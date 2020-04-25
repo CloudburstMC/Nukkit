@@ -45,10 +45,6 @@ public interface Painting extends Entity {
         PIG_SCENE("Pigscene", 4, 4),
         FLAMING_SKULL("Flaming Skull", 4, 4);
 
-        public final String title;
-        public final int width;
-        public final int height;
-
         private static final Map<String, Motive> BY_NAME = new HashMap<>();
 
         static {
@@ -56,6 +52,10 @@ public interface Painting extends Entity {
                 BY_NAME.put(motive.title, motive);
             }
         }
+
+        public final String title;
+        public final int width;
+        public final int height;
 
         @Nullable
         public static Motive from(String name) {

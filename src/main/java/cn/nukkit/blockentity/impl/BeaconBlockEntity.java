@@ -24,9 +24,11 @@ import static cn.nukkit.block.BlockIds.*;
  */
 public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
 
+    private static final int POWER_LEVEL_MAX = 4;
     private int primaryEffect;
     private int secondaryEffect;
     private int powerLevel;
+    private long currentTick = 0;
 
     public BeaconBlockEntity(BlockEntityType<?> type, Chunk chunk, Vector3i position) {
         super(type, chunk, position);
@@ -51,8 +53,6 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
     public boolean isValid() {
         return getBlock().getId() == BlockIds.BEACON;
     }
-
-    private long currentTick = 0;
 
     @Override
     public boolean onUpdate() {
@@ -135,8 +135,6 @@ public class BeaconBlockEntity extends BaseBlockEntity implements Beacon {
 
         return true;
     }
-
-    private static final int POWER_LEVEL_MAX = 4;
 
     private boolean hasSkyAccess() {
         //Check every block from our y coord to the top of the world

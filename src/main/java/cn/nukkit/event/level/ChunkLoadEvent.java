@@ -10,16 +10,15 @@ import cn.nukkit.level.chunk.Chunk;
 public class ChunkLoadEvent extends ChunkEvent {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final boolean newChunk;
 
     public ChunkLoadEvent(Chunk chunk, boolean newChunk) {
         super(chunk);
         this.newChunk = newChunk;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public boolean isNewChunk() {

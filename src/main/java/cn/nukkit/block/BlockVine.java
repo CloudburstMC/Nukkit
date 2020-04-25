@@ -17,16 +17,20 @@ import com.nukkitx.math.vector.Vector3f;
  */
 public class BlockVine extends BlockTransparent {
     public static final int SOUTH = 1;
-    public static final int WEST  = 2;
+    public static final int WEST = 2;
     public static final int NORTH = 4;
-    public static final int EAST  = 8;
+    public static final int EAST = 8;
+
+    public BlockVine(Identifier id) {
+        super(id);
+    }
 
     public static BlockFace getFace(int meta) {
         if ((meta & EAST) != 0) {
             return BlockFace.EAST;
         } else if ((meta & NORTH) != 0) {
             return BlockFace.NORTH;
-        } else if ((meta & WEST) != 0)  {
+        } else if ((meta & WEST) != 0) {
             return BlockFace.WEST;
         } else {
             return BlockFace.SOUTH;
@@ -45,10 +49,6 @@ public class BlockVine extends BlockTransparent {
             case EAST:
                 return EAST;
         }
-    }
-
-    public BlockVine(Identifier id) {
-        super(id);
     }
 
     @Override

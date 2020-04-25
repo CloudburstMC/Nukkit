@@ -12,8 +12,8 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
-import static java.lang.Math.*;
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static java.lang.Math.abs;
+import static net.daporkchop.lib.math.primitive.PMath.ceilI;
 
 /**
  * Places large spikes in the world.

@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class NukkitConsole extends SimpleTerminalConsole {
     private final Server server;
     private final BlockingQueue<String> consoleQueue = new LinkedBlockingQueue<>();
-    private AtomicBoolean executingCommands = new AtomicBoolean(false);
+    private final AtomicBoolean executingCommands = new AtomicBoolean(false);
 
     @Override
     protected boolean isRunning() {

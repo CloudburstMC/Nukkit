@@ -79,7 +79,7 @@ public final class BiomeTerrainCache {
                     double height = elevation.getNormalizedHeight();
                     double variation = elevation.getNormalizedVariation();
 
-                    if (height > 0.0d)  {
+                    if (height > 0.0d) {
                         height = height * heightFactor + heightOffset;
                         variation = variation * heightVariationFactor + heightVariationOffset;
                     }

@@ -66,8 +66,8 @@ public abstract class ReplacingWorldFeature implements WorldFeature, BlockFilter
      * Checks whether all the blocks that horizontally neighbor the given coordinates match the given {@link BlockFilter}.
      */
     public boolean allNeighborsMatch(ChunkManager level, int x, int y, int z, BlockFilter filter, BlockFace except) {
-        for (BlockFace face : BlockFace.Plane.HORIZONTAL)   {
-            if (face != except && !filter.test(level.getBlockRuntimeIdUnsafe(x + face.getXOffset(), y, z + face.getZOffset(), 0)))  {
+        for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
+            if (face != except && !filter.test(level.getBlockRuntimeIdUnsafe(x + face.getXOffset(), y, z + face.getZOffset(), 0))) {
                 return false;
             }
         }

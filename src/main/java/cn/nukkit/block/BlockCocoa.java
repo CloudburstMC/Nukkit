@@ -18,19 +18,28 @@ import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static cn.nukkit.block.BlockIds.*;
-import static cn.nukkit.item.ItemIds.*;
+import static cn.nukkit.block.BlockIds.LOG;
+import static cn.nukkit.item.ItemIds.DYE;
 
 /**
  * Created by CreeperFace on 27. 10. 2016.
  */
 public class BlockCocoa extends BlockTransparent implements Faceable {
+    public static final int NORTH = 0;
+    public static final int EAST = 1;
+    public static final int SOUTH = 2;
+    public static final int WEST = 3;
+    public static final int DIR_MASK = 3;
+    public static final int STAGE_1 = 0;
+    public static final int STAGE_2 = 1;
+    public static final int STAGE_3 = 2;
+    public static final int STAGE_MASK = 12;
     protected static final AxisAlignedBB[] BB_NORTH = {
             new SimpleAxisAlignedBB(0.375f, 0.4375f, 0.0625f, 0.625f, 0.75f, 0.3125f),
             new SimpleAxisAlignedBB(0.3125f, 0.3125f, 0.0625f, 0.6875f, 0.75f, 0.4375f),
             new SimpleAxisAlignedBB(0.3125f, 0.3125f, 0.0625f, 0.6875f, 0.75f, 0.4375f)
     };
-    protected static final AxisAlignedBB[] BB_EAST  = {
+    protected static final AxisAlignedBB[] BB_EAST = {
             new SimpleAxisAlignedBB(0.6875f, 0.4375f, 0.375f, 0.9375f, 0.75f, 0.625f),
             new SimpleAxisAlignedBB(0.5625f, 0.3125f, 0.3125f, 0.9375f, 0.75f, 0.6875f),
             new SimpleAxisAlignedBB(0.5625f, 0.3125f, 0.3125f, 0.9375f, 0.75f, 0.6875f)
@@ -40,27 +49,16 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
             new SimpleAxisAlignedBB(0.3125f, 0.3125f, 0.5625f, 0.6875f, 0.75f, 0.9375f),
             new SimpleAxisAlignedBB(0.3125f, 0.3125f, 0.5625f, 0.6875f, 0.75f, 0.9375f)
     };
-    protected static final AxisAlignedBB[] BB_WEST  = {
+    protected static final AxisAlignedBB[] BB_WEST = {
             new SimpleAxisAlignedBB(0.0625f, 0.4375f, 0.375f, 0.3125f, 0.75f, 0.625f),
             new SimpleAxisAlignedBB(0.0625f, 0.3125f, 0.3125f, 0.4375f, 0.75f, 0.6875f),
             new SimpleAxisAlignedBB(0.0625f, 0.3125f, 0.3125f, 0.4375f, 0.75f, 0.6875f)
     };
-    protected static final AxisAlignedBB[] BB_ALL   = {
+    protected static final AxisAlignedBB[] BB_ALL = {
             BB_NORTH[0], BB_EAST[0], BB_SOUTH[0], BB_WEST[0],
             BB_NORTH[1], BB_EAST[1], BB_SOUTH[1], BB_WEST[1],
             BB_NORTH[2], BB_EAST[2], BB_SOUTH[2], BB_WEST[2],
     };
-
-    public static final int NORTH    = 0;
-    public static final int EAST     = 1;
-    public static final int SOUTH    = 2;
-    public static final int WEST     = 3;
-    public static final int DIR_MASK = 3;
-
-    public static final int STAGE_1    = 0;
-    public static final int STAGE_2    = 1;
-    public static final int STAGE_3    = 2;
-    public static final int STAGE_MASK = 12;
 
     public BlockCocoa(Identifier id) {
         super(id);

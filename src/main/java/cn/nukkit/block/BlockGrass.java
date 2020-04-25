@@ -57,7 +57,7 @@ public class BlockGrass extends BlockDirt {
 
                 Block tallGrass = Block.get(BlockIds.TALL_GRASS, 0, blockX, blockY + 1, blockZ, this.level);
                 Block toReplace = this.level.getBlock(blockX, blockY + 1, blockZ);
-                if (toReplace.getId() == BlockIds.AIR)  {
+                if (toReplace.getId() == BlockIds.AIR) {
                     tallGrass.place(null, toReplace, null, null, null, null);
                 }
             }

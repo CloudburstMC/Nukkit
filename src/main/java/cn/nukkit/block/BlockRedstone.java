@@ -5,6 +5,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+
 public class BlockRedstone extends BlockSolid {
 
     public BlockRedstone(Identifier id) {

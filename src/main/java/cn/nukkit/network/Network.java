@@ -84,13 +84,13 @@ public class Network {
         }
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void setName(String name) {
         this.name = name;
         this.updateName();
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getSubName() {

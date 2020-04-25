@@ -177,6 +177,28 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
         return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getMeta() == b2.getMeta());
     }
 
+    private static int toolType0(Item item) {
+        if (item.isSword()) return ItemTool.TYPE_SWORD;
+        if (item.isShovel()) return ItemTool.TYPE_SHOVEL;
+        if (item.isPickaxe()) return ItemTool.TYPE_PICKAXE;
+        if (item.isAxe()) return ItemTool.TYPE_AXE;
+        if (item.isShears()) return ItemTool.TYPE_SHEARS;
+        return ItemTool.TYPE_NONE;
+    }
+
+    private static boolean correctTool0(int blockToolType, Item item) {
+        return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
+                (blockToolType == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
+                (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
+                (blockToolType == ItemTool.TYPE_AXE && item.isAxe()) ||
+                (blockToolType == ItemTool.TYPE_SHEARS && item.isShears()) ||
+                blockToolType == ItemTool.TYPE_NONE;
+    }
+
+    public static boolean equals(Block b1, Block b2) {
+        return equals(b1, b2, true);
+    }
+
     public Vector3i getPosition() {
         return position;
     }
@@ -210,6 +232,10 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
         return level;
     }
 
+    public final void setLevel(Level level) {
+        this.level = level;
+    }
+
     public int onUpdate(int type) {
         return 0;
     }
@@ -220,10 +246,6 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
 
     public boolean onActivate(Item item, Player player) {
         return false;
-    }
-
-    public final void setLevel(Level level) {
-        this.level = level;
     }
 
     public Chunk getChunk() {
@@ -331,10 +353,6 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
         return level != null && position != null;
     }
 
-    public void setMeta(int meta) {
-        this.meta = meta;
-    }
-
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         return this.getLevel().setBlock(this.getPosition(), this, true, true);
     }
@@ -376,24 +394,6 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
         return vector;
     }
 
-    private static int toolType0(Item item) {
-        if (item.isSword()) return ItemTool.TYPE_SWORD;
-        if (item.isShovel()) return ItemTool.TYPE_SHOVEL;
-        if (item.isPickaxe()) return ItemTool.TYPE_PICKAXE;
-        if (item.isAxe()) return ItemTool.TYPE_AXE;
-        if (item.isShears()) return ItemTool.TYPE_SHEARS;
-        return ItemTool.TYPE_NONE;
-    }
-
-    private static boolean correctTool0(int blockToolType, Item item) {
-        return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
-                (blockToolType == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
-                (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
-                (blockToolType == ItemTool.TYPE_AXE && item.isAxe()) ||
-                (blockToolType == ItemTool.TYPE_SHEARS && item.isShears()) ||
-                blockToolType == ItemTool.TYPE_NONE;
-    }
-
     public Item[] getDrops(Item item) {
         return new Item[]{
                 this.toItem()
@@ -402,6 +402,10 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
 
     public final int getMeta() {
         return meta;
+    }
+
+    public void setMeta(int meta) {
+        this.meta = meta;
     }
 
     public float getBreakTime(Item item, Player player) {
@@ -779,10 +783,6 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
         return !isTransparent() && isSolid() && !isPowerSource();
     }
 
-    public static boolean equals(Block b1, Block b2) {
-        return equals(b1, b2, true);
-    }
-
     public Block clone() {
         try {
             return (Block) super.clone();
@@ -814,6 +814,7 @@ public abstract class Block implements Metadatable, Cloneable, AxisAlignedBB {
 
     /**
      * Returns the data of the water which is waterlogging this block.
+     *
      * @return -1 if the block is not waterlogged, the water meta otherwise.
      */
     public int getWaterloggingWaterDamage() {

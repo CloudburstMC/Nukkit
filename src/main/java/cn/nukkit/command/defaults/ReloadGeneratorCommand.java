@@ -24,7 +24,7 @@ public class ReloadGeneratorCommand extends VanillaCommand {
             try {
                 Server.getInstance().getLevels().forEach(Level::reloadGenerator);
                 sender.sendMessage("Generators reloaded!");
-            } catch (Exception e)   {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

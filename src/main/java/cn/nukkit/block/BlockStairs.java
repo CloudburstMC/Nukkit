@@ -90,49 +90,41 @@ public abstract class BlockStairs extends BlockTransparent implements Faceable {
 
 
         if (side == 0) {
-            if (bb.intersectsWith(new SimpleAxisAlignedBB(
+            return bb.intersectsWith(new SimpleAxisAlignedBB(
                     this.getX() + 0.5f,
                     this.getY() + f2,
                     this.getZ(),
                     this.getX() + 1,
                     this.getY() + f3,
                     this.getZ() + 1
-            ))) {
-                return true;
-            }
+            ));
         } else if (side == 1) {
-            if (bb.intersectsWith(new SimpleAxisAlignedBB(
+            return bb.intersectsWith(new SimpleAxisAlignedBB(
                     this.getX(),
                     this.getY() + f2,
                     this.getZ(),
                     this.getX() + 0.5f,
                     this.getY() + f3,
                     this.getZ() + 1
-            ))) {
-                return true;
-            }
+            ));
         } else if (side == 2) {
-            if (bb.intersectsWith(new SimpleAxisAlignedBB(
+            return bb.intersectsWith(new SimpleAxisAlignedBB(
                     this.getX(),
                     this.getY() + f2,
                     this.getZ() + 0.5f,
                     this.getX() + 1,
                     this.getY() + f3,
                     this.getZ() + 1
-            ))) {
-                return true;
-            }
+            ));
         } else if (side == 3) {
-            if (bb.intersectsWith(new SimpleAxisAlignedBB(
+            return bb.intersectsWith(new SimpleAxisAlignedBB(
                     this.getX(),
                     this.getY() + f2,
                     this.getZ(),
                     this.getX() + 1,
                     this.getY() + f3,
                     this.getZ() + 0.5f
-            ))) {
-                return true;
-            }
+            ));
         }
 
         return false;

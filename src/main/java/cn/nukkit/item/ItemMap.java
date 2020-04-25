@@ -81,10 +81,6 @@ public class ItemMap extends Item {
         tag.byteArrayTag(TAG_COLORS, this.getColors());
     }
 
-    public void setImage(File file) throws IOException {
-        setImage(ImageIO.read(file));
-    }
-
     protected BufferedImage getBufferedImage() {
         try {
             byte[] data = getColors();
@@ -174,6 +170,10 @@ public class ItemMap extends Item {
 
     public int[] getImage() {
         return image;
+    }
+
+    public void setImage(File file) throws IOException {
+        setImage(ImageIO.read(file));
     }
 
     public void setImage(BufferedImage img) {

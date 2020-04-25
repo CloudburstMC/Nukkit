@@ -9,14 +9,6 @@ import cn.nukkit.item.enchantment.EnchantmentType;
  */
 public abstract class EnchantmentProtection extends Enchantment {
 
-    public enum TYPE {
-        ALL,
-        FIRE,
-        FALL,
-        EXPLOSION,
-        PROJECTILE
-    }
-
     protected final TYPE protectionType;
 
     protected EnchantmentProtection(int id, String name, int weight, EnchantmentProtection.TYPE type) {
@@ -55,5 +47,13 @@ public abstract class EnchantmentProtection extends Enchantment {
     @Override
     public boolean isMajor() {
         return true;
+    }
+
+    public enum TYPE {
+        ALL,
+        FIRE,
+        FALL,
+        EXPLOSION,
+        PROJECTILE
     }
 }

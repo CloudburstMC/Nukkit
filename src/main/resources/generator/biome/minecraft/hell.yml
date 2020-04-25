@@ -1,10 +1,9 @@
-
 elevationVanilla:
   height: 0.1
   variation: 0.2
 
 decorators:
-    # Determine whether anything other than netherrack may generate at the given coordinates
+  # Determine whether anything other than netherrack may generate at the given coordinates
   - id: "nukkitx:noise"
     selector:
       id: "nukkitx:simplex"
@@ -15,7 +14,7 @@ decorators:
     randomFactor: 0.25
     threshold: 0.0
     above:
-        # Determine whether soul sand may generate at the given coordinates
+      # Determine whether soul sand may generate at the given coordinates
       - id: "nukkitx:noise"
         selector:
           id: "nukkitx:simplex"
@@ -25,13 +24,13 @@ decorators:
         randomFactor: 0.2
         threshold: 0.0
         above:
-            # Soul sand
+          # Soul sand
           - id: "nukkitx:surface"
             height: "60-65"
             top: "soul_sand"
             filler: "soul_sand"
         below:
-            # Determine whether gravel may generate at the given coordinates
+          # Determine whether gravel may generate at the given coordinates
           - id: "nukkitx:noise"
             selector:
               id: "nukkitx:simplex"
@@ -41,14 +40,14 @@ decorators:
             randomFactor: 0.2
             threshold: 0.0
             above:
-                # Gravel
+              # Gravel
               - id: "nukkitx:surface"
                 height: "60-65"
                 top: "gravel"
                 filler: "gravel"
 
 populators:
-    # Lava springs
+  # Lava springs
   - id: "nukkitx:spring"
     chance: 0.03125 # about 8 per chunk
     replace: "netherrack"

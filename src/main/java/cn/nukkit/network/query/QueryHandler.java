@@ -47,6 +47,21 @@ public class QueryHandler {
         log.info(this.server.getLanguage().translate("nukkit.server.query.running", addr, String.valueOf(port)));
     }
 
+    public static byte[] getTokenString(String token, InetAddress address) {
+        return getTokenString(token.getBytes(StandardCharsets.UTF_8), address);
+    }
+
+    public static byte[] getTokenString(byte[] token, InetAddress address) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("MD5");
+            digest.update(address.toString().getBytes(StandardCharsets.UTF_8));
+            digest.update(token);
+            return Arrays.copyOf(digest.digest(), 4);
+        } catch (NoSuchAlgorithmException e) {
+            return ByteBuffer.allocate(4).putInt(ThreadLocalRandom.current().nextInt()).array();
+        }
+    }
+
     public void regenerateInfo() {
         QueryRegenerateEvent ev = this.server.getQueryInformation();
         this.longData = ev.getLongQuery();
@@ -61,21 +76,6 @@ public class QueryHandler {
             token[i] = (byte) new Random().nextInt(255);
         }
         this.token = token;
-    }
-
-    public static byte[] getTokenString(String token, InetAddress address) {
-        return getTokenString(token.getBytes(StandardCharsets.UTF_8), address);
-    }
-
-    public static byte[] getTokenString(byte[] token, InetAddress address) {
-        try {
-            MessageDigest digest = MessageDigest.getInstance("MD5");
-            digest.update(address.toString().getBytes(StandardCharsets.UTF_8));
-            digest.update(token);
-            return Arrays.copyOf(digest.digest(), 4);
-        } catch (NoSuchAlgorithmException e) {
-            return ByteBuffer.allocate(4).putInt(ThreadLocalRandom.current().nextInt()).array();
-        }
     }
 
     public void handle(InetSocketAddress address, ByteBuf packet) {

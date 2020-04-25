@@ -1,7 +1,7 @@
 parent: "minecraft:forest"
 
 populators:
-    # Fallen trees
+  # Fallen trees
   - id: "nukkitx:tree"
     chance: 0.0005580357 # about 1 per 7 chunks
     on: "grass"

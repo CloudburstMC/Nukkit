@@ -1,12 +1,9 @@
 package cn.nukkit.registry;
 
-import cn.nukkit.block.BlockIds;
-import cn.nukkit.blockentity.BlastFurnace;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityFactory;
 import cn.nukkit.blockentity.BlockEntityType;
 import cn.nukkit.blockentity.impl.*;
-import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.plugin.Plugin;
 import com.google.common.collect.BiMap;

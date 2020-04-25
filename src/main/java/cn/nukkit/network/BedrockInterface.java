@@ -1,7 +1,6 @@
 package cn.nukkit.network;
 
 import cn.nukkit.Server;
-import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.player.Player;
 import cn.nukkit.player.handler.LoginPacketHandler;
@@ -16,12 +15,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Queue;
@@ -38,7 +34,7 @@ public class BedrockInterface implements AdvancedSourceInterface, BedrockServerE
 
     private final BedrockServer bedrock;
     private final BedrockPong advertisement = new BedrockPong();
-    private Queue<NukkitSessionListener> disconnectQueue = new ConcurrentLinkedQueue<>();
+    private final Queue<NukkitSessionListener> disconnectQueue = new ConcurrentLinkedQueue<>();
 
     public BedrockInterface(Server server) throws Exception {
         this.server = server;
@@ -143,7 +139,7 @@ public class BedrockInterface implements AdvancedSourceInterface, BedrockServerE
         this.bedrock.close();
     }
 
-    public NukkitSessionListener initDisconnectHandler(Player player){
+    public NukkitSessionListener initDisconnectHandler(Player player) {
         return new NukkitSessionListener(player);
     }
 

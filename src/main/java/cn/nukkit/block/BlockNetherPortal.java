@@ -22,16 +22,6 @@ public class BlockNetherPortal extends FloodableBlock implements Faceable {
         super(id);
     }
 
-    @Override
-    public boolean canPassThrough() {
-        return true;
-    }
-
-    @Override
-    public boolean isBreakable(Item item) {
-        return false;
-    }
-
     public static void spawnPortal(Vector3f pos, Level level) {
         int x = pos.getFloorX(), y = pos.getFloorY(), z = pos.getFloorZ();
 
@@ -80,6 +70,16 @@ public class BlockNetherPortal extends FloodableBlock implements Faceable {
         level.setBlockId(x + 1, y, z, OBSIDIAN);
         level.setBlockId(x + 2, y, z, OBSIDIAN);
         level.setBlockId(x + 3, y, z, OBSIDIAN);
+    }
+
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
+
+    @Override
+    public boolean isBreakable(Item item) {
+        return false;
     }
 
     @Override

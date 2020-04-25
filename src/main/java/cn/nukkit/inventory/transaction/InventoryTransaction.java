@@ -21,14 +21,11 @@ import static cn.nukkit.block.BlockIds.AIR;
 @Log4j2
 public class InventoryTransaction {
 
-    private long creationTime;
     protected boolean hasExecuted;
-
     protected Player source;
-
     protected Set<Inventory> inventories = new HashSet<>();
-
     protected Set<InventoryAction> actions = new HashSet<>();
+    private long creationTime;
 
     public InventoryTransaction(Player source, List<InventoryAction> actions) {
         this(source, actions, true);
@@ -200,8 +197,7 @@ public class InventoryTransaction {
                         lastTargetItem = action.getTargetItem();
                         list.remove(i);
                         sortedThisLoop++;
-                    }
-                    else if (actionSource.equals(lastTargetItem)) {
+                    } else if (actionSource.equals(lastTargetItem)) {
                         lastTargetItem.decrementCount(actionSource.getCount());
                         list.remove(i);
                         if (lastTargetItem.getCount() == 0) sortedThisLoop++;

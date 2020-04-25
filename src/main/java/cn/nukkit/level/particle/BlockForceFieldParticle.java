@@ -2,6 +2,7 @@ package cn.nukkit.level.particle;
 
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.protocol.bedrock.data.LevelEventType;
+
 public class BlockForceFieldParticle extends GenericParticle {
     public BlockForceFieldParticle(Vector3f pos) {
         this(pos, 0);

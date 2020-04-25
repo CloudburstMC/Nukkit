@@ -12,18 +12,18 @@ public class PlayerMapInfoRequestEvent extends PlayerEvent implements Cancellabl
 
     private static final HandlerList handlers = new HandlerList();
 
-    private Item item;
+    private final Item item;
 
     public PlayerMapInfoRequestEvent(Player p, Item item) {
         this.player = p;
         this.item = item;
     }
 
-    public Item getMap() {
-        return item;
-    }
-
     public static HandlerList getHandlers() {
         return handlers;
+    }
+
+    public Item getMap() {
+        return item;
     }
 }

@@ -85,7 +85,7 @@ public class ChunkBuilder {
         Preconditions.checkNotNull(this.heightMap, "heightMap");
         Chunk chunk = new Chunk(new UnsafeChunk(this.x, this.z, this.level, this.sections, this.biomes,
                 this.heightMap), this.chunkDataLoaders, this.blockUpdates);
-        if (this.state != IChunk.STATE_NEW)  {
+        if (this.state != IChunk.STATE_NEW) {
             chunk.setState(this.state);
         }
         chunk.setDirty(this.dirty);

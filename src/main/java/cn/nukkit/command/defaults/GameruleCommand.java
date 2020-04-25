@@ -67,7 +67,7 @@ public class GameruleCommand extends VanillaCommand {
                     rules.put(gameRule, gameRule.parse(args[1]));
                     sender.sendMessage(new TranslationContainer("commands.gamerule.success", gameRule.getName(), args[1]));
                 } catch (NumberFormatException e) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule "  + args[0] + " ", args[1], " " + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
+                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule " + args[0] + " ", args[1], " " + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
                 }
                 return true;
         }

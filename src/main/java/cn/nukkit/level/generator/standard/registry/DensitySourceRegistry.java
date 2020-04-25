@@ -6,11 +6,7 @@ import cn.nukkit.level.generator.standard.generation.density.DensitySource;
 import cn.nukkit.level.generator.standard.generation.density.EndDensitySource;
 import cn.nukkit.level.generator.standard.generation.density.NetherDensitySource;
 import cn.nukkit.level.generator.standard.generation.density.VanillaDensitySource;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 import net.daporkchop.lib.noise.NoiseSource;
 
 /**
@@ -36,7 +32,7 @@ public final class DensitySourceRegistry extends AbstractGeneratorRegistry<Densi
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class ConstructionEvent extends Event {
         @Getter
-        private static HandlerList handlers = new HandlerList();
+        private static final HandlerList handlers = new HandlerList();
 
         @NonNull
         private final DensitySourceRegistry registry;

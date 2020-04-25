@@ -11,7 +11,7 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
 /**
  * Places very short "trees", consisting of only a single log with a pile of leaves around it.

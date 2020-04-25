@@ -1,8 +1,7 @@
 package cn.nukkit.math;
 
-import net.daporkchop.lib.random.impl.AbstractFastPRandom;
-
 import com.nukkitx.math.vector.Vector3f;
+import net.daporkchop.lib.random.impl.AbstractFastPRandom;
 
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -13,11 +12,10 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class BedrockRandom extends AbstractFastPRandom {
     private static final AtomicLong seedUniquifier = new AtomicLong(8682522807148012L);
-    private static final ThreadLocal<BedrockRandom> THREAD_LOCAL = ThreadLocal.withInitial(BedrockRandom::new);
-
     private static final int UPPER_MASK = 0x80000000;
     private static final int LOWER_MASK = 0x7fffffff;
     private static final int N = 624;
+    private static final ThreadLocal<BedrockRandom> THREAD_LOCAL = ThreadLocal.withInitial(BedrockRandom::new);
     private static final int M = 397;
     private static final int[] MAGIC = {0, 0x9908b0df};
     private static final int MAGIC_FACTOR_1 = 1812433253;

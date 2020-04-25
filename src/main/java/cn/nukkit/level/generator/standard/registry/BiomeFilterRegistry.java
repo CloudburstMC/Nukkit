@@ -3,22 +3,8 @@ package cn.nukkit.level.generator.standard.registry;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.biome.map.complex.BiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.BleedIslandBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.ClimateBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.RandomBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.ReplaceSwathBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.ReplaceThresholdBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.RiverBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.RiverCombineBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.ShoreBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.SmoothBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.SubstituteRandomBiomeFilter;
-import cn.nukkit.level.generator.standard.biome.map.complex.filter.ZoomBiomeFilter;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import cn.nukkit.level.generator.standard.biome.map.complex.filter.*;
+import lombok.*;
 
 /**
  * Registry for {@link BiomeFilter}.
@@ -51,7 +37,7 @@ public final class BiomeFilterRegistry extends AbstractGeneratorRegistry<BiomeFi
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class ConstructionEvent extends Event {
         @Getter
-        private static HandlerList handlers = new HandlerList();
+        private static final HandlerList handlers = new HandlerList();
 
         @NonNull
         private final BiomeFilterRegistry registry;

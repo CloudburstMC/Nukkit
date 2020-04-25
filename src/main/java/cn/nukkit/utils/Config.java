@@ -33,7 +33,7 @@ public class Config {
     //public static final int SERIALIZED = 4; // .sl
     public static final int ENUM = 5; // .txt, .list, .enum
     public static final int ENUMERATION = Config.ENUM;
-
+    public static final Map<String, Integer> format = new TreeMap<>();
     private static final JsonMapper JSON_MAPPER = new JsonMapper();
     private static final YAMLMapper YAML_MAPPER = new YAMLMapper();
     private static final JavaPropsMapper JAVA_PROPS_MAPPER = new JavaPropsMapper();
@@ -45,14 +45,6 @@ public class Config {
         YAML_MAPPER.registerModule(module);
         JAVA_PROPS_MAPPER.registerModule(module);
     }
-
-    //private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
-    private ConfigSection config = new ConfigSection();
-    private File file;
-    private boolean correct = false;
-    private int type = Config.DETECT;
-
-    public static final Map<String, Integer> format = new TreeMap<>();
 
     static {
         format.put("properties", Config.PROPERTIES);
@@ -69,6 +61,12 @@ public class Config {
         format.put("list", Config.ENUM);
         format.put("enum", Config.ENUM);
     }
+
+    //private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
+    private ConfigSection config = new ConfigSection();
+    private File file;
+    private boolean correct = false;
+    private int type = Config.DETECT;
 
     /**
      * Constructor for Config instance with undefined file object
@@ -416,14 +414,6 @@ public class Config {
         return config.getMapList(key);
     }
 
-    public void setAll(LinkedHashMap<String, Object> map) {
-        this.config = new ConfigSection(map);
-    }
-
-    public void setAll(ConfigSection section) {
-        this.config = section;
-    }
-
     public boolean exists(String key) {
         return config.exists(key);
     }
@@ -438,6 +428,14 @@ public class Config {
 
     public Map<String, Object> getAll() {
         return this.config.getAllMap();
+    }
+
+    public void setAll(LinkedHashMap<String, Object> map) {
+        this.config = new ConfigSection(map);
+    }
+
+    public void setAll(ConfigSection section) {
+        this.config = section;
     }
 
     /**

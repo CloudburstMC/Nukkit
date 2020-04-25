@@ -17,13 +17,13 @@ import java.io.IOException;
  */
 final class PopulatorDeserializer extends JsonDeserializer<Populator> {
     @Override
-    public Populator deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public Populator deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String nextName = p.nextFieldName();
         Preconditions.checkState("id".equals(nextName), "first field must be \"id\", not \"%s\"", nextName);
         Identifier id = Identifier.fromString(p.nextTextValue());
         p.nextToken();
 
         return id == NextGenerationPass.ID
-               ? NextGenerationPass.INSTANCE : Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.populator().get(id));
+                ? NextGenerationPass.INSTANCE : Nukkit.YAML_MAPPER.readValue(p, StandardGeneratorRegistries.populator().get(id));
     }
 }

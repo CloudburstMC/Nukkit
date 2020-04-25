@@ -34,31 +34,6 @@ public abstract class ContainerInventory extends BaseInventory {
         super(holder, type, items, overrideSize, overrideTitle);
     }
 
-    @Override
-    public void onOpen(Player who) {
-        super.onOpen(who);
-        ContainerOpenPacket packet = new ContainerOpenPacket();
-        packet.setWindowId(who.getWindowId(this));
-        packet.setType((byte) this.getType().getNetworkType());
-        InventoryHolder holder = this.getHolder();
-        if (holder instanceof BlockEntity) {
-            packet.setBlockPosition(((BlockEntity) holder).getPosition());
-        } else {
-            packet.setBlockPosition(Vector3i.ZERO);
-        }
-        who.sendPacket(packet);
-
-        this.sendContents(who);
-    }
-
-    @Override
-    public void onClose(Player who) {
-        ContainerClosePacket packet = new ContainerClosePacket();
-        packet.setWindowId(who.getWindowId(this));
-        who.sendPacket(packet);
-        super.onClose(who);
-    }
-
     public static int calculateRedstone(Inventory inv) {
         if (inv == null) {
             return 0;
@@ -87,5 +62,30 @@ public abstract class ContainerInventory extends BaseInventory {
         bep.setEventType(1);
         bep.setEventData(eventData);
         block.getLevel().addChunkPacket(block.getPosition(), bep);
+    }
+
+    @Override
+    public void onOpen(Player who) {
+        super.onOpen(who);
+        ContainerOpenPacket packet = new ContainerOpenPacket();
+        packet.setWindowId(who.getWindowId(this));
+        packet.setType((byte) this.getType().getNetworkType());
+        InventoryHolder holder = this.getHolder();
+        if (holder instanceof BlockEntity) {
+            packet.setBlockPosition(((BlockEntity) holder).getPosition());
+        } else {
+            packet.setBlockPosition(Vector3i.ZERO);
+        }
+        who.sendPacket(packet);
+
+        this.sendContents(who);
+    }
+
+    @Override
+    public void onClose(Player who) {
+        ContainerClosePacket packet = new ContainerClosePacket();
+        packet.setWindowId(who.getWindowId(this));
+        who.sendPacket(packet);
+        super.onClose(who);
     }
 }

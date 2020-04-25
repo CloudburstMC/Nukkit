@@ -15,7 +15,7 @@ import java.io.IOException;
  */
 final class GenerationBiomeDeserializer extends JsonDeserializer<GenerationBiome> {
     @Override
-    public GenerationBiome deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public GenerationBiome deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         return StandardGeneratorStores.generationBiome().find(Nukkit.YAML_MAPPER.readValue(p, Identifier.class));
     }
 }

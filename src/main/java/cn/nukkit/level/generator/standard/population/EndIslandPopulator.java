@@ -11,7 +11,8 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static net.daporkchop.lib.math.primitive.PMath.ceilI;
+import static net.daporkchop.lib.math.primitive.PMath.floorI;
 
 /**
  * @author DaPorkchop_

@@ -16,13 +16,13 @@ public class PlayerInvalidMoveEvent extends PlayerEvent implements Cancellable {
 
     private boolean revert;
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     public PlayerInvalidMoveEvent(Player player, boolean revert) {
         this.player = player;
         this.revert = revert;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public boolean isRevert() {
@@ -30,8 +30,8 @@ public class PlayerInvalidMoveEvent extends PlayerEvent implements Cancellable {
     }
 
     /**
-     * @deprecated If you just simply want to disable the movement check, please use {@link Player#setCheckMovement(boolean)} instead.
      * @param revert revert movement
+     * @deprecated If you just simply want to disable the movement check, please use {@link Player#setCheckMovement(boolean)} instead.
      */
     @Deprecated
     public void setRevert(boolean revert) {

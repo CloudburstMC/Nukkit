@@ -2,24 +2,10 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.generation.decorator.BedrockDecorator;
-import cn.nukkit.level.generator.standard.generation.decorator.Decorator;
-import cn.nukkit.level.generator.standard.generation.decorator.DeepSurfaceDecorator;
-import cn.nukkit.level.generator.standard.generation.decorator.DistanceSelectionDecorator;
-import cn.nukkit.level.generator.standard.generation.decorator.GroundCoverDecorator;
-import cn.nukkit.level.generator.standard.generation.decorator.HeightSelectionDecorator;
-import cn.nukkit.level.generator.standard.generation.decorator.MesaSurfaceDecorator;
-import cn.nukkit.level.generator.standard.generation.decorator.NoiseSelectionDecorator;
-import cn.nukkit.level.generator.standard.generation.decorator.ReplaceTopDecorator;
-import cn.nukkit.level.generator.standard.generation.decorator.ScatteredCoverDecorator;
-import cn.nukkit.level.generator.standard.generation.decorator.SurfaceDecorator;
+import cn.nukkit.level.generator.standard.generation.decorator.*;
 import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.registry.RegistryException;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 /**
  * Registry for {@link Decorator}.
@@ -58,7 +44,7 @@ public final class DecoratorRegistry extends AbstractGeneratorRegistry<Decorator
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class ConstructionEvent extends Event {
         @Getter
-        private static HandlerList handlers = new HandlerList();
+        private static final HandlerList handlers = new HandlerList();
 
         @NonNull
         private final DecoratorRegistry registry;

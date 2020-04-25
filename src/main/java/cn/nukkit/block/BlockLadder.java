@@ -19,6 +19,11 @@ import static cn.nukkit.block.BlockIds.LADDER;
  */
 public class BlockLadder extends BlockTransparent implements Faceable {
 
+    private float offMinX;
+    private float offMinZ;
+    private float offMaxX;
+    private float offMaxZ;
+
     public BlockLadder(Identifier id) {
         super(id);
         calculateOffsets();
@@ -38,11 +43,6 @@ public class BlockLadder extends BlockTransparent implements Faceable {
     public boolean isSolid() {
         return false;
     }
-
-    private float offMinX;
-    private float offMinZ;
-    private float offMaxX;
-    private float offMaxZ;
 
     @Override
     public float getHardness() {
@@ -84,7 +84,7 @@ public class BlockLadder extends BlockTransparent implements Faceable {
                 break;
             default:
                 this.offMinX = 0;
-                this.offMinZ = 1 ;
+                this.offMinZ = 1;
                 this.offMaxX = 1;
                 this.offMaxZ = 1;
                 break;
@@ -162,7 +162,7 @@ public class BlockLadder extends BlockTransparent implements Faceable {
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
-    
+
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{

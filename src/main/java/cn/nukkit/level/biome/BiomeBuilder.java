@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +14,11 @@ import java.util.Set;
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BiomeBuilder {
+    protected Identifier id;
+    protected Set<Identifier> tags = new HashSet<>();
+    protected float temperature = 0.5f;
+    protected float downfall = 0.5f;
+
     public static BiomeBuilder builder() {
         return new BiomeBuilder();
     }
@@ -22,11 +26,6 @@ public class BiomeBuilder {
     public static BiomeBuilder from(@NonNull Biome biome) {
         return builder();
     }
-
-    protected Identifier id;
-    protected Set<Identifier> tags = new HashSet<>();
-    protected float temperature = 0.5f;
-    protected float downfall = 0.5f;
 
     public BiomeBuilder setId(Identifier id) {
         this.id = id;

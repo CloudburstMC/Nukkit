@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.Preconditions;
 import net.daporkchop.lib.random.PRandom;
 
-import static java.lang.Math.*;
+import static java.lang.Math.min;
 
 /**
  * Places a random number of single blocks on top of a given cover block.

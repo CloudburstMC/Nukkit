@@ -27,7 +27,7 @@ import static cn.nukkit.block.BlockIds.AIR;
 public class PlayerInventory extends BaseInventory {
 
     protected int itemInHandIndex = 0;
-    private int[] hotbar;
+    private final int[] hotbar;
     private int offHandIndex = 40;
 
     public PlayerInventory(Human player) {
@@ -333,6 +333,26 @@ public class PlayerInventory extends BaseInventory {
         return armor;
     }
 
+    public void setArmorContents(Item[] items) {
+        if (items.length < 4) {
+            Item[] newItems = new Item[4];
+            System.arraycopy(items, 0, newItems, 0, items.length);
+            items = newItems;
+        }
+
+        for (int i = 0; i < 4; ++i) {
+            if (items[i] == null) {
+                items[i] = Item.get(AIR, 0, 0);
+            }
+
+            if (items[i].getId() == AIR) {
+                this.clear(this.getSize() + i);
+            } else {
+                this.setItem(this.getSize() + i, items[i]);
+            }
+        }
+    }
+
     @Override
     public void clearAll() {
         int limit = this.getSize() + 5;
@@ -437,26 +457,6 @@ public class PlayerInventory extends BaseInventory {
                 player.sendPacket(packet2);
             } else {
                 player.sendPacket(packet);
-            }
-        }
-    }
-
-    public void setArmorContents(Item[] items) {
-        if (items.length < 4) {
-            Item[] newItems = new Item[4];
-            System.arraycopy(items, 0, newItems, 0, items.length);
-            items = newItems;
-        }
-
-        for (int i = 0; i < 4; ++i) {
-            if (items[i] == null) {
-                items[i] = Item.get(AIR, 0, 0);
-            }
-
-            if (items[i].getId() == AIR) {
-                this.clear(this.getSize() + i);
-            } else {
-                this.setItem(this.getSize() + i, items[i]);
             }
         }
     }

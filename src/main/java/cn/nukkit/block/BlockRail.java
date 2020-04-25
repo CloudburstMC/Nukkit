@@ -138,8 +138,8 @@ public class BlockRail extends FloodableBlock implements Faceable {
         this.connect(rail2, face2);
 
         if (face1.getOpposite() == face2) {
-            int delta1 = (int) (this.getY() - rail1.getY());
-            int delta2 = (int) (this.getY() - rail2.getY());
+            int delta1 = this.getY() - rail1.getY();
+            int delta2 = this.getY() - rail2.getY();
 
             if (delta1 == -1) {
                 return Orientation.ascending(face1);
@@ -151,7 +151,7 @@ public class BlockRail extends FloodableBlock implements Faceable {
     }
 
     private Orientation connect(BlockRail other, BlockFace face) {
-        int delta = (int) (this.getY() - other.getY());
+        int delta = this.getY() - other.getY();
         Map<BlockRail, BlockFace> rails = other.checkRailsConnected();
         if (rails.isEmpty()) { //Only one
             other.setOrientation(delta == 1 ? ascending(face.getOpposite()) : straight(face));

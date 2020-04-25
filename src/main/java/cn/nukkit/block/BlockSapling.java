@@ -16,7 +16,7 @@ import net.daporkchop.lib.random.impl.ThreadLocalPRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.*;
-import static cn.nukkit.item.ItemIds.*;
+import static cn.nukkit.item.ItemIds.DYE;
 
 /**
  * author: Angelic47
@@ -103,9 +103,9 @@ public class BlockSapling extends FloodableBlock {
         TreeSpecies species = TreeSpecies.fromItem(this.getId(), this.getMeta());
         WorldFeature feature = species.getHugeGenerator();
         BIG_TREE:
-        if (bigTree = feature != null)  {
-            for (int dx = 0; dx >= -1; dx--)    {
-                for (int dz = 0; dz >= -1; dz--)    {
+        if (bigTree = feature != null) {
+            for (int dx = 0; dx >= -1; dx--) {
+                for (int dz = 0; dz >= -1; dz--) {
                     if (this.findSaplings(x + dx, z + dz, species.getItemDamage())) {
                         x += dx;
                         z += dz;
@@ -124,7 +124,7 @@ public class BlockSapling extends FloodableBlock {
         } else {
             x = z = 0;
             feature = species.getDefaultGenerator();
-            if (feature == null)    {
+            if (feature == null) {
                 return;
             }
 

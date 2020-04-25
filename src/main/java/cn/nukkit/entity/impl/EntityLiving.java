@@ -47,6 +47,11 @@ import static com.nukkitx.protocol.bedrock.data.EntityFlag.BREATHING;
  */
 public abstract class EntityLiving extends BaseEntity implements EntityDamageable {
 
+    protected int attackTime = 0;
+    protected boolean invisible = false;
+    protected float movementSpeed = 0.1f;
+    protected int turtleTicks = 200;
+
     public EntityLiving(EntityType<?> type, Location location) {
         super(type, location);
     }
@@ -60,14 +65,6 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
     public float getDrag() {
         return 0.02f;
     }
-
-    protected int attackTime = 0;
-
-    protected boolean invisible = false;
-
-    protected float movementSpeed = 0.1f;
-
-    protected int turtleTicks = 200;
 
     @Override
     public void loadAdditionalData(CompoundTag tag) {
@@ -364,12 +361,12 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
         return null;
     }
 
-    public void setMovementSpeed(float speed) {
-        this.movementSpeed = speed;
-    }
-
     public float getMovementSpeed() {
         return this.movementSpeed;
+    }
+
+    public void setMovementSpeed(float speed) {
+        this.movementSpeed = speed;
     }
 
     public int getAirTicks() {

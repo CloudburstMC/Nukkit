@@ -17,19 +17,10 @@ import static cn.nukkit.block.BlockIds.AIR;
 public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     protected final Block blockTouched;
-
     protected final Vector3f touchVector;
-
     protected final BlockFace blockFace;
-
     protected final Item item;
-
     protected final Action action;
 
     public PlayerInteractEvent(Player player, Item item, Block block, BlockFace face, Action action) {
@@ -47,6 +38,10 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
         this.action = action;
         this.blockTouched = block;
         this.touchVector = touchVector;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Action getAction() {

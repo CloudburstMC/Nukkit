@@ -6,7 +6,7 @@ import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
 /**
  * Generates a spruce tree.

@@ -26,6 +26,8 @@ import static com.google.common.base.Preconditions.checkElementIndex;
 
 public final class UnsafeChunk implements IChunk, Closeable {
 
+    static final AtomicIntegerFieldUpdater<UnsafeChunk> CLEAR_CACHE_FIELD = AtomicIntegerFieldUpdater
+            .newUpdater(UnsafeChunk.class, "clearCache");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> DIRTY_FIELD = AtomicIntegerFieldUpdater
             .newUpdater(UnsafeChunk.class, "dirty");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> INITIALIZED_FIELD = AtomicIntegerFieldUpdater
@@ -34,9 +36,6 @@ public final class UnsafeChunk implements IChunk, Closeable {
             .newUpdater(UnsafeChunk.class, "state");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> CLOSED_FIELD = AtomicIntegerFieldUpdater
             .newUpdater(UnsafeChunk.class, "closed");
-    static final AtomicIntegerFieldUpdater<UnsafeChunk> CLEAR_CACHE_FIELD = AtomicIntegerFieldUpdater
-            .newUpdater(UnsafeChunk.class, "clearCache");
-
     private final int x;
 
     private final int z;
@@ -287,11 +286,11 @@ public final class UnsafeChunk implements IChunk, Closeable {
     @Override
     public int getHighestBlock(int x, int z) {
         checkBounds(x, z);
-        for (int sectionY = 15; sectionY >= 0; sectionY--)  {
+        for (int sectionY = 15; sectionY >= 0; sectionY--) {
             ChunkSection section = this.sections[sectionY];
-            if (section != null)    {
-                for (int y = 15; y >= 0; y--)    {
-                    if (section.getBlockRuntimeIdUnsafe(x, y, z, 0) != 0)  {
+            if (section != null) {
+                for (int y = 15; y >= 0; y--) {
+                    if (section.getBlockRuntimeIdUnsafe(x, y, z, 0) != 0) {
                         return (sectionY << 4) | y;
                     }
                 }

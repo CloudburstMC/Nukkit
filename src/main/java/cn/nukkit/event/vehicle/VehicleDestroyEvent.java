@@ -7,16 +7,15 @@ import cn.nukkit.event.HandlerList;
 public class VehicleDestroyEvent extends VehicleEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final Entity attacker;
 
     public VehicleDestroyEvent(Entity vehicle, Entity attacker) {
         super(vehicle);
         this.attacker = attacker;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Entity getAttacker() {

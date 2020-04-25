@@ -1,6 +1,5 @@
 package cn.nukkit.level.feature.tree;
 
-import cn.nukkit.block.BlockHugeMushroomBrown;
 import cn.nukkit.block.BlockHugeMushroomRed;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.level.ChunkManager;

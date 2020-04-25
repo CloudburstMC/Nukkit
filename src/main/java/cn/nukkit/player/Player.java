@@ -4,13 +4,9 @@ import cn.nukkit.Achievement;
 import cn.nukkit.AdventureSettings;
 import cn.nukkit.AdventureSettings.Type;
 import cn.nukkit.Server;
-import cn.nukkit.block.*;
-<<<<<<< HEAD
-=======
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.ItemFrame;
-import cn.nukkit.blockentity.Lectern;
->>>>>>> parent of 8fe42e3d... Fix compilation
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockEnderChest;
+import cn.nukkit.block.BlockIds;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Attribute;
@@ -20,37 +16,28 @@ import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.entity.impl.Human;
 import cn.nukkit.entity.impl.projectile.EntityArrow;
-import cn.nukkit.entity.impl.vehicle.EntityAbstractMinecart;
-import cn.nukkit.entity.impl.vehicle.EntityBoat;
 import cn.nukkit.entity.misc.DroppedItem;
 import cn.nukkit.entity.misc.ExperienceOrb;
 import cn.nukkit.entity.projectile.Arrow;
 import cn.nukkit.entity.projectile.FishingHook;
 import cn.nukkit.entity.projectile.ThrownTrident;
-import cn.nukkit.event.block.ItemFrameDropItemEvent;
-import cn.nukkit.event.block.LecternPageChangeEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
-import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
 import cn.nukkit.event.player.*;
-import cn.nukkit.event.player.PlayerAsyncPreLoginEvent.LoginResult;
-import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.PlayerPacketSendEvent;
 import cn.nukkit.form.window.FormWindow;
-import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
-import cn.nukkit.inventory.transaction.InventoryTransaction;
-import cn.nukkit.inventory.transaction.action.InventoryAction;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArmor;
+import cn.nukkit.item.ItemIds;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.ChunkLoader;
 import cn.nukkit.level.Level;
@@ -59,14 +46,13 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
-import cn.nukkit.level.particle.PunchBlockParticle;
 import cn.nukkit.locale.TextContainer;
 import cn.nukkit.locale.TranslationContainer;
-import cn.nukkit.math.*;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockRayTrace;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.metadata.MetadataValue;
-import cn.nukkit.network.ProtocolInfo;
-import cn.nukkit.network.protocol.types.InventoryTransactionUtils;
-import cn.nukkit.pack.Pack;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
@@ -78,7 +64,6 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.registry.ItemRegistry;
-import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -91,7 +76,6 @@ import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.BedrockServerSession;
 import com.nukkitx.protocol.bedrock.BedrockSession;
 import com.nukkitx.protocol.bedrock.data.*;
@@ -109,12 +93,9 @@ import java.net.InetSocketAddress;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 import java.util.function.LongConsumer;
 
-import static cn.nukkit.block.BlockIds.AIR;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.nukkitx.protocol.bedrock.data.EntityData.*;
 import static com.nukkitx.protocol.bedrock.data.EntityFlag.USING_ITEM;
@@ -150,108 +131,136 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public static final int PERMISSION_VISITOR = 0;
 
     protected final BedrockServerSession session;
-
+    protected final BiMap<Inventory, Byte> windows = HashBiMap.create();
+    protected final BiMap<Byte, Inventory> windowIndex = windows.inverse();
+    protected final ByteSet permanentWindows = new ByteOpenHashSet();
+    protected final PlayerData playerData = new PlayerData();
+    protected final PlayerFood foodData = new PlayerFood(this, 20, 20);
+    protected final Map<UUID, Player> hiddenPlayers = new HashMap<>();
+    protected final int chunksPerTick;
+    protected final int spawnThreshold;
     private final PlayerPacketHandler packetHandler;
-
-    private boolean initialized;
+    private final Queue<BedrockPacket> inboundQueue = new ConcurrentLinkedQueue<>();
+    private final AtomicReference<Locale> locale = new AtomicReference<>(null);
+    private final PlayerChunkManager chunkManager = new PlayerChunkManager(this);
     public boolean spawned = false;
     public boolean loggedIn = false;
     public long lastBreak;
     public Vector3f speed = null;
-
-    protected final BiMap<Inventory, Byte> windows = HashBiMap.create();
-    protected final BiMap<Byte, Inventory> windowIndex = windows.inverse();
-    protected final ByteSet permanentWindows = new ByteOpenHashSet();
-    protected byte windowCnt = 4;
-
-    protected final PlayerData playerData = new PlayerData();
-
-    protected int messageCounter = 2;
-
-    private String clientSecret;
-    protected Vector3f forceMovement = null;
-
     public int craftingType = CRAFTING_SMALL;
-
+    public long creationTime = 0;
+    public Block breakingBlock = null;
+    public int pickedXPOrb = 0;
+    public FishingHook fishing = null;
+    public int packetsRecieved;
+    public long lastSkinChange;
+    protected byte windowCnt = 4;
+    protected int messageCounter = 2;
+    protected Vector3f forceMovement = null;
     protected PlayerUIInventory playerUIInventory;
     protected CraftingGrid craftingGrid;
     protected CraftingTransaction craftingTransaction;
-
-    public long creationTime = 0;
-
     protected long randomClientId;
     protected Vector3f teleportPosition = null;
-    protected final PlayerFood foodData = new PlayerFood(this, 20, 20);
-
     protected boolean connected = true;
     protected boolean removeFormat = true;
-
     protected String username;
     protected String iusername;
     protected String displayName;
-
     protected int startAction = -1;
     protected Vector3f newPosition = null;
-
-    private int loaderId;
-
     protected float stepHeight = 0.6f;
-
-    protected final Map<UUID, Player> hiddenPlayers = new HashMap<>();
-
     protected int viewDistance;
-    protected final int chunksPerTick;
-    protected final int spawnThreshold;
-    private final Queue<BedrockPacket> inboundQueue = new ConcurrentLinkedQueue<>();
-
     protected int inAirTicks = 0;
     protected int startAirTicks = 5;
-
     protected AdventureSettings adventureSettings;
-
     protected boolean checkMovement = true;
     protected Vector3i sleeping = null;
-
-    private PermissibleBase perm = null;
-
-    private int exp = 0;
-    private int expLevel = 0;
     protected Location spawnLocation = null;
-
-    private Entity killer = null;
-
-    private final AtomicReference<Locale> locale = new AtomicReference<>(null);
-
-    private int hash;
-
-    private String buttonText = "Button";
-
     protected boolean enableClientCommand = true;
-
-    private BlockEnderChest viewingEnderChest = null;
-
     protected int lastEnderPearl = 20;
     protected int lastChorusFruitTeleport = 20;
-
-    private LoginChainData loginChainData;
-
-    public Block breakingBlock = null;
-
-    public int pickedXPOrb = 0;
-
     protected int formWindowCount = 0;
     protected Map<Integer, FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
     protected Map<Integer, FormWindow> serverSettings = new Int2ObjectOpenHashMap<>();
-
     protected Map<Long, DummyBossBar> dummyBossBars = new Long2ObjectLinkedOpenHashMap<>();
+    private boolean initialized;
+    private String clientSecret;
+    private int loaderId;
+    private PermissibleBase perm = null;
+    private int exp = 0;
+    private int expLevel = 0;
+    private Entity killer = null;
+    private int hash;
+    private String buttonText = "Button";
+    private BlockEnderChest viewingEnderChest = null;
+    private LoginChainData loginChainData;
+    private boolean foodEnabled = true;
 
-    public FishingHook fishing = null;
+    public Player(BedrockServerSession session, ClientChainData chainData) {
+        super(EntityTypes.PLAYER, Location.from(Server.getInstance().getDefaultLevel()));
+        this.session = session;
+        this.packetHandler = new PlayerPacketHandler(this);
+        session.setBatchedHandler(new Handler());
+        this.perm = new PermissibleBase(this);
+        this.server = Server.getInstance();
+        this.lastBreak = -1;
+        this.chunksPerTick = this.server.getConfig("chunk-sending.per-tick", 4);
+        this.spawnThreshold = this.server.getConfig("chunk-sending.spawn-threshold", 56);
+        this.spawnLocation = null;
+        this.playerData.setGamemode(this.server.getGamemode());
+        this.viewDistance = this.server.getViewDistance();
+        //this.newPosition = new Vector3(0, 0, 0);
+        this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
+        this.lastSkinChange = -1;
 
-    private final PlayerChunkManager chunkManager = new PlayerChunkManager(this);
+        this.loginChainData = chainData;
 
-    public int packetsRecieved;
+        this.randomClientId = chainData.getClientId();
+        this.identity = chainData.getClientUUID();
+        this.username = TextFormat.clean(chainData.getUsername());
+        this.iusername = username.toLowerCase();
+        this.setDisplayName(this.username);
+        this.setNameTag(this.username);
 
-    public long lastSkinChange;
+        this.setSkin(chainData.getSkin());
+
+        this.creationTime = System.currentTimeMillis();
+    }
+
+    private static boolean hasSubstantiallyMoved(Vector3f oldPos, Vector3f newPos) {
+        return oldPos.getFloorX() >> 4 != newPos.getFloorX() >> 4 || oldPos.getFloorZ() >> 4 != newPos.getFloorZ() >> 4;
+    }
+
+    private static int distance(int centerX, int centerZ, int x, int z) {
+        int dx = centerX - x;
+        int dz = centerZ - z;
+        return dx * dx + dz * dz;
+    }
+
+    /**
+     * Returns a client-friendly gamemode of the specified real gamemode
+     * This function takes care of handling gamemodes known to MCPE (as of 1.1.0.3, that includes Survival, Creative and Adventure)
+     * <p>
+     * TODO: remove this when Spectator Mode gets added properly to MCPE
+     */
+    private static int getClientFriendlyGamemode(int gamemode) {
+        gamemode &= 0x03;
+        if (gamemode == Player.SPECTATOR) {
+            return Player.CREATIVE;
+        }
+        return gamemode;
+    }
+
+    public static int calculateRequireExperience(int level) {
+        if (level >= 30) {
+            return 112 + (level - 30) * 9;
+        } else if (level >= 15) {
+            return 37 + (level - 15) * 5;
+        } else {
+            return 7 + level * 2;
+        }
+    }
 
     public int getStartActionTick() {
         return startAction;
@@ -355,41 +364,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this;
     }
 
-    public Player(BedrockServerSession session, ClientChainData chainData) {
-        super(EntityTypes.PLAYER, Location.from(Server.getInstance().getDefaultLevel()));
-        this.session = session;
-        this.packetHandler = new PlayerPacketHandler(this);
-        session.setBatchedHandler(new Handler());
-        this.perm = new PermissibleBase(this);
-        this.server = Server.getInstance();
-        this.lastBreak = -1;
-        this.chunksPerTick = this.server.getConfig("chunk-sending.per-tick", 4);
-        this.spawnThreshold = this.server.getConfig("chunk-sending.spawn-threshold", 56);
-        this.spawnLocation = null;
-        this.playerData.setGamemode(this.server.getGamemode());
-        this.viewDistance = this.server.getViewDistance();
-        //this.newPosition = new Vector3(0, 0, 0);
-        this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
-        this.lastSkinChange = -1;
-
-        this.loginChainData = chainData;
-
-        this.randomClientId = chainData.getClientId();
-        this.identity = chainData.getClientUUID();
-        this.username = TextFormat.clean(chainData.getUsername());
-        this.iusername = username.toLowerCase();
-        this.setDisplayName(this.username);
-        this.setNameTag(this.username);
-
-        this.setSkin(chainData.getSkin());
-
-        this.creationTime = System.currentTimeMillis();
-    }
-
-    private static boolean hasSubstantiallyMoved(Vector3f oldPos, Vector3f newPos) {
-        return oldPos.getFloorX() >> 4 != newPos.getFloorX() >> 4 || oldPos.getFloorZ() >> 4 != newPos.getFloorZ() >> 4;
-    }
-
     @Override
     public Long getFirstPlayed() {
         return this.playerData.getFirstPlayed();
@@ -409,14 +383,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     @Deprecated
-    public void setAllowFlight(boolean value) {
-        this.getAdventureSettings().set(Type.ALLOW_FLIGHT, value);
-        this.getAdventureSettings().update();
+    public boolean getAllowFlight() {
+        return this.getAdventureSettings().get(Type.ALLOW_FLIGHT);
     }
 
     @Deprecated
-    public boolean getAllowFlight() {
-        return this.getAdventureSettings().get(Type.ALLOW_FLIGHT);
+    public void setAllowFlight(boolean value) {
+        this.getAdventureSettings().set(Type.ALLOW_FLIGHT, value);
+        this.getAdventureSettings().update();
     }
 
     public void setAllowModifyWorld(boolean value) {
@@ -462,12 +436,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return removeFormat;
     }
 
-    public void setRemoveFormat() {
-        this.setRemoveFormat(true);
-    }
-
     public void setRemoveFormat(boolean remove) {
         this.removeFormat = remove;
+    }
+
+    public void setRemoveFormat() {
+        this.setRemoveFormat(true);
     }
 
     @Override
@@ -612,6 +586,14 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.enableClientCommand;
     }
 
+    public void setEnableClientCommand(boolean enable) {
+        this.enableClientCommand = enable;
+        SetCommandsEnabledPacket packet = new SetCommandsEnabledPacket();
+        packet.setCommandsEnabled(enable);
+        this.sendPacket(packet);
+        if (enable) this.sendCommandData();
+    }
+
     @Override
     public void resetFallDistance() {
         super.resetFallDistance();
@@ -620,14 +602,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
         this.inAirTicks = 0;
         this.highestPosition = this.getPosition().getY();
-    }
-
-    public void setEnableClientCommand(boolean enable) {
-        this.enableClientCommand = enable;
-        SetCommandsEnabledPacket packet = new SetCommandsEnabledPacket();
-        packet.setCommandsEnabled(enable);
-        this.sendPacket(packet);
-        if (enable) this.sendCommandData();
     }
 
     @Override
@@ -732,13 +706,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.data.getFlag(USING_ITEM) && this.startAction > -1;
     }
 
-    public String getButtonText() {
-        return this.buttonText;
-    }
-
     public void setUsingItem(boolean value) {
         this.startAction = value ? this.server.getTick() : -1;
         this.data.setFlag(USING_ITEM, value);
+    }
+
+    public String getButtonText() {
+        return this.buttonText;
     }
 
     public void setButtonText(String text) {
@@ -752,12 +726,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         } else {
             return this.server.getDefaultLevel().getSafeSpawn();
         }
-    }
-
-    private static int distance(int centerX, int centerZ, int x, int z) {
-        int dx = centerX - x;
-        int dz = centerZ - z;
-        return dx * dx + dz * dz;
     }
 
     public void setSpawn(Location location) {
@@ -942,20 +910,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public int getGamemode() {
         return this.playerData.getGamemode();
-    }
-
-    /**
-     * Returns a client-friendly gamemode of the specified real gamemode
-     * This function takes care of handling gamemodes known to MCPE (as of 1.1.0.3, that includes Survival, Creative and Adventure)
-     * <p>
-     * TODO: remove this when Spectator Mode gets added properly to MCPE
-     */
-    private static int getClientFriendlyGamemode(int gamemode) {
-        gamemode &= 0x03;
-        if (gamemode == Player.SPECTATOR) {
-            return Player.CREATIVE;
-        }
-        return gamemode;
     }
 
     public boolean setGamemode(int gamemode) {
@@ -1881,6 +1835,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.getChunkManager().getChunkRadius();
     }
 
+    public void setChunkRadius(int chunkRadius) {
+        this.getChunkManager().setChunkRadius(chunkRadius);
+    }
+
     public String getXuid() {
         return this.getLoginChainData().isXboxAuthed() ? this.getLoginChainData().getXUID() : "";
     }
@@ -2053,10 +2011,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.close(message, reason, true);
     }
 
-    public void setChunkRadius(int chunkRadius) {
-        this.getChunkManager().setChunkRadius(chunkRadius);
-    }
-
     public void save() {
         this.save(false);
     }
@@ -2215,9 +2169,15 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.exp;
     }
 
+    public void setExperience(int exp) {
+        setExperience(exp, this.getExperienceLevel());
+    }
+
     public int getExperienceLevel() {
         return this.expLevel;
     }
+
+    //todo something on performance, lots of exp orbs then lots of packets, could crash client
 
     public void addExperience(int add) {
         if (add == 0) return;
@@ -2232,22 +2192,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
         this.setExperience(added, level);
     }
-
-    public static int calculateRequireExperience(int level) {
-        if (level >= 30) {
-            return 112 + (level - 30) * 9;
-        } else if (level >= 15) {
-            return 37 + (level - 15) * 5;
-        } else {
-            return 7 + level * 2;
-        }
-    }
-
-    public void setExperience(int exp) {
-        setExperience(exp, this.getExperienceLevel());
-    }
-
-    //todo something on performance, lots of exp orbs then lots of packets, could crash client
 
     public void setExperience(int exp, int level) {
         this.exp = exp;
@@ -2656,6 +2600,20 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
+//    protected void forceSendEmptyChunks() {
+//        int chunkPositionX = this.getChunkX();
+//        int chunkPositionZ = this.getChunkZ();
+//        for (int x = -chunkRadius; x < chunkRadius; x++) {
+//            for (int z = -chunkRadius; z < chunkRadius; z++) {
+//                LevelChunkPacket chunk = new LevelChunkPacket();
+//                chunk.chunkX = chunkPositionX + x;
+//                chunk.chunkZ = chunkPositionZ + z;
+//                chunk.data = Unpooled.EMPTY_BUFFER;
+//                this.dataPacket(chunk);
+//            }
+//        }
+//    }
+
     @Override
     protected void checkChunks() {
         Vector3f pos = this.getPosition();
@@ -2688,20 +2646,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.chunk.addEntity(this);
         }
     }
-
-//    protected void forceSendEmptyChunks() {
-//        int chunkPositionX = this.getChunkX();
-//        int chunkPositionZ = this.getChunkZ();
-//        for (int x = -chunkRadius; x < chunkRadius; x++) {
-//            for (int z = -chunkRadius; z < chunkRadius; z++) {
-//                LevelChunkPacket chunk = new LevelChunkPacket();
-//                chunk.chunkX = chunkPositionX + x;
-//                chunk.chunkZ = chunkPositionZ + z;
-//                chunk.data = Unpooled.EMPTY_BUFFER;
-//                this.dataPacket(chunk);
-//            }
-//        }
-//    }
 
     public void teleportImmediate(Location location) {
         this.teleportImmediate(location, TeleportCause.PLUGIN);
@@ -3129,8 +3073,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.isConnected();
     }
 
-    private boolean foodEnabled = true;
-
     public boolean isFoodEnabled() {
         return !(this.isCreative() || this.isSpectator()) && this.foodEnabled;
     }
@@ -3161,12 +3103,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.checkMovement = checkMovement;
     }
 
-    public synchronized void setLocale(Locale locale) {
-        this.locale.set(locale);
-    }
-
     public synchronized Locale getLocale() {
         return this.locale.get();
+    }
+
+    public synchronized void setLocale(Locale locale) {
+        this.locale.set(locale);
     }
 
     @Override

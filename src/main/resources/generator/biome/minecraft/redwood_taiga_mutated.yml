@@ -1,7 +1,7 @@
 parent: "minecraft:mega_taiga"
 
 populators:
-    # Mossy cobblestone blobs
+  # Mossy cobblestone blobs
   - id: "nukkitx:blob"
     chance: 0.00390625 # about 1 per chunk
     radius: "0-1"

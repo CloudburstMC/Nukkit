@@ -6,14 +6,8 @@ import cn.nukkit.player.Player;
 
 public class PlayerRespawnEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private Location location;
-
-    private boolean firstSpawn;
+    private final boolean firstSpawn;
 
     public PlayerRespawnEvent(Player player, Location location) {
         this(player, location, false);
@@ -23,6 +17,10 @@ public class PlayerRespawnEvent extends PlayerEvent {
         this.player = player;
         this.location = location;
         this.firstSpawn = firstSpawn;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Location getRespawnLocation() {

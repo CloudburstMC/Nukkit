@@ -15,9 +15,10 @@ import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
-import static java.lang.Math.*;
-import static java.util.Objects.*;
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static java.lang.Math.sqrt;
+import static java.util.Objects.requireNonNull;
+import static net.daporkchop.lib.math.primitive.PMath.clamp;
+import static net.daporkchop.lib.math.primitive.PMath.lerp;
 
 /**
  * A {@link NoiseSource} that provides noise similar to that of vanilla's end terrain.
@@ -40,9 +41,9 @@ public class EndDensitySource extends AbstractGenerationPass implements DensityS
     private IslandCache islands;
 
     @JsonProperty
-    private double maxHeightCutoff = 112.0d;
+    private final double maxHeightCutoff = 112.0d;
     @JsonProperty
-    private double minHeightCutoff = 64.0d;
+    private final double minHeightCutoff = 64.0d;
 
     @JsonProperty
     private NoiseGenerator selectorNoise;

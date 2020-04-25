@@ -17,12 +17,12 @@ import cn.nukkit.level.Location;
 public class EntityDespawnEvent extends EntityEvent {
     private static final HandlerList handlers = new HandlerList();
 
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     public EntityDespawnEvent(Entity entity) {
         this.entity = entity;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Location getLocation() {

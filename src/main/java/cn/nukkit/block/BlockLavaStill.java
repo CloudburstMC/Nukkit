@@ -19,6 +19,10 @@ public class BlockLavaStill extends BlockLava {
         this(stationaryId, flowingId, stationaryId);
     }
 
+    public static BlockFactory factory(Identifier flowingId) {
+        return id -> new BlockLavaStill(flowingId, id);
+    }
+
     @Override
     public Block getBlock(int meta) {
         return Block.get(LAVA);
@@ -30,9 +34,5 @@ public class BlockLavaStill extends BlockLava {
             return super.onUpdate(type);
         }
         return 0;
-    }
-
-    public static BlockFactory factory(Identifier flowingId) {
-        return id-> new BlockLavaStill(flowingId, id);
     }
 }

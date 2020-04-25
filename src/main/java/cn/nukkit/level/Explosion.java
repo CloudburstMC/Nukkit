@@ -13,7 +13,10 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityExplodeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
-import cn.nukkit.math.*;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.Hash;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
@@ -40,11 +43,9 @@ public class Explosion {
     private final Level level;
     private final Vector3f source;
     private final double size;
-
-    private List<Block> affectedBlocks = new ArrayList<>();
     private final double stepLen = 0.3d;
-
     private final Object what;
+    private List<Block> affectedBlocks = new ArrayList<>();
 
     public Explosion(Level level, Vector3f center, double size, Entity what) {
         this.level = level;

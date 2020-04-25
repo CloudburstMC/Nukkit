@@ -111,6 +111,26 @@ public class BlockLever extends FloodableBlock implements Faceable {
         return true;
     }
 
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
+    }
+
+    @Override
+    public boolean canWaterlogFlowing() {
+        return true;
+    }
+
     public enum LeverOrientation {
         DOWN_X(0, "down_x", BlockFace.DOWN),
         EAST(1, "east", BlockFace.EAST),
@@ -122,6 +142,13 @@ public class BlockLever extends FloodableBlock implements Faceable {
         DOWN_Z(7, "down_z", BlockFace.DOWN);
 
         private static final LeverOrientation[] META_LOOKUP = new LeverOrientation[values().length];
+
+        static {
+            for (LeverOrientation face : values()) {
+                META_LOOKUP[face.getMetadata()] = face;
+            }
+        }
+
         private final int meta;
         private final String name;
         private final BlockFace facing;
@@ -130,18 +157,6 @@ public class BlockLever extends FloodableBlock implements Faceable {
             this.meta = meta;
             this.name = name;
             this.facing = face;
-        }
-
-        public int getMetadata() {
-            return this.meta;
-        }
-
-        public BlockFace getFacing() {
-            return this.facing;
-        }
-
-        public String toString() {
-            return this.name;
         }
 
         public static LeverOrientation byMetadata(int meta) {
@@ -195,34 +210,20 @@ public class BlockLever extends FloodableBlock implements Faceable {
             }
         }
 
-        public String getName() {
+        public int getMetadata() {
+            return this.meta;
+        }
+
+        public BlockFace getFacing() {
+            return this.facing;
+        }
+
+        public String toString() {
             return this.name;
         }
 
-        static {
-            for (LeverOrientation face : values()) {
-                META_LOOKUP[face.getMetadata()] = face;
-            }
+        public String getName() {
+            return this.name;
         }
-    }
-
-    @Override
-    public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
-    }
-
-    @Override
-    public BlockColor getColor() {
-        return BlockColor.AIR_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean canWaterlogSource() {
-        return true;
-    }
-
-    @Override
-    public boolean canWaterlogFlowing() {
-        return true;
     }
 }

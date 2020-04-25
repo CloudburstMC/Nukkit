@@ -20,7 +20,7 @@ import static cn.nukkit.blockentity.BlockEntityTypes.ENDER_CHEST;
 
 public class BlockEnderChest extends BlockTransparent implements Faceable {
 
-    private Set<Player> viewers = new HashSet<>();
+    private final Set<Player> viewers = new HashSet<>();
 
     public BlockEnderChest(Identifier id) {
         super(id);

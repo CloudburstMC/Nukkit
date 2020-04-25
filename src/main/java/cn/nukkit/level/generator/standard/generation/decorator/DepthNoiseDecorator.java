@@ -12,7 +12,7 @@ import net.daporkchop.lib.noise.filter.ScaleOctavesOffsetFilter;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static net.daporkchop.lib.math.primitive.PMath.roundI;
 
 /**
  * @author DaPorkchop_

@@ -21,30 +21,6 @@ import java.util.*;
  */
 public abstract class Command {
 
-    private static CommandData defaultDataTemplate = null;
-
-    protected CommandData commandData;
-
-    private final String name;
-
-    private String nextLabel;
-
-    private String label;
-
-    private String[] aliases = new String[0];
-
-    private String[] activeAliases = new String[0];
-
-    private CommandMap commandMap = null;
-
-    protected String description = "";
-
-    protected String usageMessage = "";
-
-    private String permission = null;
-
-    private String permissionMessage = null;
-
     private static final ImmutableMap<CommandParamType, CommandParamData.Type> NETWORK_TYPES = ImmutableMap.<CommandParamType, CommandParamData.Type>builder()
             .put(CommandParamType.INT, CommandParamData.Type.INT)
             .put(CommandParamType.FLOAT, CommandParamData.Type.FLOAT)
@@ -63,8 +39,20 @@ public abstract class Command {
             .put(CommandParamType.RAWTEXT, CommandParamData.Type.TEXT)
 
             .build();
-
+    private static final CommandData defaultDataTemplate = null;
+    private final String name;
     public Timing timing;
+    protected CommandData commandData;
+    protected String description = "";
+    protected String usageMessage = "";
+    protected List<CommandParameter[]> commandParameters = new ArrayList<>();
+    private String nextLabel;
+    private String label;
+    private String[] aliases = new String[0];
+    private String[] activeAliases = new String[0];
+    private CommandMap commandMap = null;
+    private String permission = null;
+    private String permissionMessage = null;
 
     public Command(String name) {
         this(name, "", null, new String[0]);
@@ -76,17 +64,6 @@ public abstract class Command {
 
     public Command(String name, String description, String usageMessage) {
         this(name, description, usageMessage, new String[0]);
-    }
-
-    protected List<CommandParameter[]> commandParameters = new ArrayList<>();
-
-    /**
-     * Returns an CommandData containing command data
-     *
-     * @return CommandData
-     */
-    public CommandData getDefaultCommandData() {
-        return this.commandData;
     }
 
     public Command(String name, String description, String usageMessage, String[] aliases) {
@@ -120,6 +97,73 @@ public abstract class Command {
             return null;
         }
         return new CommandEnumData(commandEnum.getName(), commandEnum.getValues().toArray(new String[0]), false);
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, String message) {
+        broadcastCommandMessage(source, message, true);
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, String message, boolean sendToSource) {
+        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
+
+        TranslationContainer result = new TranslationContainer("chat.type.admin", source.getName(), message);
+
+        TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + "" + TextFormat.ITALIC + "%chat.type.admin", source.getName(), message);
+
+        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+            source.sendMessage(message);
+        }
+
+        for (Permissible user : users) {
+            if (user instanceof CommandSender) {
+                if (user instanceof ConsoleCommandSender) {
+                    ((ConsoleCommandSender) user).sendMessage(result);
+                } else if (!user.equals(source)) {
+                    ((CommandSender) user).sendMessage(colored);
+                }
+            }
+        }
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, TextContainer message) {
+        broadcastCommandMessage(source, message, true);
+    }
+
+    public static void broadcastCommandMessage(CommandSender source, TextContainer message, boolean sendToSource) {
+        TextContainer m = message.clone();
+        String resultStr = "[" + source.getName() + ": " + (!m.getText().equals(source.getServer().getLanguage().get(m.getText())) ? "%" : "") + m.getText() + "]";
+
+        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
+
+        String coloredStr = TextFormat.GRAY + "" + TextFormat.ITALIC + resultStr;
+
+        m.setText(resultStr);
+        TextContainer result = m.clone();
+        m.setText(coloredStr);
+        TextContainer colored = m.clone();
+
+        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
+            source.sendMessage(message);
+        }
+
+        for (Permissible user : users) {
+            if (user instanceof CommandSender) {
+                if (user instanceof ConsoleCommandSender) {
+                    ((ConsoleCommandSender) user).sendMessage(result);
+                } else if (!user.equals(source)) {
+                    ((CommandSender) user).sendMessage(colored);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns an CommandData containing command data
+     *
+     * @return CommandData
+     */
+    public CommandData getDefaultCommandData() {
+        return this.commandData;
     }
 
     public CommandParameter[] getCommandParameters(int key) {
@@ -217,18 +261,6 @@ public abstract class Command {
         return this.activeAliases;
     }
 
-    public String getPermissionMessage() {
-        return permissionMessage;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getUsage() {
-        return usageMessage;
-    }
-
     public void setAliases(String[] aliases) {
         this.aliases = aliases;
         if (!this.isRegistered()) {
@@ -236,12 +268,24 @@ public abstract class Command {
         }
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getPermissionMessage() {
+        return permissionMessage;
     }
 
     public void setPermissionMessage(String permissionMessage) {
         this.permissionMessage = permissionMessage;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getUsage() {
+        return usageMessage;
     }
 
     public void setUsage(String usageMessage) {
@@ -252,71 +296,13 @@ public abstract class Command {
         return commandParameters;
     }
 
-    public static void broadcastCommandMessage(CommandSender source, String message) {
-        broadcastCommandMessage(source, message, true);
-    }
-
-    public static void broadcastCommandMessage(CommandSender source, String message, boolean sendToSource) {
-        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
-
-        TranslationContainer result = new TranslationContainer("chat.type.admin", source.getName(), message);
-
-        TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + "" + TextFormat.ITALIC + "%chat.type.admin", source.getName(), message);
-
-        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
-            source.sendMessage(message);
-        }
-
-        for (Permissible user : users) {
-            if (user instanceof CommandSender) {
-                if (user instanceof ConsoleCommandSender) {
-                    ((ConsoleCommandSender) user).sendMessage(result);
-                } else if (!user.equals(source)) {
-                    ((CommandSender) user).sendMessage(colored);
-                }
-            }
-        }
-    }
-
-    public static void broadcastCommandMessage(CommandSender source, TextContainer message) {
-        broadcastCommandMessage(source, message, true);
-    }
-
-    public static void broadcastCommandMessage(CommandSender source, TextContainer message, boolean sendToSource) {
-        TextContainer m = message.clone();
-        String resultStr = "[" + source.getName() + ": " + (!m.getText().equals(source.getServer().getLanguage().get(m.getText())) ? "%" : "") + m.getText() + "]";
-
-        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
-
-        String coloredStr = TextFormat.GRAY + "" + TextFormat.ITALIC + resultStr;
-
-        m.setText(resultStr);
-        TextContainer result = m.clone();
-        m.setText(coloredStr);
-        TextContainer colored = m.clone();
-
-        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
-            source.sendMessage(message);
-        }
-
-        for (Permissible user : users) {
-            if (user instanceof CommandSender) {
-                if (user instanceof ConsoleCommandSender) {
-                    ((ConsoleCommandSender) user).sendMessage(result);
-                } else if (!user.equals(source)) {
-                    ((CommandSender) user).sendMessage(colored);
-                }
-            }
-        }
+    public void setCommandParameters(List<CommandParameter[]> parameters) {
+        this.commandParameters = parameters;
     }
 
     @Override
     public String toString() {
         return this.name;
-    }
-
-    public void setCommandParameters(List<CommandParameter[]> parameters) {
-        this.commandParameters = parameters;
     }
 
     public void addCommandParameters(CommandParameter[] parameters) {

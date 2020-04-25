@@ -91,7 +91,7 @@ public class EntityFireworksRocket extends BaseEntity implements FireworksRocket
             float f = (float) Math.sqrt(this.motion.getX() * this.motion.getX() + this.motion.getZ() * this.motion.getZ());
             this.yaw = (float) (Math.atan2(this.motion.getX(), this.motion.getZ()) * (180D / Math.PI));
 
-            this.pitch = (float) (Math.atan2(this.motion.getY(), (double) f) * (180D / Math.PI));
+            this.pitch = (float) (Math.atan2(this.motion.getY(), f) * (180D / Math.PI));
 
 
             if (this.life == 0) {

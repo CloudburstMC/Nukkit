@@ -35,7 +35,7 @@ public abstract class BlockLiquid extends BlockTransparent {
     protected final Identifier stationaryId;
     public int adjacentSources = 0;
     protected Vector3f flowVector = null;
-    private Long2ByteMap flowCostVisited = new Long2ByteOpenHashMap();
+    private final Long2ByteMap flowCostVisited = new Long2ByteOpenHashMap();
 
     public BlockLiquid(Identifier id, Identifier flowingId, Identifier stationaryId) {
         super(id);

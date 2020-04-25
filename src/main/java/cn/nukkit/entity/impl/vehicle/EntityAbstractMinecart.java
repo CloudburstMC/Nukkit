@@ -41,7 +41,6 @@ import static com.nukkitx.protocol.bedrock.data.EntityData.*;
  */
 public abstract class EntityAbstractMinecart extends EntityVehicle {
 
-    private String entityName;
     private static final int[][][] matrix = new int[][][]{
             {{0, 0, -1}, {0, 0, 1}},
             {{-1, 0, 0}, {1, 0, 0}},
@@ -54,12 +53,14 @@ public abstract class EntityAbstractMinecart extends EntityVehicle {
             {{0, 0, -1}, {-1, 0, 0}},
             {{0, 0, -1}, {1, 0, 0}}
     };
+    private String entityName;
     private float currentSpeed = 0;
     // Plugins modifiers
     private boolean slowWhenEmpty = true;
     private Vector3f derailed = Vector3f.from(0.5, 0.5, 0.5);
     private Vector3f flying = Vector3f.from(0.95, 0.95, 0.95);
     private float maxSpeed = 0.4f;
+    private boolean hasUpdated = false;
 
     public EntityAbstractMinecart(EntityType<?> type, Location location) {
         super(type, location);
@@ -87,13 +88,13 @@ public abstract class EntityAbstractMinecart extends EntityVehicle {
         return 0.1F;
     }
 
-    public void setName(String name) {
-        entityName = name;
-    }
-
     @Override
     public String getName() {
         return entityName;
+    }
+
+    public void setName(String name) {
+        entityName = name;
     }
 
     @Override
@@ -406,8 +407,6 @@ public abstract class EntityAbstractMinecart extends EntityVehicle {
 
     protected void activate(int x, int y, int z, boolean flag) {
     }
-
-    private boolean hasUpdated = false;
 
     private void setFalling() {
         this.motion = Vector3f.from(

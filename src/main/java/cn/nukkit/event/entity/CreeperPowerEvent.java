@@ -11,14 +11,8 @@ import cn.nukkit.event.HandlerList;
  */
 public class CreeperPowerEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final PowerCause cause;
     private LightningBolt lightningBolt;
-
     public CreeperPowerEvent(final Creeper creeper, final LightningBolt lightningBolt, final PowerCause cause) {
         this(creeper, cause);
         this.lightningBolt = lightningBolt;
@@ -27,6 +21,10 @@ public class CreeperPowerEvent extends EntityEvent implements Cancellable {
     public CreeperPowerEvent(final Creeper creeper, final PowerCause cause) {
         this.entity = creeper;
         this.cause = cause;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     @Override

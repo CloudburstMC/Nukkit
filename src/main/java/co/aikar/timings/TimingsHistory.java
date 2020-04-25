@@ -51,12 +51,10 @@ public class TimingsHistory {
     public static long entityTicks;
     public static long tileEntityTicks;
     public static long activatedEntityTicks;
-
-    private static int levelIdPool = 1;
     static Map<String, Integer> levelMap = new HashMap<>();
     static Map<Identifier, String> entityMap = new HashMap<>();
     static Map<Identifier, String> blockEntityMap = new HashMap<>();
-
+    private static int levelIdPool = 1;
     private final long endTime;
     private final long startTime;
     private final long totalTicks;

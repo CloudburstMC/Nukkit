@@ -3,10 +3,8 @@ package cn.nukkit.utils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.google.common.base.Preconditions;
@@ -16,7 +14,6 @@ import net.daporkchop.lib.common.ref.ThreadRef;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.locks.Lock;
@@ -101,7 +98,7 @@ public final class Identifier implements Comparable<Identifier> {
 
     public static Identifier from(String space, String name) {
         if (Strings.isNullOrEmpty(space)) {
-            if (Strings.isNullOrEmpty(name))    {
+            if (Strings.isNullOrEmpty(name)) {
                 return EMPTY;
             } else {
                 //assume minecraft namespace
@@ -135,9 +132,9 @@ public final class Identifier implements Comparable<Identifier> {
         return this.hashCode;
     }
 
-    static final class Deserializer extends JsonDeserializer<Identifier>    {
+    static final class Deserializer extends JsonDeserializer<Identifier> {
         @Override
-        public Identifier deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        public Identifier deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             return Identifier.fromString(p.getText());
         }
     }

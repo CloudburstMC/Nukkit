@@ -17,24 +17,21 @@ import java.util.function.Consumer;
 public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final String name;
     private final UUID uuid;
     private final InetSocketAddress address;
-
+    private final List<Consumer<Server>> scheduledActions = new ArrayList<>();
     private LoginResult loginResult = LoginResult.SUCCESS;
     private String kickMessage = "Plugin Reason";
-
-    private final List<Consumer<Server>> scheduledActions = new ArrayList<>();
 
     public PlayerAsyncPreLoginEvent(String name, UUID uuid, InetSocketAddress address) {
         this.name = name;
         this.uuid = uuid;
         this.address = address;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public String getName() {

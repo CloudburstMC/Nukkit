@@ -15,6 +15,10 @@ public class BlockWallSign extends BlockSignPost {
         super(id, signStandingId, id, signItemId);
     }
 
+    public static BlockFactory factory(Identifier signStandingId, Identifier signItemId) {
+        return signWallId -> new BlockWallSign(signWallId, signStandingId, signItemId);
+    }
+
     @Override
     public int onUpdate(int type) {
         int[] faces = {
@@ -32,9 +36,5 @@ public class BlockWallSign extends BlockSignPost {
             }
         }
         return 0;
-    }
-
-    public static BlockFactory factory(Identifier signStandingId, Identifier signItemId) {
-        return signWallId -> new BlockWallSign(signWallId, signStandingId, signItemId);
     }
 }

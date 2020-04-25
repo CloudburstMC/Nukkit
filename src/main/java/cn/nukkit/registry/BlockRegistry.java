@@ -1,8 +1,6 @@
 package cn.nukkit.registry;
 
 import cn.nukkit.block.*;
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityType;
 import cn.nukkit.blockentity.BlockEntityTypes;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.utils.BlockColor;

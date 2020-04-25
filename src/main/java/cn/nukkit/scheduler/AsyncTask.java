@@ -21,6 +21,19 @@ public abstract class AsyncTask implements Runnable {
     private int taskId;
     private boolean finished = false;
 
+    public static void collectTask() {
+        try (Timing ignored = Timings.schedulerAsyncTimer.startTiming()) {
+            while (!FINISHED_LIST.isEmpty()) {
+                AsyncTask task = FINISHED_LIST.poll();
+                try {
+                    task.onCompletion(Server.getInstance());
+                } catch (Exception e) {
+                    log.error("Exception while async task " + task.getTaskId() + " invoking onCompletion", e);
+                }
+            }
+        }
+    }
+
     public void run() {
         this.result = null;
         this.onRun();
@@ -36,20 +49,20 @@ public abstract class AsyncTask implements Runnable {
         return this.result;
     }
 
-    public boolean hasResult() {
-        return this.result != null;
-    }
-
     public void setResult(Object result) {
         this.result = result;
     }
 
-    public void setTaskId(int taskId) {
-        this.taskId = taskId;
+    public boolean hasResult() {
+        return this.result != null;
     }
 
     public int getTaskId() {
         return this.taskId;
+    }
+
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
     }
 
     public Object getFromThreadStore(String identifier) {
@@ -76,18 +89,5 @@ public abstract class AsyncTask implements Runnable {
         this.result = null;
         this.taskId = 0;
         this.finished = false;
-    }
-
-    public static void collectTask() {
-        try (Timing ignored = Timings.schedulerAsyncTimer.startTiming()) {
-            while (!FINISHED_LIST.isEmpty()) {
-                AsyncTask task = FINISHED_LIST.poll();
-                try {
-                    task.onCompletion(Server.getInstance());
-                } catch (Exception e) {
-                    log.error("Exception while async task " + task.getTaskId() + " invoking onCompletion", e);
-                }
-            }
-        }
     }
 }

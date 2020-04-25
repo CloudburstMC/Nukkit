@@ -313,6 +313,7 @@ public abstract class BlockDoor extends BlockTransparent implements Faceable {
             return (this.getMeta() & DOOR_OPEN_BIT) > 0;
         }
     }
+
     public boolean isTop() {
         return isTop(this.getMeta());
     }

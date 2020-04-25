@@ -3,15 +3,17 @@ package cn.nukkit.timings;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 /**
  * @author Tee7even
- *         <p>
- *         Various methods for more compact JSON object constructing
+ * <p>
+ * Various methods for more compact JSON object constructing
  */
 @SuppressWarnings("unchecked")
 public class JsonUtil {

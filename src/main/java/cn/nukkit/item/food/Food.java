@@ -86,6 +86,9 @@ public abstract class Food {
     public static final Food dried_kelp = registerDefaultFood(new FoodNormal(1, 0.6F).addRelative(DRIED_KELP));
     public static final Food sweet_berries = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(SWEET_BERRIES));
     public static final Food honey = registerDefaultFood(new FoodHoney(6, 2.4F).addRelative(HONEY_BOTTLE));
+    protected final List<NodeIDMeta> relativeIDs = new ArrayList<>();
+    protected int restoreFood = 0;
+    protected float restoreSaturation = 0;
 
     //Opened API for plugins
     public static Food registerFood(Food food, Plugin plugin) {
@@ -122,10 +125,6 @@ public abstract class Food {
         }
         return result[0];
     }
-
-    protected int restoreFood = 0;
-    protected float restoreSaturation = 0;
-    protected final List<NodeIDMeta> relativeIDs = new ArrayList<>();
 
     public final boolean eatenBy(Player player) {
         PlayerEatFoodEvent event = new PlayerEatFoodEvent(player, this);

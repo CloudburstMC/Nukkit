@@ -29,11 +29,9 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public abstract class Enchantment implements Cloneable {
 
-    protected static Enchantment[] enchantments;
+    public static final int ID_PROTECTION_ALL = 0;
 
     //http://minecraft.gamepedia.com/Enchanting#Aqua_Affinity
-
-    public static final int ID_PROTECTION_ALL = 0;
     public static final int ID_PROTECTION_FIRE = 1;
     public static final int ID_PROTECTION_FALL = 2;
     public static final int ID_PROTECTION_EXPLOSION = 3;
@@ -66,6 +64,20 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_TRIDENT_RIPTIDE = 30;
     public static final int ID_TRIDENT_LOYALTY = 31;
     public static final int ID_TRIDENT_CHANNELING = 32;
+    public static final String[] words = {"the", "elder", "scrolls", "klaatu", "berata", "niktu", "xyzzy", "bless", "curse", "light", "darkness", "fire", "air", "earth", "water", "hot", "dry", "cold", "wet", "ignite", "snuff", "embiggen", "twist", "shorten", "stretch", "fiddle", "destroy", "imbue", "galvanize", "enchant", "free", "limited", "range", "of", "towards", "inside", "sphere", "cube", "self", "other", "ball", "mental", "physical", "grow", "shrink", "demon", "elemental", "spirit", "animal", "creature", "beast", "humanoid", "undead", "fresh", "stale"};
+    protected static Enchantment[] enchantments;
+    public final int id;
+    protected final String name;
+    private final int weight;
+    public EnchantmentType type;
+    protected int level = 1;
+    protected Enchantment(int id, String name, int weight, EnchantmentType type) {
+        this.id = id;
+        this.weight = weight;
+        this.type = type;
+
+        this.name = name;
+    }
 
     public static void init() {
         enchantments = new Enchantment[256];
@@ -96,13 +108,13 @@ public abstract class Enchantment implements Cloneable {
         enchantments[ID_FORTUNE_FISHING] = new EnchantmentLootFishing();
         enchantments[ID_LURE] = new EnchantmentLure();
         enchantments[ID_FROST_WALKER] = new EnchantmentFrostWalker();
-        enchantments[ID_MENDING]  = new EnchantmentMending();
-        enchantments[ID_BINDING_CURSE]  = new EnchantmentBindingCurse();
-        enchantments[ID_VANISHING_CURSE]  = new EnchantmentVanishingCurse();
-        enchantments[ID_TRIDENT_IMPALING]  = new EnchantmentTridentImpaling();
-        enchantments[ID_TRIDENT_RIPTIDE]  = new EnchantmentTridentRiptide();
-        enchantments[ID_TRIDENT_LOYALTY]  = new EnchantmentTridentLoyalty();
-        enchantments[ID_TRIDENT_CHANNELING]  = new EnchantmentTridentChanneling();
+        enchantments[ID_MENDING] = new EnchantmentMending();
+        enchantments[ID_BINDING_CURSE] = new EnchantmentBindingCurse();
+        enchantments[ID_VANISHING_CURSE] = new EnchantmentVanishingCurse();
+        enchantments[ID_TRIDENT_IMPALING] = new EnchantmentTridentImpaling();
+        enchantments[ID_TRIDENT_RIPTIDE] = new EnchantmentTridentRiptide();
+        enchantments[ID_TRIDENT_LOYALTY] = new EnchantmentTridentLoyalty();
+        enchantments[ID_TRIDENT_CHANNELING] = new EnchantmentTridentChanneling();
     }
 
     public static Enchantment get(int id) {
@@ -133,20 +145,15 @@ public abstract class Enchantment implements Cloneable {
         return list.toArray(new Enchantment[0]);
     }
 
-    public final int id;
-    private final int weight;
-    public EnchantmentType type;
+    public static String getRandomName() {
+        int count = ThreadLocalRandom.current().nextInt(3, 6);
+        HashSet<String> set = new HashSet<>();
+        while (set.size() < count) {
+            set.add(Enchantment.words[ThreadLocalRandom.current().nextInt(0, Enchantment.words.length)]);
+        }
 
-    protected int level = 1;
-
-    protected final String name;
-
-    protected Enchantment(int id, String name, int weight, EnchantmentType type) {
-        this.id = id;
-        this.weight = weight;
-        this.type = type;
-
-        this.name = name;
+        String[] words = set.toArray(new String[0]);
+        return String.join(" ", words);
     }
 
     public int getLevel() {
@@ -241,19 +248,6 @@ public abstract class Enchantment implements Cloneable {
         } catch (CloneNotSupportedException e) {
             return null;
         }
-    }
-
-    public static final String[] words = {"the", "elder", "scrolls", "klaatu", "berata", "niktu", "xyzzy", "bless", "curse", "light", "darkness", "fire", "air", "earth", "water", "hot", "dry", "cold", "wet", "ignite", "snuff", "embiggen", "twist", "shorten", "stretch", "fiddle", "destroy", "imbue", "galvanize", "enchant", "free", "limited", "range", "of", "towards", "inside", "sphere", "cube", "self", "other", "ball", "mental", "physical", "grow", "shrink", "demon", "elemental", "spirit", "animal", "creature", "beast", "humanoid", "undead", "fresh", "stale"};
-
-    public static String getRandomName() {
-        int count = ThreadLocalRandom.current().nextInt(3, 6);
-        HashSet<String> set = new HashSet<>();
-        while (set.size() < count) {
-            set.add(Enchantment.words[ThreadLocalRandom.current().nextInt(0, Enchantment.words.length)]);
-        }
-
-        String[] words = set.toArray(new String[0]);
-        return String.join(" ", words);
     }
 
     private static class UnknownEnchantment extends Enchantment {

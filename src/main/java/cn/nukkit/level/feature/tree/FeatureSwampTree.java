@@ -31,28 +31,28 @@ public class FeatureSwampTree extends FeatureNormalTree {
         super.finish(level, random, x, y, z, height, log, leaves);
 
         y = y + height - 3;
-        for (int dx = -3; dx <= 3; dx++)    {
-            for (int dz = -3; dz <= 3; dz++)    {
-                if (!this.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0)) || random.nextInt(4) != 0)    {
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 3; dz++) {
+                if (!this.test(level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz, 0)) || random.nextInt(4) != 0) {
                     continue;
                 }
 
-                if (level.getBlockRuntimeIdUnsafe(x + dx + 1, y, z + dz, 0) == leaves)  {
-                    this.placeVines(level, random,x + dx, y, z + dz, BlockFace.WEST, leaves);
-                } else if (level.getBlockRuntimeIdUnsafe(x + dx - 1, y, z + dz, 0) == leaves)  {
-                    this.placeVines(level, random,x + dx, y, z + dz, BlockFace.EAST, leaves);
-                } else if (level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz + 1, 0) == leaves)  {
-                    this.placeVines(level, random,x + dx, y, z + dz, BlockFace.NORTH, leaves);
-                } else if (level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz - 1, 0) == leaves)  {
-                    this.placeVines(level, random,x + dx, y, z + dz, BlockFace.SOUTH, leaves);
+                if (level.getBlockRuntimeIdUnsafe(x + dx + 1, y, z + dz, 0) == leaves) {
+                    this.placeVines(level, random, x + dx, y, z + dz, BlockFace.WEST, leaves);
+                } else if (level.getBlockRuntimeIdUnsafe(x + dx - 1, y, z + dz, 0) == leaves) {
+                    this.placeVines(level, random, x + dx, y, z + dz, BlockFace.EAST, leaves);
+                } else if (level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz + 1, 0) == leaves) {
+                    this.placeVines(level, random, x + dx, y, z + dz, BlockFace.NORTH, leaves);
+                } else if (level.getBlockRuntimeIdUnsafe(x + dx, y, z + dz - 1, 0) == leaves) {
+                    this.placeVines(level, random, x + dx, y, z + dz, BlockFace.SOUTH, leaves);
                 }
             }
         }
     }
 
-    protected void placeVines(ChunkManager level, PRandom random, int x, int y, int z, BlockFace face, int leaves)  {
+    protected void placeVines(ChunkManager level, PRandom random, int x, int y, int z, BlockFace face, int leaves) {
         int block = BlockRegistry.get().getRuntimeId(BlockIds.VINE, BlockVine.getMeta(face.getOpposite()));
-        for (int dy = 0, id; dy < 4 && (id = level.getBlockRuntimeIdUnsafe(x, y - dy, z, 0)) != leaves && this.test(id); dy++)  {
+        for (int dy = 0, id; dy < 4 && (id = level.getBlockRuntimeIdUnsafe(x, y - dy, z, 0)) != leaves && this.test(id); dy++) {
             level.setBlockRuntimeIdUnsafe(x, y - dy, z, 0, block);
         }
     }

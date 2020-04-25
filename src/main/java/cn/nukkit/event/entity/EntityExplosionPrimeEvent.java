@@ -10,18 +10,16 @@ import cn.nukkit.event.HandlerList;
 public class EntityExplosionPrimeEvent extends EntityEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private double force;
     private boolean blockBreaking;
-
     public EntityExplosionPrimeEvent(Entity entity, double force) {
         this.entity = entity;
         this.force = force;
         this.blockBreaking = true;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public double getForce() {

@@ -158,8 +158,8 @@ public class ItemFlintSteel extends ItemTool {
                         }
                     }
 
-                    for (int height = 0; height < innerHeight; height++)    {
-                        for (int width = 0; width < innerWidth; width++)    {
+                    for (int height = 0; height < innerHeight; height++) {
+                        for (int width = 0; width < innerWidth; width++) {
                             level.setBlock(Vector3i.from(scanX - width, scanY + height, scanZ), Block.get(BlockIds.PORTAL));
                         }
                     }
@@ -237,7 +237,7 @@ public class ItemFlintSteel extends ItemTool {
                         }
                     }
 
-                    for (int height = 0; height < innerHeight; height++)    {
+                    for (int height = 0; height < innerHeight; height++) {
                         for (int width = 0; width < innerWidth; width++) {
                             level.setBlock(Vector3i.from(scanX, scanY + height, scanZ - width), Block.get(BlockIds.PORTAL));
                         }

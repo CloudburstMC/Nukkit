@@ -130,7 +130,7 @@ public class NKServiceManager implements ServiceManager {
                 return empty;
             }
             for (RegisteredServiceProvider<?> provider : registered) {
-                builder.add((RegisteredServiceProvider<T>)provider);
+                builder.add((RegisteredServiceProvider<T>) provider);
             }
         }
         return builder.build();

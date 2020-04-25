@@ -15,20 +15,18 @@ import java.util.List;
 public class EntityExplodeEvent extends EntityEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     protected final Vector3f position;
     protected List<Block> blocks;
     protected double yield;
-
     public EntityExplodeEvent(Entity entity, Vector3f position, List<Block> blocks, double yield) {
         this.entity = entity;
         this.position = position;
         this.blocks = blocks;
         this.yield = yield;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Vector3f getPosition() {

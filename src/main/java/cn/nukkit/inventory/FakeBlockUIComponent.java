@@ -38,7 +38,7 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
     public void onOpen(Player who) {
         super.onOpen(who);
         ContainerOpenPacket packet = new ContainerOpenPacket();
-        packet.setWindowId((byte) who.getWindowId(this));
+        packet.setWindowId(who.getWindowId(this));
         packet.setType((byte) type.getNetworkType());
         InventoryHolder holder = this.getHolder();
         if (holder != null) {
@@ -55,7 +55,7 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
     @Override
     public void onClose(Player who) {
         ContainerClosePacket packet = new ContainerClosePacket();
-        packet.setWindowId((byte) who.getWindowId(this));
+        packet.setWindowId(who.getWindowId(this));
         who.sendPacket(packet);
         super.onClose(who);
     }

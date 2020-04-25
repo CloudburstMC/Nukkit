@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 final class DensitySourceDeserializer extends JsonDeserializer<DensitySource> {
     @Override
-    public DensitySource deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public DensitySource deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String nextName = p.nextFieldName();
         Preconditions.checkState("id".equals(nextName), "first field must be \"id\", not \"%s\"", nextName);
         Identifier id = Identifier.fromString(p.nextTextValue());

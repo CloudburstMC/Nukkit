@@ -198,10 +198,7 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
             this.getLevel().addParticle(new WaterParticle(this.fish));
         }
         double dist = Math.abs(Math.sqrt(this.getX() * this.getX() + this.getZ() * this.getZ()) - Math.sqrt(this.fish.getX() * this.fish.getX() + this.fish.getZ() * this.fish.getZ()));
-        if (dist < 0.15) {
-            return true;
-        }
-        return false;
+        return dist < 0.15;
     }
 
     public void reelLine() {

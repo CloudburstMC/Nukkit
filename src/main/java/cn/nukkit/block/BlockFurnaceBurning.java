@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityType;
-import cn.nukkit.blockentity.BlockEntityTypes;
 import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
@@ -21,14 +20,14 @@ import static cn.nukkit.block.BlockIds.AIR;
  * Nukkit Project
  */
 public class BlockFurnaceBurning extends BlockSolid implements Faceable {
-    private BlockEntityType<? extends Furnace> furnaceEntity;
+    private final BlockEntityType<? extends Furnace> furnaceEntity;
 
     protected BlockFurnaceBurning(Identifier id, BlockEntityType<? extends Furnace> entity) {
         super(id);
         this.furnaceEntity = entity;
     }
 
-    public static BlockFactory factory (BlockEntityType<? extends Furnace> furnaceEntity) {
+    public static BlockFactory factory(BlockEntityType<? extends Furnace> furnaceEntity) {
         return id -> new BlockFurnaceBurning(id, furnaceEntity);
     }
 

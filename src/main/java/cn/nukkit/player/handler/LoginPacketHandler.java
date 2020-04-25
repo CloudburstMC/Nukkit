@@ -27,7 +27,7 @@ public class LoginPacketHandler implements BedrockPacketHandler {
     private final BedrockServerSession session;
     private final Server server;
 
-    private PlayerLoginData loginData;
+    private final PlayerLoginData loginData;
 
     public LoginPacketHandler(BedrockServerSession session, Server server, BedrockInterface interfaz) {
         this.session = session;
@@ -118,7 +118,7 @@ public class LoginPacketHandler implements BedrockPacketHandler {
 
             @Override
             public void onCompletion(Server server) {
-                if(!loginDataInstance.getSession().isClosed()){
+                if (!loginDataInstance.getSession().isClosed()) {
                     if (e.getLoginResult() == PlayerAsyncPreLoginEvent.LoginResult.KICK) {
                         loginDataInstance.getSession().disconnect(e.getKickMessage());
                     } else if (loginDataInstance.isShouldLogin()) {

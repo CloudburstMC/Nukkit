@@ -14,6 +14,7 @@ import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -27,17 +28,13 @@ public class RCONServer extends Thread {
     private static final int SERVERDATA_AUTH_RESPONSE = 2;
     private static final int SERVERDATA_EXECCOMMAND = 2;
     private static final int SERVERDATA_RESPONSE_VALUE = 0;
-
-    private volatile boolean running;
-
-    private ServerSocketChannel serverChannel;
-    private Selector selector;
-
-    private String password;
     private final Set<SocketChannel> rconSessions = new HashSet<>();
-
     private final List<RCONCommand> receiveQueue = new ArrayList<>();
     private final Map<SocketChannel, List<RCONPacket>> sendQueues = new HashMap<>();
+    private volatile boolean running;
+    private final ServerSocketChannel serverChannel;
+    private final Selector selector;
+    private final String password;
 
     public RCONServer(String address, int port, String password) throws IOException {
         this.setName("RCON");
@@ -156,7 +153,7 @@ public class RCONServer extends Thread {
             case SERVERDATA_AUTH:
                 byte[] payload = new byte[1];
 
-                if (new String(packet.getPayload(), Charset.forName("UTF-8")).equals(this.password)) {
+                if (new String(packet.getPayload(), StandardCharsets.UTF_8).equals(this.password)) {
                     this.rconSessions.add(channel);
                     this.send(channel, new RCONPacket(packet.getId(), SERVERDATA_AUTH_RESPONSE, payload));
                     return;
@@ -169,7 +166,7 @@ public class RCONServer extends Thread {
                     return;
                 }
 
-                String command = new String(packet.getPayload(), Charset.forName("UTF-8")).trim();
+                String command = new String(packet.getPayload(), StandardCharsets.UTF_8).trim();
                 synchronized (this.receiveQueue) {
                     this.receiveQueue.add(new RCONCommand(channel, packet.getId(), command));
                 }

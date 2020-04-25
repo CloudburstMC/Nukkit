@@ -36,6 +36,10 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
         this(id, id, signWallId, signItemId);
     }
 
+    public static BlockFactory factory(Identifier signWallId, Identifier signItemId) {
+        return signStandingId -> new BlockSignPost(signStandingId, signWallId, signItemId);
+    }
+
     @Override
     public float getHardness() {
         return 1;
@@ -54,10 +58,6 @@ public class BlockSignPost extends BlockTransparent implements Faceable {
     @Override
     public AxisAlignedBB getBoundingBox() {
         return null;
-    }
-
-    public static BlockFactory factory(Identifier signWallId, Identifier signItemId) {
-        return signStandingId -> new BlockSignPost(signStandingId, signWallId, signItemId);
     }
 
     @Override

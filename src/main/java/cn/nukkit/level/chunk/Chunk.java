@@ -60,15 +60,11 @@ public final class Chunk implements IChunk, Closeable {
     private final Set<ChunkLoader> loaders = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private final Set<Player> playerLoaders = Collections.newSetFromMap(new IdentityHashMap<>());
-
-    private SoftReference<LevelChunkPacket> cached = null;
-
-    private Collection<ChunkDataLoader> chunkDataLoaders;
-
-    private List<BlockUpdate> blockUpdates;
-    
     private final LockableChunk readLockable;
     private final LockableChunk writeLockable;
+    private SoftReference<LevelChunkPacket> cached = null;
+    private Collection<ChunkDataLoader> chunkDataLoaders;
+    private List<BlockUpdate> blockUpdates;
 
     public Chunk(int x, int z, Level level) {
         this(new UnsafeChunk(x, z, level));
@@ -79,16 +75,55 @@ public final class Chunk implements IChunk, Closeable {
         this.chunkDataLoaders = checkNotNull(chunkDataLoaders, "chunkEntityLoaders");
         this.blockUpdates = checkNotNull(blockUpdates, "blockUpdates");
     }
-    
+
     private Chunk(@NonNull UnsafeChunk unsafe) {
         this.unsafe = unsafe;
-        
+
         ReadWriteLock lock = new ReentrantReadWriteLock();
         this.readLock = lock.readLock();
         this.writeLock = lock.writeLock();
-        
+
         this.readLockable = new LockableChunk(unsafe, this.readLock);
         this.writeLockable = new LockableChunk(unsafe, this.writeLock);
+    }
+
+    public static short blockKey(Vector3i vector) {
+        return blockKey(vector.getX(), vector.getY(), vector.getZ());
+    }
+
+    public static short blockKey(int x, int y, int z) {
+        return (short) ((x & 0xf) | ((z & 0xf) << 4) | ((y & 0xff) << 9));
+    }
+
+    public static Vector3i fromKey(long chunkKey, short blockKey) {
+        int x = (blockKey & 0xf) | (fromKeyX(chunkKey) << 4);
+        int z = ((blockKey >>> 4) & 0xf) | (fromKeyZ(chunkKey) << 4);
+        int y = (blockKey >>> 8) & 0xff;
+        return Vector3i.from(x, y, z);
+    }
+
+    public static Vector4i fromKey(long chunkKey, int blockKey) {
+        int layer = blockKey & 0x1;
+        int x = ((blockKey >>> 1) & 0xf) | (fromKeyX(chunkKey) << 4);
+        int z = ((blockKey >>> 5) & 0xf) | (fromKeyZ(chunkKey) << 4);
+        int y = (blockKey >>> 9) & 0xff;
+        return Vector4i.from(x, y, z, layer);
+    }
+
+    public static int blockKey(int x, int y, int z, int layer) {
+        return (layer & 0x1) | ((x & 0xf) << 1) | ((z & 0xf) << 5) | ((y & 0xff) << 9);
+    }
+
+    public static long key(int x, int z) {
+        return (((long) x) << 32) | (z & 0xffffffffL);
+    }
+
+    public static int fromKeyX(long key) {
+        return (int) (key >> 32);
+    }
+
+    public static int fromKeyZ(long key) {
+        return (int) key;
     }
 
     public void init() {
@@ -330,21 +365,6 @@ public final class Chunk implements IChunk, Closeable {
         }
     }
 
-    public static short blockKey(Vector3i vector) {
-        return blockKey(vector.getX(), vector.getY(), vector.getZ());
-    }
-
-    public static short blockKey(int x, int y, int z) {
-        return (short) ((x & 0xf) | ((z & 0xf) << 4) | ((y & 0xff) << 9));
-    }
-
-    public static Vector3i fromKey(long chunkKey, short blockKey) {
-        int x = (blockKey & 0xf) | (fromKeyX(chunkKey) << 4);
-        int z = ((blockKey >>> 4) & 0xf) | (fromKeyZ(chunkKey) << 4);
-        int y = (blockKey >>> 8) & 0xff;
-        return Vector3i.from(x, y, z);
-    }
-
     @Override
     public int getX() {
         return unsafe.getX();
@@ -405,14 +425,6 @@ public final class Chunk implements IChunk, Closeable {
         }
     }
 
-    public static Vector4i fromKey(long chunkKey, int blockKey) {
-        int layer = blockKey & 0x1;
-        int x = ((blockKey >>> 1) & 0xf) | (fromKeyX(chunkKey) << 4);
-        int z = ((blockKey >>> 5) & 0xf) | (fromKeyZ(chunkKey) << 4);
-        int y = (blockKey >>> 9) & 0xff;
-        return Vector4i.from(x, y, z, layer);
-    }
-
     @Override
     public int getState() {
         return this.unsafe.getState();
@@ -426,6 +438,11 @@ public final class Chunk implements IChunk, Closeable {
     @Override
     public boolean isDirty() {
         return this.unsafe.isDirty();
+    }
+
+    @Override
+    public void setDirty(boolean dirty) {
+        unsafe.setDirty(dirty);
     }
 
     @Override
@@ -463,7 +480,6 @@ public final class Chunk implements IChunk, Closeable {
         return new HashSet<>(playerLoaders);
     }
 
-
     private synchronized void clearCache() {
         // Clear cached packet
         if (this.cached != null) {
@@ -471,6 +487,26 @@ public final class Chunk implements IChunk, Closeable {
             this.cached = null;
         }
     }
+
+//    private static class CacheSoftReference extends FinalizableSoftReference<LevelChunkPacket> {
+//        private final LevelChunkPacket hardRef;
+//
+//        /**
+//         * Constructs a new finalizable soft reference.
+//         *
+//         * @param referent to softly reference
+//         * @param queue    that should finalize the referent
+//         */
+//        private CacheSoftReference(LevelChunkPacket referent, FinalizableReferenceQueue queue) {
+//            super(referent, queue);
+//            this.hardRef = referent;
+//        }
+//
+//        @Override
+//        public void finalizeReferent() {
+//            this.hardRef.release();
+//        }
+//    }
 
     public void tick(int tick) {
         //todo
@@ -507,26 +543,6 @@ public final class Chunk implements IChunk, Closeable {
         this.clearCache();
     }
 
-//    private static class CacheSoftReference extends FinalizableSoftReference<LevelChunkPacket> {
-//        private final LevelChunkPacket hardRef;
-//
-//        /**
-//         * Constructs a new finalizable soft reference.
-//         *
-//         * @param referent to softly reference
-//         * @param queue    that should finalize the referent
-//         */
-//        private CacheSoftReference(LevelChunkPacket referent, FinalizableReferenceQueue queue) {
-//            super(referent, queue);
-//            this.hardRef = referent;
-//        }
-//
-//        @Override
-//        public void finalizeReferent() {
-//            this.hardRef.release();
-//        }
-//    }
-
     @Override
     public void addBlockEntity(BlockEntity blockEntity) {
         this.writeLock.lock();
@@ -545,10 +561,6 @@ public final class Chunk implements IChunk, Closeable {
         } finally {
             this.writeLock.unlock();
         }
-    }
-
-    public static int blockKey(int x, int y, int z, int layer) {
-        return (layer & 0x1) | ((x & 0xf) << 1) | ((z & 0xf) << 5) | ((y & 0xff) << 9);
     }
 
     @Override
@@ -570,23 +582,6 @@ public final class Chunk implements IChunk, Closeable {
         } finally {
             this.readLock.unlock();
         }
-    }
-
-    public static long key(int x, int z) {
-        return (((long) x) << 32) | (z & 0xffffffffL);
-    }
-
-    public static int fromKeyX(long key) {
-        return (int) (key >> 32);
-    }
-
-    public static int fromKeyZ(long key) {
-        return (int) key;
-    }
-
-    @Override
-    public void setDirty(boolean dirty) {
-        unsafe.setDirty(dirty);
     }
 
     @Nonnull

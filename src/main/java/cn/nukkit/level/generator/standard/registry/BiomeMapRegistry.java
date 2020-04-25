@@ -5,11 +5,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.generator.standard.biome.map.BiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.ConstantBiomeMap;
 import cn.nukkit.level.generator.standard.biome.map.complex.ComplexBiomeMap;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 /**
  * Registry for {@link BiomeMap}.
@@ -33,7 +29,7 @@ public final class BiomeMapRegistry extends AbstractGeneratorRegistry<BiomeMap> 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class ConstructionEvent extends Event {
         @Getter
-        private static HandlerList handlers = new HandlerList();
+        private static final HandlerList handlers = new HandlerList();
 
         @NonNull
         private final BiomeMapRegistry registry;

@@ -34,12 +34,8 @@ import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.particle.PunchBlockParticle;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.network.protocol.types.InventoryTransactionUtils;
-import cn.nukkit.pack.Pack;
 import cn.nukkit.player.Player;
-import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.utils.ClientChainData;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -47,7 +43,6 @@ import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
 import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
@@ -55,7 +50,6 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.player.Player.CRAFTING_SMALL;

@@ -2,16 +2,8 @@ package cn.nukkit.level.generator.standard.registry;
 
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.generator.standard.generation.noise.NoiseGenerator;
-import cn.nukkit.level.generator.standard.generation.noise.OpenSimplexDefaultNoiseGenerator;
-import cn.nukkit.level.generator.standard.generation.noise.PerlinDefaultNoiseGenerator;
-import cn.nukkit.level.generator.standard.generation.noise.PorkianDefaultNoiseGenerator;
-import cn.nukkit.level.generator.standard.generation.noise.SimplexDefaultNoiseGenerator;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import cn.nukkit.level.generator.standard.generation.noise.*;
+import lombok.*;
 
 /**
  * Registry for {@link NoiseGenerator}.
@@ -37,7 +29,7 @@ public final class NoiseGeneratorRegistry extends AbstractGeneratorRegistry<Nois
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class ConstructionEvent extends Event {
         @Getter
-        private static HandlerList handlers = new HandlerList();
+        private static final HandlerList handlers = new HandlerList();
 
         @NonNull
         private final NoiseGeneratorRegistry registry;

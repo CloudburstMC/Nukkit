@@ -9,25 +9,23 @@ import cn.nukkit.player.PlayerLoginData;
  */
 public class PlayerPreLoginEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     protected PlayerLoginData loginData;
     protected String kickMessage;
-
     public PlayerPreLoginEvent(PlayerLoginData loginData, String kickMessage) {
         this.loginData = loginData;
         this.kickMessage = kickMessage;
     }
 
-    public void setKickMessage(String kickMessage) {
-        this.kickMessage = kickMessage;
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public String getKickMessage() {
         return this.kickMessage;
+    }
+
+    public void setKickMessage(String kickMessage) {
+        this.kickMessage = kickMessage;
     }
 
     public PlayerLoginData getLoginData() {

@@ -8,7 +8,8 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
-import static net.daporkchop.lib.random.impl.FastPRandom.*;
+import static net.daporkchop.lib.random.impl.FastPRandom.mix32;
+import static net.daporkchop.lib.random.impl.FastPRandom.mix64;
 
 /**
  * Base implementation of a {@link BiomeFilter}.

@@ -1,8 +1,8 @@
 package cn.nukkit.math;
 
 import com.google.common.collect.Iterators;
-import net.daporkchop.lib.random.PRandom;
 import com.nukkitx.math.vector.Vector3i;
+import net.daporkchop.lib.random.PRandom;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -64,15 +64,12 @@ public enum BlockFace {
      * The name of this BlockFace (up, down, north, etc.)
      */
     private final String name;
-
-
-    private Axis axis;
     private final AxisDirection axisDirection;
-
     /**
      * Normalized vector that points in the direction of this BlockFace
      */
     private final Vector3i unitVector;
+    private Axis axis;
 
     BlockFace(int index, int opposite, int horizontalIndex, String name, AxisDirection axisDirection, Vector3i unitVector) {
         this.index = index;
@@ -285,15 +282,15 @@ public enum BlockFace {
         Y("y"),
         Z("z");
 
-        private final String name;
-        private Plane plane;
-
         static {
             //Circular dependency
             X.plane = Plane.HORIZONTAL;
             Y.plane = Plane.VERTICAL;
             Z.plane = Plane.HORIZONTAL;
         }
+
+        private final String name;
+        private Plane plane;
 
         Axis(String name) {
             this.name = name;

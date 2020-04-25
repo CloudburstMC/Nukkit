@@ -19,8 +19,9 @@ import net.daporkchop.lib.random.PRandom;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static java.lang.Math.*;
-import static net.daporkchop.lib.random.impl.FastPRandom.*;
+import static java.lang.Math.min;
+import static net.daporkchop.lib.random.impl.FastPRandom.mix32;
+import static net.daporkchop.lib.random.impl.FastPRandom.mix64;
 
 /**
  * A populator that places simple trees, with a similar shape to vanilla oak/birch trees.
@@ -119,7 +120,7 @@ public class HugeTreePopulator extends AbstractTreePopulator {
 
     @JsonDeserialize
     private static final class ConfigTree {
-        private WorldFeature feature;
+        private final WorldFeature feature;
 
         @JsonCreator
         public ConfigTree(String species) {

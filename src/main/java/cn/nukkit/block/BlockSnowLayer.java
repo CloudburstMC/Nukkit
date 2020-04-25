@@ -59,7 +59,7 @@ public class BlockSnowLayer extends BlockFallable {
     public int onUpdate(int type) {
         super.onUpdate(type);
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getLevel().getBlockLightAt((int) this.getX(), (int) this.getY(), (int) this.getZ()) >= 10) {
+            if (this.getLevel().getBlockLightAt(this.getX(), this.getY(), this.getZ()) >= 10) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
@@ -96,7 +96,7 @@ public class BlockSnowLayer extends BlockFallable {
     public boolean canHarvestWithHand() {
         return false;
     }
-    
+
     @Override
     public boolean isTransparent() {
         return true;

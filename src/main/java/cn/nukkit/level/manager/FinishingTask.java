@@ -26,7 +26,7 @@ public final class FinishingTask implements BiFunction<Chunk, List<Chunk>, Chunk
 
     @Override
     public Chunk apply(@NonNull Chunk chunk, List<Chunk> chunks) {
-        if (chunk.isFinished())    {
+        if (chunk.isFinished()) {
             return chunk;
         }
         Preconditions.checkState(chunk.isPopulated(), "Chunk %s,%s was finished before being populated!", chunk.getX(), chunk.getZ());
@@ -45,7 +45,7 @@ public final class FinishingTask implements BiFunction<Chunk, List<Chunk>, Chunk
             chunk.setState(IChunk.STATE_FINISHED);
             chunk.setDirty();
         } finally {
-            for (LockableChunk lockableChunk : lockableChunks)  {
+            for (LockableChunk lockableChunk : lockableChunks) {
                 lockableChunk.unlock();
             }
         }

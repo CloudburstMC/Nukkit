@@ -11,11 +11,6 @@ import cn.nukkit.level.MovingObjectPosition;
  */
 public class ProjectileHitEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private MovingObjectPosition movingObjectPosition;
 
     public ProjectileHitEvent(EntityProjectile entity) {
@@ -25,6 +20,10 @@ public class ProjectileHitEvent extends EntityEvent implements Cancellable {
     public ProjectileHitEvent(EntityProjectile entity, MovingObjectPosition movingObjectPosition) {
         this.entity = entity;
         this.movingObjectPosition = movingObjectPosition;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public MovingObjectPosition getMovingObjectPosition() {

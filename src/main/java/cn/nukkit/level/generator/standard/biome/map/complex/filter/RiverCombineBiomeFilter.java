@@ -27,15 +27,12 @@ import java.util.Objects;
 @JsonDeserialize
 public class RiverCombineBiomeFilter extends AbstractBiomeFilter {
     public static final Identifier ID = Identifier.fromString("nukkitx:river_combine");
-
+    protected final IntSet oceanBiomes = new IntOpenHashSet();
+    protected final Int2IntMap replacements = new Int2IntOpenHashMap();
     @JsonProperty
     protected BiomeFilter biomeLayer;
     @JsonProperty
     protected BiomeFilter riverLayer;
-
-    protected final IntSet oceanBiomes = new IntOpenHashSet();
-    protected final Int2IntMap replacements = new Int2IntOpenHashMap();
-
     @JsonProperty
     protected GenerationBiome defaultRiver;
 

@@ -5,7 +5,6 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
-import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
 
 import javax.annotation.Nonnegative;
@@ -44,7 +43,7 @@ public interface IChunk extends Comparable<IChunk> {
     @Nonnull
     Identifier getBlockId(int x, int y, int z, @Nonnegative int layer);
 
-    default int getBlockRuntimeIdUnsafe(int x, int y, int z)  {
+    default int getBlockRuntimeIdUnsafe(int x, int y, int z) {
         return this.getBlockRuntimeIdUnsafe(x, y, z, 0);
     }
 
@@ -186,11 +185,11 @@ public interface IChunk extends Comparable<IChunk> {
      */
     int setState(int next);
 
-    default boolean isGenerated()   {
+    default boolean isGenerated() {
         return this.getState() >= STATE_GENERATED;
     }
 
-    default boolean isPopulated()   {
+    default boolean isPopulated() {
         return this.getState() >= STATE_POPULATED;
     }
 
@@ -207,17 +206,17 @@ public interface IChunk extends Comparable<IChunk> {
 
     /**
      * Sets the chunk's dirty status.
-     */
-    default void setDirty() {
-        this.setDirty(true);
-    }
-
-    /**
-     * Sets the chunk's dirty status.
      *
      * @param dirty true if chunk is dirty
      */
     void setDirty(boolean dirty);
+
+    /**
+     * Sets the chunk's dirty status.
+     */
+    default void setDirty() {
+        this.setDirty(true);
+    }
 
     /**
      * Atomically resets this chunk's dirty status.
@@ -234,7 +233,7 @@ public interface IChunk extends Comparable<IChunk> {
     /**
      * @return this chunk's key, as returned by {@link Chunk#key()}
      */
-    default long key()  {
+    default long key() {
         return Chunk.key(this.getX(), this.getZ());
     }
 

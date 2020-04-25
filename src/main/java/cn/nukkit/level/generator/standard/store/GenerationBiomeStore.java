@@ -58,11 +58,11 @@ public final class GenerationBiomeStore extends AbstractGeneratorStore<Generatio
         private GenerationBiome parent;
 
         @JsonProperty
-        private Decorator[] decorators = Decorator.EMPTY_ARRAY;
+        private final Decorator[] decorators = Decorator.EMPTY_ARRAY;
         @JsonProperty
-        private Populator[] populators = Populator.EMPTY_ARRAY;
+        private final Populator[] populators = Populator.EMPTY_ARRAY;
         @JsonProperty
-        private Finisher[] finishers = Finisher.EMPTY_ARRAY;
+        private final Finisher[] finishers = Finisher.EMPTY_ARRAY;
 
         private BiomeElevation elevation = BiomeElevation.DEFAULT;
 

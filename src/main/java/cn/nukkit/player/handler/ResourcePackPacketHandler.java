@@ -19,7 +19,7 @@ public class ResourcePackPacketHandler implements BedrockPacketHandler {
     private final BedrockServerSession session;
     private final Server server;
 
-    private PlayerLoginData loginData;
+    private final PlayerLoginData loginData;
 
     public ResourcePackPacketHandler(BedrockServerSession session, Server server, PlayerLoginData loginData) {
         this.session = session;

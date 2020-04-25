@@ -10,21 +10,16 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j2
 public class TaskHandler {
+    public final Timing timing;
     private final int taskId;
     private final boolean asynchronous;
-
     private final Plugin plugin;
     private final Runnable task;
-
     private int delay;
     private int period;
-
     private int lastRunTick;
     private int nextRunTick;
-
     private boolean cancelled;
-
-    public final Timing timing;
 
     public TaskHandler(Plugin plugin, Runnable task, int taskId, boolean asynchronous) {
         this.asynchronous = asynchronous;
@@ -58,6 +53,10 @@ public class TaskHandler {
         return this.delay;
     }
 
+    public void setDelay(int delay) {
+        this.delay = delay;
+    }
+
     public boolean isDelayed() {
         return this.delay > 0;
     }
@@ -68,6 +67,10 @@ public class TaskHandler {
 
     public int getPeriod() {
         return this.period;
+    }
+
+    public void setPeriod(int period) {
+        this.period = period;
     }
 
     public Plugin getPlugin() {
@@ -110,14 +113,6 @@ public class TaskHandler {
 
     public boolean isAsynchronous() {
         return asynchronous;
-    }
-
-    public void setDelay(int delay) {
-        this.delay = delay;
-    }
-
-    public void setPeriod(int period) {
-        this.period = period;
     }
 
 }

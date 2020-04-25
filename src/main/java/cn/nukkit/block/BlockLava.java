@@ -37,6 +37,10 @@ public class BlockLava extends BlockLiquid {
         this(flowingId, flowingId, stationaryId);
     }
 
+    public static BlockFactory factory(Identifier stationaryId) {
+        return id -> new BlockLava(id, stationaryId);
+    }
+
     @Override
     public int getLightLevel() {
         return 15;
@@ -160,7 +164,7 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    protected void checkForHarden(){ 
+    protected void checkForHarden() {
         Block colliding = null;
         for (int side = 1; side < 6; ++side) { //don't check downwards side
             Block blockSide = this.getSide(BlockFace.fromIndex(side));
@@ -170,7 +174,7 @@ public class BlockLava extends BlockLiquid {
                 break;
             }
         }
-        if(colliding != null){
+        if (colliding != null) {
             if (this.getMeta() == 0) {
                 this.liquidCollide(colliding, Block.get(OBSIDIAN));
             } else if (this.getMeta() <= 4) {
@@ -180,10 +184,10 @@ public class BlockLava extends BlockLiquid {
     }
 
     @Override
-    protected void flowIntoBlock(Block block, int newFlowDecay){
-        if(block instanceof BlockWater){
+    protected void flowIntoBlock(Block block, int newFlowDecay) {
+        if (block instanceof BlockWater) {
             ((BlockLiquid) block).liquidCollide(this, Block.get(STONE));
-        }else{
+        } else {
             super.flowIntoBlock(block, newFlowDecay);
         }
     }
@@ -194,10 +198,5 @@ public class BlockLava extends BlockLiquid {
             return super.addVelocityToEntity(entity, vector);
         }
         return vector;
-    }
-
-
-    public static BlockFactory factory(Identifier stationaryId) {
-        return id-> new BlockLava(id, stationaryId);
     }
 }

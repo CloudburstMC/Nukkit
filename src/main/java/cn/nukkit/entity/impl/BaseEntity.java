@@ -51,10 +51,10 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.nukkit.block.BlockIds.*;
+import static cn.nukkit.block.BlockIds.FARMLAND;
+import static cn.nukkit.block.BlockIds.PORTAL;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.nukkitx.protocol.bedrock.data.EntityData.AIR;
 import static com.nukkitx.protocol.bedrock.data.EntityData.*;
 import static com.nukkitx.protocol.bedrock.data.EntityFlag.*;
 
@@ -69,7 +69,6 @@ public abstract class BaseEntity implements Entity, Metadatable {
     protected final Short2ObjectMap<Effect> effects = new Short2ObjectOpenHashMap<>();
     protected final List<Entity> passengers = new ArrayList<>();
     private final long runtimeId = EntityRegistry.get().newEntityId();
-    protected final SyncedEntityData data = new SyncedEntityData(this::onDataChange);
     private final EntityType<?> type;
     public Chunk chunk;
     public List<Block> blocksAround = new ArrayList<>();
@@ -77,17 +76,6 @@ public abstract class BaseEntity implements Entity, Metadatable {
     public CompoundTag tag;
     public float highestPosition;
     public boolean firstMove = true;
-    protected Vector3f position = Vector3f.ZERO;
-    protected Vector3f lastPosition = Vector3f.ZERO;
-    protected Vector3f motion = Vector3f.ZERO;
-    protected Vector3f lastMotion = Vector3f.ZERO;
-    protected float yaw;
-    protected float pitch;
-    protected float lastYaw;
-    protected float lastPitch;
-    protected float pitchDelta;
-    protected float yawDelta;
-    protected float entityCollisionReduction = 0; // Higher than 0.9 will result a fast collisions
     public boolean onGround;
     public boolean inBlock = false;
     public boolean positionChanged;
@@ -101,7 +89,6 @@ public abstract class BaseEntity implements Entity, Metadatable {
     public int fireTicks = 0;
     public int inPortalTicks = 0;
     public float scale = 1;
-    protected AxisAlignedBB boundingBox;
     public boolean isCollided = false;
     public boolean isCollidedHorizontally = false;
     public boolean isCollidedVertically = false;
@@ -109,8 +96,20 @@ public abstract class BaseEntity implements Entity, Metadatable {
     public boolean justCreated;
     public boolean fireProof;
     public boolean invulnerable;
-    protected Level level;
     public boolean closed = false;
+    protected Vector3f position = Vector3f.ZERO;
+    protected Vector3f lastPosition = Vector3f.ZERO;
+    protected Vector3f motion = Vector3f.ZERO;
+    protected Vector3f lastMotion = Vector3f.ZERO;
+    protected float yaw;
+    protected float pitch;
+    protected float lastYaw;
+    protected float lastPitch;
+    protected float pitchDelta;
+    protected float yawDelta;
+    protected float entityCollisionReduction = 0; // Higher than 0.9 will result a fast collisions
+    protected AxisAlignedBB boundingBox;
+    protected Level level;
     protected Entity vehicle;
     protected EntityDamageEvent lastDamageCause = null;
     protected int age = 0;
@@ -121,6 +120,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
     protected Server server;
     protected Timing timing;
     protected boolean isPlayer = false;
+    protected final SyncedEntityData data = new SyncedEntityData(this::onDataChange);
     private int maxHealth = 20;
     private volatile boolean initialized;
 
@@ -1226,7 +1226,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
 
     protected void updateFallState(boolean onGround) {
         if (onGround) {
-            fallDistance = (float) (this.highestPosition - this.getY());
+            fallDistance = this.highestPosition - this.getY();
 
             if (fallDistance > 0) {
                 // check if we fell into at least 1 block of water

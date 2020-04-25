@@ -135,6 +135,26 @@ public class ItemFirework extends Item {
         private boolean trail;
         private ExplosionType type = ExplosionType.CREEPER_SHAPED;
 
+        public static FireworkExplosion from(CompoundTag tag) {
+            FireworkExplosion explosion = new FireworkExplosion();
+
+            explosion.setFlicker(tag.getBoolean(TAG_FLICKER));
+            explosion.setTrail(tag.getBoolean(TAG_TRAIL));
+            explosion.type(ExplosionType.values()[tag.getByte(TAG_TYPE)]);
+
+            byte[] clrs = tag.getByteArray(TAG_COLORS);
+            byte[] fds = tag.getByteArray(TAG_FADES);
+
+            for (int i = 0; i < clrs.length; i++) {
+                explosion.addColor(DyeColor.getByDyeData(clrs[i]));
+            }
+
+            for (int i = 0; i < fds.length; i++) {
+                explosion.addFade(DyeColor.getByDyeData(fds[i]));
+            }
+            return explosion;
+        }
+
         public List<DyeColor> getColors() {
             return this.colors;
         }
@@ -178,26 +198,6 @@ public class ItemFirework extends Item {
         public FireworkExplosion addFade(DyeColor fade) {
             fades.add(fade);
             return this;
-        }
-
-        public static FireworkExplosion from(CompoundTag tag) {
-            FireworkExplosion explosion = new FireworkExplosion();
-
-            explosion.setFlicker(tag.getBoolean(TAG_FLICKER));
-            explosion.setTrail(tag.getBoolean(TAG_TRAIL));
-            explosion.type(ExplosionType.values()[tag.getByte(TAG_TYPE)]);
-
-            byte[] clrs = tag.getByteArray(TAG_COLORS);
-            byte[] fds = tag.getByteArray(TAG_FADES);
-
-            for (int i = 0; i < clrs.length; i++) {
-                explosion.addColor(DyeColor.getByDyeData(clrs[i]));
-            }
-
-            for (int i = 0; i < fds.length; i++) {
-                explosion.addFade(DyeColor.getByDyeData(fds[i]));
-            }
-            return explosion;
         }
 
         public CompoundTag createTag() {

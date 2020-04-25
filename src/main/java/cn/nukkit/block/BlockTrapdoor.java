@@ -25,17 +25,6 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
 
     private static final AxisAlignedBB[] boundingBoxDamage = new AxisAlignedBB[16];
 
-    protected BlockColor blockColor;
-
-    public BlockTrapdoor(Identifier id) {
-        this(id, BlockColor.WOOD_BLOCK_COLOR);
-    }
-
-    public BlockTrapdoor(Identifier id, BlockColor blockColor) {
-        super(id);
-        this.blockColor = blockColor;
-    }
-
     static {
         for (int damage = 0; damage < 16; damage++) {
             AxisAlignedBB bb;
@@ -104,6 +93,21 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
         }
     }
 
+    protected BlockColor blockColor;
+
+    public BlockTrapdoor(Identifier id) {
+        this(id, BlockColor.WOOD_BLOCK_COLOR);
+    }
+
+    public BlockTrapdoor(Identifier id, BlockColor blockColor) {
+        super(id);
+        this.blockColor = blockColor;
+    }
+
+    public static BlockFactory factory(BlockColor blockColor) {
+        return identifier -> new BlockTrapdoor(identifier, blockColor);
+    }
+
     @Override
     public float getHardness() {
         return 3;
@@ -156,10 +160,6 @@ public class BlockTrapdoor extends BlockTransparent implements Faceable {
     @Override
     public float getMaxZ() {
         return this.getZ() + getRelativeBoundingBox().getMaxZ();
-    }
-
-    public static BlockFactory factory(BlockColor blockColor) {
-        return identifier -> new BlockTrapdoor(identifier, blockColor);
     }
 
     @Override

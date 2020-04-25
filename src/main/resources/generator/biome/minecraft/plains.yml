@@ -1,4 +1,3 @@
-
 elevationVanilla:
   height: 0.125
   variation: 0.05
@@ -9,7 +8,7 @@ decorators:
     filler: "dirt"
 
 populators:
-    # Tall grass
+  # Tall grass
   - id: "nukkitx:shrub"
     chance: 0.0390625 # about 10 per chunk
     on: "grass"
@@ -22,7 +21,7 @@ populators:
       octaves: 1
     threshold: -0.8
     above:
-        # Double tall grass
+      # Double tall grass
       - id: "nukkitx:double_plant"
         chance: 0.02734375 # about 7 per chunk
         on: "grass"
@@ -43,7 +42,7 @@ populators:
           - "red_flower#8" # Oxeye Daisy
           - "red_flower#9" # Cornflower
     below:
-        # Flowers
+      # Flowers
       - id: "nukkitx:shrub"
         chance: 0.05859375 # about 15 per chunk
         on: "grass"

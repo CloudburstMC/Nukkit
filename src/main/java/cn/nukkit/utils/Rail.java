@@ -21,9 +21,17 @@ import static cn.nukkit.utils.Rail.Orientation.State.*;
  */
 public final class Rail {
 
+    private Rail() {
+        //no instance
+    }
+
     public static boolean isRailBlock(Block block) {
         Objects.requireNonNull(block, "Rail block predicate can not accept null block");
         return isRailBlock(block.getId());
+    }
+
+    public static boolean isRailBlock(Identifier id) {
+        return id == RAIL || id == GOLDEN_RAIL || id == ACTIVATOR_RAIL || id == DETECTOR_RAIL;
     }
 
     public enum Orientation {
@@ -39,6 +47,13 @@ public final class Rail {
         CURVED_NORTH_EAST(9, CURVED, NORTH, EAST, null);
 
         private static final Orientation[] META_LOOKUP = new Orientation[values().length];
+
+        static {
+            for (Orientation o : values()) {
+                META_LOOKUP[o.meta] = o;
+            }
+        }
+
         private final int meta;
         private final State state;
         private final List<BlockFace> connectingDirections;
@@ -119,10 +134,6 @@ public final class Rail {
             return Optional.ofNullable(ascendingDirection);
         }
 
-        public enum State {
-            STRAIGHT, ASCENDING, CURVED
-        }
-
         public boolean isStraight() {
             return state == STRAIGHT;
         }
@@ -135,18 +146,8 @@ public final class Rail {
             return state == CURVED;
         }
 
-        static {
-            for (Orientation o : values()) {
-                META_LOOKUP[o.meta] = o;
-            }
+        public enum State {
+            STRAIGHT, ASCENDING, CURVED
         }
-    }
-
-    public static boolean isRailBlock(Identifier id) {
-        return id == RAIL || id == GOLDEN_RAIL || id == ACTIVATOR_RAIL || id == DETECTOR_RAIL;
-    }
-
-    private Rail() {
-        //no instance
     }
 }

@@ -15,7 +15,7 @@ public class FormWindowSimple extends FormWindow {
     protected final String type = "form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String title = "";
     private String content = "";
-    private List<ElementButton> buttons;
+    private final List<ElementButton> buttons;
 
     private FormResponseSimple response = null;
 

@@ -80,7 +80,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -96,98 +95,16 @@ public class Server {
     public static final String BROADCAST_CHANNEL_USERS = "nukkit.broadcast.user";
 
     private static Server instance = null;
-
-    private BanList banByName;
-
-    private BanList banByIP;
-
-    private Config operators;
-
-    private Config whitelist;
-
-    private AtomicBoolean isRunning = new AtomicBoolean(true);
-
-    private boolean hasStopped = false;
-
-    private PluginManager pluginManager;
-
-    private int profilingTickrate = 20;
-
-    private ServerScheduler scheduler;
-
-    private int tickCounter;
-
-    private long nextTick;
-
     private final float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
-
     private final float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-
-    private float maxTick = 20;
-
-    private float maxUse = 0;
-
-    private int sendUsageTicker = 0;
-
-    private boolean dispatchSignals = false;
-
     private final NukkitConsole console;
     private final ConsoleThread consoleThread;
-
-    private SimpleCommandMap commandMap;
-
-    private CraftingManager craftingManager;
-
     private final PackManager packManager = new PackManager();
-
-    private ConsoleCommandSender consoleSender;
-
-    private int maxPlayers;
-
-    private boolean autoSave = true;
-
-    private RCON rcon;
-
-    private EntityMetadataStore entityMetadata;
-
-    private PlayerMetadataStore playerMetadata;
-
-    private LevelMetadataStore levelMetadata;
-
-    private Network network;
-
-    private boolean networkCompressionAsync = true;
-    public int networkCompressionLevel = 7;
-    private int networkZlibProvider = 0;
-
-    private boolean autoTickRate = true;
-    private int autoTickRateLimit = 20;
-    private boolean alwaysTickPlayers = false;
-    private int baseTickRate = 1;
-    private Boolean getAllowFlight = null;
-    private int difficulty = Integer.MAX_VALUE;
-    private int defaultGamemode = Integer.MAX_VALUE;
-
-    private int autoSaveTicker = 0;
-    private int autoSaveTicks = 6000;
-
-    private boolean forceLanguage = false;
-
-    private UUID serverID;
-
     private final LevelManager levelManager = new LevelManager(this);
-
     private final String filePath;
     private final String dataPath;
     private final String pluginPath;
-
     private final Set<UUID> uniquePlayers = new HashSet<>();
-
-    private QueryHandler queryHandler;
-
-    private QueryRegenerateEvent queryRegenerateEvent;
-    private Config config;
-
     private final LocaleManager localeManager = LocaleManager.from("locale/nukkit/languages.json",
             "locale/nukkit/texts", "locale/vanilla");
     private final GameRuleRegistry gameRuleRegistry = GameRuleRegistry.get();
@@ -198,19 +115,55 @@ public class Server {
     private final ItemRegistry itemRegistry = ItemRegistry.get();
     private final EntityRegistry entityRegistry = EntityRegistry.get();
     private final BiomeRegistry biomeRegistry = BiomeRegistry.get();
-
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
-
     private final Map<UUID, Player> playerList = new HashMap<>();
     private final LevelData defaultLevelData = new LevelData();
-    private String predefinedLanguage;
-
     private final ServiceManager serviceManager = new NKServiceManager();
-
-    private boolean allowNether;
-
     private final Thread currentThread;
-
+    public int networkCompressionLevel = 7;
+    private BanList banByName;
+    private BanList banByIP;
+    private Config operators;
+    private Config whitelist;
+    private final AtomicBoolean isRunning = new AtomicBoolean(true);
+    private boolean hasStopped = false;
+    private PluginManager pluginManager;
+    private final int profilingTickrate = 20;
+    private ServerScheduler scheduler;
+    private int tickCounter;
+    private long nextTick;
+    private float maxTick = 20;
+    private float maxUse = 0;
+    private int sendUsageTicker = 0;
+    private final boolean dispatchSignals = false;
+    private SimpleCommandMap commandMap;
+    private CraftingManager craftingManager;
+    private ConsoleCommandSender consoleSender;
+    private int maxPlayers;
+    private boolean autoSave = true;
+    private RCON rcon;
+    private EntityMetadataStore entityMetadata;
+    private PlayerMetadataStore playerMetadata;
+    private LevelMetadataStore levelMetadata;
+    private Network network;
+    private boolean networkCompressionAsync = true;
+    private final int networkZlibProvider = 0;
+    private boolean autoTickRate = true;
+    private int autoTickRateLimit = 20;
+    private boolean alwaysTickPlayers = false;
+    private int baseTickRate = 1;
+    private Boolean getAllowFlight = null;
+    private int difficulty = Integer.MAX_VALUE;
+    private int defaultGamemode = Integer.MAX_VALUE;
+    private int autoSaveTicker = 0;
+    private int autoSaveTicks = 6000;
+    private boolean forceLanguage = false;
+    private UUID serverID;
+    private QueryHandler queryHandler;
+    private QueryRegenerateEvent queryRegenerateEvent;
+    private Config config;
+    private String predefinedLanguage;
+    private boolean allowNether;
     private Watchdog watchdog;
 
     private DB nameLookup;
@@ -219,7 +172,8 @@ public class Server {
     private Properties properties;
     private volatile Identifier defaultStorageId;
 
-    private Set<String> ignoredPackets = new HashSet<>();
+    private final Set<String> ignoredPackets = new HashSet<>();
+    private int lastLevelGC;
 
     public Server(String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
@@ -240,6 +194,84 @@ public class Server {
 
     public static void broadcastPacket(Player[] players, BedrockPacket packet) {
         Server.getInstance().batchPackets(players, new BedrockPacket[]{packet});
+    }
+
+    public static void broadcastPacket(Collection<Player> players, BedrockPacket packet) {
+        broadcastPacket(players.toArray(new Player[0]), packet);
+    }
+
+    public static String getGamemodeString(int mode) {
+        return getGamemodeString(mode, false);
+    }
+
+    public static String getGamemodeString(int mode, boolean direct) {
+        switch (mode) {
+            case Player.SURVIVAL:
+                return direct ? "Survival" : "%gameMode.survival";
+            case Player.CREATIVE:
+                return direct ? "Creative" : "%gameMode.creative";
+            case Player.ADVENTURE:
+                return direct ? "Adventure" : "%gameMode.adventure";
+            case Player.SPECTATOR:
+                return direct ? "Spectator" : "%gameMode.spectator";
+        }
+        return "UNKNOWN";
+    }
+
+    public static int getGamemodeFromString(String str) {
+        switch (str.trim().toLowerCase()) {
+            case "0":
+            case "survival":
+            case "s":
+                return Player.SURVIVAL;
+
+            case "1":
+            case "creative":
+            case "c":
+                return Player.CREATIVE;
+
+            case "2":
+            case "adventure":
+            case "a":
+                return Player.ADVENTURE;
+
+            case "3":
+            case "spectator":
+            case "spc":
+            case "view":
+            case "v":
+                return Player.SPECTATOR;
+        }
+        return -1;
+    }
+
+    public static int getDifficultyFromString(String str) {
+        switch (str.trim().toLowerCase()) {
+            case "0":
+            case "peaceful":
+            case "p":
+                return 0;
+
+            case "1":
+            case "easy":
+            case "e":
+                return 1;
+
+            case "2":
+            case "normal":
+            case "n":
+                return 2;
+
+            case "3":
+            case "hard":
+            case "h":
+                return 3;
+        }
+        return -1;
+    }
+
+    public static Server getInstance() {
+        return instance;
     }
 
     public int broadcastMessage(String message) {
@@ -308,10 +340,6 @@ public class Server {
         }
 
         return recipients.size();
-    }
-
-    public static void broadcastPacket(Collection<Player> players, BedrockPacket packet) {
-        broadcastPacket(players.toArray(new Player[0]), packet);
     }
 
     public void boot() throws IOException {
@@ -763,8 +791,6 @@ public class Server {
         }
     }
 
-    private int lastLevelGC;
-
     public void tickProcessor() {
         this.nextTick = System.currentTimeMillis();
         try {
@@ -1137,76 +1163,6 @@ public class Server {
         return this.getPropertyBoolean("force-gamemode", false);
     }
 
-    public static String getGamemodeString(int mode) {
-        return getGamemodeString(mode, false);
-    }
-
-    public static String getGamemodeString(int mode, boolean direct) {
-        switch (mode) {
-            case Player.SURVIVAL:
-                return direct ? "Survival" : "%gameMode.survival";
-            case Player.CREATIVE:
-                return direct ? "Creative" : "%gameMode.creative";
-            case Player.ADVENTURE:
-                return direct ? "Adventure" : "%gameMode.adventure";
-            case Player.SPECTATOR:
-                return direct ? "Spectator" : "%gameMode.spectator";
-        }
-        return "UNKNOWN";
-    }
-
-    public static int getGamemodeFromString(String str) {
-        switch (str.trim().toLowerCase()) {
-            case "0":
-            case "survival":
-            case "s":
-                return Player.SURVIVAL;
-
-            case "1":
-            case "creative":
-            case "c":
-                return Player.CREATIVE;
-
-            case "2":
-            case "adventure":
-            case "a":
-                return Player.ADVENTURE;
-
-            case "3":
-            case "spectator":
-            case "spc":
-            case "view":
-            case "v":
-                return Player.SPECTATOR;
-        }
-        return -1;
-    }
-
-    public static int getDifficultyFromString(String str) {
-        switch (str.trim().toLowerCase()) {
-            case "0":
-            case "peaceful":
-            case "p":
-                return 0;
-
-            case "1":
-            case "easy":
-            case "e":
-                return 1;
-
-            case "2":
-            case "normal":
-            case "n":
-                return 2;
-
-            case "3":
-            case "hard":
-            case "h":
-                return 3;
-        }
-        return -1;
-    }
-
     public int getDifficulty() {
         if (this.difficulty == Integer.MAX_VALUE) {
             this.difficulty = this.getPropertyInt("difficulty", 1);
@@ -1484,7 +1440,7 @@ public class Server {
                 //doing it like this ensures that the playerdata will be saved in a server shutdown
                 @Override
                 public void onCancel() {
-                    if (!this.hasRun)    {
+                    if (!this.hasRun) {
                         this.hasRun = true;
                         saveOfflinePlayerDataInternal(event.getSerializer(), tag, nameLower, event.getUuid().orElse(null));
                     }
@@ -2010,10 +1966,6 @@ public class Server {
 
     public boolean isAutoTickRate() {
         return autoTickRate;
-    }
-
-    public static Server getInstance() {
-        return instance;
     }
 
     public boolean isIgnoredPacket(Class<? extends BedrockPacket> clazz) {

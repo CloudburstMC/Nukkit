@@ -1,4 +1,3 @@
-
 elevationVanilla:
   height: 0.125
   variation: 0.05
@@ -11,7 +10,7 @@ decorators:
     deepSize: "1-4"
 
 populators:
-    # Dead bushes
+  # Dead bushes
   - id: "nukkitx:shrub"
     chance: 0.0078125 # about 2 per chunk
     patchSize: 4

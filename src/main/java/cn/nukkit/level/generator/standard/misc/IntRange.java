@@ -21,12 +21,10 @@ import java.util.regex.Matcher;
  */
 @JsonDeserialize
 public final class IntRange {
-    private static final Ref<Matcher> RANGE_MATCHER_CACHE = ThreadRef.regex("^([0-9]+)(?:-([0-9]+))?$");
-
     public static final IntRange EMPTY_RANGE = new IntRange(0, 0, 0L);
     public static final IntRange ONE = new IntRange(1, 1);
     public static final IntRange WHOLE_WORLD = new IntRange(0, 255);
-
+    private static final Ref<Matcher> RANGE_MATCHER_CACHE = ThreadRef.regex("^([0-9]+)(?:-([0-9]+))?$");
     public final int min;
     public final int max;
 
@@ -132,7 +130,7 @@ public final class IntRange {
     @Override
     public String toString() {
         return this.empty() ? "empty" : this.size() == 1
-                                        ? String.valueOf(this.min)
-                                        : String.format("(%d-%d)", this.min, this.max - 1);
+                ? String.valueOf(this.min)
+                : String.format("(%d-%d)", this.min, this.max - 1);
     }
 }

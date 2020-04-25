@@ -16,7 +16,7 @@ import java.io.IOException;
  */
 final class BiomeFilterDeserializer extends JsonDeserializer<BiomeFilter> {
     @Override
-    public BiomeFilter deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public BiomeFilter deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         String nextName = p.nextFieldName();
         Preconditions.checkState("id".equals(nextName), "first field must be \"id\", not \"%s\"", nextName);
         Identifier id = Identifier.fromString(p.nextTextValue());

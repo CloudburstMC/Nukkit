@@ -17,7 +17,7 @@ import net.daporkchop.lib.random.impl.FastPRandom;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static net.daporkchop.lib.math.primitive.PMath.roundI;
 
 /**
  * @author DaPorkchop_

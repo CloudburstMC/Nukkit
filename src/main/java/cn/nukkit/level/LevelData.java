@@ -9,7 +9,6 @@ import com.nukkitx.math.vector.Vector3i;
 import lombok.ToString;
 
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 @ToString
@@ -104,7 +103,7 @@ public class LevelData {
     }
 
     public void setRandomSeed(long randomSeed) {
-        if (this.randomSeed == null)    {
+        if (this.randomSeed == null) {
             this.randomSeed = randomSeed;
         }
     }

@@ -77,6 +77,10 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
                 blockId == BlockIds.DARK_OAK_STANDING_SIGN || blockId == BlockIds.DARK_OAK_WALL_SIGN;
     }
 
+    public String[] getText() {
+        return Arrays.copyOf(text, text.length);
+    }
+
     public void setText(String... lines) {
         for (int i = 0; i < 4; i++) {
             if (i < lines.length)
@@ -87,10 +91,6 @@ public class SignBlockEntity extends BaseBlockEntity implements Sign {
 
         this.spawnToAll();
         this.setDirty();
-    }
-
-    public String[] getText() {
-        return Arrays.copyOf(text, text.length);
     }
 
     public String getTextOwner() {

@@ -38,7 +38,7 @@ public class Attribute implements Cloneable {
     protected float currentValue;
     protected String name;
     protected boolean shouldSend;
-    private int id;
+    private final int id;
 
     private Attribute(int id, String name, float minValue, float maxValue, float defaultValue, boolean shouldSend) {
         this.id = id;

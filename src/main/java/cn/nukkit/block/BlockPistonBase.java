@@ -32,6 +32,21 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
         super(id);
     }
 
+    public static boolean canPush(Block block, BlockFace face, boolean destroyBlocks) {
+        if (block.canBePushed() && block.getY() >= 0 && (face != BlockFace.DOWN || block.getY() != 0) &&
+                block.getY() <= 255 && (face != BlockFace.UP || block.getY() != 255)) {
+            if (!(block instanceof BlockPistonBase)) {
+
+                if (block instanceof FloodableBlock) {
+                    return destroyBlocks;
+                }
+            } else return !((BlockPistonBase) block).isExtended();
+            return true;
+        }
+        return false;
+
+    }
+
     @Override
     public float getResistance() {
         return 2.5f;
@@ -100,21 +115,6 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
 
             return type;
         }
-    }
-
-    public static boolean canPush(Block block, BlockFace face, boolean destroyBlocks) {
-        if (block.canBePushed() && block.getY() >= 0 && (face != BlockFace.DOWN || block.getY() != 0) &&
-                block.getY() <= 255 && (face != BlockFace.UP || block.getY() != 255)) {
-            if (!(block instanceof BlockPistonBase)) {
-
-                if (block instanceof FloodableBlock) {
-                    return destroyBlocks;
-                }
-            } else return !((BlockPistonBase) block).isExtended();
-            return true;
-        }
-        return false;
-
     }
 
     public BlockFace getFacing() {
@@ -232,6 +232,11 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getMeta() & 0x07);
+    }
+
+    @Override
+    public boolean canWaterlogSource() {
+        return true;
     }
 
     public class BlocksCalculator {
@@ -392,10 +397,5 @@ public abstract class BlockPistonBase extends BlockSolid implements Faceable {
         public List<Block> getBlocksToDestroy() {
             return this.toDestroy;
         }
-    }
-
-    @Override
-    public boolean canWaterlogSource() {
-        return true;
     }
 }

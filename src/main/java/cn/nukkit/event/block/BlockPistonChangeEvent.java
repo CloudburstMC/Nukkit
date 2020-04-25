@@ -9,18 +9,16 @@ import cn.nukkit.event.HandlerList;
 public class BlockPistonChangeEvent extends BlockEvent {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
-    private int oldPower;
-    private int newPower;
-
+    private final int oldPower;
+    private final int newPower;
     public BlockPistonChangeEvent(Block block, int oldPower, int newPower) {
         super(block);
         this.oldPower = oldPower;
         this.newPower = newPower;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public int getOldPower() {

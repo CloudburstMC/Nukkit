@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static cn.nukkit.level.biome.BiomeIds.*;
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkState;
 
 public class BiomeRegistry implements Registry {
     private static final BiomeRegistry INSTANCE;

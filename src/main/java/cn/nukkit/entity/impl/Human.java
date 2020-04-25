@@ -39,10 +39,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  */
 public class Human extends EntityCreature implements InventoryHolder {
 
-    protected UUID identity;
     private final PlayerInventory inventory = new PlayerInventory(this);
     private final PlayerEnderChestInventory enderChestInventory = new PlayerEnderChestInventory(this);
-
+    protected UUID identity;
     protected SerializedSkin skin;
 
     public Human(EntityType<Human> type, Location location) {
@@ -78,12 +77,12 @@ public class Human extends EntityCreature implements InventoryHolder {
         return skin;
     }
 
-    public UUID getServerId() {
-        return identity;
-    }
-
     public void setSkin(SerializedSkin skin) {
         this.skin = skin;
+    }
+
+    public UUID getServerId() {
+        return identity;
     }
 
     @Override

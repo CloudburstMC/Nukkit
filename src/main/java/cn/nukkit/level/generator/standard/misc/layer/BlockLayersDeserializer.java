@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  */
 public final class BlockLayersDeserializer extends JsonDeserializer<BlockLayer[]> {
     @Override
-    public BlockLayer[] deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public BlockLayer[] deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         return Nukkit.YAML_MAPPER.readValue(p, BlockLayers.class).stream()
                 .map(TempBlockLayer::toActualLayer)
                 .toArray(BlockLayer[]::new);
@@ -90,8 +90,8 @@ public final class BlockLayersDeserializer extends JsonDeserializer<BlockLayer[]
 
         public BlockLayer toActualLayer() {
             return this.minSize == this.maxSize - 1
-                   ? new ConstantSizeBlockLayer(this.blockId, this.minSize)
-                   : new VariableSizeBlockLayer(this.blockId, this.minSize, this.maxSize);
+                    ? new ConstantSizeBlockLayer(this.blockId, this.minSize)
+                    : new VariableSizeBlockLayer(this.blockId, this.minSize, this.maxSize);
         }
     }
 }

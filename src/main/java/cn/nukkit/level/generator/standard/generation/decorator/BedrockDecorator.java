@@ -24,9 +24,9 @@ public class BedrockDecorator extends AbstractGenerationPass implements Decorato
     private IntRange base;
 
     @JsonProperty
-    private IntRange fade = IntRange.EMPTY_RANGE;
+    private final IntRange fade = IntRange.EMPTY_RANGE;
     @JsonProperty
-    private boolean reverseFade = false;
+    private final boolean reverseFade = false;
 
     @Override
     public void decorate(PRandom random, IChunk chunk, int x, int z) {

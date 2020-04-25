@@ -168,7 +168,7 @@ public class Nukkit {
     private static boolean requiresShortTitle() {
         //Shorter title for windows 8/2012
         String osName = System.getProperty("os.name").toLowerCase();
-        return osName.contains("windows") &&(osName.contains("windows 8") || osName.contains("2012"));
+        return osName.contains("windows") && (osName.contains("windows 8") || osName.contains("2012"));
     }
 
     private static Properties getGitInfo() {

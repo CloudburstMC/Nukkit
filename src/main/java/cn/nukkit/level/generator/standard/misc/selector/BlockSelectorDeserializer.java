@@ -28,7 +28,7 @@ import java.util.stream.Stream;
  */
 final class BlockSelectorDeserializer extends JsonDeserializer<BlockSelector> {
     @Override
-    public BlockSelector deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public BlockSelector deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         return Nukkit.YAML_MAPPER.readValue(p, TempBlockSelector.class).toActualSelector();
     }
 

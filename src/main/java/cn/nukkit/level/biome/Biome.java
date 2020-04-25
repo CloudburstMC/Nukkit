@@ -62,7 +62,7 @@ public class Biome {
         return this.temperature;
     }
 
-    public double getTemperature(int x, int y, int z)  {
+    public double getTemperature(int x, int y, int z) {
         double temperature = this.temperature;
         if (y > 64) {
             double noise = TEMPERATURE_NOISE.get(x * 0.125d, z * 0.125d) * 4.0d;
@@ -71,7 +71,7 @@ public class Biome {
         return temperature;
     }
 
-    public boolean canSnowAt(ChunkManager level, int x, int y, int z)  {
+    public boolean canSnowAt(ChunkManager level, int x, int y, int z) {
         //TODO: light level must be less than 10
         return y >= 0 && this.getTemperature(x, y, z) < 0.15d && (y >= 256 || level.getBlockRuntimeIdUnsafe(x, y, z, 0) == 0);
     }

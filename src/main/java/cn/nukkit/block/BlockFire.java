@@ -107,7 +107,7 @@ public class BlockFire extends FloodableBlock {
                             this.getLevel().canBlockSeeSky(this.getPosition().west()) ||
                             this.getLevel().canBlockSeeSky(this.getPosition().south()) ||
                             this.getLevel().canBlockSeeSky(this.getPosition().north()))
-                    ) {
+            ) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
@@ -150,10 +150,10 @@ public class BlockFire extends FloodableBlock {
                     this.tryToCatchBlockOnFire(this.south(), 300 + o, meta);
                     this.tryToCatchBlockOnFire(this.north(), 300 + o, meta);
 
-                    for (int x = (int) (this.getX() - 1); x <= (int) (this.getX() + 1); ++x) {
-                        for (int z = (int) (this.getZ() - 1); z <= (int) (this.getZ() + 1); ++z) {
-                            for (int y = (int) (this.getY() - 1); y <= (int) (this.getY() + 4); ++y) {
-                                if (x != (int) this.getX() || y != (int) this.getY() || z != (int) this.getZ()) {
+                    for (int x = this.getX() - 1; x <= (this.getX() + 1); ++x) {
+                        for (int z = this.getZ() - 1; z <= (this.getZ() + 1); ++z) {
+                            for (int y = this.getY() - 1; y <= (this.getY() + 4); ++y) {
+                                if (x != this.getX() || y != this.getY() || z != this.getZ()) {
                                     int k = 100;
 
                                     if (y > this.getY() + 1) {
@@ -269,11 +269,8 @@ public class BlockFire extends FloodableBlock {
                         (block.getMeta() & 8) == 8) {
 
                     return true;
-                } else if (block instanceof BlockSnowLayer &&
-                        (block.getMeta() & 7) == 7) {
-
-                    return true;
-                }
+                } else return block instanceof BlockSnowLayer &&
+                        (block.getMeta() & 7) == 7;
             }
         }
 

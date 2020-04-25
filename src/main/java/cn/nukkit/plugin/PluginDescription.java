@@ -19,7 +19,7 @@ import java.util.*;
 /**
  * 描述一个Nukkit插件的类。<br>
  * Describes a Nukkit plugin.
- *
+ * <p>
  * 在jar格式的插件中，插件的描述内容可以在plugin.yml中定义。比如这个：<br>
  * The description of a jar-packed plugin can be defined in the 'plugin.yml' file. For example:
  * <blockquote><pre>
@@ -109,6 +109,7 @@ import java.util.*;
  */
 public class PluginDescription {
 
+    private final List<String> authors = new ArrayList<>();
     private String name;
     private String main;
     private List<String> api;
@@ -118,7 +119,6 @@ public class PluginDescription {
     private String version;
     private Map<String, Object> commands = new HashMap<>();
     private String description;
-    private final List<String> authors = new ArrayList<>();
     private String website;
     private String prefix;
     private PluginLoadOrder order = PluginLoadOrder.POSTWORLD;
@@ -279,7 +279,7 @@ public class PluginDescription {
     /**
      * 返回这个插件所依赖的插件名字。<br>
      * The names of the plugins what is depended by this plugin.
-     *
+     * <p>
      * Nukkit插件的依赖有这些注意事项：<br>Here are some note for Nukkit plugin depending:
      * <ul>
      * <li>一个插件不能依赖自己（否则会报错）。<br>A plugin can not depend on itself (or there will be an exception).</li>

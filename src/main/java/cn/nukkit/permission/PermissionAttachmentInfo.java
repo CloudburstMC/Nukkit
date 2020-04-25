@@ -6,13 +6,13 @@ package cn.nukkit.permission;
  */
 public class PermissionAttachmentInfo {
 
-    private Permissible permissible;
+    private final Permissible permissible;
 
-    private String permission;
+    private final String permission;
 
-    private PermissionAttachment attachment;
+    private final PermissionAttachment attachment;
 
-    private boolean value;
+    private final boolean value;
 
     public PermissionAttachmentInfo(Permissible permissible, String permission, PermissionAttachment attachment, boolean value) {
         if (permission == null) {

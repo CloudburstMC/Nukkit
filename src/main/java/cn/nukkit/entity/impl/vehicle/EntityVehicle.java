@@ -20,6 +20,8 @@ import static com.nukkitx.protocol.bedrock.data.EntityData.*;
  */
 public abstract class EntityVehicle extends BaseEntity implements Rideable, EntityInteractable {
 
+    protected boolean rollingDirection = true;
+
     public EntityVehicle(EntityType<?> type, Location location) {
         super(type, location);
     }
@@ -73,8 +75,6 @@ public abstract class EntityVehicle extends BaseEntity implements Rideable, Enti
         updateMovement();
         return true;
     }
-
-    protected boolean rollingDirection = true;
 
     protected boolean performHurtAnimation() {
         setRollingAmplitude(9);

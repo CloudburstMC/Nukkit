@@ -64,7 +64,7 @@ class LevelDBProvider implements LevelProvider {
             }
 
             byte[] finalizationState = this.db.get(LevelDBKey.STATE_FINALIZATION.getKey(x, z));
-            if (finalizationState == null)  {
+            if (finalizationState == null) {
                 chunkBuilder.state(IChunk.STATE_FINISHED);
             } else {
                 chunkBuilder.state(Unpooled.wrappedBuffer(finalizationState).readIntLE() + 1);

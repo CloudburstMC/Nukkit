@@ -10,7 +10,7 @@ import cn.nukkit.player.Player;
  */
 public class CraftingTransferMaterialAction extends InventoryAction {
 
-    private int slot;
+    private final int slot;
 
     public CraftingTransferMaterialAction(Item sourceItem, Item targetItem, int slot) {
         super(sourceItem, targetItem);

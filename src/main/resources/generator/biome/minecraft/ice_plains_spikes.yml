@@ -10,7 +10,7 @@ decorators:
     filler: "dirt"
 
 populators:
-    # Ice spikes
+  # Ice spikes
   - id: "nukkitx:spikes"
     chance: 0.01171875 # about 3 per chunk
     height: "7-11"

@@ -30,8 +30,8 @@ public class FloatingTextParticle extends Particle {
                 .skinData(SKIN_DATA).build();
     }
 
-    protected UUID uuid = UUID.randomUUID();
     protected final Level level;
+    protected UUID uuid = UUID.randomUUID();
     protected long entityId = -1;
     protected boolean invisible = false;
     protected EntityDataMap dataMap = new EntityDataMap();
@@ -105,9 +105,9 @@ public class FloatingTextParticle extends Particle {
     public void setInvisible() {
         this.setInvisible(true);
     }
-    
+
     public long getEntityId() {
-        return entityId;   
+        return entityId;
     }
 
     @Override

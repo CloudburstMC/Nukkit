@@ -13,13 +13,13 @@ public class RecordItem extends Item {
         this.soundId = soundId;
     }
 
+    public static ItemFactory factory(String soundId) {
+        return identifier -> new RecordItem(identifier, soundId);
+    }
+
     @Override
     public int getMaxStackSize() {
         return 1;
-    }
-
-    public static ItemFactory factory(String soundId) {
-        return identifier -> new RecordItem(identifier, soundId);
     }
 
     public String getSoundId() {

@@ -2,13 +2,12 @@ package cn.nukkit.level.feature.tree;
 
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.misc.IntRange;
-import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import cn.nukkit.math.BlockFace;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
 /**
  * Generates an acacia (savanna) tree.
@@ -50,20 +49,20 @@ public class FeatureSavannaTree extends FeatureNormalTree {
         BlockFace direction = BlockFace.Plane.HORIZONTAL.random(random);
 
         for (int dy = 0; dy < height; dy++) {
-            if (dy >= bendHeight && bendSize > 0)   {
+            if (dy >= bendHeight && bendSize > 0) {
                 dx += direction.getXOffset();
                 dz += direction.getZOffset();
                 bendSize--;
             }
 
-            if (this.test(level.getBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0)))    {
+            if (this.test(level.getBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0))) {
                 level.setBlockRuntimeIdUnsafe(x + dx, y + dy, z + dz, 0, log);
             }
         }
         this.placeLeaves(level, random, x + dx, y + height - 1, z + dz, height, log, leaves);
 
         BlockFace secondDirection = BlockFace.Plane.HORIZONTAL.random(random);
-        if (direction == secondDirection)    {
+        if (direction == secondDirection) {
             return true;
         }
 
@@ -72,16 +71,16 @@ public class FeatureSavannaTree extends FeatureNormalTree {
         int lastPlacedY = 0;
 
         dx = dz = 0;
-        for (; secondBendHeight < height && secondBendSize > 0; secondBendHeight++, secondBendSize--)    {
+        for (; secondBendHeight < height && secondBendSize > 0; secondBendHeight++, secondBendSize--) {
             dx += secondDirection.getXOffset();
             dz += secondDirection.getZOffset();
 
-            if (this.test(level.getBlockRuntimeIdUnsafe(x + dx, y + secondBendHeight, z + dz, 0)))    {
+            if (this.test(level.getBlockRuntimeIdUnsafe(x + dx, y + secondBendHeight, z + dz, 0))) {
                 level.setBlockRuntimeIdUnsafe(x + dx, y + secondBendHeight, z + dz, 0, log);
                 lastPlacedY = y + secondBendHeight;
             }
         }
-        if (lastPlacedY > 0)    {
+        if (lastPlacedY > 0) {
             this.placeLeaves(level, random, x + dx, y + secondBendHeight, z + dz, height, log, leaves);
         }
 

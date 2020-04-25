@@ -6,8 +6,8 @@ import cn.nukkit.utils.ThreadCache;
  * @author https://github.com/boy0001/
  */
 public final class BitArray256 {
-    private final int bitsPerEntry;
     protected final long[] data;
+    private final int bitsPerEntry;
 
     public BitArray256(int bitsPerEntry) {
         this.bitsPerEntry = bitsPerEntry;
@@ -26,7 +26,7 @@ public final class BitArray256 {
         int localBitIndexStart = bitIndexStart & 63;
         this.data[longIndexStart] = this.data[longIndexStart] & ~((long) ((1 << bitsPerEntry) - 1) << localBitIndexStart) | ((long) value) << localBitIndexStart;
 
-        if(localBitIndexStart > 64 - bitsPerEntry) {
+        if (localBitIndexStart > 64 - bitsPerEntry) {
             int longIndexEnd = longIndexStart + 1;
             int localShiftStart = 64 - localBitIndexStart;
             int localShiftEnd = bitsPerEntry - localShiftStart;
@@ -40,8 +40,8 @@ public final class BitArray256 {
         int longIndexStart = bitIndexStart >> 6;
 
         int localBitIndexStart = bitIndexStart & 63;
-        if(localBitIndexStart <= 64 - bitsPerEntry) {
-            return (int)(this.data[longIndexStart] >>> localBitIndexStart & ((1 << bitsPerEntry) - 1));
+        if (localBitIndexStart <= 64 - bitsPerEntry) {
+            return (int) (this.data[longIndexStart] >>> localBitIndexStart & ((1 << bitsPerEntry) - 1));
         } else {
             int localShift = 64 - localBitIndexStart;
             return (int) ((this.data[longIndexStart] >>> localBitIndexStart | this.data[longIndexStart + 1] << localShift) & ((1 << bitsPerEntry) - 1));

@@ -17,13 +17,12 @@ import java.util.List;
  */
 public class ItemBanner extends Item {
 
-    public ItemBanner(Identifier id) {
-        super(id);
-    }
-
     private final List<BannerPattern> patterns = new ArrayList<>();
     private DyeColor base = DyeColor.WHITE;
     private int type;
+    public ItemBanner(Identifier id) {
+        super(id);
+    }
 
     @Override
     public Block getBlock() {

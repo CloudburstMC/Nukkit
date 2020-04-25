@@ -14,20 +14,12 @@ import cn.nukkit.player.Player;
 public class BlockBreakEvent extends BlockEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     protected final Player player;
-
     protected final Item item;
     protected final BlockFace face;
-
     protected boolean instaBreak = false;
     protected Item[] blockDrops = new Item[0];
     protected int blockXP = 0;
-
     protected boolean fastBreak = false;
 
     public BlockBreakEvent(Player player, Block block, Item item, Item[] drops) {
@@ -53,6 +45,10 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
         this.blockXP = block.getDropExp();
     }
 
+    public static HandlerList getHandlers() {
+        return handlers;
+    }
+
     public Player getPlayer() {
         return player;
     }
@@ -69,6 +65,10 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
         return this.instaBreak;
     }
 
+    public void setInstaBreak(boolean instaBreak) {
+        this.instaBreak = instaBreak;
+    }
+
     public Item[] getDrops() {
         return blockDrops;
     }
@@ -83,10 +83,6 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
 
     public void setDropExp(int xp) {
         this.blockXP = xp;
-    }
-
-    public void setInstaBreak(boolean instaBreak) {
-        this.instaBreak = instaBreak;
     }
 
     public boolean isFastBreak() {

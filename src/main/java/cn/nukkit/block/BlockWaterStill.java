@@ -18,12 +18,12 @@ public class BlockWaterStill extends BlockWater {
         this(stationaryId, flowingId, stationaryId);
     }
 
+    public static BlockFactory factory(Identifier flowingId) {
+        return id -> new BlockWaterStill(flowingId, id);
+    }
+
     @Override
     public Block getBlock(int meta) {
         return Block.get(WATER, meta);
-    }
-
-    public static BlockFactory factory(Identifier flowingId) {
-        return id-> new BlockWaterStill(flowingId, id);
     }
 }

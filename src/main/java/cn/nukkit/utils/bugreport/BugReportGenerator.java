@@ -25,10 +25,19 @@ import java.util.Date;
 @Log4j2
 public class BugReportGenerator extends Thread {
 
-    private Throwable throwable;
+    private final Throwable throwable;
 
     BugReportGenerator(Throwable throwable) {
         this.throwable = throwable;
+    }
+
+    //Code section from SOF
+    public static String getCount(long bytes, boolean si) {
+        int unit = si ? 1000 : 1024;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     @Override
@@ -99,15 +108,6 @@ public class BugReportGenerator extends Thread {
         Utils.writeFile(mdReport, content);
 
         return mdReport.getAbsolutePath();
-    }
-
-    //Code section from SOF
-    public static String getCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
 }

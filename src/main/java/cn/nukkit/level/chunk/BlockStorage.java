@@ -5,7 +5,6 @@ import cn.nukkit.level.chunk.bitarray.BitArray;
 import cn.nukkit.level.chunk.bitarray.BitArrayVersion;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.utils.Identifier;
-import com.google.common.base.Preconditions;
 import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.stream.NBTOutputStream;
@@ -44,12 +43,12 @@ public class BlockStorage {
         this.bitArray = bitArray;
     }
 
-    private int getPaletteHeader(BitArrayVersion version, boolean runtime) {
-        return (version.getId() << 1) | (runtime ? 1 : 0);
-    }
-
     private static BitArrayVersion getVersionFromHeader(byte header) {
         return BitArrayVersion.get(header >> 1, true);
+    }
+
+    private int getPaletteHeader(BitArrayVersion version, boolean runtime) {
+        return (version.getId() << 1) | (runtime ? 1 : 0);
     }
 
     public Block getBlock(int index) {
@@ -78,11 +77,11 @@ public class BlockStorage {
         }
     }
 
-    public int getBlockRuntimeIdUnsafe(int index)    {
+    public int getBlockRuntimeIdUnsafe(int index) {
         return this.palette.getInt(this.bitArray.get(index));
     }
 
-    public void setBlockRuntimeIdUnsafe(int index, int runtimeId)    {
+    public void setBlockRuntimeIdUnsafe(int index, int runtimeId) {
         try {
             BlockRegistry.get().getBlock(runtimeId); //this will throw RegistryException if the runtimeId is not registered
             int idx = this.idFor(runtimeId); //need to do this separately since bitArray can change, and is apparently dereferenced first

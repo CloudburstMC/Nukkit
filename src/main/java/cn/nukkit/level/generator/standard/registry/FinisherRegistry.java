@@ -7,11 +7,7 @@ import cn.nukkit.level.generator.standard.finish.IceSnowFinisher;
 import cn.nukkit.level.generator.standard.generation.decorator.Decorator;
 import cn.nukkit.level.generator.standard.misc.NextGenerationPass;
 import cn.nukkit.level.generator.standard.population.Populator;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 /**
  * Registry for {@link Populator}.
@@ -43,7 +39,7 @@ public final class FinisherRegistry extends AbstractGeneratorRegistry<Finisher> 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class ConstructionEvent extends Event {
         @Getter
-        private static HandlerList handlers = new HandlerList();
+        private static final HandlerList handlers = new HandlerList();
 
         @NonNull
         private final FinisherRegistry registry;

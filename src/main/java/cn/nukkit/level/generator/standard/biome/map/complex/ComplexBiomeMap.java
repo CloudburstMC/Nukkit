@@ -27,14 +27,11 @@ import java.util.Set;
 @JsonDeserialize
 public final class ComplexBiomeMap extends AbstractGenerationPass implements BiomeMap {
     public static final Identifier ID = Identifier.fromString("nukkitx:complex");
-
+    protected final Int2ObjectMap<GenerationBiome> internalIdLookup = new Int2ObjectOpenHashMap<>();
     @JsonProperty
     protected BiomeFilter root;
-
     @JsonProperty
     protected GenerationBiome fallback;
-
-    protected final Int2ObjectMap<GenerationBiome> internalIdLookup = new Int2ObjectOpenHashMap<>();
 
     @Override
     protected void init0(long levelSeed, long localSeed, StandardGenerator generator) {

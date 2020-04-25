@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 final class BlockFilterDeserializer extends JsonDeserializer<BlockFilter> {
     @Override
-    public BlockFilter deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public BlockFilter deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         AnyOfBlockFilter filter = Nukkit.YAML_MAPPER.readValue(p, AnyOfBlockFilter.class);
         if (filter.runtimeIds.length == 1) {
             return filter.runtimeIds[0] == 0 ? BlockFilter.AIR : new ConstantBlock(filter.runtimeIds[0]);

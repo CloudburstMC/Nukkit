@@ -33,11 +33,11 @@ public enum TerracottaColor {
         }
     }
 
-    private int dyeColorMeta;
-    private int terracottaColorMeta;
-    private String colorName;
-    private String dyeName;
-    private BlockColor blockColor;
+    private final int dyeColorMeta;
+    private final int terracottaColorMeta;
+    private final String colorName;
+    private final String dyeName;
+    private final BlockColor blockColor;
 
     TerracottaColor(int dyeColorMeta, int terracottaColorMeta, String colorName, BlockColor blockColor) {
         this(dyeColorMeta, terracottaColorMeta, colorName, colorName + " Dye", blockColor);

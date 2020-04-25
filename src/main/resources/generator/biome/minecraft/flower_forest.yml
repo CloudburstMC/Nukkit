@@ -5,7 +5,7 @@ elevationVanilla:
   variation: 0.4
 
 populators:
-    # Trees
+  # Trees
   - id: "nukkitx:tree"
     chance: 0.0234375 # about 6 per chunk
     on: "grass"

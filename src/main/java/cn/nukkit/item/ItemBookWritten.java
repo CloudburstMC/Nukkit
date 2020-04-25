@@ -22,9 +22,8 @@ public class ItemBookWritten extends Item {
     private static final String TAG_GENERATION = "generation";
     private static final String TAG_RESOLVED = "resolved";
     private static final String TAG_ID = "id";
-
-    protected boolean isWritten = false;
     protected final List<PageContent> pages = new ArrayList<>();
+    protected boolean isWritten = false;
     protected int generation;
     protected String title;
     protected String author;

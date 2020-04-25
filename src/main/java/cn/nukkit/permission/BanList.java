@@ -9,7 +9,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -20,12 +19,10 @@ import java.util.*;
 public class BanList {
 
     private static final TypeReference<LinkedList<TreeMap<String, String>>> BANLIST_TYPE_REFERENCE =
-            new TypeReference<LinkedList<TreeMap<String, String>>>() {};
-
-    private LinkedHashMap<String, BanEntry> list = new LinkedHashMap<>();
-
+            new TypeReference<LinkedList<TreeMap<String, String>>>() {
+            };
     private final String file;
-
+    private LinkedHashMap<String, BanEntry> list = new LinkedHashMap<>();
     private boolean enable = true;
 
     public BanList(String file) {

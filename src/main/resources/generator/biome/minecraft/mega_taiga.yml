@@ -1,4 +1,3 @@
-
 elevationVanilla:
   height: 0.1
   variation: 0.2
@@ -26,7 +25,7 @@ decorators:
         filler: "dirt"
 
 populators:
-    # Mossy cobblestone blobs
+  # Mossy cobblestone blobs
   - id: "nukkitx:blob"
     chance: 0.00390625 # about 1 per chunk
     radius: "0-1"

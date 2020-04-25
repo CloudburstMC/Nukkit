@@ -22,7 +22,8 @@ public class BanEntry {
     public static final String format = "yyyy-MM-dd HH:mm:ss Z";
 
     private static final TypeReference<TreeMap<String, String>> BAN_ENTRY_TYPE_REFERENCE =
-            new TypeReference<TreeMap<String, String>>() {};
+            new TypeReference<TreeMap<String, String>>() {
+            };
 
     private final String name;
     private Date creationDate = null;
@@ -33,6 +34,38 @@ public class BanEntry {
     public BanEntry(String name) {
         this.name = name.toLowerCase();
         this.creationDate = new Date();
+    }
+
+    public static BanEntry fromMap(Map<String, String> map) {
+        BanEntry banEntry = new BanEntry(map.get("name"));
+        try {
+            banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
+            banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
+        } catch (ParseException e) {
+            log.throwing(Level.ERROR, e);
+        }
+        banEntry.setSource(map.get("source"));
+        banEntry.setReason(map.get("reason"));
+        return banEntry;
+    }
+
+    public static BanEntry fromString(String str) {
+        Map<String, String> map;
+        try {
+            map = Nukkit.JSON_MAPPER.readValue(str, BAN_ENTRY_TYPE_REFERENCE);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+        BanEntry banEntry = new BanEntry(map.get("name"));
+        try {
+            banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
+            banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
+        } catch (ParseException e) {
+            log.throwing(Level.ERROR, e);
+        }
+        banEntry.setSource(map.get("source"));
+        banEntry.setReason(map.get("reason"));
+        return banEntry;
     }
 
     public String getName() {
@@ -86,44 +119,12 @@ public class BanEntry {
         return map;
     }
 
-    public static BanEntry fromMap(Map<String, String> map) {
-        BanEntry banEntry = new BanEntry(map.get("name"));
-        try {
-            banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
-            banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
-        } catch (ParseException e) {
-            log.throwing(Level.ERROR, e);
-        }
-        banEntry.setSource(map.get("source"));
-        banEntry.setReason(map.get("reason"));
-        return banEntry;
-    }
-
     public String getString() {
         try {
             return Nukkit.JSON_MAPPER.writeValueAsString(this.getMap());
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-    public static BanEntry fromString(String str) {
-        Map<String, String> map;
-        try {
-            map = Nukkit.JSON_MAPPER.readValue(str, BAN_ENTRY_TYPE_REFERENCE);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-        BanEntry banEntry = new BanEntry(map.get("name"));
-        try {
-            banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));
-            banEntry.setExpirationDate(!map.get("expireDate").equals("Forever") ? new SimpleDateFormat(format).parse(map.get("expireDate")) : null);
-        } catch (ParseException e) {
-            log.throwing(Level.ERROR, e);
-        }
-        banEntry.setSource(map.get("source"));
-        banEntry.setReason(map.get("reason"));
-        return banEntry;
     }
 
 }

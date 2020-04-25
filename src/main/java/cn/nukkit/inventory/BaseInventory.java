@@ -21,20 +21,13 @@ import static cn.nukkit.block.BlockIds.AIR;
  */
 public abstract class BaseInventory implements Inventory {
 
-    protected final InventoryType type;
-
-    protected int maxStackSize = Inventory.MAX_STACK;
-
-    protected int size;
-
-    protected final String name;
-
-    protected final String title;
-
     public final Map<Integer, Item> slots = new HashMap<>();
-
+    protected final InventoryType type;
+    protected final String name;
+    protected final String title;
     protected final Set<Player> viewers = new HashSet<>();
-
+    protected int maxStackSize = Inventory.MAX_STACK;
+    protected int size;
     protected InventoryHolder holder;
 
     public BaseInventory(InventoryHolder holder, InventoryType type) {
@@ -85,6 +78,11 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public int getMaxStackSize() {
         return maxStackSize;
+    }
+
+    @Override
+    public void setMaxStackSize(int maxStackSize) {
+        this.maxStackSize = maxStackSize;
     }
 
     @Override
@@ -411,11 +409,6 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public InventoryHolder getHolder() {
         return holder;
-    }
-
-    @Override
-    public void setMaxStackSize(int maxStackSize) {
-        this.maxStackSize = maxStackSize;
     }
 
     @Override

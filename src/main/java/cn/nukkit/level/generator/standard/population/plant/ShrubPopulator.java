@@ -12,7 +12,7 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
-import static java.lang.Math.*;
+import static java.lang.Math.min;
 
 /**
  * Places patches of 1-block-tall plants in the world.

@@ -58,6 +58,25 @@ public class Effect implements Cloneable {
     private static final String TAG_DISPLAY_ON_SCREEN_TEXTURE_ANIMATION = "DisplayOnScreenTextureAnimation";
 
     protected static Effect[] effects;
+    protected final byte id;
+    protected final String name;
+    protected final boolean bad;
+    protected byte amplifier;
+    protected int duration;
+    protected int color;
+    protected boolean show = true;
+    protected boolean ambient = false;
+
+    public Effect(int id, String name, int r, int g, int b, boolean isBad) {
+        this.id = (byte) id;
+        this.name = name;
+        this.bad = isBad;
+        this.setColor(r, g, b);
+    }
+
+    public Effect(int id, String name, int r, int g, int b) {
+        this(id, name, r, g, b, false);
+    }
 
     public static void init() {
         effects = new Effect[256];
@@ -94,8 +113,6 @@ public class Effect implements Cloneable {
         effects[Effect.SLOW_FALLING] = new Effect(Effect.SLOW_FALLING, "%potion.slowFalling", 206, 255, 255);
     }
 
-    protected final byte id;
-
     public static Effect getEffect(int id) {
         if (id >= 0 && id < effects.length && effects[id] != null) {
             return effects[id].clone();
@@ -114,31 +131,6 @@ public class Effect implements Cloneable {
         }
     }
 
-    protected byte amplifier;
-
-    protected final String name;
-
-    protected int duration;
-
-    public Effect(int id, String name, int r, int g, int b, boolean isBad) {
-        this.id = (byte) id;
-        this.name = name;
-        this.bad = isBad;
-        this.setColor(r, g, b);
-    }
-
-    protected int color;
-
-    protected boolean show = true;
-
-    protected boolean ambient = false;
-
-    protected final boolean bad;
-
-    public Effect(int id, String name, int r, int g, int b) {
-        this(id, name, r, g, b, false);
-    }
-
     public static Effect getEffect(CompoundTag tag) {
         return getEffect(tag.getByte(TAG_ID))
                 .setAmbient(tag.getBoolean(TAG_AMBIENT))
@@ -155,13 +147,13 @@ public class Effect implements Cloneable {
         return id;
     }
 
+    public int getDuration() {
+        return duration;
+    }
+
     public Effect setDuration(int ticks) {
         this.duration = ticks;
         return this;
-    }
-
-    public int getDuration() {
-        return duration;
     }
 
     public boolean isVisible() {

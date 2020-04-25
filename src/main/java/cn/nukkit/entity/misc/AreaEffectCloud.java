@@ -6,49 +6,49 @@ import cn.nukkit.potion.Effect;
 import java.util.List;
 
 public interface AreaEffectCloud extends Entity {
-	int getWaitTime();
+    int getWaitTime();
 
-	void setWaitTime(int waitTime);
+    void setWaitTime(int waitTime);
 
-	short getPotionId();
+    short getPotionId();
 
-	void setPotionId(int potionId);
+    void setPotionId(int potionId);
 
-	void recalculatePotionColor();
+    void recalculatePotionColor();
 
-	int getPotionColor();
+    int getPotionColor();
 
-	void setPotionColor(int argp);
+    void setPotionColor(int argp);
 
-	void setPotionColor(int alpha, int red, int green, int blue);
+    void setPotionColor(int alpha, int red, int green, int blue);
 
-	int getPickupCount();
+    int getPickupCount();
 
-	void setPickupCount(int pickupCount);
+    void setPickupCount(int pickupCount);
 
-	float getRadiusChangeOnPickup();
+    float getRadiusChangeOnPickup();
 
-	void setRadiusChangeOnPickup(float radiusChangeOnPickup);
+    void setRadiusChangeOnPickup(float radiusChangeOnPickup);
 
-	float getRadiusPerTick();
+    float getRadiusPerTick();
 
-	void setRadiusPerTick(float radiusPerTick);
+    void setRadiusPerTick(float radiusPerTick);
 
-	long getSpawnTime();
+    long getSpawnTime();
 
-	void setSpawnTime(long spawnTime);
+    void setSpawnTime(long spawnTime);
 
-	int getDuration();
+    int getDuration();
 
-	void setDuration(int duration);
+    void setDuration(int duration);
 
-	float getRadius();
+    float getRadius();
 
-	void setRadius(float radius);
+    void setRadius(float radius);
 
-	int getParticleId();
+    int getParticleId();
 
-	void setParticleId(int particleId);
+    void setParticleId(int particleId);
 
-	List<Effect> getCloudEffects();
+    List<Effect> getCloudEffects();
 }

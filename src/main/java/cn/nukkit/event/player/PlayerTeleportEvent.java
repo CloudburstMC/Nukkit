@@ -7,20 +7,18 @@ import cn.nukkit.player.Player;
 
 public class PlayerTeleportEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final TeleportCause cause;
     private final Location from;
     private final Location to;
-
     public PlayerTeleportEvent(Player player, Location from, Location to, TeleportCause cause) {
         this.player = player;
         this.from = from;
         this.to = to;
         this.cause = cause;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Location getFrom() {

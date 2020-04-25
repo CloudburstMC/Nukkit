@@ -57,7 +57,7 @@ public final class SemVersion {
         }
 
         @Override
-        public SemVersion deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        public SemVersion deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
             int[] version = p.readValueAs(int[].class);
             return new SemVersion(version[0], version[1], version[2]);
         }

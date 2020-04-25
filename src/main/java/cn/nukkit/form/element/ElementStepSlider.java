@@ -10,7 +10,7 @@ public class ElementStepSlider extends Element {
     @JsonProperty
     private final String type = "step_slider"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String text = "";
-    private List<String> steps;
+    private final List<String> steps;
     @JsonProperty("default")
     private int defaultStepIndex = 0;
 

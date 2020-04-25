@@ -16,7 +16,7 @@ import java.util.Set;
 public class SlotChangeAction extends InventoryAction {
 
     protected Inventory inventory;
-    private int inventorySlot;
+    private final int inventorySlot;
 
     public SlotChangeAction(Inventory inventory, int inventorySlot, Item sourceItem, Item targetItem) {
         super(sourceItem, targetItem);

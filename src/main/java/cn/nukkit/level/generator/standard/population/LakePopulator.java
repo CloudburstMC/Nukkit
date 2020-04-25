@@ -18,7 +18,7 @@ import net.daporkchop.lib.random.PRandom;
 import java.util.BitSet;
 import java.util.Objects;
 
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static net.daporkchop.lib.math.primitive.PMath.min;
 
 /**
  * @author DaPorkchop_

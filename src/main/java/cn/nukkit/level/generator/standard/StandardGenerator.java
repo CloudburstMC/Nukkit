@@ -34,14 +34,10 @@ import net.daporkchop.lib.random.impl.FastPRandom;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Stream;
 
-import static net.daporkchop.lib.common.util.PorkUtil.*;
+import static net.daporkchop.lib.common.util.PorkUtil.fallbackIfNull;
 
 /**
  * Main class of the NukkitX Standard Generator.
@@ -52,9 +48,19 @@ import static net.daporkchop.lib.common.util.PorkUtil.*;
 @Accessors(fluent = true)
 public final class StandardGenerator implements Generator {
     public static final Identifier ID = Identifier.fromString("nukkitx:standard");
-
+    public static final int STEP_X = 4;
+    public static final int STEP_Y = 8;
+    public static final int STEP_Z = STEP_X;
+    public static final int SAMPLES_X = 16 / STEP_X;
+    public static final int SAMPLES_Y = 256 / STEP_Y;
+    public static final int SAMPLES_Z = 16 / STEP_Z;
+    public static final int CACHE_X = SAMPLES_X + 1;
+    public static final int CACHE_Y = SAMPLES_Y + 1;
+    public static final int CACHE_Z = SAMPLES_Z + 1;
+    public static final double SCALE_X = 1.0d / STEP_X;
+    public static final double SCALE_Y = 1.0d / STEP_Y;
+    public static final double SCALE_Z = 1.0d / STEP_Z;
     private static final String DEFAULT_PRESET = "minecraft:overworld";
-
     public static final GeneratorFactory FACTORY = (seed, options) -> {
         Identifier presetId = Identifier.fromString(Strings.isNullOrEmpty(options) ? DEFAULT_PRESET : options);
         try (InputStream in = StandardGeneratorUtils.read("preset", presetId)) {
@@ -65,25 +71,10 @@ public final class StandardGenerator implements Generator {
             throw new RuntimeException(e);
         }
     };
-
-    public static final int STEP_X = 4;
-    public static final int STEP_Y = 8;
-    public static final int STEP_Z = STEP_X;
-
-    public static final int SAMPLES_X = 16 / STEP_X;
-    public static final int SAMPLES_Y = 256 / STEP_Y;
-    public static final int SAMPLES_Z = 16 / STEP_Z;
-
-    public static final int CACHE_X = SAMPLES_X + 1;
-    public static final int CACHE_Y = SAMPLES_Y + 1;
-    public static final int CACHE_Z = SAMPLES_Z + 1;
-
-    public static final double SCALE_X = 1.0d / STEP_X;
-    public static final double SCALE_Y = 1.0d / STEP_Y;
-    public static final double SCALE_Z = 1.0d / STEP_Z;
-
     private static final Ref<ThreadData> THREAD_DATA_CACHE = ThreadRef.soft(ThreadData::new);
-
+    private final Int2ObjectMap<Decorator[]> decoratorLookup = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Populator[]> populatorLookup = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<Finisher[]> finisherLookup = new Int2ObjectOpenHashMap<>();
     @JsonProperty
     private BiomeMap biomes;
     @JsonProperty
@@ -94,11 +85,6 @@ public final class StandardGenerator implements Generator {
     private Populator[] populators = Populator.EMPTY_ARRAY;
     @JsonProperty
     private Finisher[] finishers = Finisher.EMPTY_ARRAY;
-
-    private final Int2ObjectMap<Decorator[]> decoratorLookup = new Int2ObjectOpenHashMap<>();
-    private final Int2ObjectMap<Populator[]> populatorLookup = new Int2ObjectOpenHashMap<>();
-    private final Int2ObjectMap<Finisher[]> finisherLookup = new Int2ObjectOpenHashMap<>();
-
     @JsonProperty("groundBlock")
     @Getter
     private int ground = -1;

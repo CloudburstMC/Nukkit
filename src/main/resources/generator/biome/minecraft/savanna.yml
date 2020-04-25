@@ -1,4 +1,3 @@
-
 elevationVanilla:
   height: 0.125
   variation: 0.05
@@ -9,7 +8,7 @@ decorators:
     filler: "dirt"
 
 populators:
-    # Acacia trees
+  # Acacia trees
   - id: "nukkitx:tree"
     chance: 0.00390625 # about 1 per chunk
     on: "grass"

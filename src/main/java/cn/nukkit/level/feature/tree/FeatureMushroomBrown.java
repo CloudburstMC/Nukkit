@@ -8,8 +8,6 @@ import cn.nukkit.registry.BlockRegistry;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
-import static java.lang.Math.abs;
-
 /**
  * Generates a huge brown mushroom.
  *
@@ -28,7 +26,7 @@ public class FeatureMushroomBrown extends FeatureAbstractTree {
     @Override
     protected boolean canPlace(ChunkManager level, PRandom random, int x, int y, int z, int height) {
         for (int dy = 0; dy <= height + 1; dy++) {
-            if (y + dy < 0 ||y + dy >= 256) {
+            if (y + dy < 0 || y + dy >= 256) {
                 return false;
             }
 
@@ -59,16 +57,16 @@ public class FeatureMushroomBrown extends FeatureAbstractTree {
     protected void placeLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
         //as ugly as it is, this makes more sense to hardcode than trying to be smart about it
         int yy = y + height;
-        for (int dx = -2; dx <= 2; dx++)    {
-            for (int dz = -2; dz <= 2; dz++)    {
+        for (int dx = -2; dx <= 2; dx++) {
+            for (int dz = -2; dz <= 2; dz++) {
                 level.setBlockAt(x + dx, yy, z + dz, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.TOP);
             }
         }
-        for (int dx = -1; dx <= 1; dx++)    {
+        for (int dx = -1; dx <= 1; dx++) {
             level.setBlockAt(x + dx, yy, z + 3, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.TOP_S);
             level.setBlockAt(x + dx, yy, z - 3, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.TOP_N);
         }
-        for (int dz = -1; dz <= 1; dz++)    {
+        for (int dz = -1; dz <= 1; dz++) {
             level.setBlockAt(x + 3, yy, z + dz, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.TOP_E);
             level.setBlockAt(x - 3, yy, z + dz, BlockIds.BROWN_MUSHROOM_BLOCK, BlockHugeMushroomBrown.TOP_W);
         }

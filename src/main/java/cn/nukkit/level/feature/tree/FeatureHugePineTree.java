@@ -1,16 +1,13 @@
 package cn.nukkit.level.feature.tree;
 
-import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.standard.misc.IntRange;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
-import static net.daporkchop.lib.math.primitive.PMath.*;
-
 /**
  * Generates a huge pine tree.
- *
+ * <p>
  * Pine trees are identical to spruce trees, but have only a small cluster of leaves near the top.
  *
  * @author DaPorkchop_

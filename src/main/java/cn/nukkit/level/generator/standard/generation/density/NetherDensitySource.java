@@ -12,9 +12,10 @@ import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
-import static java.lang.Math.*;
-import static java.util.Objects.*;
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static java.lang.Math.cos;
+import static java.util.Objects.requireNonNull;
+import static net.daporkchop.lib.math.primitive.PMath.clamp;
+import static net.daporkchop.lib.math.primitive.PMath.lerp;
 
 /**
  * A {@link NoiseSource} that provides noise similar to that of vanilla's nether terrain.

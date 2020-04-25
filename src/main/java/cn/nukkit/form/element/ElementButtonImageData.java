@@ -18,12 +18,12 @@ public class ElementButtonImageData {
         return type;
     }
 
-    public String getData() {
-        return data;
-    }
-
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getData() {
+        return data;
     }
 
     public void setData(String data) {

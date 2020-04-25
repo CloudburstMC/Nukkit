@@ -1,17 +1,10 @@
 package cn.nukkit.level.feature.tree;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockIds;
-import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.feature.ReplacingWorldFeature;
-import cn.nukkit.level.feature.WorldFeature;
 import cn.nukkit.level.generator.standard.misc.ConstantBlock;
 import cn.nukkit.level.generator.standard.misc.IntRange;
-import cn.nukkit.level.generator.standard.misc.filter.BlockFilter;
 import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
-import cn.nukkit.registry.BlockRegistry;
-import cn.nukkit.utils.Identifier;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
@@ -21,7 +14,7 @@ import net.daporkchop.lib.random.PRandom;
  * @author DaPorkchop_
  */
 public abstract class FeatureAbstractTree extends ReplacingWorldFeature {
-    protected final IntRange      height;
+    protected final IntRange height;
     protected final BlockSelector log;
     protected final BlockSelector leaves;
 
@@ -67,11 +60,11 @@ public abstract class FeatureAbstractTree extends ReplacingWorldFeature {
 
     protected abstract boolean canPlace(ChunkManager level, PRandom random, int x, int y, int z, int height);
 
-    protected int selectLog(ChunkManager level, PRandom random, int x, int y, int z, int height)    {
+    protected int selectLog(ChunkManager level, PRandom random, int x, int y, int z, int height) {
         return this.log.selectRuntimeId(random);
     }
 
-    protected int selectLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height)    {
+    protected int selectLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height) {
         return this.leaves.selectRuntimeId(random);
     }
 

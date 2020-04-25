@@ -5,7 +5,6 @@ import cn.nukkit.level.gamerule.GameRule;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.provider.LevelDataSerializer;
 import cn.nukkit.registry.GameRuleRegistry;
-import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.LoadState;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.nukkitx.math.vector.Vector3i;
@@ -31,7 +30,8 @@ import java.util.Map;
 public class LevelDBDataSerializer implements LevelDataSerializer {
     public static final LevelDataSerializer INSTANCE = new LevelDBDataSerializer();
 
-    private static final TypeReference<Map<String, Object>> OPTIONS_TYPE = new TypeReference<Map<String, Object>>() {};
+    private static final TypeReference<Map<String, Object>> OPTIONS_TYPE = new TypeReference<Map<String, Object>>() {
+    };
     private static final int VERSION = 8;
 
     @Override

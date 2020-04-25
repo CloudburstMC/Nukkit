@@ -9,14 +9,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
-import net.daporkchop.lib.random.impl.FastJavaPRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 /**
  * Delegates chunk population to a {@link Generator}.
@@ -29,7 +26,7 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
 
     @Override
     public Chunk apply(@NonNull Chunk chunk, List<Chunk> chunks) {
-        if (chunk.isPopulated())    {
+        if (chunk.isPopulated()) {
             return chunk;
         }
         Preconditions.checkState(chunk.isGenerated(), "Chunk %s,%s was populated before being generated!", chunk.getX(), chunk.getZ());
@@ -48,7 +45,7 @@ public final class PopulationTask implements BiFunction<Chunk, List<Chunk>, Chun
             chunk.setState(IChunk.STATE_POPULATED);
             chunk.setDirty();
         } finally {
-            for (LockableChunk lockableChunk : lockableChunks)  {
+            for (LockableChunk lockableChunk : lockableChunks) {
                 lockableChunk.unlock();
             }
         }

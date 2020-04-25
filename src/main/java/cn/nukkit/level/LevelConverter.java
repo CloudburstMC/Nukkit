@@ -4,7 +4,6 @@ import cn.nukkit.Server;
 import cn.nukkit.level.chunk.ChunkBuilder;
 import cn.nukkit.level.generator.impl.VoidGenerator;
 import cn.nukkit.level.provider.LevelProvider;
-import cn.nukkit.utils.Identifier;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.concurrent.CompletableFuture;

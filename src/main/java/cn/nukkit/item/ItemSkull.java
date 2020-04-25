@@ -20,11 +20,6 @@ public class ItemSkull extends Item {
         super(id);
     }
 
-    @Override
-    public Block getBlock() {
-        return Block.get(BlockIds.SKULL);
-    }
-
     public static String getItemSkullName(int meta) {
         switch (meta) {
             case 1:
@@ -41,5 +36,10 @@ public class ItemSkull extends Item {
             default:
                 return "Skeleton Skull";
         }
+    }
+
+    @Override
+    public Block getBlock() {
+        return Block.get(BlockIds.SKULL);
     }
 }

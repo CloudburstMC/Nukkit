@@ -9,8 +9,9 @@ import cn.nukkit.math.BlockFace;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
-import static java.lang.Math.*;
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static net.daporkchop.lib.math.primitive.PMath.floorI;
 
 /**
  * Generates a huge jungle tree.

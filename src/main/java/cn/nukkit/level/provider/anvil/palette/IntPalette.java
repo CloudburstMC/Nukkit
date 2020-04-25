@@ -6,7 +6,7 @@ import java.util.Arrays;
  * @author https://github.com/boy0001/
  */
 public class IntPalette {
-    private static int[] INT0 = new int[0];
+    private static final int[] INT0 = new int[0];
     private int[] keys = INT0;
     private int lastIndex = Integer.MIN_VALUE;
 
@@ -23,9 +23,8 @@ public class IntPalette {
     private int[] insert(int val) {
         lastIndex = Integer.MIN_VALUE;
         if (keys.length == 0) {
-            return new int[] { val };
-        }
-        else if (val < keys[0]) {
+            return new int[]{val};
+        } else if (val < keys[0]) {
             int[] s = new int[keys.length + 1];
             System.arraycopy(keys, 0, s, 1, keys.length);
             s[0] = val;

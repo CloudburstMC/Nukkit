@@ -31,8 +31,8 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
     @Override
     public int[] get(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc) {
         return this.times > 0
-               ? this.getRecursive(x, z, sizeX, sizeZ, alloc, this.times)
-               : this.next.get(x, z, sizeX, sizeZ, alloc);
+                ? this.getRecursive(x, z, sizeX, sizeZ, alloc, this.times)
+                : this.next.get(x, z, sizeX, sizeZ, alloc);
     }
 
     protected int[] getRecursive(int x, int z, int sizeX, int sizeZ, IntArrayAllocator alloc, int depth) {
@@ -41,8 +41,8 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
         int belowSizeX = this.mode.belowSize(sizeX);
         int belowSizeZ = this.mode.belowSize(sizeZ);
         int[] below = depth == 1
-                      ? this.next.get(belowX, belowZ, belowSizeX, belowSizeZ, alloc)
-                      : this.getRecursive(belowX, belowZ, belowSizeX, belowSizeZ, alloc, depth - 1);
+                ? this.next.get(belowX, belowZ, belowSizeX, belowSizeZ, alloc)
+                : this.getRecursive(belowX, belowZ, belowSizeX, belowSizeZ, alloc, depth - 1);
 
         return this.mode.doZoom(this, below, x, z, sizeX, sizeZ, alloc);
     }

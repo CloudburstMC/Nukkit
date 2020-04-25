@@ -25,25 +25,16 @@ import java.util.regex.Pattern;
 @Log4j2
 public class PluginManager {
 
-    private final Server server;
-
-    private final SimpleCommandMap commandMap;
-
     protected final Map<String, Plugin> plugins = new LinkedHashMap<>();
-
     protected final Map<String, Permission> permissions = new HashMap<>();
-
     protected final Map<String, Permission> defaultPerms = new HashMap<>();
-
     protected final Map<String, Permission> defaultPermsOp = new HashMap<>();
-
     protected final Map<String, Set<Permissible>> permSubs = new HashMap<>();
-
     protected final Set<Permissible> defSubs = Collections.newSetFromMap(new WeakHashMap<>());
-
     protected final Set<Permissible> defSubsOp = Collections.newSetFromMap(new WeakHashMap<>());
-
     protected final Map<String, PluginLoader> fileAssociations = new HashMap<>();
+    private final Server server;
+    private final SimpleCommandMap commandMap;
 
     public PluginManager(Server server, SimpleCommandMap commandMap) {
         this.server = server;
@@ -445,7 +436,7 @@ public class PluginManager {
         List<PluginCommand> pluginCmds = new ArrayList<>();
 
         for (Map.Entry<String, Object> entry : plugin.getDescription().getCommands().entrySet()) {
-            String key = (String) entry.getKey();
+            String key = entry.getKey();
             Object data = entry.getValue();
             if (key.contains(":")) {
                 log.error(this.server.getLanguage().translate("nukkit.plugin.commandError",

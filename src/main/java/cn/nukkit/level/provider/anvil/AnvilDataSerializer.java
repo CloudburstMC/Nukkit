@@ -25,7 +25,8 @@ import java.util.Map;
 public class AnvilDataSerializer implements LevelDataSerializer {
     public static final LevelDataSerializer INSTANCE = new AnvilDataSerializer();
 
-    private static final TypeReference<Map<String, Object>> OPTIONS_TYPE = new TypeReference<Map<String, Object>>() {};
+    private static final TypeReference<Map<String, Object>> OPTIONS_TYPE = new TypeReference<Map<String, Object>>() {
+    };
     private static final int VERSION = 8;
 
     @Override

@@ -25,8 +25,8 @@ import static cn.nukkit.block.BlockIds.*;
  */
 public class BlockRedstoneWire extends FloodableBlock {
 
-    private boolean canProvidePower = true;
     private final Set<Vector3f> blocksNeedingUpdate = new HashSet<>();
+    private boolean canProvidePower = true;
 
     public BlockRedstoneWire(Identifier id) {
         super(id);
@@ -45,6 +45,10 @@ public class BlockRedstoneWire extends FloodableBlock {
         } else {
             return block.isPowerSource() && side != null;
         }
+    }
+
+    protected static boolean canConnectUpwardsTo(Block block) {
+        return canConnectTo(block, null);
     }
 
     private void updateSurroundingRedstone(boolean force) {
@@ -264,10 +268,6 @@ public class BlockRedstoneWire extends FloodableBlock {
         boolean flag1 = this.level.getBlock(pos.up()).isNormalBlock();
         return !flag1 && flag && canConnectUpwardsTo(this.level, v.up()) || (canConnectTo(block, side) ||
                 !flag && canConnectUpwardsTo(this.level, block.getPosition().down()));
-    }
-
-    protected static boolean canConnectUpwardsTo(Block block) {
-        return canConnectTo(block, null);
     }
 
     public boolean canBePlacedOn(Vector3i v) {

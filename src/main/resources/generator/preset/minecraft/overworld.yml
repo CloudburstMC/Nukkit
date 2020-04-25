@@ -20,7 +20,7 @@ decorators:
     fade: 1-5
 
 populators:
-    # Water lakes
+  # Water lakes
   - id: "nukkitx:lake"
     chance: 0.0009765625 # about 1 per 4 chunks
     block: "water"

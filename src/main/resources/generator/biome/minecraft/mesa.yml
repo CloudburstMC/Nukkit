@@ -1,4 +1,3 @@
-
 elevationVanilla:
   height: 0.1
   variation: 0.05
@@ -13,12 +12,12 @@ decorators:
     additionalOffset: 8.0
     addSeaLevelToOffset: true
     below:
-        # Plain old mesa surface
+      # Plain old mesa surface
       - id: "nukkitx:surface"
         top: "sand#1" # red sand
         filler: "stained_hardened_clay#1" # orange
     above:
-        # Generate clay layers
+      # Generate clay layers
       - id: "nukkitx:mesa_surface"
         bandOffset:
           id: "nukkitx:simplex"
@@ -44,7 +43,7 @@ decorators:
             below: "stained_hardened_clay#8" # light gray
 
 populators:
-    # Dead bushes
+  # Dead bushes
   - id: "nukkitx:shrub"
     chance: 0.078125 # about 20 per chunk
     patchSize: 4

@@ -10,8 +10,8 @@ import java.util.List;
 @ToString
 public class CommandEnum {
 
-    private String name;
-    private List<String> values;
+    private final String name;
+    private final List<String> values;
 
     public CommandEnum(String name, List<String> values) {
         this.name = name;

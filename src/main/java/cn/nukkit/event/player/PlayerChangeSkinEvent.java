@@ -12,16 +12,15 @@ import com.nukkitx.protocol.bedrock.data.SerializedSkin;
 public class PlayerChangeSkinEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final SerializedSkin skin;
 
     public PlayerChangeSkinEvent(Player player, SerializedSkin skin) {
         this.player = player;
         this.skin = skin;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public SerializedSkin getSkin() {

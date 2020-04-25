@@ -28,7 +28,6 @@ import static cn.nukkit.block.BlockIds.*;
 public class BlockNoteblock extends BlockSolid {
 
     private static final Map<Identifier, Instrument> INSTRUMENTS = new IdentityHashMap<>();
-    ;
 
     static {
         INSTRUMENTS.put(GOLD_BLOCK, Instrument.GLOCKENSPIEL);
@@ -246,6 +245,11 @@ public class BlockNoteblock extends BlockSolid {
         return BlockEntityRegistry.get().newEntity(BlockEntityTypes.NOTEBLOCK, this.getChunk(), this.getPosition());
     }
 
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
+    }
+
     public enum Instrument {
         PIANO(Sound.NOTE_HARP),
         BASS_DRUM(Sound.NOTE_BD),
@@ -273,10 +277,5 @@ public class BlockNoteblock extends BlockSolid {
         public Sound getSound() {
             return sound;
         }
-    }
-
-    @Override
-    public BlockColor getColor() {
-        return BlockColor.WOOD_BLOCK_COLOR;
     }
 }

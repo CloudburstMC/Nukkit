@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PlayerDataSerializeEvent extends ServerEvent {
-    private static HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
 
     private final Optional<String> name;
     private final Optional<UUID> uuid;
@@ -28,6 +28,10 @@ public class PlayerDataSerializeEvent extends ServerEvent {
         this.name = this.uuid.isPresent() ? Optional.empty() : Optional.of(name);
     }
 
+    public static HandlerList getHandlers() {
+        return handlers;
+    }
+
     public Optional<String> getName() {
         return name;
     }
@@ -42,9 +46,5 @@ public class PlayerDataSerializeEvent extends ServerEvent {
 
     public void setSerializer(PlayerDataSerializer serializer) {
         this.serializer = Preconditions.checkNotNull(serializer, "serializer");
-    }
-
-    public static HandlerList getHandlers() {
-        return handlers;
     }
 }

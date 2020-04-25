@@ -303,10 +303,10 @@ public final class LevelChunkManager {
 
         private final int x;
         private final int z;
-        private CompletableFuture<Chunk> future;
         volatile int generationRunning;
         volatile int populationRunning;
         volatile int finishRunning;
+        private CompletableFuture<Chunk> future;
         private Chunk chunk;
 
         public LoadingChunk(long key, boolean load) {
@@ -379,7 +379,7 @@ public final class LevelChunkManager {
             }
         }
 
-        private void finish()   {
+        private void finish() {
             this.populate();
             if ((this.chunk == null || !this.chunk.isFinished()) && FINISH_RUNNING_UPDATER.compareAndSet(this, 0, 1)) {
                 List<CompletableFuture<Chunk>> chunksToLoad = new ArrayList<>(8);

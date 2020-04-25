@@ -42,17 +42,17 @@ import static cn.nukkit.item.ItemIds.BUCKET;
 public abstract class Item implements Cloneable {
 
     private static final Pattern ITEM_STRING_PATTERN = Pattern.compile("^((?:[A-Za-z_0-9]+:)?[A-Za-z_0-9]+):?([0-9]+)?$");
-
+    private static final ArrayList<Item> creative = new ArrayList<>();
     private final Identifier id;
-    private int meta;
-    private int count;
     private final List<String> lore = new ArrayList<>();
     private final Short2ObjectMap<Enchantment> enchantments = new Short2ObjectOpenHashMap<>();
+    private int meta;
+    private int count;
     private int damage;
     private String customName;
     private CompoundTag tag = CompoundTag.EMPTY;
-    private Set<Identifier> canPlaceOn = new HashSet<>();
-    private Set<Identifier> canDestroy = new HashSet<>();
+    private final Set<Identifier> canPlaceOn = new HashSet<>();
+    private final Set<Identifier> canDestroy = new HashSet<>();
 
     public Item(Identifier id) {
         this.id = id;
@@ -76,12 +76,6 @@ public abstract class Item implements Cloneable {
             }
         }
     }
-
-    public boolean canBeActivated() {
-        return false;
-    }
-
-    private static final ArrayList<Item> creative = new ArrayList<>();
 
     public static Item get(Identifier id) {
         return get(id, 0);
@@ -190,10 +184,6 @@ public abstract class Item implements Cloneable {
         return get(id, meta);
     }
 
-    public boolean hasMeta() {
-        return this.meta < Short.MAX_VALUE;
-    }
-
     public static Item fromJson(Map<String, Object> data) {
         String nbt = (String) data.get("nbt_b64");
 
@@ -274,6 +264,14 @@ public abstract class Item implements Cloneable {
         return Item.get(identifier, meta, count, tag);
     }
 
+    public boolean canBeActivated() {
+        return false;
+    }
+
+    public boolean hasMeta() {
+        return this.meta < Short.MAX_VALUE;
+    }
+
     public void loadAdditionalData(CompoundTag tag) {
         this.tag = this.tag.toBuilder().putAll(tag).buildRootTag();
 
@@ -306,17 +304,17 @@ public abstract class Item implements Cloneable {
             displayTag.stringTag("Name", this.customName);
             tag.tag(displayTag.build("display"));
         }
-        
-        if(!this.lore.isEmpty()){
+
+        if (!this.lore.isEmpty()) {
             List<StringTag> loreLinesTag = new ArrayList<>();
-            for(String line : this.lore){
+            for (String line : this.lore) {
                 loreLinesTag.add(new StringTag("", line));
             }
             displayTag.listTag("Lore", StringTag.class, loreLinesTag);
         }
 
         CompoundTag display = displayTag.build("display");
-        if(!display.getValue().isEmpty()){
+        if (!display.getValue().isEmpty()) {
             tag.tag(display);
         }
 
@@ -370,12 +368,12 @@ public abstract class Item implements Cloneable {
         return tag;
     }
 
-    public Enchantment getEnchantment(int id) {
-        return getEnchantment((short) (id & 0xffff));
-    }
-
     public void setTag(CompoundTag tag) {
         this.tag = tag == null ? CompoundTag.EMPTY : tag;
+    }
+
+    public Enchantment getEnchantment(int id) {
+        return getEnchantment((short) (id & 0xffff));
     }
 
     public Item addTag(CompoundTag compoundTag) {
@@ -594,6 +592,11 @@ public abstract class Item implements Cloneable {
         return meta == 0xffff ? 0 : meta;
     }
 
+    public void setMeta(int meta) {
+        this.meta = meta & 0xffff;
+        this.onMetaChange(this.meta);
+    }
+
     public int getDestroySpeed(Block block, Player player) {
         return 1;
     }
@@ -621,11 +624,6 @@ public abstract class Item implements Cloneable {
 
     public final boolean equals(Item item, boolean checkDamage) {
         return equals(item, checkDamage, true);
-    }
-
-    public void setMeta(int meta) {
-        this.meta = meta & 0xffff;
-        this.onMetaChange(this.meta);
     }
 
     /**

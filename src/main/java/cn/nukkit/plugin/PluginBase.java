@@ -64,19 +64,6 @@ abstract public class PluginBase implements Plugin {
     }
 
     /**
-     * 加载这个插件。<br>
-     * Enables this plugin.
-     * <p>
-     * <p>如果你需要卸载这个插件，建议使用{@link #setEnabled(boolean)}<br>
-     * If you need to disable this plugin, it's recommended to use {@link #setEnabled(boolean)}</p>
-     *
-     * @since Nukkit 1.0 | Nukkit API 1.0.0
-     */
-    public final void setEnabled() {
-        this.setEnabled(true);
-    }
-
-    /**
      * 加载或卸载这个插件。<br>
      * Enables or disables this plugin.
      * <p>
@@ -95,6 +82,19 @@ abstract public class PluginBase implements Plugin {
                 onDisable();
             }
         }
+    }
+
+    /**
+     * 加载这个插件。<br>
+     * Enables this plugin.
+     * <p>
+     * <p>如果你需要卸载这个插件，建议使用{@link #setEnabled(boolean)}<br>
+     * If you need to disable this plugin, it's recommended to use {@link #setEnabled(boolean)}</p>
+     *
+     * @since Nukkit 1.0 | Nukkit API 1.0.0
+     */
+    public final void setEnabled() {
+        this.setEnabled(true);
     }
 
     public final boolean isDisabled() {

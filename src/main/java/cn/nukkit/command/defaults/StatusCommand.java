@@ -26,6 +26,17 @@ public class StatusCommand extends VanillaCommand {
         this.commandParameters.clear();
     }
 
+    private static String formatUptime(long uptime) {
+        long days = TimeUnit.MILLISECONDS.toDays(uptime);
+        uptime -= TimeUnit.DAYS.toMillis(days);
+        long hours = TimeUnit.MILLISECONDS.toHours(uptime);
+        uptime -= TimeUnit.HOURS.toMillis(hours);
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(uptime);
+        uptime -= TimeUnit.MINUTES.toMillis(minutes);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(uptime);
+        return String.format(UPTIME_FORMAT, days, hours, minutes, seconds);
+    }
+
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
@@ -98,16 +109,5 @@ public class StatusCommand extends VanillaCommand {
         }
 
         return true;
-    }
-
-    private static String formatUptime(long uptime) {
-        long days = TimeUnit.MILLISECONDS.toDays(uptime);
-        uptime -= TimeUnit.DAYS.toMillis(days);
-        long hours = TimeUnit.MILLISECONDS.toHours(uptime);
-        uptime -= TimeUnit.HOURS.toMillis(hours);
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(uptime);
-        uptime -= TimeUnit.MINUTES.toMillis(minutes);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(uptime);
-        return String.format(UPTIME_FORMAT, days, hours, minutes, seconds);
     }
 }

@@ -19,10 +19,10 @@ public abstract class FormWindow {
         }
     }
 
-    public abstract void setResponse(String data);
-
     @JsonIgnore
     public abstract FormResponse getResponse();
+
+    public abstract void setResponse(String data);
 
     public boolean wasClosed() {
         return closed;

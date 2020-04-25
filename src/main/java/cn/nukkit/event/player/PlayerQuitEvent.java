@@ -6,15 +6,9 @@ import cn.nukkit.player.Player;
 
 public class PlayerQuitEvent extends PlayerEvent {
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     protected TextContainer quitMessage;
     protected boolean autoSave = true;
     protected String reason;
-
     public PlayerQuitEvent(Player player, TextContainer quitMessage, String reason) {
         this(player, quitMessage, true, reason);
     }
@@ -50,6 +44,10 @@ public class PlayerQuitEvent extends PlayerEvent {
         this.reason = reason;
     }
 
+    public static HandlerList getHandlers() {
+        return handlers;
+    }
+
     public TextContainer getQuitMessage() {
         return quitMessage;
     }
@@ -66,12 +64,12 @@ public class PlayerQuitEvent extends PlayerEvent {
         return this.autoSave;
     }
 
-    public void setAutoSave() {
-        this.setAutoSave(true);
-    }
-
     public void setAutoSave(boolean autoSave) {
         this.autoSave = autoSave;
+    }
+
+    public void setAutoSave() {
+        this.setAutoSave(true);
     }
 
     public String getReason() {

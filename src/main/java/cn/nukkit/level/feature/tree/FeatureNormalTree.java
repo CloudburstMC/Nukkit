@@ -6,7 +6,7 @@ import cn.nukkit.level.generator.standard.misc.selector.BlockSelector;
 import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
 /**
  * Generates a normal, vanilla-style tree.
@@ -36,7 +36,7 @@ public class FeatureNormalTree extends FeatureAbstractTree {
     }
 
     @Override
-    protected void placeLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves)    {
+    protected void placeLeaves(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
         for (int yy = y + height - 3; yy <= y + height; yy++) {
             int dy = yy - (y + height);
             int radius = 1 - (dy / 2);
@@ -52,14 +52,14 @@ public class FeatureNormalTree extends FeatureAbstractTree {
     }
 
     @Override
-    protected void placeTrunk(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves)    {
+    protected void placeTrunk(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
         for (int dy = 0; dy < height; dy++) {
             level.setBlockRuntimeIdUnsafe(x, y + dy, z, 0, log);
         }
     }
 
     @Override
-    protected void finish(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves)    {
+    protected void finish(ChunkManager level, PRandom random, int x, int y, int z, int height, int log, int leaves) {
         this.replaceGrassWithDirt(level, x, y - 1, z);
     }
 }

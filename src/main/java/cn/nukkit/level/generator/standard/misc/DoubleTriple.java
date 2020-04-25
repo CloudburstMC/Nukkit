@@ -17,10 +17,8 @@ import java.util.regex.Matcher;
 //TODO: remove this and add jackson deserializer methods to Vector classes in math library
 @JsonDeserialize
 public final class DoubleTriple {
-    private static final Ref<Matcher> TRIPLE_MATCHER_CACHE = ThreadRef.regex("^(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+))$");
-
     public static final DoubleTriple ONE = new DoubleTriple(1.0d, 1.0d, 1.0d);
-
+    private static final Ref<Matcher> TRIPLE_MATCHER_CACHE = ThreadRef.regex("^(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+)),(-?(?:[0-9]+|[0-9]*\\.[0-9]+))$");
     private final double x;
     private final double y;
     private final double z;

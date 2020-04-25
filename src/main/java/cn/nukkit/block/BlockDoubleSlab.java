@@ -68,6 +68,7 @@ public class BlockDoubleSlab extends BlockSolid {
     public BlockColor getColor() {
         return colors[this.getMeta() & 0x7];
     }
+
     protected void playPlaceSound() {
         LevelSoundEvent2Packet pk = new LevelSoundEvent2Packet();
         pk.setSound(SoundEvent.ITEM_USE_ON);

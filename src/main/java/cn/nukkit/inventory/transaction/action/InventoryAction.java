@@ -12,11 +12,9 @@ import lombok.ToString;
 public abstract class InventoryAction {
 
 
-    private long creationTime;
-
     protected Item sourceItem;
-
     protected Item targetItem;
+    private final long creationTime;
 
     public InventoryAction(Item sourceItem, Item targetItem) {
         this.sourceItem = sourceItem;

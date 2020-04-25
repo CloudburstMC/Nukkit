@@ -23,7 +23,7 @@ public class FormWindowCustom extends FormWindow {
     protected final String type = "custom_form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String title = "";
     private ElementButtonImageData icon;
-    private List<Element> content;
+    private final List<Element> content;
 
     private FormResponseCustom response;
 
@@ -153,13 +153,13 @@ public class FormWindowCustom extends FormWindow {
                     if (e instanceof ElementDropdown) {
                         ((ElementDropdown) e).setDefaultOptionIndex(((ElementDropdown) e).getOptions().indexOf(response));
                     } else if (e instanceof ElementInput) {
-                        ((ElementInput) e).setDefaultText((String)response);
+                        ((ElementInput) e).setDefaultText((String) response);
                     } else if (e instanceof ElementSlider) {
-                        ((ElementSlider) e).setDefaultValue((Float)response);
+                        ((ElementSlider) e).setDefaultValue((Float) response);
                     } else if (e instanceof ElementStepSlider) {
                         ((ElementStepSlider) e).setDefaultOptionIndex(((ElementStepSlider) e).getSteps().indexOf(response));
                     } else if (e instanceof ElementToggle) {
-                        ((ElementToggle) e).setDefaultValue((Boolean)response);
+                        ((ElementToggle) e).setDefaultValue((Boolean) response);
                     }
                 }
             });

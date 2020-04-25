@@ -185,13 +185,13 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
         return Item.get(ItemIds.COMPARATOR);
     }
 
-    public enum Mode {
-        COMPARE,
-        SUBTRACT
-    }
-
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    public enum Mode {
+        COMPARE,
+        SUBTRACT
     }
 }

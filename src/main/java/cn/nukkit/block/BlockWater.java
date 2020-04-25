@@ -24,6 +24,10 @@ public class BlockWater extends BlockLiquid {
         this(flowingId, flowingId, stationaryId);
     }
 
+    public static BlockFactory factory(Identifier stationaryId) {
+        return id -> new BlockWater(id, stationaryId);
+    }
+
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
         boolean success = target.getLevel().setBlock(block.getPosition(), this, true, false);
@@ -59,9 +63,5 @@ public class BlockWater extends BlockLiquid {
     @Override
     public boolean usesWaterLogging() {
         return true;
-    }
-
-    public static BlockFactory factory(Identifier stationaryId) {
-        return id-> new BlockWater(id, stationaryId);
     }
 }

@@ -22,13 +22,6 @@ public class Watchdog extends Thread {
         this.setName("Watchdog");
     }
 
-    public void kill() {
-        running = false;
-        synchronized (this) {
-            this.notifyAll();
-        }
-    }
-
     private static void dumpThread(ThreadInfo thread) {
         log.fatal("Current Thread: " + thread.getThreadName());
         log.fatal("\tPID: " + thread.getThreadId() + " | Suspended: " + thread.isSuspended() + " | Native: " + thread.isInNative() + " | State: " + thread.getThreadState());
@@ -43,6 +36,13 @@ public class Watchdog extends Thread {
         log.fatal("\tStack:");
         for (StackTraceElement stack : thread.getStackTrace()) {
             log.fatal("\t\t" + stack);
+        }
+    }
+
+    public void kill() {
+        running = false;
+        synchronized (this) {
+            this.notifyAll();
         }
     }
 
@@ -83,7 +83,8 @@ public class Watchdog extends Thread {
                 synchronized (this) {
                     this.wait(Math.max(time / 4, 1000));
                 }
-            } catch (InterruptedException ignore) {}
+            } catch (InterruptedException ignore) {
+            }
         }
     }
 }

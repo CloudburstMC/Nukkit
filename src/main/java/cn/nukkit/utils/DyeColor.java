@@ -21,15 +21,24 @@ public enum DyeColor {
     WHITE(15, 0, "White", "Bone Meal", BlockColor.WHITE_BLOCK_COLOR);
 
 
-    private int dyeColorMeta;
-    private int woolColorMeta;
-    private String colorName;
-    private String dyeName;
-    private BlockColor blockColor;
-
-
     private final static DyeColor[] BY_WOOL_DATA;
     private final static DyeColor[] BY_DYE_DATA;
+
+    static {
+        BY_DYE_DATA = values();
+        BY_WOOL_DATA = values();
+
+        for (DyeColor color : values()) {
+            BY_WOOL_DATA[color.woolColorMeta & 0x0f] = color;
+            BY_DYE_DATA[color.dyeColorMeta & 0x0f] = color;
+        }
+    }
+
+    private final int dyeColorMeta;
+    private final int woolColorMeta;
+    private final String colorName;
+    private final String dyeName;
+    private final BlockColor blockColor;
 
     DyeColor(int dyeColorMeta, int woolColorMeta, String colorName, BlockColor blockColor) {
         this(dyeColorMeta, woolColorMeta, colorName, colorName + " Dye", blockColor);
@@ -41,6 +50,14 @@ public enum DyeColor {
         this.colorName = colorName;
         this.blockColor = blockColor;
         this.dyeName = dyeName;
+    }
+
+    public static DyeColor getByDyeData(int dyeColorMeta) {
+        return BY_DYE_DATA[dyeColorMeta & 0x0f];
+    }
+
+    public static DyeColor getByWoolData(int woolColorMeta) {
+        return BY_WOOL_DATA[woolColorMeta & 0x0f];
     }
 
     public BlockColor getColor() {
@@ -61,23 +78,5 @@ public enum DyeColor {
 
     public String getDyeName() {
         return this.dyeName;
-    }
-
-    static {
-        BY_DYE_DATA = values();
-        BY_WOOL_DATA = values();
-
-        for (DyeColor color : values()) {
-            BY_WOOL_DATA[color.woolColorMeta & 0x0f] = color;
-            BY_DYE_DATA[color.dyeColorMeta & 0x0f] = color;
-        }
-    }
-
-    public static DyeColor getByDyeData(int dyeColorMeta) {
-        return BY_DYE_DATA[dyeColorMeta & 0x0f];
-    }
-
-    public static DyeColor getByWoolData(int woolColorMeta) {
-        return BY_WOOL_DATA[woolColorMeta & 0x0f];
     }
 }

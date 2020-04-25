@@ -30,19 +30,15 @@ import static cn.nukkit.block.BlockIds.LIT_BLAST_FURNACE;
 @Log4j2
 public class CraftingManager {
 
-    public final Collection<Recipe> recipes = new ArrayDeque<>();
-
     public static final Comparator<Item> recipeComparator = Comparator.comparing(Item::getId)
             .thenComparingInt(Item::getMeta).thenComparingInt(Item::getCount);
-    protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
-
+    public final Collection<Recipe> recipes = new ArrayDeque<>();
     public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
-
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
-
-    private int RECIPE_COUNT = 0;
+    protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
+    private int RECIPE_COUNT = 0;
     private CraftingDataPacket packet = null;
 
     public CraftingManager() {
@@ -79,12 +75,26 @@ public class CraftingManager {
         return UUID.nameUUIDFromBytes(buffer.array());
     }
 
-    public void rebuildPacket() {
-        rebuildPacket(true);
-    }
-
     private static int getItemHash(Item item) {
         return getItemHash(item.getId(), item.getMeta());
+    }
+
+    private static int getItemHash(Identifier id, int meta) {
+        return Objects.hash(System.identityHashCode(id), meta);
+    }
+
+    private static int getPotionHash(Identifier ingredientId, int potionType) {
+        int id = ItemRegistry.get().getRuntimeId(ingredientId);
+        return (id << 6) | potionType;
+    }
+
+    private static int getContainerHash(Identifier ingredientId, int containerId) {
+        int id = ItemRegistry.get().getRuntimeId(ingredientId);
+        return (id << 9) | containerId;
+    }
+
+    public void rebuildPacket() {
+        rebuildPacket(true);
     }
 
     public Collection<Recipe> getRecipes() {
@@ -128,10 +138,6 @@ public class CraftingManager {
         }
 
         this.packet = packet;
-    }
-
-    private static int getItemHash(Identifier id, int meta) {
-        return Objects.hash(System.identityHashCode(id), meta);
     }
 
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
@@ -302,16 +308,6 @@ public class CraftingManager {
         Map<UUID, ShapelessRecipe> map = shapelessRecipes.computeIfAbsent(resultHash, k -> new HashMap<>());
 
         map.put(hash, recipe);
-    }
-
-    private static int getPotionHash(Identifier ingredientId, int potionType) {
-        int id = ItemRegistry.get().getRuntimeId(ingredientId);
-        return (id << 6) | potionType;
-    }
-
-    private static int getContainerHash(Identifier ingredientId, int containerId) {
-        int id = ItemRegistry.get().getRuntimeId(ingredientId);
-        return (id << 9) | containerId;
     }
 
     public void registerBrewingRecipe(BrewingRecipe recipe) {

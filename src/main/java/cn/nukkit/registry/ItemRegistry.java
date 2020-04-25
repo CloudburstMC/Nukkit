@@ -39,8 +39,8 @@ public class ItemRegistry implements Registry {
     private final Map<Identifier, ItemFactory> factoryMap = new IdentityHashMap<>();
     private final BiMap<Integer, Identifier> runtimeIdMap = HashBiMap.create();
     private final AtomicInteger runtimeIdAllocator = new AtomicInteger();
-    private int lastLegacyId;
     private final BlockRegistry blockRegistry;
+    private int lastLegacyId;
     private List<StartGamePacket.ItemEntry> itemEntries;
     private volatile boolean closed;
 
@@ -259,7 +259,7 @@ public class ItemRegistry implements Registry {
         registerVanilla(SNOWBALL, ItemSnowball::new, 332);
         registerVanilla(BOAT, ItemBoat::new, 333);
         registerVanilla(LEATHER, SimpleItem::new, 334);
-        registerVanilla(KELP, PlaceableItem.factory(BlockIds.KELP),335);
+        registerVanilla(KELP, PlaceableItem.factory(BlockIds.KELP), 335);
         registerVanilla(BRICK, SimpleItem::new, 336);
         registerVanilla(CLAY_BALL, SimpleItem::new, 337);
         registerVanilla(REEDS, PlaceableItem.factory(BlockIds.REEDS), 338);

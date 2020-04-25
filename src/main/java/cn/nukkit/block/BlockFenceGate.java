@@ -18,23 +18,8 @@ import com.nukkitx.math.vector.Vector3f;
  */
 public class BlockFenceGate extends BlockTransparent implements Faceable {
 
-    public BlockFenceGate(Identifier id) {
-        super(id);
-    }
-
     private static final float[] offMinX = new float[2];
     private static final float[] offMinZ = new float[2];
-
-    @Override
-    public boolean canBeActivated() {
-        return true;
-    }
-
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_AXE;
-    }
-
     private static final float[] offMaxX = new float[2];
     private static final float[] offMaxZ = new float[2];
 
@@ -48,6 +33,20 @@ public class BlockFenceGate extends BlockTransparent implements Faceable {
         offMinZ[1] = 0;
         offMaxX[1] = 0.625f;
         offMaxZ[1] = 1;
+    }
+
+    public BlockFenceGate(Identifier id) {
+        super(id);
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_AXE;
     }
 
     @Override

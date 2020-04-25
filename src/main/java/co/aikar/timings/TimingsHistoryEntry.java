@@ -23,9 +23,8 @@
  */
 package co.aikar.timings;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
-
 import cn.nukkit.timings.JsonUtil;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 
 class TimingsHistoryEntry {
     final TimingData data;

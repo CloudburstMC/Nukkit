@@ -13,8 +13,10 @@ import net.daporkchop.lib.random.PRandom;
 
 import java.util.Objects;
 
-import static java.lang.Math.*;
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+import static net.daporkchop.lib.math.primitive.PMath.floorI;
+import static net.daporkchop.lib.math.primitive.PMath.lerp;
 
 /**
  * Generates ore veins.

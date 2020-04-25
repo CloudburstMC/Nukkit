@@ -38,12 +38,14 @@ import java.util.*;
  * ===============
  */
 public final class ClientChainData implements LoginChainData {
+    public final static int UI_PROFILE_CLASSIC = 0;
+    public final static int UI_PROFILE_POCKET = 1;
     private static final String MOJANG_PUBLIC_KEY_BASE64 =
             "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
     private static final PublicKey MOJANG_PUBLIC_KEY;
-
     private static final TypeReference<Map<String, List<String>>> MAP_TYPE_REFERENCE =
-            new TypeReference<Map<String, List<String>>>() {};
+            new TypeReference<Map<String, List<String>>>() {
+            };
 
     static {
         try {
@@ -56,6 +58,129 @@ public final class ClientChainData implements LoginChainData {
     private final String chainData;
     private final String skinData;
     private SerializedSkin skin;
+    private boolean xboxAuthed;
+    private String username;
+    private UUID clientUUID;
+    private String xuid;
+    private String identityPublicKey;
+    private long clientId;
+    private String serverAddress;
+    private String deviceModel;
+    private int deviceOS;
+    private String deviceId;
+    private String gameVersion;
+    private int guiScale;
+    private String languageCode;
+    private int currentInputMode;
+    private int defaultInputMode;
+    private int UIProfile;
+
+    private ClientChainData(String chainData, String skinData) {
+        this.chainData = chainData;
+        this.skinData = skinData;
+        decodeChainData(chainData);
+        decodeSkinData(skinData);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Override
+    ///////////////////////////////////////////////////////////////////////////
+
+    public static ClientChainData of(byte[] buffer) {
+        ByteBuf byteBuf = Unpooled.wrappedBuffer(buffer);
+        return new ClientChainData(readString(byteBuf), readString(byteBuf));
+    }
+
+    public static ClientChainData read(LoginPacket pk) {
+        return new ClientChainData(pk.getChainData().toString(), pk.getSkinData().toString());
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Internal
+    ///////////////////////////////////////////////////////////////////////////
+
+    private static PublicKey generateKey(String base64) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(base64)));
+    }
+
+    private static String readString(ByteBuf buffer) {
+        int length = buffer.readIntLE();
+        byte[] bytes = new byte[length];
+        buffer.readBytes(bytes);
+        return new String(bytes, StandardCharsets.US_ASCII); // base 64 encoded.
+    }
+
+    private static SerializedSkin getSkin(JsonNode skinToken) {
+        SerializedSkin.Builder skinBuilder = SerializedSkin.builder();
+        if (skinToken.has("SkinId")) {
+            skinBuilder.skinId(skinToken.get("SkinId").textValue());
+        }
+        if (skinToken.has("CapeId")) {
+            skinBuilder.capeId(skinToken.get("CapeId").textValue());
+        }
+
+        skinBuilder.skinData(getImage(skinToken, "Skin"));
+        skinBuilder.capeData(getImage(skinToken, "Cape"));
+        if (skinToken.has("PremiumSkin")) {
+            skinBuilder.premium(skinToken.get("PremiumSkin").booleanValue());
+        }
+        if (skinToken.has("PersonaSkin")) {
+            skinBuilder.persona(skinToken.get("PersonaSkin").booleanValue());
+        }
+        if (skinToken.has("CapeOnClassicSkin")) {
+            skinBuilder.capeOnClassic(skinToken.get("CapeOnClassicSkin").booleanValue());
+        }
+
+        if (skinToken.has("SkinResourcePatch")) {
+            skinBuilder.skinResourcePatch(new String(Base64.getDecoder().decode(skinToken.get("SkinResourcePatch").textValue()), StandardCharsets.UTF_8));
+        }
+
+        if (skinToken.has("SkinGeometryData")) {
+            skinBuilder.geometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometryData").textValue()), StandardCharsets.UTF_8));
+        }
+
+        if (skinToken.has("SkinAnimationData")) {
+            skinBuilder.animationData(new String(Base64.getDecoder().decode(skinToken.get("SkinAnimationData").textValue()), StandardCharsets.UTF_8));
+        }
+
+        if (skinToken.has("AnimatedImageData")) {
+            List<AnimationData> animations = new ArrayList<>();
+            JsonNode array = skinToken.get("AnimatedImageData");
+            for (JsonNode element : array) {
+                animations.add(getAnimation(element));
+            }
+            skinBuilder.animations(animations);
+        }
+        return skinBuilder.build();
+    }
+
+    private static boolean verify(PublicKey key, JWSObject object) throws JOSEException {
+        JWSVerifier verifier = new DefaultJWSVerifierFactory().createJWSVerifier(object.getHeader(), key);
+        return object.verify(verifier);
+    }
+
+    private static AnimationData getAnimation(JsonNode element) {
+        float frames = element.get("Frames").floatValue();
+        int type = element.get("Type").intValue();
+        byte[] data = Base64.getDecoder().decode(element.get("Image").textValue());
+        int width = element.get("ImageWidth").intValue();
+        int height = element.get("ImageHeight").intValue();
+        return new AnimationData(ImageData.of(width, height, data), type, frames);
+    }
+
+    private static ImageData getImage(JsonNode token, String name) {
+        if (token.has(name + "Data")) {
+            byte[] skinImage = Base64.getDecoder().decode(token.get(name + "Data").textValue());
+            if (token.has(name + "ImageHeight") && token.has(name + "ImageWidth")) {
+                int width = token.get(name + "ImageWidth").intValue();
+                int height = token.get(name + "ImageHeight").intValue();
+                return ImageData.of(width, height, skinImage);
+            } else {
+                return ImageData.of(skinImage);
+            }
+        }
+        return ImageData.EMPTY;
+    }
 
     @Override
     public String getUsername() {
@@ -117,8 +242,6 @@ public final class ClientChainData implements LoginChainData {
         return xuid;
     }
 
-    private boolean xboxAuthed;
-
     @Override
     public int getCurrentInputMode() {
         return currentInputMode;
@@ -129,109 +252,9 @@ public final class ClientChainData implements LoginChainData {
         return defaultInputMode;
     }
 
-    private ClientChainData(String chainData, String skinData) {
-        this.chainData = chainData;
-        this.skinData = skinData;
-        decodeChainData(chainData);
-        decodeSkinData(skinData);
-    }
-
-    public final static int UI_PROFILE_CLASSIC = 0;
-    public final static int UI_PROFILE_POCKET = 1;
-
     @Override
     public int getUIProfile() {
         return UIProfile;
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Override
-    ///////////////////////////////////////////////////////////////////////////
-
-    public static ClientChainData of(byte[] buffer) {
-        ByteBuf byteBuf = Unpooled.wrappedBuffer(buffer);
-        return new ClientChainData(readString(byteBuf), readString(byteBuf));
-    }
-
-    public static ClientChainData read(LoginPacket pk) {
-        return new ClientChainData(pk.getChainData().toString(), pk.getSkinData().toString());
-    }
-
-    ///////////////////////////////////////////////////////////////////////////
-    // Internal
-    ///////////////////////////////////////////////////////////////////////////
-
-    private String username;
-    private UUID clientUUID;
-    private String xuid;
-
-    private static PublicKey generateKey(String base64) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(base64)));
-    }
-    private String identityPublicKey;
-
-    private long clientId;
-    private String serverAddress;
-    private String deviceModel;
-    private int deviceOS;
-    private String deviceId;
-    private String gameVersion;
-    private int guiScale;
-    private String languageCode;
-    private int currentInputMode;
-    private int defaultInputMode;
-
-    private int UIProfile;
-
-    private static String readString(ByteBuf buffer) {
-        int length = buffer.readIntLE();
-        byte[] bytes = new byte[length];
-        buffer.readBytes(bytes);
-        return new String(bytes, StandardCharsets.US_ASCII); // base 64 encoded.
-    }
-
-    private static SerializedSkin getSkin(JsonNode skinToken) {
-        SerializedSkin.Builder skinBuilder = SerializedSkin.builder();
-        if (skinToken.has("SkinId")) {
-            skinBuilder.skinId(skinToken.get("SkinId").textValue());
-        }
-        if (skinToken.has("CapeId")) {
-            skinBuilder.capeId(skinToken.get("CapeId").textValue());
-        }
-
-        skinBuilder.skinData(getImage(skinToken, "Skin"));
-        skinBuilder.capeData(getImage(skinToken, "Cape"));
-        if (skinToken.has("PremiumSkin")) {
-            skinBuilder.premium(skinToken.get("PremiumSkin").booleanValue());
-        }
-        if (skinToken.has("PersonaSkin")) {
-            skinBuilder.persona(skinToken.get("PersonaSkin").booleanValue());
-        }
-        if (skinToken.has("CapeOnClassicSkin")) {
-            skinBuilder.capeOnClassic(skinToken.get("CapeOnClassicSkin").booleanValue());
-        }
-
-        if (skinToken.has("SkinResourcePatch")) {
-            skinBuilder.skinResourcePatch(new String(Base64.getDecoder().decode(skinToken.get("SkinResourcePatch").textValue()), StandardCharsets.UTF_8));
-        }
-
-        if (skinToken.has("SkinGeometryData")) {
-            skinBuilder.geometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometryData").textValue()), StandardCharsets.UTF_8));
-        }
-
-        if (skinToken.has("SkinAnimationData")) {
-            skinBuilder.animationData(new String(Base64.getDecoder().decode(skinToken.get("SkinAnimationData").textValue()), StandardCharsets.UTF_8));
-        }
-
-        if (skinToken.has("AnimatedImageData")) {
-            List<AnimationData> animations = new ArrayList<>();
-            JsonNode array = skinToken.get("AnimatedImageData");
-            for (JsonNode element : array) {
-                animations.add(getAnimation(element));
-            }
-            skinBuilder.animations(animations);
-        }
-        return skinBuilder.build();
     }
 
     @Override
@@ -250,11 +273,6 @@ public final class ClientChainData implements LoginChainData {
     @Override
     public boolean isXboxAuthed() {
         return xboxAuthed;
-    }
-
-    private static boolean verify(PublicKey key, JWSObject object) throws JOSEException {
-        JWSVerifier verifier = new DefaultJWSVerifierFactory().createJWSVerifier(object.getHeader(), key);
-        return object.verify(verifier);
     }
 
     private JsonNode decodeToken(String token) {
@@ -308,7 +326,7 @@ public final class ClientChainData implements LoginChainData {
 
         PublicKey lastKey = null;
         boolean mojangKeyVerified = false;
-        for (String chain: chains) {
+        for (String chain : chains) {
             JWSObject jws = JWSObject.parse(chain);
 
             if (!mojangKeyVerified) {
@@ -330,29 +348,6 @@ public final class ClientChainData implements LoginChainData {
             lastKey = generateKey(base64key);
         }
         return mojangKeyVerified;
-    }
-
-    private static AnimationData getAnimation(JsonNode element) {
-        float frames = element.get("Frames").floatValue();
-        int type = element.get("Type").intValue();
-        byte[] data = Base64.getDecoder().decode(element.get("Image").textValue());
-        int width = element.get("ImageWidth").intValue();
-        int height = element.get("ImageHeight").intValue();
-        return new AnimationData(ImageData.of(width, height, data), type, frames);
-    }
-
-    private static ImageData getImage(JsonNode token, String name) {
-        if (token.has(name + "Data")) {
-            byte[] skinImage = Base64.getDecoder().decode(token.get(name + "Data").textValue());
-            if (token.has(name + "ImageHeight") && token.has(name + "ImageWidth")) {
-                int width = token.get(name + "ImageWidth").intValue();
-                int height = token.get(name + "ImageHeight").intValue();
-                return ImageData.of(width, height, skinImage);
-            } else {
-                return ImageData.of(skinImage);
-            }
-        }
-        return ImageData.EMPTY;
     }
 
     @Override

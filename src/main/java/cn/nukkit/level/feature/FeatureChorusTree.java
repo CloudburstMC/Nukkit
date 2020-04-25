@@ -9,7 +9,7 @@ import lombok.NonNull;
 import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.random.PRandom;
 
-import static java.lang.Math.*;
+import static java.lang.Math.abs;
 
 /**
  * Generates a fully grown chorus tree.

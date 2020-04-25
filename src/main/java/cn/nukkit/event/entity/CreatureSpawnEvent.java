@@ -9,19 +9,17 @@ import cn.nukkit.level.Location;
 public class CreatureSpawnEvent extends Event implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final SpawnReason reason;
     private final EntityType<?> type;
     private final Location location;
-
     public CreatureSpawnEvent(EntityType<?> type, Location location, SpawnReason reason) {
         this.reason = reason;
         this.type = type;
         this.location = location;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public SpawnReason getReason() {

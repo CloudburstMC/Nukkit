@@ -28,6 +28,10 @@ public class FormattedCommandAlias extends Command {
         this.formatStrings = formatStrings.toArray(new String[0]);
     }
 
+    private static boolean inRange(int i, int j, int k) {
+        return i >= j && i <= k;
+    }
+
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         boolean result = false;
@@ -128,10 +132,6 @@ public class FormattedCommandAlias extends Command {
         }
 
         return formatString;
-    }
-
-    private static boolean inRange(int i, int j, int k) {
-        return i >= j && i <= k;
     }
 
 }

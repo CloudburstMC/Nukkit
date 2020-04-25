@@ -14,9 +14,10 @@ import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.random.PRandom;
 import net.daporkchop.lib.random.impl.FastPRandom;
 
-import static java.lang.Math.*;
-import static java.util.Objects.*;
-import static net.daporkchop.lib.math.primitive.PMath.*;
+import static java.lang.Math.signum;
+import static java.util.Objects.requireNonNull;
+import static net.daporkchop.lib.math.primitive.PMath.clamp;
+import static net.daporkchop.lib.math.primitive.PMath.lerp;
 
 /**
  * A {@link NoiseSource} that provides noise similar to that of vanilla terrain.
@@ -38,15 +39,15 @@ public class VanillaDensitySource extends AbstractGenerationPass implements Dens
     private BiomeTerrainCache terrainCache;
 
     @JsonProperty
-    private double specialHeightVariation = 0.25d;
+    private final double specialHeightVariation = 0.25d;
     @JsonProperty
-    private double heightFactor = 1.0d;
+    private final double heightFactor = 1.0d;
     @JsonProperty
-    private double heightOffset = 0.0d;
+    private final double heightOffset = 0.0d;
     @JsonProperty
-    private double heightVariationFactor = 1.0d;
+    private final double heightVariationFactor = 1.0d;
     @JsonProperty
-    private double heightVariationOffset = 0.0d;
+    private final double heightVariationOffset = 0.0d;
 
     @JsonProperty
     private NoiseGenerator selectorNoise;

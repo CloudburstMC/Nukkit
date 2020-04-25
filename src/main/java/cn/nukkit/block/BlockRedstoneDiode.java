@@ -25,6 +25,10 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
         super(id);
     }
 
+    public static boolean isDiode(Block block) {
+        return block instanceof BlockRedstoneDiode;
+    }
+
     @Override
     public boolean onBreak(Item item) {
         Vector3i pos = this.getPosition();
@@ -169,10 +173,6 @@ public abstract class BlockRedstoneDiode extends FloodableBlock implements Facea
 
     protected boolean isAlternateInput(Block block) {
         return block.isPowerSource();
-    }
-
-    public static boolean isDiode(Block block) {
-        return block instanceof BlockRedstoneDiode;
     }
 
     protected int getRedstoneSignal() {

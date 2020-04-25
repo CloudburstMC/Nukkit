@@ -10,12 +10,6 @@ import cn.nukkit.item.enchantment.EnchantmentType;
  */
 public abstract class EnchantmentDamage extends Enchantment {
 
-    public enum TYPE {
-        ALL,
-        SMITE,
-        ARTHROPODS
-    }
-
     protected final TYPE damageType;
 
     protected EnchantmentDamage(int id, String name, int weight, TYPE type) {
@@ -46,5 +40,11 @@ public abstract class EnchantmentDamage extends Enchantment {
     @Override
     public boolean isMajor() {
         return true;
+    }
+
+    public enum TYPE {
+        ALL,
+        SMITE,
+        ARTHROPODS
     }
 }

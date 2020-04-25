@@ -25,9 +25,9 @@ import static com.nukkitx.protocol.bedrock.data.EntityFlag.CRITICAL;
  */
 public abstract class EntityProjectile extends BaseEntity {
 
-    protected float damage;
     public boolean hadCollision = false;
     public boolean closeOnCollide = true;
+    protected float damage;
 
     public EntityProjectile(EntityType<?> type, Location location) {
         super(type, location);
@@ -77,7 +77,7 @@ public abstract class EntityProjectile extends BaseEntity {
         } else {
             ev = new EntityDamageByChildEntityEvent(this.getOwner(), this, entity, DamageCause.PROJECTILE, damage);
         }
-        if(entity.attack(ev)){
+        if (entity.attack(ev)) {
             this.hadCollision = true;
 
             if (this.fireTicks > 0) {

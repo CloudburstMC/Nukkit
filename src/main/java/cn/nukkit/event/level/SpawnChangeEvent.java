@@ -11,16 +11,15 @@ import com.nukkitx.math.vector.Vector3f;
 public class SpawnChangeEvent extends LevelEvent {
 
     private static final HandlerList handlers = new HandlerList();
-
-    public static HandlerList getHandlers() {
-        return handlers;
-    }
-
     private final Vector3f previousSpawn;
 
     public SpawnChangeEvent(Level level, Vector3f previousSpawn) {
         super(level);
         this.previousSpawn = previousSpawn;
+    }
+
+    public static HandlerList getHandlers() {
+        return handlers;
     }
 
     public Vector3f getPreviousSpawn() {
