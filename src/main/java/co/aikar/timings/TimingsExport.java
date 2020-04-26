@@ -27,7 +27,6 @@ import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
-import cn.nukkit.command.RemoteConsoleCommandSender;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.timings.JsonUtil;
 import cn.nukkit.utils.TextFormat;
@@ -186,16 +185,6 @@ public class TimingsExport extends Thread {
         SAMPLER6.reset(true);
 
         return timingsCost;
-    }
-
-    @Override
-    public synchronized void start() {
-        if (this.sender instanceof RemoteConsoleCommandSender) {
-            this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.rcon"));
-            run();
-        } else {
-            super.start();
-        }
     }
 
     @Override

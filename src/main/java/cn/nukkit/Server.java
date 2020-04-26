@@ -27,7 +27,6 @@ import cn.nukkit.network.Network;
 import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.query.QueryHandler;
-import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.pack.PackManager;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
@@ -145,8 +144,6 @@ public class Server {
     private int maxPlayers;
 
     private boolean autoSave = true;
-
-    private RCON rcon;
 
     private EntityMetadataStore entityMetadata;
 
@@ -410,8 +407,6 @@ public class Server {
         this.properties.setProperty("default-level", "world");
         this.properties.setProperty("allow-nether", "true");
         this.properties.setProperty("enable-query", "true");
-        this.properties.setProperty("enable-rcon", "false");
-        this.properties.setProperty("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
         this.properties.setProperty("auto-save", "true");
         this.properties.setProperty("force-resources", "false");
         this.properties.setProperty("bug-report", "true");
@@ -452,16 +447,6 @@ public class Server {
         this.autoTickRateLimit = this.getConfig("level-settings.auto-tick-rate-limit", 20);
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
         this.baseTickRate = this.getConfig("level-settings.base-tick-rate", 1);
-
-/*
-        if (this.getPropertyBoolean("enable-rcon", false)) {
-            try {
-                this.rcon = new RCON(this, this.getProperty("rcon.password", ""), (!this.getIp().equals("")) ? this.getIp() : "0.0.0.0", this.getPropertyInt("rcon.port", this.getPort()));
-            } catch (IllegalArgumentException e) {
-                log.error(getLanguage().translate(e.getMessage(), e.getCause().getMessage()));
-            }
-        }
-*/
 
         this.entityMetadata = new EntityMetadataStore();
         this.playerMetadata = new PlayerMetadataStore();
@@ -674,10 +659,6 @@ public class Server {
             isRunning.compareAndSet(true, false);
 
             this.hasStopped = true;
-
-            if (this.rcon != null) {
-                this.rcon.close();
-            }
 
             for (Player player : new ArrayList<>(this.players.values())) {
                 player.close(player.getLeaveMessage(), this.getConfig("settings.shutdown-message", "Server closed"));
@@ -946,10 +927,6 @@ public class Server {
 
             try (Timing ignored2 = Timings.connectionTimer.startTiming()) {
                 this.network.processInterfaces();
-
-                if (this.rcon != null) {
-                    this.rcon.check();
-                }
             }
 
             try (Timing ignored2 = Timings.schedulerTimer.startTiming()) {
