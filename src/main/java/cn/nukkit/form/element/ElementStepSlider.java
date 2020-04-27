@@ -1,6 +1,8 @@
 package cn.nukkit.form.element;
 
 import com.google.common.base.Preconditions;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
@@ -13,19 +15,19 @@ public final class ElementStepSlider extends Element {
     private final List<String> stepOptions = new ArrayList<>();
     private int defaultStepIndex = 0;
 
-    public ElementStepSlider(@Nonnull String elementId, @Nonnull String elementText) {
-        super(ElementType.STEP_SLIDER, elementId, elementText);
+    public ElementStepSlider(@Nonnull String elementText) {
+        super(ElementType.STEP_SLIDER, elementText);
     }
 
-    public ElementStepSlider(@Nonnull String elementId, @Nonnull String elementText, @Nonnull List<String> stepOptions) {
-        super(ElementType.STEP_SLIDER, elementId, elementText);
+    public ElementStepSlider(@Nonnull String elementText, @Nonnull List<String> stepOptions) {
+        super(ElementType.STEP_SLIDER, elementText);
         Preconditions.checkNotNull(stepOptions, "The provided step options can not be null");
 
         this.stepOptions.addAll(stepOptions);
     }
 
-    public ElementStepSlider(@Nonnull String elementId, @Nonnull String elementText, @Nonnull List<String> stepOptions, int defaultStepIndex) {
-        super(ElementType.STEP_SLIDER, elementId, elementText);
+    public ElementStepSlider(@Nonnull String elementText, @Nonnull List<String> stepOptions, int defaultStepIndex) {
+        super(ElementType.STEP_SLIDER, elementText);
         Preconditions.checkNotNull(stepOptions, "The provided step options can not be null");
 
         this.stepOptions.addAll(stepOptions);
@@ -74,5 +76,13 @@ public final class ElementStepSlider extends Element {
             this.defaultStepIndex = this.stepOptions.size() - 1;
         }
         return this;
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public static class Response {
+
+        private final int index;
+        private final String option;
     }
 }

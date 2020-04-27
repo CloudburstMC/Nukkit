@@ -9,12 +9,12 @@ public final class ElementToggle extends Element {
 
     private boolean defaultValue;
 
-    public ElementToggle(@Nonnull String elementId, @Nonnull String elementText) {
-        super(ElementType.TOGGLE, elementId, elementText);
+    public ElementToggle(@Nonnull String elementText) {
+        super(ElementType.TOGGLE, elementText);
     }
 
-    public ElementToggle(@Nonnull String elementId, @Nonnull String elementText, boolean defaultValue) {
-        super(ElementType.TOGGLE, elementId, elementText);
+    public ElementToggle(@Nonnull String elementText, boolean defaultValue) {
+        super(ElementType.TOGGLE, elementText);
         this.defaultValue = defaultValue;
     }
 

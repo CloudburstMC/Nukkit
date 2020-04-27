@@ -2,12 +2,13 @@ package cn.nukkit.form;
 
 import cn.nukkit.form.util.FormType;
 import cn.nukkit.player.Player;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
 
 @Getter
-public class ModalForm extends Form {
+public class ModalForm extends Form<Boolean> {
 
     private final String trueValue;
     private final String falseValue;
@@ -21,8 +22,14 @@ public class ModalForm extends Form {
     }
 
     @Override
-    public void handleResponse(Player p, String data) {
+    public void handleResponse(Player p, JsonNode node) {
+        if (!node.isBoolean()) {
+            error(p);
+            log.warn("Received invalid response for ModalForm {}", node);
+            return;
+        }
 
+        submit(p, node.booleanValue());
     }
 
     public static class ModalFormBuilder extends FormBuilder<ModalForm, ModalFormBuilder, Boolean> {
@@ -49,6 +56,11 @@ public class ModalForm extends Form {
         @Override
         public ModalForm build() {
             return new ModalForm(title, content, trueValue, falseValue);
+        }
+
+        @Override
+        protected ModalFormBuilder self() {
+            return this;
         }
     }
 }

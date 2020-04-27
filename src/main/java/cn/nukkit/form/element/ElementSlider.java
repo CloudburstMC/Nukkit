@@ -12,16 +12,16 @@ public final class ElementSlider extends Element {
     private int stepCount;
     private float defaultValue;
 
-    public ElementSlider(@Nonnull String elementId, @Nonnull String elementText) {
-        super(ElementType.SLIDER, elementId, elementText);
+    public ElementSlider(@Nonnull String elementText) {
+        super(ElementType.SLIDER, elementText);
         this.minimum = 0f;
         this.maximum = 100f;
         this.stepCount = 1;
         this.defaultValue = 0f;
     }
 
-    public ElementSlider(@Nonnull String elementId, @Nonnull String elementText, float minimum, float maximum) {
-        super(ElementType.SLIDER, elementId, elementText);
+    public ElementSlider(@Nonnull String elementText, float minimum, float maximum) {
+        super(ElementType.SLIDER, elementText);
         if (minimum >= maximum) {
             throw new IllegalArgumentException("Maximal value can't be smaller or equal to the minimal value");
         }
@@ -31,8 +31,8 @@ public final class ElementSlider extends Element {
         this.defaultValue = minimum;
     }
 
-    public ElementSlider(@Nonnull String elementId, @Nonnull String elementText, float minimum, float maximum, int stepCount) {
-        super(ElementType.SLIDER, elementId, elementText);
+    public ElementSlider(@Nonnull String elementText, float minimum, float maximum, int stepCount) {
+        super(ElementType.SLIDER, elementText);
         if (minimum >= maximum) {
             throw new IllegalArgumentException("Maximal value can't be smaller or equal to the minimal value");
         }
@@ -42,8 +42,8 @@ public final class ElementSlider extends Element {
         this.defaultValue = minimum;
     }
 
-    public ElementSlider(@Nonnull String elementId, @Nonnull String elementText, float minimum, float maximum, int stepCount, float defaultValue) {
-        super(ElementType.SLIDER, elementId, elementText);
+    public ElementSlider(@Nonnull String elementText, float minimum, float maximum, int stepCount, float defaultValue) {
+        super(ElementType.SLIDER, elementText);
         if (minimum >= maximum) {
             throw new IllegalArgumentException("Maximal value can't be smaller or equal to the minimal value");
         }

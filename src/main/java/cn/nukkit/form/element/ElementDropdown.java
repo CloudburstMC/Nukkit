@@ -2,6 +2,8 @@ package cn.nukkit.form.element;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
@@ -15,19 +17,19 @@ public final class ElementDropdown extends Element {
     private final List<String> dropdownOptions = new ArrayList<>();
     private int defaultOptionIndex = 0;
 
-    public ElementDropdown(@Nonnull String elementId, @Nonnull String elementText) {
-        super(ElementType.DROPDOWN, elementId, elementText);
+    public ElementDropdown(@Nonnull String elementText) {
+        super(ElementType.DROPDOWN, elementText);
     }
 
-    public ElementDropdown(@Nonnull String elementId, @Nonnull String elementText, @Nonnull List<String> dropdownOptions) {
-        super(ElementType.DROPDOWN, elementId, elementText);
+    public ElementDropdown(@Nonnull String elementText, @Nonnull List<String> dropdownOptions) {
+        super(ElementType.DROPDOWN, elementText);
 
         Preconditions.checkNotNull(dropdownOptions, "The provided dropdown options can not be null");
         this.dropdownOptions.addAll(dropdownOptions);
     }
 
-    public ElementDropdown(@Nonnull String elementId, @Nonnull String elementText, @Nonnull List<String> dropdownOptions, int defaultOptionIndex) {
-        super(ElementType.DROPDOWN, elementId, elementText);
+    public ElementDropdown(@Nonnull String elementText, @Nonnull List<String> dropdownOptions, int defaultOptionIndex) {
+        super(ElementType.DROPDOWN, elementText);
 
         Preconditions.checkNotNull(dropdownOptions, "The provided dropdown options can not be null");
         Preconditions.checkElementIndex(defaultOptionIndex, dropdownOptions.size(), "Default option index");
@@ -39,6 +41,10 @@ public final class ElementDropdown extends Element {
     @Nonnull
     public List<String> getDropdownOptions() {
         return this.dropdownOptions;
+    }
+
+    public String getDropdownOption(int index) {
+        return this.dropdownOptions.get(index);
     }
 
     @Nonnull
@@ -80,5 +86,13 @@ public final class ElementDropdown extends Element {
             this.defaultOptionIndex = this.dropdownOptions.size() - 1;
         }
         return this;
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public static class Response {
+
+        private final int index;
+        private final String option;
     }
 }
