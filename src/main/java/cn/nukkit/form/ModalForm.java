@@ -2,20 +2,35 @@ package cn.nukkit.form;
 
 import cn.nukkit.form.util.FormType;
 import cn.nukkit.player.Player;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.annotation.Nonnull;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @Getter
+@ToString
 public class ModalForm extends Form<Boolean> {
 
+    @JsonProperty("button1")
     private final String trueValue;
+    @JsonProperty("button2")
     private final String falseValue;
     private final String content;
 
-    public ModalForm(String title, String content, String trueValue, String falseValue) {
-        super(FormType.MODAL, title);
+    public ModalForm(String title,
+                     String content,
+                     String trueValue,
+                     String falseValue,
+                     List<BiConsumer<Player, Boolean>> listeners,
+                     List<Consumer<Player>> closeListeners,
+                     List<Consumer<Player>> errorListeners
+    ) {
+        super(FormType.MODAL, title, listeners, closeListeners, errorListeners);
         this.content = content;
         this.trueValue = trueValue;
         this.falseValue = falseValue;
@@ -55,7 +70,7 @@ public class ModalForm extends Form<Boolean> {
 
         @Override
         public ModalForm build() {
-            return new ModalForm(title, content, trueValue, falseValue);
+            return new ModalForm(title, content, trueValue, falseValue, listeners, closeListeners, errorListeners);
         }
 
         @Override

@@ -1,5 +1,6 @@
 package cn.nukkit.form.element;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Preconditions;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -10,76 +11,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 @ToString
+@Getter
 public final class ElementStepSlider extends Element {
 
-    private final List<String> stepOptions = new ArrayList<>();
+    private final List<String> steps = new ArrayList<>();
+    @JsonProperty("default")
     private int defaultStepIndex = 0;
 
     public ElementStepSlider(@Nonnull String elementText) {
         super(ElementType.STEP_SLIDER, elementText);
     }
 
-    public ElementStepSlider(@Nonnull String elementText, @Nonnull List<String> stepOptions) {
+    public ElementStepSlider(@Nonnull String elementText, @Nonnull List<String> steps) {
         super(ElementType.STEP_SLIDER, elementText);
-        Preconditions.checkNotNull(stepOptions, "The provided step options can not be null");
+        Preconditions.checkNotNull(steps, "The provided step options can not be null");
 
-        this.stepOptions.addAll(stepOptions);
+        this.steps.addAll(steps);
     }
 
-    public ElementStepSlider(@Nonnull String elementText, @Nonnull List<String> stepOptions, int defaultStepIndex) {
+    public ElementStepSlider(@Nonnull String elementText, @Nonnull List<String> steps, int defaultStepIndex) {
         super(ElementType.STEP_SLIDER, elementText);
-        Preconditions.checkNotNull(stepOptions, "The provided step options can not be null");
+        Preconditions.checkNotNull(steps, "The provided step options can not be null");
 
-        this.stepOptions.addAll(stepOptions);
+        this.steps.addAll(steps);
         this.defaultStepIndex = defaultStepIndex;
     }
 
-    @Nonnull
-    public List<String> getStepOptions() {
-        return this.stepOptions;
-    }
-
-    @Nonnull
-    public ElementStepSlider addStepOptions(@Nonnull List<String> stepOptions) {
-        Preconditions.checkNotNull(stepOptions, "The provided step options can not be null");
-
-        this.stepOptions.addAll(stepOptions);
-        return this;
-    }
-
-    @Nonnull
-    public ElementStepSlider addStepOption(@Nonnull String stepOption) {
-        Preconditions.checkNotNull(stepOption, "The provided step option can not be null");
-
-        this.stepOptions.add(stepOption);
-        return this;
-    }
-
-    public int getDefaultStepIndex() {
-        return this.defaultStepIndex;
-    }
-
-    @Nonnull
-    public ElementStepSlider defaultIndex(int defaultStepIndex) {
-        this.defaultStepIndex = defaultStepIndex;
-        return this;
-    }
-
-    @Nonnull
-    public ElementStepSlider defaultIndex(@Nonnull String stepOption) {
-        Preconditions.checkNotNull(stepOption, "The provided step option can not be null");
-
-        if (this.stepOptions.contains(stepOption)) {
-            this.defaultStepIndex = this.stepOptions.indexOf(stepOption);
-        } else {
-            this.stepOptions.add(stepOption);
-            this.defaultStepIndex = this.stepOptions.size() - 1;
-        }
-        return this;
+    public String getStep(int index) {
+        return steps.get(index);
     }
 
     @RequiredArgsConstructor
     @Getter
+    @ToString
     public static class Response {
 
         private final int index;

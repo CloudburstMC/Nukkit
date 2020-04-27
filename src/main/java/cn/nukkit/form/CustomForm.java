@@ -4,26 +4,37 @@ import cn.nukkit.form.element.*;
 import cn.nukkit.form.response.CustomFormResponse;
 import cn.nukkit.form.util.FormType;
 import cn.nukkit.form.util.ImageData;
+import cn.nukkit.form.util.ImageType;
 import cn.nukkit.player.Player;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Preconditions;
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.annotation.Nonnull;
 import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @Getter
+@ToString
 public class CustomForm extends Form<CustomFormResponse> {
 
     @JsonProperty("content")
     private final List<Element> elements;
 
-    private final ImageData imageData;
+    private final ImageData icon;
 
-    public CustomForm(String title, ImageData imageData, List<Element> elements) {
-        super(FormType.CUSTOM, title);
-        this.imageData = imageData;
+    public CustomForm(String title,
+                      ImageData icon,
+                      List<Element> elements,
+                      List<BiConsumer<Player, CustomFormResponse>> listeners,
+                      List<Consumer<Player>> closeListeners,
+                      List<Consumer<Player>> errorListeners
+    ) {
+        super(FormType.CUSTOM, title, listeners, closeListeners, errorListeners);
+        this.icon = icon;
         this.elements = elements;
     }
 
@@ -46,13 +57,21 @@ public class CustomForm extends Form<CustomFormResponse> {
 
         private final List<Element> elements = new ArrayList<>();
 
-        private ImageData imageData = null;
+        private ImageData icon = null;
+
+        public CustomFormBuilder dropdown(@Nonnull String text, @Nonnull String... options) {
+            return dropdown(text, Arrays.asList(options));
+        }
 
         public CustomFormBuilder dropdown(@Nonnull String text, @Nonnull List<String> options) {
             return element(new ElementDropdown(text, options));
         }
 
-        public CustomFormBuilder dropdown(@Nonnull String text, @Nonnull List<String> options, int defaultOption) {
+        public CustomFormBuilder dropdown(@Nonnull String text, int defaultOption, @Nonnull String... options) {
+            return dropdown(text, defaultOption, Arrays.asList(options));
+        }
+
+        public CustomFormBuilder dropdown(@Nonnull String text, int defaultOption, @Nonnull List<String> options) {
             Preconditions.checkPositionIndex(defaultOption, options.size(), "Default option index out of bounds");
             return element(new ElementDropdown(text, options, defaultOption));
         }
@@ -93,11 +112,19 @@ public class CustomForm extends Form<CustomFormResponse> {
             return element(new ElementStepSlider(elementText));
         }
 
+        public CustomFormBuilder stepSlider(@Nonnull String elementText, @Nonnull String... stepOptions) {
+            return stepSlider(elementText, Arrays.asList(stepOptions));
+        }
+
         public CustomFormBuilder stepSlider(@Nonnull String elementText, @Nonnull List<String> stepOptions) {
             return element(new ElementStepSlider(elementText, stepOptions));
         }
 
-        public CustomFormBuilder stepSlider(@Nonnull String elementText, @Nonnull List<String> stepOptions, int defaultStepIndex) {
+        public CustomFormBuilder stepSlider(@Nonnull String elementText, int defaultStepIndex, @Nonnull String... stepOptions) {
+            return stepSlider(elementText, defaultStepIndex, Arrays.asList(stepOptions));
+        }
+
+        public CustomFormBuilder stepSlider(@Nonnull String elementText, int defaultStepIndex, @Nonnull List<String> stepOptions) {
             return element(new ElementStepSlider(elementText, stepOptions, defaultStepIndex));
         }
 
@@ -125,14 +152,14 @@ public class CustomForm extends Form<CustomFormResponse> {
             return this;
         }
 
-        public CustomFormBuilder image(@Nonnull ImageData imageData) {
-            this.imageData = imageData;
+        public CustomFormBuilder icon(@Nonnull ImageType imageType, @Nonnull String imageData) {
+            this.icon = new ImageData(imageType, imageData);
             return this;
         }
 
         @Override
         public CustomForm build() {
-            return new CustomForm(title, imageData, Collections.unmodifiableList(elements));
+            return new CustomForm(title, icon, Collections.unmodifiableList(elements), listeners, closeListeners, errorListeners);
         }
 
         @Override

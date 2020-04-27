@@ -5,9 +5,11 @@ import cn.nukkit.form.ModalForm.ModalFormBuilder;
 import cn.nukkit.form.SimpleForm.SimpleFormBuilder;
 import cn.nukkit.form.util.FormType;
 import cn.nukkit.player.Player;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,6 +21,7 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 @Getter
+@ToString(exclude = {"listeners", "closeListeners", "errorListeners"})
 public abstract class Form<R> {
 
     protected static final Logger log = LogManager.getLogger(Form.class);
@@ -26,9 +29,12 @@ public abstract class Form<R> {
     private final FormType type;
     private final String title;
 
-    private final List<BiConsumer<Player, R>> listeners = new LinkedList<>();
-    private final List<Consumer<Player>> closeListeners = new LinkedList<>();
-    private final List<Consumer<Player>> errorListeners = new LinkedList<>();
+    @JsonIgnore
+    private final List<BiConsumer<Player, R>> listeners;
+    @JsonIgnore
+    private final List<Consumer<Player>> closeListeners;
+    @JsonIgnore
+    private final List<Consumer<Player>> errorListeners;
 
     /**
      * Use this method to build a new simple form

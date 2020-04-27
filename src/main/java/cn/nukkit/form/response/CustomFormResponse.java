@@ -6,8 +6,10 @@ import cn.nukkit.form.element.ElementDropdown.Response;
 import cn.nukkit.form.element.ElementStepSlider;
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
 @RequiredArgsConstructor
+@ToString(exclude = "form")
 public class CustomFormResponse {
 
     private final CustomForm form;
@@ -15,15 +17,6 @@ public class CustomFormResponse {
 
     private JsonNode get(int index) {
         return responses.get(index);
-    }
-
-    public String getLabel(int index) {
-        JsonNode node = get(index);
-        if (!node.isTextual()) {
-            wrongValue(index, "label");
-        }
-
-        return node.asText();
     }
 
     public Response getDropdown(int index) {
@@ -37,11 +30,11 @@ public class CustomFormResponse {
 
     public ElementStepSlider.Response getStepSlider(int index) {
         JsonNode node = get(index);
-        if (!node.isTextual()) {
+        if (!node.isInt()) {
             wrongValue(index, "step slider");
         }
 
-        return new ElementStepSlider.Response(index, node.asText());
+        return new ElementStepSlider.Response(index, ((ElementStepSlider) form.getElement(index)).getStep(node.asInt()));
     }
 
     public String getInput(int index) {
