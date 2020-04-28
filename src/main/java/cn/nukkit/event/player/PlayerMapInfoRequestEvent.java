@@ -14,8 +14,8 @@ public class PlayerMapInfoRequestEvent extends PlayerEvent implements Cancellabl
 
     private Item item;
 
-    public PlayerMapInfoRequestEvent(Player p, Item item) {
-        this.player = p;
+    public PlayerMapInfoRequestEvent(Player player, Item item) {
+        super(player);
         this.item = item;
     }
 

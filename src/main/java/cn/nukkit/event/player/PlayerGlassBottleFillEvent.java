@@ -11,7 +11,7 @@ public class PlayerGlassBottleFillEvent extends PlayerEvent implements Cancellab
     protected final Block target;
 
     public PlayerGlassBottleFillEvent(Player player, Block target, Item item) {
-        this.player = player;
+        super(player);
         this.target = target;
         this.item = item.clone();
     }

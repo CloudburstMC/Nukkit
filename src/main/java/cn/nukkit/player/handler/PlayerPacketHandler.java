@@ -398,6 +398,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 player.scheduleUpdate();
                 break;
             case JUMP:
+                player.getServer().getPluginManager().callEvent(new PlayerJumpEvent(player));
                 break;
             case START_SPRINT:
                 PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(player, true);

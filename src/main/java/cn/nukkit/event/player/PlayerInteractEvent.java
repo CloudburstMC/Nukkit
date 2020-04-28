@@ -41,7 +41,7 @@ public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
     }
 
     private PlayerInteractEvent(Player player, Item item, BlockFace face, Action action, Block block, Vector3f touchVector) {
-        this.player = player;
+        super(player);
         this.item = item;
         this.blockFace = face;
         this.action = action;

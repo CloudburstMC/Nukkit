@@ -21,7 +21,7 @@ public class PlayerInvalidMoveEvent extends PlayerEvent implements Cancellable {
     }
 
     public PlayerInvalidMoveEvent(Player player, boolean revert) {
-        this.player = player;
+        super(player);
         this.revert = revert;
     }
 

@@ -15,7 +15,7 @@ public class PlayerChunkRequestEvent extends PlayerEvent implements Cancellable 
     private final int chunkZ;
 
     public PlayerChunkRequestEvent(Player player, int chunkX, int chunkZ) {
-        this.player = player;
+        super(player);
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
     }
