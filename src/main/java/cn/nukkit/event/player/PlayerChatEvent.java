@@ -26,8 +26,7 @@ public class PlayerChatEvent extends PlayerMessageEvent implements Cancellable {
     }
 
     public PlayerChatEvent(Player player, String message, String format, Set<CommandSender> recipients) {
-        this.player = player;
-        this.message = message;
+        super(player, message);
 
         this.format = format;
 
@@ -41,15 +40,6 @@ public class PlayerChatEvent extends PlayerMessageEvent implements Cancellable {
         } else {
             this.recipients = recipients;
         }
-    }
-
-    /**
-     * Changes the player that is sending the message
-     *
-     * @param player messenger
-     */
-    public void setPlayer(Player player) {
-        this.player = player;
     }
 
     public String getFormat() {

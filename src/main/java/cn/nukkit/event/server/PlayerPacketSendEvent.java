@@ -14,19 +14,14 @@ public class PlayerPacketSendEvent extends PlayerEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
     private final BedrockPacket packet;
-    private final Player player;
 
     public PlayerPacketSendEvent(Player player, BedrockPacket packet) {
+        super(player);
         this.packet = packet;
-        this.player = player;
     }
 
     public static HandlerList getHandlers() {
         return handlers;
-    }
-
-    public Player getPlayer() {
-        return player;
     }
 
     public BedrockPacket getPacket() {
