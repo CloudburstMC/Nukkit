@@ -5,6 +5,10 @@ import cn.nukkit.blockentity.BrewingStand;
 import cn.nukkit.item.Item;
 
 public class BrewingInventory extends ContainerInventory {
+
+    public static final int SLOT_INGREDIENT = 0;
+    public static final int SLOT_FUEL = 4;
+
     public BrewingInventory(BrewingStand brewingStand) {
         super(brewingStand, InventoryType.BREWING_STAND);
     }
@@ -15,19 +19,19 @@ public class BrewingInventory extends ContainerInventory {
     }
 
     public Item getIngredient() {
-        return getItem(0);
+        return getItem(SLOT_INGREDIENT);
     }
 
     public void setIngredient(Item item) {
-        setItem(0, item);
+        setItem(SLOT_INGREDIENT, item);
     }
 
     public void setFuel(Item fuel) {
-        setItem(4, fuel);
+        setItem(SLOT_FUEL, fuel);
     }
 
     public Item getFuel() {
-        return getItem(4);
+        return getItem(SLOT_FUEL);
     }
 
     @Override
