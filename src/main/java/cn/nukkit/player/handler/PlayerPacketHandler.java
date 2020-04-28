@@ -20,6 +20,8 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
+import cn.nukkit.form.CustomForm;
+import cn.nukkit.form.Form;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
@@ -37,6 +39,9 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.tag.CompoundTag;
@@ -500,30 +505,40 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
         return true;
     }
 
-//    @Override
-//    public boolean handle(ModalFormResponsePacket packet) {
-//        if (!player.spawned || !player.isAlive()) {
-//            return true;
-//        }
-//
-//        FormWindow window;
-//        if ((window = player.removeFormWindow(packet.getFormId())) != null) {
-//            window.setResponse(packet.getFormData().trim());
-//
-//            PlayerFormRespondedEvent event = new PlayerFormRespondedEvent(player, packet.getFormId(), window);
-//            player.getServer().getPluginManager().callEvent(event);
-//        } else if ((window = player.getServerSettingById(packet.getFormId())) != null) {
-//            window.setResponse(packet.getFormData().trim());
-//
-//            PlayerSettingsRespondedEvent event = new PlayerSettingsRespondedEvent(player, packet.getFormId(), window);
-//            player.getServer().getPluginManager().callEvent(event);
-//
-//            //Set back new settings if not been cancelled
-//            if (!event.isCancelled() && window instanceof FormWindowCustom)
-//                ((FormWindowCustom) window).setElementsFromResponse();
-//        }
-//        return true;
-//    }
+    @Override
+    public boolean handle(ModalFormResponsePacket packet) {
+        if (!player.spawned || !player.isAlive()) {
+            return true;
+        }
+
+        Form<?> window = player.removeFormWindow(packet.getFormId());
+
+        if (window == null) {
+            if (player.getServerSettings() != null && player.getServerSettingsId() == packet.getFormId()) {
+                window = player.getServerSettings();
+            } else {
+                return true;
+            }
+        }
+
+        try {
+            JsonNode response = new JsonMapper().readTree(packet.getFormData());
+
+            if ("null".equals(response.asText())) {
+                window.close(player);
+            } else {
+                try {
+                    window.handleResponse(player, response);
+                } catch (Exception e) {
+                    log.error("Error while handling form response", e);
+                    window.error(player);
+                }
+            }
+        } catch (JsonProcessingException e) {
+            log.debug("Received corrupted form json data");
+        }
+        return true;
+    }
 
     @Override
     public boolean handle(InteractPacket packet) {
@@ -1189,21 +1204,24 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
         return true;
     }
 
-//    @Override
-//    public boolean handle(ServerSettingsRequestPacket packet) {
-//        PlayerServerSettingsRequestEvent settingsRequestEvent = new PlayerServerSettingsRequestEvent(player, new HashMap<>(player.getServerSettings()));
-//        player.getServer().getPluginManager().callEvent(settingsRequestEvent);
-//
-//        if (!settingsRequestEvent.isCancelled()) {
-//            settingsRequestEvent.getSettings().forEach((id, formWindow) -> {
-//                ServerSettingsResponsePacket re = new ServerSettingsResponsePacket();
-//                re.setFormId(id);
-//                re.setFormData(formWindow.getJSONData());
-//                player.sendPacket(re);
-//            });
-//        }
-//        return true;
-//    }
+    @Override
+    public boolean handle(ServerSettingsRequestPacket packet) {
+        CustomForm settings = player.getServerSettings();
+
+        if (settings == null) {
+            return true;
+        }
+
+        try {
+            ServerSettingsResponsePacket re = new ServerSettingsResponsePacket();
+            re.setFormId(player.getServerSettingsId());
+            re.setFormData(new JsonMapper().writeValueAsString(settings));
+            player.sendPacket(re);
+        } catch (JsonProcessingException e) {
+            log.error("Error while writing form data", e);
+        }
+        return true;
+    }
 
     @Override
     public boolean handle(RespawnPacket packet) {

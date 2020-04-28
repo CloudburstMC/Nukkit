@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.ToString;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.IOException;
 
@@ -16,11 +15,13 @@ import java.io.IOException;
 public final class ImageData {
 
     @JsonProperty("type")
-    private ImageType imageType;
+    private final ImageType imageType;
     @JsonProperty("data")
-    private String imageData;
+    private final String imageData;
 
     public ImageData() {
+        this.imageData = null;
+        this.imageType = null;
     }
 
     public ImageData(@Nullable ImageType imageType, @Nullable String imageData) {
@@ -33,21 +34,9 @@ public final class ImageData {
         return this.imageType;
     }
 
-    @Nonnull
-    public ImageData imageType(@Nullable ImageType imageType) {
-        this.imageType = imageType;
-        return this;
-    }
-
     @Nullable
     public String getImageData() {
         return this.imageData;
-    }
-
-    @Nonnull
-    public ImageData imageData(String imageData) {
-        this.imageData = imageData;
-        return this;
     }
 
     static final class ImageDataSerializer extends JsonSerializer<ImageData> {
