@@ -22,13 +22,14 @@ public class ModalForm extends Form<Boolean> {
     private final String falseValue;
     private final String content;
 
-    public ModalForm(String title,
-                     String content,
-                     String trueValue,
-                     String falseValue,
-                     List<BiConsumer<Player, Boolean>> listeners,
-                     List<Consumer<Player>> closeListeners,
-                     List<Consumer<Player>> errorListeners
+    public ModalForm(
+            String title,
+            String content,
+            String trueValue,
+            String falseValue,
+            List<BiConsumer<Player, Boolean>> listeners,
+            List<Consumer<Player>> closeListeners,
+            List<Consumer<Player>> errorListeners
     ) {
         super(FormType.MODAL, title, listeners, closeListeners, errorListeners);
         this.content = content;

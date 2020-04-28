@@ -26,12 +26,13 @@ public class CustomForm extends Form<CustomFormResponse> {
 
     private final ImageData icon;
 
-    public CustomForm(String title,
-                      ImageData icon,
-                      List<Element> elements,
-                      List<BiConsumer<Player, CustomFormResponse>> listeners,
-                      List<Consumer<Player>> closeListeners,
-                      List<Consumer<Player>> errorListeners
+    public CustomForm(
+            String title,
+            ImageData icon,
+            List<Element> elements,
+            List<BiConsumer<Player, CustomFormResponse>> listeners,
+            List<Consumer<Player>> closeListeners,
+            List<Consumer<Player>> errorListeners
     ) {
         super(FormType.CUSTOM, title, listeners, closeListeners, errorListeners);
         this.icon = icon;
