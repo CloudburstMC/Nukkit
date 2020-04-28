@@ -76,8 +76,13 @@ public final class BiomeTerrainCache {
                 for (int dz = -radius; dz <= radius; dz++) {
                     BiomeElevation elevation = biomes.get(x + dx * scale, z + dz * scale).getElevation();
 
-                    double height = elevation.getNormalizedHeight() * heightFactor + heightOffset;
-                    double variation = elevation.getNormalizedVariation() * heightVariationFactor + heightVariationOffset;
+                    double height = elevation.getNormalizedHeight();
+                    double variation = elevation.getNormalizedVariation();
+
+                    if (height > 0.0d)  {
+                        height = height * heightFactor + heightOffset;
+                        variation = variation * heightVariationFactor + heightVariationOffset;
+                    }
 
                     double weight = Math.abs(this.weights[(dx + radius) * diameter + dx + radius] / (height + 2.0d));
                     if (height > centerHeight) {

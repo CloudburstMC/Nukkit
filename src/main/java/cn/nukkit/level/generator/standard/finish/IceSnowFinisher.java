@@ -38,7 +38,7 @@ public class IceSnowFinisher implements Finisher {
             Block block = BlockRegistry.get().getBlock(level.getBlockRuntimeIdUnsafe(blockX, y, blockZ, 0));
             if (block.getId() == BlockIds.WATER) {
                 level.setBlockId(blockX, y, blockZ, 0, BlockIds.ICE);
-            } else if (y < 256 && block.isSolid()) {
+            } else if (y < 255 && block.isSolid()) {
                 level.setBlockId(blockX, y + 1, blockZ, 0, BlockIds.SNOW_LAYER);
             }
         }
