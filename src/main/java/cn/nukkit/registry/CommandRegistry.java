@@ -6,9 +6,10 @@ import cn.nukkit.command.defaults.*;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.utils.Identifier;
+import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
+import com.google.common.collect.ImmutableMap;
 import com.nukkitx.protocol.bedrock.data.CommandData;
 import com.nukkitx.protocol.bedrock.packet.AvailableCommandsPacket;
 import lombok.extern.log4j.Log4j2;
@@ -16,14 +17,19 @@ import lombok.extern.log4j.Log4j2;
 import java.util.*;
 
 /**
- * CommandRegistry is used to register custom commands. Use the <code>register</code>
- * method to pass a <code>{@link Command}</code> object with your unique <code>{@link Identifier}</code>
+ * CommandRegistry is used to register custom commands. Use the {@link #register(Plugin, String, CommandFactory) register()}
+ * method to pass a <code>{@link CommandFactory}</code> object with your command name.
+ * If the name is not unique, the registry will try to prefix the command with the plugin name
+ * (ex: nukkitx:commnad)
+ *
+ * @author: Sleepybear
+ * @since: API 2.0.0
  */
 @Log4j2
 public class CommandRegistry implements Registry {
     private static final CommandRegistry INSTANCE = new CommandRegistry();
     private final Map<String, CommandFactory> factoryMap = new HashMap<>();
-    private final Map<String, Command> registeredCommands = new HashMap<>();
+    private Map<String, Command> registeredCommands;
     private final Map<String, String> knownAliases = new HashMap<>();
 
     private volatile boolean closed;
@@ -43,7 +49,9 @@ public class CommandRegistry implements Registry {
     }
 
     /**
-     * Method used to register a custom command. Any aliases
+     * Method used to register a custom command. Any aliases that are defined during the command constructor
+     * will also be automatically registered. Aliases may also be registered outside of the command constructor
+     * with the {@link #registerAlias(Plugin, String, String) registerAlias()} method, as long as the registry has not closed.
      *
      * @param name           The name of your command, which is how it will be run. Should be all lowercase.
      * @param commandFactory The {@link CommandFactory} that will produce your command. (ex. CommandClass::new)
@@ -52,31 +60,39 @@ public class CommandRegistry implements Registry {
     public synchronized void register(Plugin plugin, String name, CommandFactory commandFactory) throws RegistryException {
         Objects.requireNonNull(name, "command name");
         Objects.requireNonNull(commandFactory, "commandFactory");
+        Objects.requireNonNull(plugin, "plugin");
         checkClosed();
         // Pattern match to make sure name is lowercase? or just lowercase it?
 
-        if (knownAliases.containsKey(name) && plugin != null) {
+        if (knownAliases.containsKey(name)) {
             log.warn("Command with name {} already exists, attempting to add prefix {}", name, plugin.getName());
             name = plugin.getName().toLowerCase() + ":" + name;
         }
-
-        if (this.factoryMap.containsKey(name) || this.knownAliases.containsKey(name)) {
-            throw new RegistryException("Command " + name + " is already registered.");
-        }
-
-        this.factoryMap.put(name, commandFactory);
-        this.knownAliases.put(name, name);
-
-        log.debug("Registered command: {} ", name);
+        registerInternal(name, commandFactory);
     }
 
     private synchronized void registerInternal(String command, CommandFactory factory) {
         if (this.factoryMap.containsKey(command)) {
             throw new RegistryException("Command " + command + " already registered.");
         }
-        this.register(null, command, factory);
+        this.factoryMap.put(command, factory);
+        this.knownAliases.put(command, command);
+
+        log.debug("Registered command: {} ", command);
+
     }
 
+    /**
+     * This method registers an alias for your {@link Command}. Please note that any aliases assigned
+     * to the command via the {@link Command#setAliases(String[]) setAliases()} during the constructor
+     * will be automatically registered. If the alias is already registered and also assigned during the
+     * constructor, it will simply be skipped with no error.
+     *
+     * @param plugin A reference to your {@link cn.nukkit.plugin.PluginBase} class.
+     * @param name   The name of your command. Should match the name used with {@link #register(Plugin, String, CommandFactory) register()}
+     * @param alias  The alias you wish to register. If not unique, the Plugin name will attempted to be prefixed. (ex: nukkitx:command)
+     * @throws RegistryException
+     */
     public synchronized void registerAlias(Plugin plugin, String name, String alias) throws RegistryException {
         Objects.requireNonNull(name, "command name");
         Objects.requireNonNull(alias, "alias");
@@ -96,6 +112,14 @@ public class CommandRegistry implements Registry {
         log.debug("Registered alias: {} => {}", alias, name);
     }
 
+    /**
+     * Registers all the aliases in the set {@param aliases}, using the {@link #registerAlias(Plugin, String, String) registerAlias()}
+     * method.
+     *
+     * @param plugin  A reference to your {@link PluginBase} plugin object
+     * @param name    The name used when registering the {@link Command}
+     * @param aliases The {@link Set} of String aliases to link to the above command
+     */
     public void registerAliases(Plugin plugin, String name, String... aliases) {
         for (String alias : aliases) {
             registerAlias(plugin, name, alias);
@@ -111,12 +135,12 @@ public class CommandRegistry implements Registry {
     @Override
     public void close() throws RegistryException {
         checkClosed();
-
+        ImmutableMap.Builder<String, Command> builder = new ImmutableMap.Builder<>();
         for (Map.Entry<String, CommandFactory> entry : factoryMap.entrySet()) {
             String cmdName = entry.getKey();
             Command cmd = entry.getValue().create(cmdName);
             String[] aliases = cmd.getAliases();
-            this.registeredCommands.putIfAbsent(cmdName, cmd);
+            builder.put(cmdName, cmd);
             for (String alias : aliases) {
                 if (knownAliases.containsKey(alias) && knownAliases.get(alias).equalsIgnoreCase(cmdName)) {
                     continue;
@@ -124,10 +148,18 @@ public class CommandRegistry implements Registry {
                 registerAlias(cmd instanceof PluginCommand ? ((PluginCommand) cmd).getPlugin() : null, cmdName, alias);
             }
         }
-        this.registerServerAliases(Server.getInstance()); // Want to do this after all plugins have registered thier commands
+        // Want to do this after all plugins have registered thier commands, so the aliases defined in nukkit.yml can use the plugin commands
+        this.registerServerAliases(Server.getInstance(), builder);
         this.closed = true;
+        this.registeredCommands = builder.build();
     }
 
+    /**
+     * Returns a {@link Command} object by looking it up via name or alias
+     *
+     * @param name The name or alias of the command
+     * @return The {@link Command} object, if known, otherwise <code>null</code>.
+     */
     public Command getCommand(String name) {
         if (!this.knownAliases.containsKey(name)) {
             return null;
@@ -135,22 +167,66 @@ public class CommandRegistry implements Registry {
         return this.registeredCommands.get(this.knownAliases.get(name));
     }
 
+    /**
+     * Returns all register command Strings
+     *
+     * @return A {@link Set} of String objects, of all known command name and aliases.
+     */
     public Set<String> getCommandList() {
         return this.knownAliases.keySet();
     }
 
+    /**
+     * Used to obtain a Mapping of String name/aliases to Command objects.
+     *
+     * @return a {@link Map} of String command name/aliases to {@link Command} objects.
+     */
     public Map<String, Command> getRegisteredCommands() {
         return this.registeredCommands;
     }
 
+    /**
+     * Used to check if a command is registered with the CommandRegistry
+     *
+     * @param cmd A reference to the Command object
+     * @return true if registered, false otherwise
+     */
     public boolean isRegistered(Command cmd) {
         return this.registeredCommands.containsValue(cmd);
     }
 
-    public boolean isRegistered(Identifier id) {
-        return this.registeredCommands.containsKey(id);
+    /**
+     * Used to check if a command is registered with the CommandRegistry
+     *
+     * @param cmd The command name
+     * @return true if registered, false otherwise
+     */
+    public boolean isRegistered(String cmd) {
+        return this.knownAliases.containsKey(cmd);
     }
 
+    /**
+     * Used to obtain a Plugin Command from the registry.
+     *
+     * @param name The command name or alias
+     * @return The PluginCommand associated with the command name, or <code>null</code>
+     */
+    public PluginIdentifiableCommand getPluginCommand(String name) {
+        Command cmd = this.getCommand(name);
+        if (cmd instanceof PluginIdentifiableCommand) {
+            return (PluginIdentifiableCommand) cmd;
+        }
+        return null;
+    }
+
+    /**
+     * Used to dispatch a command. This method should be used over obtaining an object
+     * reference to a Command and calling execute yourself.
+     *
+     * @param sender      The {@link CommandSender} source of the command.
+     * @param commandLine The full command line to execute, including the command name.
+     * @return <code>true</code> if the command was located and executed, <code>false</code> otherwise.
+     */
     public boolean dispatch(CommandSender sender, String commandLine) {
         ArrayList<String> parsed = parseArguments(commandLine);
         if (parsed.size() == 0) {
@@ -209,6 +285,12 @@ public class CommandRegistry implements Registry {
         return args;
     }
 
+    /**
+     * Used internally to obtain the AvailableCommandsPacket to send to a client.
+     *
+     * @param player
+     * @return The Packet
+     */
     public AvailableCommandsPacket createPacketFor(Player player) {
         AvailableCommandsPacket pk = new AvailableCommandsPacket();
         List<CommandData> data = pk.getCommands();
@@ -269,9 +351,8 @@ public class CommandRegistry implements Registry {
         this.registerInternal("stop", StopCommand::new);
     }
 
-    public void registerServerAliases(Server server) {
+    private void registerServerAliases(Server server, ImmutableMap.Builder<String, Command> builder) {
         Map<String, List<String>> values = server.getCommandAliases();
-        int count = 0;
         for (Map.Entry<String, List<String>> entry : values.entrySet()) {
             String alias = entry.getKey();
             List<String> commands = entry.getValue();
@@ -302,18 +383,11 @@ public class CommandRegistry implements Registry {
                 log.warn(server.getLanguage().translate("nukkit.command.alias.notFound", alias, bad.toString()));
                 continue;
             }
-
+            alias = alias.toLowerCase();
             if (!targets.isEmpty()) {
-                this.registerInternal(alias.toLowerCase(), FormattedCommandAlias.factory(targets));
+                builder.put(alias, new FormattedCommandAlias(alias, targets));
+                this.knownAliases.putIfAbsent(alias, alias);
             }
         }
-    }
-
-    public PluginIdentifiableCommand getPluginCommand(String name) {
-        Command cmd = this.getCommand(name);
-        if (cmd instanceof PluginIdentifiableCommand) {
-            return (PluginIdentifiableCommand) cmd;
-        }
-        return null;
     }
 }
