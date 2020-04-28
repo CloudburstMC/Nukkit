@@ -35,7 +35,7 @@ public class CommandRegistry implements Registry {
     private static final CommandRegistry INSTANCE = new CommandRegistry();
     private final Map<String, CommandFactory> factoryMap = new HashMap<>();
     private Map<String, Command> registeredCommands;
-    private final Map<String, String> knownAliases = new HashMap<>();
+    private Map<String, String> knownAliases = new HashMap<>();
 
     private volatile boolean closed;
 
@@ -198,6 +198,7 @@ public class CommandRegistry implements Registry {
         this.registerServerAliases(Server.getInstance(), builder);
         this.closed = true;
         this.registeredCommands = builder.build();
+        this.knownAliases = ImmutableMap.copyOf(this.knownAliases);
     }
 
     /**
