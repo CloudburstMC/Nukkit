@@ -10,11 +10,15 @@ import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
 import com.google.common.collect.ImmutableMap;
+import com.nukkitx.network.util.Preconditions;
 import com.nukkitx.protocol.bedrock.data.CommandData;
 import com.nukkitx.protocol.bedrock.packet.AvailableCommandsPacket;
 import lombok.extern.log4j.Log4j2;
+import net.daporkchop.lib.common.ref.Ref;
+import net.daporkchop.lib.common.ref.ThreadRef;
 
 import java.util.*;
+import java.util.regex.Matcher;
 
 /**
  * CommandRegistry is used to register custom commands. Use the {@link #register(Plugin, String, CommandFactory) register()}
@@ -27,6 +31,7 @@ import java.util.*;
  */
 @Log4j2
 public class CommandRegistry implements Registry {
+    private final Ref<Matcher> NAME_MATCHER = ThreadRef.regex("^([a-z0-9_-]+)$");
     private static final CommandRegistry INSTANCE = new CommandRegistry();
     private final Map<String, CommandFactory> factoryMap = new HashMap<>();
     private Map<String, Command> registeredCommands;
@@ -54,7 +59,7 @@ public class CommandRegistry implements Registry {
      * with the {@link #registerAlias(Plugin, String, String) registerAlias()} method, as long as the registry has not closed.
      *
      * @param name           The name of your command, which is how it will be run. Should be all lowercase.
-     * @param commandFactory The {@link CommandFactory} that will produce your command. (ex. CommandClass::new)
+     * @param commandFactory The {@link CommandFactory} that will produce your command. (ex. MyPluginCommand::new)
      * @throws RegistryException if command is unable to be registered
      */
     public synchronized void register(Plugin plugin, String name, CommandFactory commandFactory) throws RegistryException {
@@ -62,7 +67,8 @@ public class CommandRegistry implements Registry {
         Objects.requireNonNull(commandFactory, "commandFactory");
         Objects.requireNonNull(plugin, "plugin");
         checkClosed();
-        // Pattern match to make sure name is lowercase? or just lowercase it?
+        Matcher matcher = NAME_MATCHER.get().reset(name);
+        Preconditions.checkArgument(matcher.find(), "Invalid command name: %s", name);
 
         if (knownAliases.containsKey(name)) {
             log.warn("Command with name {} already exists, attempting to add prefix {}", name, plugin.getName());
@@ -78,7 +84,7 @@ public class CommandRegistry implements Registry {
         this.factoryMap.put(command, factory);
         this.knownAliases.put(command, command);
 
-        log.debug("Registered command: {} ", command);
+        log.debug("Registered command: {}", command);
 
     }
 
@@ -126,6 +132,46 @@ public class CommandRegistry implements Registry {
         }
     }
 
+    /**
+     * Method used to unregister a command. Please note that a Plugin may only unregister it's own
+     * commands, or a built in vanilla command.
+     *
+     * @param plugin A reference to your {@link PluginBase} instance
+     * @param name   The command name, or alias for the command
+     * @throws RegistryException
+     */
+    public void unregister(Plugin plugin, String name) throws RegistryException {
+        Objects.requireNonNull(name, "commandName");
+        Objects.requireNonNull(plugin, "plugin");
+        checkClosed();
+        if (!knownAliases.containsKey(name)) {
+            log.warn("Attempted to unregister unknown command: {}", name);
+            return;
+        }
+
+        String cmdName = knownAliases.get(name);
+        Command cmd = factoryMap.get(cmdName).create(cmdName);
+
+        if (cmd instanceof PluginCommand) {
+            if (((PluginCommand) cmd).getPlugin() != plugin) {
+                throw new RegistryException("Unable to unregister another plugin's command");
+            }
+        }
+        unregisterInternal(cmdName);
+    }
+
+    private void unregisterInternal(String name) {
+        factoryMap.remove(name);
+        List<String> aliasesToRemove = new ArrayList<>();
+        for (Map.Entry<String, String> entry : knownAliases.entrySet()) {
+            if (entry.getValue().equals(name)) {
+                aliasesToRemove.add(entry.getKey());
+            }
+        }
+        for (String alias : aliasesToRemove)
+            knownAliases.remove(alias);
+    }
+
     private void checkClosed() {
         if (this.closed) {
             throw new RegistryException("Registration is closed");
@@ -168,18 +214,19 @@ public class CommandRegistry implements Registry {
     }
 
     /**
-     * Returns all register command Strings
+     * Returns all registered command and alias Strings
      *
-     * @return A {@link Set} of String objects, of all known command name and aliases.
+     * @return A {@link Set} of String objects, of all known command names and aliases.
      */
     public Set<String> getCommandList() {
         return this.knownAliases.keySet();
     }
 
     /**
-     * Used to obtain a Mapping of String name/aliases to Command objects.
+     * Used to obtain a Mapping of String name to Command objects. Note that this map
+     * does not include aliases.
      *
-     * @return a {@link Map} of String command name/aliases to {@link Command} objects.
+     * @return a {@link ImmutableMap} of String command names to {@link Command} objects.
      */
     public Map<String, Command> getRegisteredCommands() {
         return this.registeredCommands;
@@ -189,7 +236,7 @@ public class CommandRegistry implements Registry {
      * Used to check if a command is registered with the CommandRegistry
      *
      * @param cmd A reference to the Command object
-     * @return true if registered, false otherwise
+     * @return <code>true</code> if registered, <code>false</code> otherwise
      */
     public boolean isRegistered(Command cmd) {
         return this.registeredCommands.containsValue(cmd);
@@ -198,8 +245,8 @@ public class CommandRegistry implements Registry {
     /**
      * Used to check if a command is registered with the CommandRegistry
      *
-     * @param cmd The command name
-     * @return true if registered, false otherwise
+     * @param cmd The command or alias name
+     * @return <code>true</code> if registered, <code>false</code> otherwise
      */
     public boolean isRegistered(String cmd) {
         return this.knownAliases.containsKey(cmd);
@@ -209,7 +256,7 @@ public class CommandRegistry implements Registry {
      * Used to obtain a Plugin Command from the registry.
      *
      * @param name The command name or alias
-     * @return The PluginCommand associated with the command name, or <code>null</code>
+     * @return The {@link PluginCommand} associated with the command name, or <code>null</code>
      */
     public PluginIdentifiableCommand getPluginCommand(String name) {
         Command cmd = this.getCommand(name);
