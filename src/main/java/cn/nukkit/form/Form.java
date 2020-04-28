@@ -96,6 +96,12 @@ public abstract class Form<R> {
         protected final List<Consumer<Player>> closeListeners = new LinkedList<>();
         protected final List<Consumer<Player>> errorListeners = new LinkedList<>();
 
+        /**
+         * Set a title of the form
+         *
+         * @param title form title
+         * @return self builder instance
+         */
         public T title(@Nonnull String title) {
             this.title = title;
             return self();

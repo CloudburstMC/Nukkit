@@ -53,21 +53,44 @@ public class ModalForm extends Form<Boolean> {
         private String trueValue = "true";
         private String falseValue = "false";
 
+        /**
+         * Set the form text content
+         *
+         * @param content form text content
+         * @return self builder instance
+         */
         public ModalFormBuilder content(@Nonnull String content) {
             this.content = content;
             return this;
         }
 
+        /**
+         * Set a displayed value for true boolean value
+         *
+         * @param value string value for {@link Boolean#TRUE}
+         * @return self builder instance
+         */
         public ModalFormBuilder trueValue(@Nonnull String value) {
             this.trueValue = value;
             return this;
         }
 
+        /**
+         * Set a displayed value for false boolean value
+         *
+         * @param value string value for {@link Boolean#FALSE}
+         * @return self builder instance
+         */
         public ModalFormBuilder falseValue(@Nonnull String value) {
             this.falseValue = value;
             return this;
         }
 
+        /**
+         * Builds a new ModalForm instance using builder values
+         *
+         * @return ModalForm instance
+         */
         @Override
         public ModalForm build() {
             return new ModalForm(title, content, trueValue, falseValue, listeners, closeListeners, errorListeners);

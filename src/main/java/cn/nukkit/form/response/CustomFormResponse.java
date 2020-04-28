@@ -19,6 +19,10 @@ public class CustomFormResponse {
         return responses.get(index);
     }
 
+    /**
+     * @param index element index
+     * @return dropdown response object
+     */
     public Response getDropdown(int index) {
         JsonNode node = get(index);
         if (!node.isInt()) {
@@ -28,6 +32,10 @@ public class CustomFormResponse {
         return new Response(index, ((ElementDropdown) form.getElement(index)).getDropdownOption(node.asInt()));
     }
 
+    /**
+     * @param index element index
+     * @return step slider response object
+     */
     public ElementStepSlider.Response getStepSlider(int index) {
         JsonNode node = get(index);
         if (!node.isInt()) {
@@ -37,6 +45,10 @@ public class CustomFormResponse {
         return new ElementStepSlider.Response(index, ((ElementStepSlider) form.getElement(index)).getStep(node.asInt()));
     }
 
+    /**
+     * @param index element index
+     * @return input response value
+     */
     public String getInput(int index) {
         JsonNode node = get(index);
         if (!node.isTextual()) {
@@ -46,6 +58,10 @@ public class CustomFormResponse {
         return node.asText();
     }
 
+    /**
+     * @param index element index
+     * @return slider response value
+     */
     public float getSlider(int index) {
         JsonNode node = get(index);
         if (!node.isDouble()) {
@@ -55,6 +71,10 @@ public class CustomFormResponse {
         return (float) node.asDouble();
     }
 
+    /**
+     * @param index element index
+     * @return toggle response value
+     */
     public boolean getToggle(int index) {
         JsonNode node = get(index);
         if (!node.isBoolean()) {
