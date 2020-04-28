@@ -12,6 +12,7 @@ import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemUtils;
 import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3i;
@@ -263,5 +264,15 @@ public class FurnaceBlockEntity extends BaseBlockEntity implements Furnace {
     @Override
     public boolean isSpawnable() {
         return true;
+    }
+
+    @Override
+    public int[] getHopperPullSlots() {
+        return new int[]{FurnaceInventory.SLOT_RESULT};
+    }
+
+    @Override
+    public int[] getHopperPushSlots(BlockFace direction, Item item) {
+        return new int[]{direction == BlockFace.DOWN ? FurnaceInventory.SLOT_SMELTING : FurnaceInventory.SLOT_FUEL};
     }
 }
