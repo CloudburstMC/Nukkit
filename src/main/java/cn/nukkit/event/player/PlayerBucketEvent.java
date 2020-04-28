@@ -17,8 +17,8 @@ public abstract class PlayerBucketEvent extends PlayerEvent implements Cancellab
     private Item item;
 
 
-    public PlayerBucketEvent(Player who, Block blockClicked, BlockFace blockFace, Item bucket, Item itemInHand) {
-        this.player = who;
+    public PlayerBucketEvent(Player player, Block blockClicked, BlockFace blockFace, Item bucket, Item itemInHand) {
+        super(player);
         this.blockClicked = blockClicked;
         this.blockFace = blockFace;
         this.item = itemInHand;
@@ -27,6 +27,7 @@ public abstract class PlayerBucketEvent extends PlayerEvent implements Cancellab
 
     /**
      * Returns the bucket used in this event
+     *
      * @return bucket
      */
     public Item getBucket() {

@@ -12,11 +12,6 @@ public class PlayerCommandPreprocessEvent extends PlayerMessageEvent implements 
     }
 
     public PlayerCommandPreprocessEvent(Player player, String message) {
-        this.player = player;
-        this.message = message;
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
+        super(player, message);
     }
 }

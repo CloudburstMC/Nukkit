@@ -18,7 +18,7 @@ public class PlayerToggleSwimEvent extends PlayerEvent implements Cancellable {
     private final boolean isSwimming;
 
     public PlayerToggleSwimEvent(Player player, boolean isSwimming) {
-        this.player = player;
+        super(player);
         this.isSwimming = isSwimming;
     }
 

@@ -7,7 +7,7 @@ import javax.annotation.Nonnull;
 @ToString
 public final class ElementLabel extends Element {
 
-    public ElementLabel(@Nonnull String elementId, @Nonnull String elementText) {
-        super(ElementType.LABEL, elementId, elementText);
+    public ElementLabel(@Nonnull String elementText) {
+        super(ElementType.LABEL, elementText);
     }
 }

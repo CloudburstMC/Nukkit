@@ -19,7 +19,7 @@ public class PlayerAnimationEvent extends PlayerEvent implements Cancellable {
     }
 
     public PlayerAnimationEvent(Player player, AnimatePacket.Action animation) {
-        this.player = player;
+        super(player);
         this.animationType = animation;
     }
 

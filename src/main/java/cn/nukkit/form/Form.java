@@ -5,8 +5,13 @@ import cn.nukkit.form.ModalForm.ModalFormBuilder;
 import cn.nukkit.form.SimpleForm.SimpleFormBuilder;
 import cn.nukkit.form.util.FormType;
 import cn.nukkit.player.Player;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.ToString;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import java.util.LinkedList;
@@ -16,28 +21,49 @@ import java.util.function.Consumer;
 
 @RequiredArgsConstructor
 @Getter
-public abstract class Form {
+@ToString(exclude = {"listeners", "closeListeners", "errorListeners"})
+public abstract class Form<R> {
+
+    protected static final Logger log = LogManager.getLogger(Form.class);
 
     private final FormType type;
     private final String title;
 
-    private final List<BiConsumer<Player, Object>> listeners = new LinkedList<>();
-    private final List<Consumer<Player>> closeListeners = new LinkedList<>();
-    private final List<Consumer<Player>> errorListeners = new LinkedList<>();
+    @JsonIgnore
+    private final List<BiConsumer<Player, R>> listeners;
+    @JsonIgnore
+    private final List<Consumer<Player>> closeListeners;
+    @JsonIgnore
+    private final List<Consumer<Player>> errorListeners;
 
+    /**
+     * Use this method to build a new simple form
+     *
+     * @return new SimpleFormBuilder instance
+     */
     public static SimpleFormBuilder simple() {
         return new SimpleFormBuilder();
     }
 
+    /**
+     * Use this method to build a new modal form
+     *
+     * @return new ModalFormBuilder instance
+     */
     public static ModalFormBuilder modal() {
         return new ModalFormBuilder();
     }
 
+    /**
+     * Use this method to build a new custom form
+     *
+     * @return new CustomFormBuilder instance
+     */
     public static CustomFormBuilder custom() {
         return new CustomFormBuilder();
     }
 
-    public abstract void handleResponse(Player p, String data);
+    public abstract void handleResponse(Player p, JsonNode node);
 
     public void close(Player p) {
         for (Consumer<Player> closeListener : closeListeners) {
@@ -45,13 +71,13 @@ public abstract class Form {
         }
     }
 
-    public void submit(Player p, Object response) {
+    public void submit(Player p, R response) {
         if (response == null) {
             close(p);
             return;
         }
 
-        for (BiConsumer<Player, Object> listener : listeners) {
+        for (BiConsumer<Player, R> listener : listeners) {
             listener.accept(p, response);
         }
     }
@@ -62,9 +88,7 @@ public abstract class Form {
         }
     }
 
-    public static abstract class FormBuilder<F extends Form, T extends FormBuilder<F, T, R>, R> {
-
-        private final T self;
+    public static abstract class FormBuilder<F extends Form<R>, T extends FormBuilder<F, T, R>, R> {
 
         protected String title = "";
 
@@ -72,31 +96,56 @@ public abstract class Form {
         protected final List<Consumer<Player>> closeListeners = new LinkedList<>();
         protected final List<Consumer<Player>> errorListeners = new LinkedList<>();
 
-        @SuppressWarnings("unchecked")
-        public FormBuilder() {
-            self = (T) this;
-        }
-
+        /**
+         * Set a title of the form
+         *
+         * @param title form title
+         * @return self builder instance
+         */
         public T title(@Nonnull String title) {
             this.title = title;
-            return self;
+            return self();
         }
 
-        public T onSubmit(BiConsumer<Player, R> listener) {
+        /**
+         * Called when the form is successfully submitted
+         *
+         * @param listener callback function
+         * @return builder instance
+         */
+        public T onSubmit(@Nonnull BiConsumer<Player, R> listener) {
             this.listeners.add(listener);
-            return self;
+            return self();
         }
 
-        public T onClose(Consumer<Player> listener) {
+        /**
+         * Called when the form is closed
+         *
+         * @param listener callback function
+         * @return builder instance
+         */
+        public T onClose(@Nonnull Consumer<Player> listener) {
             this.closeListeners.add(listener);
-            return self;
+            return self();
         }
 
-        public T onError(Consumer<Player> listener) {
+        /**
+         * Called when an error occurs during the response processing
+         * That could be caused either by a plugin or wrong response (which shouldn't occur in case of vanilla client)
+         *
+         * @param listener callback function
+         * @return builder instance
+         */
+        public T onError(@Nonnull Consumer<Player> listener) {
             this.errorListeners.add(listener);
-            return self;
+            return self();
         }
 
+        /**
+         * @return a new Form instance of given generic type
+         */
         public abstract F build();
+
+        protected abstract T self();
     }
 }

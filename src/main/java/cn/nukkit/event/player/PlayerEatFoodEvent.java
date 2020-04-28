@@ -18,7 +18,7 @@ public class PlayerEatFoodEvent extends PlayerEvent implements Cancellable {
     }
 
     public PlayerEatFoodEvent(Player player, Food food) {
-        this.player = player;
+        super(player);
         this.food = food;
     }
 

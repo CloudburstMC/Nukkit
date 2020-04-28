@@ -14,7 +14,7 @@ public class PlayerToggleFlightEvent extends PlayerEvent implements Cancellable 
     protected final boolean isFlying;
 
     public PlayerToggleFlightEvent(Player player, boolean isFlying) {
-        this.player = player;
+        super(player);
         this.isFlying = isFlying;
     }
 

@@ -1,24 +1,17 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.player.Player;
 
-public class PlayerBedLeaveEvent extends PlayerEvent {
+public class PlayerJumpEvent extends PlayerEvent {
+
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {
         return handlers;
     }
 
-    private final Block bed;
-
-    public PlayerBedLeaveEvent(Player player, Block bed) {
+    public PlayerJumpEvent(Player player) {
         super(player);
-        this.bed = bed;
-    }
-
-    public Block getBed() {
-        return bed;
     }
 }

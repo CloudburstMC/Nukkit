@@ -33,6 +33,10 @@ public class SyncedEntityData {
         map.putAll(this.data);
     }
 
+    public void putFlagsIn(EntityDataMap map) {
+        map.putFlags(this.flags);
+    }
+
     public boolean contains(EntityData data) {
         return this.data.containsKey(data);
     }
@@ -165,6 +169,10 @@ public class SyncedEntityData {
             this.data.putVector3f(data, value);
             this.dataChangeSet.putVector3f(data, value);
         }
+    }
+
+    public Object get(EntityData data) {
+        return this.data.ensureAndGet(data);
     }
 
     public boolean getFlag(EntityFlag flag) {

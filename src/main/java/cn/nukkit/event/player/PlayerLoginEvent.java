@@ -15,7 +15,7 @@ public class PlayerLoginEvent extends PlayerEvent implements Cancellable {
 
 
     public PlayerLoginEvent(Player player, String kickMessage) {
-        this.player = player;
+        super(player);
         this.kickMessage = kickMessage;
     }
 

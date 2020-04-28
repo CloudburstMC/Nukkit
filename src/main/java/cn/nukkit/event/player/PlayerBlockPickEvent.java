@@ -21,9 +21,9 @@ public class PlayerBlockPickEvent extends PlayerEvent implements Cancellable {
     private Item item;
 
     public PlayerBlockPickEvent(Player player, Block blockClicked, Item item) {
+        super(player);
         this.blockClicked = blockClicked;
         this.item = item;
-        this.player = player;
     }
 
     public Item getItem() {

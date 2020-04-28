@@ -14,7 +14,7 @@ public class PlayerMouseOverEntityEvent extends PlayerEvent {
     private final Entity entity;
 
     public PlayerMouseOverEntityEvent(Player player, Entity entity) {
-        this.player = player;
+        super(player);
         this.entity = entity;
     }
 

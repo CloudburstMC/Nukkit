@@ -13,14 +13,14 @@ public class PlayerRespawnEvent extends PlayerEvent {
 
     private Location location;
 
-    private boolean firstSpawn;
+    private final boolean firstSpawn;
 
     public PlayerRespawnEvent(Player player, Location location) {
         this(player, location, false);
     }
 
     public PlayerRespawnEvent(Player player, Location location, boolean firstSpawn) {
-        this.player = player;
+        super(player);
         this.location = location;
         this.firstSpawn = firstSpawn;
     }
