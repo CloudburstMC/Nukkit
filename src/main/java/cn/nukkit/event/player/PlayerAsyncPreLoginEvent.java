@@ -1,12 +1,11 @@
 package cn.nukkit.event.player;
 
-import cn.nukkit.Server;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.player.Player;
+import cn.nukkit.player.PlayerLoginData;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -22,31 +21,20 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
         return handlers;
     }
 
-    private final String name;
-    private final UUID uuid;
-    private final InetSocketAddress address;
+    private final PlayerLoginData loginData;
 
     private LoginResult loginResult = LoginResult.SUCCESS;
     private String kickMessage = "Plugin Reason";
 
-    private final List<Consumer<Server>> scheduledActions = new ArrayList<>();
+    private final List<Consumer<Player>> scheduledActions = new ArrayList<>();
 
-    public PlayerAsyncPreLoginEvent(String name, UUID uuid, InetSocketAddress address) {
-        this.name = name;
-        this.uuid = uuid;
-        this.address = address;
+    public PlayerAsyncPreLoginEvent(PlayerLoginData loginData) {
+        super(null);
+        this.loginData = loginData;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public UUID getUuid() {
-        return uuid;
-    }
-
-    public InetSocketAddress getAddress() {
-        return address;
+    public PlayerLoginData getLoginData() {
+        return loginData;
     }
 
     public LoginResult getLoginResult() {
@@ -65,11 +53,11 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
         this.kickMessage = kickMessage;
     }
 
-    public void scheduleSyncAction(Consumer<Server> action) {
+    public void scheduleSyncAction(Consumer<Player> action) {
         this.scheduledActions.add(action);
     }
 
-    public List<Consumer<Server>> getScheduledActions() {
+    public List<Consumer<Player>> getScheduledActions() {
         return new ArrayList<>(scheduledActions);
     }
 
@@ -80,6 +68,11 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
     public void disAllow(String message) {
         this.loginResult = LoginResult.KICK;
         this.kickMessage = message;
+    }
+
+    @Override
+    public Player getPlayer() {
+        throw new UnsupportedOperationException("No Player instance provided in async event");
     }
 
     public enum LoginResult {

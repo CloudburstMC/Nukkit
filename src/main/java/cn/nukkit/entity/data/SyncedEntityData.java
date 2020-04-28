@@ -33,6 +33,10 @@ public class SyncedEntityData {
         map.putAll(this.data);
     }
 
+    public void putFlagsIn(EntityDataMap map) {
+        map.putFlags(this.flags);
+    }
+
     public boolean contains(EntityData data) {
         return this.data.containsKey(data);
     }

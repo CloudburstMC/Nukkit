@@ -14,7 +14,7 @@ public class PlayerAchievementAwardedEvent extends PlayerEvent implements Cancel
     protected final String achievement;
 
     public PlayerAchievementAwardedEvent(Player player, String achievementId) {
-        this.player = player;
+        super(player);
         this.achievement = achievementId;
     }
 

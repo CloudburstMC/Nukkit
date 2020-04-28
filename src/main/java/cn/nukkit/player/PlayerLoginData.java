@@ -33,7 +33,7 @@ public class PlayerLoginData {
         shouldLogin = false;
     }
 
-    public void initializePlayer() {
+    public Player initializePlayer() {
         Player player;
 
         PlayerCreationEvent ev = new PlayerCreationEvent(interfaz, Player.class, Player.class, this.chainData.getClientId(), session.getAddress());
@@ -47,11 +47,13 @@ public class PlayerLoginData {
             session.addDisconnectHandler(interfaz.initDisconnectHandler(player));
         } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
             log.throwing(Level.ERROR, e);
-            return;
+            return null;
         }
 
         player.processLogin();
         player.completeLoginSequence();
+
+        return player;
     }
 
     public AsyncTask getPreLoginEventTask() {

@@ -14,7 +14,7 @@ public class PlayerToggleGlideEvent extends PlayerEvent implements Cancellable {
     protected final boolean isGliding;
 
     public PlayerToggleGlideEvent(Player player, boolean isSneaking) {
-        this.player = player;
+        super(player);
         this.isGliding = isSneaking;
     }
 

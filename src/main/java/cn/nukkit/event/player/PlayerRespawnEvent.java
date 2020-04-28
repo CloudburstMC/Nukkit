@@ -20,7 +20,7 @@ public class PlayerRespawnEvent extends PlayerEvent {
     }
 
     public PlayerRespawnEvent(Player player, Location location, boolean firstSpawn) {
-        this.player = player;
+        super(player);
         this.location = location;
         this.firstSpawn = firstSpawn;
     }

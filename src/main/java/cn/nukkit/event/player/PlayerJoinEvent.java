@@ -14,12 +14,12 @@ public class PlayerJoinEvent extends PlayerEvent {
     protected TextContainer joinMessage;
 
     public PlayerJoinEvent(Player player, TextContainer joinMessage) {
-        this.player = player;
+        super(player);
         this.joinMessage = joinMessage;
     }
 
     public PlayerJoinEvent(Player player, String joinMessage) {
-        this.player = player;
+        super(player);
         this.joinMessage = new TextContainer(joinMessage);
     }
 

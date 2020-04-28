@@ -15,7 +15,7 @@ public class PlayerBedEnterEvent extends PlayerEvent implements Cancellable {
     private final Block bed;
 
     public PlayerBedEnterEvent(Player player, Block bed) {
-        this.player = player;
+        super(player);
         this.bed = bed;
     }
 

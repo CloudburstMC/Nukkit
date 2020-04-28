@@ -21,7 +21,7 @@ public class PlayerItemHeldEvent extends PlayerEvent implements Cancellable {
     private final int hotbarSlot;
 
     public PlayerItemHeldEvent(Player player, Item item, int hotbarSlot) {
-        this.player = player;
+        super(player);
         this.item = item;
         this.hotbarSlot = hotbarSlot;
     }

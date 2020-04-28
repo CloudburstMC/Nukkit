@@ -5,6 +5,7 @@ import cn.nukkit.event.player.PlayerAsyncPreLoginEvent;
 import cn.nukkit.event.player.PlayerPreLoginEvent;
 import cn.nukkit.network.BedrockInterface;
 import cn.nukkit.network.ProtocolInfo;
+import cn.nukkit.player.Player;
 import cn.nukkit.player.PlayerLoginData;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.ClientChainData;
@@ -112,21 +113,21 @@ public class LoginPacketHandler implements BedrockPacketHandler {
 
             @Override
             public void onRun() {
-                e = new PlayerAsyncPreLoginEvent(loginDataInstance.getName(), loginDataInstance.getChainData().getClientUUID(), loginDataInstance.getSession().getAddress());
+                e = new PlayerAsyncPreLoginEvent(loginDataInstance);
                 server.getPluginManager().callEvent(e);
             }
 
             @Override
             public void onCompletion(Server server) {
-                if(!loginDataInstance.getSession().isClosed()){
+                if (!loginDataInstance.getSession().isClosed()) {
                     if (e.getLoginResult() == PlayerAsyncPreLoginEvent.LoginResult.KICK) {
                         loginDataInstance.getSession().disconnect(e.getKickMessage());
                     } else if (loginDataInstance.isShouldLogin()) {
-                        loginDataInstance.initializePlayer();
-                    }
+                        Player player = loginDataInstance.initializePlayer();
 
-                    for (Consumer<Server> action : e.getScheduledActions()) {
-                        action.accept(server);
+                        for (Consumer<Player> action : e.getScheduledActions()) {
+                            action.accept(player);
+                        }
                     }
                 }
             }

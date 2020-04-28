@@ -20,7 +20,7 @@ public class PlayerInteractEntityEvent extends PlayerEvent implements Cancellabl
     protected final Vector3f clickedPos;
 
     public PlayerInteractEntityEvent(Player player, Entity entity, Item item, Vector3f clickedPos) {
-        this.player = player;
+        super(player);
         this.entity = entity;
         this.item = item;
         this.clickedPos = clickedPos;
