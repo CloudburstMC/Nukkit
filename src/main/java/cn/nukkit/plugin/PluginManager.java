@@ -96,13 +96,6 @@ public class PluginManager {
                                 this.plugins.put(plugin.getDescription().getName(), plugin);
 
                                 this.parseYamlCommands(plugin);
-
-/*
-                                if (!pluginCommands.isEmpty()) {
-                                    this.server.registerAll(plugin, pluginCommands);
-                                }
-*/
-
                                 return plugin;
                             }
                         } catch (Exception e) {

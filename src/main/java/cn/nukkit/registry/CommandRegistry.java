@@ -3,6 +3,7 @@ package cn.nukkit.registry;
 import cn.nukkit.Server;
 import cn.nukkit.command.*;
 import cn.nukkit.command.defaults.*;
+import cn.nukkit.command.simple.SimpleCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
@@ -17,6 +18,7 @@ import lombok.extern.log4j.Log4j2;
 import net.daporkchop.lib.common.ref.Ref;
 import net.daporkchop.lib.common.ref.ThreadRef;
 
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
 
@@ -26,8 +28,8 @@ import java.util.regex.Matcher;
  * If the name is not unique, the registry will try to prefix the command with the plugin name
  * (ex: nukkitx:commnad)
  *
- * @author: Sleepybear
- * @since: API 2.0.0
+ * @author Sleepybear
+ * @since API 2.0.0
  */
 @Log4j2
 public class CommandRegistry implements Registry {
@@ -86,6 +88,27 @@ public class CommandRegistry implements Registry {
 
         log.debug("Registered command: {}", command);
 
+    }
+
+    /**
+     * Used to register {@link SimpleCommand}s created using the annotations found in <code>cn.nukkit.command.simple</code>
+     * package.
+     *
+     * @param plugin        Reference to your {@link PluginBase}
+     * @param simpleCommand Object reference to the class containing the SimpleCommand annotations.
+     */
+    public synchronized void registerSimpleCommand(Plugin plugin, Object simpleCommand) {
+        Objects.requireNonNull(simpleCommand, "simpleCommand");
+        Objects.requireNonNull(plugin, "plugin");
+        checkClosed();
+
+        for (Method method : simpleCommand.getClass().getDeclaredMethods()) {
+            cn.nukkit.command.simple.Command def = method.getAnnotation(cn.nukkit.command.simple.Command.class);
+            if (def != null) {
+                String cmd = def.name();
+                register(plugin, cmd, SimpleCommand.factory(simpleCommand, method, def.description(), def.usageMessage(), def.aliases()));
+            }
+        }
     }
 
     /**
