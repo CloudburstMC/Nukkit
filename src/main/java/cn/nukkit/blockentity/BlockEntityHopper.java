@@ -313,10 +313,10 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     @Override
     public void onBreak() {
-
         for (Item content : inventory.getContents().values()) {
             level.dropItem(this, content);
         }
+        this.inventory.clearAll();
     }
 
     public boolean pushItems() {
