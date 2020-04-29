@@ -42,12 +42,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
-import static java.lang.Integer.valueOf;
 
 /**
  * @author MagicDroidX
  */
-@SuppressWarnings("UnnecessaryBoxing")
 public abstract class Entity extends Location implements Metadatable {
 
     public static final int NETWORK_ID = -1;
@@ -126,9 +124,9 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = 60; //float
     public static final int DATA_AREA_EFFECT_CLOUD_WAITING = 61; //int
     public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = 62; //int
-    public static final int DATA_SHULKER_PEEK_ID = 64; //int
+    public static final int DATA_SHULKER_PEEK_ID = 63; //int
     public static final int DATA_SHULKER_ATTACH_FACE = 64; //byte
-    public static final int DATA_SHULKER_ATTACHED = 64; //short
+    public static final int DATA_SHULKER_ATTACHED = 65; //short
     public static final int DATA_SHULKER_ATTACH_POS = 66; //block coords
     public static final int DATA_TRADING_PLAYER_EID = 67; //long
     public static final int DATA_TRADING_CAREER = 68;
