@@ -10,6 +10,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,15 +38,16 @@ public class GlobalBlockPalette {
 
         for (CompoundTag state : tag.getAll()) {
             int runtimeId = runtimeIdAllocator.getAndIncrement();
-            if (!state.contains("meta")) continue;
+            if (!state.contains("LegacyStates")) continue;
 
-            int id = state.getShort("id");
-            int[] meta = state.getIntArray("meta");
+            List<CompoundTag> legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
 
             // Resolve to first legacy id
-            runtimeIdToLegacy.put(runtimeId, id << 6 | meta[0]);
-            for (int val : meta) {
-                int legacyId = id << 6 | val;
+            CompoundTag firstState = legacyStates.get(0);
+            runtimeIdToLegacy.put(runtimeId, firstState.getInt("id") << 6 | firstState.getShort("val"));
+
+            for (CompoundTag legacyState : legacyStates) {
+                int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
                 legacyToRuntimeId.put(legacyId, runtimeId);
             }
             state.remove("meta"); // No point in sending this since the client doesn't use it.
