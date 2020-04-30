@@ -23,10 +23,10 @@ import java.util.*;
 import java.util.regex.Matcher;
 
 /**
- * CommandRegistry is used to register custom commands. Use the {@link #register(Plugin, String, CommandFactory) register()}
+ * <code>CommandRegistry</code> is used to register custom commands. Use the {@link #register(Plugin, String, CommandFactory) register()}
  * method to pass a <code>{@link CommandFactory}</code> object with your command name.
  * If the name is not unique, the registry will try to prefix the command with the plugin name
- * (ex: nukkitx:commnad)
+ * (ex: <code>nukkitx:commnad</code>)
  *
  * @author Sleepybear
  * @since API 2.0.0
@@ -112,8 +112,8 @@ public class CommandRegistry implements Registry {
     }
 
     /**
-     * This method registers an alias for your {@link Command}. Please note that any aliases assigned
-     * to the command via the {@link Command#setAliases(String[]) setAliases()} during the constructor
+     * This method registers an alias for your {@link PluginCommand Command}. Please note that any aliases assigned
+     * to the command via the {@link Command#setAliases(String[]) setAliases()} method during the constructor
      * will be automatically registered. If the alias is already registered and also assigned during the
      * constructor, it will simply be skipped with no error.
      *
@@ -142,11 +142,11 @@ public class CommandRegistry implements Registry {
     }
 
     /**
-     * Registers all the aliases in the set {@param aliases}, using the {@link #registerAlias(Plugin, String, String) registerAlias()}
+     * Registers all the aliases in the set <code>aliases</code>, using the {@link #registerAlias(Plugin, String, String) registerAlias()}
      * method.
      *
      * @param plugin  A reference to your {@link PluginBase} plugin object
-     * @param name    The name used when registering the {@link Command}
+     * @param name    The name used when registering the {@link PluginCommand Command}
      * @param aliases The {@link Set} of String aliases to link to the above command
      */
     public void registerAliases(Plugin plugin, String name, String... aliases) {
@@ -250,7 +250,7 @@ public class CommandRegistry implements Registry {
      * Used to obtain a Mapping of String name to Command objects. Note that this map
      * does not include aliases.
      *
-     * @return a {@link ImmutableMap} of String command names to {@link Command} objects.
+     * @return An {@link ImmutableMap} of String command names to {@link Command} objects.
      */
     public Map<String, Command> getRegisteredCommands() {
         return this.registeredCommands;
