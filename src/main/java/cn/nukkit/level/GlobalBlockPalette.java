@@ -13,13 +13,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.nio.ByteOrder;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GlobalBlockPalette {
@@ -46,7 +41,7 @@ public class GlobalBlockPalette {
             }
 
             for (CompoundTag override : states.getAll()) {
-                if (override.contains("block") && override.contains("meta")) {
+                if (override.contains("block") && override.contains("LegacyStates")) {
                     metaOverrides.put(override.getCompound("block").remove("version"), override.getList("LegacyStates", CompoundTag.class).getAll());
                 }
             }
