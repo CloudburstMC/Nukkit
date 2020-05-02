@@ -40,7 +40,8 @@ public class AvailableCommandsPacket extends DataPacket {
     public static final int ARG_TYPE_FILE_PATH = 14;
 
     public static final int ARG_TYPE_STRING = 29;
-    public static final int ARG_TYPE_POSITION = 37;
+    public static final int ARG_TYPE_BLOCK_POSITION = 37;
+    public static final int ARG_TYPE_POSITION = 38;
 
     public static final int ARG_TYPE_MESSAGE = 41;
     public static final int ARG_TYPE_RAWTEXT = 43;

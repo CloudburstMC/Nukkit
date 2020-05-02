@@ -2053,6 +2053,8 @@ public class Level implements ChunkManager, Metadatable {
                     ev.setCancelled();
                 } else if (!player.isOp() && isInSpawnRadius(target)) {
                     ev.setCancelled();
+                } else if (!ev.getInstaBreak() && ev.isFastBreak()) {
+                    ev.setCancelled();
                 }
 
                 this.server.getPluginManager().callEvent(ev);
@@ -3423,6 +3425,19 @@ public class Level implements ChunkManager, Metadatable {
     @Override
     public void removeMetadata(String metadataKey, Plugin owningPlugin) throws Exception {
         this.server.getLevelMetadata().removeMetadata(this, metadataKey, owningPlugin);
+    }
+
+    public void addPlayerMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
+        MovePlayerPacket pk = new MovePlayerPacket();
+        pk.eid = entity.getId();
+        pk.x = (float) x;
+        pk.y = (float) y;
+        pk.z = (float) z;
+        pk.yaw = (float) yaw;
+        pk.headYaw = (float) headYaw;
+        pk.pitch = (float) pitch;
+
+        Server.broadcastPacket(entity.getViewers().values(), pk);
     }
 
     public void addEntityMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
