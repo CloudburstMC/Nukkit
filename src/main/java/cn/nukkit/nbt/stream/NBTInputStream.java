@@ -81,7 +81,11 @@ public class NBTInputStream implements DataInput, AutoCloseable {
 
     @Override
     public int readUnsignedShort() throws IOException {
-        return this.readShort() & 0xFFFF;
+        int s = this.stream.readUnsignedShort();
+        if (endianness == ByteOrder.LITTLE_ENDIAN) {
+            s = Integer.reverseBytes(s) >> 16;
+        }
+        return s;
     }
 
     @Override
@@ -143,7 +147,7 @@ public class NBTInputStream implements DataInput, AutoCloseable {
 
     @Override
     public String readUTF() throws IOException {
-        int length = network ? (int) VarInt.readUnsignedVarInt(stream) : this.readUnsignedShort();
+        int length = (int) (network ? VarInt.readUnsignedVarInt(stream) : this.readUnsignedShort());
         byte[] bytes = new byte[length];
         this.stream.read(bytes);
         return new String(bytes, StandardCharsets.UTF_8);
