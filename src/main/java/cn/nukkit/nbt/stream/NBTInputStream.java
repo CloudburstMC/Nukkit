@@ -149,7 +149,7 @@ public class NBTInputStream implements DataInput, AutoCloseable {
     public String readUTF() throws IOException {
         int length = network ? (int) VarInt.readUnsignedVarInt(stream) : this.readUnsignedShort();
         byte[] bytes = new byte[length];
-        this.stream.read(bytes);
+        this.stream.readFully(bytes);
         return new String(bytes, StandardCharsets.UTF_8);
     }
 
