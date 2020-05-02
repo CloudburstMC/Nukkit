@@ -22,12 +22,12 @@ public class NewJungleTree extends TreeGenerator {
     /**
      * The metadata value of the wood to use in tree generation.
      */
-    private final Block metaWood = new BlockWood(BlockWood.JUNGLE);
+    private final Block metaWood = Block.get(BlockID.WOOD, BlockWood.JUNGLE);
 
     /**
      * The metadata value of the leaves to use in tree generation.
      */
-    private final Block metaLeaves = new BlockLeaves(BlockLeaves.JUNGLE);
+    private final Block metaLeaves = Block.get(BlockID.LEAVES, BlockLeaves.JUNGLE);
 
     public NewJungleTree(int minTreeHeight, int maxTreeHeight) {
         this.minTreeHeight = minTreeHeight;
@@ -192,7 +192,7 @@ public class NewJungleTree extends TreeGenerator {
     }
 
     private void addVine(ChunkManager worldIn, BlockVector3 pos, int meta) {
-        this.setBlockAndNotifyAdequately(worldIn, pos, new BlockVine(meta));
+        this.setBlockAndNotifyAdequately(worldIn, pos, Block.get(BlockID.VINE, meta));
     }
 
     private void addHangingVine(ChunkManager worldIn, BlockVector3 pos, int meta) {

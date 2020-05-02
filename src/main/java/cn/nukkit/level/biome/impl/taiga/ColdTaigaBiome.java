@@ -32,4 +32,9 @@ public class ColdTaigaBiome extends TaigaBiome {
     public boolean isFreezing() {
         return true;
     }
+
+    @Override
+    public boolean canRain() {
+        return false;
+    }
 }

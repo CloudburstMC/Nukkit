@@ -2,6 +2,7 @@ package cn.nukkit.entity.weather;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFire;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -48,7 +49,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         if (isEffect && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK) && (this.server.getDifficulty() >= 2)) {
             Block block = this.getLevelBlock();
             if (block.getId() == 0 || block.getId() == Block.TALL_GRASS) {
-                BlockFire fire = new BlockFire();
+                BlockFire fire = (BlockFire) Block.get(BlockID.FIRE);
                 fire.x = block.x;
                 fire.y = block.y;
                 fire.z = block.z;
@@ -122,7 +123,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                         getServer().getPluginManager().callEvent(e);
 
                         if (!e.isCancelled()) {
-                            Block fire = new BlockFire();
+                            Block fire = Block.get(BlockID.FIRE);
                             this.level.setBlock(block, fire);
                             this.getLevel().scheduleUpdate(fire, fire.tickRate());
                         }

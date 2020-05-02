@@ -7,6 +7,10 @@ import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.ToString;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
+import java.util.List;
+
 @ToString
 public class InventoryTransactionPacket extends DataPacket {
 
@@ -101,10 +105,12 @@ public class InventoryTransactionPacket extends DataPacket {
     public void decode() {
         this.transactionType = (int) this.getUnsignedVarInt();
 
-        this.actions = new NetworkInventoryAction[(int) this.getUnsignedVarInt()];
-        for (int i = 0; i < this.actions.length; i++) {
-            this.actions[i] = new NetworkInventoryAction().read(this);
+        int length = (int) this.getUnsignedVarInt();
+        Collection<NetworkInventoryAction> actions = new ArrayDeque<>();
+        for (int i = 0; i < length; i++) {
+            actions.add(new NetworkInventoryAction().read(this));
         }
+        this.actions = actions.toArray(new NetworkInventoryAction[0]);
 
         switch (this.transactionType) {
             case TYPE_NORMAL:

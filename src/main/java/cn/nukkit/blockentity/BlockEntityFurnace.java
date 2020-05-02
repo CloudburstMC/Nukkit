@@ -1,10 +1,7 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
-import cn.nukkit.block.BlockFurnace;
-import cn.nukkit.block.BlockFurnaceBurning;
+import cn.nukkit.block.*;
 import cn.nukkit.event.inventory.FurnaceBurnEvent;
 import cn.nukkit.event.inventory.FurnaceSmeltEvent;
 import cn.nukkit.inventory.*;
@@ -124,6 +121,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         for (Item content : inventory.getContents().values()) {
             level.dropItem(this, content);
         }
+        this.inventory.clearAll();
     }
 
     @Override
@@ -165,7 +163,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     public Item getItem(int index) {
         int i = this.getSlotIndex(index);
         if (i < 0) {
-            return new ItemBlock(new BlockAir(), 0, 0);
+            return new ItemBlock(Block.get(BlockID.AIR), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
             return NBTIO.getItemHelper(data);
@@ -231,7 +229,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
                     fuel.setDamage(0);
                     fuel.setCount(1);
                 } else {
-                    fuel = new ItemBlock(new BlockAir(), 0, 0);
+                    fuel = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
                 }
             }
             this.inventory.setFuel(fuel);
@@ -281,7 +279,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
                         this.inventory.setResult(ev.getResult());
                         raw.setCount(raw.getCount() - 1);
                         if (raw.getCount() == 0) {
-                            raw = new ItemBlock(new BlockAir(), 0, 0);
+                            raw = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
                         }
                         this.inventory.setSmelting(raw);
                     }
