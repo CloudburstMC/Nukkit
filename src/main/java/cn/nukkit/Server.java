@@ -133,8 +133,6 @@ public class Server {
     private final NukkitConsole console;
     private final ConsoleThread consoleThread;
 
-    //private SimpleCommandMap commandMap;
-
     private CraftingManager craftingManager;
 
     private final PackManager packManager = new PackManager();
@@ -155,7 +153,6 @@ public class Server {
 
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
-    private final int networkZlibProvider = 0;
 
     private boolean autoTickRate = true;
     private int autoTickRateLimit = 20;

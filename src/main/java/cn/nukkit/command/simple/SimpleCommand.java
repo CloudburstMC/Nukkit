@@ -32,36 +32,33 @@ public class SimpleCommand extends Command {
     }
 
     public static CommandFactory factory(Object object, Method method, String desc, String usage, String[] aliases) {
-        return new CommandFactory() {
-            @Override
-            public Command create(String name) {
-                SimpleCommand sc = new SimpleCommand(object, method, name, desc, usage, aliases);
-                Arguments args = method.getAnnotation(Arguments.class);
-                if (args != null) {
-                    sc.setMaxArgs(args.max());
-                    sc.setMinArgs(args.min());
-                }
-
-                CommandPermission perm = method.getAnnotation(CommandPermission.class);
-                if (perm != null) {
-                    sc.setPermission(perm.value());
-                }
-
-                if (method.isAnnotationPresent(ForbidConsole.class)) {
-                    sc.setForbidConsole(true);
-                }
-
-                CommandParameters params = method.getAnnotation(CommandParameters.class);
-                if (params != null) {
-                    Collection<CommandParameter[]> map = Arrays.stream(params.parameters())
-                            .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
-                                    .map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional()))
-                                    .distinct()
-                                    .toArray(CommandParameter[]::new))).values();
-                    sc.commandParameters.addAll(map);
-                }
-                return sc;
+        return name -> {
+            SimpleCommand sc = new SimpleCommand(object, method, name, desc, usage, aliases);
+            Arguments args = method.getAnnotation(Arguments.class);
+            if (args != null) {
+                sc.setMaxArgs(args.max());
+                sc.setMinArgs(args.min());
             }
+
+            CommandPermission perm = method.getAnnotation(CommandPermission.class);
+            if (perm != null) {
+                sc.setPermission(perm.value());
+            }
+
+            if (method.isAnnotationPresent(ForbidConsole.class)) {
+                sc.setForbidConsole(true);
+            }
+
+            CommandParameters params = method.getAnnotation(CommandParameters.class);
+            if (params != null) {
+                Collection<CommandParameter[]> map = Arrays.stream(params.parameters())
+                        .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
+                                .map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional()))
+                                .distinct()
+                                .toArray(CommandParameter[]::new))).values();
+                sc.commandParameters.addAll(map);
+            }
+            return sc;
         };
     }
 
