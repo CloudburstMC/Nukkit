@@ -9,6 +9,9 @@ Nukkit 1.X and 2.X.
 ## [Unreleased]
 Click the link above to see the future.
 
+## [1.2.0.0-PN] - 2020-05-03 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/6?closed=1))
+**Note:** Effort has been made to keep this list accurate but some bufixes and new features might be missing here, specially those made by the NukkitX team and contributors.
+
 ### Added
 - This change log file
 - [#108] EntityMoveByPistonEvent
@@ -38,8 +41,6 @@ Click the link above to see the future.
 ### Changed
 - Make BlockLectern implements Faceable
 - The versioning convention now follows this pattern:<br>`upstream.major.minor.patch-PN`<br>[Click here for details.](https://github.com/GameModsBR/PowerNukkit/blob/7912aa4be68e94a52762361c2d5189b7bbc58d2a/pom.xml#L8-L14)
-
-**Note:** Effort has been made to keep this list accurate but some bufixes and new features might be missing here, specially those made by the NukkitX team and contributors.
 
 ## [1.1.1.0-PN] - 2020-01-21
 ### Fixes
@@ -147,7 +148,8 @@ Click the link above to see the future.
     - Loom
     - Bamboo
 
-[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...HEAD
+[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...HEAD
+[1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
 [1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN#files_bucket
 
 [a8247360]: https://github.com/GameModsBR/PowerNukkit/commit/a8247360
