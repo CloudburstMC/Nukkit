@@ -91,7 +91,7 @@ public class BlockKelp extends BlockFlowable {
         int age = MathHelper.clamp(getDamage(), 0, 25);
         if (age < 25) {
             Block up = up();
-            if (up instanceof BlockWater && up.getDamage() == 0 || up.getDamage() == 8) {
+            if (up instanceof BlockWater && (up.getDamage() == 0 || up.getDamage() == 8)) {
                 BlockKelp grown = new BlockKelp(age + 1);
                 BlockGrowEvent ev = new BlockGrowEvent(this, grown);
                 Server.getInstance().getPluginManager().callEvent(ev);

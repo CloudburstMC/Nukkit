@@ -174,7 +174,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         if (type == Level.BLOCK_UPDATE_REDSTONE && this.level.getServer().isRedstoneEnabled()) {
             if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
-                this.setDamage(this.getDamage() ^ 0x04);
+                this.setDamage(this.getDamage() ^ TRAPDOOR_OPEN_BIT);
                 this.level.setBlock(this, this, true);
                 this.level.addSound(this, isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
                 return type;

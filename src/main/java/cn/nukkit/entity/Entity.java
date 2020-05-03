@@ -82,23 +82,26 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_DISPLAY_ITEM = 16; //int (id | (data << 16))
     public static final int DATA_DISPLAY_OFFSET = 17; //int
     public static final int DATA_HAS_DISPLAY = 18; //byte (must be 1 for minecart to show block inside)
-    //TODO: add more properties
+    public static final int DATA_SWELL = 19;
+    public static final int DATA_OLD_SWELL = 20;
+    public static final int DATA_SWELL_DIR = 21;
+    public static final int DATA_CHARGE_AMOUNT = 22;
     public static final int DATA_ENDERMAN_HELD_RUNTIME_ID = 23; //short
     public static final int DATA_ENTITY_AGE = 24; //short
     public static final int DATA_PLAYER_FLAGS = 26; //byte
-    /* 27 (int) player "index"? */
+    public static final int DATA_PLAYER_INDEX = 27;
     public static final int DATA_PLAYER_BED_POSITION = 28; //block coords
     public static final int DATA_FIREBALL_POWER_X = 29; //float
     public static final int DATA_FIREBALL_POWER_Y = 30; //float
     public static final int DATA_FIREBALL_POWER_Z = 31; //float
-    /* 32 (unknown)
-     * 33 (float) fishing bobber
-     * 34 (float) fishing bobber
-     * 35 (float) fishing bobber */
+    public static final int DATA_AUX_POWER = 32;
+    public static final int DATA_FISH_X = 33;
+    public static final int DATA_FISH_Z = 34;
+    public static final int DATA_FISH_ANGLE = 35;
     public static final int DATA_POTION_AUX_VALUE = 36; //short
     public static final int DATA_LEAD_HOLDER_EID = 37; //long
     public static final int DATA_SCALE = 38; //float
-    public static final int DATA_HAS_NPC_COMPONENT = 39; //byte
+    public static final int DATA_HAS_NPC_COMPONENT = 39; //byte - PowerNukkit
     public static final int DATA_NPC_SKIN_ID = 40; //string
     public static final int DATA_URL_TAG = 41; //string
     public static final int DATA_MAX_AIR = 42; //short
@@ -111,7 +114,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_WITHER_TARGET_1 = 49; //long
     public static final int DATA_WITHER_TARGET_2 = 50; //long
     public static final int DATA_WITHER_TARGET_3 = 51; //long
-    /* 52 (short) */
+    public static final int DATA_AERIAL_ATTACK = 52;
     public static final int DATA_BOUNDING_BOX_WIDTH = 53; //float
     public static final int DATA_BOUNDING_BOX_HEIGHT = 54; //float
     public static final int DATA_FUSE_LENGTH = 55; //int
@@ -122,51 +125,101 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = 60; //float
     public static final int DATA_AREA_EFFECT_CLOUD_WAITING = 61; //int
     public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = 62; //int
-    /* 63 (int) shulker-related */
+    public static final int DATA_SHULKER_PEEK_ID = 63; //int
     public static final int DATA_SHULKER_ATTACH_FACE = 64; //byte
-    /* 65 (short) shulker-related */
+    public static final int DATA_SHULKER_ATTACHED = 65; //short
     public static final int DATA_SHULKER_ATTACH_POS = 66; //block coords
     public static final int DATA_TRADING_PLAYER_EID = 67; //long
-
-    public static final int DATA_COMMAND_BLOCK_ENABLED = 69; //byte
+    public static final int DATA_TRADING_CAREER = 68;
+    public static final int DATA_HAS_COMMAND_BLOCK = 69; // NukkitX
+    public static final int DATA_COMMAND_BLOCK_ENABLED = 69; //byte - PowerNukkit
     public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
     public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = 71; //string
     public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = 72; //byte
     public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = 73; //byte
     public static final int DATA_STRENGTH = 74; //int
     public static final int DATA_MAX_STRENGTH = 75; //int
-    public static final int DATA_EVOKER_SPELL_COLOR = 76; // int
+    public static final int DATA_SPELL_CASTING_COLOR = 76; //int NukkitX
+    public static final int DATA_EVOKER_SPELL_COLOR = 76; // int PowerNukkit
     public static final int DATA_LIMITED_LIFE = 77; // int
     public static final int DATA_ARMOR_STAND_POSE_INDEX = 78; // int
     public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 79; // int
     public static final int DATA_ALWAYS_SHOW_NAMETAG = 80; // byte
     public static final int DATA_COLOR_2 = 81; // byte
-    // 82 unknown
+    public static final int DATA_NAME_AUTHOR = 82;
     public static final int DATA_SCORE_TAG = 83; //String
     public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
     public static final int DATA_PUFFERFISH_SIZE = 85;
-    public static final int DATA_BOAT_BUBBLE_TIME = 86;
-    public static final int DATA_AGENT_ID = 87;
-
-    public static final int DATA_EAT_COUNTER = 90;
+    public static final int DATA_BUBBLE_TIME = 86; // NukkitX
+    /**
+     * @deprecated Replace with {@link #DATA_BUBBLE_TIME}.
+     */
+    @Deprecated
+    public static final int DATA_BOAT_BUBBLE_TIME = 86; // PowerNukkit
+    /**
+     * @deprecated Replace with {@link #DATA_AGENT}.
+     */
+    @Deprecated
+    public static final int DATA_AGENT_ID = 87; // PowerNukkit
+    public static final int DATA_AGENT = 87; // NukkitX
+    public static final int DATA_SITTING_AMOUNT = 88;
+    public static final int DATA_SITTING_AMOUNT_PREVIOUS = 89;
+    public static final int DATA_EATING_COUNTER = 90;
     public static final int DATA_FLAGS_EXTENDED = 91;
-
-    public static final int DATA_AREA_EFFECT_CLOUD_DURATION = 94; // int
-    public static final int DATA_AREA_EFFECT_CLOUD_SPAWN_TIME = 95; // long
-    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_PER_TICK = 96; // float
-    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP = 97; // float
-    public static final int DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT = 98; // int
+    public static final int DATA_LAYING_AMOUNT = 92;
+    public static final int DATA_LAYING_AMOUNT_PREVIOUS = 93;
+    /**
+     * @deprecated Replace with {@link #DATA_DURATION}.
+     */
+    @Deprecated
+    public static final int DATA_AREA_EFFECT_CLOUD_DURATION = 94; // int - PowerNukkit
+    public static final int DATA_DURATION = 94; // NukkitX
+    /**
+     * @deprecated Replace with {@link #DATA_SPAWN_TIME}.
+     */
+    @Deprecated
+    public static final int DATA_AREA_EFFECT_CLOUD_SPAWN_TIME = 95; // long - PowerNukkit
+    public static final int DATA_SPAWN_TIME = 95; // NukkitX
+    /**
+     * @deprecated Replace with {@link #DATA_CHANGE_RATE}.
+     */
+    @Deprecated
+    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_PER_TICK = 96; // float - PowerNukkit
+    public static final int DATA_CHANGE_RATE = 96; // NukkitX
+    /**
+     * @deprecated Replace with {@link #DATA_CHANGE_ON_PICKUP}.
+     */
+    @Deprecated
+    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP = 97; // float - PowerNukkit
+    public static final int DATA_CHANGE_ON_PICKUP = 97; // NukkitX
+    /**
+     * @deprecated Replace with {@link #DATA_PICKUP_COUNT}.
+     */
+    @Deprecated
+    public static final int DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT = 98; // int - PowerNukkit
+    public static final int DATA_PICKUP_COUNT = 98; // NukkitX
+    /**
+     * @deprecated Wrong mapping in NukkitX. Replace with {@link #DATA_INTERACT_TEXT}.
+     */
+    @Deprecated
     public static final int DATA_INTERACTIVE_TAG = 99; // string (button text)
+    public static final int DATA_INTERACT_TEXT = 99; // NukkitX
     public static final int DATA_TRADE_TIER = 100; // int
     public static final int DATA_MAX_TRADE_TIER = 101; // int
-    public static final int DATA_TRADE_XP = 102; // int
+    /**
+     * @deprecated Replace with {@link #DATA_TRADE_EXPERIENCE}.
+     */
+    public static final int DATA_TRADE_XP = 102; // int - PowerNukkit
+    public static final int DATA_TRADE_EXPERIENCE = 102; // NukkitX
     public static final int DATA_SKIN_ID = 103; // int
-    // 105 (int) unknown
-    // 106 (byte) unknown
-    // 107 (float) unknown
-    // 108 (float) unknown
-    // 109 (string) unknown
-    // 110 (float) unknown
+    public static final int DATA_SPAWNING_FRAMES = 104;
+    public static final int DATA_COMMAND_BLOCK_TICK_DELAY = 105;
+    public static final int DATA_COMMAND_BLOCK_EXECUTE_ON_FIRST_TICK = 106;
+    public static final int DATA_AMBIENT_SOUND_INTERVAL = 107;
+    public static final int DATA_AMBIENT_SOUND_EVENT_NAME = 108;
+    public static final int DATA_FALL_DAMAGE_MULTIPLIER = 109;
+    public static final int DATA_NAME_RAW_TEXT = 110;
+    public static final int DATA_CAN_RIDE_TARGET = 111;
     // 112 (byte) unknwon
 
     // Flags
@@ -224,14 +277,31 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_ENCHANTED = 51;
     public static final int DATA_FLAG_SHOW_TRIDENT_ROPE = 52; // tridents show an animated rope when enchanted with loyalty after they are thrown and return to their owner. To be combined with DATA_OWNER_EID
     public static final int DATA_FLAG_CONTAINER_PRIVATE = 53; //inventory is private, doesn't drop contents when killed if true
-    //public static final int TransformationComponent 54; ???
+    public static final int DATA_FLAG_IS_TRANSFORMING = 54;
     public static final int DATA_FLAG_SPIN_ATTACK = 55;
     public static final int DATA_FLAG_SWIMMING = 56;
     public static final int DATA_FLAG_BRIBED = 57; //dolphins have this set when they go to find treasure for the player
     public static final int DATA_FLAG_PREGNANT = 58;
     public static final int DATA_FLAG_LAYING_EGG = 59;
-    public static final int DATA_FLAG_RIDER_CAN_PICKUP = 60;
-    public static final int DATA_FLAG_TRANSITION_SITTING = 61;
+    /**
+     * @deprecated Use {@link #DATA_FLAG_RIDER_CAN_PICK} instead.
+     */
+    @Deprecated
+    public static final int DATA_FLAG_RIDER_CAN_PICKUP = 60; // PowerNukkit
+    public static final int DATA_FLAG_RIDER_CAN_PICK = 60; // NukkitX
+    //TODO Is it actually sitting? or should really be setting? Needs to investigate.
+    /**
+     * @deprecated This is not available in NukkitX yet, use with care.
+     * @see #DATA_FLAG_TRANSITION_SETTING
+     */
+    @Deprecated
+    public static final int DATA_FLAG_TRANSITION_SITTING = 61; // PowerNukkit but without typo
+    /**
+     * @deprecated This is from NukkitX but it has a typo which we can't remove unless NukkitX removes from their side.
+     * @see #DATA_FLAG_TRANSITION_SITTING
+     */
+    @Deprecated
+    public static final int DATA_FLAG_TRANSITION_SETTING = 61; // NukkitX with the same typo
     public static final int DATA_FLAG_EATING = 62;
     public static final int DATA_FLAG_LAYING_DOWN = 63;
     public static final int DATA_FLAG_SNEEZING = 64;
@@ -242,8 +312,32 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_OVER_SCAFFOLDING = 69;
     public static final int DATA_FLAG_FALL_THROUGH_SCAFFOLDING = 70;
     public static final int DATA_FLAG_BLOCKING = 71; //shield
+    /**
+     * @deprecated Use {@link #DATA_FLAG_TRANSITION_BLOCKING} instead.
+     */
+    @Deprecated
     public static final int DATA_FLAG_DISABLED_BLOCKING = 72;
-
+    public static final int DATA_FLAG_TRANSITION_BLOCKING = 72;
+    public static final int DATA_FLAG_BLOCKED_USING_SHIELD = 73;
+    public static final int DATA_FLAG_BLOCKED_USING_DAMAGED_SHIELD = 74;
+    public static final int DATA_FLAG_SLEEPING = 75;
+    public static final int DATA_FLAG_WANTS_TO_WAKE = 76;
+    public static final int DATA_FLAG_TRADE_INTEREST = 77;
+    public static final int DATA_FLAG_DOOR_BREAKER = 78;
+    public static final int DATA_FLAG_BREAKING_OBSTRUCTION = 79;
+    public static final int DATA_FLAG_DOOR_OPENER = 80;
+    public static final int DATA_FLAG_IS_ILLAGER_CAPTAIN = 81;
+    public static final int DATA_FLAG_STUNNED = 82;
+    public static final int DATA_FLAG_ROARING = 83;
+    public static final int DATA_FLAG_DELAYED_ATTACK = 84;
+    public static final int DATA_FLAG_IS_AVOIDING_MOBS = 85;
+    public static final int DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK = 86;
+    public static final int DATA_FLAG_HIDDEN_WHEN_INVISIBLE = 87;
+    public static final int DATA_FLAG_IS_IN_UI = 88;
+    public static final int DATA_FLAG_STALKING = 89;
+    public static final int DATA_FLAG_EMOTING = 90;
+    public static final int DATA_FLAG_CELEBRATING = 91;
+    
     public static long entityCount = 1;
 
     private static final Map<String, Class<? extends Entity>> knownEntities = new HashMap<>();
@@ -1098,7 +1192,6 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (health < 1) {
             if (this.isAlive()) {
-                this.health = 0;
                 this.kill();
             }
         } else if (health <= this.getMaxHealth() || health < this.health) {
@@ -1614,13 +1707,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void fall(float fallDistance) {
-        float damage;
         if (this.hasEffect(Effect.SLOW_FALLING)) {
-            damage = 0;
+            return;
         }
-        else {
-            damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
-        }
+
+        float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
         Location floorLocation = this.floor();
         Block down = this.level.getBlock(floorLocation.down());
         if (damage > 0) {

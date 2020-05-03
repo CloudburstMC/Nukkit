@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.BlockDoorWood;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 
 /**
  * author: MagicDroidX
@@ -18,7 +19,7 @@ public class ItemDoorWood extends Item {
 
     public ItemDoorWood(Integer meta, int count) {
         super(WOODEN_DOOR, 0, count, "Oak Door");
-        this.block = new BlockDoorWood();
+        this.block = Block.get(BlockID.WOODEN_DOOR_BLOCK);
     }
 
 }

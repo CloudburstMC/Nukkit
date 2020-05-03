@@ -13,12 +13,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.nio.ByteOrder;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GlobalBlockPalette {
@@ -33,7 +29,7 @@ public class GlobalBlockPalette {
         legacyToRuntimeId.defaultReturnValue(-1);
         runtimeIdToLegacy.defaultReturnValue(-1);
 
-        Map<CompoundTag, int[]> metaOverrides = new LinkedHashMap<>();
+        Map<CompoundTag, List<CompoundTag>> metaOverrides = new LinkedHashMap<>();
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states_overrides.dat")) {
             if (stream == null) {
                 throw new AssertionError("Unable to locate block state nbt");
@@ -45,8 +41,8 @@ public class GlobalBlockPalette {
             }
 
             for (CompoundTag override : states.getAll()) {
-                if (override.contains("block") && override.contains("meta")) {
-                    metaOverrides.put(override.getCompound("block").remove("version"), override.getIntArray("meta"));
+                if (override.contains("block") && override.contains("LegacyStates")) {
+                    metaOverrides.put(override.getCompound("block").remove("version"), override.getList("LegacyStates", CompoundTag.class).getAll());
                 }
             }
 
@@ -71,28 +67,31 @@ public class GlobalBlockPalette {
 
         for (CompoundTag state : tag.getAll()) {
             int runtimeId = runtimeIdAllocator.getAndIncrement();
-            int[] meta = metaOverrides.get(state.getCompound("block").copy().remove("version"));
-            if (meta == null) {
-                if (!state.contains("meta")) {
+            List<CompoundTag> legacyStates = metaOverrides.get(state.getCompound("block").copy().remove("version"));
+            if (legacyStates == null) {
+                if (!state.contains("LegacyStates")) {
                     continue;
                 } else {
-                    meta = state.getIntArray("meta");
+                    legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
                 }
             }
 
-            int id = state.getShort("id");
             String name = state.getCompound("block").getString("name");
 
             // Resolve to first legacy id
-            runtimeIdToLegacy.put(runtimeId, id << 6 | meta[0]);
+            CompoundTag firstState = legacyStates.get(0);
+            int id = firstState.getInt("id");
+            runtimeIdToLegacy.put(runtimeId, id << 6 | firstState.getShort("val"));
             stringToLegacyId.put(name, id);
             legacyIdToString.put(id, name);
 
-            for (int val : meta) {
-                int legacyId = id << 6 | val;
+            for (CompoundTag legacyState : legacyStates) {
+                int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
                 legacyToRuntimeId.put(legacyId, runtimeId);
             }
-            state.remove("meta"); // No point in sending this since the client doesn't use it.
+            // No point in sending this since the client doesn't use it.
+            state.remove("meta");
+            state.remove("LegacyStates");
         }
 
         try {

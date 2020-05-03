@@ -933,7 +933,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             food.sendFoodLevel();
         }
 
-        if (this.getHealth() <= 0) {
+        if (this.getHealth() < 1) {
             this.respawn();
         }
 
@@ -1548,7 +1548,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!to.equals(ev.getTo())) { //If plugins modify the destination
                         this.teleport(ev.getTo(), null);
                     } else {
-                        this.addMovement(this.x, this.y + this.getEyeHeight(), this.z, this.yaw, this.pitch, this.yaw);
+                        this.addMovement(this.x, this.y, this.z, this.yaw, this.pitch, this.yaw);
                     }
                     //Biome biome = Biome.biomes[level.getBiomeId(this.getFloorX(), this.getFloorZ())];
                     //sendTip(biome.getName() + " (" + biome.doesOverhang() + " " + biome.getBaseHeight() + "-" + biome.getHeightVariation() + ")");
@@ -1638,6 +1638,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Override
+    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
+        this.sendPosition(new Vector3(x, y, z), yaw, pitch, MovePlayerPacket.MODE_NORMAL, this.getViewers().values().toArray(new Player[0]));
+    }
+
+    @Override
     public boolean setMotion(Vector3 motion) {
         if (super.setMotion(motion)) {
             if (this.chunk != null) {
@@ -1690,8 +1695,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.lastUpdate = currentTick;
 
-        if (this.fishing != null) {
-            if (this.distance(fishing) > 80) {
+        if (this.fishing != null && this.server.getTick() % 20 == 0) {
+            if (this.distance(fishing) > 33) {
                 this.stopFishing(false);
             }
         }
@@ -1753,7 +1758,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 || blockId == Block.SCAFFOLDING;// || (blockId == Block.SWEET_BERRY_BUSH && block.getDamage() > 0);
 
                         if (!this.hasEffect(Effect.JUMP) && diff > 0.6 && expectedVelocity < this.speed.y && !ignore) {
-                            if (this.inAirTicks < 100) {
+                            if (this.inAirTicks < 150) {
                                 this.setMotion(new Vector3(0, expectedVelocity, 0));
                             } else if (this.kick(PlayerKickEvent.Reason.FLYING_DISABLED, "Flying is not enabled on this server")) {
                                 return false;
@@ -2468,7 +2473,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                             Block block = target.getSide(face);
                             if (block.getId() == Block.FIRE) {
-                                this.level.setBlock(block, new BlockAir(), true);
+                                this.level.setBlock(block, Block.get(BlockID.AIR), true);
                                 this.level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_EXTINGUISH_FIRE);
                                 break;
                             }
@@ -2798,13 +2803,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
-
-                    if (craftingType != CRAFTING_ANVIL) {
+                    EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
+                    if (craftingType != CRAFTING_ANVIL && entityEventPacket.event != EntityEventPacket.ENCHANT) {
                         this.craftingType = CRAFTING_SMALL;
                         //this.resetCraftingGridType();
                     }
 
-                    EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
 
                     switch (entityEventPacket.event) {
                         case EntityEventPacket.EATING_ITEM:
@@ -2817,6 +2821,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             this.dataPacket(entityEventPacket);
                             Server.broadcastPacket(this.getViewers().values(), entityEventPacket);
+                            break;
+                        case EntityEventPacket.ENCHANT:
+                            if (entityEventPacket.eid != this.id) {
+                                break;
+                            }
+
+                            int levels = entityEventPacket.data; // Sent as negative number of levels lost
+                            if (levels < 0) this.setExperience(this.exp, this.expLevel + levels);
                             break;
                     }
                     break;
@@ -2844,7 +2856,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     TextPacket textPacket = (TextPacket) packet;
 
                     if (textPacket.type == TextPacket.TYPE_CHAT) {
-                        this.chat(textPacket.message);
+                        String chatMessage = textPacket.message;
+                        int breakLine = chatMessage.indexOf('\n');
+                        // Chat messages shouldn't contain break lines so ignore text afterwards
+                        if (breakLine != -1) {
+                            chatMessage = chatMessage.substring(0, breakLine);
+                        }
+                        this.chat(chatMessage);
                     }
                     break;
                 case ProtocolInfo.CONTAINER_CLOSE_PACKET:
@@ -2930,7 +2948,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (itemDrop.getId() != Item.AIR) {
                                 vector3 = this.temporalVector.setComponents(itemFrame.x + 0.5, itemFrame.y, itemFrame.z + 0.5);
                                 this.level.dropItem(vector3, itemDrop);
-                                itemFrame.setItem(new ItemBlock(new BlockAir()));
+                                itemFrame.setItem(new ItemBlock(Block.get(BlockID.AIR)));
                                 itemFrame.setItemRotation(0);
                                 this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
                             }
@@ -3261,13 +3279,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     if (target.onInteract(this, item, useItemOnEntityData.clickPos) && this.isSurvival()) {
                                         if (item.isTool()) {
                                             if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
-                                                item = new ItemBlock(new BlockAir());
+                                                item = new ItemBlock(Block.get(BlockID.AIR));
                                             }
                                         } else {
                                             if (item.count > 1) {
                                                 item.count--;
                                             } else {
-                                                item = new ItemBlock(new BlockAir());
+                                                item = new ItemBlock(Block.get(BlockID.AIR));
                                             }
                                         }
 
@@ -3313,7 +3331,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     if (item.isTool() && this.isSurvival()) {
                                         if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
-                                            this.inventory.setItemInHand(new ItemBlock(new BlockAir()));
+                                            this.inventory.setItemInHand(new ItemBlock(Block.get(BlockID.AIR)));
                                         } else {
                                             this.inventory.setItemInHand(item);
                                         }
@@ -3398,6 +3416,45 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         respawn1.respawnState = RespawnPacket.STATE_READY_TO_SPAWN;
                         this.dataPacket(respawn1);
                     }
+                    break;
+                case ProtocolInfo.BOOK_EDIT_PACKET:
+                    BookEditPacket bookEditPacket = (BookEditPacket) packet;
+                    Item oldBook = this.inventory.getItem(bookEditPacket.inventorySlot);
+                    if (oldBook.getId() != Item.BOOK_AND_QUILL) {
+                        return;
+                    }
+
+                    Item newBook = oldBook.clone();
+                    boolean success;
+                    switch (bookEditPacket.action) {
+                        case REPLACE_PAGE:
+                            success = ((ItemBookAndQuill) newBook).setPageText(bookEditPacket.pageNumber, bookEditPacket.text);
+                            break;
+                        case ADD_PAGE:
+                            success = ((ItemBookAndQuill) newBook).insertPage(bookEditPacket.pageNumber, bookEditPacket.text);
+                            break;
+                        case DELETE_PAGE:
+                            success = ((ItemBookAndQuill) newBook).deletePage(bookEditPacket.pageNumber);
+                            break;
+                        case SWAP_PAGES:
+                            success = ((ItemBookAndQuill) newBook).swapPages(bookEditPacket.pageNumber, bookEditPacket.secondaryPageNumber);
+                            break;
+                        case SIGN_BOOK:
+                            newBook = Item.get(Item.WRITTEN_BOOK, 0, 1, oldBook.getCompoundTag());
+                            success = ((ItemBookWritten) newBook).signBook(bookEditPacket.title, bookEditPacket.author, bookEditPacket.xuid, ItemBookWritten.GENERATION_ORIGINAL);
+                            break;
+                        default:
+                            return;
+                    }
+
+                    if (success) {
+                        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(this, oldBook, newBook, bookEditPacket.action);
+                        this.server.getPluginManager().callEvent(editBookEvent);
+                        if (!editBookEvent.isCancelled()) {
+                            this.inventory.setItem(bookEditPacket.inventorySlot, editBookEvent.getNewBook());
+                        }
+                    }
+                    break;
                 default:
                     break;
             }
@@ -3930,37 +3987,38 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(new String[0])), this.expLevel);
         ev.setKeepExperience(this.level.gameRules.getBoolean(GameRule.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());
+
+        if (cause != null && cause.getCause() != DamageCause.VOID) {
+            PlayerOffhandInventory offhandInventory = this.getOffhandInventory();
+            PlayerInventory playerInventory = this.getInventory();
+            if (offhandInventory.getItem(0).getId() == Item.TOTEM || playerInventory.getItemInHand().getId() == Item.TOTEM) {
+                this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
+                this.extinguish();
+                this.removeAllEffects();
+                this.setHealth(1);
+
+                this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
+                this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800).setAmplifier(1));
+                this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
+
+                EntityEventPacket pk = new EntityEventPacket();
+                pk.eid = this.getId();
+                pk.event = EntityEventPacket.CONSUME_TOTEM;
+                this.dataPacket(pk);
+
+                if (offhandInventory.getItem(0).getId() == Item.TOTEM) {
+                    offhandInventory.clear(0);
+                } else {
+                    playerInventory.clear(playerInventory.getHeldItemIndex());
+                }
+
+                ev.setCancelled(true);
+            }
+        }
+
         this.server.getPluginManager().callEvent(ev);
 
         if (!ev.isCancelled()) {
-            if (cause != null && cause.getCause() != DamageCause.VOID) {
-                PlayerOffhandInventory offhandInventory = this.getOffhandInventory();
-                PlayerInventory playerInventory = this.getInventory();
-                if (offhandInventory.getItem(0).getId() == Item.TOTEM || playerInventory.getItemInHand().getId() == Item.TOTEM) {
-                    this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
-                    this.extinguish();
-                    this.removeAllEffects();
-                    this.setHealth(1);
-
-                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
-                    this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800).setAmplifier(1));
-                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
-
-                    EntityEventPacket pk = new EntityEventPacket();
-                    pk.eid = this.getId();
-                    pk.event = EntityEventPacket.CONSUME_TOTEM;
-                    this.dataPacket(pk);
-
-                    if (offhandInventory.getItem(0).getId() == Item.TOTEM) {
-                        offhandInventory.clear(0);
-                    } else {
-                        playerInventory.clear(playerInventory.getHeldItemIndex());
-                    }
-                    ev.setCancelled(true);
-                    return;
-                }
-            }
-
             if (this.fishing != null) {
                 this.stopFishing(false);
             }
@@ -4020,6 +4078,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         Position respawnPos = playerRespawnEvent.getRespawnPosition();
 
+        this.sendExperience();
+        this.sendExperienceLevel();
 
         this.setSprinting(false);
         this.setSneaking(false);
@@ -5093,6 +5153,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.fishing = null;
+    }
+
+    @Override
+    public boolean doesTriggerPressurePlate() {
+        return this.gamemode != SPECTATOR;
     }
 
     @Override

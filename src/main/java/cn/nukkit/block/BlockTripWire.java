@@ -193,10 +193,10 @@ public class BlockTripWire extends BlockTransparentMeta {
             this.setDisarmed(true);
             this.level.setBlock(this, this, true, false);
             this.updateHook(false);
-            this.getLevel().setBlock(this, new BlockAir(), true, true);
+            this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
         } else {
             this.setPowered(true);
-            this.getLevel().setBlock(this, new BlockAir(), true, true);
+            this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
             this.updateHook(true);
         }
 

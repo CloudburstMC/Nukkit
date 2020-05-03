@@ -2,7 +2,7 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
@@ -110,7 +110,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     public Item getItem(int index) {
         int i = this.getSlotIndex(index);
         if (i < 0) {
-            return new ItemBlock(new BlockAir(), 0, 0);
+            return new ItemBlock(Block.get(BlockID.AIR), 0, 0);
         } else {
             CompoundTag data = (CompoundTag) this.namedTag.getList("Items").get(i);
             return NBTIO.getItemHelper(data);
@@ -315,10 +315,10 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     @Override
     public void onBreak() {
-
         for (Item content : inventory.getContents().values()) {
             level.dropItem(this, content);
         }
+        this.inventory.clearAll();
     }
 
     public boolean pushItems() {

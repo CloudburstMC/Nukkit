@@ -1,7 +1,7 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
@@ -20,7 +20,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     @Override
     protected void initBlockEntity() {
         if (!namedTag.contains("Item")) {
-            namedTag.putCompound("Item", NBTIO.putItemHelper(new ItemBlock(new BlockAir())));
+            namedTag.putCompound("Item", NBTIO.putItemHelper(new ItemBlock(Block.get(BlockID.AIR))));
         }
         if (!namedTag.contains("ItemRotation")) {
             namedTag.putByte("ItemRotation", 0);
@@ -88,7 +88,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     @Override
     public CompoundTag getSpawnCompound() {
         if (!this.namedTag.contains("Item")) {
-            this.setItem(new ItemBlock(new BlockAir()), false);
+            this.setItem(new ItemBlock(Block.get(BlockID.AIR)), false);
         }
         CompoundTag item = namedTag.getCompound("Item").copy();
         item.setName("Item");

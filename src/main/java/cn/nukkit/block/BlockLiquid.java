@@ -253,14 +253,14 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                     boolean decayed = decay < 0;
                     Block to;
                     if (decayed) {
-                        to = new BlockAir();
+                        to = Block.get(BlockID.AIR);
                     } else {
                         to = getBlock(decay);
                     }
                     BlockFromToEvent event = new BlockFromToEvent(this, to);
                     level.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
-                        this.level.setBlock(this, layer, to, true, true);
+                        this.level.setBlock(this, layer, event.getTo(), true, true);
                         if (!decayed) {
                             this.level.scheduleUpdate(this, this.tickRate());
                         }
@@ -473,7 +473,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         if (event.isCancelled()) {
             return false;
         }
-        this.level.setBlock(this, result, true, true);
+        this.level.setBlock(this, event.getTo(), true, true);
         this.level.setBlock(this, 1, Block.get(Block.AIR), true, true);
         this.getLevel().addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_FIZZ);
         return true;
@@ -493,7 +493,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockAir());
+        return new ItemBlock(Block.get(BlockID.AIR));
     }
 
     @Override

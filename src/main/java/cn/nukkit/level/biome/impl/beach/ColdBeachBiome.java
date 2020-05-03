@@ -27,4 +27,9 @@ public class ColdBeachBiome extends SandyBiome {
     public boolean isFreezing() {
         return true;
     }
+
+    @Override
+    public boolean canRain() {
+        return false;
+    }
 }

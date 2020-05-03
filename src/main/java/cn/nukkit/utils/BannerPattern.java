@@ -2,7 +2,6 @@ package cn.nukkit.utils;
 
 import cn.nukkit.nbt.tag.CompoundTag;
 
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
