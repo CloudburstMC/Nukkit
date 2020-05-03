@@ -30,6 +30,7 @@ Click the link above to see the future.
 - [#140] A collision detection issue on Area Effect Cloud which could make it wears off way quicker than it should
 - [#152] Changes the blue_ice blast resistance from 2.5 to 14
 - [#170] Trapdoors behaving incorrectly when they receive redstone signal
+- [#219] Button and door sounds
 
 ### Changed
 - Make BlockLectern implements Faceable
@@ -168,3 +169,4 @@ Click the link above to see the future.
 [#140]: https://github.com/GameModsBR/PowerNukkit/pull/108
 [#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
 [#170]: https://github.com/GameModsBR/PowerNukkit/pull/170
+[#219]: https://github.com/GameModsBR/PowerNukkit/pull/170
