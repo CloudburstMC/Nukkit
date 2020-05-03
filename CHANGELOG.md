@@ -31,10 +31,15 @@ Click the link above to see the future.
 - [#152] Changes the blue_ice blast resistance from 2.5 to 14
 - [#170] Trapdoors behaving incorrectly when they receive redstone signal
 - [#219] Button and door sounds
+- [#44] Different daytime from Android and Windows 10 Edition
+- [#93] Nukkit sends a rain time that doesn't matches the server
+- [#210] Issues with old blocks from old NukkitX worlds, specially fully barked logs (log:15 for example)
 
 ### Changed
 - Make BlockLectern implements Faceable
 - The versioning convention now follows this pattern:<br>`upstream.major.minor.patch-PN`<br>[Click here for details.](https://github.com/GameModsBR/PowerNukkit/blob/7912aa4be68e94a52762361c2d5189b7bbc58d2a/pom.xml#L8-L14)
+
+**Note:** Effort has been made to keep this list accurate but some bufixes and new features might be missing here, specially those made by the NukkitX team and contributors.
 
 ## [1.1.1.0-PN] - 2020-01-21
 ### Fixes
@@ -150,7 +155,8 @@ Click the link above to see the future.
 [NukkitX]: https://github.com/NukkitX/Nukkit
 
 [#12]: https://github.com/GameModsBR/PowerNukkit/issues/12
-[#46]: https://github.com/GameModsBR/PowerNukkit/issues/87
+[#44]: https://github.com/GameModsBR/PowerNukkit/issues/44
+[#46]: https://github.com/GameModsBR/PowerNukkit/issues/46
 [#49]: https://github.com/GameModsBR/PowerNukkit/pull/49
 [#50]: https://github.com/GameModsBR/PowerNukkit/pull/50
 [#51]: https://github.com/GameModsBR/PowerNukkit/pull/51
@@ -163,10 +169,12 @@ Click the link above to see the future.
 [#58]: https://github.com/GameModsBR/PowerNukkit/pull/58
 [#80]: https://github.com/GameModsBR/PowerNukkit/pull/80
 [#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
+[#93]: https://github.com/GameModsBR/PowerNukkit/issues/93
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
 [#129]: https://github.com/GameModsBR/PowerNukkit/pull/108
 [#140]: https://github.com/GameModsBR/PowerNukkit/pull/108
 [#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
 [#170]: https://github.com/GameModsBR/PowerNukkit/pull/170
+[#210]: https://github.com/GameModsBR/PowerNukkit/issues/210
 [#219]: https://github.com/GameModsBR/PowerNukkit/pull/170
