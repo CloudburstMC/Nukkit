@@ -1,0 +1,19 @@
+parent: "minecraft:extreme_hills"
+
+decorators:
+  - id: "nukkitx:noise"
+    seed: "extreme_hills"
+    selector:
+      id: "nukkitx:simplex"
+      scale: 0.0045
+      octaves: 4
+    min: -0.06666666666
+    max: 0.13333333333
+    in:
+      - id: "nukkitx:surface"
+        top: "grass"
+        filler: "dirt"
+    out:
+      - id: "nukkitx:surface"
+        top: "gravel"
+        filler: "gravel"

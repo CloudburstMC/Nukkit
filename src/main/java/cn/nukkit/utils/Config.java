@@ -364,11 +364,11 @@ public class Config {
         return config.isBoolean(key);
     }
 
-    public List getList(String key) {
+    public <T> List<T> getList(String key) {
         return this.getList(key, null);
     }
 
-    public List getList(String key, List defaultList) {
+    public <T> List<T> getList(String key, List<T> defaultList) {
         return this.correct ? this.config.getList(key, defaultList) : defaultList;
     }
 

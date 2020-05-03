@@ -13,9 +13,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
 
-import static cn.nukkit.block.BlockIds.AIR;
-
 public interface IChunk extends Comparable<IChunk> {
+    int STATE_NEW = 0;
+    int STATE_GENERATED = 1;
+    int STATE_POPULATED = 2;
+    int STATE_FINISHED = 3;
+
     @Nonnull
     ChunkSection getOrCreateSection(@Nonnegative int y);
 
@@ -95,56 +98,7 @@ public interface IChunk extends Comparable<IChunk> {
 
     void setBlockLight(int x, int y, int z, @Nonnegative int level);
 
-    default void recalculateHeightMap() {
-        for (int z = 0; z < 16; ++z) {
-            for (int x = 0; x < 16; ++x) {
-                this.setHeightMap(x, z, this.getHighestBlock(x, z, false));
-            }
-        }
-        setDirty();
-    }
-
-    default void populateSkyLight() {
-        for (int z = 0; z < 16; ++z) {
-            for (int x = 0; x < 16; ++x) {
-                int top = this.getHeightMap(x, z);
-                for (int y = 255; y > top; --y) {
-                    this.setSkyLight(x, y, z, (byte) 15);
-                }
-                for (int y = top; y >= 0; --y) {
-                    if (BlockRegistry.get().getBlock(this.getBlockId(x, y, z), 0).isSolid()) {
-                        break;
-                    }
-                    this.setSkyLight(x, y, z, (byte) 15);
-                }
-                this.setHeightMap(x, z, this.getHighestBlock(x, z, false));
-            }
-        }
-    }
-
-    int getHeightMap(int x, int z);
-
-    void setHeightMap(int x, int z, @Nonnegative int value);
-
-    default int getHighestBlock(int x, int z) {
-        return getHighestBlock(x, z, true);
-    }
-
-    default int getHighestBlock(int x, int z, boolean cache) {
-        if (cache) {
-            int h = this.getHeightMap(x, z);
-            if (h != 0 && h != 255) {
-                return h;
-            }
-        }
-        for (int y = 255; y >= 0; --y) {
-            if (getBlockId(x, y, z) != AIR) {
-                this.setHeightMap(x, z, y);
-                return y;
-            }
-        }
-        return 0;
-    }
+    int getHighestBlock(int x, int z);
 
     void addEntity(@Nonnull Entity entity);
 
@@ -218,20 +172,30 @@ public interface IChunk extends Comparable<IChunk> {
     @Nonnull
     Collection<BlockEntity> getBlockEntities();
 
-    boolean isGenerated();
+    /**
+     * Gets this chunk's current state.
+     */
+    int getState();
 
-    void setGenerated(boolean generated);
+    /**
+     * Atomically updates this chunk's state.
+     *
+     * @param next the new state to set
+     * @return the chunk's previous state
+     * @throws IllegalStateException if the new state is invalid, or the same as or lower than the current state
+     */
+    int setState(int next);
 
-    default void setGenerated() {
-        this.setGenerated(true);
+    default boolean isGenerated()   {
+        return this.getState() >= STATE_GENERATED;
     }
 
-    boolean isPopulated();
+    default boolean isPopulated()   {
+        return this.getState() >= STATE_POPULATED;
+    }
 
-    void setPopulated(boolean populated);
-
-    default void setPopulated() {
-        this.setPopulated(true);
+    default boolean isFinished() {
+        return this.getState() >= STATE_FINISHED;
     }
 
     /**
@@ -266,6 +230,13 @@ public interface IChunk extends Comparable<IChunk> {
      * Clear chunk to a state as if it was not generated.
      */
     void clear();
+
+    /**
+     * @return this chunk's key, as returned by {@link Chunk#key()}
+     */
+    default long key()  {
+        return Chunk.key(this.getX(), this.getZ());
+    }
 
     @Override
     default int compareTo(IChunk o) {

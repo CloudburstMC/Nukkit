@@ -5,10 +5,11 @@ import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3i;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.DIRT;
 import static cn.nukkit.block.BlockIds.MYCELIUM;
@@ -48,11 +49,10 @@ public class BlockMycelium extends BlockSolid {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
             //TODO: light levels
-            NukkitRandom random = new NukkitRandom();
             Vector3i pos = this.getPosition();
-            int x = random.nextRange(pos.getX() - 1, pos.getX() + 1);
-            int y = random.nextRange(pos.getY() - 1, pos.getY() + 1);
-            int z = random.nextRange(pos.getZ() - 1, pos.getZ() + 1);
+            int x = ThreadLocalRandom.current().nextInt(pos.getX() - 1, pos.getX() + 1);
+            int y = ThreadLocalRandom.current().nextInt(pos.getY() - 1, pos.getY() + 1);
+            int z = ThreadLocalRandom.current().nextInt(pos.getZ() - 1, pos.getZ() + 1);
             Block block = this.getLevel().getBlock(x, y, z);
             if (block.getId() == DIRT && block.getMeta() == 0) {
                 if (block.up().isTransparent()) {

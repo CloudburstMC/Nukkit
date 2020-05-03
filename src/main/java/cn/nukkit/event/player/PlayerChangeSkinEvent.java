@@ -20,7 +20,7 @@ public class PlayerChangeSkinEvent extends PlayerEvent implements Cancellable {
     private final SerializedSkin skin;
 
     public PlayerChangeSkinEvent(Player player, SerializedSkin skin) {
-        this.player = player;
+        super(player);
         this.skin = skin;
     }
 

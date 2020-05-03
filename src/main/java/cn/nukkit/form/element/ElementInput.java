@@ -1,51 +1,32 @@
 package cn.nukkit.form.element;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.ToString;
 
-public class ElementInput extends Element {
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    @JsonProperty
-    private final String type = "input"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
-    private String text = "";
-    private String placeholder = "";
+@ToString
+@Getter
+public final class ElementInput extends Element {
+
+    private String placeholder;
     @JsonProperty("default")
-    private String defaultText = "";
+    private String defaultText;
 
-    public ElementInput(String text) {
-        this(text, "");
+    public ElementInput(@Nonnull String elementText) {
+        super(ElementType.INPUT, elementText);
     }
 
-    public ElementInput(String text, String placeholder) {
-        this(text, placeholder, "");
-    }
-
-    public ElementInput(String text, String placeholder, String defaultText) {
-        this.text = text;
-        this.placeholder = placeholder;
-        this.defaultText = defaultText;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public String getPlaceHolder() {
-        return placeholder;
-    }
-
-    public void setPlaceHolder(String placeholder) {
+    public ElementInput(@Nonnull String elementText, @Nullable String placeholder) {
+        super(ElementType.INPUT, elementText);
         this.placeholder = placeholder;
     }
 
-    public String getDefaultText() {
-        return defaultText;
-    }
-
-    public void setDefaultText(String defaultText) {
+    public ElementInput(@Nonnull String elementText, @Nullable String placeholder, @Nullable String defaultText) {
+        super(ElementType.INPUT, elementText);
+        this.placeholder = placeholder;
         this.defaultText = defaultText;
     }
 }

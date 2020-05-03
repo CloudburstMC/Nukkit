@@ -1,0 +1,24 @@
+
+elevationVanilla:
+  height: 0.2
+  variation: 0.3
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "mycelium"
+    filler: "dirt"
+
+populators:
+    # Small mushrooms
+  - id: "nukkitx:shrub"
+    chance: 0.0078125 # about 2 per chunk
+    on: "mycelium"
+    block: "2*brown_mushroom,red_mushroom"
+
+    # Huge mushrooms
+  - id: "nukkitx:tree"
+    chance: 0.00390625 # about 1 per chunk
+    on: "mycelium"
+    types:
+      - "mushroom_red"
+      - "mushroom_brown"

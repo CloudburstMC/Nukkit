@@ -8,6 +8,7 @@ import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 import lombok.ToString;
 
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
@@ -18,11 +19,11 @@ public class LevelData {
 
     private final GameRuleMap gameRules = new GameRuleMap();
     private volatile long currentTick;
-    private long randomSeed = ThreadLocalRandom.current().nextLong();
+    private Long randomSeed;
     private int dimension;
     private Identifier generator;
     private String generatorOptions = "";
-    private String name = "World";
+    private String name;
     private long time;
     private Vector3i spawn = Vector3i.from(0, 128, 0);
     private int serverChunkTickRange;
@@ -99,11 +100,13 @@ public class LevelData {
     }
 
     public long getRandomSeed() {
-        return this.randomSeed;
+        return Objects.requireNonNull(this.randomSeed, "seed has not been set!");
     }
 
     public void setRandomSeed(long randomSeed) {
-        this.randomSeed = randomSeed;
+        if (this.randomSeed == null)    {
+            this.randomSeed = randomSeed;
+        }
     }
 
     public int getDimension() {

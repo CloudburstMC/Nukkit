@@ -1,0 +1,72 @@
+# NukkitX Standard Generator - Overworld density generator preset
+#
+# Author: DaPorkchop_
+
+# The scale factors are not just arbitrary constants. Vanilla uses the following scale factors:
+#    low/high noise: 684.412
+#    selector noise: 684.412/80
+#    depth noise: 200
+# First of all, since Notch seems to despise anything and everything that is standard, Minecraft's definition of "octave" is exactly
+# the opposite of what it should be. Rather than having a lacunarity of 2 and a persistence of 0.5, it uses a lacunarity of 0.5 and
+# a persistence of 2. This means that to convert Minecraft's scale values to the universally accepted ones, we use the formula
+#    scale = vanillaScale / (2 ** (octaves - 1))
+# Since vanilla uses 8 octaves for selector noise and 16 octaves for low/high and depth noise, we get the following scale factors:
+#    low/high noise: 0.0208865966796875
+#    selector noise: 0.066837109375
+#    depth noise: 0.006103515625
+# But wait! There's more! Minecraft only samples noise values every 4 blocks along the X and Z axes and every 8 blocks along the Y
+# axis, and interpolates linearly between them. This is a significant optimization, as it reduces the number of required noise calculations
+# down to only 1/(4*4*8)=1/128 of what it would be, and only causes minor artifacts (since the noise rarely changes too significantly
+# over a distance of 4 blocks. (wow, an actual optimization in Minecraft? what's going on!?!) We do this as well, however for some
+# reason Minecraft samples the noise values at the scaled-down coordinates rather than the real ones. Our final scale factors are:
+#    low/high noise: 0.005221649169921875 (on X/Z axis), 0.0026108245849609375 (on Y axis)
+#    selector noise: 0.01670927734375 (on X/Z axis), 0.008354638671875 (on Y axis)
+#    depth noise: 0.00152587890625 (on X/Z axis) (depth noise is only sampled in 2D)
+
+id: "nukkitx:vanilla"
+seed: "overworld"
+selectorNoise:
+  id: "nukkitx:perlin"
+  scale:
+    x: 0.01670927734375
+    y: 0.008354638671875
+    z: 0.01670927734375
+  octaves: 8
+  factor: 12.75
+  offset: 0.5
+lowNoise:
+  id: "nukkitx:perlin"
+  scale:
+    x: 0.005221649169921875
+    y: 0.0026108245849609375
+    z: 0.005221649169921875
+  octaves: 16
+  factor: 1.0
+  offset: 0.0
+highNoise:
+  id: "nukkitx:perlin"
+  scale:
+    x: 0.005221649169921875
+    y: 0.0026108245849609375
+    z: 0.005221649169921875
+  octaves: 16
+  factor: 1.0
+  offset: 0.0
+depthNoise:
+  id: "nukkitx:perlin"
+  scale: 0.00152587890625
+  octaves: 16
+  factor: 1.0240000486373901
+  offset: 0.0
+terrainSmoothing:
+  radius: 2
+  scale: 4
+  heightFactor: 1.0
+  heightOffset: 0.0
+  heightVariationFactor: 1.0
+  heightVariationOffset: 0.0
+specialHeightVariation: 0.25
+heightFactor: 64.0
+heightOffset: 64.0
+heightVariationFactor: 64.0
+heightVariationOffset: 0.0

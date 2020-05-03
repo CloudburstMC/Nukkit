@@ -4,7 +4,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Identifier;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -59,7 +58,7 @@ public class BlockOreEmerald extends BlockSolid {
 
     @Override
     public int getDropExp() {
-        return new NukkitRandom().nextRange(3, 7);
+        return ThreadLocalRandom.current().nextInt(3, 8);
     }
 
     @Override

@@ -129,11 +129,11 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
             tag = (CompoundTag) nbtInputStream.readTag();
         }
 
-        tag.listenForString("LevelName", data::setName);
+        /*tag.listenForString("LevelName", data::setName);
         if (tag.contains("FlatWorldLayers")) {
             data.setGeneratorOptions(tag.getString("FlatWorldLayers"));
         }
-        tag.listenForString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));
+        tag.listenForString("generatorName", s -> data.setGenerator(Identifier.fromString(s)));*/
         tag.listenForInt("lightningTime", data::setLightningTime);
         tag.listenForInt("Difficulty", data::setDifficulty);
         tag.listenForInt("GameType", data::setGameType);

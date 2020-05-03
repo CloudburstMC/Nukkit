@@ -1,0 +1,15 @@
+# NukkitX Standard Generator - End preset
+#
+# Author: DaPorkchop_
+
+groundBlock: "end_stone"
+
+biomes: "minecraft:end"
+
+density: "minecraft:end"
+
+decorators:
+  - id: "nukkitx:next"
+
+populators:
+  - id: "nukkitx:next"

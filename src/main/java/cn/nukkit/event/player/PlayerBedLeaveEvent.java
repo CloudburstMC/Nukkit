@@ -14,7 +14,7 @@ public class PlayerBedLeaveEvent extends PlayerEvent {
     private final Block bed;
 
     public PlayerBedLeaveEvent(Player player, Block bed) {
-        this.player = player;
+        super(player);
         this.bed = bed;
     }
 

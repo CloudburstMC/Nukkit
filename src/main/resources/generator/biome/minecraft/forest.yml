@@ -1,0 +1,63 @@
+
+elevationVanilla:
+  height: 0.1
+  variation: 0.2
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "grass"
+    filler: "dirt"
+
+populators:
+    # Fallen trees
+  - id: "nukkitx:tree"
+    chance: 0.0005580357 # about 1 per 7 chunks
+    on: "grass"
+    replace: "air"
+    types:
+      - species: "oak"
+        fallen: true
+      - species: "oak"
+        fallen: true
+      - species: "oak"
+        fallen: true
+      - species: "oak"
+        fallen: true
+      - species: "birch"
+        fallen: true
+
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.0390625 # about 10 per chunk
+    on: "grass"
+    replace: "air"
+    types:
+      - "oak"
+      - "oak"
+      - "oak"
+      - "oak"
+      - "birch"
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.0078125 # about 2 per chunk
+    on: "grass"
+    block: "tallgrass"
+
+    # Flowers
+  - id: "nukkitx:shrub"
+    chance: 0.015625 # about 4 per chunk
+    on: "grass"
+    replace: "air,tallgrass"
+    roundDown: false
+    block: "2*yellow_flower,red_flower"
+
+    # Double plants
+  - id: "nukkitx:double_plant"
+    chance: 0.01171875 # about 3 per chunk
+    on: "grass"
+    replace: "air,tallgrass"
+    types:
+      - 1 # lilac
+      - 4 # rose
+      - 5 # peony

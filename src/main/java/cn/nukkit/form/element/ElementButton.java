@@ -1,33 +1,39 @@
 package cn.nukkit.form.element;
 
-public class ElementButton {
+import cn.nukkit.form.util.ImageData;
+import cn.nukkit.form.util.ImageType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
+import lombok.Getter;
+import lombok.ToString;
 
-    private String text = "";
-    private ElementButtonImageData image;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
-    public ElementButton(String text) {
-        this.text = text;
+@ToString
+@Getter
+public final class ElementButton {
+
+    @JsonIgnore
+    private final ElementType elementType = ElementType.BUTTON;
+
+    @JsonProperty("text")
+    private final String buttonText;
+    @JsonProperty("image")
+    private final ImageData imageData;
+
+    public ElementButton(@Nonnull String buttonText) {
+        Preconditions.checkNotNull(buttonText, "The provided button text can not be null");
+
+        this.buttonText = buttonText;
+        this.imageData = new ImageData();
     }
 
-    public ElementButton(String text, ElementButtonImageData image) {
-        this.text = text;
-        if (!image.getData().isEmpty() && !image.getType().isEmpty()) this.image = image;
-    }
+    public ElementButton(@Nonnull String buttonText, @Nullable ImageType imageType, @Nullable String imageData) {
+        Preconditions.checkNotNull(buttonText, "The provided button text can not be null");
 
-    public String getText() {
-        return text;
+        this.buttonText = buttonText;
+        this.imageData = new ImageData(imageType, imageData);
     }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public ElementButtonImageData getImage() {
-        return image;
-    }
-
-    public void addImage(ElementButtonImageData image) {
-        if (!image.getData().isEmpty() && !image.getType().isEmpty()) this.image = image;
-    }
-
 }

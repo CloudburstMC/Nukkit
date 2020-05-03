@@ -1,8 +1,8 @@
 package cn.nukkit.entity;
-/**
- * Attribute
- *
- * @author Box, MagicDroidX(code), PeratX @ Nukkit Project
+/*
+  Attribute
+
+  @author Box, MagicDroidX(code), PeratX @ Nukkit Project
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 

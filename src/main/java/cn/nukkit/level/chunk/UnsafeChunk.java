@@ -30,10 +30,8 @@ public final class UnsafeChunk implements IChunk, Closeable {
             .newUpdater(UnsafeChunk.class, "dirty");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> INITIALIZED_FIELD = AtomicIntegerFieldUpdater
             .newUpdater(UnsafeChunk.class, "initialized");
-    private static final AtomicIntegerFieldUpdater<UnsafeChunk> GENERATED_FIELD = AtomicIntegerFieldUpdater
-            .newUpdater(UnsafeChunk.class, "generated");
-    private static final AtomicIntegerFieldUpdater<UnsafeChunk> POPULATED_FIELD = AtomicIntegerFieldUpdater
-            .newUpdater(UnsafeChunk.class, "populated");
+    private static final AtomicIntegerFieldUpdater<UnsafeChunk> STATE_FIELD = AtomicIntegerFieldUpdater
+            .newUpdater(UnsafeChunk.class, "state");
     private static final AtomicIntegerFieldUpdater<UnsafeChunk> CLOSED_FIELD = AtomicIntegerFieldUpdater
             .newUpdater(UnsafeChunk.class, "closed");
     static final AtomicIntegerFieldUpdater<UnsafeChunk> CLEAR_CACHE_FIELD = AtomicIntegerFieldUpdater
@@ -61,9 +59,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     private volatile int initialized;
 
-    private volatile int generated;
-
-    private volatile int populated;
+    private volatile int state = STATE_NEW;
 
     private volatile int closed;
 
@@ -125,7 +121,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Nullable
     @Override
-    public synchronized ChunkSection getSection(int y) {
+    public ChunkSection getSection(int y) {
         checkElementIndex(y, sections.length, "section Y");
         return this.sections[y];
     }
@@ -173,7 +169,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
             return BlockRegistry.get().getRuntimeId(AIR, 0); //will probably always evaluate to 0, but oh well
             //TODO: constant fields for runtime ids of default block states
         }
-        return section.getBlockRuntimeIdUnsafe(x, y, z, layer);
+        return section.getBlockRuntimeIdUnsafe(x, y & 0xF, z, layer);
     }
 
     @Override
@@ -220,7 +216,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
         checkBounds(x, y, z);
         ChunkSection section = this.getSection(y >> 4);
         if (section == null) {
-            if (runtimeId == BlockRegistry.get().getRuntimeId(AIR, 0)) { //will probably always evaluate to 0, but oh well
+            if (runtimeId == 0) {
                 // Setting air in an empty section.
                 return;
             }
@@ -289,6 +285,22 @@ public final class UnsafeChunk implements IChunk, Closeable {
     }
 
     @Override
+    public int getHighestBlock(int x, int z) {
+        checkBounds(x, z);
+        for (int sectionY = 15; sectionY >= 0; sectionY--)  {
+            ChunkSection section = this.sections[sectionY];
+            if (section != null)    {
+                for (int y = 15; y >= 0; y--)    {
+                    if (section.getBlockRuntimeIdUnsafe(x, y, z, 0) != 0)  {
+                        return (sectionY << 4) | y;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /*@Override
     public int getHeightMap(int x, int z) {
         checkBounds(x, z);
         return this.heightMap[get2dIndex(x, z)] & 0xFF;
@@ -299,7 +311,7 @@ public final class UnsafeChunk implements IChunk, Closeable {
         checkBounds(x, z);
         this.heightMap[get2dIndex(x, z)] = (byte) value;
         setDirty();
-    }
+    }*/
 
     @Override
     public void addEntity(@Nonnull Entity entity) {
@@ -408,20 +420,18 @@ public final class UnsafeChunk implements IChunk, Closeable {
         return this.tiles.values();
     }
 
-    public boolean isGenerated() {
-        return generated == 1;
+    @Override
+    public int getState() {
+        return this.state;
     }
 
-    public void setGenerated(boolean generated) {
-        GENERATED_FIELD.set(this, generated ? 1 : 0);
-    }
-
-    public boolean isPopulated() {
-        return populated == 1;
-    }
-
-    public void setPopulated(boolean populated) {
-        POPULATED_FIELD.set(this, populated ? 1 : 0);
+    @Override
+    public int setState(int nextIn) {
+        return STATE_FIELD.getAndAccumulate(this, nextIn, (curr, next) -> {
+            Preconditions.checkArgument(next >= 0 && next <= STATE_FINISHED, "invalid state: %s", next);
+            Preconditions.checkState(curr < next, "invalid state transition: %s => %s", curr, next);
+            return next;
+        });
     }
 
     /**
@@ -429,13 +439,15 @@ public final class UnsafeChunk implements IChunk, Closeable {
      *
      * @return dirty
      */
+    @Override
     public boolean isDirty() {
-        return dirty == 1;
+        return this.state >= STATE_GENERATED && this.dirty == 1;
     }
 
     /**
      * Sets the chunk's dirty status.
      */
+    @Override
     public void setDirty(boolean dirty) {
         if (dirty) {
             CLEAR_CACHE_FIELD.set(this, 1);
@@ -445,25 +457,25 @@ public final class UnsafeChunk implements IChunk, Closeable {
 
     @Override
     public boolean clearDirty() {
-        return DIRTY_FIELD.compareAndSet(this, 1, 0);
+        return this.state >= STATE_GENERATED && DIRTY_FIELD.compareAndSet(this, 1, 0);
     }
 
     /**
      * Clear chunk to a state as if it was not generated.
      */
-    public synchronized void clear() {
+    @Override
+    public void clear() {
         Arrays.fill(this.sections, null);
         Arrays.fill(this.biomes, (byte) 0);
         Arrays.fill(this.heightMap, (byte) 0);
         this.tiles.clear();
         this.entities.clear();
-        this.generated = 0;
-        this.populated = 0;
+        this.state = STATE_NEW;
         this.dirty = 1;
     }
 
     @Override
-    public synchronized void close() {
+    public void close() {
         if (CLOSED_FIELD.compareAndSet(this, 0, 1)) {
             for (Entity entity : ImmutableList.copyOf(this.entities)) {
                 if (entity instanceof Player) {

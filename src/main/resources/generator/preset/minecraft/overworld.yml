@@ -1,0 +1,136 @@
+# NukkitX Standard Generator - Overworld preset
+#
+# Author: DaPorkchop_
+
+groundBlock: "stone"
+seaBlock: "water"
+seaLevel: 63
+
+biomes: "minecraft:overworld"
+
+density: "minecraft:overworld"
+
+decorators:
+  - id: "nukkitx:next"
+
+    # Bedrock
+  - id: "nukkitx:bedrock"
+    block: "bedrock"
+    base: 0
+    fade: 1-5
+
+populators:
+    # Water lakes
+  - id: "nukkitx:lake"
+    chance: 0.0009765625 # about 1 per 4 chunks
+    block: "water"
+    surfaceBlocks: "grass,podzol,mycelium"
+    replaceWithSurface: "dirt"
+
+    # Lava lakes (underground)
+  - id: "nukkitx:lake"
+    chance: 0.00048828125 # about 1 per 8 chunks
+    height:
+      min: 8
+      max: 63
+      downwardBias: true
+    block: "lava"
+    border: "stone"
+
+    # Lava lakes (surface)
+  - id: "nukkitx:lake"
+    chance: 0.00006103515625 # about 1 per 64 chunks
+    height:
+      min: 64
+      max: 255
+      downwardBias: true
+    block: "lava"
+    border: "stone"
+    surfaceBlocks: "grass,podzol,mycelium"
+    replaceWithSurface: "dirt"
+
+  - id: "nukkitx:next"
+
+    #
+    # Minerals
+    # (and other veins that aren't ores)
+    #
+
+    # Dirt and gravel
+  - id: "nukkitx:ore"
+    chance: 0.0703125 # about 18 per chunk
+    size: 33
+    height: "0-255"
+    block: "5*dirt,4*gravel"
+    replace: "stone"
+
+    # Granite, Diorite and Andesite
+    # in vanilla these are generated as three separate ores, but this way adds a bit of variety
+  - id: "nukkitx:ore"
+    chance: 0.1171875 # about 30 per chunk
+    size: 33
+    height: "0-80"
+    block: "stone#1,stone#3,stone#5"
+    replace: "stone"
+
+    #
+    # Ores
+    #
+
+    # Coal
+  - id: "nukkitx:ore"
+    chance: 0.078125 # about 20 per chunk
+    size: 17
+    height: "0-128"
+    block: "coal_ore"
+    replace: "stone"
+
+    # Iron
+  - id: "nukkitx:ore"
+    chance: 0.078125 # about 20 per chunk
+    size: 9
+    height: "0-64"
+    block: "iron_ore"
+    replace: "stone"
+
+    # Gold
+  - id: "nukkitx:ore"
+    chance: 0.0078125 # about 2 per chunk
+    size: 9
+    height: "0-32"
+    block: "gold_ore"
+    replace: "stone"
+
+    # Redstone
+  - id: "nukkitx:ore"
+    chance: 0.03125 # about 8 per chunk
+    size: 8
+    height: "0-16"
+    block: "redstone_ore"
+    replace: "stone"
+
+    # Diamond
+  - id: "nukkitx:ore"
+    chance: 0.00390625 # about 1 per chunk
+    size: 8
+    height: "0-16"
+    block: "diamond_ore"
+    replace: "stone"
+
+    # Lapis Lazuli
+  - id: "nukkitx:ore"
+    chance: 0.00390625 # about 1 per chunk
+    size: 7
+    height:
+      min: 0
+      max: 32
+      gaussian: true
+    block: "lapis_ore"
+    replace: "stone"
+
+finishers:
+  - id: "nukkitx:next"
+
+    # Ice and snow in cold biomes
+  - id: "nukkitx:ice_snow"
+    height: "60-255"

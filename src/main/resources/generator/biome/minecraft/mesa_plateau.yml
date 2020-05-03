@@ -1,0 +1,61 @@
+parent: "minecraft:mesa"
+
+elevationVanilla:
+  height: 1.525
+  variation: 0.025
+
+decorators:
+  - id: "nukkitx:next"
+
+  - id: "nukkitx:noise"
+    selector:
+      id: "nukkitx:simplex"
+      scale: 0.015625
+      octaves: 4
+    threshold: 0.0
+    above:
+      - id: "nukkitx:noise"
+        selector:
+          id: "nukkitx:simplex"
+          scale: 0.0045
+          octaves: 4
+        threshold: 0.0
+        above:
+          - id: "nukkitx:replace_top"
+            height: "86-255"
+            replace:
+              - "hardened_clay"
+              - "stained_hardened_clay" # white
+              - "stained_hardened_clay#1" # orange
+              - "stained_hardened_clay#4" # yellow
+              - "stained_hardened_clay#8" # light gray
+              - "stained_hardened_clay#12" # brown
+              - "stained_hardened_clay#14" # red
+            block: "grass"
+        below:
+          - id: "nukkitx:replace_top"
+            height: "86-255"
+            replace:
+              - "hardened_clay"
+              - "stained_hardened_clay" # white
+              - "stained_hardened_clay#1" # orange
+              - "stained_hardened_clay#4" # yellow
+              - "stained_hardened_clay#8" # light gray
+              - "stained_hardened_clay#12" # brown
+              - "stained_hardened_clay#14" # red
+            block: "dirt#1" # coarse dirt
+
+populators:
+  - id: "nukkitx:next"
+
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.01953125 # about 5 per chunk
+    on: "grass,dirt#1"
+    type: "oak"
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    on: "grass,dirt#1"
+    block: "tallgrass"

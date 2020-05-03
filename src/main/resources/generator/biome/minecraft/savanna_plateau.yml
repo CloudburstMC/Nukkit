@@ -1,0 +1,6 @@
+parent: "minecraft:savanna"
+
+elevationVanilla:
+  height: 1.5
+  variation: 0.025
+

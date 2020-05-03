@@ -1,0 +1,37 @@
+
+elevationVanilla:
+  height: 0.125
+  variation: 0.05
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "grass"
+    filler: "dirt"
+
+populators:
+    # Acacia trees
+  - id: "nukkitx:tree"
+    chance: 0.00390625 # about 1 per chunk
+    on: "grass"
+    replace: "air"
+    type: "acacia"
+
+    # Double tall grass
+  - id: "nukkitx:double_plant"
+    chance: 0.02734375 # about 7 per chunk
+    on: "grass"
+    type: 2
+
+    # Flowers
+  - id: "nukkitx:shrub"
+    chance: 0.015625 # about 4 per chunk
+    on: "grass"
+    replace: "air"
+    roundDown: false
+    block: "2*yellow_flower,red_flower"
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.078125 # about 20 per chunk
+    on: "grass"
+    block: "tallgrass"

@@ -4,8 +4,7 @@ import cn.nukkit.utils.Identifier;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public final class BlockIds {
-
+public class BlockIds {
     public static final Identifier AIR = Identifier.fromString("air");
     public static final Identifier STONE = Identifier.fromString("stone");
     public static final Identifier GRASS = Identifier.fromString("grass");
@@ -42,7 +41,6 @@ public final class BlockIds {
     public static final Identifier PISTON = Identifier.fromString("piston");
     public static final Identifier PISTON_ARM_COLLISION = Identifier.fromString("pistonArmCollision");
     public static final Identifier WOOL = Identifier.fromString("wool");
-    //            public static final Identifier ELEMENT_0 = Identifier.fromString("element_0");
     public static final Identifier YELLOW_FLOWER = Identifier.fromString("yellow_flower");
     public static final Identifier RED_FLOWER = Identifier.fromString("red_flower");
     public static final Identifier BROWN_MUSHROOM = Identifier.fromString("brown_mushroom");
@@ -267,7 +265,8 @@ public final class BlockIds {
     public static final Identifier STRIPPED_DARK_OAK_LOG = Identifier.fromString("stripped_dark_oak_log");
     public static final Identifier STRIPPED_OAK_LOG = Identifier.fromString("stripped_oak_log");
     public static final Identifier BLUE_ICE = Identifier.fromString("blue_ice");
-    //            public static final Identifier ELEMENT_1 = Identifier.fromString("element_1");
+//            public static final Identifier ELEMENT_0 = Identifier.fromString("element_0");
+//            public static final Identifier ELEMENT_1 = Identifier.fromString("element_1");
 //            public static final Identifier ELEMENT_2 = Identifier.fromString("element_2");
 //            public static final Identifier ELEMENT_3 = Identifier.fromString("element_3");
 //            public static final Identifier ELEMENT_4 = Identifier.fromString("element_4");

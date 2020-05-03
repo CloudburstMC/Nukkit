@@ -1,0 +1,10 @@
+parent: "minecraft:ocean"
+
+elevationVanilla:
+  height: -1.8
+  variation: 0.1
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "gravel"
+    filler: "stone"

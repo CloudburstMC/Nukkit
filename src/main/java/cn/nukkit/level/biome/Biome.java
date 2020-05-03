@@ -1,132 +1,82 @@
 package cn.nukkit.level.biome;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.chunk.IChunk;
-import cn.nukkit.level.generator.populator.type.Populator;
-import cn.nukkit.math.BedrockRandom;
+import cn.nukkit.utils.Identifier;
+import com.nukkitx.nbt.NbtUtils;
+import com.nukkitx.nbt.stream.NBTInputStream;
+import com.nukkitx.nbt.tag.CompoundTag;
+import lombok.NonNull;
+import net.daporkchop.lib.noise.NoiseSource;
+import net.daporkchop.lib.noise.engine.PerlinNoiseEngine;
+import net.daporkchop.lib.random.impl.FastPRandom;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.Set;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author DaPorkchop_
  */
-public abstract class Biome {
-    public static final int MAX_BIOMES = 256;
-    public static final Biome[] biomes = new Biome[MAX_BIOMES];
-    public static final List<Biome> unorderedBiomes = new ArrayList<>();
+public class Biome {
+    public static final CompoundTag BIOME_DEFINITIONS;
+    public static final NoiseSource TEMPERATURE_NOISE = new PerlinNoiseEngine(new FastPRandom(123456789L));
 
-    private final ArrayList<Populator> populators = new ArrayList<>();
-    private int id;
-    private float baseHeight = 0.1f;
-    private float heightVariation = 0.3f;
-
-    protected static void register(int id, Biome biome) {
-        biome.setId(id);
-        biomes[id] = biome;
-        unorderedBiomes.add(biome);
-    }
-
-    public static Biome getBiome(int id) {
-        Biome biome = biomes[id];
-        return biome != null ? biome : EnumBiome.OCEAN.biome;
-    }
-
-    /**
-     * Get Biome by name.
-     *
-     * @param name Name of biome. Name could contain symbol "_" instead of space
-     * @return Biome. Null - when biome was not found
-     */
-    public static Biome getBiome(String name) {
-        for (Biome biome : biomes) {
-            if (biome != null) {
-                if (biome.getName().equalsIgnoreCase(name.replace("_", " "))) return biome;
-            }
+    static {
+        InputStream inputStream = Nukkit.class.getClassLoader().getResourceAsStream("biome_definitions.dat");
+        if (inputStream == null) {
+            throw new AssertionError("Could not find biome_definitions.dat");
         }
-        return null;
-    }
-
-    public void clearPopulators() {
-        this.populators.clear();
-    }
-
-    public void addPopulator(Populator populator) {
-        this.populators.add(populator);
-    }
-
-    public void populateChunk(ChunkManager level, final int chunkX, final int chunkZ, BedrockRandom random) {
-        IChunk chunk = level.getChunk(chunkX, chunkZ);
-        for (Populator populator : populators) {
-            populator.populate(level, chunkX, chunkZ, random, chunk);
+        try (NBTInputStream stream = NbtUtils.createNetworkReader(inputStream)) {
+            BIOME_DEFINITIONS = (CompoundTag) stream.readTag();
+        } catch (Exception e) {
+            throw new AssertionError("Error whilst loading biome_definitions.dat", e);
         }
     }
 
-    public ArrayList<Populator> getPopulators() {
-        return populators;
-    }
+    protected final Identifier id;
+    protected final Set<Identifier> tags;
+    protected final double temperature;
+    protected final double downfall;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
+    protected Biome(@NonNull Identifier id, Set<Identifier> tags, float temperature, float downfall) {
         this.id = id;
+        this.tags = tags == null || tags.isEmpty() ? Collections.emptySet() : Collections.unmodifiableSet(tags);
+        this.temperature = temperature;
+        this.downfall = downfall;
     }
 
-    public abstract String getName();
-
-    public void setBaseHeight(float baseHeight) {
-        this.baseHeight = baseHeight;
+    public Identifier getId() {
+        return this.id;
     }
 
-    public void setHeightVariation(float heightVariation)   {
-        this.heightVariation = heightVariation;
+    public boolean hasTag(Identifier tag) {
+        return this.tags.contains(tag);
     }
 
-    public float getBaseHeight() {
-        return baseHeight;
+    public Set<Identifier> getTags() {
+        return this.tags;
     }
 
-    public float getHeightVariation() {
-        return heightVariation;
+    public double getTemperature() {
+        return this.temperature;
     }
 
-    @Override
-    public int hashCode() {
-        return getId();
+    public double getTemperature(int x, int y, int z)  {
+        double temperature = this.temperature;
+        if (y > 64) {
+            double noise = TEMPERATURE_NOISE.get(x * 0.125d, z * 0.125d) * 4.0d;
+            temperature -= (noise + y - 64.0d) * 0.001666666666d;
+        }
+        return temperature;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        return hashCode() == obj.hashCode();
+    public boolean canSnowAt(ChunkManager level, int x, int y, int z)  {
+        //TODO: light level must be less than 10
+        return y >= 0 && this.getTemperature(x, y, z) < 0.15d && (y >= 256 || level.getBlockRuntimeIdUnsafe(x, y, z, 0) == 0);
     }
 
-    //whether or not water should freeze into ice on generation
-    public boolean isFreezing() {
-        return false;
-    }
-
-    /**
-     * Whether or not overhangs should generate in this biome (places where solid blocks generate over air)
-     *
-     * This should probably be used with a custom max elevation or things can look stupid
-     *
-     * @return overhang
-     */
-    public boolean doesOverhang()   {
-        return false;
-    }
-
-    /**
-     * How much offset should be added to the min/max heights at this position
-     *
-     * @param x x
-     * @param z z
-     * @return height offset
-     */
-    public int getHeightOffset(int x, int z)    {
-        return 0;
+    public double getDownfall() {
+        return this.downfall;
     }
 }

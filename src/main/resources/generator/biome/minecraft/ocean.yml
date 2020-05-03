@@ -1,0 +1,34 @@
+
+elevationVanilla:
+  height: -1.0
+  variation: 0.1
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "dirt"
+    filler: "dirt"
+
+populators:
+    # Sand
+  - id: "nukkitx:ore_submerged"
+    chance: 0.01171875 # about 3 per chunk
+    radius: "2-6"
+    block: "sand"
+    replace: "dirt,grass"
+    start: "water"
+
+    # Clay
+  - id: "nukkitx:ore_submerged"
+    chance: 0.00390625 # about 1 per chunk
+    radius: "2-3"
+    block: "clay"
+    replace: "dirt"
+    start: "water"
+
+    # Gravel
+  - id: "nukkitx:ore_submerged"
+    chance: 0.00390625 # about 1 per chunk
+    radius: "2-5"
+    block: "gravel"
+    replace: "dirt,grass"
+    start: "water"

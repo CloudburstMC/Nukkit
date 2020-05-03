@@ -13,7 +13,6 @@ import cn.nukkit.inventory.Recipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.*;
-import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.storage.StorageIds;
 import cn.nukkit.locale.LocaleManager;
 import cn.nukkit.locale.TextContainer;
@@ -81,6 +80,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -197,6 +197,7 @@ public class Server {
     private final BlockEntityRegistry blockEntityRegistry = BlockEntityRegistry.get();
     private final ItemRegistry itemRegistry = ItemRegistry.get();
     private final EntityRegistry entityRegistry = EntityRegistry.get();
+    private final BiomeRegistry biomeRegistry = BiomeRegistry.get();
 
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
@@ -520,6 +521,7 @@ public class Server {
             this.blockRegistry.close();
             this.itemRegistry.close();
             this.entityRegistry.close();
+            this.biomeRegistry.close();
             this.gameRuleRegistry.close();
             this.generatorRegistry.close();
             this.storageRegistry.close();
@@ -1893,7 +1895,6 @@ public class Server {
 
     private void registerVanillaComponents() {
         Enchantment.init();
-        EnumBiome.values(); //load class, this also registers biomes
         Item.initCreativeItems();
         Effect.init();
         Potion.init();
@@ -1929,7 +1930,8 @@ public class Server {
             Identifier generator = Identifier.fromString(this.getConfig("worlds." + name + ".generator"));
             String options = this.getConfig("worlds." + name + ".options", "");
 
-            levelFutures.add(this.loadLevel().id(name).seed(seed)
+            levelFutures.add(this.loadLevel().id(name)
+                    .seed(seed)
                     .generator(generator == null ? this.generatorRegistry.getFallback() : generator)
                     .generatorOptions(options)
                     .load());
@@ -1992,6 +1994,10 @@ public class Server {
 
     public ItemRegistry getItemRegistry() {
         return itemRegistry;
+    }
+
+    public GeneratorRegistry getGeneratorRegistry() {
+        return this.generatorRegistry;
     }
 
     public int getBaseTickRate() {

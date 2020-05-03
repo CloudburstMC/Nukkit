@@ -1,11 +1,17 @@
 package cn.nukkit.math;
 
+import net.daporkchop.lib.random.impl.AbstractFastPRandom;
+
 import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.atomic.AtomicLong;
 
-public class BedrockRandom {
-
+/**
+ * Bedrock-style PRNG.
+ * <p>
+ * Warning: very slow!
+ */
+public class BedrockRandom extends AbstractFastPRandom {
     private static final AtomicLong seedUniquifier = new AtomicLong(8682522807148012L);
     private static final ThreadLocal<BedrockRandom> THREAD_LOCAL = ThreadLocal.withInitial(BedrockRandom::new);
 
@@ -18,8 +24,6 @@ public class BedrockRandom {
     private static final int MAGIC_MASK1 = 0x9d2c5680;
     private static final int MAGIC_MASK2 = 0xefc60000;
     private static final int DEFAULT_SEED = 5489;
-    private static final double TWO_POW_M32 = 1.0 / (1L << 32);
-    private static final int BOOLEAN_MASK = ~0b1;
 
     private final int[] mt = new int[N];
     private int seed;
@@ -63,75 +67,19 @@ public class BedrockRandom {
         this.initGenRandFast(seed);
     }
 
+    @Override
+    public void setSeed(long seed) {
+        this.setSeed((int) seed);
+    }
+
+    @Override
     public int nextInt() {
-        return this.genRandInt32() >>> 1;
+        return this.genRandInt32();
     }
 
-    public int nextInt(int bound) {
-        return bound > 0 ? (int) (Integer.toUnsignedLong(this.genRandInt32()) % bound) : 0;
-    }
-
-    public int nextInt(int origin, int bound) {
-        return origin < bound ? origin + this.nextInt(bound - origin) : origin;
-    }
-
-    public int nextIntInclusive(int origin, int bound) {
-        return this.nextInt(origin, bound + 1);
-    }
-
-    public long nextUnsignedInt() {
-        return Integer.toUnsignedLong(this.genRandInt32());
-    }
-
-    public short nextUnsignedByte() {
-        return (short) (this.genRandInt32() & 0xff);
-    }
-
-    public boolean nextBoolean() {
-        return (this.genRandInt32() & BOOLEAN_MASK) != 0;
-    }
-
-    public float nextFloat() {
-        return (float) this.genRandReal2();
-    }
-
-    public float nextFloat(float bound) {
-        return this.nextFloat() * bound;
-    }
-
-    public float nextFloat(float origin, float bound) {
-        return origin + this.nextFloat(origin - bound);
-    }
-
-    public double nextDouble() {
-        return this.genRandReal2();
-    }
-
-    public double nextGaussian() {
-        if (this.hasFutureGaussian) {
-            this.hasFutureGaussian = false;
-            return futureGaussian;
-        }
-
-        float v1, v2, s;
-        do {
-            v1 = this.nextFloat() * 2 - 1;
-            v2 = this.nextFloat() * 2 - 1;
-            s = v1 * v1 + v2 * v2;
-        } while (s == 0 || s > 1);
-
-        float multiplier = (float) Math.sqrt(-2 * (float) Math.log(s) / s);
-        this.futureGaussian = v2 * multiplier;
-        this.hasFutureGaussian = true;
-        return v1 * multiplier;
-    }
-
-    public int nextGaussianInt(int bound) {
-        return this.nextInt(bound) - this.nextInt(bound);
-    }
-
-    public float nextGaussianFloat() {
-        return this.nextFloat() - this.nextFloat();
+    @Override
+    public long nextLong() {
+        return (((long) this.genRandInt32()) << 32L) | (long) this.genRandInt32();
     }
 
     public Vector3f nextVector3() {
@@ -142,9 +90,9 @@ public class BedrockRandom {
     }
 
     public Vector3f nextGaussianVector3() {
-        float x = (float) nextGaussian();
-        float y = (float) nextGaussian();
-        float z = (float) nextGaussian();
+        float x = this.nextGaussianFloat();
+        float y = this.nextGaussianFloat();
+        float z = this.nextGaussianFloat();
         return Vector3f.from(x, y, z);
     }
 
@@ -195,9 +143,5 @@ public class BedrockRandom {
         value = ((value ^ (value >> 11)) << 7) & MAGIC_MASK1 ^ value ^ (value >> 11);
         value = (value << 15) & MAGIC_MASK2 ^ value ^ (((value << 15) & MAGIC_MASK2 ^ value) >> 18);
         return value;
-    }
-
-    private double genRandReal2() {
-        return Integer.toUnsignedLong(genRandInt32()) * TWO_POW_M32;
     }
 }

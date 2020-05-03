@@ -1,0 +1,52 @@
+
+elevationVanilla:
+  height: 0.1
+  variation: 0.2
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "grass"
+    filler: "dirt"
+
+populators:
+    # Mushrooms
+  - id: "nukkitx:tree"
+    chance: 0.001953125 # about 1 per 2 chunks
+    on: "grass"
+    replace: "air"
+    types:
+      - "mushroom_red"
+      - "mushroom_brown"
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.0078125 # about 2 per chunk
+    on: "grass"
+    block: "tallgrass"
+
+    # Huge trees
+  - id: "nukkitx:huge_tree"
+    chance: 1.0
+    grid: true
+    on: "grass"
+    replace: "air"
+    below: "dirt"
+    type: "dark_oak"
+
+    # Flowers
+  - id: "nukkitx:shrub"
+    chance: 0.015625 # about 4 per chunk
+    on: "grass"
+    replace: "air,tallgrass"
+    roundDown: false
+    block: "2*yellow_flower,red_flower"
+
+    # Double plants
+  - id: "nukkitx:double_plant"
+    chance: 0.01171875 # about 3 per chunk
+    on: "grass"
+    replace: "air,tallgrass"
+    types:
+      - 1 # lilac
+      - 4 # rose
+      - 5 # peony

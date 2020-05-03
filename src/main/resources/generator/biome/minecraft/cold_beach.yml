@@ -1,0 +1,12 @@
+parent: "minecraft:ocean" # inherit sand, clay and gravel populators from ocean
+
+elevationVanilla:
+  height: 0.0
+  variation: 0.025
+
+decorators:
+  - id: "nukkitx:surface_deep"
+    top: "sand"
+    filler: "sand"
+    deep: "sandstone"
+    deepSize: "1-4"

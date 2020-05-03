@@ -183,7 +183,7 @@ public class Explosion {
         for (Block block : this.affectedBlocks) {
             //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == TNT) {
-                ((BlockTNT) block).prime(new NukkitRandom().nextRange(10, 30), this.what instanceof Entity ? (Entity) this.what : null);
+                ((BlockTNT) block).prime(ThreadLocalRandom.current().nextInt(10, 31), this.what instanceof Entity ? (Entity) this.what : null);
             } else if (Math.random() * 100 < yield) {
                 for (Item drop : block.getDrops(air)) {
                     this.level.dropItem(block.getPosition(), drop);

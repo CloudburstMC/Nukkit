@@ -28,7 +28,6 @@ import cn.nukkit.level.chunk.ChunkSection;
 import cn.nukkit.level.gamerule.GameRuleMap;
 import cn.nukkit.level.gamerule.GameRules;
 import cn.nukkit.level.generator.Generator;
-import cn.nukkit.level.generator.GeneratorFactory;
 import cn.nukkit.level.manager.LevelChunkManager;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.Particle;
@@ -209,7 +208,6 @@ public class Level implements ChunkManager, Metadatable {
     public int tickRateTime = 0;
     public int tickRateCounter = 0;
 
-    private GeneratorFactory generatorFactory;
     private final Long2ObjectOpenHashMap<Set<Player>> chunkPlayers = new Long2ObjectOpenHashMap<>();
     private final Cache<Long, ByteBuf> chunkCache = CacheBuilder.newBuilder()
             .softValues()
@@ -217,17 +215,8 @@ public class Level implements ChunkManager, Metadatable {
             .build();
     private final LevelChunkManager chunkManager;
     private final LevelData levelData;
-    private ThreadLocal<Generator> generators = new ThreadLocal<Generator>() {
-        @Override
-        protected Generator initialValue() {
-            try {
-                BedrockRandom random = new BedrockRandom((int) getSeed());
-                return generatorFactory.create(random, levelData.getGeneratorOptions());
-            } catch (Throwable e) {
-                throw new IllegalStateException("Unable to initialize generator", e);
-            }
-        }
-    };
+
+    private Generator generator;
 
     Level(Server server, String id, LevelProvider levelProvider, LevelData levelData) {
         this.id = id;
@@ -270,7 +259,7 @@ public class Level implements ChunkManager, Metadatable {
         log.info(this.server.getLanguage().translate("nukkit.level.preparing",
                 TextFormat.GREEN + getId() + TextFormat.WHITE));
 
-        this.generatorFactory = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator());
+        this.generator = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator()).create(this.getSeed(), this.levelData.getGeneratorOptions());
 
         if (this.levelData.getRainTime() <= 0) {
             setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
@@ -293,6 +282,10 @@ public class Level implements ChunkManager, Metadatable {
         this.skyLightSubtracted = this.calculateSkylightSubtracted(1);
     }
 
+    public void reloadGenerator()   {
+        this.generator = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator()).create(this.getSeed(), this.levelData.getGeneratorOptions());
+    }
+
     public int getTickRate() {
         return tickRate;
     }
@@ -306,11 +299,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void init() {
-        Generator generator = generators.get();
-    }
-
-    public Generator getGenerator() {
-        return generators.get();
     }
 
     public BlockMetadataStore getBlockMetadata() {
@@ -1631,8 +1619,8 @@ public class Level implements ChunkManager, Metadatable {
                 breakTime = 0.15;
             }
 
-            if (player.hasEffect(Effect.SWIFTNESS)) {
-                breakTime *= 1 - (0.2 * (player.getEffect(Effect.SWIFTNESS).getAmplifier() + 1));
+            if (player.hasEffect(Effect.HASTE)) {
+                breakTime *= 1 - (0.2 * (player.getEffect(Effect.HASTE).getAmplifier() + 1));
             }
 
             if (player.hasEffect(Effect.MINING_FATIGUE)) {
@@ -2070,11 +2058,11 @@ public class Level implements ChunkManager, Metadatable {
 
 
     public Identifier getBlockId(int x, int y, int z, int layer) {
-        return this.getChunk(x >> 4, z >> 4).getBlockId(x & 0x0f, y & 0xff, z & 0x0f, layer);
+        return this.getChunk(x >> 4, z >> 4).getBlockId(x & 0xF, y, z & 0xF, layer);
     }
 
     public void setBlockId(int x, int y, int z, int layer, Identifier id) {
-        this.getChunk(x >> 4, z >> 4).setBlockId(x & 0x0f, y & 0xff, z & 0x0f, layer, id);
+        this.getChunk(x >> 4, z >> 4).setBlockId(x & 0xF, y, z & 0xF, layer, id);
         addBlockChange(x, y, z, layer);
     }
 
@@ -2093,12 +2081,12 @@ public class Level implements ChunkManager, Metadatable {
 
     @Override
     public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
-        return this.getChunk(x >> 4, z >> 4).getBlockRuntimeIdUnsafe(x & 0xF, y & 0xFF, z & 0xF, layer);
+        return this.getChunk(x >> 4, z >> 4).getBlockRuntimeIdUnsafe(x & 0xF, y, z & 0xF, layer);
     }
 
     @Override
     public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId) {
-        this.getChunk(x >> 4, z >> 4).setBlockRuntimeIdUnsafe(x & 0xF, y & 0xFF, z & 0xF, layer, runtimeId);
+        this.getChunk(x >> 4, z >> 4).setBlockRuntimeIdUnsafe(x & 0xF, y, z & 0xF, layer, runtimeId);
         this.addBlockChange(x, y, z, layer);
     }
 
@@ -2113,36 +2101,32 @@ public class Level implements ChunkManager, Metadatable {
         this.addBlockChange(x, y, z, layer);
     }
 
-    public int getBlockSkyLightAt(int x, int y, int z) {
-        return this.getChunk(x >> 4, z >> 4).getBlockLight(x & 0x0f, y & 0xff, z & 0x0f);
-    }
-
-    public void setBlockSkyLightAt(int x, int y, int z, int level) {
-        this.getChunk(x >> 4, z >> 4).setBlockLight(x & 0x0f, y & 0xff, z & 0x0f, (byte) (level & 0x0f));
-    }
-
-    public int getBlockLightAt(int x, int y, int z) {
-        return this.getChunk(x >> 4, z >> 4).getBlockLight(x & 0x0f, y & 0xff, z & 0x0f);
-    }
-
-    public void setBlockLightAt(int x, int y, int z, int level) {
-        this.getChunk(x >> 4, z >> 4).setBlockLight(x & 0x0f, y & 0xff, z & 0x0f, (byte) (level & 0x0f));
-    }
-
     public int getBiomeId(int x, int z) {
-        return this.getChunk(x >> 4, z >> 4).getBiome(x & 0x0f, z & 0x0f);
+        return this.getChunk(x >> 4, z >> 4).getBiome(x & 0xF, z & 0xF);
     }
 
     public void setBiomeId(int x, int z, byte biomeId) {
-        this.getChunk(x >> 4, z >> 4).setBiome(x & 0x0f, z & 0x0f, biomeId);
+        this.getChunk(x >> 4, z >> 4).setBiome(x & 0xF, z & 0xF, biomeId);
     }
 
-    public int getHeightMap(int x, int z) {
-        return this.getChunk(x >> 4, z >> 4).getHeightMap(x & 0x0f, z & 0x0f);
+    public int getSkyLightAt(int x, int y, int z) {
+        return this.getChunk(x >> 4, z >> 4).getBlockLight(x & 0xF, y, z & 0xF);
     }
 
-    public void setHeightMap(int x, int z, int value) {
-        this.getChunk(x >> 4, z >> 4).setHeightMap(x & 0x0f, z & 0x0f, value & 0x0f);
+    public void setSkyLightAt(int x, int y, int z, int level) {
+        this.getChunk(x >> 4, z >> 4).setBlockLight(x & 0xF, y, z & 0xF, level);
+    }
+
+    public int getBlockLightAt(int x, int y, int z) {
+        return this.getChunk(x >> 4, z >> 4).getBlockLight(x & 0xF, y, z & 0xF);
+    }
+
+    public void setBlockLightAt(int x, int y, int z, int level) {
+        this.getChunk(x >> 4, z >> 4).setBlockLight(x & 0xF, y, z & 0xF, level);
+    }
+
+    public int getHighestBlock(int x, int z) {
+        return this.getChunk(x >> 4, z >> 4).getHighestBlock(x & 0xF, z & 0xF);
     }
 
     public Chunk getLoadedChunk(Vector3f pos) {
@@ -2428,8 +2412,8 @@ public class Level implements ChunkManager, Metadatable {
     public void addEntityMovement(BaseEntity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MoveEntityAbsolutePacket packet = new MoveEntityAbsolutePacket();
         packet.setRuntimeEntityId(entity.getRuntimeId());
-        packet.setPosition(com.nukkitx.math.vector.Vector3f.from(x, y, z));
-        packet.setRotation(com.nukkitx.math.vector.Vector3f.from(yaw, headYaw, pitch));
+        packet.setPosition(Vector3f.from(x, y, z));
+        packet.setRotation(Vector3f.from(pitch, yaw, headYaw));
 
         Server.broadcastPacket(entity.getViewers(), packet);
     }
@@ -2681,6 +2665,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public int getUpdateLCG() {
         return (this.updateLCG = (this.updateLCG * 3) ^ LCG_CONSTANT);
+    }
+
+    public Generator getGenerator() {
+        return this.generator;
     }
 
     @Override

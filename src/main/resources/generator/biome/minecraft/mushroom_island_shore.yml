@@ -1,0 +1,5 @@
+parent: "minecraft:mushroom_island"
+
+elevationVanilla:
+  height: 0.0
+  variation: 0.025

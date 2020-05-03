@@ -20,6 +20,8 @@ import it.unimi.dsi.fastutil.ints.IntList;
 import java.io.IOException;
 import java.util.function.IntConsumer;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class BlockStorage {
 
     private static final int SIZE = 4096;
@@ -83,7 +85,8 @@ public class BlockStorage {
     public void setBlockRuntimeIdUnsafe(int index, int runtimeId)    {
         try {
             BlockRegistry.get().getBlock(runtimeId); //this will throw RegistryException if the runtimeId is not registered
-            this.bitArray.set(index, this.idFor(runtimeId));
+            int idx = this.idFor(runtimeId); //need to do this separately since bitArray can change, and is apparently dereferenced first
+            this.bitArray.set(index, idx);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Unable to set block runtime ID: " + runtimeId + ", palette: " + palette, e);
         }
@@ -150,7 +153,7 @@ public class BlockStorage {
         this.palette.clear();
         int paletteSize = buffer.readIntLE();
 
-        Preconditions.checkArgument(version.getMaxEntryValue() >= paletteSize - 1,
+        checkArgument(version.getMaxEntryValue() >= paletteSize - 1,
                 "Palette is too large. Max size %s. Actual size %s", version.getMaxEntryValue(),
                 paletteSize);
 
@@ -158,14 +161,15 @@ public class BlockStorage {
              NBTInputStream nbtInputStream = NbtUtils.createReaderLE(stream)) {
             for (int i = 0; i < paletteSize; i++) {
                 CompoundTag tag = (CompoundTag) nbtInputStream.readTag();
-                int id = BlockRegistry.get().getLegacyId(tag.getString("name"));
+                checkArgument(!tag.contains("states"), "Unsupported chunk version (flattened)"); // TODO: 19/04/2020 Support this
+
+                String name = tag.getString("name");
+                int id = BlockRegistry.get().getLegacyId(name);
                 int data = tag.getShort("val");
 
                 int runtimeId = BlockRegistry.get().getRuntimeId(id, data);
-                if (palette.indexOf(runtimeId) != -1) {
-                    throw new IllegalArgumentException("Palette contains same block state twice!");
-                }
-
+                checkArgument(!this.palette.contains(runtimeId),
+                        "Palette contains block state (%s) twice!", name + ":" + data);
                 this.palette.add(runtimeId);
             }
         } catch (IOException e) {

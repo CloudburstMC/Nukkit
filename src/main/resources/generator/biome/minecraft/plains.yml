@@ -1,0 +1,66 @@
+
+elevationVanilla:
+  height: 0.125
+  variation: 0.05
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "grass"
+    filler: "dirt"
+
+populators:
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.0390625 # about 10 per chunk
+    on: "grass"
+    block: "tallgrass"
+
+  - id: "nukkitx:noise"
+    selector:
+      id: "nukkitx:simplex"
+      scale: 0.005
+      octaves: 1
+    threshold: -0.8
+    above:
+        # Double tall grass
+      - id: "nukkitx:double_plant"
+        chance: 0.02734375 # about 7 per chunk
+        on: "grass"
+        type: 2
+
+        # Flowers
+      - id: "nukkitx:shrub"
+        chance: 0.015625 # about 4 per chunk
+        on: "grass"
+        replace: "air,tallgrass"
+        roundDown: false
+        block:
+          - "red_flower#4" # Red Tulip
+          - "red_flower#5" # Orange Tulip
+          - "red_flower#6" # White Tulip
+          - "red_flower#7" # Pink Tulip
+          - "red_flower#3" # Azure Bluet
+          - "red_flower#8" # Oxeye Daisy
+          - "red_flower#9" # Cornflower
+    below:
+        # Flowers
+      - id: "nukkitx:shrub"
+        chance: 0.05859375 # about 15 per chunk
+        on: "grass"
+        replace: "air,tallgrass"
+        roundDown: false
+        block:
+          - "red_flower#4" # Red Tulip
+          - "red_flower#5" # Orange Tulip
+          - "red_flower#6" # White Tulip
+          - "red_flower#7" # Pink Tulip
+          - "red_flower#3" # Azure Bluet
+          - "red_flower#8" # Oxeye Daisy
+          - "red_flower#9" # Cornflower
+
+    # Oak trees
+  - id: "nukkitx:tree"
+    chance: 0.0001953125 # about 1 per 20 chunks
+    on: "grass"
+    replace: "air,tallgrass"
+    type: "oak"

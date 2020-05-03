@@ -22,7 +22,7 @@ public class PlayerMoveEvent extends PlayerEvent implements Cancellable {
     }
 
     public PlayerMoveEvent(Player player, Location from, Location to, boolean resetBlocks) {
-        this.player = player;
+        super(player);
         this.from = from;
         this.to = to;
         this.resetBlocksAround = resetBlocks;

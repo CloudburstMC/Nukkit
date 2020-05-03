@@ -1,0 +1,36 @@
+
+elevationVanilla:
+  height: 0.125
+  variation: 0.05
+
+decorators:
+  - id: "nukkitx:surface_deep"
+    top: "sand"
+    filler: "sand"
+    deep: "sandstone"
+    deepSize: "1-4"
+
+populators:
+    # Dead bushes
+  - id: "nukkitx:shrub"
+    chance: 0.0078125 # about 2 per chunk
+    patchSize: 4
+    on: "sand"
+    block: "deadbush"
+
+    # Cactus
+  - id: "nukkitx:plant"
+    chance: 0.0390625 # about 10 per chunk
+    patchSize: 10
+    height: "1-3"
+    on: "sand"
+    block: "cactus"
+
+    # Sugar cane
+  - id: "nukkitx:plant"
+    chance: 0.01953125 # about 5 per chunk
+    patchSize: 20
+    height: "1-3"
+    on: "sand"
+    water: "water"
+    block: "reeds"

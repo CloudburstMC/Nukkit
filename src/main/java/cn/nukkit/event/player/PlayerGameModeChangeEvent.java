@@ -17,7 +17,7 @@ public class PlayerGameModeChangeEvent extends PlayerEvent implements Cancellabl
     protected AdventureSettings newAdventureSettings;
 
     public PlayerGameModeChangeEvent(Player player, int newGameMode, AdventureSettings newAdventureSettings) {
-        this.player = player;
+        super(player);
         this.gamemode = newGameMode;
         this.newAdventureSettings = newAdventureSettings;
     }

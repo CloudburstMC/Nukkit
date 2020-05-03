@@ -2,8 +2,9 @@ package cn.nukkit.level;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.chunk.ChunkBuilder;
-import cn.nukkit.level.generator.GeneratorIds;
+import cn.nukkit.level.generator.impl.VoidGenerator;
 import cn.nukkit.level.provider.LevelProvider;
+import cn.nukkit.utils.Identifier;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.concurrent.CompletableFuture;
@@ -18,8 +19,11 @@ public class LevelConverter {
     public LevelConverter(LevelProvider oldLevelProvider, LevelProvider newLevelProvider) {
         this.oldLevelProvider = oldLevelProvider;
         this.newLevelProvider = newLevelProvider;
+
         LevelData data = new LevelData();
-        data.setGenerator(GeneratorIds.NORMAL);
+        data.setName("converting");
+        data.setGenerator(VoidGenerator.ID);
+        data.setRandomSeed(0L);
         this.fakeLevel = new Level(Server.getInstance(), "converting", newLevelProvider, data);
     }
 

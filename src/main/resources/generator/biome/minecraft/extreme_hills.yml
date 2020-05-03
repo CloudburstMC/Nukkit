@@ -1,0 +1,43 @@
+
+elevationVanilla:
+  height: 1.0
+  variation: 0.5
+
+decorators:
+  - id: "nukkitx:noise"
+    seed: "extreme_hills"
+    selector:
+      id: "nukkitx:simplex"
+      scale: 0.0045
+      octaves: 4
+    threshold: -0.06666666666
+    above:
+        # Generate grass surface sometimes
+      - id: "nukkitx:surface"
+        top: "grass"
+        filler: "dirt"
+
+populators:
+    # Emerald
+  - id: "nukkitx:ore"
+    chance: 0.021484375 # about 5.5 per chunk
+    size: 1
+    height: "4-32"
+    block: "emerald_ore"
+    replace: "stone"
+
+    # Silverfish
+  - id: "nukkitx:ore"
+    chance: 0.015625 # about 4 per chunk
+    size: 9
+    height: "0-32"
+    block: "monster_egg"
+    replace: "stone"
+
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.000390625 # about 1 per 10 chunks
+    on: "grass"
+    types:
+      - "oak"
+      - "spruce"

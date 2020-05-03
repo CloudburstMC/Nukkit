@@ -79,6 +79,6 @@ public class BarrelBlockEntity extends BaseBlockEntity implements Barrel {
 
     @Override
     public boolean isSpawnable() {
-        return super.isSpawnable();
+        return true;
     }
 }

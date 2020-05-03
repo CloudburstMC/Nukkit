@@ -1,7 +1,7 @@
 package cn.nukkit.network;
 
 import com.nukkitx.protocol.bedrock.BedrockPacketCodec;
-import com.nukkitx.protocol.bedrock.v389.Bedrock_v389;
+import com.nukkitx.protocol.bedrock.v390.Bedrock_v390;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnegative;
@@ -22,7 +22,7 @@ public final class ProtocolInfo {
     private static BedrockPacketCodec DEFAULT_PACKET_CODEC;
 
     static {
-        setDefaultPacketCodec(Bedrock_v389.V389_CODEC);
+        setDefaultPacketCodec(Bedrock_v390.V390_CODEC);
     }
 
     public static BedrockPacketCodec getDefaultPacketCodec() {

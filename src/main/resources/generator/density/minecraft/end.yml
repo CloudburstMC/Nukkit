@@ -1,0 +1,50 @@
+# NukkitX Standard Generator - End density generator preset
+#
+# Author: DaPorkchop_
+
+# see overworld.yml for information on where the scale values come from
+
+id: "nukkitx:end"
+seed: "end"
+selectorNoise:
+  id: "nukkitx:perlin"
+  scale:
+    x: 0.008354638671875
+    y: 0.008354638671875
+    z: 0.008354638671875
+  octaves: 8
+  factor: 12.75
+  offset: 0.5
+lowNoise:
+  id: "nukkitx:perlin"
+  scale:
+    x: 0.005221649169921875
+    y: 0.005221649169921875
+    z: 0.005221649169921875
+  octaves: 16
+  factor: 1.0
+  offset: 0.0
+highNoise:
+  id: "nukkitx:perlin"
+  scale:
+    x: 0.005221649169921875
+    y: 0.005221649169921875
+    z: 0.005221649169921875
+  octaves: 16
+  factor: 1.0
+  offset: 0.0
+islands:
+  radius: 12
+  islandRadius: 100.0
+  outerIslandStartRadius: 1024.0
+  outerIslandSeedThreshold: -0.8
+  islandNoise:
+    id: "nukkitx:simplex"
+    octaves: 1
+  islandWeight:
+    id: "nukkitx:simplex"
+    octaves: 1
+    factor: 6.5
+    offset: 15.5
+maxHeightCutoff: 56.0
+minHeightCutoff: 32.0

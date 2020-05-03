@@ -6,7 +6,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
-import com.nukkitx.protocol.bedrock.packet.BlockEventPacket;
 import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket;
 import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket;
 
@@ -42,15 +41,10 @@ public class PlayerEnderChestInventory extends BaseInventory {
         this.sendContents(who);
 
         if (chest != null && chest.getViewers().size() == 1) {
-            BlockEventPacket blockEventPacket = new BlockEventPacket();
-            blockEventPacket.setBlockPosition(chest.getPosition());
-            blockEventPacket.setEventType(1);
-            blockEventPacket.setEventData(1);
-
             Level level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.getHolder().getPosition().add(0.5, 0.5, 0.5), SoundEvent.ENDERCHEST_OPEN);
-                level.addChunkPacket(this.getHolder().getPosition(), blockEventPacket);
+                ContainerInventory.sendBlockEventPacket(level.getBlockEntity(chest.getPosition()), 1);
             }
         }
     }
@@ -64,15 +58,10 @@ public class PlayerEnderChestInventory extends BaseInventory {
 
         BlockEnderChest chest = who.getViewingEnderChest();
         if (chest != null && chest.getViewers().size() == 1) {
-            BlockEventPacket blockEventPacket = new BlockEventPacket();
-            blockEventPacket.setBlockPosition(chest.getPosition());
-            blockEventPacket.setEventType(1);
-            blockEventPacket.setEventData(0);
-
             Level level = this.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.getHolder().getPosition().add(0.5, 0.5, 0.5), SoundEvent.ENDERCHEST_CLOSED);
-                level.addChunkPacket(this.getHolder().getPosition(), blockEventPacket);
+                ContainerInventory.sendBlockEventPacket(level.getBlockEntity(chest.getPosition()), 0);
             }
 
             who.setViewingEnderChest(null);

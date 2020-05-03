@@ -1,0 +1,26 @@
+parent: "minecraft:mesa"
+
+elevationVanilla:
+  height: 1.525
+  variation: 0.025
+
+decorators:
+  - id: "nukkitx:next"
+
+  - id: "nukkitx:noise"
+    selector:
+      id: "nukkitx:simplex"
+      scale: 0.0045
+      octaves: 4
+    threshold: 0.0
+    above:
+      - id: "nukkitx:replace_top"
+        height: "86-255"
+        replace:
+          - "stained_hardened_clay" # white
+          - "stained_hardened_clay#1" # orange
+          - "stained_hardened_clay#4" # yellow
+          - "stained_hardened_clay#8" # light gray
+          - "stained_hardened_clay#12" # brown
+          - "stained_hardened_clay#14" # red
+        block: "hardened_clay"

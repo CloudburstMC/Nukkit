@@ -1,0 +1,30 @@
+
+elevationVanilla:
+  height: 0.1
+  variation: 0.2
+
+populators:
+  - id: "nukkitx:distance"
+    min: 100.0
+    max: 1024.0
+    above:
+        # Outer end islands
+
+        # Small islands
+      - id: "nukkitx:end_island"
+        chance: 0.0003487723214 # about 1.25 per 14 chunks
+        height: "32-56"
+        radius: "4-6"
+        block: "end_stone"
+
+        # Chorus plants
+      - id: "nukkitx:tree"
+        chance: 0.0078125 # about 2 per chunk
+        on: "end_stone"
+        type: "chorus"
+
+        #porktodo: end gateways (when structures are added)
+    #below:
+        # Center end island
+
+        #porktodo: obsidian pillars (will require being able to spawn entities from a populator)

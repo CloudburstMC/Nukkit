@@ -1,0 +1,19 @@
+parent: "minecraft:plains"
+
+elevationVanilla:
+  height: 0.125
+  variation: 0.05
+
+populators:
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.000390625 # about 1 per 10 chunks
+    on: "grass"
+    replace: "air"
+    type: "spruce"
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    on: "grass"
+    block: "tallgrass"

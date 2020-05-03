@@ -1,0 +1,5 @@
+parent: "minecraft:birch_forest_mutated"
+
+elevationVanilla:
+  height: 0.55
+  variation: 0.5

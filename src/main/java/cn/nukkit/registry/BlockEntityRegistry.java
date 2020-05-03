@@ -13,6 +13,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.nukkitx.math.vector.Vector3i;
 
+import javax.annotation.Nonnull;
 import java.util.IdentityHashMap;
 import java.util.Map;
 
@@ -60,8 +61,13 @@ public class BlockEntityRegistry implements Registry {
         return persistentMap.get(type);
     }
 
+    @Nonnull
     public BlockEntityType<?> getBlockEntityType(String persistentId) {
-        return persistentMap.inverse().get(persistentId);
+        BlockEntityType<?> type = persistentMap.inverse().get(persistentId);
+        if (type == null) {
+            throw new RegistryException("No BlockEntityType exists for id: " + persistentId);
+        }
+        return type;
     }
 
     /**
@@ -137,7 +143,7 @@ public class BlockEntityRegistry implements Registry {
         registerVanilla(SKULL, SkullBlockEntity::new, "Skull");
         registerVanilla(FLOWER_POT, FlowerPotBlockEntity::new, "FlowerPot");
         registerVanilla(BREWING_STAND, BrewingStandBlockEntity::new, "BrewingStand");
-        //registerVanilla(DAYLIGHT_DETECTOR, DaylightDetectorBlockEntity::new, "DaylightDetector");
+        registerVanilla(DAYLIGHT_DETECTOR, DaylightDetectorBlockEntity::new, "DaylightDetector");
         registerVanilla(NOTEBLOCK, MusicBlockEntity::new, "Music");
         registerVanilla(ITEM_FRAME, ItemFrameBlockEntity::new, "ItemFrame");
         registerVanilla(CAULDRON, CauldronBlockEntity::new, "Cauldron");

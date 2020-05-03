@@ -1,0 +1,9 @@
+parent: "minecraft:ocean" # inherit sand, clay and gravel populators from ocean
+
+elevationVanilla:
+  height: 0.1
+  variation: 0.8
+
+decorators:
+
+# this is basically the easiest biome in the game lol

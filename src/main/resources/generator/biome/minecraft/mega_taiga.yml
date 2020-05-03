@@ -1,0 +1,74 @@
+
+elevationVanilla:
+  height: 0.1
+  variation: 0.2
+
+decorators:
+  - id: "nukkitx:noise"
+    seed: "extreme_hills"
+    selector:
+      id: "nukkitx:simplex"
+      scale: 0.0045
+      octaves: 4
+    min: -0.06333333333
+    max: 0.11666666666
+    above:
+      - id: "nukkitx:surface"
+        top: "dirt#1" # coarse dirt
+        filler: "dirt"
+    in:
+      - id: "nukkitx:surface"
+        top: "grass"
+        filler: "dirt"
+    below:
+      - id: "nukkitx:surface"
+        top: "podzol"
+        filler: "dirt"
+
+populators:
+    # Mossy cobblestone blobs
+  - id: "nukkitx:blob"
+    chance: 0.00390625 # about 1 per chunk
+    radius: "0-1"
+    on: "grass,podzol,dirt#1"
+    replace: "air,grass,podzol,dirt,dirt#1,water"
+    block: "mossy_cobblestone"
+
+    # Huge trees
+  - id: "nukkitx:huge_tree"
+    chance: 0.0078125 # about 2 per chunk
+    on: "grass,podzol,dirt#1"
+    replace: "air"
+    below: "dirt"
+    type: "pine"
+
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.0078125 # about 2 per chunk
+    on: "grass,podzol,dirt#1"
+    replace: "air"
+    type: "spruce"
+
+    # Berry bushes & mushrooms
+  - id: "nukkitx:shrub"
+    chance: 0.015625 # about 4 per chunk
+    on: "grass,podzol,dirt#1"
+    block: "sweet_berry_bush,2*brown_mushroom,red_mushroom"
+
+    # Dead bushes
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    patchSize: 4
+    on: "grass,podzol,dirt#1"
+    block: "deadbush"
+
+    # Tall grass & ferns
+  - id: "nukkitx:shrub"
+    chance: 0.02734375 # about 7 per chunk
+    on: "grass,podzol,dirt#1"
+    block:
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass#2" # fern

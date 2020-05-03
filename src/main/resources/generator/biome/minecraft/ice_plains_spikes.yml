@@ -1,0 +1,29 @@
+parent: "minecraft:plains"
+
+elevationVanilla:
+  height: 0.425
+  variation: 0.45
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "snow"
+    filler: "dirt"
+
+populators:
+    # Ice spikes
+  - id: "nukkitx:spikes"
+    chance: 0.01171875 # about 3 per chunk
+    height: "7-11"
+    tallHeight: "10-39"
+    on: "snow"
+    replace: "air,dirt,snow,snow_layer"
+    block: "packed_ice"
+    tallChance: 0.0166666666666
+
+    # "Glaciers"
+  - id: "nukkitx:ore_submerged"
+    chance: 0.0078125 # about 2 per chunk
+    radius: "2-3"
+    block: "packed_ice"
+    replace: "dirt,snow"
+    start: "air"

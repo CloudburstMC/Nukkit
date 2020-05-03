@@ -22,6 +22,7 @@ import com.nukkitx.protocol.bedrock.packet.LevelChunkPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
+import lombok.NonNull;
 import lombok.Synchronized;
 import lombok.extern.log4j.Log4j2;
 
@@ -33,6 +34,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -50,28 +52,43 @@ public final class Chunk implements IChunk, Closeable {
     private static final ChunkSection EMPTY = new ChunkSection(new BlockStorage[]{new BlockStorage(BitArrayVersion.V1),
             new BlockStorage(BitArrayVersion.V1)});
 
-    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Lock readLock; //avoid pointer chasing and an additional interface method call
+    private final Lock writeLock;
+
+    private final UnsafeChunk unsafe;
 
     private final Set<ChunkLoader> loaders = Collections.newSetFromMap(new IdentityHashMap<>());
 
     private final Set<Player> playerLoaders = Collections.newSetFromMap(new IdentityHashMap<>());
-
-    private final UnsafeChunk unsafe;
 
     private SoftReference<LevelChunkPacket> cached = null;
 
     private Collection<ChunkDataLoader> chunkDataLoaders;
 
     private List<BlockUpdate> blockUpdates;
+    
+    private final LockableChunk readLockable;
+    private final LockableChunk writeLockable;
 
     public Chunk(int x, int z, Level level) {
-        this.unsafe = new UnsafeChunk(x, z, level);
+        this(new UnsafeChunk(x, z, level));
     }
 
     Chunk(UnsafeChunk unsafe, Collection<ChunkDataLoader> chunkDataLoaders, List<BlockUpdate> blockUpdates) {
-        this.unsafe = checkNotNull(unsafe, "chunk");
+        this(unsafe);
         this.chunkDataLoaders = checkNotNull(chunkDataLoaders, "chunkEntityLoaders");
         this.blockUpdates = checkNotNull(blockUpdates, "blockUpdates");
+    }
+    
+    private Chunk(@NonNull UnsafeChunk unsafe) {
+        this.unsafe = unsafe;
+        
+        ReadWriteLock lock = new ReentrantReadWriteLock();
+        this.readLock = lock.readLock();
+        this.writeLock = lock.writeLock();
+        
+        this.readLockable = new LockableChunk(unsafe, this.readLock);
+        this.writeLockable = new LockableChunk(unsafe, this.writeLock);
     }
 
     public void init() {
@@ -99,242 +116,217 @@ public final class Chunk implements IChunk, Closeable {
     @Nonnull
     @Override
     public ChunkSection getOrCreateSection(int y) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             return unsafe.getOrCreateSection(y);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Nullable
     @Override
     public ChunkSection getSection(int y) {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return unsafe.getSection(y);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Nonnull
     @Override
     public ChunkSection[] getSections() {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             ChunkSection[] sections = unsafe.getSections();
             return Arrays.copyOf(sections, sections.length);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Nonnull
     @Override
     public Block getBlock(int x, int y, int z, int layer) {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return unsafe.getBlock(x, y, z, layer);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Nonnull
     @Override
     public Identifier getBlockId(int x, int y, int z, int layer) {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return unsafe.getBlockId(x, y, z, layer);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Override
     public int getBlockRuntimeIdUnsafe(int x, int y, int z, int layer) {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return unsafe.getBlockRuntimeIdUnsafe(x, y, z, layer);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Override
     public int getBlockData(int x, int y, int z, int layer) {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return unsafe.getBlockData(x, y, z, layer);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Nonnull
     @Override
     public Block getAndSetBlock(int x, int y, int z, int layer, Block block) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             return unsafe.getAndSetBlock(x, y, z, layer, block);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
     public void setBlock(int x, int y, int z, int layer, Block block) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.setBlock(x, y, z, layer, block);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
     public void setBlockId(int x, int y, int z, int layer, Identifier id) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.setBlockId(x, y, z, layer, id);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
     public void setBlockRuntimeIdUnsafe(int x, int y, int z, int layer, int runtimeId) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.setBlockRuntimeIdUnsafe(x, y, z, layer, runtimeId);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
     public void setBlockData(int x, int y, int z, int layer, int data) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.setBlockData(x, y, z, layer, data);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
     public int getBiome(int x, int z) {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return unsafe.getBiome(x, z);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Override
     public synchronized void setBiome(int x, int z, int biome) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.setBiome(x, z, biome);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
     public byte getSkyLight(int x, int y, int z) {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return unsafe.getSkyLight(x, y, z);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Override
     public void setSkyLight(int x, int y, int z, int level) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.setSkyLight(x, y, z, level);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
     public byte getBlockLight(int x, int y, int z) {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return unsafe.getBlockLight(x, y, z);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Override
     public void setBlockLight(int x, int y, int z, int level) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.setBlockLight(x, y, z, level);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
-    public void recalculateHeightMap() {
-        this.lock.writeLock().lock();
+    public int getHighestBlock(int x, int z) {
+        this.readLock.lock();
         try {
-            for (int z = 0; z < 16; ++z) {
-                for (int x = 0; x < 16; ++x) {
-                    unsafe.setHeightMap(x, z, unsafe.getHighestBlock(x, z, false));
-                }
-            }
-            setDirty();
+            return this.unsafe.getHighestBlock(x, z);
         } finally {
-            this.lock.writeLock().unlock();
-        }
-    }
-
-    @Override
-    public synchronized int getHeightMap(int x, int z) {
-        this.lock.readLock().lock();
-        try {
-            return unsafe.getHeightMap(x, z);
-        } finally {
-            this.lock.readLock().unlock();
-        }
-    }
-
-    @Override
-    public synchronized void setHeightMap(int x, int z, int value) {
-        this.lock.writeLock().lock();
-        try {
-            unsafe.setHeightMap(x, z, value);
-        } finally {
-            this.lock.writeLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Override
     public void addEntity(@Nonnull Entity entity) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.addEntity(entity);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
     public void removeEntity(Entity entity) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.removeEntity(entity);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
@@ -372,46 +364,44 @@ public final class Chunk implements IChunk, Closeable {
     @Nonnull
     @Override
     public byte[] getBiomeArray() {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
-            byte[] biomes = unsafe.getBiomeArray();
-            return Arrays.copyOf(biomes, biomes.length);
+            return this.unsafe.getBiomeArray().clone();
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Nonnull
     @Override
     public int[] getHeightMapArray() {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
-            int[] heightMap = unsafe.getHeightMapArray();
-            return Arrays.copyOf(heightMap, heightMap.length);
+            return this.unsafe.getHeightMapArray().clone();
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Nonnull
     @Override
     public Set<Player> getPlayers() {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return new HashSet<>(unsafe.getPlayers());
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Nonnull
     @Override
     public Set<Entity> getEntities() {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return new HashSet<>(unsafe.getEntities());
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
@@ -424,28 +414,18 @@ public final class Chunk implements IChunk, Closeable {
     }
 
     @Override
-    public boolean isGenerated() {
-        return unsafe.isGenerated();
+    public int getState() {
+        return this.unsafe.getState();
     }
 
     @Override
-    public void setGenerated(boolean generated) {
-        unsafe.setGenerated(generated);
-    }
-
-    @Override
-    public boolean isPopulated() {
-        return unsafe.isPopulated();
-    }
-
-    @Override
-    public void setPopulated(boolean populated) {
-        unsafe.setPopulated(populated);
+    public int setState(int next) {
+        return this.unsafe.setState(next);
     }
 
     @Override
     public boolean isDirty() {
-        return unsafe.isDirty();
+        return this.unsafe.isDirty();
     }
 
     @Override
@@ -497,32 +477,32 @@ public final class Chunk implements IChunk, Closeable {
     }
 
     public LockableChunk readLockable() {
-        return new LockableChunk(unsafe, lock.readLock());
+        return this.readLockable;
     }
 
     public LockableChunk writeLockable() {
-        return new LockableChunk(unsafe, lock.writeLock());
+        return this.writeLockable;
     }
 
     public void clear() {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.clear();
             this.blockUpdates.clear();
             this.chunkDataLoaders = null;
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
         this.clearCache();
     }
 
     @Override
     public synchronized void close() {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.close();
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
         this.clearCache();
     }
@@ -549,21 +529,21 @@ public final class Chunk implements IChunk, Closeable {
 
     @Override
     public void addBlockEntity(BlockEntity blockEntity) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.addBlockEntity(blockEntity);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
     @Override
     public void removeBlockEntity(BlockEntity blockEntity) {
-        this.lock.writeLock().lock();
+        this.writeLock.lock();
         try {
             unsafe.removeBlockEntity(blockEntity);
         } finally {
-            this.lock.writeLock().unlock();
+            this.writeLock.unlock();
         }
     }
 
@@ -573,22 +553,22 @@ public final class Chunk implements IChunk, Closeable {
 
     @Override
     public BlockEntity getBlockEntity(int x, int y, int z) {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return unsafe.getBlockEntity(x, y, z);
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
     @Nonnull
     @Override
     public Set<BlockEntity> getBlockEntities() {
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             return new HashSet<>(unsafe.getBlockEntities());
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 
@@ -627,7 +607,7 @@ public final class Chunk implements IChunk, Closeable {
         packet.setChunkX(this.getX());
         packet.setChunkZ(this.getZ());
 
-        this.lock.readLock().lock();
+        this.readLock.lock();
         try {
             ChunkSection[] sections = unsafe.getSections();
 
@@ -691,7 +671,7 @@ public final class Chunk implements IChunk, Closeable {
                 buffer.release();
             }
         } finally {
-            this.lock.readLock().unlock();
+            this.readLock.unlock();
         }
     }
 }

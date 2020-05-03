@@ -15,7 +15,7 @@ public class PlayerFoodLevelChangeEvent extends PlayerEvent implements Cancellab
     protected float foodSaturationLevel;
 
     public PlayerFoodLevelChangeEvent(Player player, int foodLevel, float foodSaturationLevel) {
-        this.player = player;
+        super(player);
         this.foodLevel = foodLevel;
         this.foodSaturationLevel = foodSaturationLevel;
     }

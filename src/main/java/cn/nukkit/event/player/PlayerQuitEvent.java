@@ -44,7 +44,7 @@ public class PlayerQuitEvent extends PlayerEvent {
     }
 
     public PlayerQuitEvent(Player player, TextContainer quitMessage, boolean autoSave, String reason) {
-        this.player = player;
+        super(player);
         this.quitMessage = quitMessage;
         this.autoSave = autoSave;
         this.reason = reason;

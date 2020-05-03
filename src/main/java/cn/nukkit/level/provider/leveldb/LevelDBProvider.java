@@ -3,11 +3,13 @@ package cn.nukkit.level.provider.leveldb;
 import cn.nukkit.level.LevelData;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.chunk.ChunkBuilder;
+import cn.nukkit.level.chunk.IChunk;
 import cn.nukkit.level.chunk.LockableChunk;
 import cn.nukkit.level.provider.LevelProvider;
 import cn.nukkit.level.provider.leveldb.serializer.*;
 import cn.nukkit.utils.LoadState;
 import com.google.common.base.Preconditions;
+import io.netty.buffer.Unpooled;
 import lombok.extern.log4j.Log4j2;
 import net.daporkchop.ldbjni.LevelDB;
 import org.iq80.leveldb.*;
@@ -24,7 +26,6 @@ import java.util.function.BiConsumer;
 @Log4j2
 @ParametersAreNonnullByDefault
 class LevelDBProvider implements LevelProvider {
-
     private final String levelId;
     private final Path path;
     private final Executor executor;
@@ -62,6 +63,13 @@ class LevelDBProvider implements LevelProvider {
                 return null;
             }
 
+            byte[] finalizationState = this.db.get(LevelDBKey.STATE_FINALIZATION.getKey(x, z));
+            if (finalizationState == null)  {
+                chunkBuilder.state(IChunk.STATE_FINISHED);
+            } else {
+                chunkBuilder.state(Unpooled.wrappedBuffer(finalizationState).readIntLE() + 1);
+            }
+
             byte chunkVersion = versionValue[0];
 
             if (chunkVersion < 7) {
@@ -85,7 +93,7 @@ class LevelDBProvider implements LevelProvider {
 
         return CompletableFuture.supplyAsync(() -> {
             //we clear the dirty flag here instead of in LevelChunkManager in case there are modifications to the chunk between now and the time it was enqueued
-            if (!chunk.clearDirty()) {
+            if (!chunk.isGenerated() || !chunk.clearDirty()) {
                 //the chunk was not dirty, do nothing
                 return null;
             }
@@ -97,6 +105,7 @@ class LevelDBProvider implements LevelProvider {
                     Data2dSerializer.serialize(batch, chunk);
 
                     batch.put(LevelDBKey.VERSION.getKey(x, z), new byte[]{7});
+                    batch.put(LevelDBKey.STATE_FINALIZATION.getKey(x, z), Unpooled.buffer(4).writeIntLE(lockableChunk.getState() - 1).array());
 
                     BlockEntitySerializer.saveBlockEntities(batch, chunk);
                     EntitySerializer.saveEntities(batch, chunk);

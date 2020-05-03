@@ -1,61 +1,54 @@
 package cn.nukkit.form.element;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Preconditions;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ElementDropdown extends Element {
+@ToString
+@Getter
+public final class ElementDropdown extends Element {
 
-    @JsonProperty
-    private final String type = "dropdown"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
-    private String text = "";
-    private List<String> options;
+    private final List<String> options = new ArrayList<>();
     @JsonProperty("default")
     private int defaultOptionIndex = 0;
 
-    public ElementDropdown(String text) {
-        this(text, new ArrayList<>());
+    public ElementDropdown(@Nonnull String elementText) {
+        super(ElementType.DROPDOWN, elementText);
     }
 
-    public ElementDropdown(String text, List<String> options) {
-        this(text, options, 0);
+    public ElementDropdown(@Nonnull String elementText, @Nonnull List<String> options) {
+        super(ElementType.DROPDOWN, elementText);
+
+        Preconditions.checkNotNull(options, "The provided dropdown options can not be null");
+        this.options.addAll(options);
     }
 
-    public ElementDropdown(String text, List<String> options, int defaultOption) {
-        this.text = text;
-        this.options = options;
-        this.defaultOptionIndex = defaultOption;
+    public ElementDropdown(@Nonnull String elementText, @Nonnull List<String> options, int defaultOptionIndex) {
+        super(ElementType.DROPDOWN, elementText);
+
+        Preconditions.checkNotNull(options, "The provided dropdown options can not be null");
+        Preconditions.checkElementIndex(defaultOptionIndex, options.size(), "Default option index");
+
+        this.options.addAll(options);
+        this.defaultOptionIndex = defaultOptionIndex;
     }
 
-    public int getDefaultOptionIndex() {
-        return defaultOptionIndex;
+    public String getDropdownOption(int index) {
+        return this.options.get(index);
     }
 
-    public void setDefaultOptionIndex(int index) {
-        if (index >= options.size()) return;
-        this.defaultOptionIndex = index;
-    }
+    @RequiredArgsConstructor
+    @Getter
+    @ToString
+    public static class Response {
 
-    public List<String> getOptions() {
-        return options;
+        private final int index;
+        private final String option;
     }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public void addOption(String option) {
-        addOption(option, false);
-    }
-
-    public void addOption(String option, boolean isDefault) {
-        options.add(option);
-        if (isDefault) this.defaultOptionIndex = options.size() - 1;
-    }
-
 }

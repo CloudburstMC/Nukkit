@@ -1,0 +1,107 @@
+
+elevationVanilla:
+  height: 0.1
+  variation: 0.2
+
+decorators:
+    # Determine whether anything other than netherrack may generate at the given coordinates
+  - id: "nukkitx:noise"
+    selector:
+      id: "nukkitx:simplex"
+      octaves: 4
+      scale: 0.0078125
+      factor: 2.3333333333
+      offset: 3.0
+    randomFactor: 0.25
+    threshold: 0.0
+    above:
+        # Determine whether soul sand may generate at the given coordinates
+      - id: "nukkitx:noise"
+        selector:
+          id: "nukkitx:simplex"
+          octaves: 4
+          scale: 0.00390625
+          factor: 7.0
+        randomFactor: 0.2
+        threshold: 0.0
+        above:
+            # Soul sand
+          - id: "nukkitx:surface"
+            height: "60-65"
+            top: "soul_sand"
+            filler: "soul_sand"
+        below:
+            # Determine whether gravel may generate at the given coordinates
+          - id: "nukkitx:noise"
+            selector:
+              id: "nukkitx:simplex"
+              octaves: 4
+              scale: 0.00390625
+              factor: 7.0
+            randomFactor: 0.2
+            threshold: 0.0
+            above:
+                # Gravel
+              - id: "nukkitx:surface"
+                height: "60-65"
+                top: "gravel"
+                filler: "gravel"
+
+populators:
+    # Lava springs
+  - id: "nukkitx:spring"
+    chance: 0.03125 # about 8 per chunk
+    replace: "netherrack"
+    height: "4-123"
+    neighbor: "netherrack"
+    neighborCount: 4
+    airCount: 1
+    block: "lava"
+
+    # Fire
+  - id: "nukkitx:shrub"
+    chance: 0.01953125 # about 5 per chunk
+    replace: "air"
+    on: "netherrack"
+    block: "fire"
+
+    # Glowstone
+  - id: "nukkitx:glowstone"
+    chance: 0.048828125 # about 10+2.5=12.5 per chunk
+    replace: "air"
+    height: "4-123"
+    tries: 1500
+    block: "glowstone"
+
+    # Mushrooms
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    replace: "air"
+    on: "netherrack,bedrock"
+    block: "brown_mushroom,red_mushroom"
+
+    # Quartz ore
+  - id: "nukkitx:ore"
+    chance: 0.0625 # about 16 per chunk
+    size: 14
+    height: "10-117"
+    block: "quartz_ore"
+    replace: "netherrack"
+
+    # Magma blocks
+  - id: "nukkitx:ore"
+    chance: 0.015625 # about 4 per chunk
+    size: 33
+    height: "27-36"
+    block: "magma"
+    replace: "netherrack"
+
+    # Lava traps
+  - id: "nukkitx:spring"
+    chance: 0.0625 # about 16 per chunk
+    replace: "netherrack"
+    height: "4-123"
+    neighbor: "netherrack"
+    neighborCount: 5
+    airCount: 0
+    block: "lava"

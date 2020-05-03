@@ -48,7 +48,7 @@ public class ChunkSection {
         return (x << 8) | (z << 4) | y;
     }
 
-    static void checkBounds(int x, int y, int z) {
+    public static void checkBounds(int x, int y, int z) {
         Preconditions.checkArgument(x >= 0 && x < 16, "x (%s) is not between 0 and 15", x);
         Preconditions.checkArgument(y >= 0 && y < 16, "y (%s) is not between 0 and 15", y);
         Preconditions.checkArgument(z >= 0 && z < 16, "z (%s) is not between 0 and 15", z);

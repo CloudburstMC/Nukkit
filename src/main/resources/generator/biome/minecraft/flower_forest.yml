@@ -1,0 +1,54 @@
+parent: "minecraft:forest"
+
+elevationVanilla:
+  height: 0.1
+  variation: 0.4
+
+populators:
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.0234375 # about 6 per chunk
+    on: "grass"
+    replace: "air"
+    types:
+      - "oak"
+      - "oak"
+      - "oak"
+      - "oak"
+      - "birch"
+
+    # Flowers
+    # This doesn't use the "flower gradient" thing like vanilla, but instead simply distributes them randomly
+  - id: "nukkitx:shrub"
+    chance: 0.390625 # about 100 per chunk
+    on: "grass"
+    replace: "air"
+    roundDown: false
+    block:
+      - "yellow_flower"
+      - "red_flower"
+      - "red_flower#2"
+      - "red_flower#3"
+      - "red_flower#4"
+      - "red_flower#5"
+      - "red_flower#6"
+      - "red_flower#7"
+      - "red_flower#8"
+      - "red_flower#9"
+      - "red_flower#10"
+
+    # Double plants
+  - id: "nukkitx:double_plant"
+    chance: 0.01171875 # about 3 per chunk
+    on: "grass"
+    replace: "air"
+    types:
+      - 1 # lilac
+      - 4 # rose
+      - 5 # peony
+
+    # Tall grass
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    on: "grass"
+    block: "tallgrass"

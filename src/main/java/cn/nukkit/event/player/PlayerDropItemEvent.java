@@ -15,7 +15,7 @@ public class PlayerDropItemEvent extends PlayerEvent implements Cancellable {
     private final Item drop;
 
     public PlayerDropItemEvent(Player player, Item drop) {
-        this.player = player;
+        super(player);
         this.drop = drop;
     }
 

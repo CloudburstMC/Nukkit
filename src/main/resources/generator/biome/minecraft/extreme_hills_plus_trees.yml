@@ -1,0 +1,17 @@
+parent: "minecraft:extreme_hills"
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "grass"
+    filler: "dirt"
+
+populators:
+  - id: "nukkitx:next"
+
+    # More trees
+  - id: "nukkitx:tree"
+    chance: 0.01171875 # about 3 per chunk
+    on: "grass"
+    types:
+      - "oak"
+      - "spruce"

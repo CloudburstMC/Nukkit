@@ -1,71 +1,59 @@
 package cn.nukkit.form.element;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.ToString;
 
-public class ElementSlider extends Element {
+import javax.annotation.Nonnull;
 
-    @JsonProperty
-    private final String type = "slider"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
-    private String text = "";
-    private float min = 0f;
-    private float max = 100f;
-    private int step;
+@ToString
+@Getter
+public final class ElementSlider extends Element {
+
+    private final float min;
+    private final float max;
+    private final int step;
     @JsonProperty("default")
-    private float defaultValue;
+    private final float defaultValue;
 
-    public ElementSlider(String text, float min, float max) {
-        this(text, min, max, -1);
+    public ElementSlider(@Nonnull String elementText) {
+        super(ElementType.SLIDER, elementText);
+        this.min = 0f;
+        this.max = 100f;
+        this.step = 1;
+        this.defaultValue = 0f;
     }
 
-    public ElementSlider(String text, float min, float max, int step) {
-        this(text, min, max, step, -1);
-    }
-
-    public ElementSlider(String text, float min, float max, int step, float defaultValue) {
-        this.text = text;
-        this.min = Math.max(min, 0f);
-        this.max = Math.max(max, this.min);
-        if (step != -1f && step > 0) this.step = step;
-        if (defaultValue != -1f) this.defaultValue = defaultValue;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
-    }
-
-    public float getMin() {
-        return min;
-    }
-
-    public void setMin(float min) {
+    public ElementSlider(@Nonnull String elementText, float min, float max) {
+        super(ElementType.SLIDER, elementText);
+        if (min >= max) {
+            throw new IllegalArgumentException("Maximal value can't be smaller or equal to the minimal value");
+        }
         this.min = min;
-    }
-
-    public float getMax() {
-        return max;
-    }
-
-    public void setMax(float max) {
         this.max = max;
+        this.step = 1;
+        this.defaultValue = min;
     }
 
-    public int getStep() {
-        return step;
-    }
-
-    public void setStep(int step) {
+    public ElementSlider(@Nonnull String elementText, float min, float max, int step) {
+        super(ElementType.SLIDER, elementText);
+        if (min >= max) {
+            throw new IllegalArgumentException("Maximal value can't be smaller or equal to the minimal value");
+        }
+        this.min = min;
+        this.max = max;
         this.step = step;
+        this.defaultValue = min;
     }
 
-    public float getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(float defaultValue) {
+    public ElementSlider(@Nonnull String elementText, float min, float max, int step, float defaultValue) {
+        super(ElementType.SLIDER, elementText);
+        if (min >= max) {
+            throw new IllegalArgumentException("Maximal value can't be smaller or equal to the minimal value");
+        }
+        this.min = min;
+        this.max = max;
+        this.step = step;
         this.defaultValue = defaultValue;
     }
 }

@@ -1,0 +1,42 @@
+
+elevationVanilla:
+  height: 0.2
+  variation: 0.2
+
+decorators:
+  - id: "nukkitx:surface"
+    top: "grass"
+    filler: "dirt"
+
+populators:
+    # Fallen trees
+  - id: "nukkitx:tree"
+    chance: 0.0005580357 # about 1 per 7 chunks
+    on: "grass"
+    type:
+      species: "spruce"
+      fallen: true
+
+    # Trees
+  - id: "nukkitx:tree"
+    chance: 0.0390625 # about 10 per chunk
+    on: "grass"
+    replace: "air"
+    type: "spruce"
+
+    # Berry bushes & mushrooms
+  - id: "nukkitx:shrub"
+    chance: 0.0078125 # about 2 per chunk
+    on: "grass,podzol,dirt#1"
+    block: "sweet_berry_bush,2*brown_mushroom,red_mushroom"
+
+    # Tall grass & ferns
+  - id: "nukkitx:shrub"
+    chance: 0.00390625 # about 1 per chunk
+    on: "grass,podzol,dirt#1"
+    block:
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass"
+      - "tallgrass#2" # fern

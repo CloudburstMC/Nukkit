@@ -1,0 +1,5 @@
+parent: "minecraft:taiga"
+
+elevationVanilla:
+  height: 0.45
+  variation: 0.3

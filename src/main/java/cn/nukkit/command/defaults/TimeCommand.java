@@ -126,7 +126,7 @@ public class TimeCommand extends VanillaCommand {
                 level.setTime(value);
                 level.checkTime();
             }
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.set", String.valueOf(value)));
+            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.set", value));
         } else if ("add".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.add")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));

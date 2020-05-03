@@ -154,13 +154,8 @@ public final class LockableChunk implements IChunk, Lock {
     }
 
     @Override
-    public int getHeightMap(int x, int z) {
-        return this.unsafe.getHeightMap(x, z);
-    }
-
-    @Override
-    public void setHeightMap(int x, int z, int value) {
-        this.unsafe.setHeightMap(x, z, value);
+    public int getHighestBlock(int x, int z) {
+        return this.unsafe.getHighestBlock(x, z);
     }
 
     @Override
@@ -207,15 +202,13 @@ public final class LockableChunk implements IChunk, Lock {
     @Nonnull
     @Override
     public byte[] getBiomeArray() {
-        byte[] biomes = this.unsafe.getBiomeArray();
-        return Arrays.copyOf(biomes, biomes.length);
+        return this.unsafe.getBiomeArray().clone();
     }
 
     @Nonnull
     @Override
     public int[] getHeightMapArray() {
-        int[] heightmap = this.unsafe.getHeightMapArray();
-        return Arrays.copyOf(heightmap, heightmap.length);
+        return this.unsafe.getHeightMapArray().clone();
     }
 
     @Nonnull
@@ -237,23 +230,13 @@ public final class LockableChunk implements IChunk, Lock {
     }
 
     @Override
-    public boolean isGenerated() {
-        return unsafe.isGenerated();
+    public int getState() {
+        return this.unsafe.getState();
     }
 
     @Override
-    public void setGenerated(boolean generated) {
-        unsafe.setGenerated(generated);
-    }
-
-    @Override
-    public boolean isPopulated() {
-        return unsafe.isPopulated();
-    }
-
-    @Override
-    public void setPopulated(boolean populated) {
-        unsafe.setPopulated(populated);
+    public int setState(int next) {
+        return this.unsafe.setState(next);
     }
 
     @Override
