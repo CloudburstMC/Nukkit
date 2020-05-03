@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockWood2;
 import cn.nukkit.level.ChunkManager;
@@ -12,8 +13,8 @@ import cn.nukkit.math.Vector3;
  * Created by CreeperFace on 23. 10. 2016.
  */
 public class ObjectDarkOakTree extends TreeGenerator {
-    private static final Block DARK_OAK_LOG = new BlockWood2(BlockWood2.DARK_OAK);
-    private static final Block DARK_OAK_LEAVES = new BlockLeaves2(BlockLeaves2.DARK_OAK);
+    private static final Block DARK_OAK_LOG = Block.get(BlockID.WOOD2, BlockWood2.DARK_OAK);
+    private static final Block DARK_OAK_LEAVES = Block.get(BlockID.LEAVES2, BlockLeaves2.DARK_OAK);
 
     @Override
     public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {

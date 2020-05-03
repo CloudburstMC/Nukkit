@@ -90,6 +90,8 @@ public class EntityFallingBlock extends Entity {
             return;
         }
 
+        this.fireProof = true;
+
         setDataProperty(new IntEntityData(DATA_VARIANT, GlobalBlockPalette.getOrCreateRuntimeId(this.getBlock(), this.getDamage())));
     }
 

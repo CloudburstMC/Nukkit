@@ -24,7 +24,7 @@ public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(new BlockDaylightDetector(), 0);
+        return new ItemBlock(Block.get(BlockID.DAYLIGHT_DETECTOR), 0);
     }
 
     @Override

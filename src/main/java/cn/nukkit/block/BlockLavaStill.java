@@ -28,7 +28,7 @@ public class BlockLavaStill extends BlockLava {
 
     @Override
     public BlockLiquid getBlock(int meta) {
-        return new BlockLavaStill(meta);
+        return (BlockLiquid) Block.get(BlockID.STILL_LAVA, meta);
     }
 
     @Override
