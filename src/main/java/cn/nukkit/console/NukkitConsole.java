@@ -26,9 +26,6 @@ public class NukkitConsole extends SimpleTerminalConsole {
 
     @Override
     protected void runCommand(String command) {
-        if (command.startsWith("/")) {
-            command = command.substring(1);
-        }
         if (executingCommands.get()) {
             try (Timing ignored = Timings.serverCommandTimer.startTiming()) {
                 ServerCommandEvent event = new ServerCommandEvent(server.getConsoleSender(), command);
@@ -36,7 +33,7 @@ public class NukkitConsole extends SimpleTerminalConsole {
                     server.getPluginManager().callEvent(event);
                 }
                 if (!event.isCancelled()) {
-                    Server.getInstance().getScheduler().scheduleTask(() -> server.dispatchCommand(event.getSender(), event.getCommand()));
+                    Server.getInstance().getScheduler().scheduleTask(null, () -> server.dispatchCommand(event.getSender(), event.getCommand()));
                 }
             }
         } else {

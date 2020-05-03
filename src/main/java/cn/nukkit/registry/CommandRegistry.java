@@ -306,7 +306,13 @@ public class CommandRegistry implements Registry {
 
         String sentCmd = parsed.remove(0).toLowerCase();
         if (!this.knownAliases.containsKey(sentCmd)) {
-            return false;
+            if (sender instanceof ConsoleCommandSender && sentCmd.startsWith("/")) {
+                sentCmd = sentCmd.replaceFirst("/", "");
+                if (!this.knownAliases.containsKey(sentCmd))
+                    return false;
+            } else {
+                return false;
+            }
         }
 
         String[] args = parsed.toArray(new String[0]);
