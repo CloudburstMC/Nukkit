@@ -15,12 +15,11 @@ import com.nukkitx.network.util.Preconditions;
 import com.nukkitx.protocol.bedrock.data.CommandData;
 import com.nukkitx.protocol.bedrock.packet.AvailableCommandsPacket;
 import lombok.extern.log4j.Log4j2;
-import net.daporkchop.lib.common.ref.Ref;
-import net.daporkchop.lib.common.ref.ThreadRef;
 
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * <code>CommandRegistry</code> is used to register custom commands. Use the {@link #register(Plugin, String, CommandFactory) register()}
@@ -33,7 +32,7 @@ import java.util.regex.Matcher;
  */
 @Log4j2
 public class CommandRegistry implements Registry {
-    private final Ref<Matcher> NAME_MATCHER = ThreadRef.regex("^([a-z0-9_-]+)$");
+    private final Matcher NAME_MATCHER = Pattern.compile("^[a-z0-9_\\-/\\.]+$").matcher("");
     private static final CommandRegistry INSTANCE = new CommandRegistry();
     private final Map<String, CommandFactory> factoryMap = new HashMap<>();
     private Map<String, Command> registeredCommands;
@@ -69,8 +68,8 @@ public class CommandRegistry implements Registry {
         Objects.requireNonNull(commandFactory, "commandFactory");
         Objects.requireNonNull(plugin, "plugin");
         checkClosed();
-        Matcher matcher = NAME_MATCHER.get().reset(name);
-        Preconditions.checkArgument(matcher.find(), "Invalid command name: %s", name);
+        NAME_MATCHER.reset(name);
+        Preconditions.checkArgument(NAME_MATCHER.matches(), "Invalid command name: %s", name);
 
         if (knownAliases.containsKey(name)) {
             log.warn("Command with name {} already exists, attempting to add prefix {}", name, plugin.getName());
@@ -307,7 +306,7 @@ public class CommandRegistry implements Registry {
         String sentCmd = parsed.remove(0).toLowerCase();
         if (!this.knownAliases.containsKey(sentCmd)) {
             if (sender instanceof ConsoleCommandSender && sentCmd.startsWith("/")) {
-                sentCmd = sentCmd.replaceFirst("/", "");
+                sentCmd = sentCmd.substring(1);
                 if (!this.knownAliases.containsKey(sentCmd))
                     return false;
             } else {
