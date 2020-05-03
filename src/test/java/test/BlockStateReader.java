@@ -5,18 +5,18 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
-import com.google.common.primitives.Ints;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class BlockStateReader {
     public static void main(String[] args) {
-        Map<CompoundTag, int[]> metaOverrides = new LinkedHashMap<>();
+        Map<CompoundTag, List<CompoundTag>> metaOverrides = new LinkedHashMap<>();
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states_overrides.dat")) {
             if (stream == null) {
                 throw new AssertionError("Unable to locate block state nbt");
@@ -29,7 +29,7 @@ public class BlockStateReader {
         
             for (CompoundTag override : states.getAll()) {
                 if (override.contains("block") && override.contains("meta")) {
-                    metaOverrides.put(override.getCompound("block").remove("version"), override.getIntArray("meta"));
+                    metaOverrides.put(override.getCompound("block").remove("version"), override.getList("LegacyStates", CompoundTag.class).getAll());
                 }
             }
         
@@ -49,26 +49,38 @@ public class BlockStateReader {
             throw new AssertionError(e);
         }
 
-        //try(FileWriter fos = new FileWriter("antes.txt")) {
-            for (CompoundTag state : tags.getAll()) {
-                //fos.write(state.toString() + '\n');
+        Set<String> inspect = Stream.of(
+                "minecraft:light_block", "minecraft:wood"
+        ).collect(Collectors.toSet());
+        
+        TreeMap<String, String> blockStates = new TreeMap<>();
+        for (CompoundTag state : tags.getAll()) {
+            StringBuilder data = new StringBuilder();
+            //data.append(state.copy().remove("LegacyStates").toString()).append('\n');
             CompoundTag block = state.getCompound("block");
-            if (block.getString("name").toLowerCase().contains("piston")) {
-                StringBuilder builder = new StringBuilder(block.getString("name"));
-                for (Tag tag : block.getCompound("states").getAllTags()) {
-                    builder.append(';').append(tag.getName()).append('=').append(tag.parseValue());
-                }
-                System.out.println(builder.toString());
-                System.out.println(Ints.asList(state.getIntArray("meta")));
-                int[] overrides = metaOverrides.get(block.copy().remove("version"));
-                if (overrides != null) {
-                    System.out.println(Ints.asList(overrides));
-                }
-                System.out.println();
+            if (!inspect.contains(block.getString("name"))) {
+                continue;
             }
+            StringBuilder stateName = new StringBuilder(block.getString("name"));
+            for (Tag tag : block.getCompound("states").getAllTags()) {
+                stateName.append(';').append(tag.getName()).append('=').append(tag.parseValue());
             }
-        //} catch (IOException e) {
-        //    e.printStackTrace();
-        //}
+            data.append(stateName.toString()).append('\n');
+            List<String> metas = state.getList("LegacyStates", CompoundTag.class).getAll().stream()
+                    .map(t -> t.getInt("id") + ":" + t.getShort("val"))
+                    .collect(Collectors.toList());
+            data.append(metas.toString()).append('\n');
+            List<CompoundTag> overrides = metaOverrides.get(block.copy().remove("version"));
+            if (overrides != null) {
+                List<String> overrideList = overrides.stream()
+                        .map(t -> t.getInt("id") + ":" + t.getShort("val"))
+                        .collect(Collectors.toList());
+                data.append(overrideList.toString()).append('\n');
+            }
+            data.append("\n");
+            blockStates.put(stateName.toString(), data.toString());
+        }
+        
+        blockStates.values().forEach(System.out::print);
     }
 }
