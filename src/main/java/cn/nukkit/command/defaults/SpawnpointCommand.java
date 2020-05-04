@@ -1,16 +1,15 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.locale.TranslationContainer;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
-
-import java.text.DecimalFormat;
 
 /**
  * Created on 2015/12/13 by xtypr.
@@ -18,11 +17,15 @@ import java.text.DecimalFormat;
  */
 public class SpawnpointCommand extends VanillaCommand {
     public SpawnpointCommand(String name) {
-        super(name, "commands.spawnpoint.description", "commands.spawnpoint.usage");
+        super(name, "commands.spawnpoint.description", "/spawnpoint [player] <position>");
         this.setPermission("nukkit.command.spawnpoint");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("blockPos", CommandParamType.POSITION, true),
+        });
+        this.commandParameters.add(new CommandParameter[]{
+                new CommandParameter("target", CommandParamType.TARGET, false),
+                new CommandParameter("pos", CommandParamType.POSITION, true)
         });
     }
 
@@ -36,7 +39,7 @@ public class SpawnpointCommand extends VanillaCommand {
             if (sender instanceof Player) {
                 target = (Player) sender;
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslationContainer("commands.locate.fail.noplayer"));
                 return true;
             }
         } else {
@@ -47,7 +50,7 @@ public class SpawnpointCommand extends VanillaCommand {
             }
         }
         Level level = target.getLevel();
-        DecimalFormat round2 = new DecimalFormat("##0.00");
+
         if (args.length == 4) {
             if (level != null) {
                 int x;
@@ -64,23 +67,23 @@ public class SpawnpointCommand extends VanillaCommand {
                 if (y < 0) y = 0;
                 if (y > 256) y = 256;
                 target.setSpawn(Location.from(x, y, z, level));
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success", target.getName(),
-                        round2.format(x),
-                        round2.format(y),
-                        round2.format(z)));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success.single", target.getName(),
+                        NukkitMath.round(x, 2),
+                        NukkitMath.round(y, 2),
+                        NukkitMath.round(z, 2)));
                 return true;
             }
         } else if (args.length <= 1) {
             if (sender instanceof Player) {
                 Location pos = ((Player) sender).getLocation();
                 target.setSpawn(pos);
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success", target.getName(),
-                        round2.format(pos.getX()),
-                        round2.format(pos.getY()),
-                        round2.format(pos.getZ())));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success.single", target.getName(),
+                        NukkitMath.round(pos.getX(), 2),
+                        NukkitMath.round(pos.getY(), 2),
+                        NukkitMath.round(pos.getZ(), 2)));
                 return true;
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslationContainer("commands.locate.fail.noplayer"));
                 return true;
             }
         }

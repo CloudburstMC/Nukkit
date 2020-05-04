@@ -1,4 +1,4 @@
 package cn.nukkit.blockentity;
 
-public interface Dispenser extends BlockEntity {
+public interface Dispenser extends BlockEntity, ContainerBlockEntity {
 }

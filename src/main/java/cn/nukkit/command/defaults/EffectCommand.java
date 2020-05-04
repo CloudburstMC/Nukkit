@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -17,7 +18,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class EffectCommand extends Command {
     public EffectCommand(String name) {
-        super(name, "commands.effect.description", "commands.effect.usage");
+        super(name, "commands.effect.description", "/effect <player> <clear|effect> [seconds] [amplifier] [hideParticles]");
         this.setPermission("nukkit.command.effect");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -108,7 +109,7 @@ public class EffectCommand extends Command {
         } else {
             effect.setDuration(duration).setAmplifier(amplification);
             player.addEffect(effect);
-            Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.effect.success", effect.getName(), String.valueOf(effect.getAmplifier()), player.getDisplayName(), String.valueOf(effect.getDuration() / 20)));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.effect.success", effect.getName(), effect.getAmplifier(), player.getDisplayName(), effect.getDuration() / 20));
         }
         return true;
     }

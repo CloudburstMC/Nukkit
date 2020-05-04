@@ -1,15 +1,14 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
 import cn.nukkit.locale.TranslationContainer;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3f;
-
-import java.text.DecimalFormat;
 
 /**
  * Created on 2015/12/13 by xtypr.
@@ -17,7 +16,7 @@ import java.text.DecimalFormat;
  */
 public class SetWorldSpawnCommand extends VanillaCommand {
     public SetWorldSpawnCommand(String name) {
-        super(name, "commands.setworldspawn.description", "commands.setworldspawn.usage");
+        super(name, "commands.setworldspawn.description", "/setworldspawn <position>");
         this.setPermission("nukkit.command.setworldspawn");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -37,7 +36,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
                 level = ((Player) sender).getLevel();
                 pos = ((Player) sender).getPosition();
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslationContainer("commands.locate.fail.noplayer"));
                 return true;
             }
         } else if (args.length == 3) {
@@ -53,9 +52,9 @@ public class SetWorldSpawnCommand extends VanillaCommand {
             return true;
         }
         level.setSpawnLocation(pos);
-        DecimalFormat round2 = new DecimalFormat("##0.00");
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", round2.format(pos.getX()),
-                round2.format(pos.getY()), round2.format(pos.getZ())));
+
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", NukkitMath.round(pos.getX(), 2),
+                NukkitMath.round(pos.getY(), 2), NukkitMath.round(pos.getZ(), 2)));
         return true;
     }
 }

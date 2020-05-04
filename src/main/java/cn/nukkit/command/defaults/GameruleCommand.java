@@ -16,7 +16,7 @@ public class GameruleCommand extends VanillaCommand {
     private static final GameRuleRegistry registry = GameRuleRegistry.get();
 
     public GameruleCommand(String name) {
-        super(name, "commands.gamerule.description", "commands.gamerule.usage");
+        super(name, "commands.gamerule.description", "/gamerule <gamerule> [value]");
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -32,7 +32,7 @@ public class GameruleCommand extends VanillaCommand {
         }
 
         if (!sender.isPlayer()) {
-            sender.sendMessage(new TranslationContainer("%commands.generic.ingame"));
+            sender.sendMessage(new TranslationContainer("commands.locate.fail.noplayer"));
             return true;
         }
         GameRuleMap rules = ((Player) sender).getLevel().getGameRules();

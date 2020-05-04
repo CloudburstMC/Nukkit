@@ -1,15 +1,14 @@
 package cn.nukkit.command;
 
-import cn.nukkit.Server;
-import cn.nukkit.command.data.*;
-import cn.nukkit.locale.TextContainer;
+import cn.nukkit.command.data.CommandData;
+import cn.nukkit.command.data.CommandOverload;
+import cn.nukkit.command.data.CommandParamType;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
-import cn.nukkit.permission.Permissible;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import com.google.common.collect.ImmutableMap;
 import com.nukkitx.protocol.bedrock.data.CommandEnumData;
 import com.nukkitx.protocol.bedrock.data.CommandParamData;
 
@@ -21,48 +20,21 @@ import java.util.*;
  */
 public abstract class Command {
 
-    private static CommandData defaultDataTemplate = null;
-
     protected CommandData commandData;
 
     private final String name;
 
-    private String nextLabel;
+    private String[] aliases;
 
-    private String label;
+    protected String description;
 
-    private String[] aliases = new String[0];
-
-    private String[] activeAliases = new String[0];
-
-    private CommandMap commandMap = null;
-
-    protected String description = "";
-
-    protected String usageMessage = "";
+    protected String usageMessage;
 
     private String permission = null;
 
     private String permissionMessage = null;
 
-    private static final ImmutableMap<CommandParamType, CommandParamData.Type> NETWORK_TYPES = ImmutableMap.<CommandParamType, CommandParamData.Type>builder()
-            .put(CommandParamType.INT, CommandParamData.Type.INT)
-            .put(CommandParamType.FLOAT, CommandParamData.Type.FLOAT)
-            .put(CommandParamType.VALUE, CommandParamData.Type.VALUE)
-            .put(CommandParamType.WILDCARD_INT, CommandParamData.Type.WILDCARD_INT)
-            .put(CommandParamType.OPERATOR, CommandParamData.Type.OPERATOR)
-            .put(CommandParamType.TARGET, CommandParamData.Type.TARGET)
-            .put(CommandParamType.WILDCARD_TARGET, CommandParamData.Type.WILDCARD_TARGET)
-            .put(CommandParamType.FILE_PATH, CommandParamData.Type.FILE_PATH)
-            .put(CommandParamType.STRING, CommandParamData.Type.STRING)
-            .put(CommandParamType.POSITION, CommandParamData.Type.POSITION)
-            .put(CommandParamType.MESSAGE, CommandParamData.Type.MESSAGE)
-            .put(CommandParamType.TEXT, CommandParamData.Type.TEXT)
-            .put(CommandParamType.JSON, CommandParamData.Type.JSON)
-            .put(CommandParamType.COMMAND, CommandParamData.Type.COMMAND)
-            .put(CommandParamType.RAWTEXT, CommandParamData.Type.TEXT)
-
-            .build();
+    protected List<CommandParameter[]> commandParameters = new ArrayList<>();
 
     public Timing timing;
 
@@ -78,48 +50,14 @@ public abstract class Command {
         this(name, description, usageMessage, new String[0]);
     }
 
-    protected List<CommandParameter[]> commandParameters = new ArrayList<>();
-
-    /**
-     * Returns an CommandData containing command data
-     *
-     * @return CommandData
-     */
-    public CommandData getDefaultCommandData() {
-        return this.commandData;
-    }
-
     public Command(String name, String description, String usageMessage, String[] aliases) {
         this.commandData = new CommandData();
         this.name = name.toLowerCase(); // Uppercase letters crash the client?!?
-        this.nextLabel = name;
-        this.label = name;
         this.description = description;
         this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
         this.aliases = aliases;
-        this.activeAliases = aliases;
         this.timing = Timings.getCommandTiming(this);
         this.commandParameters.add(new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
-    }
-
-    public static CommandData generateDefaultData() {
-        if (defaultDataTemplate == null) {
-            //defaultDataTemplate = new Gson().fromJson(new InputStreamReader(Server.class.getClassLoader().getResourceAsStream("command_default.json")));
-        }
-        return defaultDataTemplate;
-    }
-
-    private static CommandParamData toNetwork(CommandParameter commandParameter) {
-        return new CommandParamData(commandParameter.name, commandParameter.optional,
-                toNetwork(commandParameter.enumData), NETWORK_TYPES.get(commandParameter.type),
-                commandParameter.postFix, Collections.emptyList());
-    }
-
-    private static CommandEnumData toNetwork(CommandEnum commandEnum) {
-        if (commandEnum == null) {
-            return null;
-        }
-        return new CommandEnumData(commandEnum.getName(), commandEnum.getValues().toArray(new String[0]), false);
     }
 
     public CommandParameter[] getCommandParameters(int key) {
@@ -174,47 +112,11 @@ public abstract class Command {
     }
 
     public String getLabel() {
-        return label;
-    }
-
-    public boolean setLabel(String name) {
-        this.nextLabel = name;
-        if (!this.isRegistered()) {
-            this.label = name;
-            this.timing = Timings.getCommandTiming(this);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean register(CommandMap commandMap) {
-        if (this.allowChangesFrom(commandMap)) {
-            this.commandMap = commandMap;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean unregister(CommandMap commandMap) {
-        if (this.allowChangesFrom(commandMap)) {
-            this.commandMap = null;
-            this.activeAliases = this.aliases;
-            this.label = this.nextLabel;
-            return true;
-        }
-        return false;
-    }
-
-    public boolean allowChangesFrom(CommandMap commandMap) {
-        return commandMap != null && !commandMap.equals(this.commandMap);
-    }
-
-    public boolean isRegistered() {
-        return this.commandMap != null;
+        return getName();
     }
 
     public String[] getAliases() {
-        return this.activeAliases;
+        return this.aliases;
     }
 
     public String getPermissionMessage() {
@@ -231,9 +133,6 @@ public abstract class Command {
 
     public void setAliases(String[] aliases) {
         this.aliases = aliases;
-        if (!this.isRegistered()) {
-            this.activeAliases = aliases;
-        }
     }
 
     public void setDescription(String description) {
@@ -250,64 +149,6 @@ public abstract class Command {
 
     public List<CommandParameter[]> getCommandParameters() {
         return commandParameters;
-    }
-
-    public static void broadcastCommandMessage(CommandSender source, String message) {
-        broadcastCommandMessage(source, message, true);
-    }
-
-    public static void broadcastCommandMessage(CommandSender source, String message, boolean sendToSource) {
-        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
-
-        TranslationContainer result = new TranslationContainer("chat.type.admin", source.getName(), message);
-
-        TranslationContainer colored = new TranslationContainer(TextFormat.GRAY + "" + TextFormat.ITALIC + "%chat.type.admin", source.getName(), message);
-
-        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
-            source.sendMessage(message);
-        }
-
-        for (Permissible user : users) {
-            if (user instanceof CommandSender) {
-                if (user instanceof ConsoleCommandSender) {
-                    ((ConsoleCommandSender) user).sendMessage(result);
-                } else if (!user.equals(source)) {
-                    ((CommandSender) user).sendMessage(colored);
-                }
-            }
-        }
-    }
-
-    public static void broadcastCommandMessage(CommandSender source, TextContainer message) {
-        broadcastCommandMessage(source, message, true);
-    }
-
-    public static void broadcastCommandMessage(CommandSender source, TextContainer message, boolean sendToSource) {
-        TextContainer m = message.clone();
-        String resultStr = "[" + source.getName() + ": " + (!m.getText().equals(source.getServer().getLanguage().get(m.getText())) ? "%" : "") + m.getText() + "]";
-
-        Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
-
-        String coloredStr = TextFormat.GRAY + "" + TextFormat.ITALIC + resultStr;
-
-        m.setText(resultStr);
-        TextContainer result = m.clone();
-        m.setText(coloredStr);
-        TextContainer colored = m.clone();
-
-        if (sendToSource && !(source instanceof ConsoleCommandSender)) {
-            source.sendMessage(message);
-        }
-
-        for (Permissible user : users) {
-            if (user instanceof CommandSender) {
-                if (user instanceof ConsoleCommandSender) {
-                    ((ConsoleCommandSender) user).sendMessage(result);
-                } else if (!user.equals(source)) {
-                    ((CommandSender) user).sendMessage(colored);
-                }
-            }
-        }
     }
 
     @Override
@@ -346,8 +187,7 @@ public abstract class Command {
             aliasesEnum = new String[]{this.name.toLowerCase()};
         }
         CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "Aliases", aliasesEnum, false);
-
-        String description = player.getServer().getLanguage().translateOnly("nukkit.", this.description);
+        String description = player.getServer().getLanguage().translate(this.description);
 
         CommandParamData[][] overloads = new CommandParamData[this.commandParameters.size()][];
 
@@ -355,7 +195,7 @@ public abstract class Command {
             CommandParameter[] parameters = this.commandParameters.get(i);
             CommandParamData[] params = new CommandParamData[parameters.length];
             for (int i2 = 0; i2 < parameters.length; i2++) {
-                params[i2] = toNetwork(parameters[i2]);
+                params[i2] = CommandUtils.toNetwork(parameters[i2]);
             }
             overloads[i] = params;
         }

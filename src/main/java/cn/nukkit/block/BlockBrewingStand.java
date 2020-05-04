@@ -71,7 +71,9 @@ public class BlockBrewingStand extends BlockSolid {
             if (blockEntity instanceof BrewingStand) {
                 brewing = (BrewingStand) blockEntity;
             } else {
-                blockEntity.close();
+                if (blockEntity != null) {
+                    blockEntity.close();
+                }
 
                 brewing = BlockEntityRegistry.get().newEntity(BREWING_STAND, this.getChunk(), this.getPosition());
             }

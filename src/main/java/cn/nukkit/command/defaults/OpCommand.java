@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class OpCommand extends VanillaCommand {
 
     public OpCommand(String name) {
-        super(name, "commands.op.description", "commands.op.description");
+        super(name, "commands.op.description", "/op <player>");
         this.setPermission("nukkit.command.op.give");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -40,7 +40,7 @@ public class OpCommand extends VanillaCommand {
         String name = args[0];
         Optional<UUID> uuid = sender.getServer().lookupName(name);
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", name));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", name));
         if (uuid.isPresent()) {
             IPlayer player = sender.getServer().getOfflinePlayer(uuid.get());
             if (player instanceof Player) {

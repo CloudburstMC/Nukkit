@@ -18,7 +18,7 @@ import java.util.TreeMap;
 public class HelpCommand extends VanillaCommand {
 
     public HelpCommand(String name) {
-        super(name, "commands.help.description", "commands.help.usage", new String[]{"?"});
+        super(name, "commands.help.description", "/help [page]", new String[]{"?"});
         this.setPermission("nukkit.command.help");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -36,7 +36,7 @@ public class HelpCommand extends VanillaCommand {
         int pageHeight = 5;
         if (args.length != 0) {
             try {
-                pageNumber = Integer.valueOf(args[args.length - 1]);
+                pageNumber = Integer.parseInt(args[args.length - 1]);
                 if (pageNumber <= 0) {
                     pageNumber = 1;
                 }
@@ -72,7 +72,7 @@ public class HelpCommand extends VanillaCommand {
 
         if (command.equals("")) {
             Map<String, Command> commands = new TreeMap<>();
-            for (Command cmd : sender.getServer().getCommandMap().getCommands().values()) {
+            for (Command cmd : sender.getServer().getCommandRegistry().getRegisteredCommands().values()) {
                 if (cmd.testPermissionSilent(sender)) {
                     commands.put(cmd.getName(), cmd);
                 }
@@ -87,18 +87,21 @@ public class HelpCommand extends VanillaCommand {
             int i = 1;
             for (Command command1 : commands.values()) {
                 if (i >= (pageNumber - 1) * pageHeight + 1 && i <= Math.min(commands.size(), pageNumber * pageHeight)) {
-                    sender.sendMessage(TextFormat.DARK_GREEN + "/" + command1.getName() + ": " + TextFormat.WHITE + command1.getDescription());
+                    sender.sendMessage(TextFormat.DARK_GREEN + "/" + command1.getName() + ": "
+                            + TextFormat.WHITE + sender.getServer().getLanguage().translate(command1.getDescription()));
                 }
                 i++;
             }
 
             return true;
         } else {
-            Command cmd = sender.getServer().getCommandMap().getCommand(command.toLowerCase());
+            Command cmd = sender.getServer().getCommandRegistry().getCommand(command.toLowerCase());
             if (cmd != null) {
                 if (cmd.testPermissionSilent(sender)) {
+
+                    String desc = sender.getServer().getLanguage().translate(cmd.getDescription());
                     String message = TextFormat.YELLOW + "--------- " + TextFormat.WHITE + " Help: /" + cmd.getName() + TextFormat.YELLOW + " ---------\n";
-                    message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + cmd.getDescription() + "\n";
+                    message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + desc + "\n";
                     String usage = "";
                     String[] usages = cmd.getUsage().split("\n");
                     for (String u : usages) {

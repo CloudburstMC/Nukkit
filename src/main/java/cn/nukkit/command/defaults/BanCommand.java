@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerKickEvent;
@@ -15,7 +15,7 @@ import cn.nukkit.player.Player;
 public class BanCommand extends VanillaCommand {
 
     public BanCommand(String name) {
-        super(name, "commands.ban.description", "commands.ban.usage");
+        super(name, "commands.ban.description", "/ban <player> [reason]");
         this.setPermission("nukkit.command.ban.player");
         this.commandParameters.clear();
         this.commandParameters.add(
@@ -54,7 +54,7 @@ public class BanCommand extends VanillaCommand {
             player.kick(PlayerKickEvent.Reason.NAME_BANNED, !reason.isEmpty() ? "Banned by admin. Reason: " + reason : "Banned by admin");
         }
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.ban.success", player != null ? player.getName() : name));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.ban.success", player != null ? player.getName() : name));
 
         return true;
     }

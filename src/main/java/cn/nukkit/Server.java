@@ -1,6 +1,7 @@
 package cn.nukkit;
 
-import cn.nukkit.command.*;
+import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.console.NukkitConsole;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.event.HandlerList;
@@ -26,7 +27,6 @@ import cn.nukkit.network.Network;
 import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.query.QueryHandler;
-import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.pack.PackManager;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
@@ -80,7 +80,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -105,13 +104,13 @@ public class Server {
 
     private Config whitelist;
 
-    private AtomicBoolean isRunning = new AtomicBoolean(true);
+    private final AtomicBoolean isRunning = new AtomicBoolean(true);
 
     private boolean hasStopped = false;
 
     private PluginManager pluginManager;
 
-    private int profilingTickrate = 20;
+    private final int profilingTickrate = 20;
 
     private ServerScheduler scheduler;
 
@@ -129,12 +128,10 @@ public class Server {
 
     private int sendUsageTicker = 0;
 
-    private boolean dispatchSignals = false;
+    private final boolean dispatchSignals = false;
 
     private final NukkitConsole console;
     private final ConsoleThread consoleThread;
-
-    private SimpleCommandMap commandMap;
 
     private CraftingManager craftingManager;
 
@@ -146,8 +143,6 @@ public class Server {
 
     private boolean autoSave = true;
 
-    private RCON rcon;
-
     private EntityMetadataStore entityMetadata;
 
     private PlayerMetadataStore playerMetadata;
@@ -158,7 +153,6 @@ public class Server {
 
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
-    private int networkZlibProvider = 0;
 
     private boolean autoTickRate = true;
     private int autoTickRateLimit = 20;
@@ -198,6 +192,7 @@ public class Server {
     private final ItemRegistry itemRegistry = ItemRegistry.get();
     private final EntityRegistry entityRegistry = EntityRegistry.get();
     private final BiomeRegistry biomeRegistry = BiomeRegistry.get();
+    private final CommandRegistry commandRegistry = CommandRegistry.get();
 
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
@@ -219,7 +214,7 @@ public class Server {
     private Properties properties;
     private volatile Identifier defaultStorageId;
 
-    private Set<String> ignoredPackets = new HashSet<>();
+    private final Set<String> ignoredPackets = new HashSet<>();
 
     public Server(String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
@@ -409,8 +404,6 @@ public class Server {
         this.properties.setProperty("default-level", "world");
         this.properties.setProperty("allow-nether", "true");
         this.properties.setProperty("enable-query", "true");
-        this.properties.setProperty("enable-rcon", "false");
-        this.properties.setProperty("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
         this.properties.setProperty("auto-save", "true");
         this.properties.setProperty("force-resources", "false");
         this.properties.setProperty("bug-report", "true");
@@ -452,14 +445,6 @@ public class Server {
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
         this.baseTickRate = this.getConfig("level-settings.base-tick-rate", 1);
 
-        if (this.getPropertyBoolean("enable-rcon", false)) {
-            try {
-                this.rcon = new RCON(this, this.getProperty("rcon.password", ""), (!this.getIp().equals("")) ? this.getIp() : "0.0.0.0", this.getPropertyInt("rcon.port", this.getPort()));
-            } catch (IllegalArgumentException e) {
-                log.error(getLanguage().translate(e.getMessage(), e.getCause().getMessage()));
-            }
-        }
-
         this.entityMetadata = new EntityMetadataStore();
         this.playerMetadata = new PlayerMetadataStore();
         this.levelMetadata = new LevelMetadataStore();
@@ -486,7 +471,7 @@ public class Server {
         log.info(this.getLanguage().translate("nukkit.server.license", this.getName()));
 
         this.consoleSender = new ConsoleCommandSender();
-        this.commandMap = new SimpleCommandMap(this);
+        // this.commandMap = new SimpleCommandMap(this);
 
         // Convert legacy data before plugins get the chance to mess with it.
         try {
@@ -501,7 +486,7 @@ public class Server {
 
         this.craftingManager = new CraftingManager();
 
-        this.pluginManager = new PluginManager(this, this.commandMap);
+        this.pluginManager = new PluginManager(this);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
@@ -526,6 +511,7 @@ public class Server {
             this.generatorRegistry.close();
             this.storageRegistry.close();
             this.packManager.closeRegistration();
+            this.commandRegistry.close();
         } catch (RegistryException e) {
             throw new IllegalStateException("Unable to close registries", e);
         } finally {
@@ -620,7 +606,6 @@ public class Server {
         }
 
         if (type == PluginLoadOrder.POSTWORLD) {
-            this.commandMap.registerServerAliases();
             DefaultPermissions.registerCorePermissions();
         }
     }
@@ -644,7 +629,7 @@ public class Server {
             throw new ServerException("CommandSender is not valid");
         }
 
-        if (this.commandMap.dispatch(sender, commandLine)) {
+        if (this.commandRegistry.dispatch(sender, commandLine)) {
             return true;
         }
 
@@ -671,10 +656,6 @@ public class Server {
             isRunning.compareAndSet(true, false);
 
             this.hasStopped = true;
-
-            if (this.rcon != null) {
-                this.rcon.close();
-            }
 
             for (Player player : new ArrayList<>(this.players.values())) {
                 player.close(player.getLeaveMessage(), this.getConfig("settings.shutdown-message", "Server closed"));
@@ -943,10 +924,6 @@ public class Server {
 
             try (Timing ignored2 = Timings.connectionTimer.startTiming()) {
                 this.network.processInterfaces();
-
-                if (this.rcon != null) {
-                    this.rcon.check();
-                }
             }
 
             try (Timing ignored2 = Timings.schedulerTimer.startTiming()) {
@@ -1310,8 +1287,8 @@ public class Server {
         return ((float) Math.round(sum / count * 100)) / 100;
     }
 
-    public SimpleCommandMap getCommandMap() {
-        return commandMap;
+    public CommandRegistry getCommandRegistry() {
+        return this.commandRegistry;
     }
 
     public Map<UUID, Player> getOnlinePlayers() {
@@ -1758,15 +1735,6 @@ public class Server {
             this.properties.store(stream, "");
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    public PluginIdentifiableCommand getPluginCommand(String name) {
-        Command command = this.commandMap.getCommand(name);
-        if (command instanceof PluginIdentifiableCommand) {
-            return (PluginIdentifiableCommand) command;
-        } else {
-            return null;
         }
     }
 

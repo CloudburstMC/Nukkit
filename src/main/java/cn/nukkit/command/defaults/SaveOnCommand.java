@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.locale.TranslationContainer;
 
 /**
@@ -11,7 +11,7 @@ import cn.nukkit.locale.TranslationContainer;
 public class SaveOnCommand extends VanillaCommand {
 
     public SaveOnCommand(String name) {
-        super(name, "commands.save-on.description");
+        super(name, "commands.save-on.description", "/save-on");
         this.setPermission("nukkit.command.save.enable");
         this.commandParameters.clear();
     }
@@ -22,7 +22,7 @@ public class SaveOnCommand extends VanillaCommand {
             return true;
         }
         sender.getServer().setAutoSave(true);
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.save.enabled"));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.save.enabled"));
         return true;
     }
 }

@@ -12,7 +12,7 @@ public class PlayerMapInfoRequestEvent extends PlayerEvent implements Cancellabl
 
     private static final HandlerList handlers = new HandlerList();
 
-    private Item item;
+    private final Item item;
 
     public PlayerMapInfoRequestEvent(Player player, Item item) {
         super(player);

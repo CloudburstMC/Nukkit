@@ -18,7 +18,7 @@ import java.lang.management.ManagementFactory;
 public class DebugPasteCommand extends VanillaCommand {
 
     public DebugPasteCommand(String name) {
-        super(name, "commands.debug.description", "commands.debug.usage");
+        super(name, "commands.debug.description");
         this.setPermission("nukkit.command.debug.perform");
     }
 

@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -14,7 +14,7 @@ import cn.nukkit.utils.TextFormat;
 public class WhitelistCommand extends VanillaCommand {
 
     public WhitelistCommand(String name) {
-        super(name, "commands.whitelist.description", "commands.whitelist.usage");
+        super(name, "commands.whitelist.description", "/whitelist <on|off|reload|list>\n/whitelist <add|remove> <player>");
         this.setPermission(
                 "nukkit.command.whitelist.reload;" +
                         "nukkit.command.whitelist.enable;" +
@@ -52,17 +52,17 @@ public class WhitelistCommand extends VanillaCommand {
             switch (args[0].toLowerCase()) {
                 case "reload":
                     sender.getServer().reloadWhitelist();
-                    Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.reloaded"));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.reloaded"));
 
                     return true;
                 case "on":
                     sender.getServer().setPropertyBoolean("white-list", true);
-                    Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.enabled"));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.enabled"));
 
                     return true;
                 case "off":
                     sender.getServer().setPropertyBoolean("white-list", false);
-                    Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.disabled"));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.disabled"));
 
                     return true;
                 case "list":
@@ -72,17 +72,14 @@ public class WhitelistCommand extends VanillaCommand {
                         result += player + ", ";
                         ++count;
                     }
-                    sender.sendMessage(new TranslationContainer("commands.whitelist.list", String.valueOf(count), String.valueOf(count)));
+                    sender.sendMessage(new TranslationContainer("commands.whitelist.list", count, count));
                     sender.sendMessage(result.length() > 0 ? result.substring(0, result.length() - 2) : "");
 
                     return true;
 
                 case "add":
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", "%commands.whitelist.add.usage"));
-                    return true;
-
                 case "remove":
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", "%commands.whitelist.remove.usage"));
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
                     return true;
             }
         } else if (args.length == 2) {
@@ -92,12 +89,12 @@ public class WhitelistCommand extends VanillaCommand {
             switch (args[0].toLowerCase()) {
                 case "add":
                     sender.getServer().getOfflinePlayer(args[1]).setWhitelisted(true);
-                    Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.add.success", args[1]));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.add.success", args[1]));
 
                     return true;
                 case "remove":
                     sender.getServer().getOfflinePlayer(args[1]).setWhitelisted(false);
-                    Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.remove.success", args[1]));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.remove.success", args[1]));
 
                     return true;
             }

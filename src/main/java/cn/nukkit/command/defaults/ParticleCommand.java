@@ -27,7 +27,7 @@ public class ParticleCommand extends VanillaCommand {
             , "spore", "portal", "flame", "lava", "reddust", "snowballpoof", "slime", "itembreak", "terrain", "heart"
             , "ink", "droplet", "enchantmenttable", "happyvillager", "angryvillager", "forcefield"};
     public ParticleCommand(String name) {
-        super(name, "commands.particle.description", "commands.particle.usage");
+        super(name, "commands.particle.description", "/particle <particle> <position> [count] [data[");
         this.setPermission("nukkit.command.particle");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -111,7 +111,7 @@ public class ParticleCommand extends VanillaCommand {
             return true;
         }
 
-        sender.sendMessage(new TranslationContainer("commands.particle.success", name, String.valueOf(count)));
+        sender.sendMessage(new TranslationContainer("commands.particle.success", name, count));
 
         Random random = new Random(System.currentTimeMillis());
 

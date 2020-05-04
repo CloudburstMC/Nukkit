@@ -28,7 +28,7 @@ public class LoginPacketHandler implements BedrockPacketHandler {
     private final BedrockServerSession session;
     private final Server server;
 
-    private PlayerLoginData loginData;
+    private final PlayerLoginData loginData;
 
     public LoginPacketHandler(BedrockServerSession session, Server server, BedrockInterface interfaz) {
         this.session = session;

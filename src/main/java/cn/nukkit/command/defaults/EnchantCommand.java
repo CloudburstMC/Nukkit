@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
@@ -18,7 +18,7 @@ import static cn.nukkit.block.BlockIds.AIR;
 public class EnchantCommand extends VanillaCommand {
 
     public EnchantCommand(String name) {
-        super(name, "commands.enchant.description", "commands.enchant.usage");
+        super(name, "commands.enchant.description", "/enchant <player> <enchant ID> [level]");
         this.setPermission("nukkit.command.enchant");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -69,7 +69,7 @@ public class EnchantCommand extends VanillaCommand {
         }
         item.addEnchantment(enchantment);
         player.getInventory().setItemInHand(item);
-        Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success"));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success"));
         return true;
     }
 

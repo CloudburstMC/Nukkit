@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerKickEvent;
@@ -16,7 +16,7 @@ import cn.nukkit.utils.TextFormat;
 public class KickCommand extends VanillaCommand {
 
     public KickCommand(String name) {
-        super(name, "commands.kick.description", "commands.kick.usage");
+        super(name, "commands.kick.description", "/kick <player> [reason]");
         this.setPermission("nukkit.command.kick");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -50,10 +50,10 @@ public class KickCommand extends VanillaCommand {
         if (player != null) {
             player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reason);
             if (reason.length() >= 1) {
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success.reason", player.getName(), reason)
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success.reason", player.getName(), reason)
                 );
             } else {
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success", player.getName()));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success", player.getName()));
             }
         } else {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));

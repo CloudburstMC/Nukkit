@@ -1,8 +1,8 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Server;
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -16,7 +16,7 @@ import cn.nukkit.utils.TextFormat;
 public class GamemodeCommand extends VanillaCommand {
 
     public GamemodeCommand(String name) {
-        super(name, "commands.gamemode.description", "commands.gamemode.usage",
+        super(name, "commands.gamemode.description", "/gamemode <mode> [player]",
                 new String[]{"gm"});
         this.setPermission("nukkit.command.gamemode.survival;" +
                 "nukkit.command.gamemode.creative;" +
@@ -77,10 +77,10 @@ public class GamemodeCommand extends VanillaCommand {
             sender.sendMessage("Game mode update for " + target.getName() + " failed");
         } else {
             if (target.equals(sender)) {
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(gameMode)));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(gameMode)));
             } else {
                 target.sendMessage(new TranslationContainer("gameMode.changed"));
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", target.getName(), Server.getGamemodeString(gameMode)));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", target.getName(), Server.getGamemodeString(gameMode)));
             }
         }
 

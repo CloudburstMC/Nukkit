@@ -229,9 +229,34 @@ public abstract class BaseInventory implements Inventory {
     }
 
     @Override
-    public int firstEmpty(Item item) {
+    public int firstEmpty() {
         for (int i = 0; i < this.size; ++i) {
-            if (this.getItem(i).getId() == AIR) {
+            if (this.getItem(i).isNull()) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    public int firstNonEmpty() {
+        for (int i = 0; i < this.size; ++i) {
+            if (!this.getItem(i).isNull()) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    @Override
+    public int firstFit(Item item, boolean single) {
+        int count = single ? 1 : item.getCount();
+
+        for (int i = 0; i < this.size; ++i) {
+            Item slot = this.getItem(i);
+            if (slot.getCount() + count < item.getMaxStackSize() && slot.equals(item)) {
                 return i;
             }
         }
@@ -245,6 +270,16 @@ public abstract class BaseInventory implements Inventory {
 
         if (item.getCount() > 0) {
             item.decrementCount();
+            this.setItem(slot, item);
+        }
+    }
+
+    @Override
+    public void increaseCount(int slot) {
+        Item item = this.getItem(slot);
+
+        if (item.getId() != AIR) {
+            item.incrementCount();
             this.setItem(slot, item);
         }
     }
