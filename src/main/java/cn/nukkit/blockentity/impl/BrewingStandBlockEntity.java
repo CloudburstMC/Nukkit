@@ -14,6 +14,7 @@ import cn.nukkit.inventory.ContainerRecipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemUtils;
 import cn.nukkit.level.chunk.Chunk;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3i;
@@ -70,6 +71,12 @@ public class BrewingStandBlockEntity extends BaseBlockEntity implements BrewingS
         }
         tag.listTag("Items", CompoundTag.class, items);
         tag.shortTag("CookTime", this.cookTime);
+    }
+
+    @Override
+    protected void saveClientData(CompoundTagBuilder tag) {
+        super.saveClientData(tag);
+
         tag.shortTag("FuelAmount", this.fuelAmount);
         tag.shortTag("FuelTotal", this.fuelTotal);
     }
@@ -219,9 +226,7 @@ public class BrewingStandBlockEntity extends BaseBlockEntity implements BrewingS
         return ret;
     }
 
-    protected void sendFuel() {
-
-
+    public void sendFuel() {
         for (Player p : this.inventory.getViewers()) {
             int windowId = p.getWindowId(this.inventory);
             if (windowId > 0) {
@@ -285,5 +290,32 @@ public class BrewingStandBlockEntity extends BaseBlockEntity implements BrewingS
 
     public void setFuelAmount(int fuel) {
         this.fuelAmount = (short) fuel;
+    }
+
+    @Override
+    public int[] getHopperPushSlots(BlockFace direction, Item item) {
+        Identifier id = item.getId();
+
+        if (direction.getAxis().isHorizontal()) {
+            if (id == BLAZE_POWDER) {
+                return new int[]{BrewingInventory.SLOT_FUEL};
+            }
+        } else {
+            if (id == NETHER_WART || id == REDSTONE || id == GLOWSTONE_DUST || id == FERMENTED_SPIDER_EYE || id == GUNPOWDER || id == DRAGON_BREATH) {
+                return new int[]{BrewingInventory.SLOT_INGREDIENT};
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public int[] getHopperPullSlots() {
+        return new int[]{1, 2, 3};
+    }
+
+    @Override
+    public boolean isSpawnable() {
+        return true;
     }
 }

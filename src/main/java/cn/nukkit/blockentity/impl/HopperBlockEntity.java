@@ -3,11 +3,14 @@ package cn.nukkit.blockentity.impl;
 import cn.nukkit.block.BlockIds;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityType;
+import cn.nukkit.blockentity.ContainerBlockEntity;
 import cn.nukkit.blockentity.Hopper;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.misc.DroppedItem;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
-import cn.nukkit.inventory.*;
+import cn.nukkit.inventory.HopperInventory;
+import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemUtils;
 import cn.nukkit.level.chunk.Chunk;
@@ -122,64 +125,40 @@ public class HopperBlockEntity extends BaseBlockEntity implements Hopper {
         }
 
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this.getPosition().add(UP));
-        //Fix for furnace outputs
-        if (blockEntity instanceof FurnaceBlockEntity) {
-            FurnaceInventory inv = ((FurnaceBlockEntity) blockEntity).getInventory();
-            Item item = inv.getResult();
 
-            if (!item.isNull()) {
-                Item itemToAdd = item.clone();
-                itemToAdd.setCount(1);
+        if (blockEntity instanceof ContainerBlockEntity) {
+            Inventory inv = ((ContainerBlockEntity) blockEntity).getInventory();
+            int[] slots = ((ContainerBlockEntity) blockEntity).getHopperPullSlots();
 
-                if (!this.inventory.canAddItem(itemToAdd)) {
-                    return false;
+            if (slots == null || slots.length == 0) {
+                return false;
+            }
+
+            for (int slot : slots) {
+                Item item = inv.getItem(slot);
+
+                if (item.isNull()) {
+                    continue;
                 }
 
-                InventoryMoveItemEvent ev = new InventoryMoveItemEvent(inv, this.inventory, this, itemToAdd, InventoryMoveItemEvent.Action.SLOT_CHANGE);
+                item = item.clone();
+                item.setCount(1);
+
+                if (!this.inventory.canAddItem(item)) {
+                    continue;
+                }
+
+                InventoryMoveItemEvent ev = new InventoryMoveItemEvent(inv, this.inventory, this, item, InventoryMoveItemEvent.Action.SLOT_CHANGE);
                 this.server.getPluginManager().callEvent(ev);
 
                 if (ev.isCancelled()) {
                     return false;
                 }
 
-                Item[] items = this.inventory.addItem(itemToAdd);
+                Item[] items = this.inventory.addItem(item);
 
                 if (items.length <= 0) {
-                    item.decrementCount();
-                    inv.setResult(item);
-                    return true;
-                }
-            }
-        } else if (blockEntity instanceof InventoryHolder) {
-            Inventory inv = ((InventoryHolder) blockEntity).getInventory();
-
-            for (int i = 0; i < inv.getSize(); i++) {
-                Item item = inv.getItem(i);
-
-                if (!item.isNull()) {
-                    Item itemToAdd = item.clone();
-                    itemToAdd.setCount(1);
-
-                    if (!this.inventory.canAddItem(itemToAdd)) {
-                        continue;
-                    }
-
-                    InventoryMoveItemEvent ev = new InventoryMoveItemEvent(inv, this.inventory, this, itemToAdd, InventoryMoveItemEvent.Action.SLOT_CHANGE);
-                    this.server.getPluginManager().callEvent(ev);
-
-                    if (ev.isCancelled()) {
-                        continue;
-                    }
-
-                    Item[] items = this.inventory.addItem(itemToAdd);
-
-                    if (items.length >= 1) {
-                        continue;
-                    }
-
-                    item.decrementCount();
-
-                    inv.setItem(i, item);
+                    inv.decreaseCount(slot);
                     return true;
                 }
             }
@@ -260,116 +239,51 @@ public class HopperBlockEntity extends BaseBlockEntity implements Hopper {
             return false;
         }
 
-        BlockEntity be = this.getLevel().getBlockEntity(BlockFace.fromIndex(this.getBlock().getMeta()).getOffset(this.getPosition()));
+        BlockFace direction = BlockFace.fromIndex(this.getBlock().getMeta());
+        BlockEntity be = this.getLevel().getBlockEntity(direction.getOffset(this.getPosition()));
 
-        if (be instanceof Hopper && this.getBlock().getMeta() == 0 || !(be instanceof InventoryHolder))
+        if (be instanceof Hopper && direction == BlockFace.DOWN || !(be instanceof InventoryHolder))
             return false;
 
-        InventoryMoveItemEvent event;
-
-        //Fix for furnace inputs
-        if (be instanceof FurnaceBlockEntity) {
-            FurnaceBlockEntity furnace = (FurnaceBlockEntity) be;
-            FurnaceInventory inventory = furnace.getInventory();
-            if (inventory.isFull()) {
-                return false;
-            }
-
-            boolean pushedItem = false;
+        if (be instanceof ContainerBlockEntity) {
+            Inventory inv = ((ContainerBlockEntity) be).getInventory();
 
             for (int i = 0; i < this.inventory.getSize(); i++) {
                 Item item = this.inventory.getItem(i);
-                if (!item.isNull()) {
-                    Item itemToAdd = item.clone();
-                    itemToAdd.setCount(1);
 
-                    //Check direction of hopper
-                    if (this.getBlock().getMeta() == 0) {
-                        Item smelting = inventory.getSmelting();
-                        if (smelting.isNull()) {
-                            event = new InventoryMoveItemEvent(this.inventory, inventory, this, itemToAdd, InventoryMoveItemEvent.Action.SLOT_CHANGE);
-                            this.server.getPluginManager().callEvent(event);
-
-                            if (!event.isCancelled()) {
-                                inventory.setSmelting(itemToAdd);
-                                item.decrementCount();
-                                pushedItem = true;
-                            }
-                        } else if (inventory.getSmelting().getId() == itemToAdd.getId() && inventory.getSmelting().getMeta() == itemToAdd.getMeta() && smelting.getCount() < smelting.getMaxStackSize()) {
-                            event = new InventoryMoveItemEvent(this.inventory, inventory, this, itemToAdd, InventoryMoveItemEvent.Action.SLOT_CHANGE);
-                            this.server.getPluginManager().callEvent(event);
-
-                            if (!event.isCancelled()) {
-                                smelting.incrementCount();
-                                inventory.setSmelting(smelting);
-                                item.decrementCount();
-                                pushedItem = true;
-                            }
-                        }
-                    } else if (Fuel.duration.containsKey(itemToAdd.getId())) {
-                        Item fuel = inventory.getFuel();
-                        if (fuel.isNull()) {
-                            event = new InventoryMoveItemEvent(this.inventory, inventory, this, itemToAdd, InventoryMoveItemEvent.Action.SLOT_CHANGE);
-                            this.server.getPluginManager().callEvent(event);
-
-                            if (!event.isCancelled()) {
-                                inventory.setFuel(itemToAdd);
-                                item.decrementCount();
-                                pushedItem = true;
-                            }
-                        } else if (fuel.getId() == itemToAdd.getId() && fuel.getMeta() == itemToAdd.getMeta() && fuel.getCount() < fuel.getMaxStackSize()) {
-                            event = new InventoryMoveItemEvent(this.inventory, inventory, this, itemToAdd, InventoryMoveItemEvent.Action.SLOT_CHANGE);
-                            this.server.getPluginManager().callEvent(event);
-
-                            if (!event.isCancelled()) {
-                                fuel.incrementCount();
-                                inventory.setFuel(fuel);
-                                item.decrementCount();
-                                pushedItem = true;
-                            }
-                        }
-                    }
-
-                    if (pushedItem) {
-                        this.inventory.setItem(i, item);
-                    }
+                if (item.isNull()) {
+                    continue;
                 }
-            }
 
-            return pushedItem;
-        } else {
-            Inventory inventory = ((InventoryHolder) be).getInventory();
+                int[] slots = ((ContainerBlockEntity) be).getHopperPushSlots(direction, item);
 
-            if (inventory.isFull()) {
-                return false;
-            }
+                if (slots == null || slots.length == 0) {
+                    continue;
+                }
 
-            for (int i = 0; i < this.inventory.getSize(); i++) {
-                Item item = this.inventory.getItem(i);
+                for (int slot : slots) {
+                    Item target = inv.getItem(slot);
 
-                if (!item.isNull()) {
-                    Item itemToAdd = item.clone();
-                    itemToAdd.setCount(1);
-
-                    if (!inventory.canAddItem(itemToAdd)) {
+                    if (!target.isNull() && (!target.equals(item) || target.getCount() >= item.getMaxStackSize())) {
                         continue;
                     }
 
-                    InventoryMoveItemEvent ev = new InventoryMoveItemEvent(this.inventory, inventory, this, itemToAdd, InventoryMoveItemEvent.Action.SLOT_CHANGE);
-                    this.server.getPluginManager().callEvent(ev);
+                    item.setCount(1);
 
-                    if (ev.isCancelled()) {
-                        continue;
+                    InventoryMoveItemEvent event = new InventoryMoveItemEvent(this.inventory, inv, this, item, InventoryMoveItemEvent.Action.SLOT_CHANGE);
+                    this.server.getPluginManager().callEvent(event);
+
+                    if (event.isCancelled()) {
+                        return false;
                     }
 
-                    Item[] items = inventory.addItem(itemToAdd);
-
-                    if (items.length > 0) {
-                        continue;
+                    if (target.isNull()) {
+                        inv.setItem(slot, item);
+                    } else {
+                        inv.increaseCount(slot);
                     }
 
-                    item.decrementCount();
-                    this.inventory.setItem(i, item);
+                    inventory.decreaseCount(i);
                     return true;
                 }
             }

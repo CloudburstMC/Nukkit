@@ -1,9 +1,8 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.inventory.ContainerInventory;
-import cn.nukkit.inventory.InventoryHolder;
 
-public interface Chest extends BlockEntity, InventoryHolder {
+public interface Chest extends BlockEntity, ContainerBlockEntity {
 
     boolean isFindable();
 

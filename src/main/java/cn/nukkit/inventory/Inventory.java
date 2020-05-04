@@ -15,6 +15,7 @@ public interface Inventory {
 
     int MAX_STACK = 64;
 
+
     int getSize();
 
     int getMaxStackSize();
@@ -63,11 +64,63 @@ public interface Inventory {
         return first(item, false);
     }
 
+    /**
+     * Search for the first occurrence of target item
+     *
+     * @param item  target item
+     * @param exact if true the item count will be must match
+     * @return the first index containing the item
+     */
     int first(Item item, boolean exact);
 
-    int firstEmpty(Item item);
+    default int firstFit(Item item) {
+        return firstFit(item, false);
+    }
 
+    /**
+     * Returns the first slot where item fits to
+     *
+     * @param item   item to search for
+     * @param single if false the item count will be used. Otherwise it'll be 1
+     * @return the first slot index that item fits to
+     */
+    int firstFit(Item item, boolean single);
+
+    /**
+     * Search for the first empty slot
+     *
+     * @return the first slot index
+     */
+    int firstEmpty();
+
+    /**
+     * Search for the first slot containing an item
+     *
+     * @return the first non-empty slot
+     */
+    int firstNonEmpty();
+
+    /**
+     * Returns how much space remains for the target item
+     *
+     * @param item target item
+     * @return amount if free space
+     */
+    int getFreeSpace(Item item);
+
+    /**
+     * Decrease item count in the given slot
+     *
+     * @param slot target slot index
+     */
     void decreaseCount(int slot);
+
+    /**
+     * Increase item count in the given slot
+     *
+     * @param slot target slot index
+     */
+    void increaseCount(int slot);
 
     void remove(Item item);
 
