@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
@@ -16,7 +16,7 @@ import cn.nukkit.utils.TextFormat;
 public class TimeCommand extends VanillaCommand {
 
     public TimeCommand(String name) {
-        super(name, "commands.time.description", "commands.time.usage");
+        super(name, "commands.time.description", "/time <add|set|start|stop> [value]");
         this.setPermission("nukkit.command.time.add;" +
                 "nukkit.command.time.set;" +
                 "nukkit.command.time.start;" +
@@ -54,7 +54,7 @@ public class TimeCommand extends VanillaCommand {
                 level.startTime();
                 level.checkTime();
             }
-            Command.broadcastCommandMessage(sender, "Restarted the time");
+            CommandUtils.broadcastCommandMessage(sender, "Restarted the time");
             return true;
         } else if ("stop".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.stop")) {
@@ -66,8 +66,8 @@ public class TimeCommand extends VanillaCommand {
                 level.checkTime();
                 level.stopTime();
                 level.checkTime();
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.stop", level.getTime()));
             }
-            Command.broadcastCommandMessage(sender, "Stopped the time");
             return true;
         } else if ("query".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.query")) {
@@ -81,7 +81,7 @@ public class TimeCommand extends VanillaCommand {
             } else {
                 level = sender.getServer().getDefaultLevel();
             }
-            sender.sendMessage(new TranslationContainer("commands.time.query.gametime", String.valueOf(level.getTime())));
+            sender.sendMessage(new TranslationContainer("commands.time.query.gametime", level.getTime()));
             return true;
         }
 
@@ -126,7 +126,7 @@ public class TimeCommand extends VanillaCommand {
                 level.setTime(value);
                 level.checkTime();
             }
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.set", value));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.set", value));
         } else if ("add".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.add")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
@@ -147,7 +147,7 @@ public class TimeCommand extends VanillaCommand {
                 level.setTime(level.getTime() + value);
                 level.checkTime();
             }
-            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.time.added", String.valueOf(value)));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.added", value));
         } else {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
         }

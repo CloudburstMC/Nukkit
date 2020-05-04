@@ -16,6 +16,7 @@ public class BanListCommand extends VanillaCommand {
     public BanListCommand(String name) {
         super(name);
         this.setPermission("nukkit.command.ban.list");
+        this.setUsage("/banlist <ips|players>");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
                 new CommandParameter("ips|players", true)
@@ -57,9 +58,9 @@ public class BanListCommand extends VanillaCommand {
         }
 
         if (ips) {
-            sender.sendMessage(new TranslationContainer("commands.banlist.ips", String.valueOf(list.getEntires().size())));
+            sender.sendMessage(new TranslationContainer("commands.banlist.ips", list.getEntires().size()));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.banlist.players", String.valueOf(list.getEntires().size())));
+            sender.sendMessage(new TranslationContainer("commands.banlist.players", list.getEntires().size()));
         }
         sender.sendMessage(builder.toString());
         return true;

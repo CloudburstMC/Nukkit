@@ -21,7 +21,7 @@ public class StatusCommand extends VanillaCommand {
             TextFormat.RED + "%d" + TextFormat.GOLD + " seconds";
 
     public StatusCommand(String name) {
-        super(name, "nukkit.command.status.description", "nukkit.command.status.usage");
+        super(name, "nukkit.command.status.description", "/status");
         this.setPermission("nukkit.command.status");
         this.commandParameters.clear();
     }

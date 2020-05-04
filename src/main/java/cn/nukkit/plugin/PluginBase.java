@@ -160,9 +160,9 @@ abstract public class PluginBase implements Plugin {
      * TODO: FINISH JAVADOC
      */
     public <T extends Plugin> PluginCommand<T> getCommand(String name) {
-        PluginIdentifiableCommand command = this.getServer().getPluginCommand(name);
+        PluginIdentifiableCommand command = this.getServer().getCommandRegistry().getPluginCommand(name);
         if (command == null || !command.getPlugin().equals(this)) {
-            command = this.getServer().getPluginCommand(this.description.getName().toLowerCase() + ":" + name);
+            command = this.getServer().getCommandRegistry().getPluginCommand(this.description.getName().toLowerCase() + ":" + name);
         }
 
         if (command instanceof PluginCommand && command.getPlugin().equals(this)) {

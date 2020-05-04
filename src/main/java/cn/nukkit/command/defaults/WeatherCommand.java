@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
@@ -14,10 +14,10 @@ import cn.nukkit.player.Player;
  */
 public class WeatherCommand extends VanillaCommand {
 
-    private java.util.Random rand = new java.util.Random();
+    private final java.util.Random rand = new java.util.Random();
 
     public WeatherCommand(String name) {
-        super(name, "commands.weather.description", "commands.weather.usage");
+        super(name, "commands.weather.description", "/weather <clear|rain|thunder> <time>");
         this.setPermission("nukkit.command.weather");
         this.commandParameters.clear();
         this.commandParameters.add(new CommandParameter[]{
@@ -62,20 +62,20 @@ public class WeatherCommand extends VanillaCommand {
                 level.setThundering(false);
                 level.setRainTime(seconds * 20);
                 level.setThunderTime(seconds * 20);
-                Command.broadcastCommandMessage(sender,
+                CommandUtils.broadcastCommandMessage(sender,
                         new TranslationContainer("commands.weather.clear"));
                 return true;
             case "rain":
                 level.setRaining(true);
                 level.setRainTime(seconds * 20);
-                Command.broadcastCommandMessage(sender,
+                CommandUtils.broadcastCommandMessage(sender,
                         new TranslationContainer("commands.weather.rain"));
                 return true;
             case "thunder":
                 level.setThundering(true);
                 level.setRainTime(seconds * 20);
                 level.setThunderTime(seconds * 20);
-                Command.broadcastCommandMessage(sender,
+                CommandUtils.broadcastCommandMessage(sender,
                         new TranslationContainer("commands.weather.thunder"));
                 return true;
             default:

@@ -1,21 +1,26 @@
 package cn.nukkit.command.simple;
 
 import cn.nukkit.command.Command;
+import cn.nukkit.command.CommandFactory;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * @author Tee7even
  */
 @Log4j2
 public class SimpleCommand extends Command {
-    private Object object;
-    private Method method;
+    private final Object object;
+    private final Method method;
     private boolean forbidConsole;
     private int maxArgs;
     private int minArgs;
@@ -25,6 +30,38 @@ public class SimpleCommand extends Command {
         this.object = object;
         this.method = method;
     }
+
+    public static CommandFactory factory(Object object, Method method, String desc, String usage, String[] aliases) {
+        return name -> {
+            SimpleCommand sc = new SimpleCommand(object, method, name, desc, usage, aliases);
+            Arguments args = method.getAnnotation(Arguments.class);
+            if (args != null) {
+                sc.setMaxArgs(args.max());
+                sc.setMinArgs(args.min());
+            }
+
+            CommandPermission perm = method.getAnnotation(CommandPermission.class);
+            if (perm != null) {
+                sc.setPermission(perm.value());
+            }
+
+            if (method.isAnnotationPresent(ForbidConsole.class)) {
+                sc.setForbidConsole(true);
+            }
+
+            CommandParameters params = method.getAnnotation(CommandParameters.class);
+            if (params != null) {
+                Collection<CommandParameter[]> map = Arrays.stream(params.parameters())
+                        .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
+                                .map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional()))
+                                .distinct()
+                                .toArray(CommandParameter[]::new))).values();
+                sc.commandParameters.addAll(map);
+            }
+            return sc;
+        };
+    }
+
 
     public void setForbidConsole(boolean forbidConsole) {
         this.forbidConsole = forbidConsole;
@@ -45,7 +82,7 @@ public class SimpleCommand extends Command {
     }
 
     public void sendInGameMessage(CommandSender sender) {
-        sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+        sender.sendMessage(new TranslationContainer("commands.locate.fail.noplayer"));
     }
 
     @Override

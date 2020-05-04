@@ -6,7 +6,7 @@ import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.ItemFrame;
 import cn.nukkit.blockentity.Lectern;
-import cn.nukkit.command.Command;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.impl.projectile.EntityArrow;
 import cn.nukkit.entity.impl.vehicle.EntityAbstractMinecart;
@@ -796,7 +796,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 return true;
             }
             player.setGamemode(packet.getGamemode(), true);
-            Command.broadcastCommandMessage(player, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(player.getGamemode())));
+            CommandUtils.broadcastCommandMessage(player, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(player.getGamemode())));
         }
         return true;
     }

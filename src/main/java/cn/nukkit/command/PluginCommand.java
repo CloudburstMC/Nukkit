@@ -20,6 +20,19 @@ public class PluginCommand<T extends Plugin> extends Command implements PluginId
         this.usageMessage = "";
     }
 
+    public PluginCommand(String name, T owner, String description, String usage, String perm, String permMsg, String[] aliases) {
+        this(name, owner);
+        this.description = description;
+        this.usageMessage = usage;
+        this.setPermission(perm);
+        this.setPermissionMessage(permMsg);
+        this.setAliases(aliases);
+    }
+
+    public static CommandFactory factory(Plugin owner, String desc, String usage, String perm, String permMsg, String[] aliases) {
+        return name -> new PluginCommand<>(name, owner, desc, usage, perm, permMsg, aliases);
+    }
+
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.owningPlugin.isEnabled()) {

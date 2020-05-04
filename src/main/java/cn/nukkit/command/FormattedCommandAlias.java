@@ -18,11 +18,6 @@ public class FormattedCommandAlias extends Command {
 
     private final String[] formatStrings;
 
-    public FormattedCommandAlias(String alias, String[] formatStrings) {
-        super(alias);
-        this.formatStrings = formatStrings;
-    }
-
     public FormattedCommandAlias(String alias, List<String> formatStrings) {
         super(alias);
         this.formatStrings = formatStrings.toArray(new String[0]);

@@ -18,7 +18,7 @@ public class VersionCommand extends VanillaCommand {
     public VersionCommand(String name) {
         super(name,
                 "%nukkit.command.version.description",
-                "%nukkit.command.version.usage",
+                "/version",
                 new String[]{"ver", "about"}
         );
         this.setPermission("nukkit.command.version");

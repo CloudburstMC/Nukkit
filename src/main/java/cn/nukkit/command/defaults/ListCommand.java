@@ -11,7 +11,7 @@ import cn.nukkit.player.Player;
 public class ListCommand extends VanillaCommand {
 
     public ListCommand(String name) {
-        super(name, "commands.list.description", "commands.players.usage");
+        super(name, "commands.list.description", "/list");
         this.setPermission("nukkit.command.list");
         this.commandParameters.clear();
     }
@@ -35,7 +35,7 @@ public class ListCommand extends VanillaCommand {
         }
 
         sender.sendMessage(new TranslationContainer("commands.players.list",
-                String.valueOf(onlineCount), String.valueOf(sender.getServer().getMaxPlayers())));
+                onlineCount, sender.getServer().getMaxPlayers()));
         sender.sendMessage(online);
         return true;
     }

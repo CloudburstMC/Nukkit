@@ -2,10 +2,10 @@ package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.PluginCommand;
-import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.event.*;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.permission.Permission;
+import cn.nukkit.registry.CommandRegistry;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 import co.aikar.timings.Timing;
@@ -27,8 +27,6 @@ public class PluginManager {
 
     private final Server server;
 
-    private final SimpleCommandMap commandMap;
-
     protected final Map<String, Plugin> plugins = new LinkedHashMap<>();
 
     protected final Map<String, Permission> permissions = new HashMap<>();
@@ -45,9 +43,8 @@ public class PluginManager {
 
     protected final Map<String, PluginLoader> fileAssociations = new HashMap<>();
 
-    public PluginManager(Server server, SimpleCommandMap commandMap) {
+    public PluginManager(Server server) {
         this.server = server;
-        this.commandMap = commandMap;
     }
 
     public Plugin getPlugin(String name) {
@@ -98,12 +95,7 @@ public class PluginManager {
                             if (plugin != null) {
                                 this.plugins.put(plugin.getDescription().getName(), plugin);
 
-                                List<PluginCommand> pluginCommands = this.parseYamlCommands(plugin);
-
-                                if (!pluginCommands.isEmpty()) {
-                                    this.commandMap.registerAll(plugin, pluginCommands);
-                                }
-
+                                this.parseYamlCommands(plugin);
                                 return plugin;
                             }
                         } catch (Exception e) {
@@ -441,11 +433,11 @@ public class PluginManager {
         }
     }
 
-    protected List<PluginCommand> parseYamlCommands(Plugin plugin) {
-        List<PluginCommand> pluginCmds = new ArrayList<>();
+    protected void parseYamlCommands(Plugin plugin) {
+        CommandRegistry registry = CommandRegistry.get();
 
         for (Map.Entry<String, Object> entry : plugin.getDescription().getCommands().entrySet()) {
-            String key = (String) entry.getKey();
+            String key = entry.getKey();
             Object data = entry.getValue();
             if (key.contains(":")) {
                 log.error(this.server.getLanguage().translate("nukkit.plugin.commandError",
@@ -453,21 +445,26 @@ public class PluginManager {
                 continue;
             }
             if (data instanceof Map) {
-                PluginCommand<?> newCmd = new PluginCommand<>(key, plugin);
+                String desc = "";
+                String usage = "";
+                String[] aliases = new String[0];
+                String perms = "";
+                String permsMsg = "";
+
 
                 if (((Map) data).containsKey("description")) {
-                    newCmd.setDescription((String) ((Map) data).get("description"));
+                    desc = (String) ((Map) data).get("description");
                 }
 
                 if (((Map) data).containsKey("usage")) {
-                    newCmd.setUsage((String) ((Map) data).get("usage"));
+                    usage = (String) ((Map) data).get("usage");
                 }
 
                 if (((Map) data).containsKey("aliases")) {
-                    Object aliases = ((Map) data).get("aliases");
-                    if (aliases instanceof List) {
+                    Object configAliases = ((Map) data).get("aliases");
+                    if (configAliases instanceof List) {
                         List<String> aliasList = new ArrayList<>();
-                        for (String alias : (List<String>) aliases) {
+                        for (String alias : (List<String>) configAliases) {
                             if (alias.contains(":")) {
                                 log.error(this.server.getLanguage().translate("nukkit.plugin.aliasError",
                                         alias, plugin.getDescription().getFullName()));
@@ -476,23 +473,21 @@ public class PluginManager {
                             aliasList.add(alias);
                         }
 
-                        newCmd.setAliases(aliasList.toArray(new String[0]));
+                        aliases = aliasList.toArray(new String[0]);
                     }
                 }
 
                 if (((Map) data).containsKey("permission")) {
-                    newCmd.setPermission((String) ((Map) data).get("permission"));
+                    perms = (String) ((Map) data).get("permission");
                 }
 
                 if (((Map) data).containsKey("permission-message")) {
-                    newCmd.setPermissionMessage((String) ((Map) data).get("permission-message"));
+                    permsMsg = (String) ((Map) data).get("permission-message");
                 }
 
-                pluginCmds.add(newCmd);
+                registry.register(plugin, key, PluginCommand.factory(plugin, desc, usage, perms, permsMsg, aliases));
             }
         }
-
-        return pluginCmds;
     }
 
     public void disablePlugins() {

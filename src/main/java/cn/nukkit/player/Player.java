@@ -7,7 +7,6 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockEnderChest;
 import cn.nukkit.block.BlockIds;
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
@@ -63,6 +62,7 @@ import cn.nukkit.player.manager.PlayerChunkManager;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
+import cn.nukkit.registry.CommandRegistry;
 import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.registry.ItemRegistry;
 import cn.nukkit.utils.*;
@@ -644,15 +644,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public void sendCommandData() {
-        AvailableCommandsPacket packet = new AvailableCommandsPacket();
-        List<CommandData> commandData = packet.getCommands();
-        for (Command command : this.server.getCommandMap().getRegisteredCommands()) {
-            if (!command.testPermissionSilent(this)) {
-                continue;
-            }
-            commandData.add(command.generateCustomCommandData(this));
-        }
-        this.sendPacket(packet);
+        this.sendPacket(CommandRegistry.get().createPacketFor(this));
     }
 
     public void removeAchievement(String achievementId) {

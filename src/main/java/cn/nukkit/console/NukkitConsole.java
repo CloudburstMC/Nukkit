@@ -17,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class NukkitConsole extends SimpleTerminalConsole {
     private final Server server;
     private final BlockingQueue<String> consoleQueue = new LinkedBlockingQueue<>();
-    private AtomicBoolean executingCommands = new AtomicBoolean(false);
+    private final AtomicBoolean executingCommands = new AtomicBoolean(false);
 
     @Override
     protected boolean isRunning() {
@@ -33,7 +33,7 @@ public class NukkitConsole extends SimpleTerminalConsole {
                     server.getPluginManager().callEvent(event);
                 }
                 if (!event.isCancelled()) {
-                    Server.getInstance().getScheduler().scheduleTask(() -> server.dispatchCommand(event.getSender(), event.getCommand()));
+                    Server.getInstance().getScheduler().scheduleTask(null, () -> server.dispatchCommand(event.getSender(), event.getCommand()));
                 }
             }
         } else {

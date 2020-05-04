@@ -1247,7 +1247,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
 
     protected void updateFallState(boolean onGround) {
         if (onGround) {
-            fallDistance = (float) (this.highestPosition - this.getY());
+            fallDistance = this.highestPosition - this.getY();
 
             if (fallDistance > 0) {
                 // check if we fell into at least 1 block of water

@@ -1,8 +1,8 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Server;
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.entity.Entity;
@@ -22,7 +22,7 @@ import java.util.StringJoiner;
 public class KillCommand extends VanillaCommand {
 
     public KillCommand(String name) {
-        super(name, "commands.kill.description", "commands.kill.usage", new String[]{"suicide"});
+        super(name, "commands.kill.description", "/kill [player]", new String[]{"suicide"});
         this.setPermission("nukkit.command.kill.self;"
                 + "nukkit.command.kill.other");
         this.commandParameters.clear();
@@ -54,7 +54,7 @@ public class KillCommand extends VanillaCommand {
                 }
                 player.setLastDamageCause(ev);
                 player.setHealth(0);
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
             } else if (args[0].equals("@e")) {
                 StringJoiner joiner = new StringJoiner(", ");
                 for (Level level : Server.getInstance().getLevels()) {
@@ -89,10 +89,10 @@ public class KillCommand extends VanillaCommand {
                     for (Entity entity : level.getEntities()) {
                         if (entity instanceof Player) {
                             entity.setHealth(0);
+                            sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.successful", entity.getName()));
                         }
                     }
                 }
-                sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.all.successful"));
             } else {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             }

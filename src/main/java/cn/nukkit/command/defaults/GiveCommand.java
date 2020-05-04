@@ -1,7 +1,7 @@
 package cn.nukkit.command.defaults;
 
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
@@ -74,7 +74,7 @@ public class GiveCommand extends VanillaCommand {
 
         if (player != null) {
             if (item.getId() == AIR) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", args[1]));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.invalid", args[1]));
                 return true;
             }
             player.getInventory().addItem(item.clone());
@@ -83,10 +83,10 @@ public class GiveCommand extends VanillaCommand {
 
             return true;
         }
-        Command.broadcastCommandMessage(sender, new TranslationContainer(
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer(
                 "%commands.give.success",
                 item.getName() + " (" + item.getId() + ":" + item.getMeta() + ")",
-                String.valueOf(item.getCount()),
+                item.getCount(),
                 player.getName()));
         return true;
     }
