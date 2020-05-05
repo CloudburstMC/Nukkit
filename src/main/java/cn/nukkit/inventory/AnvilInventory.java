@@ -141,7 +141,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
             
                     while(targetEnchIter.hasNext()) {
                         Enchantment targetEnchantment = targetEnchIter.next();
-                        if (targetEnchantment != sacrificeEnchantment && (!sacrificeEnchantment.isCompatibleWith(targetEnchantment) || !targetEnchantment.isCompatibleWith(sacrificeEnchantment))) {
+                        if (targetEnchantment.type != sacrificeEnchantment.type && (!sacrificeEnchantment.isCompatibleWith(targetEnchantment) || !targetEnchantment.isCompatibleWith(sacrificeEnchantment))) {
                             compatible = false;
                             ++extraCost;
                         }

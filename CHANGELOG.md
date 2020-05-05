@@ -9,6 +9,13 @@ Nukkit 1.X and 2.X.
 ## [Unreleased]
 Click the link above to see the future.
 
+### Added
+- [#224] Added option to disable watchdog with `-DdisableWatchdog=true`. 
+  This should be used **only by developers** to debug the server without interruptions by the crash detection system.
+
+### Fixes
+- [#224] Anvil not merging enchanted items correctly and destroying the items.
+
 ## [1.2.0.0-PN] - 2020-05-03 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/6?closed=1))
 **Note:** Effort has been made to keep this list accurate but some bufixes and new features might be missing here, specially those made by the NukkitX team and contributors.
 
@@ -174,9 +181,11 @@ Click the link above to see the future.
 [#93]: https://github.com/GameModsBR/PowerNukkit/issues/93
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
-[#129]: https://github.com/GameModsBR/PowerNukkit/pull/108
-[#140]: https://github.com/GameModsBR/PowerNukkit/pull/108
+[#129]: https://github.com/GameModsBR/PowerNukkit/pull/129
+[#140]: https://github.com/GameModsBR/PowerNukkit/pull/140
 [#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
 [#170]: https://github.com/GameModsBR/PowerNukkit/pull/170
 [#210]: https://github.com/GameModsBR/PowerNukkit/issues/210
-[#219]: https://github.com/GameModsBR/PowerNukkit/pull/170
+[#219]: https://github.com/GameModsBR/PowerNukkit/pull/219
+[#222]: https://github.com/GameModsBR/PowerNukkit/issues/223
+[#224]: https://github.com/GameModsBR/PowerNukkit/pull/224
