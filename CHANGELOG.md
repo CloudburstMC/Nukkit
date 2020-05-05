@@ -9,6 +9,9 @@ Nukkit 1.X and 2.X.
 ## [Unreleased]
 Click the link above to see the future.
 
+## [1.2.0.0-PN] - 2020-05-03 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/6?closed=1))
+**Note:** Effort has been made to keep this list accurate but some bufixes and new features might be missing here, specially those made by the NukkitX team and contributors.
+
 ### Added
 - This change log file
 - [#108] EntityMoveByPistonEvent
@@ -28,6 +31,12 @@ Click the link above to see the future.
 - [#129] The sound that campfire does when it extinguishes
 - [#140] Instant damage and instant health are now inverted when applied to undead entities
 - [#140] A collision detection issue on Area Effect Cloud which could make it wears off way quicker than it should
+- [#152] Changes the blue_ice blast resistance from 2.5 to 14
+- [#170] Trapdoors behaving incorrectly when they receive redstone signal
+- [#219] Button and door sounds
+- [#44] Different daytime from Android and Windows 10 Edition
+- [#93] Nukkit sends a rain time that doesn't matches the server
+- [#210] Issues with old blocks from old NukkitX worlds, specially fully barked logs (log:15 for example)
 
 ### Changed
 - Make BlockLectern implements Faceable
@@ -139,7 +148,8 @@ Click the link above to see the future.
     - Loom
     - Bamboo
 
-[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...HEAD
+[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...HEAD
+[1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
 [1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN#files_bucket
 
 [a8247360]: https://github.com/GameModsBR/PowerNukkit/commit/a8247360
@@ -147,7 +157,8 @@ Click the link above to see the future.
 [NukkitX]: https://github.com/NukkitX/Nukkit
 
 [#12]: https://github.com/GameModsBR/PowerNukkit/issues/12
-[#46]: https://github.com/GameModsBR/PowerNukkit/issues/87
+[#44]: https://github.com/GameModsBR/PowerNukkit/issues/44
+[#46]: https://github.com/GameModsBR/PowerNukkit/issues/46
 [#49]: https://github.com/GameModsBR/PowerNukkit/pull/49
 [#50]: https://github.com/GameModsBR/PowerNukkit/pull/50
 [#51]: https://github.com/GameModsBR/PowerNukkit/pull/51
@@ -160,7 +171,12 @@ Click the link above to see the future.
 [#58]: https://github.com/GameModsBR/PowerNukkit/pull/58
 [#80]: https://github.com/GameModsBR/PowerNukkit/pull/80
 [#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
+[#93]: https://github.com/GameModsBR/PowerNukkit/issues/93
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
 [#129]: https://github.com/GameModsBR/PowerNukkit/pull/108
 [#140]: https://github.com/GameModsBR/PowerNukkit/pull/108
+[#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
+[#170]: https://github.com/GameModsBR/PowerNukkit/pull/170
+[#210]: https://github.com/GameModsBR/PowerNukkit/issues/210
+[#219]: https://github.com/GameModsBR/PowerNukkit/pull/170
