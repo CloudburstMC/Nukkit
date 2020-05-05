@@ -53,10 +53,10 @@ public class KickCommand extends Command {
         if (player != null) {
             player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reason.toString());
             if (reason.length() >= 1) {
-                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success.reason", player.getName(), reason.toString())
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.kick.success.reason", player.getName(), reason.toString())
                 );
             } else {
-                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success", player.getName()));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.kick.success", player.getName()));
             }
         } else {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));

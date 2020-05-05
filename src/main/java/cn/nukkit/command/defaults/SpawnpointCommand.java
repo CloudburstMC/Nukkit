@@ -69,7 +69,7 @@ public class SpawnpointCommand extends Command {
                 if (y < 0) y = 0;
                 if (y > 256) y = 256;
                 target.setSpawn(Location.from(x, y, z, level));
-                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success.single", target.getName(),
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.spawnpoint.success.single", target.getName(),
                         NukkitMath.round(x, 2),
                         NukkitMath.round(y, 2),
                         NukkitMath.round(z, 2)));
@@ -79,7 +79,7 @@ public class SpawnpointCommand extends Command {
             if (sender instanceof Player) {
                 Location pos = ((Player) sender).getLocation();
                 target.setSpawn(pos);
-                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success.single", target.getName(),
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.spawnpoint.success.single", target.getName(),
                         NukkitMath.round(pos.getX(), 2),
                         NukkitMath.round(pos.getY(), 2),
                         NukkitMath.round(pos.getZ(), 2)));

@@ -80,7 +80,7 @@ public class TeleportCommand extends Command {
         }
         if (args.length < 3) {
             ((Player) origin).teleport(((Player) target).getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
-            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success", origin.getName(), target.getName()));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.tp.success", origin.getName(), target.getName()));
             if (origin != sender) {
                 origin.sendMessage(new TranslationContainer("commands.tp.successVictim", target.getName()));
             }
@@ -105,7 +105,7 @@ public class TeleportCommand extends Command {
                 pitch = Float.parseFloat(args[pos++]);
             }
             ((Player) target).teleport(Location.from(position, yaw, pitch, ((Player) target).getLevel()), PlayerTeleportEvent.TeleportCause.COMMAND);
-            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success.coordinates",
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.tp.success.coordinates",
                     target.getName(), String.valueOf(NukkitMath.round(position.getX(), 2)),
                     String.valueOf(NukkitMath.round(position.getY(), 2)),
                     String.valueOf(NukkitMath.round(position.getZ(), 2))));

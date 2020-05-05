@@ -25,7 +25,7 @@ public class SaveOnCommand extends Command {
             return true;
         }
         sender.getServer().setAutoSave(true);
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.save.enabled"));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.save.enabled"));
         return true;
     }
 }

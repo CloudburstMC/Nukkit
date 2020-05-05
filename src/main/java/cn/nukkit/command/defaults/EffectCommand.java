@@ -54,7 +54,7 @@ public class EffectCommand extends Command {
             for (Effect effect : player.getEffects().values()) {
                 player.removeEffect(effect.getId());
             }
-            sender.sendMessage(new TranslationContainer("commands.effect.success.removed.all", player.getDisplayName()));
+            sender.sendMessage(new TranslationContainer("%commands.effect.success.removed.all", player.getDisplayName()));
             return true;
         }
         Effect effect;
@@ -64,7 +64,7 @@ public class EffectCommand extends Command {
             try {
                 effect = Effect.getEffectByName(args[1]);
             } catch (Exception e) {
-                sender.sendMessage(new TranslationContainer("commands.effect.notFound", args[1]));
+                sender.sendMessage(new TranslationContainer("%commands.effect.notFound", args[1]));
                 return true;
             }
         }
@@ -98,14 +98,14 @@ public class EffectCommand extends Command {
         if (duration == 0) {
             if (!player.hasEffect(effect.getId())) {
                 if (player.getEffects().size() == 0) {
-                    sender.sendMessage(new TranslationContainer("commands.effect.failure.notActive.all", player.getDisplayName()));
+                    sender.sendMessage(new TranslationContainer("%commands.effect.failure.notActive.all", player.getDisplayName()));
                 } else {
-                    sender.sendMessage(new TranslationContainer("commands.effect.failure.notActive", effect.getName(), player.getDisplayName()));
+                    sender.sendMessage(new TranslationContainer("%commands.effect.failure.notActive", effect.getName(), player.getDisplayName()));
                 }
                 return true;
             }
             player.removeEffect(effect.getId());
-            sender.sendMessage(new TranslationContainer("commands.effect.success.removed", effect.getName(), player.getDisplayName()));
+            sender.sendMessage(new TranslationContainer("%commands.effect.success.removed", effect.getName(), player.getDisplayName()));
         } else {
             effect.setDuration(duration).setAmplifier(amplification);
             player.addEffect(effect);

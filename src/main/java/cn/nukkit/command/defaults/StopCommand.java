@@ -25,7 +25,7 @@ public class StopCommand extends Command {
             return true;
         }
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.stop.start"));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.stop.start"));
 
         sender.getServer().shutdown();
 

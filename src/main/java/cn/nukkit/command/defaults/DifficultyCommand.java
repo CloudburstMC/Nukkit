@@ -55,7 +55,7 @@ public class DifficultyCommand extends Command {
             packet.setDifficulty(sender.getServer().getDifficulty());
             Server.broadcastPacket(new ArrayList<>(sender.getServer().getOnlinePlayers().values()), packet);
 
-            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.difficulty.success", String.valueOf(difficulty)));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.difficulty.success", String.valueOf(difficulty)));
         } else {
             return false;
         }

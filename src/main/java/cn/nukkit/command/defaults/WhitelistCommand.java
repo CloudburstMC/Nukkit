@@ -52,17 +52,17 @@ public class WhitelistCommand extends Command {
             switch (args[0].toLowerCase()) {
                 case "reload":
                     sender.getServer().reloadWhitelist();
-                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.reloaded"));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.whitelist.reloaded"));
 
                     return true;
                 case "on":
                     sender.getServer().setPropertyBoolean("white-list", true);
-                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.enabled"));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.whitelist.enabled"));
 
                     return true;
                 case "off":
                     sender.getServer().setPropertyBoolean("white-list", false);
-                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.disabled"));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.whitelist.disabled"));
 
                     return true;
                 case "list":
@@ -88,12 +88,12 @@ public class WhitelistCommand extends Command {
             switch (args[0].toLowerCase()) {
                 case "add":
                     sender.getServer().getOfflinePlayer(args[1]).setWhitelisted(true);
-                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.add.success", args[1]));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.whitelist.add.success", args[1]));
 
                     return true;
                 case "remove":
                     sender.getServer().getOfflinePlayer(args[1]).setWhitelisted(false);
-                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.remove.success", args[1]));
+                    CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.whitelist.remove.success", args[1]));
 
                     return true;
             }

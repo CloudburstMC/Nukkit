@@ -43,7 +43,7 @@ public class OpCommand extends Command {
         String name = args[0];
         Optional<UUID> uuid = sender.getServer().lookupName(name);
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", name));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.op.success", name));
         if (uuid.isPresent()) {
             IPlayer player = sender.getServer().getOfflinePlayer(uuid.get());
             if (player instanceof Player) {

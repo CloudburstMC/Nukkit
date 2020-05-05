@@ -66,7 +66,7 @@ public class TimeCommand extends Command {
                 level.checkTime();
                 level.stopTime();
                 level.checkTime();
-                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.stop", level.getTime()));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.time.stop", level.getTime()));
             }
             return true;
         } else if ("query".equals(args[0])) {
@@ -123,7 +123,7 @@ public class TimeCommand extends Command {
                 level.setTime(value);
                 level.checkTime();
             }
-            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.set", value));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.time.set", value));
         } else if ("add".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.add")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
@@ -143,7 +143,7 @@ public class TimeCommand extends Command {
                 level.setTime(level.getTime() + value);
                 level.checkTime();
             }
-            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.added", value));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.time.added", value));
         } else {
             return false;
         }

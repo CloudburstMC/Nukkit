@@ -55,7 +55,7 @@ public class SetWorldSpawnCommand extends Command {
         }
         level.setSpawnLocation(pos);
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", NukkitMath.round(pos.getX(), 2),
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.setworldspawn.success", NukkitMath.round(pos.getX(), 2),
                 NukkitMath.round(pos.getY(), 2), NukkitMath.round(pos.getZ(), 2)));
         return true;
     }

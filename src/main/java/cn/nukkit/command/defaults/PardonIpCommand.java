@@ -50,7 +50,7 @@ public class PardonIpCommand extends Command {
                 return true;
             }
 
-            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.unbanip.success", value));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.unbanip.success", value));
         } else {
 
             sender.sendMessage(new TranslationContainer("commands.unbanip.invalid"));

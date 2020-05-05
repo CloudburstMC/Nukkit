@@ -27,7 +27,7 @@ public class SaveCommand extends Command {
             return true;
         }
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.save.start"));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.save.start"));
 
         for (Player player : sender.getServer().getOnlinePlayers().values()) {
             player.save();
@@ -37,7 +37,7 @@ public class SaveCommand extends Command {
             level.save(true);
         }
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.save.success"));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.save.success"));
         return true;
     }
 }

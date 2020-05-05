@@ -45,7 +45,7 @@ public class DeopCommand extends Command {
             ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.deop.message"));
         }
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.deop.success", player.getName()));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.deop.success", player.getName()));
 
         return true;
     }

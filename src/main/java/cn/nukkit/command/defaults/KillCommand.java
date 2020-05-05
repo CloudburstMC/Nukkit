@@ -57,7 +57,7 @@ public class KillCommand extends Command {
                 }
                 player.setLastDamageCause(ev);
                 player.setHealth(0);
-                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.kill.successful", player.getName()));
             } else if (args[0].equals("@e")) {
                 StringJoiner joiner = new StringJoiner(", ");
                 for (Level level : Server.getInstance().getLevels()) {
