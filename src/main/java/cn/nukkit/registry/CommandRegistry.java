@@ -88,7 +88,6 @@ public class CommandRegistry implements Registry {
             command.setRegisteredName(name);
         }
         registerInternal(name, command);
-        log.debug("Registered Command {}", name);
     }
 
     private synchronized void registerInternal(String cmdName, Command command) {
@@ -183,7 +182,6 @@ public class CommandRegistry implements Registry {
         if (this.knownAliases.putIfAbsent(alias, cmdName) != null) {
             throw new RegistryException("Unable to register alias " + alias + ", already registered");
         }
-        log.debug("Registered alias: {} => {}", alias, cmdName);
     }
 
     /**
