@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerKickEvent;
@@ -13,16 +15,18 @@ import cn.nukkit.utils.TextFormat;
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class KickCommand extends VanillaCommand {
+public class KickCommand extends Command {
 
-    public KickCommand(String name) {
-        super(name, "commands.kick.description", "/kick <player> [reason]");
-        this.setPermission("nukkit.command.kick");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("reason", true)
-        });
+    public KickCommand() {
+        super("kick", CommandData.builder("kick")
+                .setDescription("commands.kick.description")
+                .setUsageMessage("/kick <player> [reason]")
+                .setPermissions("nukkit.command.kick")
+                .setParams(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("reason", true)
+                })
+                .build());
     }
 
     @Override
@@ -31,26 +35,25 @@ public class KickCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
 
         String name = args[0];
 
-        String reason = "";
+        StringBuilder reason = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
-            reason += args[i] + " ";
+            reason.append(args[i]).append(" ");
         }
 
         if (reason.length() > 0) {
-            reason = reason.substring(0, reason.length() - 1);
+            reason = new StringBuilder(reason.substring(0, reason.length() - 1));
         }
 
         Player player = sender.getServer().getPlayer(name);
         if (player != null) {
-            player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reason);
+            player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reason.toString());
             if (reason.length() >= 1) {
-                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success.reason", player.getName(), reason)
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success.reason", player.getName(), reason.toString())
                 );
             } else {
                 CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success", player.getName()));

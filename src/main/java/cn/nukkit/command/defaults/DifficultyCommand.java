@@ -1,8 +1,10 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -14,19 +16,20 @@ import java.util.ArrayList;
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class DifficultyCommand extends VanillaCommand {
+public class DifficultyCommand extends Command {
 
-    public DifficultyCommand(String name) {
-        super(name, "commands.difficulty.description", "commands.difficulty.usage");
-        this.setPermission("nukkit.command.difficulty");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("difficulty", CommandParamType.INT, false)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("difficulty", new String[]{"peaceful", "p", "easy", "e",
-                        "normal", "n", "hard", "h"})
-        });
+    public DifficultyCommand() {
+        super("difficulty", CommandData.builder("difficulty")
+                .setDescription("commands.difficulty.description")
+                .setUsageMessage("commands.difficulty.usage")
+                .setPermissions("nukkit.command.difficulty")
+                .setParams(new CommandParameter[]{
+                        new CommandParameter("difficulty", CommandParamType.INT, false)
+                }, new CommandParameter[]{
+                        new CommandParameter("difficulty", new String[]{"peaceful", "p", "easy", "e",
+                                "normal", "n", "hard", "h"})
+                })
+                .build());
     }
 
     @Override
@@ -36,7 +39,6 @@ public class DifficultyCommand extends VanillaCommand {
         }
 
         if (args.length != 1) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
 
@@ -55,8 +57,6 @@ public class DifficultyCommand extends VanillaCommand {
 
             CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.difficulty.success", String.valueOf(difficulty)));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 

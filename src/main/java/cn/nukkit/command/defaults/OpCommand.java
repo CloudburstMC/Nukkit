@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -16,15 +18,17 @@ import java.util.UUID;
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class OpCommand extends VanillaCommand {
+public class OpCommand extends Command {
 
-    public OpCommand(String name) {
-        super(name, "commands.op.description", "/op <player>");
-        this.setPermission("nukkit.command.op.give");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false)
-        });
+    public OpCommand() {
+        super("op", CommandData.builder("op")
+                .setDescription("commands.op.description")
+                .setUsageMessage("/op <player>")
+                .setPermissions("nukkit.command.op.give")
+                .setParams(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false)
+                })
+                .build());
     }
 
     @Override
@@ -33,7 +37,6 @@ public class OpCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
 

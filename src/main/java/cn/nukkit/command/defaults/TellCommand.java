@@ -1,6 +1,8 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -13,16 +15,19 @@ import java.util.Objects;
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class TellCommand extends VanillaCommand {
+public class TellCommand extends Command {
 
-    public TellCommand(String name) {
-        super(name, "commands.tell.description", "/tell <player> <message>", new String[]{"w", "msg"});
-        this.setPermission("nukkit.command.tell");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("message")
-        });
+    public TellCommand() {
+        super("tell", CommandData.builder("tell")
+                .setDescription("commands.tell.description")
+                .setUsageMessage("/tell <player> <message>")
+                .setAliases("w", "msg")
+                .setPermissions("nukkit.command.tell")
+                .setParams(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("message")
+                })
+                .build());
     }
 
     @Override
@@ -32,8 +37,6 @@ public class TellCommand extends VanillaCommand {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 

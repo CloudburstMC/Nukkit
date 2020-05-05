@@ -1,6 +1,8 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.TextFormat;
@@ -11,16 +13,15 @@ import java.util.Map;
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class PluginsCommand extends VanillaCommand {
+public class PluginsCommand extends Command {
 
-    public PluginsCommand(String name) {
-        super(name,
-                "%nukkit.command.plugins.description",
-                "%nukkit.command.plugins.usage",
-                new String[]{"pl"}
-        );
-        this.setPermission("nukkit.command.plugins");
-        this.commandParameters.clear();
+    public PluginsCommand() {
+        super("plugins", CommandData.builder("plugins")
+                .setDescription("%nukkit.command.plugins.description")
+                .setUsageMessage("%nukkit.command.plugins.usage")
+                .setAliases("pl")
+                .setPermissions("nukkit.command.plugins")
+                .build());
     }
 
     @Override
@@ -34,16 +35,16 @@ public class PluginsCommand extends VanillaCommand {
     }
 
     private void sendPluginList(CommandSender sender) {
-        String list = "";
+        StringBuilder list = new StringBuilder();
         Map<String, Plugin> plugins = sender.getServer().getPluginManager().getPlugins();
         for (Plugin plugin : plugins.values()) {
             if (list.length() > 0) {
-                list += TextFormat.WHITE + ", ";
+                list.append(TextFormat.WHITE + ", ");
             }
-            list += plugin.isEnabled() ? TextFormat.GREEN : TextFormat.RED;
-            list += plugin.getDescription().getFullName();
+            list.append(plugin.isEnabled() ? TextFormat.GREEN : TextFormat.RED);
+            list.append(plugin.getDescription().getFullName());
         }
 
-        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", String.valueOf(plugins.size()), list));
+        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", String.valueOf(plugins.size()), list.toString()));
     }
 }

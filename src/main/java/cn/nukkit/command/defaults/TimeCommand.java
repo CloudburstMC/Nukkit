@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
@@ -13,33 +15,31 @@ import cn.nukkit.utils.TextFormat;
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class TimeCommand extends VanillaCommand {
+public class TimeCommand extends Command {
 
-    public TimeCommand(String name) {
-        super(name, "commands.time.description", "/time <add|set|start|stop> [value]");
-        this.setPermission("nukkit.command.time.add;" +
-                "nukkit.command.time.set;" +
-                "nukkit.command.time.start;" +
-                "nukkit.command.time.stop");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("start|stop", CommandParamType.STRING, false)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("add|set", CommandParamType.STRING, false),
-                new CommandParameter("value", CommandParamType.INT, false)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("add|set", CommandParamType.STRING, false),
-                new CommandParameter("value", CommandParamType.STRING, false)
-        });
+    public TimeCommand() {
+        super("time", CommandData.builder("time")
+                .setDescription("commands.time.description")
+                .setUsageMessage("/time <add|set|start|stop> [value]")
+                .setPermissions("nukkit.command.time.add",
+                        "nukkit.command.time.set",
+                        "nukkit.command.time.start",
+                        "nukkit.command.time.stop")
+                .setParams(new CommandParameter[]{
+                        new CommandParameter("start|stop", CommandParamType.STRING, false)
+                }, new CommandParameter[]{
+                        new CommandParameter("add|set", CommandParamType.STRING, false),
+                        new CommandParameter("value", CommandParamType.INT, false)
+                }, new CommandParameter[]{
+                        new CommandParameter("add|set", CommandParamType.STRING, false),
+                        new CommandParameter("value", CommandParamType.STRING, false)
+                })
+                .build());
     }
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (args.length < 1) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
@@ -87,8 +87,6 @@ public class TimeCommand extends VanillaCommand {
 
 
         if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
@@ -116,8 +114,7 @@ public class TimeCommand extends VanillaCommand {
                 try {
                     value = Math.max(0, Integer.parseInt(args[1]));
                 } catch (Exception e) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                    return true;
+                    return false;
                 }
             }
 
@@ -138,8 +135,7 @@ public class TimeCommand extends VanillaCommand {
             try {
                 value = Math.max(0, Integer.parseInt(args[1]));
             } catch (Exception e) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                return true;
+                return false;
             }
 
             for (Level level : sender.getServer().getLevels()) {
@@ -149,7 +145,7 @@ public class TimeCommand extends VanillaCommand {
             }
             CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.added", value));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            return false;
         }
 
         return true;

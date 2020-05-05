@@ -1,6 +1,7 @@
 package cn.nukkit.command;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 import lombok.extern.log4j.Log4j2;
@@ -19,7 +20,7 @@ public class FormattedCommandAlias extends Command {
     private final String[] formatStrings;
 
     public FormattedCommandAlias(String alias, List<String> formatStrings) {
-        super(alias);
+        super(alias, CommandData.builder(alias).build());
         this.formatStrings = formatStrings.toArray(new String[0]);
     }
 
@@ -79,7 +80,7 @@ public class FormattedCommandAlias extends Command {
                 throw new IllegalArgumentException("Invalid replacement token");
             }
 
-            int position = Integer.valueOf(formatString.substring(argStart, index));
+            int position = Integer.parseInt(formatString.substring(argStart, index));
 
             // Arguments are not 0 indexed
             if (position == 0) {

@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerKickEvent;
@@ -12,17 +14,19 @@ import cn.nukkit.player.Player;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BanCommand extends VanillaCommand {
+public class BanCommand extends Command {
 
-    public BanCommand(String name) {
-        super(name, "commands.ban.description", "/ban <player> [reason]");
-        this.setPermission("nukkit.command.ban.player");
-        this.commandParameters.clear();
-        this.commandParameters.add(
-                new CommandParameter[]{
-                        new CommandParameter("player", CommandParamType.TARGET, false),
-                        new CommandParameter("reason", CommandParamType.STRING, true)
-                });
+    public BanCommand() {
+        super("ban", CommandData.builder("ban")
+                .setDescription("commands.ban.description")
+                .setUsageMessage("/ban <player> [reason]")
+                .setPermissions("nukkit.command.ban.player")
+                .setParams(
+                        new CommandParameter[]{
+                                new CommandParameter("player", CommandParamType.TARGET, false),
+                                new CommandParameter("reason", CommandParamType.STRING, true)
+                        })
+                .build());
     }
 
     @Override
@@ -32,8 +36,6 @@ public class BanCommand extends VanillaCommand {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 

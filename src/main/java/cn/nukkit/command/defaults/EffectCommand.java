@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -17,21 +18,23 @@ import cn.nukkit.utils.TextFormat;
  * Package cn.nukkit.command.defaults in project nukkit.
  */
 public class EffectCommand extends Command {
-    public EffectCommand(String name) {
-        super(name, "commands.effect.description", "/effect <player> <clear|effect> [seconds] [amplifier] [hideParticles]");
-        this.setPermission("nukkit.command.effect");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("effect", CommandParamType.STRING, false), //Do not use Enum here because of buggy behavior
-                new CommandParameter("seconds", CommandParamType.INT, true),
-                new CommandParameter("amplifier", true),
-                new CommandParameter("hideParticle", true, new String[]{"true", "false"})
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("clear", new String[]{"clear"})
-        });
+    public EffectCommand() {
+        super("effect", CommandData.builder("effect")
+                .setDescription("commands.effect.description")
+                .setUsageMessage("/effect <player> <clear|effect> [seconds] [amplifier] [hideParticles]")
+                .setPermissions("nukkit.command.effect")
+                .setParams(
+                        new CommandParameter[]{
+                                new CommandParameter("player", CommandParamType.TARGET, false),
+                                new CommandParameter("effect", CommandParamType.STRING, false), //Do not use Enum here because of buggy behavior
+                                new CommandParameter("seconds", CommandParamType.INT, true),
+                                new CommandParameter("amplifier", true),
+                                new CommandParameter("hideParticle", true, new String[]{"true", "false"})
+                        }, new CommandParameter[]{
+                                new CommandParameter("player", CommandParamType.TARGET, false),
+                                new CommandParameter("clear", new String[]{"clear"})
+                        })
+                .build());
     }
 
     @Override
@@ -40,8 +43,7 @@ public class EffectCommand extends Command {
             return true;
         }
         if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return true;
+            return false;
         }
         Player player = sender.getServer().getPlayer(args[0]);
         if (player == null) {
@@ -70,10 +72,9 @@ public class EffectCommand extends Command {
         int amplification = 0;
         if (args.length >= 3) {
             try {
-                duration = Integer.valueOf(args[2]);
+                duration = Integer.parseInt(args[2]);
             } catch (NumberFormatException a) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                return true;
+                return false;
             }
             if (!(effect instanceof InstantEffect)) {
                 duration *= 20;
@@ -83,10 +84,9 @@ public class EffectCommand extends Command {
         }
         if (args.length >= 4) {
             try {
-                amplification = Integer.valueOf(args[3]);
+                amplification = Integer.parseInt(args[3]);
             } catch (NumberFormatException a) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                return true;
+                return false;
             }
         }
         if (args.length >= 5) {

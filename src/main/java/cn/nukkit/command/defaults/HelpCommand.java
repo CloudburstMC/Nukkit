@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -15,15 +16,18 @@ import java.util.TreeMap;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class HelpCommand extends VanillaCommand {
+public class HelpCommand extends Command {
 
-    public HelpCommand(String name) {
-        super(name, "commands.help.description", "/help [page]", new String[]{"?"});
-        this.setPermission("nukkit.command.help");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("page", CommandParamType.INT, true)
-        });
+    public HelpCommand() {
+        super("help", CommandData.builder("help")
+                .setDescription("commands.help.description")
+                .setUsageMessage("/help [page]")
+                .addAlias("?")
+                .setPermissions("nukkit.command.help")
+                .setParams(new CommandParameter[]{
+                        new CommandParameter("page", CommandParamType.INT, true)
+                })
+                .build());
     }
 
     @Override
@@ -31,7 +35,7 @@ public class HelpCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-        String command = "";
+        StringBuilder command = new StringBuilder();
         int pageNumber = 1;
         int pageHeight = 5;
         if (args.length != 0) {
@@ -50,18 +54,18 @@ public class HelpCommand extends VanillaCommand {
                     args = new String[0];
                 }*/
                 for (String arg : args) {
-                    if (!command.equals("")) {
-                        command += " ";
+                    if (!command.toString().equals("")) {
+                        command.append(" ");
                     }
-                    command += arg;
+                    command.append(arg);
                 }
             } catch (NumberFormatException e) {
                 pageNumber = 1;
                 for (String arg : args) {
-                    if (!command.equals("")) {
-                        command += " ";
+                    if (!command.toString().equals("")) {
+                        command.append(" ");
                     }
-                    command += arg;
+                    command.append(arg);
                 }
             }
         }
@@ -70,7 +74,7 @@ public class HelpCommand extends VanillaCommand {
             pageHeight = Integer.MAX_VALUE;
         }
 
-        if (command.equals("")) {
+        if (command.toString().equals("")) {
             Map<String, Command> commands = new TreeMap<>();
             for (Command cmd : sender.getServer().getCommandRegistry().getRegisteredCommands().values()) {
                 if (cmd.testPermissionSilent(sender)) {
@@ -95,28 +99,20 @@ public class HelpCommand extends VanillaCommand {
 
             return true;
         } else {
-            Command cmd = sender.getServer().getCommandRegistry().getCommand(command.toLowerCase());
+            Command cmd = sender.getServer().getCommandRegistry().getCommand(command.toString().toLowerCase());
             if (cmd != null) {
                 if (cmd.testPermissionSilent(sender)) {
 
                     String desc = sender.getServer().getLanguage().translate(cmd.getDescription());
                     String message = TextFormat.YELLOW + "--------- " + TextFormat.WHITE + " Help: /" + cmd.getName() + TextFormat.YELLOW + " ---------\n";
                     message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + desc + "\n";
-                    String usage = "";
-                    String[] usages = cmd.getUsage().split("\n");
-                    for (String u : usages) {
-                        if (!usage.equals("")) {
-                            usage += "\n" + TextFormat.WHITE;
-                        }
-                        usage += u;
-                    }
-                    message += TextFormat.GOLD + "Usage: " + TextFormat.WHITE + usage + "\n";
+                    message += TextFormat.GOLD + "Usage: " + TextFormat.WHITE + cmd.getUsage() + "\n";
                     sender.sendMessage(message);
                     return true;
                 }
             }
 
-            sender.sendMessage(TextFormat.RED + "No help for " + command.toLowerCase());
+            sender.sendMessage(TextFormat.RED + "No help for " + command.toString().toLowerCase());
             return true;
         }
     }

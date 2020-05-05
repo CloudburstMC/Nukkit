@@ -1,10 +1,14 @@
 package cn.nukkit.command.data;
 
 
+import cn.nukkit.command.CommandUtils;
+import com.nukkitx.protocol.bedrock.data.CommandEnumData;
+import com.nukkitx.protocol.bedrock.data.CommandParamData;
 import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 @ToString
 public class CommandParameter {
@@ -73,6 +77,12 @@ public class CommandParameter {
 
     public CommandParameter(String name, String[] enumValues) {
         this(name, false, enumValues);
+    }
+
+    protected CommandParamData toNetwork() {
+        return new CommandParamData(this.name, this.optional,
+                this.enumData != null ? new CommandEnumData(this.name, this.enumData.getValues().toArray(new String[0]), false) : null,
+                CommandUtils.NETWORK_TYPES.get(this.type), this.postFix, Collections.EMPTY_LIST);
     }
 
     protected static CommandParamType fromString(String param) {

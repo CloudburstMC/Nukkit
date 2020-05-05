@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerKickEvent;
@@ -23,17 +25,18 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BanIpCommand extends VanillaCommand {
+public class BanIpCommand extends Command {
 
-    public BanIpCommand(String name) {
-        super(name, "commands.banip.description", "/ban-ip <player> [reason]");
-        this.setPermission("nukkit.command.ban.ip");
-        this.setAliases(new String[]{"banip"});
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("reason", CommandParamType.STRING, true)
-        });
+    public BanIpCommand() {
+        super("ban-ip", CommandData.builder("ban-ip")
+                .setDescription("commands.banip.description")
+                .setUsageMessage("/ban-ip <player> [reason]")
+                .setPermissions("nukkit.command.ban.ip")
+                .setAliases("banip")
+                .setParams(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("reason", CommandParamType.STRING, true)
+                }).build());
     }
 
     @Override
@@ -43,29 +46,27 @@ public class BanIpCommand extends VanillaCommand {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
         String value = args[0];
-        String reason = "";
+        StringBuilder reason = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
-            reason += args[i] + " ";
+            reason.append(args[i]).append(" ");
         }
 
         if (reason.length() > 0) {
-            reason = reason.substring(0, reason.length() - 1);
+            reason = new StringBuilder(reason.substring(0, reason.length() - 1));
         }
 
         if (Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", value)) {
-            this.processIPBan(value, sender, reason);
+            this.processIPBan(value, sender, reason.toString());
 
             CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success", value));
         } else {
             Player player = sender.getServer().getPlayer(value);
             if (player != null) {
-                this.processIPBan(player.getAddress(), sender, reason);
+                this.processIPBan(player.getAddress(), sender, reason.toString());
 
                 CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success.players", player.getAddress(), player.getName()));
             } else {
@@ -83,7 +84,7 @@ public class BanIpCommand extends VanillaCommand {
                 }
 
                 if (nbt != null && nbt.contains("lastIP") && Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", (value = nbt.getString("lastIP")))) {
-                    this.processIPBan(value, sender, reason);
+                    this.processIPBan(value, sender, reason.toString());
 
                     CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success", value));
                 } else {
