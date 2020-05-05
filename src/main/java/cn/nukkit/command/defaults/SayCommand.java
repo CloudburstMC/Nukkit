@@ -8,7 +8,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
-import jdk.internal.joptsimple.internal.Strings;
+
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -46,7 +46,7 @@ public class SayCommand extends Command {
             senderString = sender.getName();
         }
 
-        String msg = Strings.join(args, " ");
+        String msg = String.join(" ", args);
 
         if (msg.length() > 0) {
             msg = msg.substring(0, msg.length() - 1);

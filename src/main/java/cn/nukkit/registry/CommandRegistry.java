@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  */
 @Log4j2
 public class CommandRegistry implements Registry {
-    private final Matcher NAME_MATCHER = Pattern.compile("^[a-z0-9_\\-/\\.]+$").matcher("");
+    private final Matcher NAME_MATCHER = Pattern.compile("^[a-z0-9_?\\-/\\.]+$").matcher("");
     private static final CommandRegistry INSTANCE = new CommandRegistry();
     private Map<String, Command> registeredCommands = new HashMap<>();
     private Map<String, String> knownAliases = new HashMap<>();
@@ -180,9 +180,10 @@ public class CommandRegistry implements Registry {
             }
         }
 
-        if (this.knownAliases.putIfAbsent(alias.toLowerCase(), cmdName) != null) {
+        if (this.knownAliases.putIfAbsent(alias, cmdName) != null) {
             throw new RegistryException("Unable to register alias " + alias + ", already registered");
         }
+        log.debug("Registered alias: {} => {}", alias, cmdName);
     }
 
     /**
