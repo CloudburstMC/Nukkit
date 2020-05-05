@@ -486,8 +486,7 @@ public class PluginManager {
                     permsMsg = (String) ((Map) data).get("permission-message");
                 }
 
-                registry.register(plugin, new PluginCommand(key,
-                        plugin, CommandData.builder(key)
+                registry.register(plugin, new PluginCommand(plugin, CommandData.builder(key)
                         .setDescription(desc)
                         .setUsageMessage(usage)
                         .setAliases(aliases)

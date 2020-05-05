@@ -102,7 +102,7 @@ public class CommandData {
         private List<CommandParameter[]> overloads = new ArrayList<>();
 
         public Builder(@NonNull String name) {
-            this.name = name;
+            this.name = name.toLowerCase();
         }
 
         public CommandData build() {
@@ -228,7 +228,7 @@ public class CommandData {
          * @param paramSet Collection of {@link CommandParameter} arrays to set as the new overloads
          * @return Builder instance for chaining calls
          */
-        public Builder setParams(@NonNull CommandParameter[]... paramSet) {
+        public Builder setParameters(@NonNull CommandParameter[]... paramSet) {
             this.overloads = Arrays.asList(paramSet);
             return this;
         }
@@ -236,21 +236,21 @@ public class CommandData {
         /**
          * @param parameters
          * @return
-         * @see #setParams(CommandParameter[]...)
+         * @see #setParameters(CommandParameter[]...)
          */
-        public Builder setParams(@NonNull List<CommandParameter[]> parameters) {
+        public Builder setParameters(@NonNull List<CommandParameter[]> parameters) {
             this.overloads = parameters;
             return this;
         }
 
         /**
-         * Adds the set of parameters as a Command overload.
+         * Adds the set of parameters as a Command overload, without clearing the current overloads.
          *
-         * @param paramSet an Array of {@link CommandParameter} objects representing the command parameters for this overload
+         * @param paramSet The set of {@link CommandParameter} arrays to add to the overloads.
          * @return Builder instance for chaining calls
          */
-        public Builder addParams(@NonNull CommandParameter[] paramSet) {
-            this.overloads.add(paramSet);
+        public Builder addParameters(@NonNull CommandParameter[]... paramSet) {
+            this.overloads.addAll(Arrays.asList(paramSet));
             return this;
         }
 

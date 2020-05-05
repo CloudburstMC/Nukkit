@@ -24,7 +24,7 @@ public class SimpleCommand extends Command {
     private int minArgs;
 
     public SimpleCommand(Object object, Method method, String name, String description, String usageMessage, String[] aliases, String permissions, List<CommandParameter[]> parameters) {
-        super(name, CommandData.builder(name)
+        super(CommandData.builder(name)
                 .setDescription(description)
                 .setUsageMessage(usageMessage)
                 .setAliases(aliases)
