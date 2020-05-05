@@ -48,11 +48,6 @@ public class SayCommand extends Command {
 
         String msg = String.join(" ", args);
 
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
-        }
-
-
         sender.getServer().broadcastMessage(new TranslationContainer(
                 TextFormat.LIGHT_PURPLE + "%chat.type.announcement",
                 senderString, TextFormat.LIGHT_PURPLE + msg));

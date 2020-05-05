@@ -10,6 +10,7 @@ import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.List;
+import java.util.StringJoiner;
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -37,15 +38,14 @@ public class VersionCommand extends Command {
                     sender.getServer().getVersion(),
                     String.valueOf(ProtocolInfo.getDefaultProtocolVersion())));
         } else {
-            StringBuilder pluginName = new StringBuilder();
-            for (String arg : args) pluginName.append(arg).append(" ");
-            pluginName = new StringBuilder(pluginName.toString().trim());
+            StringJoiner pluginName = new StringJoiner(" ");
+            for (String arg : args) pluginName.add(arg);
+
             final boolean[] found = {false};
             final Plugin[] exactPlugin = {sender.getServer().getPluginManager().getPlugin(pluginName.toString())};
 
             if (exactPlugin[0] == null) {
-                pluginName = new StringBuilder(pluginName.toString().toLowerCase());
-                final String finalPluginName = pluginName.toString();
+                final String finalPluginName = pluginName.toString().toLowerCase();
                 sender.getServer().getPluginManager().getPlugins().forEach((s, p) -> {
                     if (s.toLowerCase().contains(finalPluginName)) {
                         exactPlugin[0] = p;

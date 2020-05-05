@@ -10,6 +10,7 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -53,12 +54,9 @@ public class TellCommand extends Command {
             return true;
         }
 
-        String msg = "";
+        StringJoiner msg = new StringJoiner(" ");
         for (int i = 1; i < args.length; i++) {
-            msg += args[i] + " ";
-        }
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
+            msg.add(args[i]);
         }
 
         String displayName = (sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName());

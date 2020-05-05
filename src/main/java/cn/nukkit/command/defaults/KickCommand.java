@@ -11,6 +11,8 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.StringJoiner;
+
 /**
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -40,13 +42,9 @@ public class KickCommand extends Command {
 
         String name = args[0];
 
-        StringBuilder reason = new StringBuilder();
+        StringJoiner reason = new StringJoiner(" ");
         for (int i = 1; i < args.length; i++) {
-            reason.append(args[i]).append(" ");
-        }
-
-        if (reason.length() > 0) {
-            reason = new StringBuilder(reason.substring(0, reason.length() - 1));
+            reason.add(args[i]);
         }
 
         Player player = sender.getServer().getPlayer(name);

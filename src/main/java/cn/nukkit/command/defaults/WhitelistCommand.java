@@ -9,6 +9,8 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.StringJoiner;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -66,17 +68,16 @@ public class WhitelistCommand extends Command {
 
                     return true;
                 case "list":
-                    StringBuilder result = new StringBuilder();
+                    StringJoiner result = new StringJoiner(", ");
                     int count = 0;
                     for (String player : sender.getServer().getWhitelist().getAll().keySet()) {
-                        result.append(player).append(", ");
+                        result.add(player);
                         ++count;
                     }
                     sender.sendMessage(new TranslationContainer("commands.whitelist.list", count, count));
-                    sender.sendMessage(result.length() > 0 ? result.substring(0, result.length() - 2) : "");
+                    sender.sendMessage(result.toString());
 
                     return true;
-
                 case "add":
                 case "remove":
                     return false;

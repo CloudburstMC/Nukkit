@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.StringJoiner;
 import java.util.regex.Pattern;
 
 /**
@@ -50,18 +51,13 @@ public class BanIpCommand extends Command {
         }
 
         String value = args[0];
-        StringBuilder reason = new StringBuilder();
+        StringJoiner reason = new StringJoiner(" ");
         for (int i = 1; i < args.length; i++) {
-            reason.append(args[i]).append(" ");
-        }
-
-        if (reason.length() > 0) {
-            reason = new StringBuilder(reason.substring(0, reason.length() - 1));
+            reason.add(args[i]);
         }
 
         if (Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", value)) {
             this.processIPBan(value, sender, reason.toString());
-
             CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.banip.success", value));
         } else {
             Player player = sender.getServer().getPlayer(value);

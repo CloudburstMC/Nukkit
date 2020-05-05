@@ -45,11 +45,6 @@ public class MeCommand extends Command {
         }
 
         String msg = String.join(" ", args);
-
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
-        }
-
         sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", name, TextFormat.WHITE + msg));
 
         return true;
