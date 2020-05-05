@@ -67,31 +67,13 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         }
 
         String username = this.loginData.getChainData().getUsername();
-        boolean valid = true;
-        int len = username.length();
-        if (len > 16 || len < 3) {
-            valid = false;
-        }
 
-        for (int i = 0; i < len && valid; i++) {
-            char c = username.charAt(i);
-            if ((c >= 'a' && c <= 'z') ||
-                    (c >= 'A' && c <= 'Z') ||
-                    (c >= '0' && c <= '9') ||
-                    c == '_' || c == ' '
-            ) {
-                continue;
-            }
-
-            valid = false;
-            break;
-        }
-
-        loginData.setName(TextFormat.clean(username));
-        if (!valid || Objects.equals(loginData.getName().toLowerCase(), "rcon") || Objects.equals(loginData.getName().toLowerCase(), "console")) {
+        if (!this.loginData.isValidName(username)) {
             session.disconnect("disconnectionScreen.invalidName");
             return true;
         }
+
+        loginData.setName(TextFormat.clean(username));
 
         if (!this.loginData.getChainData().getSkin().isValid()) {
             session.disconnect("disconnectionScreen.invalidSkin");

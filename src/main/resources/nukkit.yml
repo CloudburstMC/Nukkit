@@ -112,6 +112,10 @@ player:
   # %player.skin-change-cooldown
   skin-change-cooldown: 30
 
+invalidNames:
+  - "console"
+  - "rcon"
+
 # %aliases
 aliases:
 #  showtheversion: version

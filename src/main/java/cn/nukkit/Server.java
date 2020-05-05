@@ -200,6 +200,8 @@ public class Server {
     private final LevelData defaultLevelData = new LevelData();
     private String predefinedLanguage;
 
+    private List<String> invalidNameList;
+
     private final ServiceManager serviceManager = new NKServiceManager();
 
     private boolean allowNether;
@@ -462,6 +464,11 @@ public class Server {
         if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
             this.setPropertyInt("difficulty", 3);
         }
+
+        this.invalidNameList = this.getConfig().getList("invalidNames", Arrays.asList(
+                "rcon",
+                "console"
+        ));
 
         if (this.getConfig().getBoolean("bug-report", true)) {
             ExceptionHandler.registerExceptionHandler();
@@ -1096,6 +1103,18 @@ public class Server {
         for (Level level : this.levelManager.getLevels()) {
             level.setAutoSave(this.autoSave);
         }
+    }
+
+    public List<String> getInvalidNameList() {
+        return this.invalidNameList;
+    }
+
+    public void setInvalidNameList(List<String> invalidNameList) {
+        this.invalidNameList = invalidNameList;
+    }
+
+    public boolean hasNameInvalid(String username) {
+        return this.getInvalidNameList().contains(username.toLowerCase());
     }
 
     public boolean getGenerateStructures() {

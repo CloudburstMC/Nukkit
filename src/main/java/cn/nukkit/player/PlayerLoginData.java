@@ -56,6 +56,30 @@ public class PlayerLoginData {
         return player;
     }
 
+    public boolean isValidName(String username) {
+        boolean valid = !server.hasNameInvalid(username);
+        int length = username.length();
+        if (length > 16 || length < 3) {
+            valid = false;
+        }
+
+        for (int i = 0; i < length && valid; i++) {
+            char charAt = username.charAt(i);
+            if ((charAt >= 'a' && charAt <= 'z') ||
+                    (charAt >= 'A' && charAt <= 'Z') ||
+                    (charAt >= '0' && charAt <= '9') ||
+                    charAt == '_' || charAt == ' '
+            ) {
+                continue;
+            }
+
+            valid = false;
+            break;
+        }
+
+        return valid;
+    }
+
     public AsyncTask getPreLoginEventTask() {
         return preLoginEventTask;
     }
