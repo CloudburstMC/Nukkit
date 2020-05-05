@@ -62,6 +62,10 @@ public class CommandData {
         return this.aliases.getValues();
     }
 
+    public void removeAlias(String alias) {
+        this.aliases.getValues().remove(alias);
+    }
+
     public com.nukkitx.protocol.bedrock.data.CommandData toNetwork() {
         String description = Server.getInstance().getLanguage().translate(this.description);
 

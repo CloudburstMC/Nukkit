@@ -251,6 +251,7 @@ public class CommandRegistry implements Registry {
             throw new RegistryException("Plugins may not unregister another Plugin's command aliases");
         }
         knownAliases.remove(alias);
+        cmd.removeAlias(alias);
     }
 
     private void checkClosed() {

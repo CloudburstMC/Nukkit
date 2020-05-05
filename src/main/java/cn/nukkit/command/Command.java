@@ -108,6 +108,10 @@ public abstract class Command {
         return this.commandData.getOverloads();
     }
 
+    public void removeAlias(String alias) {
+        this.commandData.removeAlias(alias);
+    }
+
     @Override
     public String toString() {
         return this.name;

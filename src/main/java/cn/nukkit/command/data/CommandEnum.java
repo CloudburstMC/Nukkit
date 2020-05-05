@@ -4,7 +4,6 @@ import com.nukkitx.protocol.bedrock.data.CommandEnumData;
 import lombok.ToString;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,8 +35,7 @@ public class CommandEnum {
     protected CommandEnumData toNetwork() {
         String[] aliases;
         if (values.size() > 0) {
-            List<String> aliasList = new ArrayList<>();
-            Collections.copy(aliasList, values);
+            List<String> aliasList = new ArrayList<>(values);
             aliasList.add(this.name);
             aliases = aliasList.toArray(new String[0]);
         } else {
