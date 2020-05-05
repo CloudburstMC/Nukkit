@@ -487,13 +487,13 @@ public class PluginManager {
                 }
 
                 registry.register(plugin, new PluginCommand(key,
-                        CommandData.builder(key)
-                                .setDescription(desc)
-                                .setUsageMessage(usage)
-                                .setAliases(aliases)
-                                .setPermissions(perms.split(";"))
-                                .setPermissionMessage(permsMsg).build(),
-                        plugin));
+                        plugin, CommandData.builder(key)
+                        .setDescription(desc)
+                        .setUsageMessage(usage)
+                        .setAliases(aliases)
+                        .setPermissions(perms.split(";"))
+                        .setPermissionMessage(permsMsg).build()
+                ));
             }
         }
     }

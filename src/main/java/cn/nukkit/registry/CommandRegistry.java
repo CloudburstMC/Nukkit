@@ -120,6 +120,12 @@ public class CommandRegistry implements Registry {
             cn.nukkit.command.simple.Command def = method.getAnnotation(cn.nukkit.command.simple.Command.class);
             if (def != null) {
                 String cmd = def.name();
+                NAME_MATCHER.reset(cmd);
+                if (!NAME_MATCHER.matches()) {
+                    log.error("Invalid Command name in SimpleCommand: {}, skipping", cmd);
+                    continue;
+                }
+
                 String perms = "";
                 CommandPermission perm = method.getAnnotation(CommandPermission.class);
                 if (perm != null) {
@@ -163,6 +169,9 @@ public class CommandRegistry implements Registry {
             throw new RegistryException("Unable to register alias " + alias + " as command " + cmdName + " is not yet registered.");
         }
 
+        NAME_MATCHER.reset(alias);
+        Preconditions.checkArgument(NAME_MATCHER.matches(), "Invalid alias name: %s", alias);
+
         if (this.knownAliases.containsKey(alias)) {
             Command cmd = this.registeredCommands.get(cmdName);
             if (cmd instanceof PluginCommand) {
@@ -178,7 +187,7 @@ public class CommandRegistry implements Registry {
 
     /**
      * Method used to unregister a command. Please note that a Plugin may only unregister it's own
-     * commands, or a built in vanilla command.
+     * commands, or a built in command.
      *
      * @param plugin A reference to your {@link PluginBase} instance
      * @param name   The command name, or alias for the command
@@ -193,18 +202,18 @@ public class CommandRegistry implements Registry {
             return;
         }
 
-        String cmdName = knownAliases.get(name);
-        Command cmd = registeredCommands.get(cmdName);
+        Command cmd = registeredCommands.get(knownAliases.get(name));
 
         if (cmd instanceof PluginCommand) {
             if (((PluginCommand) cmd).getPlugin() != plugin) {
                 throw new RegistryException("Unable to unregister another plugin's command");
             }
         }
-        unregisterInternal(cmdName);
+        unregisterInternal(cmd);
     }
 
-    private void unregisterInternal(String name) {
+    private void unregisterInternal(Command cmd) {
+        String name = cmd.getRegisteredName();
         registeredCommands.remove(name);
         List<String> aliasesToRemove = new ArrayList<>();
         for (Map.Entry<String, String> entry : knownAliases.entrySet()) {
@@ -214,6 +223,35 @@ public class CommandRegistry implements Registry {
         }
         for (String alias : aliasesToRemove)
             knownAliases.remove(alias);
+    }
+
+    /**
+     * Unregisters an alias for one of your Plugin's {@link PluginCommand Commands}, or for a
+     * built-in command.
+     *
+     * @param plugin A reference to your {@link PluginBase Plugin}
+     * @param alias  The alias to unregister
+     * @throws RegistryException on attempt to unregister another Plugin's alias
+     */
+    public void unregisterAlias(Plugin plugin, String alias) throws RegistryException {
+        Objects.requireNonNull(plugin, "plugin");
+        Objects.requireNonNull(alias, "alias");
+        checkClosed();
+
+        if (!knownAliases.containsKey(alias)) {
+            log.warn("Attempted to unregister unknown alias: {}", alias);
+            return;
+        }
+
+        if (registeredCommands.containsKey(alias)) {
+            log.warn("Attempted to unregister alias {}, but it is the base command name.", alias);
+            return;
+        }
+        Command cmd = registeredCommands.get(knownAliases.get(alias));
+        if (cmd instanceof PluginCommand && ((PluginCommand) cmd).getPlugin() != plugin) {
+            throw new RegistryException("Plugins may not unregister another Plugin's command aliases");
+        }
+        knownAliases.remove(alias);
     }
 
     private void checkClosed() {
