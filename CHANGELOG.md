@@ -6,7 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased]
+## [Unreleased] 1.2.1.0-PN-SNAPSHOT
+Click the link above to see the future.
+
+### Added
+- [#227] PlayerJumpEvent called when jump packets are received.
+
+### Changed
+- [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
+
+## [Unreleased] 1.2.0.1-PN-SNAPSHOT
 Click the link above to see the future.
 
 ### Added
@@ -189,3 +198,4 @@ Click the link above to see the future.
 [#219]: https://github.com/GameModsBR/PowerNukkit/pull/219
 [#222]: https://github.com/GameModsBR/PowerNukkit/issues/223
 [#224]: https://github.com/GameModsBR/PowerNukkit/pull/224
+[#227]: https://github.com/GameModsBR/PowerNukkit/pull/227
