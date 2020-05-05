@@ -22,7 +22,7 @@ public class GameruleCommand extends Command {
                 .setDescription("commands.gamerule.description")
                 .setUsageMessage("/gamerule <gamerule> [value]")
                 .setPermissions("nukkit.command.gamerule")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("gamerule", true, registry.getRuleNames().toArray(new String[0])),
                         new CommandParameter("value", CommandParamType.STRING, true)
                 })

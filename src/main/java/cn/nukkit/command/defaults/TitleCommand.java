@@ -19,25 +19,25 @@ public class TitleCommand extends Command {
                 .setDescription("commands.title.description")
                 .setUsageMessage("/title <player> <clear|reset>\n/title <player> <|title|subtitle|actionbar> <text>\n/title <player> <times> <fadein> <stay> <fadeOut>")
                 .setPermissions("nukkit.command.title")
-                .addParams(new CommandParameter[]{
+                .addParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("clear", new String[]{"clear"})})
-                .addParams(new CommandParameter[]{
+                .addParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("reset", new String[]{"reset"})})
-                .addParams(new CommandParameter[]{
+                .addParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("title", new String[]{"title"}),
                         new CommandParameter("titleText", CommandParamType.STRING, false)})
-                .addParams(new CommandParameter[]{
+                .addParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("subtitle", new String[]{"subtitle"}),
                         new CommandParameter("titleText", CommandParamType.STRING, false)})
-                .addParams(new CommandParameter[]{
+                .addParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("actionbar", new String[]{"actionbar"}),
                         new CommandParameter("titleText", CommandParamType.STRING, false)})
-                .addParams(new CommandParameter[]{
+                .addParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("times", new String[]{"times"}),
                         new CommandParameter("fadeIn", CommandParamType.INT, false),

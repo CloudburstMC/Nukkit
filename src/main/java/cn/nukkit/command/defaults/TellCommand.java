@@ -24,7 +24,7 @@ public class TellCommand extends Command {
                 .setUsageMessage("/tell <player> <message>")
                 .setAliases("w", "msg")
                 .setPermissions("nukkit.command.tell")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("message")
                 })

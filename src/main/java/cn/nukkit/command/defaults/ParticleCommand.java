@@ -34,7 +34,7 @@ public class ParticleCommand extends Command {
                 .setDescription("commands.particle.description")
                 .setUsageMessage("/particle <particle> <position> [count] [data[")
                 .setPermissions("nukkit.command.particle")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("name", false, ENUM_VALUES),
                         new CommandParameter("position", CommandParamType.POSITION, false),
                         new CommandParameter("count", CommandParamType.INT, true),

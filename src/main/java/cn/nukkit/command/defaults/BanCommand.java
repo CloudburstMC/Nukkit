@@ -23,7 +23,7 @@ public class BanCommand extends Command {
                 .setDescription("commands.ban.description")
                 .setUsageMessage("/ban <player> [reason]")
                 .setPermissions("nukkit.command.ban.player")
-                .setParams(
+                .setParameters(
                         new CommandParameter[]{
                                 new CommandParameter("player", CommandParamType.TARGET, false),
                                 new CommandParameter("reason", CommandParamType.STRING, true)

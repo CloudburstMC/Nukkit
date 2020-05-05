@@ -21,7 +21,7 @@ public class SayCommand extends Command {
                 .setDescription("commands.say.description")
                 .setUsageMessage("/say <usage>")
                 .setPermissions("nukkit.command.say")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("message")
                 })
                 .build());

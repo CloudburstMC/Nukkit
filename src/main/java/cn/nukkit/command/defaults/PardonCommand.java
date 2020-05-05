@@ -19,7 +19,7 @@ public class PardonCommand extends Command {
                 .setUsageMessage("/unban <player>")
                 .setPermissions("nukkit.command.unban.player")
                 .setAliases("unban")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false)
                 })
                 .build());

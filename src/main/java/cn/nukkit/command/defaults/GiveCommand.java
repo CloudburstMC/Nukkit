@@ -25,7 +25,7 @@ public class GiveCommand extends Command {
                 .setDescription("commands.give.description")
                 .setUsageMessage("commands.give.usage")
                 .setPermissions("nukkit.command.give")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("itemName", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
                         new CommandParameter("amount", CommandParamType.INT, true),

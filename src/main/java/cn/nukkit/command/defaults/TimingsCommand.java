@@ -19,7 +19,7 @@ public class TimingsCommand extends Command {
                 .setDescription("nukkit.command.timings.description")
                 .setUsageMessage("/timings <on|off|paste>")
                 .setPermissions("nukkit.command.timings")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("on|off|paste")
                 })
                 .build());

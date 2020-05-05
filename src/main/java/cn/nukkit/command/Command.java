@@ -25,6 +25,10 @@ public abstract class Command {
 
     public Timing timing;
 
+    public Command(CommandData data) {
+        this(data.getRegisteredName(), data);
+    }
+
     public Command(String name, CommandData data) {
         this.name = name.toLowerCase(); // Uppercase letters crash the client?
         this.commandData = data;

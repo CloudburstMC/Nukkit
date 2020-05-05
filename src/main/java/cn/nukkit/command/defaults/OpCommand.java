@@ -25,7 +25,7 @@ public class OpCommand extends Command {
                 .setDescription("commands.op.description")
                 .setUsageMessage("/op <player>")
                 .setPermissions("nukkit.command.op.give")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false)
                 })
                 .build());

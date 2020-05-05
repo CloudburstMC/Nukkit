@@ -23,7 +23,7 @@ public class DifficultyCommand extends Command {
                 .setDescription("commands.difficulty.description")
                 .setUsageMessage("commands.difficulty.usage")
                 .setPermissions("nukkit.command.difficulty")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("difficulty", CommandParamType.INT, false)
                 }, new CommandParameter[]{
                         new CommandParameter("difficulty", new String[]{"peaceful", "p", "easy", "e",

@@ -19,7 +19,7 @@ public class DefaultGamemodeCommand extends Command {
                 .setDescription("commands.defaultgamemode.description")
                 .setUsageMessage("/defaultgamemode <mode>")
                 .setPermissions("nukkit.command.defaultgamemode")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("mode", CommandParamType.INT, false)
                 }, new CommandParameter[]{
                         new CommandParameter("mode", new String[]{"survival", "creative", "s", "c",

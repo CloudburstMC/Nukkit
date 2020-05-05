@@ -22,7 +22,7 @@ public class SetWorldSpawnCommand extends Command {
                 .setDescription("commands.setworldspawn.description")
                 .setUsageMessage("/setworldspawn <position>")
                 .setPermissions("nukkit.command.setworldspawn")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("blockPos", CommandParamType.POSITION, true)
                 })
                 .build());

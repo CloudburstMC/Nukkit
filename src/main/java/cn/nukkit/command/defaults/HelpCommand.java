@@ -24,7 +24,7 @@ public class HelpCommand extends Command {
                 .setUsageMessage("/help [command|page]")
                 .addAlias("?")
                 .setPermissions("nukkit.command.help")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("page", CommandParamType.INT, true)
                 }, new CommandParameter[]{
                         new CommandParameter("command", CommandParamType.COMMAND, true)

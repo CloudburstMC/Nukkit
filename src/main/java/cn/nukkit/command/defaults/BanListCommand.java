@@ -19,7 +19,7 @@ public class BanListCommand extends Command {
         super("banlist", CommandData.builder("banlist")
                 .setPermissions("nukkit.command.ban.list")
                 .setUsageMessage("/banlist <ips|players>")
-                .setParams(new CommandParameter[]{new CommandParameter("ips|players", true)})
+                .setParameters(new CommandParameter[]{new CommandParameter("ips|players", true)})
                 .build());
     }
 

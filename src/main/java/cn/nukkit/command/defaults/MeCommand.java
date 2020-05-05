@@ -21,7 +21,7 @@ public class MeCommand extends Command {
                 .setDescription("commands.me.description")
                 .setUsageMessage("/me <action>")
                 .setPermissions("nukkit.command.me")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("action ...", CommandParamType.RAWTEXT, false)
                 })
                 .build());

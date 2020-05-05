@@ -24,7 +24,7 @@ public class KickCommand extends Command {
                 .setDescription("commands.kick.description")
                 .setUsageMessage("/kick <player> [reason]")
                 .setPermissions("nukkit.command.kick")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("reason", true)
                 })

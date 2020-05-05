@@ -25,7 +25,7 @@ public class TimeCommand extends Command {
                         "nukkit.command.time.set",
                         "nukkit.command.time.start",
                         "nukkit.command.time.stop")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("start|stop", CommandParamType.STRING, false)
                 }, new CommandParameter[]{
                         new CommandParameter("add|set", CommandParamType.STRING, false),

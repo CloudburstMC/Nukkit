@@ -29,7 +29,7 @@ public class SimpleCommand extends Command {
                 .setUsageMessage(usageMessage)
                 .setAliases(aliases)
                 .setPermissions(permissions)
-                .setParams(parameters)
+                .setParameters(parameters)
                 .build());
         this.object = object;
         this.method = method;

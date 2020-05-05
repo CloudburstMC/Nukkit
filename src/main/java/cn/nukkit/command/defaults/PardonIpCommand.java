@@ -22,7 +22,7 @@ public class PardonIpCommand extends Command {
                 .setPermissions("nukkit.command.unban.ip")
                 .setAliases("unbanip", "unban-ip", "pardonip")
                 .setUsageMessage("/unbanip <ip>")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("ip")
                 })
                 .build());

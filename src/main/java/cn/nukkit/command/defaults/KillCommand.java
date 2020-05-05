@@ -29,7 +29,7 @@ public class KillCommand extends Command {
                 .setUsageMessage("/kill [player]")
                 .setAliases("suicide")
                 .setPermissions("nukkit.command.kill.self", "nukkit.command.kill.other")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, true)
                 })
                 .build());

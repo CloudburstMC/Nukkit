@@ -21,7 +21,7 @@ public class DeopCommand extends Command {
                 .setDescription("commands.deop.description")
                 .setUsageMessage("/deop <player>")
                 .setPermissions("nukkit.command.op.take")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false)
                 })
                 .build());

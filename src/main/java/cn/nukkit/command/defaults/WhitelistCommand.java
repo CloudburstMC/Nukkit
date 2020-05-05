@@ -27,7 +27,7 @@ public class WhitelistCommand extends Command {
                         "nukkit.command.whitelist.list",
                         "nukkit.command.whitelist.add",
                         "nukkit.command.whitelist.remove")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("on|off|list|reload", CommandParamType.STRING, false)
                 }, new CommandParameter[]{
                         new CommandParameter("add|remove", CommandParamType.STRING, false),

@@ -34,7 +34,7 @@ public class BanIpCommand extends Command {
                 .setUsageMessage("/ban-ip <player> [reason]")
                 .setPermissions("nukkit.command.ban.ip")
                 .setAliases("banip")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("reason", CommandParamType.STRING, true)
                 }).build());

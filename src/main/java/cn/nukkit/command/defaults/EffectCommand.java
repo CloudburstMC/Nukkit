@@ -23,7 +23,7 @@ public class EffectCommand extends Command {
                 .setDescription("commands.effect.description")
                 .setUsageMessage("/effect <player> <clear|effect> [seconds] [amplifier] [hideParticles]")
                 .setPermissions("nukkit.command.effect")
-                .setParams(
+                .setParameters(
                         new CommandParameter[]{
                                 new CommandParameter("player", CommandParamType.TARGET, false),
                                 new CommandParameter("effect", CommandParamType.STRING, false), //Do not use Enum here because of buggy behavior

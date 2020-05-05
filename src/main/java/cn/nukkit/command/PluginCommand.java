@@ -16,7 +16,7 @@ import cn.nukkit.plugin.Plugin;
  * {@code
  * public class MyPluginCommand extends PluginCommand<MyPlugin> {
  *      public MyPluginCommand(MyPlugin plugin) {
- *          super("mycommand", plugin, CommandData.builder("mycommand")
+ *          super(plugin, CommandData.builder("mycommand")
  *              .setDescription("This is my awesome Command!")
  *              .setUsage("/mycommand &lt;arg&gt; [optionalArg]")
  *              .setPermission("com.example.mycommand")
@@ -57,8 +57,8 @@ public class PluginCommand<T extends Plugin> extends Command implements PluginId
 
     private CommandExecutor executor;
 
-    public PluginCommand(String name, T owner, CommandData data) {
-        super(name, data);
+    public PluginCommand(T owner, CommandData data) {
+        super(data);
         this.owningPlugin = owner;
         this.executor = owner;
     }

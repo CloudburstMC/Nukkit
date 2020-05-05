@@ -27,14 +27,14 @@ public class TeleportCommand extends Command {
                 .setDescription("commands.tp.description")
                 .setUsageMessage("/tp [player] <position|target>")
                 .setPermissions("nukkit.command.teleport")
-                .addParams(new CommandParameter[]{new CommandParameter("player", CommandParamType.TARGET, false)})
-                .addParams(new CommandParameter[]{
+                .addParameters(new CommandParameter[]{new CommandParameter("player", CommandParamType.TARGET, false)})
+                .addParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("target", CommandParamType.TARGET, false),
-                }).addParams(new CommandParameter[]{
+                }).addParameters(new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("position", CommandParamType.POSITION, false),
-                }).addParams(new CommandParameter[]{
+                }).addParameters(new CommandParameter[]{
                         new CommandParameter("position", CommandParamType.POSITION, false),
                 }).build());
     }

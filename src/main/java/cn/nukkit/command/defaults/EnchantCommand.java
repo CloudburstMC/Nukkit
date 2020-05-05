@@ -24,7 +24,7 @@ public class EnchantCommand extends Command {
                 .setDescription("commands.enchant.description")
                 .setUsageMessage("/enchant <player> <enchant ID> [level]")
                 .setPermissions("nukkit.command.enchant")
-                .setParams(
+                .setParameters(
                         new CommandParameter[]{
                                 new CommandParameter("player", CommandParamType.TARGET, false),
                                 new CommandParameter("enchantment ID", CommandParamType.INT, false),

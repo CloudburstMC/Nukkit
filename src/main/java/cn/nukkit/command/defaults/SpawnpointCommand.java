@@ -23,7 +23,7 @@ public class SpawnpointCommand extends Command {
                 .setDescription("commands.spawnpoint.description")
                 .setUsageMessage("/spawnpoint [player] <position>")
                 .setPermissions("nukkit.command.spawnpoint")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("blockPos", CommandParamType.POSITION, true),
                 }, new CommandParameter[]{
                         new CommandParameter("target", CommandParamType.TARGET, false),

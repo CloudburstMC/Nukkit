@@ -21,7 +21,7 @@ public class WeatherCommand extends Command {
                 .setDescription("commands.weather.description")
                 .setUsageMessage("/weather <clear|rain|thunder> [time]")
                 .setPermissions("nukkit.command.weather")
-                .setParams(new CommandParameter[]{
+                .setParameters(new CommandParameter[]{
                         new CommandParameter("clear|rain|thunder", CommandParamType.STRING, false),
                         new CommandParameter("duration in seconds", CommandParamType.INT, true)
                 }).build());

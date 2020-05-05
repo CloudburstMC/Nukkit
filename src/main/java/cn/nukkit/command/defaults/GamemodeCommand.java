@@ -27,7 +27,7 @@ public class GamemodeCommand extends Command {
                 .addPermission("nukkit.command.gamemode.adventure")
                 .addPermission("nukkit.command.gamemode.spectator")
                 .addPermission("nukkit.command.gamemode.other")
-                .setParams(
+                .setParameters(
                         new CommandParameter[]{
                                 new CommandParameter("mode", CommandParamType.INT, false),
                                 new CommandParameter("player", CommandParamType.TARGET, true)
