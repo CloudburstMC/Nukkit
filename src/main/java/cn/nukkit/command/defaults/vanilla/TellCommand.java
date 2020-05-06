@@ -22,7 +22,7 @@ public class TellCommand extends VanillaCommand {
 
         registerOverload()
                 .requiredArg("player", CommandParamType.TARGET)
-                .optionalArg("message", CommandParamType.RAWTEXT);
+                .requiredArg("message", CommandParamType.RAWTEXT);
     }
 
     @Override

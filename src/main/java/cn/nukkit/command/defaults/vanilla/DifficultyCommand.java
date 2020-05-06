@@ -21,8 +21,8 @@ public class DifficultyCommand extends VanillaCommand {
         super(name, "commands.difficulty.description", "commands.difficulty.usage");
         this.setPermission("nukkit.command.difficulty");
 
+        registerOverload().requiredArg("difficulty", "Difficulty", new String[]{"e", "easy", "h", "hard", "n", "normal", "p", "peaceful"});
         registerOverload().requiredArg("difficulty", CommandParamType.INT);
-        registerOverload().requiredArg("difficulty", new String[]{"peaceful", "p", "easy", "e", "normal", "n", "hard", "h"});
     }
 
     @Override

@@ -17,9 +17,15 @@ import cn.nukkit.utils.TextFormat;
  * Package cn.nukkit.command.defaults in project nukkit.
  */
 public class EffectCommand extends Command {
+
     public EffectCommand(String name) {
         super(name, "commands.effect.description", "/effect <player> <clear|effect> [seconds] [amplifier] [hideParticles]");
         this.setPermission("nukkit.command.effect");
+
+//        String[] effects = new String[Effect.getEffects().length]; // This needs to be improved
+//        for(int i = 0; i < effects.length; i++) {
+//            effects[i] = Effect.getEffects()[i].getName();
+//        }
 
         registerOverload()
                 .requiredArg("player", CommandParamType.TARGET)
@@ -27,7 +33,7 @@ public class EffectCommand extends Command {
 
         registerOverload()
                 .requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("effect", CommandParamType.STRING) // TODO
+                .requiredArg("effect", CommandParamType.STRING)
                 .optionalArg("seconds", CommandParamType.INT)
                 .optionalArg("amplifier", CommandParamType.INT)
                 .optionalArg("hideParticles", new String[]{"true", "false"});

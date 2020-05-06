@@ -26,11 +26,11 @@ public class GamemodeCommand extends VanillaCommand {
                 "nukkit.command.gamemode.other");
 
         registerOverload()
-                .requiredArg("mode", CommandParamType.INT)
+                .requiredArg("mode", "GameMode", new String[]{"sp", "spectator", "a", "adventure", "c", "creative", "s", "survival"})
                 .optionalArg("player", CommandParamType.TARGET);
 
         registerOverload()
-                .requiredArg("mode", new String[]{"survival", "s", "creative", "c", "adventure", "a", "spectator", "spc", "view", "v"})
+                .requiredArg("mode", CommandParamType.INT)
                 .optionalArg("player", CommandParamType.TARGET);
     }
 

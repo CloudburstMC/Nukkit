@@ -96,6 +96,10 @@ public class Effect implements Cloneable {
 
     protected final byte id;
 
+    public static Effect[] getEffects() {
+        return effects;
+    }
+
     public static Effect getEffect(int id) {
         if (id >= 0 && id < effects.length && effects[id] != null) {
             return effects[id].clone();

@@ -27,20 +27,7 @@ public class GiveCommand extends VanillaCommand {
                 .requiredArg("player", CommandParamType.TARGET)
                 .requiredArg("itemName", CommandParameter.ENUM_TYPE_ITEM_LIST)
                 .optionalArg("amount", CommandParamType.INT)
-                .optionalArg("meta", CommandParamType.INT)
-                .optionalArg("tags...", CommandParamType.RAWTEXT);
-
-        registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("item ID", CommandParamType.INT)
-                .optionalArg("amount", CommandParamType.INT)
-                .optionalArg("tags...", CommandParamType.RAWTEXT);
-
-        registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("item ID:meta", CommandParamType.RAWTEXT)
-                .optionalArg("amount", CommandParamType.INT)
-                .optionalArg("tags...", CommandParamType.RAWTEXT);
+                .optionalArg("data", CommandParamType.INT); // TODO: components
     }
 
     @Override

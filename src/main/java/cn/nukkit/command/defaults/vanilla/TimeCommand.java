@@ -23,46 +23,30 @@ public class TimeCommand extends VanillaCommand {
                 "nukkit.command.time.start;" +
                 "nukkit.command.time.stop");
 
-        registerOverload().requiredArg("start|stop", CommandParamType.STRING);
-        registerOverload().requiredArg("add|set", CommandParamType.STRING).requiredArg("value", CommandParamType.INT);
-        registerOverload().requiredArg("add|set", CommandParamType.STRING).requiredArg("value", CommandParamType.STRING);
+        registerOverload()
+                .literal("add")
+                .requiredArg("amount", CommandParamType.INT);
+
+        registerOverload()
+                .literal("set")
+                .requiredArg("amount", CommandParamType.INT);
+
+        registerOverload()
+                .literal("set")
+                .requiredArg("time", "TimeSpec", new String[]{"day", "midnight", "night", "noon", "sunrise", "sunset"});
+
+        registerOverload()
+                .literal("query"); // TODO: day, daytime, gametime
     }
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (args.length < 1) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
-        if ("start".equals(args[0])) {
-            if (!sender.hasPermission("nukkit.command.time.start")) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
-
-                return true;
-            }
-            for (Level level : sender.getServer().getLevels()) {
-                level.checkTime();
-                level.startTime();
-                level.checkTime();
-            }
-            CommandUtils.broadcastCommandMessage(sender, "Restarted the time");
-            return true;
-        } else if ("stop".equals(args[0])) {
-            if (!sender.hasPermission("nukkit.command.time.stop")) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
-
-                return true;
-            }
-            for (Level level : sender.getServer().getLevels()) {
-                level.checkTime();
-                level.stopTime();
-                level.checkTime();
-                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.stop", level.getTime()));
-            }
-            return true;
-        } else if ("query".equals(args[0])) {
+        if ("query".equals(args[0])) {
             if (!sender.hasPermission("nukkit.command.time.query")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
 

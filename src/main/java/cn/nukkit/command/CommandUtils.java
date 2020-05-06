@@ -14,9 +14,7 @@ import com.nukkitx.protocol.bedrock.data.CommandEnumData;
 import com.nukkitx.protocol.bedrock.data.CommandParamData;
 import lombok.experimental.UtilityClass;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,9 +74,16 @@ public class CommandUtils {
     }
 
     protected static CommandParamData toNetwork(CommandParameter commandParameter) {
+        List<CommandParamData.Option> options = new ArrayList<>();
+        if(commandParameter.enumData != null && commandParameter.enumData.getValues().size() > 1) {
+            // I have no idea what that is actually does, but im aware that it changes how some enums display.
+            // With it, the TitleType enum will show as <title:subtitle:actionbar>, which is better
+            options.add(CommandParamData.Option.UNKNOWN_0);
+        }
+
         return new CommandParamData(commandParameter.name, commandParameter.optional,
                 toNetwork(commandParameter.enumData), NETWORK_TYPES.get(commandParameter.type),
-                commandParameter.postFix, Collections.emptyList());
+                commandParameter.postFix, options);
     }
 
     private static CommandEnumData toNetwork(CommandEnum commandEnum) {

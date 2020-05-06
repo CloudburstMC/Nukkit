@@ -7,6 +7,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.nukkitx.protocol.bedrock.data.CommandData;
 
 /**
  * Created by Snake1999 on 2016/1/22.

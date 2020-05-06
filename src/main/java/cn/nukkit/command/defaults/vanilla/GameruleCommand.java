@@ -21,7 +21,7 @@ public class GameruleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.gamerule");
 
         registerOverload()
-                .optionalArg("gamerule", registry.getRuleNames().toArray(new String[0]))
+                .optionalArg("rule", registry.getRuleNames().toArray(new String[0]))
                 .optionalArg("value", CommandParamType.STRING);
     }
 

@@ -19,17 +19,11 @@ public class TitleCommand extends VanillaCommand {
 
         registerOverload().requiredArg("player", CommandParamType.TARGET).literal("clear");
         registerOverload().requiredArg("player", CommandParamType.TARGET).literal("reset");
-        registerOverload().requiredArg("player", CommandParamType.TARGET)
-                .literal("subtitle")
-                .requiredArg("titleText", CommandParamType.STRING);
 
         registerOverload().requiredArg("player", CommandParamType.TARGET)
-                .literal("actionbar")
+                .literals("titleLocation", "TitleType", new String[]{"tile", "subtitle", "actionbar"})
                 .requiredArg("titleText", CommandParamType.STRING);
 
-        registerOverload().requiredArg("player", CommandParamType.TARGET)
-                .literal("title")
-                .requiredArg("titleText", CommandParamType.STRING);
 
         registerOverload().requiredArg("player", CommandParamType.TARGET)
                 .literal("times")

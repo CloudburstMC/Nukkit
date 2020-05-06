@@ -28,6 +28,7 @@ public class CommandOverloadBuilder {
         return this;
     }
 
+    // Used for client side enums mostly
     public CommandOverloadBuilder requiredArg(String name, String enumName) {
         parameters.add(new CommandParameter(name, enumName));
         return this;
@@ -35,6 +36,11 @@ public class CommandOverloadBuilder {
 
     public CommandOverloadBuilder requiredArg(String name, String[] enumValues) {
         parameters.add(new CommandParameter(name, enumValues));
+        return this;
+    }
+
+    public CommandOverloadBuilder requiredArg(String name, String enumName, String[] enumValues) {
+        parameters.add(new CommandParameter(name, enumName, false, enumValues));
         return this;
     }
 
