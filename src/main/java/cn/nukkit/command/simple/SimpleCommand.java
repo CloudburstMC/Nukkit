@@ -86,7 +86,7 @@ public class SimpleCommand extends Command {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(CommandSender sender, String aliasUsed, String[] args) {
         if (this.forbidConsole && sender instanceof ConsoleCommandSender) {
             this.sendInGameMessage(sender);
             return false;
@@ -103,7 +103,7 @@ public class SimpleCommand extends Command {
         boolean success = false;
 
         try {
-            success = (Boolean) this.method.invoke(this.object, sender, commandLabel, args);
+            success = (Boolean) this.method.invoke(this.object, sender, aliasUsed, args);
         } catch (Exception exception) {
             log.throwing(Level.ERROR, exception);
         }

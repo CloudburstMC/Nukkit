@@ -74,7 +74,7 @@ public abstract class Command {
         return this.commandData.overloads;
     }
 
-    public abstract boolean execute(CommandSender sender, String commandLabel, String[] args);
+    public abstract boolean execute(CommandSender sender, String aliasUsed, String[] args);
 
     public String getName() {
         return name;

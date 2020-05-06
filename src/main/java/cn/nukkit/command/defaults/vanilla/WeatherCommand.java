@@ -17,8 +17,6 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 public class WeatherCommand extends VanillaCommand {
 
-    private final java.util.Random rand = new java.util.Random();
-
     public WeatherCommand(String name) {
         super(name, "commands.weather.description", "/weather <clear|rain|thunder> <time>");
         this.setPermission("nukkit.command.weather");
@@ -29,7 +27,7 @@ public class WeatherCommand extends VanillaCommand {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(CommandSender sender, String aliasUsed, String[] args) {
         if (!this.testPermission(sender)) {
             return true;
         }

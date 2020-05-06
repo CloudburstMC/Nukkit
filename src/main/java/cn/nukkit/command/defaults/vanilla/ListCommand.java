@@ -17,7 +17,7 @@ public class ListCommand extends VanillaCommand {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(CommandSender sender, String aliasUsed, String[] args) {
         if (!this.testPermission(sender)) {
             return true;
         }

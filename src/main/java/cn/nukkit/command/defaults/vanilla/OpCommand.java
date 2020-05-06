@@ -28,7 +28,7 @@ public class OpCommand extends VanillaCommand {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(CommandSender sender, String aliasUsed, String[] args) {
         if (!this.testPermission(sender)) {
             return true;
         }
@@ -40,9 +40,14 @@ public class OpCommand extends VanillaCommand {
         String name = args[0];
         Optional<UUID> uuid = sender.getServer().lookupName(name);
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", name));
         if (uuid.isPresent()) {
             IPlayer player = sender.getServer().getOfflinePlayer(uuid.get());
+
+            if(player.isOp()) {
+                sender.sendMessage(new TranslationContainer("commands.op.failed", name));
+                return true;
+            }
+
             if (player instanceof Player) {
                 ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
             }
@@ -51,6 +56,7 @@ public class OpCommand extends VanillaCommand {
             sender.getServer().addOp(name);
         }
 
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", name));
         return true;
     }
 }

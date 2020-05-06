@@ -34,7 +34,7 @@ public class PluginCommand<T extends Plugin> extends Command implements PluginId
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(CommandSender sender, String aliasUsed, String[] args) {
         if (!this.owningPlugin.isEnabled()) {
             return false;
         }
@@ -43,7 +43,7 @@ public class PluginCommand<T extends Plugin> extends Command implements PluginId
             return false;
         }
 
-        boolean success = this.executor.onCommand(sender, this, commandLabel, args);
+        boolean success = this.executor.onCommand(sender, this, aliasUsed, args);
 
         if (!success && !this.usageMessage.equals("")) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
