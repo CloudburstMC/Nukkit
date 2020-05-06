@@ -1,10 +1,11 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -25,10 +26,8 @@ public class KillCommand extends VanillaCommand {
         super(name, "commands.kill.description", "/kill [player]", new String[]{"suicide"});
         this.setPermission("nukkit.command.kill.self;"
                 + "nukkit.command.kill.other");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, true)
-        });
+
+        registerOverload().optionalArg("player", CommandParamType.TARGET);
     }
 
     @Override

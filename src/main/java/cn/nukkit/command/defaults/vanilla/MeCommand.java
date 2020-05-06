@@ -1,8 +1,9 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -11,15 +12,13 @@ import cn.nukkit.utils.TextFormat;
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class SayCommand extends VanillaCommand {
+public class MeCommand extends VanillaCommand {
 
-    public SayCommand(String name) {
-        super(name, "commands.say.description", "/say <usage>");
-        this.setPermission("nukkit.command.say");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("message")
-        });
+    public MeCommand(String name) {
+        super(name, "commands.me.description", "/me <action>");
+        this.setPermission("nukkit.command.me");
+
+        registerOverload().requiredArg("action...", CommandParamType.RAWTEXT);
     }
 
     @Override
@@ -30,30 +29,28 @@ public class SayCommand extends VanillaCommand {
 
         if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+
             return false;
         }
 
-        String senderString;
+        String name;
         if (sender instanceof Player) {
-            senderString = ((Player) sender).getDisplayName();
-        } else if (sender instanceof ConsoleCommandSender) {
-            senderString = "Server";
+            name = ((Player) sender).getDisplayName();
         } else {
-            senderString = sender.getName();
+            name = sender.getName();
         }
 
         String msg = "";
         for (String arg : args) {
             msg += arg + " ";
         }
+
         if (msg.length() > 0) {
             msg = msg.substring(0, msg.length() - 1);
         }
 
+        sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", name, TextFormat.WHITE + msg));
 
-        sender.getServer().broadcastMessage(new TranslationContainer(
-                TextFormat.LIGHT_PURPLE + "%chat.type.announcement",
-                senderString, TextFormat.LIGHT_PURPLE + msg));
         return true;
     }
 }

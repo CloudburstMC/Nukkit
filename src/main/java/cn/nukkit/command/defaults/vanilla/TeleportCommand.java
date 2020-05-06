@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.level.Location;
 import cn.nukkit.locale.TranslationContainer;
@@ -23,21 +24,15 @@ public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {
         super(name, "commands.tp.description", "/tp [player] <position|target>");
         this.setPermission("nukkit.command.teleport");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("target", CommandParamType.TARGET, false),
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("position", CommandParamType.POSITION, false),
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("position", CommandParamType.POSITION, false),
-        });
+
+        registerOverload().requiredArg("player", CommandParamType.TARGET);
+        registerOverload().requiredArg("player", CommandParamType.TARGET)
+                .requiredArg("target", CommandParamType.TARGET);
+
+        registerOverload().requiredArg("player", CommandParamType.TARGET)
+                .requiredArg("position", CommandParamType.POSITION);
+
+        registerOverload().requiredArg("position", CommandParamType.POSITION);
     }
 
     @Override

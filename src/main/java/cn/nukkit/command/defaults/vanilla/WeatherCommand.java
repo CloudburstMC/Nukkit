@@ -1,17 +1,20 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.level.Level;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * author: Angelic47
  * Nukkit Project
  */
+@Log4j2
 public class WeatherCommand extends VanillaCommand {
 
     private final java.util.Random rand = new java.util.Random();
@@ -19,11 +22,10 @@ public class WeatherCommand extends VanillaCommand {
     public WeatherCommand(String name) {
         super(name, "commands.weather.description", "/weather <clear|rain|thunder> <time>");
         this.setPermission("nukkit.command.weather");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("clear|rain|thunder", CommandParamType.STRING, false),
-                new CommandParameter("duration in seconds", CommandParamType.INT, true)
-        });
+
+        registerOverload()
+                .literals("type", "WeatherType", new String[]{"clear", "rain", "thunder"})
+                .optionalArg("duration", CommandParamType.INT);
     }
 
     @Override

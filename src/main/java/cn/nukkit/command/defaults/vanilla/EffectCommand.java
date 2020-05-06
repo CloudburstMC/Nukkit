@@ -1,4 +1,4 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -20,18 +20,17 @@ public class EffectCommand extends Command {
     public EffectCommand(String name) {
         super(name, "commands.effect.description", "/effect <player> <clear|effect> [seconds] [amplifier] [hideParticles]");
         this.setPermission("nukkit.command.effect");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("effect", CommandParamType.STRING, false), //Do not use Enum here because of buggy behavior
-                new CommandParameter("seconds", CommandParamType.INT, true),
-                new CommandParameter("amplifier", true),
-                new CommandParameter("hideParticle", true, new String[]{"true", "false"})
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("clear", new String[]{"clear"})
-        });
+
+        registerOverload()
+                .requiredArg("player", CommandParamType.TARGET)
+                .literal("clear"); // TODO: this::clear
+
+        registerOverload()
+                .requiredArg("player", CommandParamType.TARGET)
+                .requiredArg("effect", CommandParamType.STRING) // TODO
+                .optionalArg("seconds", CommandParamType.INT)
+                .optionalArg("amplifier", CommandParamType.INT)
+                .optionalArg("hideParticles", new String[]{"true", "false"});
     }
 
     @Override

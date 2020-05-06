@@ -1,6 +1,7 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 
@@ -13,7 +14,6 @@ public class ListCommand extends VanillaCommand {
     public ListCommand(String name) {
         super(name, "commands.list.description", "/list");
         this.setPermission("nukkit.command.list");
-        this.commandParameters.clear();
     }
 
     @Override

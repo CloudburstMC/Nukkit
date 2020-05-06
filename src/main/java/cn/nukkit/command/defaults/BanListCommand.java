@@ -5,6 +5,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Iterator;
 
@@ -12,15 +13,15 @@ import java.util.Iterator;
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
+@Log4j2
 public class BanListCommand extends VanillaCommand {
     public BanListCommand(String name) {
         super(name);
         this.setPermission("nukkit.command.ban.list");
         this.setUsage("/banlist <ips|players>");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("ips|players", true)
-        });
+
+        registerOverload().literal("ips");
+        registerOverload().literal("players");
     }
 
     @Override

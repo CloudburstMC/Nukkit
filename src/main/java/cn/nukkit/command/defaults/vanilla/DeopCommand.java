@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.Player;
@@ -17,9 +18,8 @@ public class DeopCommand extends VanillaCommand {
     public DeopCommand(String name) {
         super(name, "commands.deop.description", "/deop <player>");
         this.setPermission("nukkit.command.op.take");
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false)
-        });
+
+        registerOverload().requiredArg("player", CommandParamType.TARGET);
     }
 
     @Override

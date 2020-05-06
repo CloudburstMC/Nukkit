@@ -1,13 +1,14 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
-import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -16,15 +17,14 @@ import java.util.UUID;
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
+@Log4j2
 public class OpCommand extends VanillaCommand {
 
     public OpCommand(String name) {
         super(name, "commands.op.description", "/op <player>");
         this.setPermission("nukkit.command.op.give");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false)
-        });
+
+        registerOverload().requiredArg("player", CommandParamType.TARGET);
     }
 
     @Override

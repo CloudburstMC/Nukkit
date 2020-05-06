@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.locale.TranslationContainer;
@@ -19,14 +20,11 @@ public class SpawnpointCommand extends VanillaCommand {
     public SpawnpointCommand(String name) {
         super(name, "commands.spawnpoint.description", "/spawnpoint [player] <position>");
         this.setPermission("nukkit.command.spawnpoint");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("blockPos", CommandParamType.POSITION, true),
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("target", CommandParamType.TARGET, false),
-                new CommandParameter("pos", CommandParamType.POSITION, true)
-        });
+
+        registerOverload().optionalArg("blockPos", CommandParamType.POSITION);
+        registerOverload()
+                .requiredArg("target", CommandParamType.TARGET)
+                .optionalArg("pos", CommandParamType.POSITION);
     }
 
     @Override

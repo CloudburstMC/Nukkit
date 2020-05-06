@@ -1,10 +1,11 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket;
 
@@ -19,14 +20,9 @@ public class DifficultyCommand extends VanillaCommand {
     public DifficultyCommand(String name) {
         super(name, "commands.difficulty.description", "commands.difficulty.usage");
         this.setPermission("nukkit.command.difficulty");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("difficulty", CommandParamType.INT, false)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("difficulty", new String[]{"peaceful", "p", "easy", "e",
-                        "normal", "n", "hard", "h"})
-        });
+
+        registerOverload().requiredArg("difficulty", CommandParamType.INT);
+        registerOverload().requiredArg("difficulty", new String[]{"peaceful", "p", "easy", "e", "normal", "n", "hard", "h"});
     }
 
     @Override

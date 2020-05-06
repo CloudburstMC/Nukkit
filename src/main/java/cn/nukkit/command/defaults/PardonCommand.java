@@ -17,10 +17,8 @@ public class PardonCommand extends VanillaCommand {
         this.setPermission("nukkit.command.unban.player");
         this.setAliases(new String[]{"unban"});
         this.setUsage("/unban <player>");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false)
-        });
+
+        registerOverload().requiredArg("player", CommandParamType.TARGET);
     }
 
     @Override

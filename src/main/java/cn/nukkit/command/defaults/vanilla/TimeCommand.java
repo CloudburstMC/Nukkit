@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.level.Level;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
@@ -21,18 +22,10 @@ public class TimeCommand extends VanillaCommand {
                 "nukkit.command.time.set;" +
                 "nukkit.command.time.start;" +
                 "nukkit.command.time.stop");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("start|stop", CommandParamType.STRING, false)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("add|set", CommandParamType.STRING, false),
-                new CommandParameter("value", CommandParamType.INT, false)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("add|set", CommandParamType.STRING, false),
-                new CommandParameter("value", CommandParamType.STRING, false)
-        });
+
+        registerOverload().requiredArg("start|stop", CommandParamType.STRING);
+        registerOverload().requiredArg("add|set", CommandParamType.STRING).requiredArg("value", CommandParamType.INT);
+        registerOverload().requiredArg("add|set", CommandParamType.STRING).requiredArg("value", CommandParamType.STRING);
     }
 
     @Override

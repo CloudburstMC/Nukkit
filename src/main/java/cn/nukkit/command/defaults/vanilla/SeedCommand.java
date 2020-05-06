@@ -1,6 +1,7 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 
@@ -14,7 +15,6 @@ public class SeedCommand extends VanillaCommand {
         super(name);
         this.setPermission("nukkit.command.seed");
         this.setUsage("/seed");
-        this.commandParameters.clear();
     }
 
     @Override

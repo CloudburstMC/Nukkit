@@ -1,5 +1,7 @@
 package cn.nukkit.command;
 
+import cn.nukkit.Server;
+import cn.nukkit.command.args.builder.CommandOverloadBuilder;
 import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandOverload;
 import cn.nukkit.command.data.CommandParamType;
@@ -11,6 +13,7 @@ import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import com.nukkitx.protocol.bedrock.data.CommandEnumData;
 import com.nukkitx.protocol.bedrock.data.CommandParamData;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 
@@ -18,6 +21,7 @@ import java.util.*;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public abstract class Command {
 
     protected CommandData commandData;
@@ -35,6 +39,8 @@ public abstract class Command {
     private String permissionMessage = null;
 
     protected List<CommandParameter[]> commandParameters = new ArrayList<>();
+
+    protected List<CommandOverloadBuilder> overloads = new ArrayList<>();
 
     public Timing timing;
 
@@ -164,6 +170,12 @@ public abstract class Command {
         this.commandParameters.add(parameters);
     }
 
+    public CommandOverloadBuilder registerOverload() {
+        CommandOverloadBuilder overload = new CommandOverloadBuilder();
+        overloads.add(overload);
+        return overload;
+    }
+
     /**
      * Generates modified command data for the specified player
      * for AvailableCommandsPacket.
@@ -189,10 +201,10 @@ public abstract class Command {
         CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "Aliases", aliasesEnum, false);
         String description = player.getServer().getLanguage().translate(this.description);
 
-        CommandParamData[][] overloads = new CommandParamData[this.commandParameters.size()][];
+        CommandParamData[][] overloads = new CommandParamData[this.overloads.size()][];
 
         for (int i = 0; i < overloads.length; i++) {
-            CommandParameter[] parameters = this.commandParameters.get(i);
+            CommandParameter[] parameters = this.overloads.get(i).getParameters().toArray(new CommandParameter[0]);
             CommandParamData[] params = new CommandParamData[parameters.length];
             for (int i2 = 0; i2 < parameters.length; i2++) {
                 params[i2] = CommandUtils.toNetwork(parameters[i2]);

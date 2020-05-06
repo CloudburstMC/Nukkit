@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
@@ -17,12 +18,10 @@ public class BanCommand extends VanillaCommand {
     public BanCommand(String name) {
         super(name, "commands.ban.description", "/ban <player> [reason]");
         this.setPermission("nukkit.command.ban.player");
-        this.commandParameters.clear();
-        this.commandParameters.add(
-                new CommandParameter[]{
-                        new CommandParameter("player", CommandParamType.TARGET, false),
-                        new CommandParameter("reason", CommandParamType.STRING, true)
-                });
+
+        registerOverload()
+                .requiredArg("player", CommandParamType.TARGET)
+                .optionalArg("reason", CommandParamType.STRING);
     }
 
     @Override

@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 
 /**
@@ -15,14 +16,9 @@ public class DefaultGamemodeCommand extends VanillaCommand {
     public DefaultGamemodeCommand(String name) {
         super(name, "commands.defaultgamemode.description", "/defaultgamemode <mode>");
         this.setPermission("nukkit.command.defaultgamemode");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("mode", CommandParamType.INT, false)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("mode", new String[]{"survival", "creative", "s", "c",
-                        "adventure", "a", "spectator", "view", "v"})
-        });
+
+        registerOverload().requiredArg("mode", CommandParamType.INT);
+        registerOverload().requiredArg("mode", new String[]{"survival", "creative", "s", "c", "adventure", "a", "spectator", "view", "v"});
     }
 
     @Override

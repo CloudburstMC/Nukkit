@@ -1,4 +1,4 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
@@ -16,11 +16,10 @@ public class XpCommand extends Command {
     public XpCommand(String name) {
         super(name, "commands.xp.description", "/xp <amount>[L] [player]");
         this.setPermission("nukkit.command.xp");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("amount|level", CommandParamType.INT, false),
-                new CommandParameter("player", CommandParamType.TARGET, true)
-        });
+
+        registerOverload()
+                .requiredArg("amount|level", CommandParamType.INT)
+                .optionalArg("player", CommandParamType.TARGET);
     }
 
     @Override

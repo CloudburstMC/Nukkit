@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.particle.*;
@@ -26,16 +27,16 @@ public class ParticleCommand extends VanillaCommand {
             , "splash", "wake", "water", "crit", "smoke", "spell", "instantspell", "dripwater", "driplava", "townaura"
             , "spore", "portal", "flame", "lava", "reddust", "snowballpoof", "slime", "itembreak", "terrain", "heart"
             , "ink", "droplet", "enchantmenttable", "happyvillager", "angryvillager", "forcefield"};
+
     public ParticleCommand(String name) {
         super(name, "commands.particle.description", "/particle <particle> <position> [count] [data[");
         this.setPermission("nukkit.command.particle");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("name", false, ENUM_VALUES),
-                new CommandParameter("position", CommandParamType.POSITION, false),
-                new CommandParameter("count", CommandParamType.INT, true),
-                new CommandParameter("data", true)
-        });
+
+        registerOverload()
+                .requiredArg("name", ENUM_VALUES)
+                .requiredArg("position", CommandParamType.POSITION)
+                .optionalArg("count", CommandParamType.INT)
+                .optionalArg("data", CommandParamType.RAWTEXT);
     }
 
     private static float getFloat(String arg, float defaultValue) throws Exception {

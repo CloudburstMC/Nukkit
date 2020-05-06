@@ -67,6 +67,13 @@ public class CommandParameter {
         this.enumData = new CommandEnum(name + "Enums", Arrays.asList(enumValues));
     }
 
+    public CommandParameter(String name, String enumName, boolean optional, String[] enumValues) {
+        this.name = name;
+        this.type = CommandParamType.RAWTEXT;
+        this.optional = optional;
+        this.enumData = new CommandEnum(enumName, Arrays.asList(enumValues));
+    }
+
     public CommandParameter(String name, String enumType) {
         this(name, false, enumType);
     }

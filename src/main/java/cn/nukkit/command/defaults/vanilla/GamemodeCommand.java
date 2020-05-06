@@ -1,10 +1,11 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -23,16 +24,14 @@ public class GamemodeCommand extends VanillaCommand {
                 "nukkit.command.gamemode.adventure;" +
                 "nukkit.command.gamemode.spectator;" +
                 "nukkit.command.gamemode.other");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("mode", CommandParamType.INT, false),
-                new CommandParameter("player", CommandParamType.TARGET, true)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("mode", new String[]{"survival", "s", "creative", "c",
-                        "adventure", "a", "spectator", "spc", "view", "v"}),
-                new CommandParameter("player", CommandParamType.TARGET, true)
-        });
+
+        registerOverload()
+                .requiredArg("mode", CommandParamType.INT)
+                .optionalArg("player", CommandParamType.TARGET);
+
+        registerOverload()
+                .requiredArg("mode", new String[]{"survival", "s", "creative", "c", "adventure", "a", "spectator", "spc", "view", "v"})
+                .optionalArg("player", CommandParamType.TARGET);
     }
 
     @Override

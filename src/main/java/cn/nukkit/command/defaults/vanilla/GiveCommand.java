@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.item.Item;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
@@ -21,26 +22,25 @@ public class GiveCommand extends VanillaCommand {
     public GiveCommand(String name) {
         super(name, "commands.give.description", "commands.give.usage");
         this.setPermission("nukkit.command.give");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("itemName", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
-                new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("meta", CommandParamType.INT, true),
-                new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("item ID", CommandParamType.INT, false),
-                new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("item ID:meta", CommandParamType.RAWTEXT, false),
-                new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
-        });
+
+        registerOverload()
+                .requiredArg("player", CommandParamType.TARGET)
+                .requiredArg("itemName", CommandParameter.ENUM_TYPE_ITEM_LIST)
+                .optionalArg("amount", CommandParamType.INT)
+                .optionalArg("meta", CommandParamType.INT)
+                .optionalArg("tags...", CommandParamType.RAWTEXT);
+
+        registerOverload()
+                .requiredArg("player", CommandParamType.TARGET)
+                .requiredArg("item ID", CommandParamType.INT)
+                .optionalArg("amount", CommandParamType.INT)
+                .optionalArg("tags...", CommandParamType.RAWTEXT);
+
+        registerOverload()
+                .requiredArg("player", CommandParamType.TARGET)
+                .requiredArg("item ID:meta", CommandParamType.RAWTEXT)
+                .optionalArg("amount", CommandParamType.INT)
+                .optionalArg("tags...", CommandParamType.RAWTEXT);
     }
 
     @Override

@@ -1,10 +1,11 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
@@ -20,10 +21,9 @@ public class HelpCommand extends VanillaCommand {
     public HelpCommand(String name) {
         super(name, "commands.help.description", "/help [page]", new String[]{"?"});
         this.setPermission("nukkit.command.help");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("page", CommandParamType.INT, true)
-        });
+
+        registerOverload().optionalArg("page", CommandParamType.INT);
+        registerOverload().optionalArg("command", CommandParamType.STRING);
     }
 
     @Override

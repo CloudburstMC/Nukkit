@@ -15,7 +15,6 @@ public class SaveCommand extends VanillaCommand {
     public SaveCommand(String name) {
         super(name, "commands.save.description", "/save-all");
         this.setPermission("nukkit.command.save.perform");
-        this.commandParameters.clear();
     }
 
     @Override

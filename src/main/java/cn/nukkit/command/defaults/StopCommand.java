@@ -13,7 +13,6 @@ public class StopCommand extends VanillaCommand {
     public StopCommand(String name) {
         super(name, "commands.stop.description", "/stop");
         this.setPermission("nukkit.command.stop");
-        this.commandParameters.clear();
     }
 
     @Override

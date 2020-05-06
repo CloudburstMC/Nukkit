@@ -23,7 +23,6 @@ public class StatusCommand extends VanillaCommand {
     public StatusCommand(String name) {
         super(name, "nukkit.command.status.description", "/status");
         this.setPermission("nukkit.command.status");
-        this.commandParameters.clear();
     }
 
     @Override

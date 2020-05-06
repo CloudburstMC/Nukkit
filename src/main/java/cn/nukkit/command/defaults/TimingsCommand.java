@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsExport;
@@ -15,10 +16,8 @@ public class TimingsCommand extends VanillaCommand {
     public TimingsCommand(String name) {
         super(name, "nukkit.command.timings.description", "/timings <on|off|paste>");
         this.setPermission("nukkit.command.timings");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("on|off|paste")
-        });
+
+        registerOverload().literals("action", "TimingsAction", new String[]{"on", "off", "paste"});
     }
 
     @Override

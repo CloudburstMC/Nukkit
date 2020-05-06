@@ -13,7 +13,6 @@ public class SaveOffCommand extends VanillaCommand {
     public SaveOffCommand(String name) {
         super(name, "commands.save.description", "/save-off");
         this.setPermission("nukkit.command.save.disable");
-        this.commandParameters.clear();
     }
 
     @Override

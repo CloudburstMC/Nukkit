@@ -1,8 +1,9 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
@@ -18,11 +19,10 @@ public class TellCommand extends VanillaCommand {
     public TellCommand(String name) {
         super(name, "commands.tell.description", "/tell <player> <message>", new String[]{"w", "msg"});
         this.setPermission("nukkit.command.tell");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("message")
-        });
+
+        registerOverload()
+                .requiredArg("player", CommandParamType.TARGET)
+                .optionalArg("message", CommandParamType.RAWTEXT);
     }
 
     @Override

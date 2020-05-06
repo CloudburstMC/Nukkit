@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.level.Level;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.NukkitMath;
@@ -18,10 +19,8 @@ public class SetWorldSpawnCommand extends VanillaCommand {
     public SetWorldSpawnCommand(String name) {
         super(name, "commands.setworldspawn.description", "/setworldspawn <position>");
         this.setPermission("nukkit.command.setworldspawn");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("blockPos", CommandParamType.POSITION, true)
-        });
+
+        registerOverload().requiredArg("blockPos", CommandParamType.POSITION);
     }
 
     @Override

@@ -1,9 +1,10 @@
-package cn.nukkit.command.defaults;
+package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.locale.TranslationContainer;
@@ -20,17 +21,16 @@ public class EnchantCommand extends VanillaCommand {
     public EnchantCommand(String name) {
         super(name, "commands.enchant.description", "/enchant <player> <enchant ID> [level]");
         this.setPermission("nukkit.command.enchant");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("enchantment ID", CommandParamType.INT, false),
-                new CommandParameter("level", CommandParamType.INT, true)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("id", false, CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST),
-                new CommandParameter("level", CommandParamType.INT, true)
-        });
+
+        registerOverload()
+                .requiredArg("player", CommandParamType.TARGET)
+                .requiredArg("enchantment ID", CommandParamType.INT)
+                .optionalArg("level", CommandParamType.INT);
+
+        registerOverload()
+                .requiredArg("player", CommandParamType.TARGET)
+                .requiredArg("id", CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST)
+                .optionalArg("level", CommandParamType.INT);
     }
 
     @Override
