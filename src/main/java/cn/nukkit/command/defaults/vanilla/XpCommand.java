@@ -22,7 +22,7 @@ public class XpCommand extends Command {
         this.setPermission("nukkit.command.xp");
 
         registerOverload()
-                .then(requiredArg("amount|level", CommandParamType.INT)) // TODO: postfix
+                .then(requiredArg("amount|level", CommandParamType.INT)) // TODO: postfix crashes the client?
                 .then(optionalArg("player", CommandParamType.TARGET));
     }
 

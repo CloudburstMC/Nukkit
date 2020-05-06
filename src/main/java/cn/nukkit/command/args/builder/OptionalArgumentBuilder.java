@@ -3,14 +3,14 @@ package cn.nukkit.command.args.builder;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import com.nukkitx.protocol.bedrock.data.CommandParamData;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 public class OptionalArgumentBuilder extends ArgumentBuilder<OptionalArgumentBuilder> {
-    @Getter
-    private final String name;
     private final CommandParameter parameter;
+
+    public OptionalArgumentBuilder(String name, CommandParameter parameter) {
+        super(name);
+        this.parameter = parameter;
+    }
 
     @Override
     protected OptionalArgumentBuilder getThis() {

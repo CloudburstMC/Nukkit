@@ -2,6 +2,8 @@ package cn.nukkit.registry;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.*;
+import cn.nukkit.command.args.builder.ArgumentBuilder;
+import cn.nukkit.command.args.builder.CommandOverloadBuilder;
 import cn.nukkit.command.defaults.*;
 import cn.nukkit.command.defaults.DebugPasteCommand;
 import cn.nukkit.command.defaults.PluginsCommand;

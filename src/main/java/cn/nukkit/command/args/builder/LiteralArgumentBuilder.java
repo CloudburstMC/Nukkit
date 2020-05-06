@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class LiteralArgumentBuilder extends ArgumentBuilder<LiteralArgumentBuilder> {
-    private final String name;
+
+    public LiteralArgumentBuilder(String name) {
+        super(name);
+    }
 
     @Override
     protected LiteralArgumentBuilder getThis() {

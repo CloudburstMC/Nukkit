@@ -1,4 +1,4 @@
-package cn.nukkit.command;
+package cn.nukkit.command.args.nukkit;
 
 import cn.nukkit.command.args.BaseArgument;
 import cn.nukkit.player.Player;

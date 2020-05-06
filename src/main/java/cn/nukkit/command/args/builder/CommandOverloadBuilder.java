@@ -3,17 +3,17 @@ package cn.nukkit.command.args.builder;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @ToString
 public class CommandOverloadBuilder {
 
     @Getter
-    private List<ArgumentBuilder> arguments = new LinkedList<>();
+    private Map<String, ArgumentBuilder> arguments = new LinkedHashMap<>();
 
     public CommandOverloadBuilder then(ArgumentBuilder argument) {
-        arguments.add(argument);
+        arguments.put(argument.getName(), argument);
         return this;
     }
 }

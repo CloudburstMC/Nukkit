@@ -40,7 +40,7 @@ public abstract class Command {
 
     protected List<CommandParameter[]> commandParameters = new ArrayList<>();
 
-    protected List<CommandOverloadBuilder> overloads = new ArrayList<>();
+    public List<CommandOverloadBuilder> overloads = new ArrayList<>();
 
     public Timing timing;
 
@@ -206,7 +206,7 @@ public abstract class Command {
         for (int i = 0; i < overloads.length; i++) {
             // TODO: find a nicer way to do this, preferably a one line lambda thing? i'm no expert on lambda
             List<CommandParameter> params1 = new LinkedList<>();
-            this.overloads.get(i).getArguments().forEach(arg -> params1.add(arg.build()));
+            this.overloads.get(i).getArguments().forEach((name, arg) -> params1.add(arg.build()));
 
             CommandParameter[] parameters = params1.toArray(new CommandParameter[0]);
             CommandParamData[] params = new CommandParamData[parameters.length];
