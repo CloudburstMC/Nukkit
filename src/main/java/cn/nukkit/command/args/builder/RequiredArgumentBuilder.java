@@ -39,7 +39,7 @@ public class RequiredArgumentBuilder extends ArgumentBuilder<RequiredArgumentBui
     }
 
     public RequiredArgumentBuilder expandEnum() {
-        this.parameter.options.add(CommandParamData.Option.UNKNOWN_0);
+        this.parameter.getOptions().add(CommandParamData.Option.UNKNOWN_0);
         return this;
     }
 

@@ -28,7 +28,7 @@ public class GiveCommand extends VanillaCommand {
 
         registerOverload()
                 .then(requiredArg("player", CommandParamType.TARGET))
-                .then(requiredArg("itemName", BuiltinCommandEnums.ITEM.getNetworkName())) // TODO: add support for the enum directly
+                .then(requiredArg("itemName", BuiltinCommandEnums.ITEM.getNetworkName()))
                 .then(optionalArg("amount", CommandParamType.INT))
                 .then(optionalArg("data", CommandParamType.INT)); // TODO: components
     }
