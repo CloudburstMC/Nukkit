@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
@@ -17,30 +19,30 @@ import static cn.nukkit.block.BlockIds.AIR;
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 @Log4j2
-public class GiveCommand extends VanillaCommand {
-    public GiveCommand(String name) {
-        super(name, "commands.give.description", "commands.give.usage");
-        this.setPermission("nukkit.command.give");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("itemName", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
-                new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("meta", CommandParamType.INT, true),
-                new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("item ID", CommandParamType.INT, false),
-                new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("item ID:meta", CommandParamType.RAWTEXT, false),
-                new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
-        });
+public class GiveCommand extends Command {
+    public GiveCommand() {
+        super("give", CommandData.builder("give")
+                .setDescription("commands.give.description")
+                .setUsageMessage("commands.give.usage")
+                .setPermissions("nukkit.command.give")
+                .setParameters(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("itemName", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
+                        new CommandParameter("amount", CommandParamType.INT, true),
+                        new CommandParameter("meta", CommandParamType.INT, true),
+                        new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
+                }, new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("item ID", CommandParamType.INT, false),
+                        new CommandParameter("amount", CommandParamType.INT, true),
+                        new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
+                }, new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("item ID:meta", CommandParamType.RAWTEXT, false),
+                        new CommandParameter("amount", CommandParamType.INT, true),
+                        new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
+                })
+                .build());
     }
 
     @Override
@@ -50,9 +52,7 @@ public class GiveCommand extends VanillaCommand {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
-            return true;
+            return false;
         }
 
         Player player = sender.getServer().getPlayer(args[0]);
@@ -62,8 +62,7 @@ public class GiveCommand extends VanillaCommand {
             item = Item.fromString(args[1]);
         } catch (Exception e) {
             log.throwing(e);
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return true;
+            return false;
         }
 
         try {

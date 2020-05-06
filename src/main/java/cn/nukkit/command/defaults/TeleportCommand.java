@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerTeleportEvent;
@@ -19,25 +21,22 @@ import java.util.Optional;
  * Created on 2015/11/12 by Pub4Game and milkice.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class TeleportCommand extends VanillaCommand {
-    public TeleportCommand(String name) {
-        super(name, "commands.tp.description", "/tp [player] <position|target>");
-        this.setPermission("nukkit.command.teleport");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("target", CommandParamType.TARGET, false),
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("position", CommandParamType.POSITION, false),
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("position", CommandParamType.POSITION, false),
-        });
+public class TeleportCommand extends Command {
+    public TeleportCommand() {
+        super("tp", CommandData.builder("tp")
+                .setDescription("commands.tp.description")
+                .setUsageMessage("/tp [player] <position|target>")
+                .setPermissions("nukkit.command.teleport")
+                .addParameters(new CommandParameter[]{new CommandParameter("player", CommandParamType.TARGET, false)})
+                .addParameters(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("target", CommandParamType.TARGET, false),
+                }).addParameters(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("position", CommandParamType.POSITION, false),
+                }).addParameters(new CommandParameter[]{
+                        new CommandParameter("position", CommandParamType.POSITION, false),
+                }).build());
     }
 
     @Override
@@ -46,8 +45,7 @@ public class TeleportCommand extends VanillaCommand {
             return true;
         }
         if (args.length < 1 || args.length > 6) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return true;
+            return false;
         }
         CommandSender target;
         CommandSender origin = sender;
@@ -82,7 +80,7 @@ public class TeleportCommand extends VanillaCommand {
         }
         if (args.length < 3) {
             ((Player) origin).teleport(((Player) target).getLocation(), PlayerTeleportEvent.TeleportCause.COMMAND);
-            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success", origin.getName(), target.getName()));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.tp.success", origin.getName(), target.getName()));
             if (origin != sender) {
                 origin.sendMessage(new TranslationContainer("commands.tp.successVictim", target.getName()));
             }
@@ -96,8 +94,7 @@ public class TeleportCommand extends VanillaCommand {
             }
             Optional<Vector3f> optional = CommandUtils.parseVector3f(Arrays.copyOfRange(args, pos, pos += 3), ((Player) target).getPosition());
             if (!optional.isPresent()) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                return true;
+                return false;
             }
             Vector3f position = optional.get();
             float yaw = ((Player) target).getYaw();
@@ -108,7 +105,7 @@ public class TeleportCommand extends VanillaCommand {
                 pitch = Float.parseFloat(args[pos++]);
             }
             ((Player) target).teleport(Location.from(position, yaw, pitch, ((Player) target).getLevel()), PlayerTeleportEvent.TeleportCause.COMMAND);
-            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success.coordinates",
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.tp.success.coordinates",
                     target.getName(), String.valueOf(NukkitMath.round(position.getX(), 2)),
                     String.valueOf(NukkitMath.round(position.getY(), 2)),
                     String.valueOf(NukkitMath.round(position.getZ(), 2))));
@@ -117,7 +114,6 @@ public class TeleportCommand extends VanillaCommand {
             }
             return true;
         }
-        sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-        return true;
+        return false;
     }
 }

@@ -1,25 +1,30 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class MeCommand extends VanillaCommand {
+public class MeCommand extends Command {
 
-    public MeCommand(String name) {
-        super(name, "commands.me.description", "/me <action>");
-        this.setPermission("nukkit.command.me");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("action ...", CommandParamType.RAWTEXT, false)
-        });
+    public MeCommand() {
+        super("me", CommandData.builder("me")
+                .setDescription("commands.me.description")
+                .setUsageMessage("/me <action>")
+                .setPermissions("nukkit.command.me")
+                .setParameters(new CommandParameter[]{
+                        new CommandParameter("action ...", CommandParamType.RAWTEXT, false)
+                })
+                .build());
     }
 
     @Override
@@ -29,8 +34,6 @@ public class MeCommand extends VanillaCommand {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
@@ -41,15 +44,7 @@ public class MeCommand extends VanillaCommand {
             name = sender.getName();
         }
 
-        String msg = "";
-        for (String arg : args) {
-            msg += arg + " ";
-        }
-
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
-        }
-
+        String msg = String.join(" ", args);
         sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", name, TextFormat.WHITE + msg));
 
         return true;

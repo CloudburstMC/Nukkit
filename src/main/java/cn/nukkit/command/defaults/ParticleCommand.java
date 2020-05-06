@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
@@ -21,24 +23,27 @@ import static cn.nukkit.item.ItemIds.SNOWBALL;
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class ParticleCommand extends VanillaCommand {
+public class ParticleCommand extends Command {
     private static final String[] ENUM_VALUES = new String[]{"explode", "hugeexplosion", "hugeexplosionseed", "bubble"
             , "splash", "wake", "water", "crit", "smoke", "spell", "instantspell", "dripwater", "driplava", "townaura"
             , "spore", "portal", "flame", "lava", "reddust", "snowballpoof", "slime", "itembreak", "terrain", "heart"
             , "ink", "droplet", "enchantmenttable", "happyvillager", "angryvillager", "forcefield"};
-    public ParticleCommand(String name) {
-        super(name, "commands.particle.description", "/particle <particle> <position> [count] [data[");
-        this.setPermission("nukkit.command.particle");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("name", false, ENUM_VALUES),
-                new CommandParameter("position", CommandParamType.POSITION, false),
-                new CommandParameter("count", CommandParamType.INT, true),
-                new CommandParameter("data", true)
-        });
+
+    public ParticleCommand() {
+        super("particle", CommandData.builder("particle")
+                .setDescription("commands.particle.description")
+                .setUsageMessage("/particle <particle> <position> [count] [data[")
+                .setPermissions("nukkit.command.particle")
+                .setParameters(new CommandParameter[]{
+                        new CommandParameter("name", false, ENUM_VALUES),
+                        new CommandParameter("position", CommandParamType.POSITION, false),
+                        new CommandParameter("count", CommandParamType.INT, true),
+                        new CommandParameter("data", true)
+                })
+                .build());
     }
 
-    private static float getFloat(String arg, float defaultValue) throws Exception {
+    private static float getFloat(String arg, float defaultValue) {
         if (arg.startsWith("~")) {
             String relativePos = arg.substring(1);
             if (relativePos.isEmpty()) {
@@ -56,9 +61,7 @@ public class ParticleCommand extends VanillaCommand {
         }
 
         if (args.length < 4) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
-            return true;
+            return false;
         }
 
         Location defaultLocation;
@@ -86,7 +89,7 @@ public class ParticleCommand extends VanillaCommand {
         int count = 1;
         if (args.length > 4) {
             try {
-                double c = Double.valueOf(args[4]);
+                double c = Double.parseDouble(args[4]);
                 count = (int) c;
             } catch (Exception e) {
                 //ignore
@@ -97,7 +100,7 @@ public class ParticleCommand extends VanillaCommand {
         int data = -1;
         if (args.length > 5) {
             try {
-                double d = Double.valueOf(args[5]);
+                double d = Double.parseDouble(args[5]);
                 data = (int) d;
             } catch (Exception e) {
                 //ignore

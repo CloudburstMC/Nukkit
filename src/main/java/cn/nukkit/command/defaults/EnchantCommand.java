@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
@@ -15,22 +17,24 @@ import static cn.nukkit.block.BlockIds.AIR;
 /**
  * Created by Pub4Game on 23.01.2016.
  */
-public class EnchantCommand extends VanillaCommand {
+public class EnchantCommand extends Command {
 
-    public EnchantCommand(String name) {
-        super(name, "commands.enchant.description", "/enchant <player> <enchant ID> [level]");
-        this.setPermission("nukkit.command.enchant");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("enchantment ID", CommandParamType.INT, false),
-                new CommandParameter("level", CommandParamType.INT, true)
-        });
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("id", false, CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST),
-                new CommandParameter("level", CommandParamType.INT, true)
-        });
+    public EnchantCommand() {
+        super("enchant", CommandData.builder("enchant")
+                .setDescription("commands.enchant.description")
+                .setUsageMessage("/enchant <player> <enchant ID> [level]")
+                .setPermissions("nukkit.command.enchant")
+                .setParameters(
+                        new CommandParameter[]{
+                                new CommandParameter("player", CommandParamType.TARGET, false),
+                                new CommandParameter("enchantment ID", CommandParamType.INT, false),
+                                new CommandParameter("level", CommandParamType.INT, true)
+                        }, new CommandParameter[]{
+                                new CommandParameter("player", CommandParamType.TARGET, false),
+                                new CommandParameter("id", false, CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST),
+                                new CommandParameter("level", CommandParamType.INT, true)
+                        })
+                .build());
     }
 
     @Override
@@ -39,8 +43,7 @@ public class EnchantCommand extends VanillaCommand {
             return true;
         }
         if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return true;
+            return false;
         }
         Player player = sender.getServer().getPlayer(args[0]);
         if (player == null) {
@@ -53,8 +56,7 @@ public class EnchantCommand extends VanillaCommand {
             enchantId = getIdByName(args[1]);
             enchantLevel = args.length == 3 ? Integer.parseInt(args[2]) : 1;
         } catch (NumberFormatException e) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return true;
+            return false;
         }
         Enchantment enchantment = Enchantment.getEnchantment(enchantId);
         if (enchantment == null) {

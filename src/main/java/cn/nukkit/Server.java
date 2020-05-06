@@ -482,6 +482,8 @@ public class Server {
             throw new RuntimeException(e);
         }
 
+        this.commandRegistry.registerVanilla();
+
         this.convertLegacyPlayerData();
 
         this.craftingManager = new CraftingManager();

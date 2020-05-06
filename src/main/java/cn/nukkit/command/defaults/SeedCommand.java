@@ -1,6 +1,8 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 
@@ -8,13 +10,12 @@ import cn.nukkit.player.Player;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class SeedCommand extends VanillaCommand {
+public class SeedCommand extends Command {
 
-    public SeedCommand(String name) {
-        super(name);
-        this.setPermission("nukkit.command.seed");
-        this.setUsage("/seed");
-        this.commandParameters.clear();
+    public SeedCommand() {
+        super("seed", CommandData.builder("seed")
+                .setPermissions("nukkit.command.seed")
+                .build());
     }
 
     @Override

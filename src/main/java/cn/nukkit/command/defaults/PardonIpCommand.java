@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 
@@ -13,17 +15,17 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class PardonIpCommand extends VanillaCommand {
+public class PardonIpCommand extends Command {
 
-    public PardonIpCommand(String name) {
-        super(name);
-        this.setPermission("nukkit.command.unban.ip");
-        this.setAliases(new String[]{"unbanip", "unban-ip", "pardonip"});
-        this.setUsage("/unbanip <ip>");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("ip")
-        });
+    public PardonIpCommand() {
+        super("pardon-ip", CommandData.builder("pardon-ip")
+                .setPermissions("nukkit.command.unban.ip")
+                .setAliases("unbanip", "unban-ip", "pardonip")
+                .setUsageMessage("/unbanip <ip>")
+                .setParameters(new CommandParameter[]{
+                        new CommandParameter("ip")
+                })
+                .build());
     }
 
     @Override
@@ -33,8 +35,6 @@ public class PardonIpCommand extends VanillaCommand {
         }
 
         if (args.length != 1) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
@@ -50,7 +50,7 @@ public class PardonIpCommand extends VanillaCommand {
                 return true;
             }
 
-            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.unbanip.success", value));
+            CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.unbanip.success", value));
         } else {
 
             sender.sendMessage(new TranslationContainer("commands.unbanip.invalid"));

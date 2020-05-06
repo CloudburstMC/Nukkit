@@ -1,6 +1,8 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -8,21 +10,25 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.Objects;
+import java.util.StringJoiner;
 
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class TellCommand extends VanillaCommand {
+public class TellCommand extends Command {
 
-    public TellCommand(String name) {
-        super(name, "commands.tell.description", "/tell <player> <message>", new String[]{"w", "msg"});
-        this.setPermission("nukkit.command.tell");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("message")
-        });
+    public TellCommand() {
+        super("tell", CommandData.builder("tell")
+                .setDescription("commands.tell.description")
+                .setUsageMessage("/tell <player> <message>")
+                .setAliases("w", "msg")
+                .setPermissions("nukkit.command.tell")
+                .setParameters(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("message")
+                })
+                .build());
     }
 
     @Override
@@ -32,8 +38,6 @@ public class TellCommand extends VanillaCommand {
         }
 
         if (args.length < 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
@@ -50,12 +54,9 @@ public class TellCommand extends VanillaCommand {
             return true;
         }
 
-        String msg = "";
+        StringJoiner msg = new StringJoiner(" ");
         for (int i = 1; i < args.length; i++) {
-            msg += args[i] + " ";
-        }
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
+            msg.add(args[i]);
         }
 
         String displayName = (sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName());

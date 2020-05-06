@@ -1,6 +1,8 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
@@ -10,12 +12,14 @@ import cn.nukkit.utils.ThreadCache;
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class GarbageCollectorCommand extends VanillaCommand {
+public class GarbageCollectorCommand extends Command {
 
-    public GarbageCollectorCommand(String name) {
-        super(name, "commands.gc.description", "/gc");
-        this.setPermission("nukkit.command.gc");
-        this.commandParameters.clear();
+    public GarbageCollectorCommand() {
+        super("gc", CommandData.builder("gc")
+                .setDescription("commands.gc.description")
+                .setUsageMessage("/gc")
+                .setPermissions("nukkit.command.gc")
+                .build());
     }
 
     @Override

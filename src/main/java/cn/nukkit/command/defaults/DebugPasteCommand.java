@@ -1,10 +1,13 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.network.ProtocolInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
+import cn.nukkit.registry.CommandRegistry;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.HastebinUtility;
 import cn.nukkit.utils.Utils;
@@ -15,11 +18,13 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 @Log4j2
-public class DebugPasteCommand extends VanillaCommand {
+public class DebugPasteCommand extends Command {
 
-    public DebugPasteCommand(String name) {
-        super(name, "commands.debug.description");
-        this.setPermission("nukkit.command.debug.perform");
+    public DebugPasteCommand() {
+        super("debugpaste", CommandData.builder("debugpaste")
+                .setDescription("commands.debug.description")
+                .setPermissions("nukkit.command.debug.perform")
+                .build());
     }
 
     @Override
@@ -28,11 +33,11 @@ public class DebugPasteCommand extends VanillaCommand {
             return true;
         }
         Server server = Server.getInstance();
-        server.getScheduler().scheduleAsyncTask(new AsyncTask() {
+        server.getScheduler().scheduleAsyncTask(null, new AsyncTask() {
             @Override
             public void onRun() {
                 try {
-                    new StatusCommand("status").execute(server.getConsoleSender(), "status", new String[]{});
+                    CommandRegistry.get().dispatch(sender, "status");
                     String dataPath = server.getDataPath();
                     String nukkitYML = HastebinUtility.upload(new File(dataPath, "nukkit.yml"));
                     String serverProperties = HastebinUtility.upload(new File(dataPath, "server.properties"));

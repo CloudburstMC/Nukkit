@@ -2,6 +2,7 @@ package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
 import cn.nukkit.command.PluginCommand;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.event.*;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.permission.Permission;
@@ -485,7 +486,13 @@ public class PluginManager {
                     permsMsg = (String) ((Map) data).get("permission-message");
                 }
 
-                registry.register(plugin, key, PluginCommand.factory(plugin, desc, usage, perms, permsMsg, aliases));
+                registry.register(plugin, new PluginCommand(plugin, CommandData.builder(key)
+                        .setDescription(desc)
+                        .setUsageMessage(usage)
+                        .setAliases(aliases)
+                        .setPermissions(perms.split(";"))
+                        .setPermissionMessage(permsMsg).build()
+                ));
             }
         }
     }

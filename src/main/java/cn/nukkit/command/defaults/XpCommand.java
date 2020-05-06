@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -13,14 +14,15 @@ import cn.nukkit.utils.TextFormat;
  * Package cn.nukkit.command.defaults in project nukkit.
  */
 public class XpCommand extends Command {
-    public XpCommand(String name) {
-        super(name, "commands.xp.description", "/xp <amount>[L] [player]");
-        this.setPermission("nukkit.command.xp");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("amount|level", CommandParamType.INT, false),
-                new CommandParameter("player", CommandParamType.TARGET, true)
-        });
+    public XpCommand() {
+        super("xp", CommandData.builder("xp")
+                .setDescription("commands.xp.description")
+                .setUsageMessage("/xp <amount>[L] [player]")
+                .setPermissions("nukkit.command.xp")
+                .setParameters(new CommandParameter[]{
+                        new CommandParameter("amount|level", CommandParamType.INT, false),
+                        new CommandParameter("player", CommandParamType.TARGET, true)
+                }).build());
     }
 
     @Override
@@ -36,8 +38,7 @@ public class XpCommand extends Command {
         Player player;
         if (!(sender instanceof Player)) {
             if (args.length != 2) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                return true;
+                return false;
             }
             amountString = args[0];
             playerName = args[1];
@@ -51,8 +52,7 @@ public class XpCommand extends Command {
                 playerName = args[1];
                 player = sender.getServer().getPlayer(playerName);
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                return true;
+                return false;
             }
         }
 
@@ -71,8 +71,7 @@ public class XpCommand extends Command {
         try {
             amount = Integer.parseInt(amountString);
         } catch (NumberFormatException e1) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return true;
+            return false;
         }
 
         if (isLevel) {
@@ -92,8 +91,7 @@ public class XpCommand extends Command {
             return true;
         } else {
             if (amount < 0) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                return true;
+                return false;
             }
             player.addExperience(amount);
             sender.sendMessage(new TranslationContainer("commands.xp.success", amount, player.getName()));

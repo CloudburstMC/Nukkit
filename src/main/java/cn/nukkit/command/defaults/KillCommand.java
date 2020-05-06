@@ -1,8 +1,10 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.entity.Entity;
@@ -19,16 +21,18 @@ import java.util.StringJoiner;
  * Created on 2015/12/08 by Pub4Game.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class KillCommand extends VanillaCommand {
+public class KillCommand extends Command {
 
-    public KillCommand(String name) {
-        super(name, "commands.kill.description", "/kill [player]", new String[]{"suicide"});
-        this.setPermission("nukkit.command.kill.self;"
-                + "nukkit.command.kill.other");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, true)
-        });
+    public KillCommand() {
+        super("kill", CommandData.builder("kill")
+                .setDescription("commands.kill.description")
+                .setUsageMessage("/kill [player]")
+                .setAliases("suicide")
+                .setPermissions("nukkit.command.kill.self", "nukkit.command.kill.other")
+                .setParameters(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, true)
+                })
+                .build());
     }
 
     @Override
@@ -37,7 +41,6 @@ public class KillCommand extends VanillaCommand {
             return true;
         }
         if (args.length >= 2) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
         if (args.length == 1) {
@@ -54,7 +57,7 @@ public class KillCommand extends VanillaCommand {
                 }
                 player.setLastDamageCause(ev);
                 player.setHealth(0);
-                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
+                CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.kill.successful", player.getName()));
             } else if (args[0].equals("@e")) {
                 StringJoiner joiner = new StringJoiner(", ");
                 for (Level level : Server.getInstance().getLevels()) {
@@ -112,7 +115,6 @@ public class KillCommand extends VanillaCommand {
             ((Player) sender).setHealth(0);
             sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
         return true;

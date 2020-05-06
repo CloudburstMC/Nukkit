@@ -1,71 +1,38 @@
 package cn.nukkit.command;
 
 import cn.nukkit.command.data.CommandData;
-import cn.nukkit.command.data.CommandOverload;
-import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
+import cn.nukkit.registry.CommandRegistry;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
-import com.nukkitx.protocol.bedrock.data.CommandEnumData;
-import com.nukkitx.protocol.bedrock.data.CommandParamData;
 
-import java.util.*;
+import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * Base class for Commands. Plugins should extend {@link PluginCommand PluginCommand<T>} and not this class.
+ *
+ * @author MagicDroidX
+ * @see PluginCommand
  */
 public abstract class Command {
 
-    protected CommandData commandData;
+    protected final CommandData commandData;
 
     private final String name;
 
-    private String[] aliases;
-
-    protected String description;
-
-    protected String usageMessage;
-
-    private String permission = null;
-
-    private String permissionMessage = null;
-
-    protected List<CommandParameter[]> commandParameters = new ArrayList<>();
-
     public Timing timing;
 
-    public Command(String name) {
-        this(name, "", null, new String[0]);
+    public Command(CommandData data) {
+        this(data.getRegisteredName(), data);
     }
 
-    public Command(String name, String description) {
-        this(name, description, null, new String[0]);
-    }
-
-    public Command(String name, String description, String usageMessage) {
-        this(name, description, usageMessage, new String[0]);
-    }
-
-    public Command(String name, String description, String usageMessage, String[] aliases) {
-        this.commandData = new CommandData();
-        this.name = name.toLowerCase(); // Uppercase letters crash the client?!?
-        this.description = description;
-        this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
-        this.aliases = aliases;
+    public Command(String name, CommandData data) {
+        this.name = name.toLowerCase(); // Uppercase letters crash the client?
+        this.commandData = data;
         this.timing = Timings.getCommandTiming(this);
-        this.commandParameters.add(new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
-    }
-
-    public CommandParameter[] getCommandParameters(int key) {
-        return commandParameters.get(key);
-    }
-
-    public Map<String, CommandOverload> getOverloads() {
-        return this.commandData.overloads;
     }
 
     public abstract boolean execute(CommandSender sender, String commandLabel, String[] args);
@@ -74,12 +41,19 @@ public abstract class Command {
         return name;
     }
 
-    public String getPermission() {
-        return permission;
+    public String getRegisteredName() {
+        return this.commandData.getRegisteredName();
     }
 
-    public void setPermission(String permission) {
-        this.permission = permission;
+    public void setRegisteredName(String name) {
+        if (CommandRegistry.get().isClosed()) {
+            throw new IllegalStateException("Trying to set registered command name outside of registration period.");
+        }
+        this.commandData.setRegisteredName(name);
+    }
+
+    public List<String> getPermissions() {
+        return this.commandData.getPermissions();
     }
 
     public boolean testPermission(CommandSender target) {
@@ -87,22 +61,21 @@ public abstract class Command {
             return true;
         }
 
-        if (this.permissionMessage == null) {
+        if (this.commandData.getPermissionMessage().equals("")) {
             target.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", this.name));
-        } else if (!this.permissionMessage.equals("")) {
-            target.sendMessage(this.permissionMessage.replace("<permission>", this.permission));
+        } else {
+            target.sendMessage(this.commandData.getPermissionMessage());
         }
 
         return false;
     }
 
     public boolean testPermissionSilent(CommandSender target) {
-        if (this.permission == null || this.permission.equals("")) {
+        if (this.commandData.getPermissions().size() == 0) {
             return true;
         }
 
-        String[] permissions = this.permission.split(";");
-        for (String permission : permissions) {
+        for (String permission : this.commandData.getPermissions()) {
             if (target.hasPermission(permission)) {
                 return true;
             }
@@ -116,39 +89,27 @@ public abstract class Command {
     }
 
     public String[] getAliases() {
-        return this.aliases;
+        return this.commandData.getAliases().toArray(new String[0]);
     }
 
     public String getPermissionMessage() {
-        return permissionMessage;
+        return commandData.getPermissionMessage();
     }
 
     public String getDescription() {
-        return description;
+        return this.commandData.getDescription();
     }
 
     public String getUsage() {
-        return usageMessage;
-    }
-
-    public void setAliases(String[] aliases) {
-        this.aliases = aliases;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setPermissionMessage(String permissionMessage) {
-        this.permissionMessage = permissionMessage;
-    }
-
-    public void setUsage(String usageMessage) {
-        this.usageMessage = usageMessage;
+        return this.commandData.getUsage();
     }
 
     public List<CommandParameter[]> getCommandParameters() {
-        return commandParameters;
+        return this.commandData.getOverloads();
+    }
+
+    public void removeAlias(String alias) {
+        this.commandData.removeAlias(alias);
     }
 
     @Override
@@ -156,51 +117,19 @@ public abstract class Command {
         return this.name;
     }
 
-    public void setCommandParameters(List<CommandParameter[]> parameters) {
-        this.commandParameters = parameters;
-    }
-
-    public void addCommandParameters(CommandParameter[] parameters) {
-        this.commandParameters.add(parameters);
-    }
-
     /**
-     * Generates modified command data for the specified player
-     * for AvailableCommandsPacket.
+     * Generates the {@link com.nukkitx.protocol.bedrock.data.CommandData CommandData} used
+     * in {@link com.nukkitx.protocol.bedrock.packet.AvailableCommandsPacket AvailableCommandsPacket} which
+     * sends the Command data to a client. If the player does not have permission to use this Command,
+     * <code>null</code> will be returned.
      *
      * @param player player
      * @return CommandData|null
      */
-    public com.nukkitx.protocol.bedrock.data.CommandData generateCustomCommandData(Player player) {
+    public com.nukkitx.protocol.bedrock.data.CommandData toNetwork(Player player) {
         if (!this.testPermission(player)) {
             return null;
         }
-
-        String[] aliasesEnum;
-        if (getAliases().length > 0) {
-            Set<String> aliasList = new HashSet<>();
-            Collections.addAll(aliasList, this.getAliases());
-            aliasList.add(this.name.toLowerCase());
-
-            aliasesEnum = aliasList.toArray(new String[0]);
-        } else {
-            aliasesEnum = new String[]{this.name.toLowerCase()};
-        }
-        CommandEnumData aliases = new CommandEnumData(this.name.toLowerCase() + "Aliases", aliasesEnum, false);
-        String description = player.getServer().getLanguage().translate(this.description);
-
-        CommandParamData[][] overloads = new CommandParamData[this.commandParameters.size()][];
-
-        for (int i = 0; i < overloads.length; i++) {
-            CommandParameter[] parameters = this.commandParameters.get(i);
-            CommandParamData[] params = new CommandParamData[parameters.length];
-            for (int i2 = 0; i2 < parameters.length; i2++) {
-                params[i2] = CommandUtils.toNetwork(parameters[i2]);
-            }
-            overloads[i] = params;
-        }
-
-        return new com.nukkitx.protocol.bedrock.data.CommandData(this.name.toLowerCase(), description, Collections.emptyList(),
-                (byte) 0, aliases, overloads);
+        return this.commandData.toNetwork();
     }
 }

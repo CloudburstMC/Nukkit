@@ -1,6 +1,8 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.gamerule.GameRule;
@@ -12,17 +14,19 @@ import cn.nukkit.registry.GameRuleRegistry;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
-public class GameruleCommand extends VanillaCommand {
+public class GameruleCommand extends Command {
     private static final GameRuleRegistry registry = GameRuleRegistry.get();
 
-    public GameruleCommand(String name) {
-        super(name, "commands.gamerule.description", "/gamerule <gamerule> [value]");
-        this.setPermission("nukkit.command.gamerule");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("gamerule", true, registry.getRuleNames().toArray(new String[0])),
-                new CommandParameter("value", CommandParamType.STRING, true)
-        });
+    public GameruleCommand() {
+        super("gamerule", CommandData.builder("gamerule")
+                .setDescription("commands.gamerule.description")
+                .setUsageMessage("/gamerule <gamerule> [value]")
+                .setPermissions("nukkit.command.gamerule")
+                .setParameters(new CommandParameter[]{
+                        new CommandParameter("gamerule", true, registry.getRuleNames().toArray(new String[0])),
+                        new CommandParameter("value", CommandParamType.STRING, true)
+                })
+                .build());
     }
 
     @Override

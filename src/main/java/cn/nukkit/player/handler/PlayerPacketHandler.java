@@ -796,7 +796,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 return true;
             }
             player.setGamemode(packet.getGamemode(), true);
-            CommandUtils.broadcastCommandMessage(player, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(player.getGamemode())));
+            CommandUtils.broadcastCommandMessage(player, new TranslationContainer("%commands.gamemode.success.self", Server.getGamemodeString(player.getGamemode())));
         }
         return true;
     }

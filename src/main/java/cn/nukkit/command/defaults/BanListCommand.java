@@ -1,6 +1,8 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.BanEntry;
@@ -12,15 +14,13 @@ import java.util.Iterator;
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class BanListCommand extends VanillaCommand {
-    public BanListCommand(String name) {
-        super(name);
-        this.setPermission("nukkit.command.ban.list");
-        this.setUsage("/banlist <ips|players>");
-        this.commandParameters.clear();
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("ips|players", true)
-        });
+public class BanListCommand extends Command {
+    public BanListCommand() {
+        super("banlist", CommandData.builder("banlist")
+                .setPermissions("nukkit.command.ban.list")
+                .setUsageMessage("/banlist <ips|players>")
+                .setParameters(new CommandParameter[]{new CommandParameter("ips|players", true)})
+                .build());
     }
 
     @Override
@@ -41,7 +41,6 @@ public class BanListCommand extends VanillaCommand {
                     list = sender.getServer().getNameBans();
                     break;
                 default:
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                     return false;
             }
         } else {

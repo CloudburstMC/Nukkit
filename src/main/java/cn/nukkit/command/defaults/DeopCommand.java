@@ -1,7 +1,9 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -13,13 +15,16 @@ import cn.nukkit.utils.TextFormat;
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
-public class DeopCommand extends VanillaCommand {
-    public DeopCommand(String name) {
-        super(name, "commands.deop.description", "/deop <player>");
-        this.setPermission("nukkit.command.op.take");
-        this.commandParameters.add(new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false)
-        });
+public class DeopCommand extends Command {
+    public DeopCommand() {
+        super("deop", CommandData.builder("deop")
+                .setDescription("commands.deop.description")
+                .setUsageMessage("/deop <player>")
+                .setPermissions("nukkit.command.op.take")
+                .setParameters(new CommandParameter[]{
+                        new CommandParameter("player", CommandParamType.TARGET, false)
+                })
+                .build());
     }
 
     @Override
@@ -29,8 +34,6 @@ public class DeopCommand extends VanillaCommand {
         }
 
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
@@ -42,7 +45,7 @@ public class DeopCommand extends VanillaCommand {
             ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.deop.message"));
         }
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.deop.success", player.getName()));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.deop.success", player.getName()));
 
         return true;
     }
