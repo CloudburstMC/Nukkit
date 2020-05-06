@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.BuiltinCommandEnums;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.defaults.VanillaCommand;
@@ -27,7 +28,7 @@ public class GiveCommand extends VanillaCommand {
 
         registerOverload()
                 .then(requiredArg("player", CommandParamType.TARGET))
-                .then(requiredArg("itemName", CommandParameter.ENUM_TYPE_ITEM_LIST))
+                .then(requiredArg("itemName", BuiltinCommandEnums.ITEM.getNetworkName())) // TODO: add support for the enum directly
                 .then(optionalArg("amount", CommandParamType.INT))
                 .then(optionalArg("data", CommandParamType.INT)); // TODO: components
     }

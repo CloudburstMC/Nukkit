@@ -74,9 +74,9 @@ public class CommandUtils {
     }
 
     protected static CommandParamData toNetwork(CommandParameter commandParameter) {
-        return new CommandParamData(commandParameter.name, commandParameter.optional,
-                toNetwork(commandParameter.enumData), NETWORK_TYPES.get(commandParameter.type),
-                commandParameter.postFix, commandParameter.options);
+        return new CommandParamData(commandParameter.getName(), commandParameter.isOptional(),
+                toNetwork(commandParameter.getEnumData()), NETWORK_TYPES.get(commandParameter.getType()),
+                commandParameter.getPostFix(), commandParameter.getOptions());
     }
 
     private static CommandEnumData toNetwork(CommandEnum commandEnum) {

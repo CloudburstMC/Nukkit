@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults.vanilla;
 
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.data.BuiltinCommandEnums;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.defaults.VanillaCommand;
@@ -31,7 +32,7 @@ public class EnchantCommand extends VanillaCommand {
 
         registerOverload()
                 .then(requiredArg("player", CommandParamType.TARGET))
-                .then(requiredArg("id", CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST))
+                .then(requiredArg("id", BuiltinCommandEnums.ENCHANTMENT.getNetworkName()))
                 .then(optionalArg("level", CommandParamType.INT));
     }
 

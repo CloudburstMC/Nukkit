@@ -1,31 +1,21 @@
 package cn.nukkit.command.data;
 
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
 import java.util.List;
 
 /**
+ * @author lukeeey
  * @author CreeperFace
  */
-@ToString
+@Data
 public class CommandEnum {
+    private final String name;
+    private final List<String> values;
 
-    private String name;
-    private List<String> values;
-
-    public CommandEnum(String name, List<String> values) {
-        this.name = name;
-        this.values = values;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<String> getValues() {
-        return values;
-    }
-
+    @Override
     public int hashCode() {
         return name.hashCode();
     }

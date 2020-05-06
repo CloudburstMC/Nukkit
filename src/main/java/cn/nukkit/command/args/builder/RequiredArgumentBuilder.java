@@ -34,7 +34,7 @@ public class RequiredArgumentBuilder extends ArgumentBuilder<RequiredArgumentBui
     }
 
     public RequiredArgumentBuilder postfix(String postfix) {
-        this.parameter.postFix = postfix;
+        this.parameter.setPostFix(postfix);
         return this;
     }
 

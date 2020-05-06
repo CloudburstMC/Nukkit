@@ -1,10 +1,14 @@
 package cn.nukkit.command.data;
 
 import com.nukkitx.protocol.bedrock.data.CommandParamData;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author CreeperFace
  */
+@Getter
+@RequiredArgsConstructor
 public enum CommandParamType {
     INT(CommandParamData.Type.INT),
     FLOAT(CommandParamData.Type.FLOAT),
@@ -20,16 +24,7 @@ public enum CommandParamType {
     TEXT(CommandParamData.Type.TEXT), // backwards compatibility
     COMMAND(CommandParamData.Type.COMMAND),
     FILE_PATH(CommandParamData.Type.FILE_PATH),
-    OPERATOR(CommandParamData.Type.OPERATOR),
-    ;
+    OPERATOR(CommandParamData.Type.OPERATOR);
 
     private final CommandParamData.Type type;
-
-    CommandParamType(CommandParamData.Type type) {
-        this.type = type;
-    }
-
-    public CommandParamData.Type getType() {
-        return type;
-    }
 }

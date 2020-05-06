@@ -2,6 +2,8 @@ package cn.nukkit.command.data;
 
 
 import com.nukkitx.protocol.bedrock.data.CommandParamData;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -9,8 +11,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @ToString
+@Getter
 public class CommandParameter {
-
     public final static String ARG_TYPE_STRING = "string";
     public final static String ARG_TYPE_STRING_ENUM = "stringenum";
     public final static String ARG_TYPE_BOOL = "bool";
@@ -20,26 +22,13 @@ public class CommandParameter {
     public final static String ARG_TYPE_RAW_TEXT = "rawtext";
     public final static String ARG_TYPE_INT = "int";
 
-    public static final String ENUM_TYPE_ITEM_LIST = "Item";
-    public static final String ENUM_TYPE_BLOCK_LIST = "Block";
-    public static final String ENUM_TYPE_COMMAND_LIST = "commandName";
-    public static final String ENUM_TYPE_ENCHANTMENT_LIST = "enchantmentType";
-    public static final String ENUM_TYPE_ENTITY_LIST = "entityType";
-    public static final String ENUM_TYPE_EFFECT_LIST = "effectType";
-    public static final String ENUM_TYPE_PARTICLE_LIST = "particleType";
-
-    public String name;
-    public CommandParamType type;
-    public boolean optional;
-    public List<CommandParamData.Option> options;
-
-    public CommandEnum enumData;
-    public String postFix;
-
-    @Deprecated
-    public CommandParameter(String name, String type, boolean optional) {
-        this(name, fromString(type), optional);
-    }
+    private String name;
+    private CommandParamType type;
+    private boolean optional;
+    private List<CommandParamData.Option> options = new ArrayList<>();
+    private CommandEnum enumData;
+    @Setter
+    private String postFix;
 
     public CommandParameter(String name, CommandParamType type, boolean optional) {
         this.name = name;
@@ -82,23 +71,5 @@ public class CommandParameter {
 
     public CommandParameter(String name, String[] enumValues) {
         this(name, false, enumValues);
-    }
-
-    protected static CommandParamType fromString(String param) {
-        switch (param) {
-            case "string":
-            case "stringenum":
-                return CommandParamType.STRING;
-            case "target":
-                return CommandParamType.TARGET;
-            case "blockpos":
-                return CommandParamType.POSITION;
-            case "rawtext":
-                return CommandParamType.RAWTEXT;
-            case "int":
-                return CommandParamType.INT;
-        }
-
-        return CommandParamType.RAWTEXT;
     }
 }

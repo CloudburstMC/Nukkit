@@ -34,12 +34,12 @@ public class OptionalArgumentBuilder extends ArgumentBuilder<OptionalArgumentBui
     }
 
     public OptionalArgumentBuilder postfix(String postfix) {
-        this.parameter.postFix = postfix;
+        this.parameter.setPostFix(postfix);
         return this;
     }
 
     public OptionalArgumentBuilder expandEnum() {
-        this.parameter.options.add(CommandParamData.Option.UNKNOWN_0);
+        this.parameter.getOptions().add(CommandParamData.Option.UNKNOWN_0);
         return this;
     }
 

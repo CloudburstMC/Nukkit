@@ -1,9 +1,6 @@
 package cn.nukkit.command;
 
-import cn.nukkit.Server;
 import cn.nukkit.command.args.builder.CommandOverloadBuilder;
-import cn.nukkit.command.data.CommandData;
-import cn.nukkit.command.data.CommandOverload;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
@@ -24,22 +21,14 @@ import java.util.*;
 @Log4j2
 public abstract class Command {
 
-    protected CommandData commandData;
-
     private final String name;
-
     private String[] aliases;
-
     protected String description;
-
     protected String usageMessage;
-
     private String permission = null;
-
     private String permissionMessage = null;
 
-    protected List<CommandParameter[]> commandParameters = new ArrayList<>();
-
+    protected List<CommandParameter[]> commandParameters = new ArrayList<>(); // TODO: remove
     public List<CommandOverloadBuilder> overloads = new ArrayList<>();
 
     public Timing timing;
@@ -57,7 +46,6 @@ public abstract class Command {
     }
 
     public Command(String name, String description, String usageMessage, String[] aliases) {
-        this.commandData = new CommandData();
         this.name = name.toLowerCase(); // Uppercase letters crash the client?!?
         this.description = description;
         this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
@@ -68,10 +56,6 @@ public abstract class Command {
 
     public CommandParameter[] getCommandParameters(int key) {
         return commandParameters.get(key);
-    }
-
-    public Map<String, CommandOverload> getOverloads() {
-        return this.commandData.overloads;
     }
 
     public abstract boolean execute(CommandSender sender, String aliasUsed, String[] args);
