@@ -10,6 +10,8 @@ import cn.nukkit.utils.TextFormat;
 
 import java.util.Objects;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -21,8 +23,8 @@ public class TellCommand extends VanillaCommand {
         this.setPermission("nukkit.command.tell");
 
         registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("message", CommandParamType.RAWTEXT);
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(requiredArg("message", CommandParamType.RAWTEXT));
     }
 
     @Override

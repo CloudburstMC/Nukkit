@@ -74,16 +74,9 @@ public class CommandUtils {
     }
 
     protected static CommandParamData toNetwork(CommandParameter commandParameter) {
-        List<CommandParamData.Option> options = new ArrayList<>();
-        if(commandParameter.enumData != null && commandParameter.enumData.getValues().size() > 1) {
-            // I have no idea what that is actually does, but im aware that it changes how some enums display.
-            // With it, the TitleType enum will show as <title:subtitle:actionbar>, which is better
-            options.add(CommandParamData.Option.UNKNOWN_0);
-        }
-
         return new CommandParamData(commandParameter.name, commandParameter.optional,
                 toNetwork(commandParameter.enumData), NETWORK_TYPES.get(commandParameter.type),
-                commandParameter.postFix, options);
+                commandParameter.postFix, commandParameter.options);
     }
 
     private static CommandEnumData toNetwork(CommandEnum commandEnum) {

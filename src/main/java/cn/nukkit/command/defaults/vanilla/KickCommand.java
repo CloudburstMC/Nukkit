@@ -10,6 +10,9 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -21,8 +24,8 @@ public class KickCommand extends VanillaCommand {
         this.setPermission("nukkit.command.kick");
 
         registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .optionalArg("reason", CommandParamType.RAWTEXT);
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(optionalArg("reason", CommandParamType.RAWTEXT));
     }
 
     @Override

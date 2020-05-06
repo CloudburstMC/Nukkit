@@ -15,6 +15,8 @@ import com.nukkitx.math.vector.Vector3f;
 
 import java.util.Random;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
 import static cn.nukkit.item.ItemIds.SLIME_BALL;
 import static cn.nukkit.item.ItemIds.SNOWBALL;
 
@@ -33,10 +35,10 @@ public class ParticleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.particle");
 
         registerOverload()
-                .requiredArg("name", ENUM_VALUES)
-                .requiredArg("position", CommandParamType.POSITION)
-                .optionalArg("count", CommandParamType.INT)
-                .optionalArg("data", CommandParamType.RAWTEXT);
+                .then(requiredArg("name", ENUM_VALUES))
+                .then(requiredArg("position", CommandParamType.POSITION))
+                .then(optionalArg("count", CommandParamType.INT))
+                .then(optionalArg("data", CommandParamType.RAWTEXT));
     }
 
     private static float getFloat(String arg, float defaultValue) throws Exception {

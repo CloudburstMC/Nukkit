@@ -11,6 +11,8 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3f;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/12/13 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -20,7 +22,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         super(name, "commands.setworldspawn.description", "/setworldspawn <position>");
         this.setPermission("nukkit.command.setworldspawn");
 
-        registerOverload().requiredArg("blockPos", CommandParamType.POSITION);
+        registerOverload().then(requiredArg("blockPos", CommandParamType.POSITION));
     }
 
     @Override

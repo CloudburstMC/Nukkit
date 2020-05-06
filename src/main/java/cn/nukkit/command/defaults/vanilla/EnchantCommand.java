@@ -12,6 +12,8 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
 import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
 
 /**
  * Created by Pub4Game on 23.01.2016.
@@ -23,14 +25,14 @@ public class EnchantCommand extends VanillaCommand {
         this.setPermission("nukkit.command.enchant");
 
         registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("enchantment ID", CommandParamType.INT)
-                .optionalArg("level", CommandParamType.INT);
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(requiredArg("enchantment ID", CommandParamType.INT))
+                .then(optionalArg("level", CommandParamType.INT));
 
         registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("id", CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST)
-                .optionalArg("level", CommandParamType.INT);
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(requiredArg("id", CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST))
+                .then(optionalArg("level", CommandParamType.INT));
     }
 
     @Override

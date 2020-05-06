@@ -10,6 +10,8 @@ import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -19,7 +21,7 @@ public class DeopCommand extends VanillaCommand {
         super(name, "commands.deop.description", "/deop <player>");
         this.setPermission("nukkit.command.op.take");
 
-        registerOverload().requiredArg("player", CommandParamType.TARGET);
+        registerOverload().then(requiredArg("player", CommandParamType.TARGET));
     }
 
     @Override

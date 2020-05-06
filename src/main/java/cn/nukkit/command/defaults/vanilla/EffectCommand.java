@@ -12,6 +12,10 @@ import cn.nukkit.potion.InstantEffect;
 import cn.nukkit.utils.ServerException;
 import cn.nukkit.utils.TextFormat;
 
+import static cn.nukkit.command.args.builder.LiteralArgumentBuilder.literal;
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created by Snake1999 and Pub4Game on 2016/1/23.
  * Package cn.nukkit.command.defaults in project nukkit.
@@ -28,15 +32,15 @@ public class EffectCommand extends Command {
 //        }
 
         registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .literal("clear"); // TODO: this::clear
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(literal("clear")); // TODO: this::clear
 
         registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("effect", CommandParamType.STRING)
-                .optionalArg("seconds", CommandParamType.INT)
-                .optionalArg("amplifier", CommandParamType.INT)
-                .optionalArg("hideParticles", new String[]{"true", "false"});
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(requiredArg("effect", CommandParamType.STRING))
+                .then(optionalArg("seconds", CommandParamType.INT))
+                .then(optionalArg("amplifier", CommandParamType.INT))
+                .then(optionalArg("hideParticles", new String[]{"true", "false"}));
     }
 
     @Override

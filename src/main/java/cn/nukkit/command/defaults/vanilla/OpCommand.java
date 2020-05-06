@@ -13,6 +13,8 @@ import lombok.extern.log4j.Log4j2;
 import java.util.Optional;
 import java.util.UUID;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -24,7 +26,7 @@ public class OpCommand extends VanillaCommand {
         super(name, "commands.op.description", "/op <player>");
         this.setPermission("nukkit.command.op.give");
 
-        registerOverload().requiredArg("player", CommandParamType.TARGET);
+        registerOverload().then(requiredArg("player", CommandParamType.TARGET));
     }
 
     @Override

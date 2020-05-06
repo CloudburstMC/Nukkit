@@ -9,6 +9,9 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import static cn.nukkit.command.args.builder.LiteralArgumentBuilder.literal;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * @author Tee7even
  */
@@ -17,19 +20,25 @@ public class TitleCommand extends VanillaCommand {
         super(name, "commands.title.description", "/title <player> <clear|reset>\n/title <player> <|title|subtitle|actionbar> <text>\n/title <player> <times> <fadein> <stay> <fadeOut>");
         this.setPermission("nukkit.command.title");
 
-        registerOverload().requiredArg("player", CommandParamType.TARGET).literal("clear");
-        registerOverload().requiredArg("player", CommandParamType.TARGET).literal("reset");
+        registerOverload()
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(literal("clear"));
 
-        registerOverload().requiredArg("player", CommandParamType.TARGET)
-                .literals("titleLocation", "TitleType", new String[]{"tile", "subtitle", "actionbar"})
-                .requiredArg("titleText", CommandParamType.STRING);
+        registerOverload()
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(literal("reset"));
+
+//        registerOverload().requiredArg("player", CommandParamType.TARGET)
+//                .literals("titleLocation", "TitleType", new String[]{"tile", "subtitle", "actionbar"})
+//                .requiredArg("titleText", CommandParamType.STRING);
 
 
-        registerOverload().requiredArg("player", CommandParamType.TARGET)
-                .literal("times")
-                .requiredArg("fadeIn", CommandParamType.INT)
-                .requiredArg("stay", CommandParamType.INT)
-                .requiredArg("fadeOut", CommandParamType.INT);
+        registerOverload()
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(literal("times"))
+                .then(requiredArg("fadeIn", CommandParamType.INT))
+                .then(requiredArg("stay", CommandParamType.INT))
+                .then(requiredArg("fadeOut", CommandParamType.INT));
     }
 
     @Override

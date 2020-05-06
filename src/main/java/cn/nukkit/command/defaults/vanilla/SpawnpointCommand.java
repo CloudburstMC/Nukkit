@@ -12,6 +12,9 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/12/13 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -21,10 +24,10 @@ public class SpawnpointCommand extends VanillaCommand {
         super(name, "commands.spawnpoint.description", "/spawnpoint [player] <position>");
         this.setPermission("nukkit.command.spawnpoint");
 
-        registerOverload().optionalArg("blockPos", CommandParamType.POSITION);
+        registerOverload().then(optionalArg("blockPos", CommandParamType.POSITION));
         registerOverload()
-                .requiredArg("target", CommandParamType.TARGET)
-                .optionalArg("pos", CommandParamType.POSITION);
+                .then(requiredArg("target", CommandParamType.TARGET))
+                .then(optionalArg("pos", CommandParamType.POSITION));
     }
 
     @Override

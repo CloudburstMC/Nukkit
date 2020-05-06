@@ -1,10 +1,12 @@
 package cn.nukkit.command.data;
 
 
+import com.nukkitx.protocol.bedrock.data.CommandParamData;
 import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 @ToString
 public class CommandParameter {
@@ -29,7 +31,7 @@ public class CommandParameter {
     public String name;
     public CommandParamType type;
     public boolean optional;
-    public byte options = 0;
+    public List<CommandParamData.Option> options;
 
     public CommandEnum enumData;
     public String postFix;

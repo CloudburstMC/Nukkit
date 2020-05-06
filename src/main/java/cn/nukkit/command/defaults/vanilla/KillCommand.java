@@ -16,6 +16,8 @@ import cn.nukkit.utils.TextFormat;
 
 import java.util.StringJoiner;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+
 /**
  * Created on 2015/12/08 by Pub4Game.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -27,7 +29,7 @@ public class KillCommand extends VanillaCommand {
         this.setPermission("nukkit.command.kill.self;"
                 + "nukkit.command.kill.other");
 
-        registerOverload().optionalArg("player", CommandParamType.TARGET);
+        registerOverload().then(optionalArg("player", CommandParamType.TARGET));
     }
 
     @Override

@@ -17,7 +17,7 @@ public class TimingsCommand extends VanillaCommand {
         super(name, "nukkit.command.timings.description", "/timings <on|off|paste>");
         this.setPermission("nukkit.command.timings");
 
-        registerOverload().literals("action", "TimingsAction", new String[]{"on", "off", "paste"});
+        //registerOverload().literals("action", "TimingsAction", new String[]{"on", "off", "paste"});
     }
 
     @Override

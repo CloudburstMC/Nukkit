@@ -204,7 +204,11 @@ public abstract class Command {
         CommandParamData[][] overloads = new CommandParamData[this.overloads.size()][];
 
         for (int i = 0; i < overloads.length; i++) {
-            CommandParameter[] parameters = this.overloads.get(i).getParameters().toArray(new CommandParameter[0]);
+            // TODO: find a nicer way to do this, preferably a one line lambda thing? i'm no expert on lambda
+            List<CommandParameter> params1 = new LinkedList<>();
+            this.overloads.get(i).getArguments().forEach(arg -> params1.add(arg.build()));
+
+            CommandParameter[] parameters = params1.toArray(new CommandParameter[0]);
             CommandParamData[] params = new CommandParamData[parameters.length];
             for (int i2 = 0; i2 < parameters.length; i2++) {
                 params[i2] = CommandUtils.toNetwork(parameters[i2]);

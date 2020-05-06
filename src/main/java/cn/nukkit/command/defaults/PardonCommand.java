@@ -6,6 +6,8 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -18,7 +20,7 @@ public class PardonCommand extends VanillaCommand {
         this.setAliases(new String[]{"unban"});
         this.setUsage("/unban <player>");
 
-        registerOverload().requiredArg("player", CommandParamType.TARGET);
+        registerOverload().then(requiredArg("player", CommandParamType.TARGET));
     }
 
     @Override

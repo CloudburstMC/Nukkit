@@ -7,6 +7,8 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -17,8 +19,10 @@ public class DefaultGamemodeCommand extends VanillaCommand {
         super(name, "commands.defaultgamemode.description", "/defaultgamemode <mode>");
         this.setPermission("nukkit.command.defaultgamemode");
 
-        registerOverload().requiredArg("mode", CommandParamType.INT);
-        registerOverload().requiredArg("mode", new String[]{"survival", "creative", "s", "c", "adventure", "a", "spectator", "view", "v"});
+        registerOverload()
+                .then(requiredArg("mode", CommandParamType.INT));
+        registerOverload()
+                .then(requiredArg("mode", new String[]{"survival", "creative", "s", "c", "adventure", "a", "spectator", "view", "v"}));
     }
 
     @Override

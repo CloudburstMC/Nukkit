@@ -12,6 +12,8 @@ import cn.nukkit.utils.TextFormat;
 import lombok.extern.log4j.Log4j2;
 
 import static cn.nukkit.block.BlockIds.AIR;
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
 
 /**
  * Created on 2015/12/9 by xtypr.
@@ -24,10 +26,10 @@ public class GiveCommand extends VanillaCommand {
         this.setPermission("nukkit.command.give");
 
         registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("itemName", CommandParameter.ENUM_TYPE_ITEM_LIST)
-                .optionalArg("amount", CommandParamType.INT)
-                .optionalArg("data", CommandParamType.INT); // TODO: components
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(requiredArg("itemName", CommandParameter.ENUM_TYPE_ITEM_LIST))
+                .then(optionalArg("amount", CommandParamType.INT))
+                .then(optionalArg("data", CommandParamType.INT)); // TODO: components
     }
 
     @Override

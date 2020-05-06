@@ -9,6 +9,9 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import com.nukkitx.protocol.bedrock.data.CommandData;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created by Snake1999 on 2016/1/22.
  * Package cn.nukkit.command.defaults in project nukkit.
@@ -19,8 +22,8 @@ public class XpCommand extends Command {
         this.setPermission("nukkit.command.xp");
 
         registerOverload()
-                .requiredArg("amount|level", CommandParamType.INT)
-                .optionalArg("player", CommandParamType.TARGET);
+                .then(requiredArg("amount|level", CommandParamType.INT)) // TODO: postfix
+                .then(optionalArg("player", CommandParamType.TARGET));
     }
 
     @Override

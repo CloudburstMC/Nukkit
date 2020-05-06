@@ -13,6 +13,8 @@ import cn.nukkit.registry.GameRuleRegistry;
 import java.util.Arrays;
 import java.util.StringJoiner;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+
 public class GameruleCommand extends VanillaCommand {
     private static final GameRuleRegistry registry = GameRuleRegistry.get();
 
@@ -21,8 +23,8 @@ public class GameruleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.gamerule");
 
         registerOverload()
-                .optionalArg("rule", registry.getRuleNames().toArray(new String[0]))
-                .optionalArg("value", CommandParamType.STRING);
+                .then(optionalArg("rule", registry.getRuleNames().toArray(new String[0])))
+                .then(optionalArg("value", CommandParamType.STRING));
     }
 
     @Override

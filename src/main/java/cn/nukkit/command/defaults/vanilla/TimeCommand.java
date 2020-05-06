@@ -10,6 +10,9 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import static cn.nukkit.command.args.builder.LiteralArgumentBuilder.literal;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -24,19 +27,19 @@ public class TimeCommand extends VanillaCommand {
                 "nukkit.command.time.stop");
 
         registerOverload()
-                .literal("add")
-                .requiredArg("amount", CommandParamType.INT);
+                .then(literal("add"))
+                .then(requiredArg("amount", CommandParamType.INT));
 
         registerOverload()
-                .literal("set")
-                .requiredArg("amount", CommandParamType.INT);
+                .then(literal("set"))
+                .then(requiredArg("amount", CommandParamType.INT));
 
         registerOverload()
-                .literal("set")
-                .requiredArg("time", "TimeSpec", new String[]{"day", "midnight", "night", "noon", "sunrise", "sunset"});
+                .then(literal("set"))
+                .then(requiredArg("time", "TimeSpec", new String[]{"day", "midnight", "night", "noon", "sunrise", "sunset"}));
 
         registerOverload()
-                .literal("query"); // TODO: day, daytime, gametime
+                .then(literal("query")); // TODO: day, daytime, gametime
     }
 
     @Override

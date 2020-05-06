@@ -8,6 +8,8 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -18,7 +20,7 @@ public class MeCommand extends VanillaCommand {
         super(name, "commands.me.description", "/me <action>");
         this.setPermission("nukkit.command.me");
 
-        registerOverload().requiredArg("action...", CommandParamType.RAWTEXT);
+        registerOverload().then(requiredArg("action...", CommandParamType.RAWTEXT));
     }
 
     @Override

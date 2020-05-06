@@ -11,6 +11,8 @@ import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket;
 
 import java.util.ArrayList;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -21,8 +23,8 @@ public class DifficultyCommand extends VanillaCommand {
         super(name, "commands.difficulty.description", "commands.difficulty.usage");
         this.setPermission("nukkit.command.difficulty");
 
-        registerOverload().requiredArg("difficulty", "Difficulty", new String[]{"e", "easy", "h", "hard", "n", "normal", "p", "peaceful"});
-        registerOverload().requiredArg("difficulty", CommandParamType.INT);
+        registerOverload().then(requiredArg("difficulty", "Difficulty", new String[]{"e", "easy", "h", "hard", "n", "normal", "p", "peaceful"}));
+        registerOverload().then(requiredArg("difficulty", CommandParamType.INT));
     }
 
     @Override

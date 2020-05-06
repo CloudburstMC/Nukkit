@@ -24,9 +24,9 @@ public class WhitelistCommand extends VanillaCommand {
                         "nukkit.command.whitelist.remove"
         );
 
-        registerOverload()
-                .literals("action", "WhitelistAction", new String[]{"on", "off", "list", "reload", "add", "remove"})
-                .optionalArg("name", CommandParamType.STRING);
+//        registerOverload()
+//                .literals("action", "WhitelistAction", new String[]{"on", "off", "list", "reload", "add", "remove"})
+//                .optionalArg("name", CommandParamType.STRING);
     }
 
 

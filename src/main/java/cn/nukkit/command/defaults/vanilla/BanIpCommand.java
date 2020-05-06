@@ -20,6 +20,9 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -32,8 +35,8 @@ public class BanIpCommand extends VanillaCommand {
         this.setAliases(new String[]{"banip"});
 
         registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .optionalArg("reason", CommandParamType.STRING);
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(optionalArg("reason", CommandParamType.STRING));
     }
 
     @Override

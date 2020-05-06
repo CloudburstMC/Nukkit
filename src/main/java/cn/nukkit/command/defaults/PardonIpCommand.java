@@ -10,6 +10,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -22,7 +24,7 @@ public class PardonIpCommand extends VanillaCommand {
         this.setAliases(new String[]{"unbanip", "unban-ip", "pardonip"});
         this.setUsage("/unbanip <ip>");
 
-        registerOverload().requiredArg("ip", CommandParamType.STRING);
+        registerOverload().then(requiredArg("ip", CommandParamType.STRING));
     }
 
     @Override

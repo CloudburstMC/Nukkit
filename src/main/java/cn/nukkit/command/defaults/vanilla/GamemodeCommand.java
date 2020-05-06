@@ -3,12 +3,17 @@ package cn.nukkit.command.defaults.vanilla;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
+import cn.nukkit.command.args.builder.LiteralArgumentBuilder;
+import cn.nukkit.command.args.builder.RequiredArgumentBuilder;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
 
 /**
  * Created on 2015/11/13 by xtypr.
@@ -26,12 +31,12 @@ public class GamemodeCommand extends VanillaCommand {
                 "nukkit.command.gamemode.other");
 
         registerOverload()
-                .requiredArg("mode", "GameMode", new String[]{"sp", "spectator", "a", "adventure", "c", "creative", "s", "survival"})
-                .optionalArg("player", CommandParamType.TARGET);
+                .then(requiredArg("mode", "GameMode", new String[]{"sp", "spectator", "a", "adventure", "c", "creative", "s", "survival"}))
+                .then(optionalArg("player", CommandParamType.TARGET));
 
         registerOverload()
-                .requiredArg("mode", CommandParamType.INT)
-                .optionalArg("player", CommandParamType.TARGET);
+                .then(requiredArg("mode", CommandParamType.INT))
+                .then(optionalArg("player", CommandParamType.TARGET));
     }
 
     @Override

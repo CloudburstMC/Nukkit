@@ -21,9 +21,9 @@ public class WeatherCommand extends VanillaCommand {
         super(name, "commands.weather.description", "/weather <clear|rain|thunder> <time>");
         this.setPermission("nukkit.command.weather");
 
-        registerOverload()
-                .literals("type", "WeatherType", new String[]{"clear", "rain", "thunder"})
-                .optionalArg("duration", CommandParamType.INT);
+//        registerOverload()
+//                .literals("type", "WeatherType", new String[]{"clear", "rain", "thunder"})
+//                .optionalArg("duration", CommandParamType.INT);
     }
 
     @Override

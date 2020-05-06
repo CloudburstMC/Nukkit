@@ -16,6 +16,8 @@ import com.nukkitx.math.vector.Vector3f;
 import java.util.Arrays;
 import java.util.Optional;
 
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * Created on 2015/11/12 by Pub4Game and milkice.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -25,14 +27,17 @@ public class TeleportCommand extends VanillaCommand {
         super(name, "commands.tp.description", "/tp [player] <position|target>");
         this.setPermission("nukkit.command.teleport");
 
-        registerOverload().requiredArg("player", CommandParamType.TARGET);
-        registerOverload().requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("target", CommandParamType.TARGET);
+        registerOverload().then(requiredArg("player", CommandParamType.TARGET));
 
-        registerOverload().requiredArg("player", CommandParamType.TARGET)
-                .requiredArg("position", CommandParamType.POSITION);
+        registerOverload()
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(requiredArg("target", CommandParamType.TARGET));
 
-        registerOverload().requiredArg("position", CommandParamType.POSITION);
+        registerOverload()
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(requiredArg("position", CommandParamType.POSITION));
+
+        registerOverload().then(requiredArg("position", CommandParamType.POSITION));
     }
 
     @Override

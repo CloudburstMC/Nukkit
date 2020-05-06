@@ -9,6 +9,9 @@ import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -20,8 +23,8 @@ public class BanCommand extends VanillaCommand {
         this.setPermission("nukkit.command.ban.player");
 
         registerOverload()
-                .requiredArg("player", CommandParamType.TARGET)
-                .optionalArg("reason", CommandParamType.STRING);
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(optionalArg("reason", CommandParamType.STRING));
     }
 
     @Override

@@ -9,6 +9,8 @@ import lombok.extern.log4j.Log4j2;
 
 import java.util.Iterator;
 
+import static cn.nukkit.command.args.builder.LiteralArgumentBuilder.literal;
+
 /**
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -20,8 +22,8 @@ public class BanListCommand extends VanillaCommand {
         this.setPermission("nukkit.command.ban.list");
         this.setUsage("/banlist <ips|players>");
 
-        registerOverload().literal("ips");
-        registerOverload().literal("players");
+        registerOverload().then(literal("ips"));
+        registerOverload().then(literal("players"));
     }
 
     @Override

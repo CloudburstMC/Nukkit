@@ -12,6 +12,8 @@ import cn.nukkit.utils.TextFormat;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -22,8 +24,8 @@ public class HelpCommand extends VanillaCommand {
         super(name, "commands.help.description", "/help [page]", new String[]{"?"});
         this.setPermission("nukkit.command.help");
 
-        registerOverload().optionalArg("page", CommandParamType.INT);
-        registerOverload().optionalArg("command", CommandParamType.STRING);
+        registerOverload().then(optionalArg("page", CommandParamType.INT));
+        registerOverload().then(optionalArg("command", CommandParamType.STRING));
     }
 
     @Override
