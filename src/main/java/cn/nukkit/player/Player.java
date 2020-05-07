@@ -7,6 +7,8 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockEnderChest;
 import cn.nukkit.block.BlockIds;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.Sign;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
@@ -3216,6 +3218,27 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         ShowProfilePacket packet = new ShowProfilePacket();
         packet.setXuid(xuid);
         this.sendPacket(packet);
+    }
+
+    /**
+     * Sends a sign change. Sends "fake" sign contents
+     * by sending a sign change packet. This does not actually
+     * modify the sign lines and is only temporary.
+     *
+     * @param position the position of the sign
+     * @param lines the lines to send
+     */
+    public void sendSignChange(Vector3i position, String[] lines) {
+        BlockEntity blockEntity = level.getBlockEntity(position);
+        if (!(blockEntity instanceof Sign)) {
+            return;
+        }
+
+        CompoundTag tag = blockEntity.getChunkTag().toBuilder().stringTag("Text", String.join("\n", lines)).buildRootTag();
+        BlockEntityDataPacket blockEntityDataPacket = new BlockEntityDataPacket();
+        blockEntityDataPacket.setBlockPosition(position);
+        blockEntityDataPacket.setData(tag);
+        this.sendPacket(blockEntityDataPacket);
     }
 
     public void startFishing(Item fishingRod) {
