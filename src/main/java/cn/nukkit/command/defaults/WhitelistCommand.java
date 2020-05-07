@@ -7,6 +7,9 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
+import static cn.nukkit.command.args.builder.LiteralsArgumentBuilder.literals;
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -24,9 +27,9 @@ public class WhitelistCommand extends VanillaCommand {
                         "nukkit.command.whitelist.remove"
         );
 
-//        registerOverload()
-//                .literals("action", "WhitelistAction", new String[]{"on", "off", "list", "reload", "add", "remove"})
-//                .optionalArg("name", CommandParamType.STRING);
+        registerOverload()
+                .then(literals("action", "WhitelistAction", new String[]{"on", "off", "list", "reload", "add", "remove"}))
+                .then(optionalArg("name", CommandParamType.STRING));
     }
 
 

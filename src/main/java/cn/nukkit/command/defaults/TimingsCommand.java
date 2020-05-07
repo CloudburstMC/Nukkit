@@ -7,6 +7,8 @@ import cn.nukkit.locale.TranslationContainer;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsExport;
 
+import static cn.nukkit.command.args.builder.LiteralsArgumentBuilder.literals;
+
 /**
  * @author fromgate
  * @author Pub4Game
@@ -17,7 +19,8 @@ public class TimingsCommand extends VanillaCommand {
         super(name, "nukkit.command.timings.description", "/timings <on|off|paste>");
         this.setPermission("nukkit.command.timings");
 
-        //registerOverload().literals("action", "TimingsAction", new String[]{"on", "off", "paste"});
+        registerOverload()
+                .then(literals("action", "TimingsAction", new String[]{"on", "off", "paste"}));
     }
 
     @Override

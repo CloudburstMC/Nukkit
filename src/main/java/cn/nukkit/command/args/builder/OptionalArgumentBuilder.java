@@ -38,11 +38,6 @@ public class OptionalArgumentBuilder extends ArgumentBuilder<OptionalArgumentBui
         return this;
     }
 
-    public OptionalArgumentBuilder expandEnum() {
-        this.parameter.getOptions().add(CommandParamData.Option.UNKNOWN_0);
-        return this;
-    }
-
     @Override
     public CommandParameter build() {
         return parameter;

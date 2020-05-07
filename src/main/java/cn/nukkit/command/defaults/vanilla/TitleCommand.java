@@ -10,6 +10,7 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
 import static cn.nukkit.command.args.builder.LiteralArgumentBuilder.literal;
+import static cn.nukkit.command.args.builder.LiteralsArgumentBuilder.literals;
 import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
 
 /**
@@ -28,9 +29,10 @@ public class TitleCommand extends VanillaCommand {
                 .then(requiredArg("player", CommandParamType.TARGET))
                 .then(literal("reset"));
 
-//        registerOverload().requiredArg("player", CommandParamType.TARGET)
-//                .literals("titleLocation", "TitleType", new String[]{"tile", "subtitle", "actionbar"})
-//                .requiredArg("titleText", CommandParamType.STRING);
+        registerOverload()
+                .then(requiredArg("player", CommandParamType.TARGET))
+                .then(literals("titleLocation", "TitleType", new String[]{"title", "subtitle", "actionbar"}).expandEnum())
+                .then(requiredArg("titleText", CommandParamType.STRING));
 
 
         registerOverload()

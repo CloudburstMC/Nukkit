@@ -10,6 +10,9 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import lombok.extern.log4j.Log4j2;
 
+import static cn.nukkit.command.args.builder.LiteralsArgumentBuilder.literals;
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+
 /**
  * author: Angelic47
  * Nukkit Project
@@ -21,9 +24,9 @@ public class WeatherCommand extends VanillaCommand {
         super(name, "commands.weather.description", "/weather <clear|rain|thunder> <time>");
         this.setPermission("nukkit.command.weather");
 
-//        registerOverload()
-//                .literals("type", "WeatherType", new String[]{"clear", "rain", "thunder"})
-//                .optionalArg("duration", CommandParamType.INT);
+        registerOverload()
+                .then(literals("type", "WeatherType", new String[]{"clear", "rain", "thunder"}))
+                .then(optionalArg("duration", CommandParamType.INT));
     }
 
     @Override
