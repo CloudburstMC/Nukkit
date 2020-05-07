@@ -9,8 +9,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import io.netty.util.internal.StringUtil;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -60,7 +60,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
         int repairMaterial = getRepairMaterial(target);
         Item result = target.clone();
         int levelCost = getRepairCost(result) + (sacrifice.isNull() ? 0 : getRepairCost(sacrifice));
-        Map<Integer, Enchantment> enchantmentMap = new HashMap<>();
+        Map<Integer, Enchantment> enchantmentMap = new LinkedHashMap<>();
         for (Enchantment enchantment : target.getEnchantments()) {
             enchantmentMap.put(enchantment.getId(), enchantment);
         }
