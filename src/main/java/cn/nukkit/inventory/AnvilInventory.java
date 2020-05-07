@@ -117,7 +117,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                     Enchantment sacrificeEnchantment;
                     do {
                         if (!sacrificeEnchIter.hasNext()) {
-                            if (incompatibleFlag && !compatibleFlag) {
+                            if (incompatibleFlag && !compatibleFlag) { // TODO These flags would never be positive?
                                 setResult(Item.get(0));
                                 setLevelCost(0);
                                 return;
@@ -172,7 +172,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                             rarity = Math.max(1, rarity / 2);
                         }
                 
-                        extraCost += rarity * resultLevel;
+                        extraCost += rarity * Math.max(0, resultLevel - targetLevel);
                         if (target.getCount() > 1) {
                             extraCost = 40;
                         }
