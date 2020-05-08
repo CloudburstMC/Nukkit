@@ -4788,7 +4788,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.checkMovement = checkMovement;
     }
 
-    public boolean getCheckMovement() {
+    public boolean isCheckingMovement() {
         return this.checkMovement;
     }
 
