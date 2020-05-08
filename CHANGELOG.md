@@ -9,6 +9,9 @@ Nukkit 1.X and 2.X.
 ## [Unreleased]
 Click the link above to see the future.
 
+## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
+Fixes several anvil issues.
+
 ### Added
 - [#224] Added option to disable watchdog with `-DdisableWatchdog=true`. 
   This should be used **only by developers** to debug the server without interruptions by the crash detection system.
@@ -167,7 +170,8 @@ Click the link above to see the future.
     - Loom
     - Bamboo
 
-[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...HEAD
+[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...HEAD
+[1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
 [1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
 [1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN#files_bucket
 
