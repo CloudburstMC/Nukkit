@@ -43,5 +43,7 @@ assignees: ''
 ### 💢 Crash Dump, Stack Trace and Other Files
 <!-- ✍ Use https://hastebin.com for big logs or dumps -->
 
+
 ### 💬 Anything else we should know?
 <!-- ✍ This is the perfect place to add any additional details -->
+
