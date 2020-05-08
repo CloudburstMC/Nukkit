@@ -87,8 +87,8 @@ import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -2826,7 +2826,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             Server.broadcastPacket(this.getViewers().values(), entityEventPacket);
                             break;
                         case EntityEventPacket.ENCHANT:
-                            if (entityEventPacket.eid != this.id) {
+                            // TODO IMHO This packet should be ignored and make the server calculate the cost by itself
+                            // TODO Keeping the enchanting table work but this should be revisited later. PowerNukkit#232
+                            if (entityEventPacket.eid != this.id || craftingType == CRAFTING_ANVIL) {
                                 break;
                             }
 

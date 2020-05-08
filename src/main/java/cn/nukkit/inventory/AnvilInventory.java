@@ -7,10 +7,11 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
 import io.netty.util.internal.StringUtil;
+import lombok.NonNull;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -24,10 +25,12 @@ public class AnvilInventory extends FakeBlockUIComponent {
     public static final int TARGET = 0;
     public static final int SACRIFICE = 1;
     public static final int RESULT = 50;
-    private static final int SLOT_RESULT = RESULT - OFFSET;
     
     private int levelCost;
     private String newItemName;
+    
+    @NonNull
+    private Item currentResult = Item.get(0);
 
     public AnvilInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.ANVIL, OFFSET, position);
@@ -60,7 +63,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
         int repairMaterial = getRepairMaterial(target);
         Item result = target.clone();
         int levelCost = getRepairCost(result) + (sacrifice.isNull() ? 0 : getRepairCost(sacrifice));
-        Map<Integer, Enchantment> enchantmentMap = new HashMap<>();
+        Map<Integer, Enchantment> enchantmentMap = new LinkedHashMap<>();
         for (Enchantment enchantment : target.getEnchantments()) {
             enchantmentMap.put(enchantment.getId(), enchantment);
         }
@@ -117,7 +120,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                     Enchantment sacrificeEnchantment;
                     do {
                         if (!sacrificeEnchIter.hasNext()) {
-                            if (incompatibleFlag && !compatibleFlag) {
+                            if (incompatibleFlag && !compatibleFlag) { // TODO These flags would never be positive?
                                 setResult(Item.get(0));
                                 setLevelCost(0);
                                 return;
@@ -172,7 +175,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                             rarity = Math.max(1, rarity / 2);
                         }
                 
-                        extraCost += rarity * resultLevel;
+                        extraCost += rarity * Math.max(0, resultLevel - targetLevel);
                         if (target.getCount() > 1) {
                             extraCost = 40;
                         }
@@ -254,7 +257,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
             return Item.get(0);
         }
         if (index == 2) {
-            index = SLOT_RESULT;
+            return getResult();
         }
         
         return super.getItem(index);
@@ -267,7 +270,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
         }
         
         if (index == 2) {
-            index = SLOT_RESULT;
+            return setResult(item);
         }
         
         return super.setItem(index, item, send);
@@ -282,9 +285,18 @@ public class AnvilInventory extends FakeBlockUIComponent {
     }
     
     public Item getResult() {
-        return getItem(2);
+        return currentResult.clone();
     }
-    
+
+    @Override
+    public void sendContents(Player... players) {
+        super.sendContents(players);
+        // Fixes desync when transactions are cancelled.
+        for (Player player : players) {
+            player.sendExperienceLevel();
+        }
+    }
+
     public boolean setFirstItem(Item item, boolean send) {
         return setItem(SACRIFICE, item, send);
     }
@@ -300,13 +312,26 @@ public class AnvilInventory extends FakeBlockUIComponent {
     public boolean setSecondItem(Item item) {
         return setSecondItem(item, true);
     }
-    
+
+    /**
+     * @deprecated send parameter is deprecated. This method will be removed in 1.3.0.0-PN.
+     */
+    @Deprecated
     public boolean setResult(Item item, boolean send) {
         return setItem(2, item, send);
     }
-    
+
+    /**
+     * @deprecated the client won't see this change, and the transaction might fail. This method will be removed from public in 1.3.0.0-PN.
+     */
+    @Deprecated
     public boolean setResult(Item item) {
-        return setResult(item, true);
+        if (item == null || item.isNull()) {
+            this.currentResult = Item.get(0);
+        } else {
+            this.currentResult = item.clone();
+        }
+        return true;
     }
     
     private static int getRepairCost(Item item) {
