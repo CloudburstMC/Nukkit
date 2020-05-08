@@ -8,11 +8,13 @@ assignees: ''
 ---
 
 # ❇ Feature Request
-<!-- 👉 This template is helpful but you may erase everything if you can express the issue clearly -->
-<!-- Feel free to ask questions or start related discussion -->
+<!-- 
+👉 This template is helpful, but you may erase everything if you can express the issue clearly
+      Feel free to ask questions or start related discussion 
+-->
 
 ### 📸 Screenshots / Videos
-<!-- ✍ If applicable, add screenshots or a video recording to help explain your problem -->
+<!-- ✍ If applicable, add screenshots or video recordings to help explain your problem -->
 
 
 ### ✔ Expected Behavior
