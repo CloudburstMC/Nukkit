@@ -17,8 +17,9 @@ import com.nukkitx.protocol.bedrock.packet.LoginPacket;
 import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Extollite
@@ -67,31 +68,13 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         }
 
         String username = this.loginData.getChainData().getUsername();
-        boolean valid = true;
-        int len = username.length();
-        if (len > 16 || len < 3) {
-            valid = false;
-        }
 
-        for (int i = 0; i < len && valid; i++) {
-            char c = username.charAt(i);
-            if ((c >= 'a' && c <= 'z') ||
-                    (c >= 'A' && c <= 'Z') ||
-                    (c >= '0' && c <= '9') ||
-                    c == '_' || c == ' '
-            ) {
-                continue;
-            }
-
-            valid = false;
-            break;
-        }
-
-        loginData.setName(TextFormat.clean(username));
-        if (!valid || Objects.equals(loginData.getName().toLowerCase(), "rcon") || Objects.equals(loginData.getName().toLowerCase(), "console")) {
+        if (!this.isValidName(username) || username.equalsIgnoreCase("rcon") || username.equalsIgnoreCase("console")) {
             session.disconnect("disconnectionScreen.invalidName");
             return true;
         }
+
+        loginData.setName(TextFormat.clean(username));
 
         if (!this.loginData.getChainData().getSkin().isValid()) {
             session.disconnect("disconnectionScreen.invalidSkin");
@@ -141,5 +124,18 @@ public class LoginPacketHandler implements BedrockPacketHandler {
 
         session.sendPacket(this.server.getPackManager().getPacksInfos());
         return true;
+    }
+
+    private boolean isValidName(String username) {
+        int length = username.length();
+
+        if (length > 16 || length < 3) {
+            return false;
+        }
+
+        Pattern pattern = Pattern.compile("^[aA-zZ\\s\\d_]+$");
+        Matcher matcher = pattern.matcher(username);
+
+        return matcher.matches();
     }
 }
