@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased] 1.2.1.0-PN-SNAPSHOT
+## [Unreleased]
 Click the link above to see the future.
 
 ### Added
@@ -15,8 +15,8 @@ Click the link above to see the future.
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
 
-## [Unreleased] 1.2.0.1-PN-SNAPSHOT
-Click the link above to see the future.
+## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
+Fixes several anvil issues.
 
 ### Added
 - [#224] Added option to disable watchdog with `-DdisableWatchdog=true`. 
@@ -24,6 +24,18 @@ Click the link above to see the future.
 
 ### Fixes
 - [#224] Anvil not merging enchanted items correctly and destroying the items.
+- [#228] Invalid enchantment order on anvil's results causing the crafting transaction to fail.
+- [#226] Anvil cost calculation not applying bedrock edition reductions
+- [#222] Anvil changes the level twice and fails the transaction if the player doesn't have enough.
+- [#235] Wrong flags in MoveEntityAbsolutePacket
+- [#234] Failed anvil transactions caused all involved items to be destroyed
+- [#234] Visual desync in the player's experience level when an anvil transaction fails or is cancelled. 
+
+### Changed
+- [#234] Anvil's result is no longer stored in the PlayerUIInventory at slot 50 as 
+         it was vulnerable to heavy duplication exploits.
+- [#234] `setResult` methods in `AnvilInventory` are now deprecated and marked for removal at 1.3.0.0-PN
+         because it's not supported by the client and changing it will fail the transaction.
 
 ## [1.2.0.0-PN] - 2020-05-03 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/6?closed=1))
 **Note:** Effort has been made to keep this list accurate but some bufixes and new features might be missing here, specially those made by the NukkitX team and contributors.
@@ -164,7 +176,8 @@ Click the link above to see the future.
     - Loom
     - Bamboo
 
-[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...HEAD
+[Unreleased]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...HEAD
+[1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
 [1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
 [1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN#files_bucket
 
@@ -198,4 +211,8 @@ Click the link above to see the future.
 [#219]: https://github.com/GameModsBR/PowerNukkit/pull/219
 [#222]: https://github.com/GameModsBR/PowerNukkit/issues/223
 [#224]: https://github.com/GameModsBR/PowerNukkit/pull/224
+[#226]: https://github.com/GameModsBR/PowerNukkit/issues/226
 [#227]: https://github.com/GameModsBR/PowerNukkit/pull/227
+[#228]: https://github.com/GameModsBR/PowerNukkit/issues/228
+[#234]: https://github.com/GameModsBR/PowerNukkit/issues/234
+[#235]: https://github.com/GameModsBR/PowerNukkit/issues/235
