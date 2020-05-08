@@ -4788,6 +4788,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.checkMovement = checkMovement;
     }
 
+    public boolean getCheckMovement() {
+        return this.checkMovement;
+    }
+
     public synchronized void setLocale(Locale locale) {
         this.locale.set(locale);
     }
