@@ -314,7 +314,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
     }
 
     /**
-     * @deprecated send parameter is deprecated
+     * @deprecated send parameter is deprecated. This method will be removed in 1.3.0.0-PN.
      */
     @Deprecated
     public boolean setResult(Item item, boolean send) {
@@ -322,7 +322,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
     }
 
     /**
-     * @deprecated the client won't see this change, and the transaction might fail.
+     * @deprecated the client won't see this change, and the transaction might fail. This method will be removed from public in 1.3.0.0-PN.
      */
     @Deprecated
     public boolean setResult(Item item) {
