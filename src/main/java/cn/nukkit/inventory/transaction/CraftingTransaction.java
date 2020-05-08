@@ -14,6 +14,7 @@ import cn.nukkit.scheduler.Task;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -172,10 +173,10 @@ public class CraftingTransaction extends InventoryTransaction {
                                     actions.remove(a);
                                     actions.add(a);
                                 });
-                        anvil.setResult(Item.get(0), false);
                     }
                 }
             }
+            source.getUIInventory().setItem(AnvilInventory.RESULT, Item.get(0), false);
         } else if (craftingType == Player.CRAFTING_GRINDSTONE) {
             Inventory inventory = source.getWindowById(Player.GRINDSTONE_WINDOW_ID);
             if (inventory instanceof GrindstoneInventory) {
@@ -202,7 +203,13 @@ public class CraftingTransaction extends InventoryTransaction {
 
     protected void sendInventories() {
         super.sendInventories();
-
+        
+        Optional<Inventory> topWindow = source.getTopWindow();
+        if (topWindow.isPresent()) {
+            //source.removeWindow(topWindow.get());
+            return;
+        }
+        
 		/*
          * TODO: HACK!
 		 * we can't resend the contents of the crafting window, so we force the client to close it instead.
@@ -211,13 +218,14 @@ public class CraftingTransaction extends InventoryTransaction {
 		 */
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = ContainerIds.NONE;
+        //TODO This hack causes PowerNukkit#223
         source.getServer().getScheduler().scheduleDelayedTask(new Task() {
             @Override
             public void onRun(int currentTick) {
                 source.dataPacket(pk);
             }
         }, 20);
-
+        
         this.source.resetCraftingGridType();
     }
 

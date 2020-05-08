@@ -19,6 +19,14 @@ Click the link above to see the future.
 - [#226] Anvil cost calculation not applying bedrock edition reductions
 - [#222] Anvil changes the level twice and fails the transaction if the player doesn't have enough.
 - [#235] Wrong flags in MoveEntityAbsolutePacket
+- [#234] Failed anvil transactions caused all involved items to be destroyed
+- [#234] Visual desync in the player's experience level when an anvil transaction fails or is cancelled. 
+
+### Changed
+- [#234] Anvil's result is no longer stored in the PlayerUIInventory at slot 50 as 
+         it was vulnerable to heavy duplication exploits.
+- [#234] `setResult` methods in `AnvilInventory` are now deprecated and marked for removal at 1.3.0.0-PN
+         because it's not supported by the client and changing it will fail the transaction.
 
 ## [1.2.0.0-PN] - 2020-05-03 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/6?closed=1))
 **Note:** Effort has been made to keep this list accurate but some bufixes and new features might be missing here, specially those made by the NukkitX team and contributors.
@@ -195,4 +203,5 @@ Click the link above to see the future.
 [#224]: https://github.com/GameModsBR/PowerNukkit/pull/224
 [#226]: https://github.com/GameModsBR/PowerNukkit/issues/226
 [#228]: https://github.com/GameModsBR/PowerNukkit/issues/228
+[#234]: https://github.com/GameModsBR/PowerNukkit/issues/234
 [#235]: https://github.com/GameModsBR/PowerNukkit/issues/235
