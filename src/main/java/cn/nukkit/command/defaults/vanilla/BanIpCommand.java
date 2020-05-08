@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
@@ -44,22 +45,13 @@ public class BanIpCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-
         if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
         String value = args[0];
-        String reason = "";
-        for (int i = 1; i < args.length; i++) {
-            reason += args[i] + " ";
-        }
-
-        if (reason.length() > 0) {
-            reason = reason.substring(0, reason.length() - 1);
-        }
+        String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
         if (Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", value)) {
             this.processIPBan(value, sender, reason);
@@ -95,7 +87,6 @@ public class BanIpCommand extends VanillaCommand {
                 }
             }
         }
-
         return true;
     }
 

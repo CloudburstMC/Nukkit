@@ -29,15 +29,14 @@ public class DeopCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-
         if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
         String playerName = args[0];
         IPlayer player = sender.getServer().getOfflinePlayer(playerName);
+
         player.setOp(false);
 
         if (player instanceof Player) {
@@ -45,7 +44,6 @@ public class DeopCommand extends VanillaCommand {
         }
 
         CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.deop.success", player.getName()));
-
         return true;
     }
 }

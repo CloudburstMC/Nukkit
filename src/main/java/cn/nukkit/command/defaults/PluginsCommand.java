@@ -7,6 +7,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -29,21 +30,13 @@ public class PluginsCommand extends VanillaCommand {
             return true;
         }
 
-        this.sendPluginList(sender);
-        return true;
-    }
-
-    private void sendPluginList(CommandSender sender) {
-        String list = "";
+        StringJoiner joiner = new StringJoiner(", ");
         Map<String, Plugin> plugins = sender.getServer().getPluginManager().getPlugins();
-        for (Plugin plugin : plugins.values()) {
-            if (list.length() > 0) {
-                list += TextFormat.WHITE + ", ";
-            }
-            list += plugin.isEnabled() ? TextFormat.GREEN : TextFormat.RED;
-            list += plugin.getDescription().getFullName();
-        }
 
-        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", String.valueOf(plugins.size()), list));
+        plugins.values().forEach(plugin ->
+                joiner.add(plugin.isEnabled() ? TextFormat.GREEN + "" : TextFormat.RED + "" + plugin.getDescription().getFullName()));
+
+        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", String.valueOf(plugins.size()), joiner.toString()));
+        return true;
     }
 }

@@ -3,6 +3,9 @@ package cn.nukkit.permission;
 import cn.nukkit.Nukkit;
 import cn.nukkit.utils.Utils;
 import com.fasterxml.jackson.core.type.TypeReference;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
@@ -13,36 +16,26 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author lukeeey
+ * @author MagicDroidX
  */
 @Log4j2
+@RequiredArgsConstructor
 public class BanList {
-
     private static final TypeReference<LinkedList<TreeMap<String, String>>> BANLIST_TYPE_REFERENCE =
             new TypeReference<LinkedList<TreeMap<String, String>>>() {};
 
     private LinkedHashMap<String, BanEntry> list = new LinkedHashMap<>();
 
-    private final String file;
+    private final String filePath;
 
+    @Setter
+    @Getter
     private boolean enable = true;
 
-    public BanList(String file) {
-        this.file = file;
-    }
-
-    public boolean isEnable() {
-        return enable;
-    }
-
-    public void setEnable(boolean enable) {
-        this.enable = enable;
-    }
-
-    public LinkedHashMap<String, BanEntry> getEntires() {
+    public LinkedHashMap<String, BanEntry> getEntries() {
         removeExpired();
-        return this.list;
+        return list;
     }
 
     public boolean isBanned(String name) {
@@ -91,7 +84,6 @@ public class BanList {
         }
     }
 
-
     public void removeExpired() {
         for (String name : new ArrayList<>(this.list.keySet())) {
             BanEntry entry = this.list.get(name);
@@ -103,14 +95,14 @@ public class BanList {
 
     public void load() {
         this.list = new LinkedHashMap<>();
-        File file = new File(this.file);
+        File file = new File(this.filePath);
         try {
             if (!file.exists()) {
                 file.createNewFile();
                 this.save();
             } else {
 
-                LinkedList<TreeMap<String, String>> list = Nukkit.JSON_MAPPER.readValue(Utils.readFile(this.file),
+                LinkedList<TreeMap<String, String>> list = Nukkit.JSON_MAPPER.readValue(Utils.readFile(this.filePath),
                         BANLIST_TYPE_REFERENCE);
 
                 for (TreeMap<String, String> map : list) {
@@ -128,7 +120,7 @@ public class BanList {
         this.removeExpired();
 
         try {
-            File file = new File(this.file);
+            File file = new File(this.filePath);
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -139,7 +131,7 @@ public class BanList {
             }
             try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
                 Nukkit.JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue(stream, list);
-                Utils.writeFile(this.file, new ByteArrayInputStream(stream.toByteArray()));
+                Utils.writeFile(this.filePath, new ByteArrayInputStream(stream.toByteArray()));
             }
         } catch (IOException e) {
             log.error("Could not save ban list", e);

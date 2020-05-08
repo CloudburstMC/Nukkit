@@ -1,5 +1,6 @@
 package cn.nukkit.command.defaults;
 
+import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.command.defaults.VanillaCommand;
@@ -13,7 +14,7 @@ import static cn.nukkit.command.args.builder.LiteralsArgumentBuilder.literals;
  * @author fromgate
  * @author Pub4Game
  */
-public class TimingsCommand extends VanillaCommand {
+public class TimingsCommand extends Command {
 
     public TimingsCommand(String name) {
         super(name, "nukkit.command.timings.description", "/timings <on|off|paste>");

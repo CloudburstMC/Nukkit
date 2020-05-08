@@ -8,9 +8,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.function.Predicate;
 
-@Getter
 @RequiredArgsConstructor
 public abstract class ArgumentBuilder<T extends ArgumentBuilder> {
+    @Getter
     protected final String name;
     private CommandExecutor executor;
 
@@ -18,15 +18,16 @@ public abstract class ArgumentBuilder<T extends ArgumentBuilder> {
 
     protected abstract T getThis();
 
-    public T requires(Predicate<CommandSender> requirement) {
-        this.requirement = requirement;
-        return getThis();
-    }
-
-    public T executes(CommandExecutor executor) {
-        this.executor = executor;
-        return getThis();
-    }
+    // TODO: requires argument parsing
+//    public T requires(Predicate<CommandSender> requirement) {
+//        this.requirement = requirement;
+//        return getThis();
+//    }
+//
+//    public T executes(CommandExecutor executor) {
+//        this.executor = executor;
+//        return getThis();
+//    }
 
     public abstract CommandParameter build();
 }

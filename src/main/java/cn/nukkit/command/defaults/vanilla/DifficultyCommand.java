@@ -32,9 +32,8 @@ public class DifficultyCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-
         if (args.length != 1) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
             return false;
         }
 
@@ -53,8 +52,7 @@ public class DifficultyCommand extends VanillaCommand {
 
             CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.difficulty.success", String.valueOf(difficulty)));
         } else {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
             return false;
         }
 

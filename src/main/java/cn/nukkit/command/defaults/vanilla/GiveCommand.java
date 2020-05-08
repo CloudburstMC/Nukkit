@@ -38,10 +38,8 @@ public class GiveCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-
         if (args.length < 2) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return true;
         }
 
@@ -52,7 +50,7 @@ public class GiveCommand extends VanillaCommand {
             item = Item.fromString(args[1]);
         } catch (Exception e) {
             log.throwing(e);
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
             return true;
         }
 
@@ -62,17 +60,18 @@ public class GiveCommand extends VanillaCommand {
             item.setCount(item.getMaxStackSize());
         }
 
-        if (player != null) {
-            if (item.getId() == AIR) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.invalid", args[1]));
-                return true;
-            }
-            player.getInventory().addItem(item.clone());
-        } else {
+        if (player == null) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
-
             return true;
         }
+
+        if (item.getId() == AIR) {
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.invalid", args[1]));
+            return true;
+        }
+
+        player.getInventory().addItem(item.clone());
+
         CommandUtils.broadcastCommandMessage(sender, new TranslationContainer(
                 "%commands.give.success",
                 item.getName() + " (" + item.getId() + ":" + item.getMeta() + ")",

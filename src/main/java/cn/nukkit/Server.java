@@ -704,7 +704,7 @@ public class Server {
             this.queryHandler = new QueryHandler();
         }
 
-        for (BanEntry entry : this.getIPBans().getEntires().values()) {
+        for (BanEntry entry : this.getIPBans().getEntries().values()) {
             try {
                 this.network.blockAddress(InetAddress.getByName(entry.getName()));
             } catch (UnknownHostException e) {

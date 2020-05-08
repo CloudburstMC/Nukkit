@@ -49,12 +49,16 @@ public class OpCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer("commands.op.failed", name));
                 return true;
             }
-
             if (player instanceof Player) {
                 ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
             }
+
             player.setOp(true);
         } else {
+            if(sender.getServer().isOp(name)) {
+                sender.sendMessage(new TranslationContainer("commands.op.failed", name));
+                return true;
+            }
             sender.getServer().addOp(name);
         }
 

@@ -8,11 +8,14 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Arrays;
+
 import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
 
 /**
  * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author lukeeey
+ * @author xtypr
  */
 public class MeCommand extends VanillaCommand {
 
@@ -28,31 +31,14 @@ public class MeCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-
         if (args.length == 0) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
+        String name = sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName();
+        String message = String.join(" ", args);
 
-        String name;
-        if (sender instanceof Player) {
-            name = ((Player) sender).getDisplayName();
-        } else {
-            name = sender.getName();
-        }
-
-        String msg = "";
-        for (String arg : args) {
-            msg += arg + " ";
-        }
-
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
-        }
-
-        sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", name, TextFormat.WHITE + msg));
-
+        sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", name, TextFormat.WHITE + message));
         return true;
     }
 }

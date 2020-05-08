@@ -48,7 +48,7 @@ public class GamemodeCommand extends VanillaCommand {
 
         int gameMode = Server.getGamemodeFromString(args[0]);
         if (gameMode == -1) {
-            sender.sendMessage("Unknown game mode");
+            sender.sendMessage(new TranslationContainer("commands.gamemode.fail.invalid", args[0]));
             return true;
         }
 

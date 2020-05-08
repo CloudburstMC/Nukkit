@@ -29,33 +29,14 @@ public class SayCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
             return false;
         }
+        String name = sender instanceof Player ? ((Player) sender).getDisplayName() : sender instanceof ConsoleCommandSender ? "Server" : sender.getName();
+        String message = String.join(" ", args);
 
-        String senderString;
-        if (sender instanceof Player) {
-            senderString = ((Player) sender).getDisplayName();
-        } else if (sender instanceof ConsoleCommandSender) {
-            senderString = "Server";
-        } else {
-            senderString = sender.getName();
-        }
-
-        String msg = "";
-        for (String arg : args) {
-            msg += arg + " ";
-        }
-        if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
-        }
-
-
-        sender.getServer().broadcastMessage(new TranslationContainer(
-                TextFormat.LIGHT_PURPLE + "%chat.type.announcement",
-                senderString, TextFormat.LIGHT_PURPLE + msg));
+        sender.getServer().broadcastMessage(new TranslationContainer(TextFormat.LIGHT_PURPLE + "%chat.type.announcement", name, TextFormat.LIGHT_PURPLE + message));
         return true;
     }
 }

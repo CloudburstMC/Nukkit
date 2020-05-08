@@ -36,6 +36,7 @@ public class HelpCommand extends VanillaCommand {
         String command = "";
         int pageNumber = 1;
         int pageHeight = 5;
+
         if (args.length != 0) {
             try {
                 pageNumber = Integer.parseInt(args[args.length - 1]);

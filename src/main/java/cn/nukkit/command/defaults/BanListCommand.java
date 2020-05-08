@@ -1,13 +1,12 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Iterator;
+import java.util.StringJoiner;
 
 import static cn.nukkit.command.args.builder.LiteralArgumentBuilder.literal;
 
@@ -31,9 +30,9 @@ public class BanListCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-
-        BanList list;
+        BanList list = sender.getServer().getNameBans();
         boolean ips = false;
+
         if (args.length > 0) {
             switch (args[0].toLowerCase()) {
                 case "ips":
@@ -44,28 +43,13 @@ public class BanListCommand extends VanillaCommand {
                     list = sender.getServer().getNameBans();
                     break;
                 default:
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
                     return false;
             }
-        } else {
-            list = sender.getServer().getNameBans();
         }
 
-        StringBuilder builder = new StringBuilder();
-        Iterator<BanEntry> itr = list.getEntires().values().iterator();
-        while (itr.hasNext()) {
-            builder.append(itr.next().getName());
-            if (itr.hasNext()) {
-                builder.append(", ");
-            }
-        }
-
-        if (ips) {
-            sender.sendMessage(new TranslationContainer("commands.banlist.ips", list.getEntires().size()));
-        } else {
-            sender.sendMessage(new TranslationContainer("commands.banlist.players", list.getEntires().size()));
-        }
-        sender.sendMessage(builder.toString());
+        sender.sendMessage(new TranslationContainer(ips ? "commands.banlist.ips" : "commands.banlist.players", list.getEntries().size()));
+        sender.sendMessage(String.join(", ", list.getEntries().keySet()));
         return true;
     }
 }

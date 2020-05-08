@@ -49,36 +49,29 @@ public class TimeCommand extends VanillaCommand {
             return false;
         }
 
-        if ("query".equals(args[0])) {
+        if(args[0].equals("query")) {
             if (!sender.hasPermission("nukkit.command.time.query")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
-
                 return true;
             }
-            Level level;
-            if (sender instanceof Player) {
-                level = ((Player) sender).getLevel();
-            } else {
-                level = sender.getServer().getDefaultLevel();
-            }
+            Level level = sender instanceof Player ? ((Player) sender).getLevel() : sender.getServer().getDefaultLevel();
             sender.sendMessage(new TranslationContainer("commands.time.query.gametime", level.getTime()));
             return true;
         }
 
-
         if (args.length < 2) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
-        if ("set".equals(args[0])) {
+        if(args[0].equals("set")) {
             if (!sender.hasPermission("nukkit.command.time.set")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
-
                 return true;
             }
+        }
 
+        if ("set".equals(args[0])) {
             int value;
             if ("day".equals(args[1])) {
                 value = Level.TIME_DAY;
@@ -96,7 +89,7 @@ public class TimeCommand extends VanillaCommand {
                 try {
                     value = Math.max(0, Integer.parseInt(args[1]));
                 } catch (Exception e) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+                    sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
                     return true;
                 }
             }
@@ -107,10 +100,12 @@ public class TimeCommand extends VanillaCommand {
                 level.checkTime();
             }
             CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.set", value));
-        } else if ("add".equals(args[0])) {
+            return true;
+        }
+
+        if (args[0].equals("add")) {
             if (!sender.hasPermission("nukkit.command.time.add")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
-
                 return true;
             }
 
@@ -128,10 +123,10 @@ public class TimeCommand extends VanillaCommand {
                 level.checkTime();
             }
             CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.time.added", value));
-        } else {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            return true;
         }
 
+        sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
         return true;
     }
 }

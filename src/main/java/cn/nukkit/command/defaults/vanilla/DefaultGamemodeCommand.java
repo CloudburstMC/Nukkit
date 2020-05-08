@@ -22,7 +22,7 @@ public class DefaultGamemodeCommand extends VanillaCommand {
         registerOverload()
                 .then(requiredArg("mode", CommandParamType.INT));
         registerOverload()
-                .then(requiredArg("mode", new String[]{"survival", "creative", "s", "c", "adventure", "a", "spectator", "view", "v"}));
+                .then(requiredArg("mode", "GameMode", new String[]{"sp", "spectator", "a", "adventure", "c", "creative", "s", "survival"}));
     }
 
     @Override
@@ -31,16 +31,17 @@ public class DefaultGamemodeCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
             return false;
         }
         int gameMode = Server.getGamemodeFromString(args[0]);
-        if (gameMode != -1) {
-            sender.getServer().setPropertyInt("gamemode", gameMode);
-            sender.sendMessage(new TranslationContainer("commands.defaultgamemode.success", Server.getGamemodeString(gameMode)));
-        } else {
-            sender.sendMessage("Unknown game mode"); //
+        if (gameMode == -1) {
+            sender.sendMessage(new TranslationContainer("commands.gamemode.fail.invalid", args[0]));
+            return true;
         }
+
+        sender.getServer().setPropertyInt("gamemode", gameMode);
+        sender.sendMessage(new TranslationContainer("commands.defaultgamemode.success", Server.getGamemodeString(gameMode)));
         return true;
     }
 }

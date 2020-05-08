@@ -9,6 +9,8 @@ import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 
+import java.util.Arrays;
+
 import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
 import static cn.nukkit.command.args.builder.RequiredArgumentBuilder.requiredArg;
 
@@ -32,32 +34,23 @@ public class BanCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", usageMessage));
             return false;
         }
 
         String name = args[0];
-        String reason = "";
-        for (int i = 1; i < args.length; i++) {
-            reason += args[i] + " ";
-        }
-
-        if (reason.length() > 0) {
-            reason = reason.substring(0, reason.length() - 1);
-        }
-
-        sender.getServer().getNameBans().addBan(name, reason, null, sender.getName());
+        String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
 
         Player player = sender.getServer().getPlayerExact(name);
         if (player != null) {
             player.kick(PlayerKickEvent.Reason.NAME_BANNED, !reason.isEmpty() ? "Banned by admin. Reason: " + reason : "Banned by admin");
         }
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.ban.success", player != null ? player.getName() : name));
+        // TODO: op permission levels?
+        sender.getServer().getNameBans().addBan(name, reason, null, sender.getName());
 
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.ban.success", player != null ? player.getName() : name));
         return true;
     }
 }

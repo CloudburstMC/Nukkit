@@ -20,11 +20,8 @@ public class StopCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-
         CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("commands.stop.start"));
-
         sender.getServer().shutdown();
-
         return true;
     }
 }

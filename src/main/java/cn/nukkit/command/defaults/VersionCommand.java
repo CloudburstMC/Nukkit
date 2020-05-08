@@ -1,6 +1,7 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.network.ProtocolInfo;
@@ -10,9 +11,13 @@ import cn.nukkit.utils.TextFormat;
 
 import java.util.List;
 
+import static cn.nukkit.command.args.builder.OptionalArgumentBuilder.optionalArg;
+
 /**
  * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ *
+ * @author lukeeey
+ * @author xtypr
  */
 public class VersionCommand extends VanillaCommand {
 
@@ -22,7 +27,9 @@ public class VersionCommand extends VanillaCommand {
                 "/version",
                 new String[]{"ver", "about"}
         );
-        this.setPermission("nukkit.command.version");
+        this.setPermission("nukkit.command.version;nukkit.command.version.plugin");
+
+        registerOverload().then(optionalArg("pluginName", CommandParamType.STRING));
     }
 
     @Override
@@ -37,44 +44,29 @@ public class VersionCommand extends VanillaCommand {
                     sender.getServer().getVersion(),
                     String.valueOf(ProtocolInfo.getDefaultProtocolVersion())));
         } else {
-            String pluginName = "";
-            for (String arg : args) pluginName += arg + " ";
-            pluginName = pluginName.trim();
-            final boolean[] found = {false};
-            final Plugin[] exactPlugin = {sender.getServer().getPluginManager().getPlugin(pluginName)};
+            if(!sender.hasPermission("nukkit.command.version.plugin")) {
+                return true;
+            }
+            Plugin plugin = sender.getServer().getPluginManager().getPlugin(args[0].trim());
 
-            if (exactPlugin[0] == null) {
-                pluginName = pluginName.toLowerCase();
-                final String finalPluginName = pluginName;
-                sender.getServer().getPluginManager().getPlugins().forEach((s, p) -> {
-                    if (s.toLowerCase().contains(finalPluginName)) {
-                        exactPlugin[0] = p;
-                        found[0] = true;
-                    }
-                });
-            } else {
-                found[0] = true;
+            if(plugin == null) {
+                sender.sendMessage(new TranslationContainer("nukkit.command.version.noSuchPlugin"));
+                return true;
             }
 
-            if (found[0]) {
-                PluginDescription desc = exactPlugin[0].getDescription();
-                sender.sendMessage(TextFormat.DARK_GREEN + desc.getName() + TextFormat.WHITE + " version " + TextFormat.DARK_GREEN + desc.getVersion());
-                if (desc.getDescription() != null) {
-                    sender.sendMessage(desc.getDescription());
-                }
-                if (desc.getWebsite() != null) {
-                    sender.sendMessage("Website: " + desc.getWebsite());
-                }
-                List<String> authors = desc.getAuthors();
-                final String[] authorsString = {""};
-                authors.forEach((s) -> authorsString[0] += s);
-                if (authors.size() == 1) {
-                    sender.sendMessage("Author: " + authorsString[0]);
-                } else if (authors.size() >= 2) {
-                    sender.sendMessage("Authors: " + authorsString[0]);
-                }
-            } else {
-                sender.sendMessage(new TranslationContainer("nukkit.command.version.noSuchPlugin"));
+            PluginDescription desc = plugin.getDescription();
+
+            sender.sendMessage(TextFormat.DARK_GREEN + desc.getName() + TextFormat.WHITE + " version " + TextFormat.DARK_GREEN + desc.getVersion());
+            if (desc.getDescription() != null) {
+                sender.sendMessage(desc.getDescription());
+            }
+            if (desc.getWebsite() != null) {
+                sender.sendMessage("Website: " + desc.getWebsite());
+            }
+            if(desc.getAuthors().size() == 1) {
+                sender.sendMessage("Author: " + desc.getAuthors().get(0));
+            } else if(desc.getAuthors().size() >= 2) {
+                sender.sendMessage("Authors: " + String.join(", ", desc.getAuthors()));
             }
         }
         return true;

@@ -5,6 +5,9 @@ import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 /**
  * Created on 2015/11/11 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -21,22 +24,17 @@ public class ListCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-        String online = "";
-        int onlineCount = 0;
-        for (Player player : sender.getServer().getOnlinePlayers().values()) {
-            if (player.isOnline() && (!(sender instanceof Player) || ((Player) sender).canSee(player))) {
-                online += player.getDisplayName() + ", ";
-                ++onlineCount;
+
+        Collection<Player> players = sender.getServer().getOnlinePlayers().values();
+
+        players.forEach(player -> {
+            if(!player.isOnline() || (sender instanceof Player && !((Player) sender).canSee(player))) {
+                players.remove(player);
             }
-        }
+        });
 
-        if (online.length() > 0) {
-            online = online.substring(0, online.length() - 2);
-        }
-
-        sender.sendMessage(new TranslationContainer("commands.players.list",
-                onlineCount, sender.getServer().getMaxPlayers()));
-        sender.sendMessage(online);
+        sender.sendMessage(new TranslationContainer("commands.players.list", players.size(), sender.getServer().getMaxPlayers()));
+        sender.sendMessage(String.join(", ", players.stream().map(Player::getDisplayName).toArray(String[]::new)));
         return true;
     }
 }
