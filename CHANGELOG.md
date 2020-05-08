@@ -18,6 +18,7 @@ Click the link above to see the future.
 - [#228] Invalid enchantment order on anvil's results causing the crafting transaction to fail.
 - [#226] Anvil cost calculation not applying bedrock edition reductions
 - [#222] Anvil changes the level twice and fails the transaction if the player doesn't have enough.
+- [#235] Wrong flags in MoveEntityAbsolutePacket
 
 ## [1.2.0.0-PN] - 2020-05-03 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/6?closed=1))
 **Note:** Effort has been made to keep this list accurate but some bufixes and new features might be missing here, specially those made by the NukkitX team and contributors.
@@ -194,3 +195,4 @@ Click the link above to see the future.
 [#224]: https://github.com/GameModsBR/PowerNukkit/pull/224
 [#226]: https://github.com/GameModsBR/PowerNukkit/issues/226
 [#228]: https://github.com/GameModsBR/PowerNukkit/issues/228
+[#235]: https://github.com/GameModsBR/PowerNukkit/issues/235
