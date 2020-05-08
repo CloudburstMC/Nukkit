@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @Log4j2
 public class LoginPacketHandler implements BedrockPacketHandler {
 
-    private final Pattern pattern = Pattern.compile("^[aA-zZ\\s\\d_]+$");
+    private final Pattern pattern = Pattern.compile("^[aA-zZ\\s\\d_]{3,16}+$");
 
     private final BedrockServerSession session;
     private final Server server;
@@ -71,8 +71,9 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         }
 
         String username = this.loginData.getChainData().getUsername();
+        Matcher matcher = pattern.matcher(username);
 
-        if (!this.isValidName(username) || username.equalsIgnoreCase("rcon") || username.equalsIgnoreCase("console")) {
+        if (!matcher.matches() || username.matches("^(((R|r)(C|c)(O|o)(N|n))|((C|c)(O|o)(N|n)(S|s)(O|o)(L|l)(E|e)))$")) {
             session.disconnect("disconnectionScreen.invalidName");
             return true;
         }
@@ -127,17 +128,5 @@ public class LoginPacketHandler implements BedrockPacketHandler {
 
         session.sendPacket(this.server.getPackManager().getPacksInfos());
         return true;
-    }
-
-    private boolean isValidName(String username) {
-        int length = username.length();
-
-        if (length > 16 || length < 3) {
-            return false;
-        }
-
-        Matcher matcher = pattern.matcher(username);
-
-        return matcher.matches();
     }
 }
