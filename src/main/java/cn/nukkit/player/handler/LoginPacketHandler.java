@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @Log4j2
 public class LoginPacketHandler implements BedrockPacketHandler {
 
-    private final Pattern pattern = Pattern.compile("^[aA-zZ\\s\\d_]{3,16}+$");
+    private static final Pattern pattern = Pattern.compile("^[aA-zZ\\s\\d_]{3,16}+$");
 
     private final BedrockServerSession session;
     private final Server server;
