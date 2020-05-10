@@ -18,6 +18,7 @@ Click the link above to see the future.
 - [#248] Air blocks with metadata were being rendered as "UPDATE!" block (backward compatibility fix)
 - [#212] The `/tp player 0 1 2` command doesn't work
 - [#220] Stripping old full bark log results in a wrong block
+- [#157] Wrong Packed and Blue Ice break time with the hands
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once.
@@ -213,6 +214,7 @@ Fixes several anvil issues.
 [#129]: https://github.com/GameModsBR/PowerNukkit/pull/129
 [#140]: https://github.com/GameModsBR/PowerNukkit/pull/140
 [#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
+[#157]: https://github.com/GameModsBR/PowerNukkit/issues/157
 [#170]: https://github.com/GameModsBR/PowerNukkit/pull/170
 [#210]: https://github.com/GameModsBR/PowerNukkit/issues/210
 [#212]: https://github.com/GameModsBR/PowerNukkit/issues/212
