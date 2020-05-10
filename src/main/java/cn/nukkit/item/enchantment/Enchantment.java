@@ -140,6 +140,8 @@ public abstract class Enchantment implements Cloneable {
     protected int level = 1;
 
     protected final String name;
+    
+    private PowerNukkit powerNukkit;
 
     protected Enchantment(int id, String name, int weight, EnchantmentType type) {
         this.id = id;
@@ -240,6 +242,28 @@ public abstract class Enchantment implements Cloneable {
             return (Enchantment) super.clone();
         } catch (CloneNotSupportedException e) {
             return null;
+        }
+    }
+
+    /**
+     * @since 1.2.1.0-PN
+     */
+    public PowerNukkit getPowerNukkit() {
+        PowerNukkit powerNukkit = this.powerNukkit;
+        if (powerNukkit == null) this.powerNukkit = powerNukkit = new PowerNukkit();
+        return powerNukkit;
+    }
+
+    /**
+     * @since 1.2.1.0-PN
+     */
+    public class PowerNukkit {
+        /**
+         * Checks if an item can have this enchantment. It's not strict to the enchantment table.
+         * @since 1.2.1.0-PN
+         */
+        public boolean isItemAcceptable(Item item) {
+            return canEnchant(item);
         }
     }
 
