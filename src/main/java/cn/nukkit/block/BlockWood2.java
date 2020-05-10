@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -40,14 +39,34 @@ public class BlockWood2 extends BlockWood {
     
     @Override
     protected int getStrippedId() {
-        int typeId = getDamage() & 0x3;
+        int damage = getDamage();
+        if ((damage & 0b1100) == 0b1100) { // Only bark
+            return WOOD_BARK;
+        }
+        
+        int typeId = damage & 0x3;
         if (typeId == 0) {
             return STRIPPED_ACACIA_LOG;
         } else {
             return STRIPPED_DARK_OAK_LOG;
         }
     }
-    
+
+    @Override
+    protected int getStrippedDamage() {
+        int damage = getDamage();
+        if ((damage & 0b1100) == 0b1100) { // Only bark
+            int typeId = damage & 0x3;
+            if (typeId == 0) {
+                return 0x4 | 0x8;
+            } else {
+                return 0x5 | 0x8;
+            }
+        }
+        
+        return super.getStrippedDamage();
+    }
+
     @Override
     public Item toItem() {
         if ((getDamage() & 0b1100) == 0b1100) {
