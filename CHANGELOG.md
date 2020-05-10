@@ -13,6 +13,8 @@ Click the link above to see the future.
 - [#239] Anvil fails to merge some enchantments because the ordering mismatches
 - [#240] Anvils were charging fewer levels to merge thorn books
 - [#243] Anvils were charging more levels to merge punch books
+- [#246] Anvil checking the enchantment table property instead of the enchantment id
+- [#246] Compatibility rules for unbreaking, fortune, mending, riptide, loyalty and channeling enchantments.
 
 ## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
 Fixes several anvil issues.
@@ -217,3 +219,4 @@ Fixes several anvil issues.
 [#239]: https://github.com/GameModsBR/PowerNukkit/issues/239
 [#240]: https://github.com/GameModsBR/PowerNukkit/issues/240
 [#243]: https://github.com/GameModsBR/PowerNukkit/issues/243
+[#246]: https://github.com/GameModsBR/PowerNukkit/issues/246
