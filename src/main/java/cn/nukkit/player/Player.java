@@ -65,6 +65,8 @@ import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.registry.CommandRegistry;
 import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.registry.ItemRegistry;
+import cn.nukkit.scoreboard.Scoreboard;
+import cn.nukkit.scoreboard.impl.NukkitScoreboard;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -91,6 +93,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -235,6 +238,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public FishingHook fishing = null;
 
     private final PlayerChunkManager chunkManager = new PlayerChunkManager(this);
+
+    private Scoreboard scoreboard;
 
     public int packetsRecieved;
 
@@ -2090,6 +2095,10 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 if (this.fishing != null) {
                     this.stopFishing(false);
                 }
+                if (this.scoreboard != null) {
+                    ((NukkitScoreboard) this.scoreboard).getPlayers().remove(this);
+                    this.scoreboard = null;
+                }
             }
 
             for (Player player : new ArrayList<>(this.server.getOnlinePlayers().values())) {
@@ -3402,6 +3411,33 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         return false;
+    }
+
+    /**
+     * Gets the current {@link Scoreboard} of
+     * the player
+     *
+     * @return the current scoreboard of the player
+     */
+    @Nullable
+    public Scoreboard getScoreboard() {
+        return this.scoreboard;
+    }
+
+    /**
+     * Sets the player's {@link Scoreboard} to the
+     * specified scoreboard
+     *
+     * @param scoreboard the scoreboard to set
+     */
+    public void setScoreboard(@Nullable Scoreboard scoreboard) {
+        this.scoreboard = scoreboard;
+        if (this.scoreboard != null) {
+            ((NukkitScoreboard) this.scoreboard).hide(this);
+        }
+        if (scoreboard != null) {
+            ((NukkitScoreboard) scoreboard).show(this);
+        }
     }
 
     @Override
