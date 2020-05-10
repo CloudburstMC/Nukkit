@@ -96,10 +96,15 @@ public class Explosion {
                             Block block = this.level.getBlock(vBlock);
 
                             if (block.getId() != 0) {
-                                blastForce -= (block.getResistance() / 5 + 0.3d) * this.stepLen;
+                                Block layer1 = block.getLevelBlockAtLayer(1);
+                                double resistance = Math.max(block.getResistance(), layer1.getResistance());
+                                blastForce -= (resistance / 5 + 0.3d) * this.stepLen;
                                 if (blastForce > 0) {
                                     if (!this.affectedBlocks.contains(block)) {
                                         this.affectedBlocks.add(block);
+                                        if (layer1.getId() != BlockID.AIR) {
+                                            this.affectedBlocks.add(layer1);
+                                        }
                                     }
                                 }
                             }
@@ -189,7 +194,11 @@ public class Explosion {
                 }
             }
 
-            this.level.setBlockAt((int) block.x, (int) block.y, (int) block.z, BlockID.AIR);
+            this.level.setBlockAtLayer((int) block.x, (int) block.y, (int) block.z, block.layer, BlockID.AIR);
+
+            if (block.layer != 0) {
+                continue;
+            }
 
             Vector3 pos = new Vector3(block.x, block.y, block.z);
 
@@ -202,8 +211,16 @@ public class Explosion {
                     if (!ev.isCancelled()) {
                         ev.getBlock().onUpdate(Level.BLOCK_UPDATE_NORMAL);
                     }
+                    Block layer1 = this.level.getBlock(sideBlock, 1);
+                    if (layer1.getId() != BlockID.AIR) {
+                        ev = new BlockUpdateEvent(layer1);
+                        this.level.getServer().getPluginManager().callEvent(ev);
+                        if (!ev.isCancelled()) {
+                            ev.getBlock().onUpdate(Level.BLOCK_UPDATE_NORMAL);
+                        }
+                    }
                     updateBlocks.add(index);
-                }
+                }   
             }
             send.add(new Vector3(block.x - source.x, block.y - source.y, block.z - source.z));
         }
