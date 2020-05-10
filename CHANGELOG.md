@@ -16,6 +16,7 @@ Click the link above to see the future.
 - [#246] Anvil checking the enchantment table property instead of the enchantment id
 - [#246] Compatibility rules for unbreaking, fortune, mending, riptide, loyalty and channeling enchantments.
 - [#248] Air blocks with metadata were being rendered as "UPDATE!" block (backward compatibility fix)
+- [#212] The `/tp player 0 1 2` command doesn't work
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once.
@@ -213,6 +214,7 @@ Fixes several anvil issues.
 [#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
 [#170]: https://github.com/GameModsBR/PowerNukkit/pull/170
 [#210]: https://github.com/GameModsBR/PowerNukkit/issues/210
+[#212]: https://github.com/GameModsBR/PowerNukkit/issues/212
 [#219]: https://github.com/GameModsBR/PowerNukkit/pull/219
 [#222]: https://github.com/GameModsBR/PowerNukkit/issues/223
 [#224]: https://github.com/GameModsBR/PowerNukkit/pull/224
