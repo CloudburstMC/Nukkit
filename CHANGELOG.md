@@ -9,6 +9,9 @@ Nukkit 1.X and 2.X.
 ## [Unreleased]
 Click the link above to see the future.
 
+### Fixes
+- [#239] Anvil fails to merge some enchantments because the ordering mismatches
+
 ## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
 Fixes several anvil issues.
 
@@ -209,3 +212,4 @@ Fixes several anvil issues.
 [#228]: https://github.com/GameModsBR/PowerNukkit/issues/228
 [#234]: https://github.com/GameModsBR/PowerNukkit/issues/234
 [#235]: https://github.com/GameModsBR/PowerNukkit/issues/235
+[#239]: https://github.com/GameModsBR/PowerNukkit/issues/239
