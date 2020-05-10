@@ -16,6 +16,9 @@ Click the link above to see the future.
 - [#246] Anvil checking the enchantment table property instead of the enchantment id
 - [#246] Compatibility rules for unbreaking, fortune, mending, riptide, loyalty and channeling enchantments.
 
+### Changed
+- [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once.
+
 ## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
 Fixes several anvil issues.
 
@@ -220,3 +223,4 @@ Fixes several anvil issues.
 [#240]: https://github.com/GameModsBR/PowerNukkit/issues/240
 [#243]: https://github.com/GameModsBR/PowerNukkit/issues/243
 [#246]: https://github.com/GameModsBR/PowerNukkit/issues/246
+[#247]: https://github.com/GameModsBR/PowerNukkit/pull/247

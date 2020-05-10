@@ -5,10 +5,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.*;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -24,6 +21,7 @@ public class GlobalBlockPalette {
     private static final Map<String, Integer> stringToLegacyId = new HashMap<>();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     public static final byte[] BLOCK_PALETTE;
+    private static final Int2ObjectMap<IntSet> unknownRuntimeIds = new Int2ObjectOpenHashMap<>();
 
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
@@ -105,9 +103,10 @@ public class GlobalBlockPalette {
         int legacyId = id << 6 | meta;
         int runtimeId = legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
-            //runtimeId = registerMapping(runtimeIdAllocator.incrementAndGet(), legacyId);
             runtimeId = legacyToRuntimeId.get(248 << 6);
-            //throw new NoSuchElementException("Unmapped block registered id:" + id + " meta:" + meta);
+            if (unknownRuntimeIds.computeIfAbsent(id, k -> new IntOpenHashSet(5)).add(meta)) {
+                Server.getInstance().getLogger().error("Found an unknown BlockId:Meta combination: "+id+":"+meta+", replacing with an \"UPDATE!\" block.");
+            }
         }
         return runtimeId;
     }
