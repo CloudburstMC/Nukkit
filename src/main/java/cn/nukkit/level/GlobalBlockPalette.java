@@ -100,6 +100,9 @@ public class GlobalBlockPalette {
     }
 
     public static int getOrCreateRuntimeId(int id, int meta) {
+        // Special case for PN-96 PowerNukkit#210 where the world contains blocks like 0:13, 0:7, etc
+        if (id == 0) meta = 0;
+        
         int legacyId = id << 6 | meta;
         int runtimeId = legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
