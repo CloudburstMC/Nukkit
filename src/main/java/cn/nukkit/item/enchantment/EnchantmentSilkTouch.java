@@ -53,9 +53,6 @@ public class EnchantmentSilkTouch extends Enchantment {
      * @since 1.2.1.0-PN
      */
     public class PowerNukkit extends Enchantment.PowerNukkit {
-        /**
-         * @since 1.2.1.0-PN
-         */
         @Override
         public boolean isItemAcceptable(Item item) {
             if (item.isShears()) {
