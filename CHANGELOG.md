@@ -15,6 +15,7 @@ Click the link above to see the future.
 - [#243] Anvils were charging more levels to merge punch books
 - [#246] Anvil checking the enchantment table property instead of the enchantment id
 - [#246] Compatibility rules for unbreaking, fortune, mending, riptide, loyalty and channeling enchantments.
+- [#248] Air blocks with metadata were being rendered as "UPDATE!" block (backward compatibility fix)
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once.
@@ -224,3 +225,4 @@ Fixes several anvil issues.
 [#243]: https://github.com/GameModsBR/PowerNukkit/issues/243
 [#246]: https://github.com/GameModsBR/PowerNukkit/issues/246
 [#247]: https://github.com/GameModsBR/PowerNukkit/pull/247
+[#248]: https://github.com/GameModsBR/PowerNukkit/pull/248
