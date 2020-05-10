@@ -5,6 +5,8 @@ import cn.nukkit.entity.EntityHumanType;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArmor;
+import cn.nukkit.item.ItemElytra;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -13,6 +15,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * Nukkit Project
  */
 public class EnchantmentThorns extends Enchantment {
+    private PowerNukkit powerNukkit;
+    
     protected EnchantmentThorns() {
         super(ID_THORNS, "thorns", 1, EnchantmentType.ARMOR_TORSO);
     }
@@ -53,6 +57,32 @@ public class EnchantmentThorns extends Enchantment {
 
         if (shouldHit(random, thornsLevel)) {
             attacker.attack(new EntityDamageByEntityEvent(entity, attacker, EntityDamageEvent.DamageCause.ENTITY_ATTACK, getDamage(random, level), 0f));
+        }
+    }
+
+    /**
+     * @since 1.2.1.0-PN
+     */
+    @Override
+    public PowerNukkit getPowerNukkit() {
+        PowerNukkit powerNukkit = this.powerNukkit;
+        if (powerNukkit == null) this.powerNukkit = powerNukkit = new PowerNukkit();
+        return powerNukkit;
+    }
+
+    /**
+     * @since 1.2.1.0-PN
+     */
+    public class PowerNukkit extends Enchantment.PowerNukkit {
+        /**
+         * @since 1.2.1.0-PN
+         */
+        @Override
+        public boolean isItemAcceptable(Item item) {
+            if (item instanceof ItemArmor) {
+                return !(item instanceof ItemElytra);
+            }
+            return super.isItemAcceptable(item);
         }
     }
 
