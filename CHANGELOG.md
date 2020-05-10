@@ -19,6 +19,7 @@ Click the link above to see the future.
 - [#212] The `/tp player 0 1 2` command doesn't work
 - [#220] Stripping old full bark log results in a wrong block
 - [#157] Wrong Packed and Blue Ice break time with the hands
+- [#193] Wrong explosion behaviour with waterlogged block
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once.
@@ -216,6 +217,7 @@ Fixes several anvil issues.
 [#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
 [#157]: https://github.com/GameModsBR/PowerNukkit/issues/157
 [#170]: https://github.com/GameModsBR/PowerNukkit/pull/170
+[#193]: https://github.com/GameModsBR/PowerNukkit/issues/193
 [#210]: https://github.com/GameModsBR/PowerNukkit/issues/210
 [#212]: https://github.com/GameModsBR/PowerNukkit/issues/212
 [#220]: https://github.com/GameModsBR/PowerNukkit/issues/220
