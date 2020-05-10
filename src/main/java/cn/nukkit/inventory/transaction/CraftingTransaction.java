@@ -155,7 +155,7 @@ public class CraftingTransaction extends InventoryTransaction {
             if (inventory instanceof AnvilInventory) {
                 AnvilInventory anvil = (AnvilInventory) inventory;
                 addInventory(anvil);
-                if (this.primaryOutput.equals(anvil.getResult(), true, true)) {
+                if (this.primaryOutput.equalsIgnoringEnchantmentOrder(anvil.getResult(), true)) {
                     TakeLevelAction takeLevel = new TakeLevelAction(anvil.getLevelCost());
                     addAction(takeLevel);
                     if (takeLevel.isValid(source)) {
