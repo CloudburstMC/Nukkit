@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.2.1.0-PN]
+## [Unreleased 1.2.1.0-PN+]
 Click the link above to see the future.
 
 ### Added
@@ -16,7 +16,7 @@ Click the link above to see the future.
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
 
-## [Unreleased 1.2.0.2-PN]
+## [Unreleased 1.2.0.2-PN+]
 Click the link above to see the future.
 
 ### Fixes
@@ -183,8 +183,8 @@ Fixes several anvil issues.
     - Loom
     - Bamboo
 
-[Unreleased 1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...master
-[Unreleased 1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...snapshot/v1.2.0.x
+[Unreleased 1.2.1.0-PN+]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...master
+[Unreleased 1.2.0.2-PN+]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...snapshot/v1.2.0.x
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
 [1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
 [1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN#files_bucket
