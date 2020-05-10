@@ -93,9 +93,9 @@ public class TeleportCommand extends VanillaCommand {
             double yaw;
             double pitch;
             try {
-                x = parseTilde(args[0], ((Player) target).x);
-                y = parseTilde(args[1], ((Player) target).y);
-                z = parseTilde(args[2], ((Player) target).z);
+                x = parseTilde(args[pos++], ((Player) target).x);
+                y = parseTilde(args[pos++], ((Player) target).y);
+                z = parseTilde(args[pos++], ((Player) target).z);
                 yaw = ((Player) target).getYaw();
                 pitch = ((Player) target).getPitch();
             } catch (NumberFormatException e1) {
