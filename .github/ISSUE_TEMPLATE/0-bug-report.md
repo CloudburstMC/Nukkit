@@ -17,20 +17,20 @@ assignees: ''
 <!-- ✍ If applicable, add screenshots or video recordings to help explain your problem -->
 
 
-### ✔ Expected Behavior
-<!-- ✍ What would you expect to happen -->
-
-
-### ❌ Actual Behavior
-<!-- ✍ What actually happened -->
-
-
 ### ▶ Steps to Reproduce
 <!--- ✍ Reliable steps which someone can use to reproduce the issue. -->
 1. Run command '...'
 2. Click on '....'
 3. Put '....' at '...'
 4. See error
+
+
+### ✔ Expected Behavior
+<!-- ✍ What would you expect to happen -->
+
+
+### ❌ Actual Behavior
+<!-- ✍ What actually happened -->
 
 
 ### 📋 Debug information

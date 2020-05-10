@@ -22,7 +22,7 @@ assignees: ''
 
 
 ### ❌ Actual Behavior
-<!-- ✍ What actually happened -->
+<!-- ✍ What actually happened, if relevant -->
 
 
 ### 💬 Anything else we should know?
