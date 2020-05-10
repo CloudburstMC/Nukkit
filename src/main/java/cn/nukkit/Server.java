@@ -451,6 +451,14 @@ public class Server {
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
 
+        // Enable metrics
+        if(isMetricsEnabled()) {
+            if(getMetricsServerId() == null) {
+                config.set("metrics.server-id", UUID.randomUUID().toString());
+            }
+            new Metrics(this);
+        }
+
         this.registerEntities();
         this.registerBlockEntities();
 
@@ -2211,6 +2219,14 @@ public class Server {
 
     public int getPlayerSkinChangeCooldown() {
         return this.getConfig("player.skin-change-cooldown", 30);
+    }
+
+    public boolean isMetricsEnabled() {
+        return this.getConfig("metrics.enabled", true);
+    }
+
+    public String getMetricsServerId() {
+        return this.getConfig("metrics.server-id");
     }
 
     /**
