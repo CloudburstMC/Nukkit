@@ -3431,13 +3431,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
      * @param scoreboard the scoreboard to set
      */
     public void setScoreboard(@Nullable Scoreboard scoreboard) {
-        this.scoreboard = scoreboard;
         if (this.scoreboard != null) {
             ((NukkitScoreboard) this.scoreboard).hide(this);
         }
         if (scoreboard != null) {
             ((NukkitScoreboard) scoreboard).show(this);
         }
+        this.scoreboard = scoreboard;
     }
 
     @Override

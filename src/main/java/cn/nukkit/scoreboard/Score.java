@@ -2,8 +2,6 @@ package cn.nukkit.scoreboard;
 
 import cn.nukkit.scoreboard.impl.NukkitScore;
 
-import javax.annotation.Nullable;
-
 /**
  * Represents a score for a {@link ScoreboardObjective}.
  */
