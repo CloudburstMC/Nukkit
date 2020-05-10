@@ -21,4 +21,11 @@ public class EnchantmentTridentRiptide extends EnchantmentTrident {
     public int getMaxLevel() {
         return 3;
     }
+
+    @Override
+    public boolean isCompatibleWith(Enchantment enchantment) {
+        return super.isCompatibleWith(enchantment) 
+                && enchantment.id != Enchantment.ID_TRIDENT_LOYALTY
+                && enchantment.id != Enchantment.ID_TRIDENT_CHANNELING;
+    }
 }
