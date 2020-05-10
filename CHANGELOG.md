@@ -11,6 +11,7 @@ Click the link above to see the future.
 
 ### Added
 - [#227] PlayerJumpEvent called when jump packets are received.
+- [#242] `Item.equalsIgnoringEnchantmentOrder` method for public usage.
 
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
@@ -224,3 +225,4 @@ Fixes several anvil issues.
 [#234]: https://github.com/GameModsBR/PowerNukkit/issues/234
 [#235]: https://github.com/GameModsBR/PowerNukkit/issues/235
 [#239]: https://github.com/GameModsBR/PowerNukkit/issues/239
+[#242]: https://github.com/GameModsBR/PowerNukkit/pull/242
