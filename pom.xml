@@ -222,7 +222,7 @@
         <dependency>
             <groupId>com.nukkitx.protocol</groupId>
             <artifactId>bedrock-v390</artifactId>
-            <version>2.5.5</version>
+            <version>2.5.6</version>
         </dependency>
         <dependency>
             <groupId>com.nukkitx</groupId>
