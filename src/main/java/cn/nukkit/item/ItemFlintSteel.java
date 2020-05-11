@@ -3,6 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockIds;
+import cn.nukkit.block.BlockLeaves;
 import cn.nukkit.block.BlockSolid;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
@@ -40,7 +41,7 @@ public class ItemFlintSteel extends ItemTool {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, Vector3f clickPos) {
-        if (block.getId() == AIR && target instanceof BlockSolid) {
+        if (block.getId() == AIR && target instanceof BlockSolid || target instanceof BlockLeaves) {
             PORTAL:
             if (target.getId() == OBSIDIAN) {
                 final int targX = target.getX();
