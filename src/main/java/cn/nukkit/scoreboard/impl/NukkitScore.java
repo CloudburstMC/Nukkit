@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.scoreboard.Score;
 import cn.nukkit.scoreboard.ScoreType;
+import com.google.common.base.Preconditions;
 import com.nukkitx.protocol.bedrock.data.ScoreInfo;
 import com.nukkitx.protocol.bedrock.packet.SetScorePacket;
 import lombok.Getter;
@@ -109,6 +110,8 @@ public class NukkitScore<T> implements Score<T> {
 
         @Override
         public NukkitScore<T> build() {
+            Preconditions.checkNotNull(this.score.name, "Score name cannot be null.");
+            Preconditions.checkNotNull(this.score.value, "Score value cannot be null.");
             return this.score;
         }
     }

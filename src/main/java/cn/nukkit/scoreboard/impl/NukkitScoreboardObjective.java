@@ -7,6 +7,7 @@ import cn.nukkit.scoreboard.ScoreType;
 import cn.nukkit.scoreboard.ScoreboardCriteria;
 import cn.nukkit.scoreboard.ScoreboardObjective;
 import cn.nukkit.scoreboard.SortOrder;
+import com.google.common.base.Preconditions;
 import com.nukkitx.protocol.bedrock.data.ScoreInfo;
 import com.nukkitx.protocol.bedrock.packet.RemoveObjectivePacket;
 import com.nukkitx.protocol.bedrock.packet.SetDisplayObjectivePacket;
@@ -183,6 +184,9 @@ public class NukkitScoreboardObjective implements ScoreboardObjective {
 
         @Override
         public ScoreboardObjective build() {
+            Preconditions.checkNotNull(this.objective.name, "Name cannot be null");
+            Preconditions.checkNotNull(this.objective.displayMode, "Display mode cannot be null.");
+            Preconditions.checkNotNull(this.objective.displayName, "Display name cannot be null.");
             return this.objective;
         }
     }
