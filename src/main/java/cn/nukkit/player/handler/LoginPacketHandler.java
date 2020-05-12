@@ -73,7 +73,7 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         String username = this.loginData.getChainData().getUsername();
         Matcher matcher = pattern.matcher(username);
 
-        if (!matcher.matches() || username.matches("^(((R|r)(C|c)(O|o)(N|n))|((C|c)(O|o)(N|n)(S|s)(O|o)(L|l)(E|e)))$")) {
+        if (!matcher.matches() || username.equalsIgnoreCase("rcon") || username.equalsIgnoreCase("console")) {
             session.disconnect("disconnectionScreen.invalidName");
             return true;
         }
