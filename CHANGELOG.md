@@ -14,12 +14,14 @@ Click the link above to see the future.
 - [#240] Anvils were charging fewer levels to merge thorn books
 - [#243] Anvils were charging more levels to merge punch books
 - [#246] Anvil checking the enchantment table property instead of the enchantment id
-- [#246] Compatibility rules for unbreaking, fortune, mending, riptide, loyalty and channeling enchantments.
+- [#246] Compatibility rules for unbreaking, fortune, mending, riptide, loyalty and channeling enchantments
 - [#248] Air blocks with metadata were being rendered as "UPDATE!" block (backward compatibility fix)
 - [#212] The `/tp player 0 1 2` command doesn't work
 - [#220] Stripping old full bark log results in a wrong block
 - [#157] Wrong Packed and Blue Ice break time with the hands
 - [#193] Wrong explosion behaviour with waterlogged block
+- [#103] Fixes BlockLeaves's random update logic spamming packets and consuming CPU unnecessarily
+- [#253] Fixes `LeavesDecayEvent` also being called when leaves wouldn't decay
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once.
@@ -211,6 +213,7 @@ Fixes several anvil issues.
 [#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
 [#93]: https://github.com/GameModsBR/PowerNukkit/issues/93
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
+[#103]: https://github.com/GameModsBR/PowerNukkit/issues/103
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
 [#129]: https://github.com/GameModsBR/PowerNukkit/pull/129
 [#140]: https://github.com/GameModsBR/PowerNukkit/pull/140
@@ -234,3 +237,4 @@ Fixes several anvil issues.
 [#246]: https://github.com/GameModsBR/PowerNukkit/issues/246
 [#247]: https://github.com/GameModsBR/PowerNukkit/pull/247
 [#248]: https://github.com/GameModsBR/PowerNukkit/pull/248
+[#253]: https://github.com/GameModsBR/PowerNukkit/pull/253
