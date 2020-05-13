@@ -113,8 +113,8 @@ public class BlockLeaves extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (!isPersistent() && isCheckDecay()) {
-                if (findLog(this, 7)) {
+            if (isCheckDecay()) {
+                if (isPersistent() || findLog(this, 7)) {
                     setCheckDecay(false);
                     getLevel().setBlock(this, this, false, false);
                 } else {
@@ -127,17 +127,18 @@ public class BlockLeaves extends BlockTransparentMeta {
                 return type;
             }
         } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_SCHEDULED) {
-            if (!isPersistent() && !isCheckDecay()) {
+            if (!isCheckDecay()) {
                 setCheckDecay(true);
                 getLevel().setBlock(this, this, false, false);
-                // Slowly propagates the need to update instead of peaking down the TPS for huge trees
-                for (BlockFace side : BlockFace.values()) {
-                    Block other = getSide(side);
-                    if (other instanceof BlockLeaves) {
-                        BlockLeaves otherLeave = (BlockLeaves) other;
-                        if (!otherLeave.isPersistent() && !otherLeave.isCheckDecay()) {
-                            getLevel().scheduleUpdate(otherLeave, 2);
-                        }
+            }
+            
+            // Slowly propagates the need to update instead of peaking down the TPS for huge trees
+            for (BlockFace side : BlockFace.values()) {
+                Block other = getSide(side);
+                if (other instanceof BlockLeaves) {
+                    BlockLeaves otherLeave = (BlockLeaves) other;
+                    if (!otherLeave.isCheckDecay()) {
+                        getLevel().scheduleUpdate(otherLeave, 2);
                     }
                 }
             }
