@@ -112,23 +112,38 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM && !isPersistent() && !isCheckDecay()) {
-            setCheckDecay(true);
-            getLevel().setBlock(this, this, false, false);
-        } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
-            setDamage(getDamage() & 0x03);
-
-            LeavesDecayEvent ev = new LeavesDecayEvent(this);
-
-            Server.getInstance().getPluginManager().callEvent(ev);
-            if (ev.isCancelled() || findLog(this, 7)) {
-                getLevel().setBlock(this, this, false, false);
-            } else {
-                getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+        if (type == Level.BLOCK_UPDATE_RANDOM) {
+            if (!isPersistent() && isCheckDecay()) {
+                if (findLog(this, 7)) {
+                    setCheckDecay(false);
+                    getLevel().setBlock(this, this, false, false);
+                } else {
+                    LeavesDecayEvent ev = new LeavesDecayEvent(this);
+                    Server.getInstance().getPluginManager().callEvent(ev);
+                    if (!ev.isCancelled()) {
+                        getLevel().useBreakOn(this);
+                    }
+                }
+                return type;
             }
+        } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_SCHEDULED) {
+            if (!isPersistent() && !isCheckDecay()) {
+                setCheckDecay(true);
+                getLevel().setBlock(this, this, false, false);
+                // Slowly propagates the need to update instead of peaking down the TPS for huge trees
+                for (BlockFace side : BlockFace.values()) {
+                    Block other = getSide(side);
+                    if (other instanceof BlockLeaves) {
+                        BlockLeaves otherLeave = (BlockLeaves) other;
+                        if (!otherLeave.isPersistent() && !otherLeave.isCheckDecay()) {
+                            getLevel().scheduleUpdate(otherLeave, 2);
+                        }
+                    }
+                }
+            }
+            return type;
         }
-        return 0;
+        return type;
     }
 
     private Boolean findLog(Block pos, Integer distance) {
