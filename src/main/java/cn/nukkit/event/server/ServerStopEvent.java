@@ -7,7 +7,7 @@ import cn.nukkit.event.HandlerList;
  * author: NycuRO
  * NukkitX Project
  */
-public class ServerStopEvent extends ServerEvent implements Cancellable {
+public class ServerStopEvent extends ServerEvent {
 
     private static final HandlerList handlers = new HandlerList();
 
