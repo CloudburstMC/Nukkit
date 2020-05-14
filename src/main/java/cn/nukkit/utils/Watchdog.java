@@ -1,6 +1,7 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.Server;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.MonitorInfo;
 import java.lang.management.ThreadInfo;
@@ -39,8 +40,8 @@ public class Watchdog extends Thread {
                     if (responding) {
                         MainLogger logger = this.server.getLogger();
                         logger.emergency("--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)");
-                        logger.emergency("Please report this to Nukkit:");
-                        logger.emergency(" - https://github.com/NukkitX/Nukkit/issues/new");
+                        logger.emergency("Please report this to PowerNukkit:");
+                        logger.emergency(" - https://github.com/GameModsBr/PowerNukkit/issues/new");
                         logger.emergency("---------------- Main thread ----------------");
 
                         dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(this.server.getPrimaryThread().getId(), Integer.MAX_VALUE), logger);
