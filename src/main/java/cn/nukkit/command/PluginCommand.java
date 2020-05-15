@@ -4,21 +4,20 @@ import cn.nukkit.command.data.CommandData;
 import cn.nukkit.plugin.Plugin;
 
 /**
- * This class is used as a base for all Commands for Plugins. You will want to extend this class to implement
+ * <p>This class is used as a base for all Commands for Plugins. You will want to extend this class to implement
  * your custom commands, and then register them with the {@link cn.nukkit.registry.CommandRegistry CommandRegistry}
  * in your {@link cn.nukkit.plugin.PluginBase Plugin}'s <code>onLoad()</code> method to ensure you are registering
- * them before the registration period closes.<p/>
- * The {@link CommandData} created during the constructor cannot be modified at runtime. For simplicity, a
+ * them before the registration period closes.</p>
+ * <p>The {@link CommandData} created during the constructor cannot be modified at runtime. For simplicity, a
  * {@link CommandData.Builder Builder} class has been provided to make construction of custom Commands easier.
- * <p/>
- * Here is an example of implementation of a PluginCommand for a Plugin with base class <code>MyPlugin</code>:
- * <pre>
- * {@code
+ * </p>
+ * <p>Here is an example of implementation of a PluginCommand for a Plugin with base class <code>MyPlugin</code>:</p>
+ * <pre>{@code
  * public class MyPluginCommand extends PluginCommand<MyPlugin> {
  *      public MyPluginCommand(MyPlugin plugin) {
  *          super(plugin, CommandData.builder("mycommand")
  *              .setDescription("This is my awesome Command!")
- *              .setUsage("/mycommand &lt;arg&gt; [optionalArg]")
+ *              .setUsage("/mycommand <arg> [optionalArg]")
  *              .setPermission("com.example.mycommand")
  *              .build());
  *
@@ -27,12 +26,11 @@ import cn.nukkit.plugin.Plugin;
  *      }
  * }
  * }</pre>
- * By default, the PluginBase (<code>MyPlugin</code> in example above) is the {@link CommandExecutor}.
+ * <p>By default, the PluginBase (<code>MyPlugin</code> in example above) is the {@link CommandExecutor}.
  * You may implement the CommandExecutor interface on the PluginCommand itself if you wish, and then add
- * <code>this.setExecutor(this)</code> after the <code>super()</code> call in the Constructor.<p/>
- * Wherever you have the CommandExecutor implemented, you will want to have the following: <pre>
- * {@code
- *      @Override
+ * <code>this.setExecutor(this)</code> after the <code>super()</code> call in the Constructor.</p>
+ * Wherever you have the CommandExecutor implemented, you will want to have the following:
+ * <pre>{@code
  *      public boolean onCommand(CommandSender sender, Command command, commandLabel, args) {
  *          // If you do not define a CommandExecutor for the Command either in the
  *          // constructor or at time of registration, the owning Plugin will be used as the executor
@@ -41,8 +39,7 @@ import cn.nukkit.plugin.Plugin;
  *          // Note that a base permissions check will already have been done at this point,
  *          // and if you return false, the server will send the Usage message to the sender
  *      }
- * }
- * </pre>
+ * }</pre>
  * To register the command (recommended to be done from your PluginBase class <code>onLoad()</code>), you can do the following:
  * <pre>
  * {@code getServer().getCommandRegistry().register(this, new MyCommand(this);}

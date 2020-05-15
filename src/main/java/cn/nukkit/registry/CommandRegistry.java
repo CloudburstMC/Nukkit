@@ -24,13 +24,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * <code>CommandRegistry</code> is used to register custom commands. Use the {@link #register(Plugin, Command) register()}
+ * <p><code>CommandRegistry</code> is used to register custom commands. Use the {@link #register(Plugin, Command) register()}
  * method to pass a <code>{@link PluginCommand}</code> object with a reference to your {@link PluginBase Plugin}.
  * If the name used in the Command constructor is not unique, the registry will try to prefix the command with the
- * lower cased version of your plugin name (ex: <code>nukkitx:commnad</code>).
- * <p/>You may also use the {@link cn.nukkit.command.simple SimpleCommand} annotations to create your Command,
+ * lower cased version of your plugin name (ex: <code>nukkitx:commnad</code>).</p>
+ * <p>You may also use the {@link cn.nukkit.command.simple SimpleCommand} annotations to create your Command,
  * in which case you would use {@link #registerSimpleCommand(Plugin, Object) registerSimpleCommand()}
- * method to register the command.
+ * method to register the command.</p>
  *
  * @author Sleepybear
  * @see PluginCommand
@@ -64,11 +64,11 @@ public class CommandRegistry implements Registry {
     }
 
     /**
-     * Method used to register a custom command. Any aliases that are defined in the
+     * <p>Method used to register a custom command. Any aliases that are defined in the
      * {@link cn.nukkit.command.data.CommandData CommandData} created during the Command construction are also
-     * registered. Your Command should extend from {@link PluginCommand}.<p/>If you are using the {@link SimpleCommand}
+     * registered. Your Command should extend from {@link PluginCommand}.</p><p>If you are using the {@link SimpleCommand}
      * annotations to create your command, you should register it using
-     * {@link #registerSimpleCommand(Plugin, Object) registerSimpleCommand()}.
+     * {@link #registerSimpleCommand(Plugin, Object) registerSimpleCommand()}.</p>
      *
      * @param plugin  A reference to your {@link PluginBase Plugin}
      * @param command The {@link PluginCommand Command} object of your Command.
@@ -190,7 +190,7 @@ public class CommandRegistry implements Registry {
      *
      * @param plugin A reference to your {@link PluginBase} instance
      * @param name   The command name, or alias for the command
-     * @throws RegistryException
+     * @throws RegistryException if unregistering was unsuccessful
      */
     public void unregister(Plugin plugin, String name) throws RegistryException {
         Objects.requireNonNull(name, "commandName");
@@ -420,7 +420,7 @@ public class CommandRegistry implements Registry {
     /**
      * Used internally to obtain the AvailableCommandsPacket to send to a client.
      *
-     * @param player The player reciving the packet
+     * @param player The player receiving the packet
      * @return The Packet
      */
     public AvailableCommandsPacket createPacketFor(Player player) {
