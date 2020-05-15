@@ -87,27 +87,20 @@ public class BlockDoublePlant extends FloodableBlock {
     @Override
     public Item[] getDrops(Item item) {
         if ((this.getMeta() & TOP_HALF_BITMASK) != TOP_HALF_BITMASK) {
+            boolean dropSeeds = ThreadLocalRandom.current().nextDouble(100) > 87.5;
             switch (this.getMeta() & 0x07) {
                 case TALL_GRASS:
                 case LARGE_FERN:
-                    boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
                     if (item.isShears()) {
                         //todo enchantment
-                        if (dropSeeds) {
-                            return new Item[]{
-                                    Item.get(ItemIds.WHEAT, 0, 1),
-                                    toItem()
-                            };
-                        } else {
-                            return new Item[]{
-                                    toItem()
-                            };
-                        }
+                        return new Item[] {
+                                Item.get(BlockIds.TALL_GRASS, (this.getMeta() & 0x07) == TALL_GRASS ? 1 : 2, 2)
+                        };
                     }
 
                     if (dropSeeds) {
                         return new Item[]{
-                                Item.get(ItemIds.WHEAT)
+                                Item.get(ItemIds.WHEAT_SEEDS)
                         };
                     } else {
                         return new Item[0];

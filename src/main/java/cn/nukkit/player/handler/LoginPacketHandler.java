@@ -17,14 +17,18 @@ import com.nukkitx.protocol.bedrock.packet.LoginPacket;
 import com.nukkitx.protocol.bedrock.packet.PlayStatusPacket;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author Extollite
  */
 @Log4j2
 public class LoginPacketHandler implements BedrockPacketHandler {
+
+    private static final Pattern pattern = Pattern.compile("^[aA-zZ\\s\\d_]{3,16}+$");
+
     private final BedrockServerSession session;
     private final Server server;
 
@@ -67,31 +71,14 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         }
 
         String username = this.loginData.getChainData().getUsername();
-        boolean valid = true;
-        int len = username.length();
-        if (len > 16 || len < 3) {
-            valid = false;
-        }
+        Matcher matcher = pattern.matcher(username);
 
-        for (int i = 0; i < len && valid; i++) {
-            char c = username.charAt(i);
-            if ((c >= 'a' && c <= 'z') ||
-                    (c >= 'A' && c <= 'Z') ||
-                    (c >= '0' && c <= '9') ||
-                    c == '_' || c == ' '
-            ) {
-                continue;
-            }
-
-            valid = false;
-            break;
-        }
-
-        loginData.setName(TextFormat.clean(username));
-        if (!valid || Objects.equals(loginData.getName().toLowerCase(), "rcon") || Objects.equals(loginData.getName().toLowerCase(), "console")) {
+        if (!matcher.matches() || username.equalsIgnoreCase("rcon") || username.equalsIgnoreCase("console")) {
             session.disconnect("disconnectionScreen.invalidName");
             return true;
         }
+
+        loginData.setName(TextFormat.clean(username));
 
         if (!this.loginData.getChainData().getSkin().isValid()) {
             session.disconnect("disconnectionScreen.invalidSkin");

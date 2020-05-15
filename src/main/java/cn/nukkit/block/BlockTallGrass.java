@@ -48,6 +48,10 @@ public class BlockTallGrass extends FloodableBlock {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, Vector3f clickPos, Player player) {
+        // Prevents from placing the same plant block on itself
+        if (item.getId() == target.getId() && item.getMeta() == block.getMeta()) {
+            return false;
+        }
         Block down = this.down();
         if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == PODZOL) {
             this.getLevel().setBlock(block.getPosition(), this, true);
@@ -107,19 +111,12 @@ public class BlockTallGrass extends FloodableBlock {
 
     @Override
     public Item[] getDrops(Item item) {
-        boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
+        boolean dropSeeds = ThreadLocalRandom.current().nextDouble(100) > 87.5;
         if (item.isShears()) {
             //todo enchantment
-            if (dropSeeds) {
-                return new Item[]{
-                        Item.get(ItemIds.WHEAT_SEEDS),
+            return new Item[]{
                         Item.get(BlockIds.TALL_GRASS, this.getMeta(), 1)
                 };
-            } else {
-                return new Item[]{
-                        Item.get(BlockIds.TALL_GRASS, this.getMeta(), 1)
-                };
-            }
         }
 
         if (dropSeeds) {
