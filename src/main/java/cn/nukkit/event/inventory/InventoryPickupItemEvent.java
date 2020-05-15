@@ -1,9 +1,11 @@
 package cn.nukkit.event.inventory;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.level.Level;
 
 /**
  * author: MagicDroidX
@@ -18,13 +20,25 @@ public class InventoryPickupItemEvent extends InventoryEvent implements Cancella
     }
 
     private final EntityItem item;
-
-    public InventoryPickupItemEvent(Inventory inventory, EntityItem item) {
+    private final Player player;
+    private final Level level;
+    
+    public InventoryPickupItemEvent(Inventory inventory, EntityItem item, Player player, Level level) {
         super(inventory);
         this.item = item;
+        this.player = player;
+        this.level = level;
     }
 
     public EntityItem getItem() {
         return item;
     }
+    
+    public Player getPlayer() {
+		return player;
+	}
+    
+    public Level getLevel() {
+		return level;
+	}
 }
