@@ -1,5 +1,6 @@
 package cn.nukkit.event.inventory;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
@@ -18,13 +19,19 @@ public class InventoryPickupItemEvent extends InventoryEvent implements Cancella
     }
 
     private final EntityItem item;
+    private final Player player;
 
-    public InventoryPickupItemEvent(Inventory inventory, EntityItem item) {
+    public InventoryPickupItemEvent(Inventory inventory, EntityItem item, Player player) {
         super(inventory);
         this.item = item;
+        this.player = player;
     }
 
     public EntityItem getItem() {
         return item;
+    }
+    
+     public Player getPlayer() {
+        return player;
     }
 }
