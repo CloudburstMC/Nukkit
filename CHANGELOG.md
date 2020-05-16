@@ -22,7 +22,9 @@ Click the link above to see the future.
 - [#193] Wrong explosion behaviour with waterlogged block
 - [#103] Fixes BlockLeaves's random update logic spamming packets and consuming CPU unnecessarily
 - [#253] Fixes `LeavesDecayEvent` also being called when leaves wouldn't decay
+- [#254] Fixes BlockLeaves not checking for log connectivity, was checking only if it had a log block nearby
 - [#255] Fix /status information in /debugpaste not being collected
+
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
@@ -240,4 +242,5 @@ Fixes several anvil issues.
 [#247]: https://github.com/GameModsBR/PowerNukkit/pull/247
 [#248]: https://github.com/GameModsBR/PowerNukkit/pull/248
 [#253]: https://github.com/GameModsBR/PowerNukkit/pull/253
+[#254]: https://github.com/GameModsBR/PowerNukkit/issues/254
 [#255]: https://github.com/GameModsBR/PowerNukkit/pull/255
