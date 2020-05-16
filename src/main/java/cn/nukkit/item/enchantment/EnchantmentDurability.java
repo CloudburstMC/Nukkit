@@ -9,6 +9,8 @@ import java.util.Random;
  * Nukkit Project
  */
 public class EnchantmentDurability extends Enchantment {
+    private PowerNukkit powerNukkit;
+    
     protected EnchantmentDurability() {
         super(ID_DURABILITY, "durability", 5, EnchantmentType.BREAKABLE);
     }
@@ -35,5 +37,28 @@ public class EnchantmentDurability extends Enchantment {
 
     public static boolean negateDamage(Item item, int level, Random random) {
         return !(item.isArmor() && random.nextFloat() < 0.6f) && random.nextInt(level + 1) > 0;
+    }
+    
+    /**
+     * @since 1.2.1.0-PN
+     */
+    @Override
+    public PowerNukkit getPowerNukkit() {
+        PowerNukkit powerNukkit = this.powerNukkit;
+        if (powerNukkit == null) this.powerNukkit = powerNukkit = new PowerNukkit();
+        return powerNukkit;
+    }
+
+    /**
+     * @since 1.2.1.0-PN
+     */
+    public class PowerNukkit extends Enchantment.PowerNukkit {
+        @Override
+        public boolean isItemAcceptable(Item item) {
+            if (!item.isNull() && item.getMaxDurability() != -1 && !item.isUnbreakable()) {
+                return true;
+            }
+            return super.isItemAcceptable(item);
+        }
     }
 }
