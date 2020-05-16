@@ -19,9 +19,11 @@ Click the link above to see the future.
          in a given item stack by any non-hack means.
 - [#256] `CapturingCommandSender` intended to capture output of commands which don't require players.
 - [#259] `Hash.hashBlock(Vector3)` method for public usage.
+- [#261] `Player.isCheckingMovement()` method for public usage.
 
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
+- [#261] Kicked players can now view the kick reason on kick.
 
 ## [Unreleased 1.2.0.2-PN+]
 Click the link above to see the future.
@@ -270,3 +272,4 @@ Fixes several anvil issues.
 [#256]: https://github.com/GameModsBR/PowerNukkit/pull/256
 [#259]: https://github.com/GameModsBR/PowerNukkit/pull/259
 [#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
+[#261]: https://github.com/GameModsBR/PowerNukkit/pull/261
