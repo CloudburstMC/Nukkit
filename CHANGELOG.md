@@ -18,6 +18,7 @@ Click the link above to see the future.
 - [#244] `Enchantment.getPowerNukkit().isItemAcceptable(Item)` to check if an enchantment can exist 
          in a given item stack by any non-hack means.
 - [#256] `CapturingCommandSender` intended to capture output of commands which don't require players.
+- [#259] `Hash.hashBlock(Vector3)` method for public usage.
 
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
@@ -265,3 +266,4 @@ Fixes several anvil issues.
 [#254]: https://github.com/GameModsBR/PowerNukkit/issues/254
 [#255]: https://github.com/GameModsBR/PowerNukkit/pull/255
 [#256]: https://github.com/GameModsBR/PowerNukkit/pull/256
+[#259]: https://github.com/GameModsBR/PowerNukkit/pull/259
