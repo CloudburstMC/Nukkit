@@ -12,7 +12,7 @@ import co.aikar.timings.Timings;
 import java.util.List;
 
 /**
- * Base class for Commands. Plugins should extend {@link PluginCommand PluginCommand<T>} and not this class.
+ * Base class for Commands. Plugins should extend {@link PluginCommand} and not this class.
  *
  * @author MagicDroidX
  * @see PluginCommand
@@ -123,7 +123,7 @@ public abstract class Command {
      * sends the Command data to a client. If the player does not have permission to use this Command,
      * <code>null</code> will be returned.
      *
-     * @param player player
+     * @param player Player to have command packet sent
      * @return CommandData|null
      */
     public com.nukkitx.protocol.bedrock.data.CommandData toNetwork(Player player) {

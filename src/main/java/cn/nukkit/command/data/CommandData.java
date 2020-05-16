@@ -155,8 +155,8 @@ public class CommandData {
 
         /**
          * Clears all current permissions and sets as the passed in collection.
-         * <p/>Note: A player only needs to have <em>one</em> of the permissions in the list to
-         * be able to execute the command.
+         * <p>Note: A player only needs to have <em>one</em> of the permissions in the list to
+         * be able to execute the command.</p>
          *
          * @param permissions Collection of String premissions
          * @return Builder instance for chaining calls
@@ -168,8 +168,8 @@ public class CommandData {
 
         /**
          * Adds the passed permission String to the list of allowed permissions.
-         * <p/>Note: A player only needs to have <em>one</em> of the permissions in the list to
-         * be able to execute the command.
+         * <p>Note: A player only needs to have <em>one</em> of the permissions in the list to
+         * be able to execute the command.</p>
          *
          * @param permission Permission string to add
          * @return Builder instance for chaining calls
@@ -182,8 +182,8 @@ public class CommandData {
         /**
          * Adds all of the permissions in the passed String collection to the list of allowed permissions,
          * without clearing the current permissions set.
-         * <p/>Note: A player only needs to have <em>one</em> of the permissions in the list to
-         * be able to execute the command.
+         * <p>Note: A player only needs to have <em>one</em> of the permissions in the list to
+         * be able to execute the command.</p>
          *
          * @param permissions Collection of permissions to add
          * @return Builder instance for chaining calls
@@ -238,9 +238,10 @@ public class CommandData {
         }
 
         /**
-         * @param parameters
-         * @return
-         * @see #setParameters(CommandParameter[]...)
+         * Clears the command overloads and sets the passed collection as the overloads for this Command.
+         *
+         * @param parameters List of {@link CommandParameter CommandParameter[]}
+         * @return Builder instance for chaining calls
          */
         public Builder setParameters(@NonNull List<CommandParameter[]> parameters) {
             this.overloads = parameters;
