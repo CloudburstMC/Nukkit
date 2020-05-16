@@ -3236,6 +3236,7 @@ public class Level implements ChunkManager, Metadatable {
         pk.yaw = (float) yaw;
         pk.headYaw = (float) headYaw;
         pk.pitch = (float) pitch;
+        pk.onGround = entity.onGround;
 
         Server.broadcastPacket(entity.getViewers().values(), pk);
     }
