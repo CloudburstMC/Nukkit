@@ -1879,10 +1879,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             return;
         } else if (this.isBanned()) {
-            this.kick(PlayerKickEvent.Reason.NAME_BANNED, "You are banned");
+            String reason = this.server.getNameBans().getEntires().get(this.getName().toLowerCase()).getReason();
+            this.kick(PlayerKickEvent.Reason.NAME_BANNED, !reason.isEmpty() ? "You are banned. Reason: " + reason : "You are banned");
             return;
         } else if (this.server.getIPBans().isBanned(this.getAddress())) {
-            this.kick(PlayerKickEvent.Reason.IP_BANNED, "You are banned");
+            String reason = this.server.getIPBans().getEntires().get(this.getAddress()).getReason();
+            this.kick(PlayerKickEvent.Reason.IP_BANNED, !reason.isEmpty() ? "You are banned. Reason: " + reason : "You are banned");
             return;
         }
 
