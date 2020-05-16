@@ -19,9 +19,12 @@ Click the link above to see the future.
          in a given item stack by any non-hack means.
 - [#256] `CapturingCommandSender` intended to capture output of commands which don't require players.
 - [#259] `Hash.hashBlock(Vector3)` method for public usage.
+- [#261] `Player.isCheckingMovement()` method for public usage.
+- [#261] Protected field `EntityEndCrystal.detonated` to disable the `EndCrystal.explode()` method.
 
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
+- [#261] Kicked players can now view the kick reason on kick.
 
 ## [Unreleased 1.2.0.2-PN+]
 Click the link above to see the future.
@@ -41,7 +44,9 @@ Click the link above to see the future.
 - [#253] Fixes `LeavesDecayEvent` also being called when leaves wouldn't decay
 - [#254] Fixes BlockLeaves not checking for log connectivity, was checking only if it had a log block nearby
 - [#255] Fix /status information in /debugpaste not being collected
-
+- [#260] Fix a stack overflow when setting off end crystals near to each other
+- [#260] Fix drops of block entity inventory contents on explosion
+- [#260] Check SUPPORTED_PROTOCOLS instead of CURRENT_PROTOCOL in `LoginPacket.decode()` 
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
@@ -267,3 +272,5 @@ Fixes several anvil issues.
 [#255]: https://github.com/GameModsBR/PowerNukkit/pull/255
 [#256]: https://github.com/GameModsBR/PowerNukkit/pull/256
 [#259]: https://github.com/GameModsBR/PowerNukkit/pull/259
+[#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
+[#261]: https://github.com/GameModsBR/PowerNukkit/pull/261
