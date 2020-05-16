@@ -24,7 +24,9 @@ Click the link above to see the future.
 - [#253] Fixes `LeavesDecayEvent` also being called when leaves wouldn't decay
 - [#254] Fixes BlockLeaves not checking for log connectivity, was checking only if it had a log block nearby
 - [#255] Fix /status information in /debugpaste not being collected
-
+- [#260] Fix a stack overflow when setting off end crystals near to each other
+- [#260] Fix drops of block entity inventory contents on explosion
+- [#260] Check SUPPORTED_PROTOCOLS instead of CURRENT_PROTOCOL in `LoginPacket.decode()` 
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
@@ -244,3 +246,4 @@ Fixes several anvil issues.
 [#253]: https://github.com/GameModsBR/PowerNukkit/pull/253
 [#254]: https://github.com/GameModsBR/PowerNukkit/issues/254
 [#255]: https://github.com/GameModsBR/PowerNukkit/pull/255
+[#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
