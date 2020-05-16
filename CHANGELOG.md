@@ -20,6 +20,7 @@ Click the link above to see the future.
 - [#256] `CapturingCommandSender` intended to capture output of commands which don't require players.
 - [#259] `Hash.hashBlock(Vector3)` method for public usage.
 - [#261] `Player.isCheckingMovement()` method for public usage.
+- [#261] Protected field `EntityEndCrystal.detonated` to disable the `EndCrystal.explode()` method.
 
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
