@@ -16,7 +16,10 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
 
     public static final int NETWORK_ID = 71;
 
-    private boolean detonated = false;
+    /**
+     * @since 1.2.1.0-PN
+     */
+    protected boolean detonated = false;
 
     @Override
     public int getNetworkId() {

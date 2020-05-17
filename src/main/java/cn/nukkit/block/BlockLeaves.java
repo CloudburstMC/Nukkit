@@ -7,7 +7,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Hash;
 import it.unimi.dsi.fastutil.longs.Long2LongMap;
@@ -164,7 +163,7 @@ public class BlockLeaves extends BlockTransparentMeta {
         if (distance == 0 || !(current instanceof BlockLeaves)) {
             return false;
         }
-        long hash = hashBlock(current);
+        long hash = Hash.hashBlock(current);
         if (visited.get(hash) >= distance) {
             return false;
         }
@@ -233,13 +232,5 @@ public class BlockLeaves extends BlockTransparentMeta {
     @Override
     public boolean sticksToPiston() {
         return false;
-    }
-
-    /**
-     * @deprecated Move to {@link Hash} and make it public in 1.2.1.0-PN
-     */
-    @Deprecated
-    private static long hashBlock(Vector3 blockPos) {
-        return Hash.hashBlock(blockPos.getFloorX(), blockPos.getFloorY(), blockPos.getFloorZ());
     }
 }
