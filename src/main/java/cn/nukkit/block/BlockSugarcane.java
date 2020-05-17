@@ -120,8 +120,8 @@ public class BlockSugarcane extends BlockFlowable {
             }
             
             int height = 0;
-            for (Block down = this; height < 3 && down.getId() == SUGARCANE_BLOCK; height++) {
-                down = down.down();
+            for (Block current = this; height < 3 && current.getId() == SUGARCANE_BLOCK; height++) {
+                current = current.down();
             }
             if (height >= 3) {
                 return type;
