@@ -30,6 +30,7 @@ Click the link above to see the future.
 - [#79] Sugarcane can grow without water
 - [#262] Removing the water don't break the sugarcane (using empty bucket or breaking water flow)
 - [#263] Fixes disconnect messages not reaching the player sometimes
+- [#116] Fishing hooks don't attach to entities and damages multiples entities
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
@@ -225,6 +226,7 @@ Fixes several anvil issues.
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#103]: https://github.com/GameModsBR/PowerNukkit/issues/103
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
+[#116]: https://github.com/GameModsBR/PowerNukkit/issues/116
 [#129]: https://github.com/GameModsBR/PowerNukkit/pull/129
 [#140]: https://github.com/GameModsBR/PowerNukkit/pull/140
 [#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
