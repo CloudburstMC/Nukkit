@@ -4193,11 +4193,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendExperience(exp);
         if (playLevelUpSound && levelBefore < level && levelBefore / 5 != level / 5 && this.lastPlayerdLevelUpSoundTime < this.age - 100) {
             this.lastPlayerdLevelUpSoundTime = this.age;
-            //noinspection PointlessArithmeticExpression
             this.level.addLevelSoundEvent(
                     this, 
                     LevelSoundEventPacketV2.SOUND_LEVELUP,
-                    1*1024*1024*1024, // Why 1GB or 1073741824? I don't know, but this works...
+                    Math.min(7, level / 5) << 28,
                     "",
                     false, false
             );
