@@ -8,7 +8,6 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.level.Level;
 import cn.nukkit.locale.TranslationContainer;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3f;
 
@@ -55,8 +54,8 @@ public class SetWorldSpawnCommand extends Command {
         }
         level.setSpawnLocation(pos);
 
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.setworldspawn.success", NukkitMath.round(pos.getX(), 2),
-                NukkitMath.round(pos.getY(), 2), NukkitMath.round(pos.getZ(), 2)));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.setworldspawn.success", pos.getFloorX(),
+                pos.getFloorY(), pos.getFloorZ()));
         return true;
     }
 }
