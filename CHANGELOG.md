@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
+## [Unreleased 1.2.1.0-PN+]
+Click the link above to see the future.
+
+### Fixes
+- [#224] Enchantment compatibility rules when merging enchanted items in an anvil
+
+### Added
+- [#227] PlayerJumpEvent called when jump packets are received.
+- [#242] `Item.equalsIgnoringEnchantmentOrder` method for public usage.
+- [#244] `Enchantment.getPowerNukkit().isItemAcceptable(Item)` to check if an enchantment can exist 
+         in a given item stack by any non-hack means.
+- [#256] `CapturingCommandSender` intended to capture output of commands which don't require players.
+- [#259] `Hash.hashBlock(Vector3)` method for public usage.
+- [#261] `Player.isCheckingMovement()` method for public usage.
+- [#261] Protected field `EntityEndCrystal.detonated` to disable the `EndCrystal.explode()` method.
+
+### Changed
+- [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
+- [#261] Kicked players can now view the kick reason on kick.
+
 ## [Unreleased 1.2.0.2-PN+]
 Click the link above to see the future.
 
@@ -197,6 +217,7 @@ Fixes several anvil issues.
     - Loom
     - Bamboo
 
+[Unreleased 1.2.1.0-PN+]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...master
 [Unreleased 1.2.0.2-PN+]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...snapshot/v1.2.0.x
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
 [1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
@@ -240,18 +261,24 @@ Fixes several anvil issues.
 [#222]: https://github.com/GameModsBR/PowerNukkit/issues/223
 [#224]: https://github.com/GameModsBR/PowerNukkit/pull/224
 [#226]: https://github.com/GameModsBR/PowerNukkit/issues/226
+[#227]: https://github.com/GameModsBR/PowerNukkit/pull/227
 [#228]: https://github.com/GameModsBR/PowerNukkit/issues/228
 [#234]: https://github.com/GameModsBR/PowerNukkit/issues/234
 [#235]: https://github.com/GameModsBR/PowerNukkit/issues/235
 [#239]: https://github.com/GameModsBR/PowerNukkit/issues/239
 [#240]: https://github.com/GameModsBR/PowerNukkit/issues/240
+[#242]: https://github.com/GameModsBR/PowerNukkit/pull/242
 [#243]: https://github.com/GameModsBR/PowerNukkit/issues/243
+[#244]: https://github.com/GameModsBR/PowerNukkit/pull/244
 [#246]: https://github.com/GameModsBR/PowerNukkit/issues/246
 [#247]: https://github.com/GameModsBR/PowerNukkit/pull/247
 [#248]: https://github.com/GameModsBR/PowerNukkit/pull/248
 [#253]: https://github.com/GameModsBR/PowerNukkit/pull/253
 [#254]: https://github.com/GameModsBR/PowerNukkit/issues/254
 [#255]: https://github.com/GameModsBR/PowerNukkit/pull/255
+[#256]: https://github.com/GameModsBR/PowerNukkit/pull/256
+[#259]: https://github.com/GameModsBR/PowerNukkit/pull/259
 [#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
+[#261]: https://github.com/GameModsBR/PowerNukkit/pull/261
 [#262]: https://github.com/GameModsBR/PowerNukkit/pull/262
 [#263]: https://github.com/GameModsBR/PowerNukkit/pull/263

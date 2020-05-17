@@ -19,6 +19,8 @@ import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -1062,6 +1064,58 @@ public class Item implements Cloneable, BlockID, ItemID {
      */
     public final boolean equalsExact(Item other) {
         return this.equals(other, true, true) && this.count == other.count;
+    }
+
+    /**
+     * Same as {@link #equals(Item, boolean)} but the enchantment order of the items does not affect the result.
+     * @since 1.2.1.0-PN
+     */
+    public final boolean equalsIgnoringEnchantmentOrder(Item item, boolean checkDamage) {
+        if (!this.equals(item, checkDamage, false)) {
+            return false;
+        }
+
+        if (Arrays.equals(this.getCompoundTag(), item.getCompoundTag())) {
+            return true;
+        }
+
+        if (!this.hasCompoundTag() || !item.hasCompoundTag()) {
+            return false;
+        }
+
+        CompoundTag thisTags = this.getNamedTag();
+        CompoundTag otherTags = item.getNamedTag();
+        if (thisTags.equals(otherTags)) {
+            return true;
+        }
+
+        if (!thisTags.contains("ench") || !otherTags.contains("ench")
+                || !(thisTags.get("ench") instanceof ListTag)
+                || !(otherTags.get("ench") instanceof ListTag)
+                || thisTags.getList("ench").size() != otherTags.getList("ench").size()) {
+            return false;
+        }
+
+        ListTag<CompoundTag> thisEnchantmentTags = thisTags.getList("ench", CompoundTag.class);
+        ListTag<CompoundTag> otherEnchantmentTags = otherTags.getList("ench", CompoundTag.class);
+
+        int size = thisEnchantmentTags.size();
+        Int2IntMap enchantments = new Int2IntArrayMap(size);
+        enchantments.defaultReturnValue(Integer.MIN_VALUE);
+
+        for (int i = 0; i < size; i++) {
+            CompoundTag tag = thisEnchantmentTags.get(i);
+            enchantments.put(tag.getShort("id"), tag.getShort("lvl"));
+        }
+
+        for (int i = 0; i < size; i++) {
+            CompoundTag tag = otherEnchantmentTags.get(i);
+            if (enchantments.get(tag.getShort("id")) != tag.getShort("lvl")) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Deprecated
