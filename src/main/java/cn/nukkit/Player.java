@@ -2152,11 +2152,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (loginPacket.getProtocol() < ProtocolInfo.CURRENT_PROTOCOL) {
                             message = "disconnectionScreen.outdatedClient";
 
-                            this.sendPlayStatus(PlayStatusPacket.LOGIN_FAILED_CLIENT);
+                            this.sendPlayStatus(PlayStatusPacket.LOGIN_FAILED_CLIENT, true);
                         } else {
                             message = "disconnectionScreen.outdatedServer";
 
-                            this.sendPlayStatus(PlayStatusPacket.LOGIN_FAILED_SERVER);
+                            this.sendPlayStatus(PlayStatusPacket.LOGIN_FAILED_SERVER, true);
                         }
                         if (((LoginPacket) packet).protocol < 137) {
                             DisconnectPacket disconnectPacket = new DisconnectPacket();
