@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Properties;
 
 /*
@@ -61,6 +62,7 @@ public class Nukkit {
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
+        Locale.setDefault(Locale.ENGLISH);
         System.setProperty("log4j.skipJansi", "false");
 
         // Force Mapped ByteBuffers for LevelDB till fixed.
