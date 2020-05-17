@@ -31,10 +31,12 @@ Click the link above to see the future.
 - [#262] Removing the water don't break the sugarcane (using empty bucket or breaking water flow)
 - [#263] Fixes disconnect messages not reaching the player sometimes
 - [#116] Fishing hooks don't attach to entities and damages multiples entities
+- [#95] The Level Up sound is not centered
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
 - [#255] The report issues link has been changed to point to the PowerNukkit repository
+- [#268] The `/xp` command now makes level up sound every 5 levels
 
 ## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
 Fixes several anvil issues.
@@ -223,6 +225,7 @@ Fixes several anvil issues.
 [#80]: https://github.com/GameModsBR/PowerNukkit/pull/80
 [#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
 [#93]: https://github.com/GameModsBR/PowerNukkit/issues/93
+[#95]: https://github.com/GameModsBR/PowerNukkit/issues/95
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#103]: https://github.com/GameModsBR/PowerNukkit/issues/103
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
@@ -255,3 +258,4 @@ Fixes several anvil issues.
 [#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
 [#262]: https://github.com/GameModsBR/PowerNukkit/pull/262
 [#263]: https://github.com/GameModsBR/PowerNukkit/pull/263
+[#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
