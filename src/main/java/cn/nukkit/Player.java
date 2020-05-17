@@ -4193,7 +4193,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendExperience(exp);
         if (playLevelUpSound && levelBefore / 5 != level / 5 && this.lastPlayerdLevelUpSoundTime < this.age - 100) {
             this.lastPlayerdLevelUpSoundTime = this.age;
-            this.level.addSound(this, Sound.RANDOM_LEVELUP, 1F, 1F, this);
+            //noinspection PointlessArithmeticExpression
+            this.level.addLevelSoundEvent(
+                    this, 
+                    LevelSoundEventPacketV2.SOUND_LEVELUP,
+                    1*1024*1024*1024, // Why 1GB or 1073741824? I don't know, but this works...
+                    "",
+                    false, false
+            );
         }
     }
 
