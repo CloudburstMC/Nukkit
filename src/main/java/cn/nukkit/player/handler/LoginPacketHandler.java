@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @Log4j2
 public class LoginPacketHandler implements BedrockPacketHandler {
 
-    private static final Pattern pattern = Pattern.compile("^[aA-zZ\\s\\d_]{3,16}+$");
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[aA-zZ\\s\\d_]{3,16}+$");
 
     private final BedrockServerSession session;
     private final Server server;
@@ -37,7 +37,7 @@ public class LoginPacketHandler implements BedrockPacketHandler {
     public LoginPacketHandler(BedrockServerSession session, Server server, BedrockInterface interfaz) {
         this.session = session;
         this.server = server;
-        loginData = new PlayerLoginData(session, server, interfaz);
+        this.loginData = new PlayerLoginData(session, server, interfaz);
     }
 
     @Override
@@ -71,14 +71,14 @@ public class LoginPacketHandler implements BedrockPacketHandler {
         }
 
         String username = this.loginData.getChainData().getUsername();
-        Matcher matcher = pattern.matcher(username);
+        Matcher matcher = NAME_PATTERN.matcher(username);
 
         if (!matcher.matches() || username.equalsIgnoreCase("rcon") || username.equalsIgnoreCase("console")) {
             session.disconnect("disconnectionScreen.invalidName");
             return true;
         }
 
-        loginData.setName(TextFormat.clean(username));
+        this.loginData.setName(TextFormat.clean(username));
 
         if (!this.loginData.getChainData().getSkin().isValid()) {
             session.disconnect("disconnectionScreen.invalidSkin");
