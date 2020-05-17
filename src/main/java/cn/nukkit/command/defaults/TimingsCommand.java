@@ -8,6 +8,8 @@ import cn.nukkit.locale.TranslationContainer;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsExport;
 
+import java.util.Locale;
+
 /**
  * @author fromgate
  * @author Pub4Game
@@ -35,7 +37,7 @@ public class TimingsCommand extends Command {
             return false;
         }
 
-        String mode = args[0].toLowerCase();
+        String mode = args[0].toLowerCase(Locale.ENGLISH);
 
         if (mode.equals("on")) {
             Timings.setTimingsEnabled(true);

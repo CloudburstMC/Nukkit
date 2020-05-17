@@ -9,6 +9,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -78,7 +79,7 @@ public class HelpCommand extends Command {
                 i++;
             }
         } else {
-            Command cmd = sender.getServer().getCommandRegistry().getCommand(command.toLowerCase());
+            Command cmd = sender.getServer().getCommandRegistry().getCommand(command.toLowerCase(Locale.ENGLISH));
             if (cmd != null) {
                 if (cmd.testPermissionSilent(sender)) {
                     String desc = sender.getServer().getLanguage().translate(cmd.getDescription());

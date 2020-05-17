@@ -9,6 +9,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Locale;
 import java.util.StringJoiner;
 
 /**
@@ -48,10 +49,10 @@ public class WhitelistCommand extends Command {
         }
 
         if (args.length == 1) {
-            if (this.badPerm(sender, args[0].toLowerCase())) {
+            if (this.badPerm(sender, args[0].toLowerCase(Locale.ENGLISH))) {
                 return false;
             }
-            switch (args[0].toLowerCase()) {
+            switch (args[0].toLowerCase(Locale.ENGLISH)) {
                 case "reload":
                     sender.getServer().reloadWhitelist();
                     CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.whitelist.reloaded"));
@@ -83,10 +84,10 @@ public class WhitelistCommand extends Command {
                     return false;
             }
         } else {
-            if (this.badPerm(sender, args[0].toLowerCase())) {
+            if (this.badPerm(sender, args[0].toLowerCase(Locale.ENGLISH))) {
                 return false;
             }
-            switch (args[0].toLowerCase()) {
+            switch (args[0].toLowerCase(Locale.ENGLISH)) {
                 case "add":
                     sender.getServer().getOfflinePlayer(args[1]).setWhitelisted(true);
                     CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.whitelist.add.success", args[1]));

@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
+import java.util.Locale;
 
 
 /**
@@ -38,7 +39,7 @@ public class Binary {
             }
             stringBuilder.append(hv);
         }
-        return stringBuilder.toString().toUpperCase();
+        return stringBuilder.toString().toUpperCase(Locale.ENGLISH);
     }
 
     public static byte[] hexStringToBytes(String hexString) {

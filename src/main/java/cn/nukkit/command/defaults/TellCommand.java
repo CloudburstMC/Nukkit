@@ -9,6 +9,7 @@ import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Locale;
 import java.util.Objects;
 import java.util.StringJoiner;
 
@@ -41,7 +42,7 @@ public class TellCommand extends Command {
             return false;
         }
 
-        String name = args[0].toLowerCase();
+        String name = args[0].toLowerCase(Locale.ENGLISH);
 
         Player player = sender.getServer().getPlayer(name);
         if (player == null) {

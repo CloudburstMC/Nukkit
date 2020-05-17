@@ -9,6 +9,8 @@ import cn.nukkit.event.potion.PotionApplyEvent;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.ServerException;
 
+import java.util.Locale;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -118,7 +120,7 @@ public class Potion implements Cloneable {
 
     public static Potion getPotionByName(String name) {
         try {
-            byte id = Potion.class.getField(name.toUpperCase()).getByte(null);
+            byte id = Potion.class.getField(name.toUpperCase(Locale.ENGLISH)).getByte(null);
             return getPotion(id);
         } catch (Exception e) {
             throw new RuntimeException(e);

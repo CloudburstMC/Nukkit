@@ -1135,7 +1135,7 @@ public class Server {
     }
 
     public static int getGamemodeFromString(String str) {
-        switch (str.trim().toLowerCase()) {
+        switch (str.trim().toLowerCase(Locale.ENGLISH)) {
             case "0":
             case "survival":
             case "s":
@@ -1162,7 +1162,7 @@ public class Server {
     }
 
     public static int getDifficultyFromString(String str) {
-        switch (str.trim().toLowerCase()) {
+        switch (str.trim().toLowerCase(Locale.ENGLISH)) {
             case "0":
             case "peaceful":
             case "p":
@@ -1307,7 +1307,7 @@ public class Server {
     }
 
     public Optional<UUID> lookupName(String name) {
-        byte[] nameBytes = name.toLowerCase().getBytes(StandardCharsets.UTF_8);
+        byte[] nameBytes = name.toLowerCase(Locale.ENGLISH).getBytes(StandardCharsets.UTF_8);
         byte[] uuidBytes = nameLookup.get(nameBytes);
         if (uuidBytes == null) {
             return Optional.empty();
@@ -1324,7 +1324,7 @@ public class Server {
     }
 
     public void updateName(UUID uuid, String name) {
-        byte[] nameBytes = name.toLowerCase().getBytes(StandardCharsets.UTF_8);
+        byte[] nameBytes = name.toLowerCase(Locale.ENGLISH).getBytes(StandardCharsets.UTF_8);
 
         ByteBuffer buffer = ByteBuffer.allocate(16);
         buffer.putLong(uuid.getMostSignificantBits());
@@ -1335,7 +1335,7 @@ public class Server {
 
     @Deprecated
     public IPlayer getOfflinePlayer(final String name) {
-        IPlayer result = this.getPlayerExact(name.toLowerCase());
+        IPlayer result = this.getPlayerExact(name.toLowerCase(Locale.ENGLISH));
         if (result != null) {
             return result;
         }
@@ -1445,7 +1445,7 @@ public class Server {
     }
 
     private void saveOfflinePlayerData(String name, CompoundTag tag, boolean async, boolean runEvent) {
-        String nameLower = name.toLowerCase();
+        String nameLower = name.toLowerCase(Locale.ENGLISH);
         if (this.shouldSavePlayerData()) {
             PlayerDataSerializeEvent event = new PlayerDataSerializeEvent(nameLower, playerDataSerializer);
             if (runEvent) {
@@ -1532,10 +1532,10 @@ public class Server {
 
     public Player getPlayer(String name) {
         Player found = null;
-        name = name.toLowerCase();
+        name = name.toLowerCase(Locale.ENGLISH);
         int delta = Integer.MAX_VALUE;
         for (Player player : this.getOnlinePlayers().values()) {
-            if (player.getName().toLowerCase().startsWith(name)) {
+            if (player.getName().toLowerCase(Locale.ENGLISH).startsWith(name)) {
                 int curDelta = player.getName().length() - name.length();
                 if (curDelta < delta) {
                     found = player;
@@ -1551,9 +1551,9 @@ public class Server {
     }
 
     public Player getPlayerExact(String name) {
-        name = name.toLowerCase();
+        name = name.toLowerCase(Locale.ENGLISH);
         for (Player player : this.getOnlinePlayers().values()) {
-            if (player.getName().toLowerCase().equals(name)) {
+            if (player.getName().toLowerCase(Locale.ENGLISH).equals(name)) {
                 return player;
             }
         }
@@ -1562,12 +1562,12 @@ public class Server {
     }
 
     public Player[] matchPlayer(String partialName) {
-        partialName = partialName.toLowerCase();
+        partialName = partialName.toLowerCase(Locale.ENGLISH);
         List<Player> matchedPlayer = new ArrayList<>();
         for (Player player : this.getOnlinePlayers().values()) {
-            if (player.getName().toLowerCase().equals(partialName)) {
+            if (player.getName().toLowerCase(Locale.ENGLISH).equals(partialName)) {
                 return new Player[]{player};
-            } else if (player.getName().toLowerCase().contains(partialName)) {
+            } else if (player.getName().toLowerCase(Locale.ENGLISH).contains(partialName)) {
                 matchedPlayer.add(player);
             }
         }
@@ -1749,7 +1749,7 @@ public class Server {
     }
 
     public void addOp(String name) {
-        this.operators.set(name.toLowerCase(), true);
+        this.operators.set(name.toLowerCase(Locale.ENGLISH), true);
         Player player = this.getPlayerExact(name);
         if (player != null) {
             player.recalculatePermissions();
@@ -1758,7 +1758,7 @@ public class Server {
     }
 
     public void removeOp(String name) {
-        this.operators.remove(name.toLowerCase());
+        this.operators.remove(name.toLowerCase(Locale.ENGLISH));
         Player player = this.getPlayerExact(name);
         if (player != null) {
             player.recalculatePermissions();
@@ -1767,12 +1767,12 @@ public class Server {
     }
 
     public void addWhitelist(String name) {
-        this.whitelist.set(name.toLowerCase(), true);
+        this.whitelist.set(name.toLowerCase(Locale.ENGLISH), true);
         this.whitelist.save(true);
     }
 
     public void removeWhitelist(String name) {
-        this.whitelist.remove(name.toLowerCase());
+        this.whitelist.remove(name.toLowerCase(Locale.ENGLISH));
         this.whitelist.save(true);
     }
 

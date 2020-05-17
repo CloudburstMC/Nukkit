@@ -7,10 +7,7 @@ import com.google.common.collect.ImmutableSet;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class GameRuleRegistry implements Registry {
     private static final GameRuleRegistry INSTANCE = new GameRuleRegistry();
@@ -32,13 +29,13 @@ public class GameRuleRegistry implements Registry {
         Preconditions.checkArgument(gameRule instanceof BooleanGameRule ||
                         gameRule instanceof IntegerGameRule || gameRule instanceof FloatGameRule,
                 "Invalid gamerule type given");
-        Preconditions.checkArgument(this.registered.putIfAbsent(gameRule.getName().toLowerCase(), gameRule) == null,
+        Preconditions.checkArgument(this.registered.putIfAbsent(gameRule.getName().toLowerCase(Locale.ENGLISH), gameRule) == null,
                 "GameRule already registered");
     }
 
     @Nullable
     public GameRule<? extends Comparable<?>> fromString(String name) {
-        name = name.trim().toLowerCase();
+        name = name.trim().toLowerCase(Locale.ENGLISH);
         return this.registered.get(name);
     }
 

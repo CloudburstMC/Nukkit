@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Locale;
 import java.util.Map;
 
 @Log4j2
@@ -91,7 +92,7 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
         // Gamerules - No idea why these aren't in a separate tag
         GameRuleMap gameRules = data.getGameRules();
         gameRules.forEach((gameRule, o) -> {
-            String name = gameRule.getName().toLowerCase();
+            String name = gameRule.getName().toLowerCase(Locale.ENGLISH);
             if (gameRule.getValueClass() == Boolean.class) {
                 tag.booleanTag(name, (boolean) o);
             } else if (gameRule.getValueClass() == Integer.class) {
@@ -156,7 +157,7 @@ public class LevelDBDataSerializer implements LevelDataSerializer {
         tag.listenForBoolean("Hardcore", data::setHardcore);
 
         GameRuleRegistry.get().getRules().forEach(rule -> {
-            Tag<?> gameRuleTag = tag.get(rule.getName().toLowerCase());
+            Tag<?> gameRuleTag = tag.get(rule.getName().toLowerCase(Locale.ENGLISH));
             Object value = gameRuleTag == null ? null : gameRuleTag.getValue();
             if (value instanceof Byte) {
                 data.getGameRules().put((GameRule<Boolean>) rule, (byte) value != 0);

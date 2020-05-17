@@ -5,10 +5,7 @@ import com.nukkitx.protocol.bedrock.data.CommandParamData;
 import lombok.NonNull;
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * This stores the information about a command.
@@ -106,7 +103,7 @@ public class CommandData {
         private List<CommandParameter[]> overloads = new ArrayList<>();
 
         public Builder(@NonNull String name) {
-            this.name = name.toLowerCase();
+            this.name = name.toLowerCase(Locale.ENGLISH);
         }
 
         public CommandData build() {

@@ -10,6 +10,7 @@ import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Base class for Commands. Plugins should extend {@link PluginCommand} and not this class.
@@ -30,7 +31,7 @@ public abstract class Command {
     }
 
     public Command(String name, CommandData data) {
-        this.name = name.toLowerCase(); // Uppercase letters crash the client?
+        this.name = name.toLowerCase(Locale.ENGLISH); // Uppercase letters crash the client?
         this.commandData = data;
         this.timing = Timings.getCommandTiming(this);
     }

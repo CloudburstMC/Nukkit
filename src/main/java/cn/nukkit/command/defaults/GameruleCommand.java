@@ -12,6 +12,7 @@ import cn.nukkit.player.Player;
 import cn.nukkit.registry.GameRuleRegistry;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.StringJoiner;
 
 public class GameruleCommand extends Command {
@@ -45,7 +46,7 @@ public class GameruleCommand extends Command {
             case 0:
                 StringJoiner rulesJoiner = new StringJoiner(", ");
                 for (String rule : registry.getRuleNames()) {
-                    rulesJoiner.add(rule.toLowerCase());
+                    rulesJoiner.add(rule.toLowerCase(Locale.ENGLISH));
                 }
                 sender.sendMessage(rulesJoiner.toString());
                 return true;

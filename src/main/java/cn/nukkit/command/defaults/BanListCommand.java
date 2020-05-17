@@ -9,6 +9,7 @@ import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 
 import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -32,7 +33,7 @@ public class BanListCommand extends Command {
         BanList list;
         boolean ips = false;
         if (args.length > 0) {
-            switch (args[0].toLowerCase()) {
+            switch (args[0].toLowerCase(Locale.ENGLISH)) {
                 case "ips":
                     list = sender.getServer().getIPBans();
                     ips = true;

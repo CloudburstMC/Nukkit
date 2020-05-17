@@ -18,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Project nukkit
@@ -93,7 +94,7 @@ public class BugReportGenerator extends Thread {
         content = content.replace("${CPU_TYPE}", cpuType == null ? "UNKNOWN" : cpuType);
         content = content.replace("${AVAILABLE_CORE}", String.valueOf(osMXBean.getAvailableProcessors()));
         content = content.replace("${STACKTRACE}", stringWriter.toString());
-        content = content.replace("${PLUGIN_ERROR}", Boolean.toString(pluginError).toUpperCase());
+        content = content.replace("${PLUGIN_ERROR}", Boolean.toString(pluginError).toUpperCase(Locale.ENGLISH));
         content = content.replace("${STORAGE_TYPE}", model.toString());
 
         Utils.writeFile(mdReport, content);
