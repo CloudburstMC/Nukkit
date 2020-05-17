@@ -4191,7 +4191,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.sendExperienceLevel(level);
         this.sendExperience(exp);
-        if (playLevelUpSound && levelBefore / 5 != level / 5 && this.lastPlayerdLevelUpSoundTime < this.age - 100) {
+        if (playLevelUpSound && levelBefore < level && levelBefore / 5 != level / 5 && this.lastPlayerdLevelUpSoundTime < this.age - 100) {
             this.lastPlayerdLevelUpSoundTime = this.age;
             //noinspection PointlessArithmeticExpression
             this.level.addLevelSoundEvent(
