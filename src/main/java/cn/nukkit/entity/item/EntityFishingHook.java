@@ -286,6 +286,11 @@ public class EntityFishingHook extends EntityProjectile {
     }
 
     @Override
+    public boolean canCollide() {
+        return getRiding() == null;
+    }
+
+    @Override
     public void onCollideWithEntity(Entity entity) {
         this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity)));
         float damage = this.getResultDamage();
@@ -297,6 +302,12 @@ public class EntityFishingHook extends EntityProjectile {
             ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
 
-        entity.attack(ev);
+        if (entity.attack(ev)) {
+            Entity top = entity;
+            for (Entity current = top; current != null; current = current.getPassenger()) {
+                top = current;
+            }
+            top.mountEntity(this);
+        }
     }
 }
