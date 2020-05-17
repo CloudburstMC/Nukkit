@@ -36,6 +36,7 @@ Click the link above to see the future.
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
 - [#255] The report issues link has been changed to point to the PowerNukkit repository
+- [#268] The `/xp` command now makes level up sound every 5 levels
 
 ## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
 Fixes several anvil issues.
@@ -257,3 +258,4 @@ Fixes several anvil issues.
 [#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
 [#262]: https://github.com/GameModsBR/PowerNukkit/pull/262
 [#263]: https://github.com/GameModsBR/PowerNukkit/pull/263
+[#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
