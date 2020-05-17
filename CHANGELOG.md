@@ -29,6 +29,7 @@ Click the link above to see the future.
 - [#260] Check SUPPORTED_PROTOCOLS instead of CURRENT_PROTOCOL in `LoginPacket.decode()`
 - [#79] Sugarcane can grow without water
 - [#262] Removing the water don't break the sugarcane (using empty bucket or breaking water flow)
+- [#263] Fixes disconnect messages not reaching the player sometimes
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
@@ -251,3 +252,4 @@ Fixes several anvil issues.
 [#255]: https://github.com/GameModsBR/PowerNukkit/pull/255
 [#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
 [#262]: https://github.com/GameModsBR/PowerNukkit/pull/262
+[#263]: https://github.com/GameModsBR/PowerNukkit/pull/263
