@@ -2535,6 +2535,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.respawn();
                             break;
                         case PlayerActionPacket.ACTION_JUMP:
+                            PlayerJumpEvent playerJumpEvent = new PlayerJumpEvent(this);
+                            this.server.getPluginManager().callEvent(playerJumpEvent);
                             break packetswitch;
                         case PlayerActionPacket.ACTION_START_SPRINT:
                             PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, true);
@@ -4913,6 +4915,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void setCheckMovement(boolean checkMovement) {
         this.checkMovement = checkMovement;
+    }
+
+    /**
+     * @since 1.2.1.0-PN
+     */
+    public boolean isCheckingMovement() {
+        return this.checkMovement;
     }
 
     public synchronized void setLocale(Locale locale) {
