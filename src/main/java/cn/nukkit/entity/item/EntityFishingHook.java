@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -17,6 +18,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.BubbleParticle;
 import cn.nukkit.level.particle.WaterParticle;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -98,7 +100,20 @@ public class EntityFishingHook extends EntityProjectile {
 
     @Override
     public boolean onUpdate(int currentTick) {
-        boolean hasUpdate = super.onUpdate(currentTick);
+        boolean hasUpdate = false;
+        long target = getDataPropertyLong(DATA_TARGET_EID);
+        if (target != 0L) {
+            Entity entity = getLevel().getEntity(target);
+            if (entity == null || !entity.isAlive()) {
+                setDataProperty(new LongEntityData(DATA_TARGET_EID, 0L));
+            } else {
+                Vector3f offset = entity.getMountedOffset(this);
+                setPosition(new Vector3(entity.x + offset.x, entity.y + offset.y, entity.z + offset.z));
+            }
+            hasUpdate = true;
+        }
+        
+        hasUpdate |= super.onUpdate(currentTick);
         if (hasUpdate) {
             return false;
         }
@@ -296,7 +311,7 @@ public class EntityFishingHook extends EntityProjectile {
 
     @Override
     public boolean canCollide() {
-        return getRiding() == null;
+        return getDataPropertyLong(DATA_TARGET_EID) == 0L;
     }
 
     @Override
@@ -312,11 +327,7 @@ public class EntityFishingHook extends EntityProjectile {
         }
 
         if (entity.attack(ev)) {
-            Entity top = entity;
-            for (Entity current = top; current != null; current = current.getPassenger()) {
-                top = current;
-            }
-            top.mountEntity(this);
+            setDataProperty(new LongEntityData(DATA_TARGET_EID, entity.getId()));
         }
     }
 }
