@@ -58,6 +58,15 @@ public class EntityFishingHook extends EntityProjectile {
     }
 
     @Override
+    protected void initEntity() {
+        super.initEntity();
+        // https://github.com/GameModsBR/PowerNukkit/issues/267
+        if (age > 0) {
+            close();
+        }
+    }
+
+    @Override
     public int getNetworkId() {
         return NETWORK_ID;
     }

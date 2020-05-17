@@ -32,6 +32,7 @@ Click the link above to see the future.
 - [#263] Fixes disconnect messages not reaching the player sometimes
 - [#116] Fishing hooks don't attach to entities and damages multiples entities
 - [#95] The Level Up sound is not centered
+- [#267] Fishing hooks without players, loaded from the level save. They are now removed on load
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
@@ -258,4 +259,5 @@ Fixes several anvil issues.
 [#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
 [#262]: https://github.com/GameModsBR/PowerNukkit/pull/262
 [#263]: https://github.com/GameModsBR/PowerNukkit/pull/263
+[#267]: https://github.com/GameModsBR/PowerNukkit/issues/267
 [#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
