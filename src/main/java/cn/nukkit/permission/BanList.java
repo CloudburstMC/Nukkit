@@ -51,7 +51,7 @@ public class BanList {
         } else {
             this.removeExpired();
 
-            return this.list.containsKey(name.toLowerCase(Locale.ENGLISH));
+            return this.list.containsKey(name.toLowerCase());
         }
     }
 
@@ -84,7 +84,7 @@ public class BanList {
     }
 
     public void remove(String name) {
-        name = name.toLowerCase(Locale.ENGLISH);
+        name = name.toLowerCase();
         if (this.list.containsKey(name)) {
             this.list.remove(name);
             this.save();

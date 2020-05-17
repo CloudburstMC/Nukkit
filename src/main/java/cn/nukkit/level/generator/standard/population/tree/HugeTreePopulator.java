@@ -17,7 +17,6 @@ import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Objects;
 
 import static java.lang.Math.*;
@@ -124,7 +123,7 @@ public class HugeTreePopulator extends AbstractTreePopulator {
 
         @JsonCreator
         public ConfigTree(String species) {
-            this.feature = Preconditions.checkNotNull(TreeSpecies.valueOf(species.toUpperCase(Locale.ENGLISH)).getHugeGenerator(), "%s does not support huge trees!", species);
+            this.feature = Preconditions.checkNotNull(TreeSpecies.valueOf(species.toUpperCase()).getHugeGenerator(), "%s does not support huge trees!", species);
         }
 
         public WorldFeature build() {

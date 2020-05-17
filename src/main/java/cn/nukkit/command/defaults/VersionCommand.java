@@ -10,7 +10,6 @@ import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.StringJoiner;
 
 /**
@@ -46,9 +45,9 @@ public class VersionCommand extends Command {
             final Plugin[] exactPlugin = {sender.getServer().getPluginManager().getPlugin(pluginName.toString())};
 
             if (exactPlugin[0] == null) {
-                final String finalPluginName = pluginName.toString().toLowerCase(Locale.ENGLISH);
+                final String finalPluginName = pluginName.toString().toLowerCase();
                 sender.getServer().getPluginManager().getPlugins().forEach((s, p) -> {
-                    if (s.toLowerCase(Locale.ENGLISH).contains(finalPluginName)) {
+                    if (s.toLowerCase().contains(finalPluginName)) {
                         exactPlugin[0] = p;
                         found[0] = true;
                     }

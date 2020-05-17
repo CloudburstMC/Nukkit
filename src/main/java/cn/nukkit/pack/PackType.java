@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 import java.io.IOException;
-import java.util.Locale;
 
 @JsonSerialize(using = PackType.Serializer.class)
 @JsonDeserialize(using = PackType.Deserializer.class)
@@ -32,7 +31,7 @@ public enum PackType {
 
         @Override
         public void serialize(PackType value, JsonGenerator gen, SerializerProvider provider) throws IOException {
-            gen.writeString(value.name().toLowerCase(Locale.ENGLISH));
+            gen.writeString(value.name().toLowerCase());
         }
     }
 
@@ -45,7 +44,7 @@ public enum PackType {
         @Override
         public PackType deserialize(JsonParser p, DeserializationContext ctxt) {
             try {
-                return valueOf(p.getValueAsString().toUpperCase(Locale.ENGLISH));
+                return valueOf(p.getValueAsString().toUpperCase());
             } catch (Exception e) {
                 return null;
             }

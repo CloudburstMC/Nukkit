@@ -22,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Properties;
 
 /*
@@ -168,7 +167,7 @@ public class Nukkit {
 
     private static boolean requiresShortTitle() {
         //Shorter title for windows 8/2012
-        String osName = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
+        String osName = System.getProperty("os.name").toLowerCase();
         return osName.contains("windows") &&(osName.contains("windows 8") || osName.contains("2012"));
     }
 

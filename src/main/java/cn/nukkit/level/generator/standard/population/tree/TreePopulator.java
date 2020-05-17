@@ -15,7 +15,6 @@ import lombok.NonNull;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Objects;
 
 /**
@@ -67,7 +66,7 @@ public class TreePopulator extends AbstractTreePopulator {
 
         @JsonCreator
         public ConfigTree(String species) {
-            this.species = TreeSpecies.valueOf(species.toUpperCase(Locale.ENGLISH));
+            this.species = TreeSpecies.valueOf(species.toUpperCase());
         }
 
         @JsonCreator

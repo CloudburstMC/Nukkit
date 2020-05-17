@@ -2,8 +2,6 @@ package cn.nukkit.metadata;
 
 import cn.nukkit.level.Level;
 
-import java.util.Locale;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -15,6 +13,6 @@ public class LevelMetadataStore extends MetadataStore {
         if (!(level instanceof Level)) {
             throw new IllegalArgumentException("Argument must be a Level instance");
         }
-        return (((Level) level).getName() + ":" + metadataKey).toLowerCase(Locale.ENGLISH);
+        return (((Level) level).getName() + ":" + metadataKey).toLowerCase();
     }
 }

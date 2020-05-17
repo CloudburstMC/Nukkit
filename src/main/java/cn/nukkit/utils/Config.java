@@ -502,7 +502,7 @@ public class Config {
                 }
                 final String key = line.substring(0, splitIndex);
                 final String value = line.substring(splitIndex + 1);
-                final String valueLower = value.toLowerCase(Locale.ENGLISH);
+                final String valueLower = value.toLowerCase();
                 if (this.config.containsKey(key) && log.isDebugEnabled()) {
                     log.debug("[Config] Repeated property " + key + " on file " + this.file.toString());
                 }

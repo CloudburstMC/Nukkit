@@ -8,7 +8,6 @@ import org.jline.reader.LineReader;
 import org.jline.reader.ParsedLine;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.function.Consumer;
@@ -27,7 +26,7 @@ public class NukkitConsoleCompleter implements Completer {
             SortedSet<String> names = new TreeSet<>();
             addCandidates(names::add);
             for (String match : names) {
-                if (!match.toLowerCase(Locale.ENGLISH).startsWith(parsedLine.word())) {
+                if (!match.toLowerCase().startsWith(parsedLine.word())) {
                     continue;
                 }
 
@@ -38,7 +37,7 @@ public class NukkitConsoleCompleter implements Completer {
             SortedSet<String> names = new TreeSet<>();
             server.getOnlinePlayers().values().forEach((p) -> names.add(p.getName()));
             for (String match : names) {
-                if (!match.toLowerCase(Locale.ENGLISH).startsWith(word.toLowerCase(Locale.ENGLISH))) {
+                if (!match.toLowerCase().startsWith(word.toLowerCase())) {
                     continue;
                 }
 

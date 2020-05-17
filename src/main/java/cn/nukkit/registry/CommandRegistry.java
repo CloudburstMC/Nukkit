@@ -84,7 +84,7 @@ public class CommandRegistry implements Registry {
 
         if (knownAliases.containsKey(name)) {
             log.warn("Command with name {} already exists, attempting to add prefix {}", name, plugin.getName());
-            name = plugin.getName().toLowerCase(Locale.ENGLISH) + ":" + name;
+            name = plugin.getName().toLowerCase() + ":" + name;
             command.setRegisteredName(name);
         }
         registerInternal(name, command);
@@ -175,7 +175,7 @@ public class CommandRegistry implements Registry {
             Command cmd = this.registeredCommands.get(cmdName);
             if (cmd instanceof PluginCommand) {
                 log.warn("Alias {} already registered, trying with plugin prefix", alias);
-                alias = ((PluginCommand) cmd).getPlugin().getName().toLowerCase(Locale.ENGLISH) + ":" + alias;
+                alias = ((PluginCommand) cmd).getPlugin().getName().toLowerCase() + ":" + alias;
             }
         }
 
@@ -356,7 +356,7 @@ public class CommandRegistry implements Registry {
             return false;
         }
 
-        String sentCmd = parsed.remove(0).toLowerCase(Locale.ENGLISH);
+        String sentCmd = parsed.remove(0).toLowerCase();
         if (!this.knownAliases.containsKey(sentCmd)) {
             if (sender instanceof ConsoleCommandSender && sentCmd.startsWith("/")) {
                 sentCmd = sentCmd.substring(1);
@@ -515,7 +515,7 @@ public class CommandRegistry implements Registry {
                 log.warn(server.getLanguage().translate("nukkit.command.alias.notFound", alias, bad.toString()));
                 continue;
             }
-            alias = alias.toLowerCase(Locale.ENGLISH);
+            alias = alias.toLowerCase();
             if (!targets.isEmpty()) {
                 registerInternal(alias, new FormattedCommandAlias(alias, targets));
             }

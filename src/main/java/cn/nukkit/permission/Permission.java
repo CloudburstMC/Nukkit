@@ -18,7 +18,7 @@ public class Permission {
     public static final String DEFAULT_PERMISSION = DEFAULT_OP;
 
     public static String getByName(String value) {
-        switch (value.toLowerCase(Locale.ENGLISH)) {
+        switch (value.toLowerCase()) {
             case "op":
             case "isop":
             case "operator":

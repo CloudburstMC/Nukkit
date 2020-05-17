@@ -9,8 +9,6 @@ import cn.nukkit.utils.ServerException;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.packet.MobEffectPacket;
 
-import java.util.Locale;
-
 import static com.nukkitx.protocol.bedrock.data.EntityFlag.INVISIBLE;
 
 /**
@@ -109,7 +107,7 @@ public class Effect implements Cloneable {
     public static Effect getEffectByName(String name) {
         name = name.trim().replace(' ', '_').replace("minecraft:", "");
         try {
-            int id = Effect.class.getField(name.toUpperCase(Locale.ENGLISH)).getInt(null);
+            int id = Effect.class.getField(name.toUpperCase()).getInt(null);
             return getEffect(id);
         } catch (Exception e) {
             throw new RuntimeException(e);

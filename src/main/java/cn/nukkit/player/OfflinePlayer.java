@@ -6,7 +6,6 @@ import cn.nukkit.plugin.Plugin;
 import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 /**
@@ -98,7 +97,7 @@ public class OfflinePlayer implements IPlayer {
 
     @Override
     public boolean isOp() {
-        return this.server.isOp(this.getName().toLowerCase(Locale.ENGLISH));
+        return this.server.isOp(this.getName().toLowerCase());
     }
 
     @Override
@@ -108,9 +107,9 @@ public class OfflinePlayer implements IPlayer {
         }
 
         if (value) {
-            this.server.addOp(this.getName().toLowerCase(Locale.ENGLISH));
+            this.server.addOp(this.getName().toLowerCase());
         } else {
-            this.server.removeOp(this.getName().toLowerCase(Locale.ENGLISH));
+            this.server.removeOp(this.getName().toLowerCase());
         }
     }
 
@@ -130,15 +129,15 @@ public class OfflinePlayer implements IPlayer {
 
     @Override
     public boolean isWhitelisted() {
-        return this.server.isWhitelisted(this.getName().toLowerCase(Locale.ENGLISH));
+        return this.server.isWhitelisted(this.getName().toLowerCase());
     }
 
     @Override
     public void setWhitelisted(boolean value) {
         if (value) {
-            this.server.addWhitelist(this.getName().toLowerCase(Locale.ENGLISH));
+            this.server.addWhitelist(this.getName().toLowerCase());
         } else {
-            this.server.removeWhitelist(this.getName().toLowerCase(Locale.ENGLISH));
+            this.server.removeWhitelist(this.getName().toLowerCase());
         }
     }
 

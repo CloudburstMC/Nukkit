@@ -319,15 +319,15 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     @Override
     public boolean isWhitelisted() {
-        return this.server.isWhitelisted(this.getName().toLowerCase(Locale.ENGLISH));
+        return this.server.isWhitelisted(this.getName().toLowerCase());
     }
 
     @Override
     public void setWhitelisted(boolean value) {
         if (value) {
-            this.server.addWhitelist(this.getName().toLowerCase(Locale.ENGLISH));
+            this.server.addWhitelist(this.getName().toLowerCase());
         } else {
-            this.server.removeWhitelist(this.getName().toLowerCase(Locale.ENGLISH));
+            this.server.removeWhitelist(this.getName().toLowerCase());
         }
     }
 
@@ -366,7 +366,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.randomClientId = chainData.getClientId();
         this.identity = chainData.getClientUUID();
         this.username = TextFormat.clean(chainData.getUsername());
-        this.iusername = username.toLowerCase(Locale.ENGLISH);
+        this.iusername = username.toLowerCase();
         this.setDisplayName(this.username);
         this.setNameTag(this.username);
 
@@ -1683,7 +1683,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void processLogin() {
         if (this.server.getOnlinePlayers().size() >= this.server.getMaxPlayers() && this.kick(PlayerKickEvent.Reason.SERVER_FULL, "disconnectionScreen.serverFull", false)) {
             return;
-        } else if (!this.server.isWhitelisted((this.getName()).toLowerCase(Locale.ENGLISH))) {
+        } else if (!this.server.isWhitelisted((this.getName()).toLowerCase())) {
             this.kick(PlayerKickEvent.Reason.NOT_WHITELISTED, "Server is white-listed");
             return;
         } else if (this.isBanned()) {
@@ -1716,7 +1716,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             nbt = tag.buildRootTag();
             oldPlayer.close("", "disconnectionScreen.loggedinOtherLocation");
         } else {
-            File legacyDataFile = new File(server.getDataPath() + "players/" + this.username.toLowerCase(Locale.ENGLISH) + ".dat");
+            File legacyDataFile = new File(server.getDataPath() + "players/" + this.username.toLowerCase() + ".dat");
             File dataFile = new File(server.getDataPath() + "players/" + this.identity.toString() + ".dat");
             if (legacyDataFile.exists() && !dataFile.exists()) {
                 nbt = this.server.getOfflinePlayerData(this.username, false);

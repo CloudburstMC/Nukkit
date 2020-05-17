@@ -9,7 +9,6 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.Collection;
-import java.util.Locale;
 
 /**
  * @author DaPorkchop_
@@ -91,7 +90,7 @@ public class ZoomBiomeFilter extends AbstractBiomeFilter.Next {
 
     @JsonSetter("mode")
     private void setMode(String mode) {
-        this.mode = Mode.valueOf(mode.toUpperCase(Locale.ENGLISH));
+        this.mode = Mode.valueOf(mode.toUpperCase());
     }
 
     protected enum Mode {

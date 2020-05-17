@@ -13,8 +13,6 @@ import cn.nukkit.potion.InstantEffect;
 import cn.nukkit.utils.ServerException;
 import cn.nukkit.utils.TextFormat;
 
-import java.util.Locale;
-
 /**
  * Created by Snake1999 and Pub4Game on 2016/1/23.
  * Package cn.nukkit.command.defaults in project nukkit.
@@ -92,7 +90,7 @@ public class EffectCommand extends Command {
             }
         }
         if (args.length >= 5) {
-            String v = args[4].toLowerCase(Locale.ENGLISH);
+            String v = args[4].toLowerCase();
             if (v.matches("(?i)|on|true|t|1")) {
                 effect.setVisible(false);
             }

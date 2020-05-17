@@ -14,7 +14,6 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
 
-import java.util.Locale;
 import java.util.Random;
 
 import static cn.nukkit.item.ItemIds.SLIME_BALL;
@@ -72,7 +71,7 @@ public class ParticleCommand extends Command {
             defaultLocation = Location.from(Vector3f.ZERO, sender.getServer().getDefaultLevel());
         }
 
-        String name = args[0].toLowerCase(Locale.ENGLISH);
+        String name = args[0].toLowerCase();
 
         float x;
         float y;
