@@ -23,12 +23,19 @@ public class GrindstoneInventory extends FakeBlockUIComponent {
     public void onClose(Player who) {
         super.onClose(who);
         who.craftingType = Player.CRAFTING_SMALL;
-        who.resetCraftingGridType();
 
-        for (int i = 0; i < 3; ++i) {
-            this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
-            this.clear(i);
+        Item[] drops = new Item[]{ getFirstItem(), getSecondItem() };
+        drops = who.getInventory().addItem(drops);
+        for (Item drop : drops) {
+            if (!who.dropItem(drop)) {
+                this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), drop);
+            }
         }
+
+        clear(SLOT_FIRST_ITEM);
+        clear(SLOT_SECOND_ITEM);
+
+        who.resetCraftingGridType();
     }
 
     @Override

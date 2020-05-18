@@ -1786,7 +1786,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.checkTeleportPosition();
-        this.checkInteractNearby();
+        
+        if (currentTick % 10 == 0) {
+            this.checkInteractNearby();
+        }
 
         if (this.spawned && this.dummyBossBars.size() > 0 && currentTick % 100 == 0) {
             this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
@@ -3735,12 +3738,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             PlayerQuitEvent ev = null;
             if (this.getName() != null && this.getName().length() > 0) {
                 this.server.getPluginManager().callEvent(ev = new PlayerQuitEvent(this, message, true, reason));
-                if (this.loggedIn && ev.getAutoSave()) {
-                    this.save();
-                }
                 if (this.fishing != null) {
                     this.stopFishing(false);
                 }
+            }
+            
+            // Close the temporary windows first, so they have chance to change all inventories before being disposed 
+            this.removeAllWindows(false);
+            resetCraftingGridType();
+
+            if (ev != null && this.loggedIn && ev.getAutoSave()) {
+                this.save();
             }
 
             for (Player player : new ArrayList<>(this.server.getOnlinePlayers().values())) {

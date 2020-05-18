@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.2.1.0-PN+]
+## [Unreleased 1.2.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
 Click the link above to see the future.
 
 ### Fixes
@@ -26,8 +26,8 @@ Click the link above to see the future.
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
 - [#261] Kicked players can now view the kick reason on kick.
 
-## [Unreleased 1.2.0.2-PN+]
-Click the link above to see the future.
+## [1.2.0.2-PN] - 2020-05-18 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/10?closed=1))
+Contains several fixes, including issues which cause item losses and performance issues
 
 ### Fixes
 - [#239] Anvil fails to merge some enchantments because the ordering mismatches
@@ -53,11 +53,17 @@ Click the link above to see the future.
 - [#116] Fishing hooks don't attach to entities and damages multiples entities
 - [#95] The Level Up sound is not centered
 - [#267] Fishing hooks without players, loaded from the level save. They are now removed on load
+- [#266] Loosing connection with items in an open anvil makes you loose the items
+- [#273] Loosing connection with items in an open grindstone, enchanting table, stone cutter  makes you loose the items
+- [#273] Loosing connection with items in an open crafting table, 2x2 crafting grid makes you loose the items
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
 - [#255] The report issues link has been changed to point to the PowerNukkit repository
 - [#268] The `/xp` command now makes level up sound every 5 levels
+- [#273] If an anvil, grindstone, enchanting, stonecutter, crafting GUI closes, the items will try to go to the player's inventory
+- [#273] `FakeBlockUIComponent.close(Player)` now calls `onClose(Player)`
+- [#274] `Player.checkInteractNearby()` is now called once every 10 ticks, it was called every tick
 
 ## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
 Fixes several anvil issues.
@@ -220,8 +226,10 @@ Fixes several anvil issues.
     - Loom
     - Bamboo
 
-[Unreleased 1.2.1.0-PN+]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...master
-[Unreleased 1.2.0.2-PN+]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...snapshot/v1.2.0.x
+[updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/master/CHANGELOG.md
+
+[Unreleased 1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...master
+[1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
 [1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
 [1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN#files_bucket
@@ -286,5 +294,8 @@ Fixes several anvil issues.
 [#261]: https://github.com/GameModsBR/PowerNukkit/pull/261
 [#262]: https://github.com/GameModsBR/PowerNukkit/pull/262
 [#263]: https://github.com/GameModsBR/PowerNukkit/pull/263
+[#266]: https://github.com/GameModsBR/PowerNukkit/issues/266
 [#267]: https://github.com/GameModsBR/PowerNukkit/issues/267
 [#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
+[#273]: https://github.com/GameModsBR/PowerNukkit/pull/273
+[#274]: https://github.com/GameModsBR/PowerNukkit/pull/274
