@@ -3740,6 +3740,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             
             // Close the temporary windows first, so they have chance to change all inventories before being disposed 
             this.removeAllWindows(false);
+            resetCraftingGridType();
 
             if (ev != null && this.loggedIn && ev.getAutoSave()) {
                 this.save();
