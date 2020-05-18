@@ -33,11 +33,16 @@ Click the link above to see the future.
 - [#116] Fishing hooks don't attach to entities and damages multiples entities
 - [#95] The Level Up sound is not centered
 - [#267] Fishing hooks without players, loaded from the level save. They are now removed on load
+- [#266] Loosing connection with items in an open anvil makes you loose the items
+- [#273] Loosing connection with items in an open grindstone, enchanting table, stone cutter  makes you loose the items
+- [#273] Loosing connection with items in an open crafting table, 2x2 crafting grid makes you loose the items
 
 ### Changed
 - [#247] Invalid BlockId:Meta combinations now log an error when found. It logs only once
 - [#255] The report issues link has been changed to point to the PowerNukkit repository
 - [#268] The `/xp` command now makes level up sound every 5 levels
+- [#273] If an anvil, grindstone, enchanting, stonecutter, crafting GUI closes, the items will try to go to the player's inventory
+- [#273] `FakeBlockUIComponent.close(Player)` now calls `onClose(Player)`
 
 ## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
 Fixes several anvil issues.
@@ -259,5 +264,7 @@ Fixes several anvil issues.
 [#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
 [#262]: https://github.com/GameModsBR/PowerNukkit/pull/262
 [#263]: https://github.com/GameModsBR/PowerNukkit/pull/263
+[#266]: https://github.com/GameModsBR/PowerNukkit/issues/266
 [#267]: https://github.com/GameModsBR/PowerNukkit/issues/267
 [#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
+[#273]: https://github.com/GameModsBR/PowerNukkit/pull/273

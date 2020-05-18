@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 
 /**
@@ -16,8 +17,13 @@ public class BeaconInventory extends FakeBlockUIComponent {
     public void onClose(Player who) {
         super.onClose(who);
 
-        //Drop item in slot
-        this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(0));
+        Item[] drops = who.getInventory().addItem(this.getItem(0));
+        for (Item drop : drops) {
+            if (!who.dropItem(drop)) {
+                this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), drop);
+            }
+        }
+        
         this.clear(0);
     }
 }
