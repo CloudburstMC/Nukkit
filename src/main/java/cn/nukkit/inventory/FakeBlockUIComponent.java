@@ -60,6 +60,11 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
     }
 
     @Override
+    public void close(Player who) {
+        this.onClose(who);
+    }
+
+    @Override
     public void onClose(Player who) {
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = who.getWindowId(this);
