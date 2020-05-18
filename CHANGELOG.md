@@ -43,6 +43,7 @@ Click the link above to see the future.
 - [#268] The `/xp` command now makes level up sound every 5 levels
 - [#273] If an anvil, grindstone, enchanting, stonecutter, crafting GUI closes, the items will try to go to the player's inventory
 - [#273] `FakeBlockUIComponent.close(Player)` now calls `onClose(Player)`
+- [#274] `Player.checkInteractNearby()` is now called once every 10 ticks, it was called every tick
 
 ## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
 Fixes several anvil issues.
@@ -268,3 +269,4 @@ Fixes several anvil issues.
 [#267]: https://github.com/GameModsBR/PowerNukkit/issues/267
 [#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
 [#273]: https://github.com/GameModsBR/PowerNukkit/pull/273
+[#274]: https://github.com/GameModsBR/PowerNukkit/pull/274
