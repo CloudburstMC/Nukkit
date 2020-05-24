@@ -11,6 +11,10 @@ public class EntitySnowGolem extends EntityMob {
         return NETWORK_ID;
     }
 
+    @Override
+    public String getName() {
+        return "Snow Golem";
+    }
 
     @Override
     public float getWidth() {
