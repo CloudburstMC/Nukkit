@@ -11,6 +11,23 @@ public class EntitySnowGolem extends EntityMob {
         return NETWORK_ID;
     }
 
+
+    @Override
+    public float getWidth() {
+        return 0.7f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 1.9f;
+    }
+
+    @Override
+    protected void initEntity() {
+        super.initEntity();
+        this.setMaxHealth(4);
+    }
+
     public EntitySnowGolem(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
