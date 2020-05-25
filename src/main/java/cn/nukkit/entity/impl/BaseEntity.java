@@ -20,6 +20,7 @@ import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
+import cn.nukkit.player.GameMode;
 import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
@@ -897,7 +898,8 @@ public abstract class BaseEntity implements Entity, Metadatable {
             if (this.position.getY() <= -16 && this.isAlive()) {
                 if (this instanceof Player) {
                     Player player = (Player) this;
-                    if (player.getGamemode() != 1) this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+                    if (player.getGamemode() != GameMode.CREATIVE)
+                        this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
                 } else {
                     this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
                     hasUpdate = true;

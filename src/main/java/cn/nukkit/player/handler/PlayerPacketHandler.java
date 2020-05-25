@@ -35,6 +35,7 @@ import cn.nukkit.level.particle.PunchBlockParticle;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.types.InventoryTransactionUtils;
+import cn.nukkit.player.GameMode;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
@@ -787,16 +788,16 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
 
     @Override
     public boolean handle(SetPlayerGameTypePacket packet) {
-        if (packet.getGamemode() != player.getGamemode()) {
+        if (packet.getGamemode() != player.getGamemode().ordinal()) {
             if (!player.hasPermission("nukkit.command.gamemode")) {
                 SetPlayerGameTypePacket packet1 = new SetPlayerGameTypePacket();
-                packet1.setGamemode(player.getGamemode() & 0x01);
+                packet1.setGamemode(player.getGamemode().ordinal());
                 player.sendPacket(packet1);
                 player.getAdventureSettings().update();
                 return true;
             }
-            player.setGamemode(packet.getGamemode(), true);
-            CommandUtils.broadcastCommandMessage(player, new TranslationContainer("%commands.gamemode.success.self", Server.getGamemodeString(player.getGamemode())));
+            player.setGamemode(GameMode.values()[packet.getGamemode() & 0x03], true);
+            CommandUtils.broadcastCommandMessage(player, new TranslationContainer("%commands.gamemode.success.self", player.getGamemode().getTranslation()));
         }
         return true;
     }
@@ -1118,7 +1119,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                         if (!player.canInteract(target.getPosition(), player.isCreative() ? 8 : 5)) {
                             break;
                         } else if (target instanceof Player) {
-                            if ((((Player) target).getGamemode() & 0x01) > 0) {
+                            if (((Player) target).getGamemode() != GameMode.SURVIAL) {
                                 break;
                             } else if (!player.getServer().getPropertyBoolean("pvp")) {
                                 break;

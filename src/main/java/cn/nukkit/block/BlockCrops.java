@@ -61,7 +61,7 @@ public abstract class BlockCrops extends FloodableBlock {
                 this.getLevel().setBlock(this.getPosition(), ev.getNewState(), false, true);
                 this.level.addParticle(new BoneMealParticle(this.getPosition()));
 
-                if (player != null && (player.getGamemode() & 0x01) == 0) {
+                if (player != null && player.getGamemode().isSurvival()) {
                     item.decrementCount();
                 }
             }

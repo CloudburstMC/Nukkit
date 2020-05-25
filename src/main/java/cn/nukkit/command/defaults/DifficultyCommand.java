@@ -7,6 +7,7 @@ import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandData;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.level.Difficulty;
 import cn.nukkit.locale.TranslationContainer;
 import com.nukkitx.protocol.bedrock.packet.SetDifficultyPacket;
 
@@ -42,17 +43,17 @@ public class DifficultyCommand extends Command {
             return false;
         }
 
-        int difficulty = Server.getDifficultyFromString(args[0]);
+        Difficulty difficulty = Difficulty.fromString(args[0]);
 
         if (sender.getServer().isHardcore()) {
-            difficulty = 3;
+            difficulty = Difficulty.HARD;
         }
 
-        if (difficulty != -1) {
-            sender.getServer().setPropertyInt("difficulty", difficulty);
+        if (difficulty != null) {
+            sender.getServer().setPropertyInt("difficulty", difficulty.ordinal());
 
             SetDifficultyPacket packet = new SetDifficultyPacket();
-            packet.setDifficulty(sender.getServer().getDifficulty());
+            packet.setDifficulty(sender.getServer().getDifficulty().ordinal());
             Server.broadcastPacket(new ArrayList<>(sender.getServer().getOnlinePlayers().values()), packet);
 
             CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.difficulty.success", String.valueOf(difficulty)));

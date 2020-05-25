@@ -93,7 +93,7 @@ public class BlockTallGrass extends FloodableBlock {
                 }
 
                 if (meta != -1) {
-                    if (player != null && (player.getGamemode() & 0x01) == 0) {
+                    if (player != null && player.getGamemode().isSurvival()) {
                         item.decrementCount();
                     }
 

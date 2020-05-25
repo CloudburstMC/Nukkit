@@ -4,6 +4,7 @@ import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.player.GameMode;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
@@ -43,7 +44,7 @@ public class BlockIce extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item, Player player) {
-        if (player.getGamemode() == Player.CREATIVE) {
+        if (player.getGamemode() == GameMode.CREATIVE) {
             return this.getLevel().setBlock(this.getPosition(), Block.get(AIR), true);
         }
 

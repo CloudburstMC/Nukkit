@@ -41,10 +41,7 @@ import cn.nukkit.item.ItemArmor;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.ChunkLoader;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Location;
-import cn.nukkit.level.Sound;
+import cn.nukkit.level.*;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.chunk.Chunk;
 import cn.nukkit.level.gamerule.GameRules;
@@ -113,12 +110,6 @@ import static com.nukkitx.protocol.bedrock.data.EntityFlag.USING_ITEM;
 @Log4j2
 public class Player extends Human implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {
 
-    public static final int SURVIVAL = 0;
-    public static final int CREATIVE = 1;
-    public static final int ADVENTURE = 2;
-    public static final int SPECTATOR = 3;
-    public static final int VIEW = SPECTATOR;
-
     public static final int SURVIVAL_SLOTS = 36;
     public static final int CREATIVE_SLOTS = 112;
 
@@ -130,11 +121,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public static final float DEFAULT_SPEED = 0.1f;
     public static final float MAXIMUM_SPEED = 0.5f;
-
-    public static final int PERMISSION_CUSTOM = 3;
-    public static final int PERMISSION_OPERATOR = 2;
-    public static final int PERMISSION_MEMBER = 1;
-    public static final int PERMISSION_VISITOR = 0;
 
     protected final BedrockServerSession session;
 
@@ -790,7 +776,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.getServer().sendRecipeList(this);
 
-        if (this.getGamemode() == Player.SPECTATOR) {
+        if (this.getGamemode() == GameMode.SPECTATOR) {
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
             inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
             inventoryContentPacket.setContents(new ItemData[0]);
@@ -921,7 +907,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return true;
     }
 
-    public int getGamemode() {
+    public GameMode getGamemode() {
         return this.playerData.getGamemode();
     }
 
@@ -931,19 +917,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
      * <p>
      * TODO: remove this when Spectator Mode gets added properly to MCPE
      */
-    private static int getClientFriendlyGamemode(int gamemode) {
-        gamemode &= 0x03;
-        if (gamemode == Player.SPECTATOR) {
-            return Player.CREATIVE;
+    private static GameMode getClientFriendlyGamemode(GameMode gamemode) {
+        if (gamemode == GameMode.SPECTATOR) {
+            return GameMode.CREATIVE;
         }
+
         return gamemode;
     }
 
-    public boolean setGamemode(int gamemode) {
+    public boolean setGamemode(GameMode gamemode) {
         return this.setGamemode(gamemode, false, null);
     }
 
-    public boolean setGamemode(int gamemode, boolean clientSide) {
+    public boolean setGamemode(GameMode gamemode, boolean clientSide) {
         return this.setGamemode(gamemode, clientSide, null);
     }
 
@@ -986,19 +972,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public boolean isSurvival() {
-        return this.getGamemode() == SURVIVAL;
+        return this.getGamemode() == GameMode.SURVIAL;
     }
 
     public boolean isCreative() {
-        return this.getGamemode() == CREATIVE;
+        return this.getGamemode() == GameMode.CREATIVE;
     }
 
     public boolean isSpectator() {
-        return this.getGamemode() == SPECTATOR;
+        return this.getGamemode() == GameMode.SPECTATOR;
     }
 
     public boolean isAdventure() {
-        return this.getGamemode() == ADVENTURE;
+        return this.getGamemode() == GameMode.ADVENTURE;
     }
 
     @Override
@@ -1065,19 +1051,19 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    public boolean setGamemode(int gamemode, boolean clientSide, AdventureSettings newSettings) {
-        if (gamemode < 0 || gamemode > 3 || this.getGamemode() == gamemode) {
+    public boolean setGamemode(GameMode gamemode, boolean clientSide, AdventureSettings newSettings) {
+        if (this.getGamemode() == gamemode) {
             return false;
         }
 
         if (newSettings == null) {
             newSettings = this.getAdventureSettings().clone(this);
-            newSettings.set(Type.WORLD_IMMUTABLE, (gamemode & 0x02) > 0);
-            newSettings.set(Type.BUILD_AND_MINE, (gamemode & 0x02) <= 0);
-            newSettings.set(Type.WORLD_BUILDER, (gamemode & 0x02) <= 0);
-            newSettings.set(Type.ALLOW_FLIGHT, (gamemode & 0x01) > 0);
-            newSettings.set(Type.NO_CLIP, gamemode == 0x03);
-            newSettings.set(Type.FLYING, gamemode == 0x03);
+            newSettings.set(Type.WORLD_IMMUTABLE, gamemode.isVisitor());
+            newSettings.set(Type.BUILD_AND_MINE, !gamemode.isVisitor());
+            newSettings.set(Type.WORLD_BUILDER, !gamemode.isVisitor());
+            newSettings.set(Type.ALLOW_FLIGHT, gamemode == GameMode.CREATIVE || gamemode == GameMode.SPECTATOR);
+            newSettings.set(Type.NO_CLIP, gamemode == GameMode.SPECTATOR);
+            newSettings.set(Type.FLYING, gamemode == GameMode.SPECTATOR);
         }
 
         PlayerGameModeChangeEvent ev;
@@ -1101,7 +1087,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         if (!clientSide) {
             SetPlayerGameTypePacket pk = new SetPlayerGameTypePacket();
-            pk.setGamemode(getClientFriendlyGamemode(gamemode));
+            pk.setGamemode(getClientFriendlyGamemode(gamemode).ordinal());
             this.sendPacket(pk);
         }
 
@@ -1342,7 +1328,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.speed = Vector3f.ZERO;
         }
 
-        if (!revert && (this.isFoodEnabled() || this.getServer().getDifficulty() == 0)) {
+        if (!revert && (this.isFoodEnabled() || this.getServer().getDifficulty() == Difficulty.PEACEFUL)) {
             if ((this.isSurvival() || this.isAdventure())/* && !this.getRiddingOn() instanceof Entity*/) {
 
                 //UpdateFoodExpLevel
@@ -1433,7 +1419,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
                 this.entityBaseTick(tickDiff);
 
-                if (this.getServer().getDifficulty() == 0 && this.getLevel().getGameRules().get(GameRules.NATURAL_REGENERATION)) {
+                if (this.getServer().getDifficulty() == Difficulty.PEACEFUL && this.getLevel().getGameRules().get(GameRules.NATURAL_REGENERATION)) {
                     if (this.getHealth() < this.getMaxHealth() && this.ticksLived % 20 == 0) {
                         this.heal(1);
                     }
@@ -1585,13 +1571,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.setUniqueEntityId(this.getUniqueId());
         startGamePacket.setRuntimeEntityId(this.getRuntimeId());
-        startGamePacket.setPlayerGamemode(getClientFriendlyGamemode(this.getGamemode()));
+        startGamePacket.setPlayerGamemode(getClientFriendlyGamemode(this.getGamemode()).ordinal());
         startGamePacket.setPlayerPosition(pos);
         startGamePacket.setRotation(Vector2f.from(this.getYaw(), this.getPitch()));
         startGamePacket.setSeed(-1);
         startGamePacket.setDimensionId(0);
-        startGamePacket.setLevelGamemode(getClientFriendlyGamemode(this.getGamemode()));
-        startGamePacket.setDifficulty(this.server.getDifficulty());
+        startGamePacket.setLevelGamemode(getClientFriendlyGamemode(this.getGamemode()).ordinal());
+        startGamePacket.setDifficulty(this.server.getDifficulty().ordinal());
         startGamePacket.setDefaultSpawn(this.getSpawn().getPosition().toInt());
         startGamePacket.setAchievementsDisabled(true);
         startGamePacket.setTime(this.getLevel().getTime());
@@ -3226,7 +3212,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
      * modify the sign lines and is only temporary.
      *
      * @param position the position of the sign
-     * @param lines the lines to send
+     * @param lines    the lines to send
      */
     public void sendSignChange(Vector3i position, String[] lines) {
         BlockEntity blockEntity = level.getBlockEntity(position);
@@ -3298,7 +3284,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public boolean pickupEntity(Entity entity, boolean near) {
-        if (!this.spawned || !this.isAlive() || !this.isOnline() || this.getGamemode() == SPECTATOR || entity.isClosed()) {
+        if (!this.spawned || !this.isAlive() || !this.isOnline() || this.getGamemode() == GameMode.SPECTATOR || entity.isClosed()) {
             return false;
         }
 

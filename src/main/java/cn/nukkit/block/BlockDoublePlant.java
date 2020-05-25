@@ -131,7 +131,7 @@ public class BlockDoublePlant extends FloodableBlock {
                 case LILAC:
                 case ROSE_BUSH:
                 case PEONY:
-                    if (player != null && (player.getGamemode() & 0x01) == 0) {
+                    if (player != null && player.getGamemode().isSurvival()) {
                         item.decrementCount();
                     }
                     this.level.addParticle(new BoneMealParticle(this.getPosition()));
