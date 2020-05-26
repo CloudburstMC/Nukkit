@@ -171,7 +171,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         motion.y /= 2d;
         motion.z /= 2d;
         motion.x += x * f * base;
-        motion.y += base;
+        motion.y += 0.4;
         motion.z += z * f * base;
 
         if (motion.y > base) {
