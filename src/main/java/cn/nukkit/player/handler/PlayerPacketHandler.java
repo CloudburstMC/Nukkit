@@ -49,8 +49,7 @@ import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -62,8 +61,8 @@ import static cn.nukkit.player.Player.DEFAULT_SPEED;
 /**
  * @author Extollite
  */
+@Log4j2
 public class PlayerPacketHandler implements BedrockPacketHandler {
-    private static final Logger log = LogManager.getLogger(PlayerPacketHandler.class);
     private final Player player;
 
     protected Vector3i lastRightClickPos = null;
