@@ -1995,8 +1995,10 @@ public class Level implements ChunkManager, Metadatable {
         if (item == null) {
             item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
         }
-
-        boolean isSilkTouch = item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null;
+        
+        boolean mustDrop = target.mustDrop(vector, layer, face, item, player);
+        boolean mustSilkTouch = target.mustSilkTouch(vector, layer, face, item, player);
+        boolean isSilkTouch = mustSilkTouch || item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null;
 
         if (player != null) {
             if (player.getGamemode() == 2) {
@@ -2044,9 +2046,9 @@ public class Level implements ChunkManager, Metadatable {
             breakTime -= 0.15;
 
             Item[] eventDrops;
-            if (!setBlockDestroy && !player.isSurvival()) {
+            if (!mustDrop && !setBlockDestroy && !player.isSurvival()) {
                 eventDrops = new Item[0];
-            } else if (isSilkTouch && target.canSilkTouch()) {
+            } else if (mustSilkTouch || isSilkTouch && target.canSilkTouch()) {
                 eventDrops = new Item[]{target.toItem()};
             } else {
                 eventDrops = target.getDrops(item);
@@ -2082,7 +2084,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         } else if (!target.isBreakable(item)) {
             return null;
-        } else if (item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null) {
+        } else if (isSilkTouch) {
             drops = new Item[]{target.toItem()};
         } else {
             drops = target.getDrops(item);
@@ -2125,11 +2127,11 @@ public class Level implements ChunkManager, Metadatable {
 
         if (this.gameRules.getBoolean(GameRule.DO_TILE_DROPS)) {
             
-            if (!isSilkTouch && player != null && (player.isSurvival() || setBlockDestroy) && dropExp > 0 && drops.length != 0) {
+            if (!isSilkTouch && (mustDrop || player != null && (player.isSurvival() || setBlockDestroy)) && dropExp > 0 && drops.length != 0) {
                 this.dropExpOrb(vector.add(0.5, 0.5, 0.5), dropExp);
             }
 
-            if (player == null || setBlockDestroy || player.isSurvival()) {
+            if (mustDrop || player == null || setBlockDestroy || player.isSurvival()) {
                 for (Item drop : drops) {
                     if (drop.getCount() > 0) {
                         this.dropItem(vector.add(0.5, 0.5, 0.5), drop);
