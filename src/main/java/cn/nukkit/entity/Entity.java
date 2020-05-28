@@ -2,6 +2,8 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.entity.data.*;
@@ -413,6 +415,10 @@ public abstract class Entity extends Location implements Metadatable {
     public int maxFireTicks;
     public int fireTicks = 0;
     public int inPortalTicks = 0;
+    
+    @PowerNukkitOnly
+    @Since("1.2.1.0-PN")
+    protected boolean inEndPortal;
 
     public float scale = 1;
 
@@ -2127,17 +2133,18 @@ public abstract class Entity extends Location implements Metadatable {
         Vector3 vector = new Vector3(0, 0, 0);
         boolean portal = false;
         boolean scaffolding = false;
-        boolean overScaffolding = false;
-
+        boolean endPortal = false;
         for (Block block : this.getCollisionBlocks()) {
-            if (block.getId() == Block.NETHER_PORTAL) {
-                portal = true;
-            } else if (block.getId() == Block.SCAFFOLDING) {
-                scaffolding = true;
-            }
-
-            if (block.getFloorY() == getFloorY() && block.down().getId() == BlockID.SCAFFOLDING) {
-                overScaffolding = true;
+            switch (block.getId()) {
+                case Block.NETHER_PORTAL:
+                    portal = true;
+                    break;
+                case BlockID.SCAFFOLDING:
+                    scaffolding = true;
+                    break;
+                case BlockID.END_PORTAL:
+                    endPortal = true;
+                    break;
             }
 
             block.onEntityCollide(this);
@@ -2146,8 +2153,26 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_IN_SCAFFOLDING, scaffolding);
-        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_OVER_SCAFFOLDING, overScaffolding);
 
+        AxisAlignedBB scanBoundingBox = boundingBox.getOffsetBoundingBox(0, -0.125, 0);
+        scanBoundingBox.setMaxY(boundingBox.getMinY());
+        Block[] scaffoldingUnder = level.getCollisionBlocks(
+                scanBoundingBox,
+                true, true,
+                b-> b.getId() == BlockID.SCAFFOLDING
+        );
+        setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_OVER_SCAFFOLDING, scaffoldingUnder.length > 0);
+
+        if (endPortal) {
+            if (!inEndPortal) {
+                inEndPortal = true;
+                EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, PortalType.END);
+                getServer().getPluginManager().callEvent(ev);
+            }
+        } else {
+            inEndPortal = false;
+        }
+        
         if (portal) {
             if (this.inPortalTicks < 80) {
                 this.inPortalTicks = 80;
