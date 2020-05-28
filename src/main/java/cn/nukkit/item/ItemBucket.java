@@ -119,14 +119,6 @@ public class ItemBucket extends Item {
                         level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_LAVA);
                     } else {
                         level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_WATER);
-                        // Special check for sugar canes
-                        Block up = target.up();
-                        for (BlockFace diagonalFace : Plane.HORIZONTAL) {
-                            Block diagonal = up.getSide(diagonalFace);
-                            if (diagonal.getId() == BlockID.SUGARCANE_BLOCK) {
-                                diagonal.onUpdate(Level.BLOCK_UPDATE_SCHEDULED);
-                            }
-                        }
                     }
 
                     return true;
