@@ -21,6 +21,8 @@ Click the link above to see the future.
 - [#259] `Hash.hashBlock(Vector3)` method for public usage.
 - [#261] `Player.isCheckingMovement()` method for public usage.
 - [#261] Protected field `EntityEndCrystal.detonated` to disable the `EndCrystal.explode()` method.
+- [#275] New annotations to document when elements get added and when deprecated elements will be removed
+- [#123] Adds and register the banner pattern items 
 
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
@@ -260,6 +262,7 @@ Fixes several anvil issues.
 [#103]: https://github.com/GameModsBR/PowerNukkit/issues/103
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
 [#116]: https://github.com/GameModsBR/PowerNukkit/issues/116
+[#123]: https://github.com/GameModsBR/PowerNukkit/issues/123
 [#129]: https://github.com/GameModsBR/PowerNukkit/pull/129
 [#140]: https://github.com/GameModsBR/PowerNukkit/pull/140
 [#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
@@ -299,3 +302,4 @@ Fixes several anvil issues.
 [#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
 [#273]: https://github.com/GameModsBR/PowerNukkit/pull/273
 [#274]: https://github.com/GameModsBR/PowerNukkit/pull/274
+[#275]: https://github.com/GameModsBR/PowerNukkit/pull/275
