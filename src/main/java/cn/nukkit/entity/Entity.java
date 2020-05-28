@@ -2523,6 +2523,12 @@ public abstract class Entity extends Location implements Metadatable {
         return false;
     }
 
+    @PowerNukkitOnly
+    @Since("1.2.1.0-PN")
+    public boolean isInEndPortal() {
+        return inEndPortal;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
