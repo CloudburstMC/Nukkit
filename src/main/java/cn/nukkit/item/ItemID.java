@@ -1,5 +1,8 @@
 package cn.nukkit.item;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 public interface ItemID {
     int IRON_SHOVEL = 256;
     int IRON_PICKAXE = 257;
@@ -199,6 +202,10 @@ public interface ItemID {
     int DARK_OAK_DOOR = 431;
     int CHORUS_FRUIT = 432;
     int POPPED_CHORUS_FRUIT = 433;
+    
+    @Since("1.2.1.0-PN")
+    @PowerNukkitOnly 
+    int BANNER_PATTERN = 434;
 
     int DRAGON_BREATH = 437;
     int SPLASH_POTION = 438;
