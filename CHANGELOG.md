@@ -11,8 +11,11 @@ Click the link above to see the future.
 
 ### Fixes
 - [#224] Enchantment compatibility rules when merging enchanted items in an anvil
-- [#113] Behives not dropping in creative when it has bees
+- [#113] Beehives not dropping in creative when it has bees
 - [#270] Replacing sugarcane's water don't break the sugarcane immediately
+- [#272] `EntityPortalEnterEvent` not being fired when entering end portals
+- [#279] `BlockEndPortal` missing collision bounding box
+- [#279] `Entity.checkBlockCollision()`'s over scaffolding logic outdated
 
 ### Added
 - [#227] PlayerJumpEvent called when jump packets are received.
@@ -27,6 +30,7 @@ Click the link above to see the future.
 - [#123] Adds and register the banner pattern items
 - [#276] `Block.afterRemoval()` called automatically when the block is replaced using any `Level.setBlock()`
 - [#277] `Block.mustSilkTouch()` and `Block.mustDrop()` to allow blocks to force the dropping behaviour when being broken
+- [#279] `Entity.isInEndPortal()` for public usage
 
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
@@ -306,8 +310,10 @@ Fixes several anvil issues.
 [#267]: https://github.com/GameModsBR/PowerNukkit/issues/267
 [#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
 [#270]: https://github.com/GameModsBR/PowerNukkit/issues/270
+[#272]: https://github.com/GameModsBR/PowerNukkit/issues/272
 [#273]: https://github.com/GameModsBR/PowerNukkit/pull/273
 [#274]: https://github.com/GameModsBR/PowerNukkit/pull/274
 [#275]: https://github.com/GameModsBR/PowerNukkit/pull/275
 [#276]: https://github.com/GameModsBR/PowerNukkit/pull/276
 [#277]: https://github.com/GameModsBR/PowerNukkit/pull/277
+[#279]: https://github.com/GameModsBR/PowerNukkit/pull/279
