@@ -12,6 +12,7 @@ Click the link above to see the future.
 ### Fixes
 - [#224] Enchantment compatibility rules when merging enchanted items in an anvil
 - [#113] Behives not dropping in creative when it has bees
+- [#270] Replacing sugarcane's water don't break the sugarcane immediately
 
 ### Added
 - [#227] PlayerJumpEvent called when jump packets are received.
@@ -304,6 +305,7 @@ Fixes several anvil issues.
 [#266]: https://github.com/GameModsBR/PowerNukkit/issues/266
 [#267]: https://github.com/GameModsBR/PowerNukkit/issues/267
 [#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
+[#270]: https://github.com/GameModsBR/PowerNukkit/issues/270
 [#273]: https://github.com/GameModsBR/PowerNukkit/pull/273
 [#274]: https://github.com/GameModsBR/PowerNukkit/pull/274
 [#275]: https://github.com/GameModsBR/PowerNukkit/pull/275

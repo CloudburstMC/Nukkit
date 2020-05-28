@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
@@ -37,6 +38,26 @@ public class BlockWater extends BlockLiquid {
         this.getLevel().scheduleUpdate(this, this.tickRate());
 
         return ret;
+    }
+
+    @Override
+    public void afterRemoval(Block newBlock, boolean update) {
+        if (!update) {
+            return;
+        }
+        
+        int newId = newBlock.getId();
+        if (newId == WATER || newId == STILL_WATER) {
+            return;
+        }
+        
+        Block up = up(1, 0);
+        for (BlockFace diagonalFace : BlockFace.Plane.HORIZONTAL) {
+            Block diagonal = up.getSide(diagonalFace);
+            if (diagonal.getId() == BlockID.SUGARCANE_BLOCK) {
+                diagonal.onUpdate(Level.BLOCK_UPDATE_SCHEDULED);
+            }
+        }
     }
 
     @Override
