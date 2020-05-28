@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.TYPE,
         ElementType.FIELD, ElementType.PACKAGE})
-@Inherited
+@Documented
 public @interface DeprecationDetails {
     /**
      * The version which marked this element as deprecated.

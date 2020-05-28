@@ -8,7 +8,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.CLASS)
 @Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.TYPE,
         ElementType.FIELD, ElementType.PACKAGE})
-@Inherited
+@Documented
 public @interface Since {
     /**
      * The version which added the element.

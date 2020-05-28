@@ -10,6 +10,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
@@ -157,7 +158,23 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     public boolean canSilkTouch() {
         return true;
     }
-    
+
+    @Override
+    public boolean mustSilkTouch(Vector3 vector, int layer, BlockFace face, Item item, Player player) {
+        if (player != null) {
+            BlockEntity blockEntity = getLevel().getBlockEntity(this);
+            if (blockEntity instanceof BlockEntityBeehive && !((BlockEntityBeehive) blockEntity).isEmpty()) {
+                return true;
+            }
+        }
+        return super.mustSilkTouch(vector, layer, face, item, player);
+    }
+
+    @Override
+    public boolean mustDrop(Vector3 vector, int layer, BlockFace face, Item item, Player player) {
+        return mustSilkTouch(vector, layer, face, item, player) || super.mustDrop(vector, layer, face, item, player);
+    }
+
     @Override
     public boolean canHarvestWithHand() {
         return true;
