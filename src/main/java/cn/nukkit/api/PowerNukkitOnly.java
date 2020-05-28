@@ -1,9 +1,6 @@
 package cn.nukkit.api;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.lang.annotation.*;
 
 /**
  * Indicates that the annotated element is only available in PowerNukkit environment
@@ -13,5 +10,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.TYPE,
         ElementType.FIELD, ElementType.PACKAGE})
 @PowerNukkitOnly @Since("1.2.1.0-PN")
+@Inherited
 public @interface PowerNukkitOnly {
 }
