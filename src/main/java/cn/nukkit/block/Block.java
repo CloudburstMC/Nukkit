@@ -1216,6 +1216,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return false;
     }
     
+    @PowerNukkitOnly
+    @Since("1.2.1.0-PN")
+    public boolean mustSilkTouch(Vector3 vector, int layer, BlockFace face, Item item, Player player) {
+        return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.2.1.0-PN")
+    public boolean mustDrop(Vector3 vector, int layer, BlockFace face, Item item, Player player) {
+        return false;
+    }
+    
     public Optional<Block> firstInLayers(Predicate<Block> condition) {
         return firstInLayers(0, condition);
     }

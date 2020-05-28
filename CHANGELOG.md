@@ -11,6 +11,7 @@ Click the link above to see the future.
 
 ### Fixes
 - [#224] Enchantment compatibility rules when merging enchanted items in an anvil
+- [#113] Behives not dropping in creative when it has bees
 - [#270] Replacing sugarcane's water don't break the sugarcane immediately
 
 ### Added
@@ -25,6 +26,7 @@ Click the link above to see the future.
 - [#275] New annotations to document when elements get added and when deprecated elements will be removed
 - [#123] Adds and register the banner pattern items
 - [#276] `Block.afterRemoval()` called automatically when the block is replaced using any `Level.setBlock()`
+- [#277] `Block.mustSilkTouch()` and `Block.mustDrop()` to allow blocks to force the dropping behaviour when being broken
 
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
@@ -263,6 +265,7 @@ Fixes several anvil issues.
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#103]: https://github.com/GameModsBR/PowerNukkit/issues/103
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
+[#113]: https://github.com/GameModsBR/PowerNukkit/issues/113
 [#116]: https://github.com/GameModsBR/PowerNukkit/issues/116
 [#123]: https://github.com/GameModsBR/PowerNukkit/issues/123
 [#129]: https://github.com/GameModsBR/PowerNukkit/pull/129
@@ -307,3 +310,4 @@ Fixes several anvil issues.
 [#274]: https://github.com/GameModsBR/PowerNukkit/pull/274
 [#275]: https://github.com/GameModsBR/PowerNukkit/pull/275
 [#276]: https://github.com/GameModsBR/PowerNukkit/pull/276
+[#277]: https://github.com/GameModsBR/PowerNukkit/pull/277

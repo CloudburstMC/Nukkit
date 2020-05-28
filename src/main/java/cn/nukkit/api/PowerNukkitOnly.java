@@ -11,5 +11,6 @@ import java.lang.annotation.*;
         ElementType.FIELD, ElementType.PACKAGE})
 @PowerNukkitOnly @Since("1.2.1.0-PN")
 @Inherited
+@Documented
 public @interface PowerNukkitOnly {
 }
