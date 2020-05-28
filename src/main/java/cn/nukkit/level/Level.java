@@ -1886,6 +1886,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
         }
+        blockPrevious.afterRemoval(block, update);
         return true;
     }
 

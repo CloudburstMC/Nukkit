@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -578,6 +580,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public boolean onActivate(Item item, Player player) {
         return false;
+    }
+    
+    @Since("1.2.1.0-PN")
+    @PowerNukkitOnly
+    public void afterRemoval(Block newBlock, boolean update) {
     }
 
     public double getHardness() {
