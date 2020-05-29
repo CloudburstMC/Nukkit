@@ -116,10 +116,6 @@ public class ShapelessRecipe implements CraftingRecipe {
         List<Item> needOutputs = new LinkedList<>(this.getExtraResults());
         needOutputs.sort(CraftingManager.recipeComparator);
 
-        if(haveOutputs.isEmpty() && needOutputs.isEmpty()){
-            return true;
-        }
-
         return this.matchItemList(haveOutputs, needOutputs);
     }
 
