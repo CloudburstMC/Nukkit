@@ -49,7 +49,7 @@ import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.data.*;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
-import org.apache.logging.log4j.Logger;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -61,8 +61,8 @@ import static cn.nukkit.player.Player.DEFAULT_SPEED;
 /**
  * @author Extollite
  */
+@Log4j2
 public class PlayerPacketHandler implements BedrockPacketHandler {
-    private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(PlayerPacketHandler.class);
     private final Player player;
 
     protected Vector3i lastRightClickPos = null;
@@ -90,72 +90,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 return true;
             }
 
-            switch (packet.getPacketType()) {
-                case PLAYER_SKIN:
-                    return handle((PlayerSkinPacket) packet);
-                case PLAYER_INPUT:
-                    return handle((PlayerInputPacket) packet);
-                case MOVE_PLAYER:
-                    return handle((MovePlayerPacket) packet);
-                case ADVENTURE_SETTINGS:
-                    //TODO: player abilities, check for other changes
-                    return handle((AdventureSettingsPacket) packet);
-                case MOB_EQUIPMENT:
-                    return handle((MobEquipmentPacket) packet);
-                case PLAYER_ACTION:
-                    return handle((PlayerActionPacket) packet);
-                case MOB_ARMOR_EQUIPMENT:
-                    return handle((MobArmorEquipmentPacket) packet);
-                case MODAL_FORM_RESPONSE:
-                    return handle((ModalFormResponsePacket) packet);
-                case INTERACT:
-                    return handle((InteractPacket) packet);
-                case BLOCK_PICK_REQUEST:
-                    return handle((BlockPickRequestPacket) packet);
-                case ANIMATE:
-                    return handle((AnimatePacket) packet);
-                case SET_HEALTH:
-                    // Cannot be trusted. Use UpdateAttributePacket instead
-                    break;
-                case ENTITY_EVENT:
-                    return handle((EntityEventPacket) packet);
-                case COMMAND_REQUEST:
-                    return handle((CommandRequestPacket) packet);
-                case TEXT:
-                    return handle((TextPacket) packet);
-                case CONTAINER_CLOSE:
-                    return handle((ContainerClosePacket) packet);
-                case CRAFTING_EVENT:
-                    break;
-                case BLOCK_ENTITY_DATA:
-                    return handle((BlockEntityDataPacket) packet);
-                case REQUEST_CHUNK_RADIUS:
-                    return handle((RequestChunkRadiusPacket) packet);
-                case SET_PLAYER_GAME_TYPE:
-                    return handle((SetPlayerGameTypePacket) packet);
-                case ITEM_FRAME_DROP_ITEM:
-                    return handle((ItemFrameDropItemPacket) packet);
-                case MAP_INFO_REQUEST:
-                    return handle((MapInfoRequestPacket) packet);
-                case LEVEL_SOUND_EVENT_2:
-                case LEVEL_SOUND_EVENT_3:
-                    return handle((LevelSoundEvent2Packet) packet);
-                case INVENTORY_TRANSACTION:
-                    return handle((InventoryTransactionPacket) packet);
-                case PLAYER_HOTBAR:
-                    return handle((PlayerHotbarPacket) packet);
-                case SERVER_SETTINGS_REQUEST:
-                    return handle((ServerSettingsRequestPacket) packet);
-                case RESPAWN:
-                    return handle((RespawnPacket) packet);
-                case LECTERN_UPDATE:
-                    return handle((LecternUpdatePacket) packet);
-                case SET_LOCAL_PLAYER_AS_INITIALIZED:
-                    return handle((SetLocalPlayerAsInitializedPacket) packet);
-                default:
-                    break;
-            }
-            return true;
+            return packet.handle(this);
         }
     }
 
@@ -685,6 +620,12 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
     }
 
     @Override
+    public boolean handle(SetHealthPacket packet) {
+        // Cannot be trusted. Use UpdateAttributePacket instead
+        return true;
+    }
+
+    @Override
     public boolean handle(EntityEventPacket packet) {
         if (!player.spawned || !player.isAlive()) {
             return true;
@@ -753,6 +694,11 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
             player.resetCraftingGridType();
             player.addWindow(player.getCraftingGrid(), (byte) ContainerId.NONE);
         }
+        return true;
+    }
+
+    @Override
+    public boolean handle(CraftingEventPacket packet){
         return true;
     }
 
