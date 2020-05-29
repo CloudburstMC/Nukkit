@@ -134,22 +134,6 @@ public class ShapedRecipe implements CraftingRecipe {
         return items;
     }
 
-    public Map<Integer, Map<Integer, Item>> getIngredientMap() {
-        Map<Integer, Map<Integer, Item>> ingredients = new LinkedHashMap<>();
-
-        for (int y = 0, y2 = getHeight(); y < y2; ++y) {
-            Map<Integer, Item> m = new LinkedHashMap<>();
-
-            for (int x = 0, x2 = getWidth(); x < x2; ++x) {
-                m.put(x, getIngredient(x, y));
-            }
-
-            ingredients.put(y, m);
-        }
-
-        return ingredients;
-    }
-
     public Item getIngredient(int x, int y) {
         Item item = this.ingredients.get(this.shape[y].charAt(x));
 
@@ -189,73 +173,46 @@ public class ShapedRecipe implements CraftingRecipe {
     }
 
     @Override
-    public boolean matchItems(Item[][] input, Item[][] output) {
-        if (!matchInputMap(Utils.clone2dArray(input))) {
+    public boolean matchItems(List<Item> input, List<Item> output) {
+        List<Item> haveInputs = new ArrayList<>(input);
+        List<Item> needInputs = this.getIngredientList();
+        needInputs.sort(CraftingManager.recipeComparator);
 
-            Item[][] reverse = Utils.clone2dArray(input);
-
-            for (int y = 0; y < reverse.length; y++) {
-                reverse[y] = Utils.reverseArray(reverse[y], false);
-            }
-
-            if (!matchInputMap(reverse)) {
-                return false;
-            }
+        if (!matchItemList(haveInputs, needInputs)) {
+            return false;
         }
 
-        //and then, finally, check that the output items are good:
-        List<Item> haveItems = new ArrayList<>();
-        for (Item[] items : output) {
-            haveItems.addAll(Arrays.asList(items));
+        List<Item> haveOutputs = new LinkedList<>(output);
+        haveOutputs.sort(CraftingManager.recipeComparator);
+        List<Item> needOutputs = new LinkedList<>(this.getExtraResults());
+        needOutputs.sort(CraftingManager.recipeComparator);
+
+        if(haveOutputs.isEmpty() && needOutputs.isEmpty()){
+            return true;
         }
-
-        List<Item> needItems = this.getExtraResults();
-
-        for (Item haveItem : new ArrayList<>(haveItems)) {
-            if (haveItem.isNull()) {
-                haveItems.remove(haveItem);
-                continue;
-            }
-
-            for (Item needItem : new ArrayList<>(needItems)) {
-                if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag()) && needItem.getCount() == haveItem.getCount()) {
-                    haveItems.remove(haveItem);
-                    needItems.remove(needItem);
-                    break;
-                }
-            }
-        }
-
-        return haveItems.isEmpty() && needItems.isEmpty();
+        return this.matchItemList(haveOutputs, needOutputs);
     }
 
-    private boolean matchInputMap(Item[][] input) {
-        Map<Integer, Map<Integer, Item>> map = this.getIngredientMap();
+    private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
+        haveItems.removeIf(Item::isNull);
+        needItems.removeIf(Item::isNull);
 
-        //match the given items to the requested items
-        for (int y = 0, y2 = this.getHeight(); y < y2; ++y) {
-            for (int x = 0, x2 = this.getWidth(); x < x2; ++x) {
-                Item given = input[y][x];
-                Item required = map.get(y).get(x);
+        if (haveItems.size() != needItems.size()) {
+            return false;
+        }
 
-                if (given == null || !required.equals(given, required.hasMeta(), required.hasCompoundTag()) || required.getCount() != given.getCount()) {
-                    return false;
-                }
+        int size = needItems.size();
+        int completed = 0;
+        for (int i = 0; i < size; i++) {
+            Item haveItem = haveItems.get(i);
+            Item needItem = needItems.get(i);
 
-                input[y][x] = null;
+            if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag()) && haveItem.getCount() == needItem.getCount()) {
+                completed++;
             }
         }
 
-        //check if there are any items left in the grid outside of the recipe
-        for (Item[] items : input) {
-            for (Item item : items) {
-                if (item != null && !item.isNull()) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
+        return completed == size;
     }
 
     @Override

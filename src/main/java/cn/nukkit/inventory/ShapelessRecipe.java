@@ -103,29 +103,25 @@ public class ShapelessRecipe implements CraftingRecipe {
     }
 
     @Override
-    public boolean matchItems(Item[][] input, Item[][] output) {
-        List<Item> haveInputs = new ArrayList<>();
-        for (Item[] items : input) {
-            haveInputs.addAll(Arrays.asList(items));
-        }
-        haveInputs.sort(CraftingManager.recipeComparator);
-
-        List<Item> needInputs = this.getIngredientList();
+    public boolean matchItems(List<Item> input, List<Item> output) {
+        List<Item> haveInputs = new LinkedList<>(input);
+        List<Item> needInputs = new LinkedList<>(ingredients);
 
         if (!this.matchItemList(haveInputs, needInputs)) {
             return false;
         }
 
-        List<Item> haveOutputs = new ArrayList<>();
-        for (Item[] items : output) {
-            haveOutputs.addAll(Arrays.asList(items));
-        }
+        List<Item> haveOutputs = new LinkedList<>(output);
         haveOutputs.sort(CraftingManager.recipeComparator);
-        List<Item> needOutputs = this.getExtraResults();
+        List<Item> needOutputs = new LinkedList<>(this.getExtraResults());
+        needOutputs.sort(CraftingManager.recipeComparator);
+
+        if(haveOutputs.isEmpty() && needOutputs.isEmpty()){
+            return true;
+        }
 
         return this.matchItemList(haveOutputs, needOutputs);
     }
-
 
     private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
         // Remove any air blocks that may have gotten through.
