@@ -70,7 +70,7 @@ public class ItemPotion extends Item {
         }
         Potion potion = Potion.getPotion(this.getMeta()).setSplash(false);
 
-        if (player.getGamemode() == GameMode.SURVIAL) {
+        if (player.getGamemode() == GameMode.SURVIVAL) {
             this.decrementCount();
             player.getInventory().setItemInHand(this);
             player.getInventory().addItem(Item.get(ItemIds.GLASS_BOTTLE));

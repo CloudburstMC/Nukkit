@@ -110,15 +110,6 @@ import static com.nukkitx.protocol.bedrock.data.EntityFlag.USING_ITEM;
 @Log4j2
 public class Player extends Human implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {
 
-    public static final int SURVIVAL_SLOTS = 36;
-    public static final int CREATIVE_SLOTS = 112;
-
-    public static final int CRAFTING_SMALL = 0;
-    public static final int CRAFTING_BIG = 1;
-    public static final int CRAFTING_ANVIL = 2;
-    public static final int CRAFTING_ENCHANT = 3;
-    public static final int CRAFTING_BEACON = 4;
-
     public static final float DEFAULT_SPEED = 0.1f;
     public static final float MAXIMUM_SPEED = 0.5f;
 
@@ -144,7 +135,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     private String clientSecret;
     protected Vector3f forceMovement = null;
 
-    public int craftingType = CRAFTING_SMALL;
+    public CraftingType craftingType = CraftingType.SMALL;
 
     protected PlayerUIInventory playerUIInventory;
     protected CraftingGrid craftingGrid;
@@ -911,26 +902,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         return this.playerData.getGamemode();
     }
 
-    /**
-     * Returns a client-friendly gamemode of the specified real gamemode
-     * This function takes care of handling gamemodes known to MCPE (as of 1.1.0.3, that includes Survival, Creative and Adventure)
-     * <p>
-     * TODO: remove this when Spectator Mode gets added properly to MCPE
-     */
-    private static GameMode getClientFriendlyGamemode(GameMode gamemode) {
-        if (gamemode == GameMode.SPECTATOR) {
-            return GameMode.CREATIVE;
-        }
-
-        return gamemode;
-    }
-
     public boolean setGamemode(GameMode gamemode) {
-        return this.setGamemode(gamemode, false, null);
-    }
-
-    public boolean setGamemode(GameMode gamemode, boolean clientSide) {
-        return this.setGamemode(gamemode, clientSide, null);
+        return this.setGamemode(gamemode, false);
     }
 
     /**
@@ -972,7 +945,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     }
 
     public boolean isSurvival() {
-        return this.getGamemode() == GameMode.SURVIAL;
+        return this.getGamemode() == GameMode.SURVIVAL;
     }
 
     public boolean isCreative() {
@@ -1051,23 +1024,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
     }
 
-    public boolean setGamemode(GameMode gamemode, boolean clientSide, AdventureSettings newSettings) {
+    public boolean setGamemode(GameMode gamemode, boolean clientSide) {
         if (this.getGamemode() == gamemode) {
             return false;
         }
 
-        if (newSettings == null) {
-            newSettings = this.getAdventureSettings().clone(this);
-            newSettings.set(Type.WORLD_IMMUTABLE, gamemode.isVisitor());
-            newSettings.set(Type.BUILD_AND_MINE, !gamemode.isVisitor());
-            newSettings.set(Type.WORLD_BUILDER, !gamemode.isVisitor());
-            newSettings.set(Type.ALLOW_FLIGHT, gamemode == GameMode.CREATIVE || gamemode == GameMode.SPECTATOR);
-            newSettings.set(Type.NO_CLIP, gamemode == GameMode.SPECTATOR);
-            newSettings.set(Type.FLYING, gamemode == GameMode.SPECTATOR);
-        }
-
         PlayerGameModeChangeEvent ev;
-        this.server.getPluginManager().callEvent(ev = new PlayerGameModeChangeEvent(this, gamemode, newSettings));
+        this.server.getPluginManager().callEvent(ev = new PlayerGameModeChangeEvent(this, gamemode));
 
         if (ev.isCancelled()) {
             return false;
@@ -1087,14 +1050,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         if (!clientSide) {
             SetPlayerGameTypePacket pk = new SetPlayerGameTypePacket();
-            pk.setGamemode(getClientFriendlyGamemode(gamemode).ordinal());
+            pk.setGamemode(gamemode.getVanillaId());
             this.sendPacket(pk);
         }
 
-        this.setAdventureSettings(ev.getNewAdventureSettings());
+        this.setAdventureSettings(new AdventureSettings(this, gamemode.getAdventureSettings()));
 
         if (this.isSpectator()) {
-            this.getAdventureSettings().set(Type.FLYING, true);
             this.teleport(this.getPosition().add(0, 0.1, 0));
 
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
@@ -1102,9 +1064,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             inventoryContentPacket.setContents(new ItemData[0]);
             this.sendPacket(inventoryContentPacket);
         } else {
-            if (this.isSurvival()) {
-                this.getAdventureSettings().set(Type.FLYING, false);
-            }
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
             inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
             inventoryContentPacket.setContents(Item.toNetwork(Item.getCreativeItems().toArray(new Item[0])));
@@ -1571,12 +1530,12 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.setUniqueEntityId(this.getUniqueId());
         startGamePacket.setRuntimeEntityId(this.getRuntimeId());
-        startGamePacket.setPlayerGamemode(getClientFriendlyGamemode(this.getGamemode()).ordinal());
+        startGamePacket.setPlayerGamemode(this.getGamemode().getVanillaId());
         startGamePacket.setPlayerPosition(pos);
         startGamePacket.setRotation(Vector2f.from(this.getYaw(), this.getPitch()));
         startGamePacket.setSeed(-1);
         startGamePacket.setDimensionId(0);
-        startGamePacket.setLevelGamemode(getClientFriendlyGamemode(this.getGamemode()).ordinal());
+        startGamePacket.setLevelGamemode(this.getGamemode().getVanillaId());
         startGamePacket.setDifficulty(this.server.getDifficulty().ordinal());
         startGamePacket.setDefaultSpawn(this.getSpawn().getPosition().toInt());
         startGamePacket.setAchievementsDisabled(true);
@@ -1770,7 +1729,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         this.resetCraftingGridType();
-        this.craftingType = CRAFTING_SMALL;
+        this.craftingType = CraftingType.SMALL;
 
         if (this.removeFormat) {
             message = TextFormat.clean(message, true);
@@ -2980,7 +2939,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 //                this.dataPacket(pk);
             }
 
-            this.craftingType = CRAFTING_SMALL;
+            this.craftingType = CraftingType.SMALL;
         }
     }
 
@@ -3426,5 +3385,13 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 Player.this.handleDataPacket(packet);
             }
         }
+    }
+
+    public enum CraftingType {
+        SMALL,
+        BIG,
+        ANVIL,
+        ENCHANT,
+        BEACON
     }
 }

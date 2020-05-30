@@ -2,6 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.player.Player;
+import cn.nukkit.player.Player.CraftingType;
 
 
 /**
@@ -17,7 +18,7 @@ public class EnchantInventory extends FakeBlockUIComponent {
     @Override
     public void onOpen(Player who) {
         super.onOpen(who);
-        who.craftingType = Player.CRAFTING_ENCHANT;
+        who.craftingType = CraftingType.ENCHANT;
     }
 
     @Override

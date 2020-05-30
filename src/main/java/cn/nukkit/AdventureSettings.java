@@ -14,18 +14,17 @@ import java.util.Map;
  */
 public class AdventureSettings implements Cloneable {
 
-    public static final int PERMISSION_NORMAL = 0;
-    public static final int PERMISSION_OPERATOR = 1;
-    public static final int PERMISSION_HOST = 2;
-    public static final int PERMISSION_AUTOMATION = 3;
-    public static final int PERMISSION_ADMIN = 4;
-
-    private Map<Type, Boolean> values = new EnumMap<>(Type.class);
+    private final Map<Type, Boolean> values = new EnumMap<>(Type.class);
 
     private Player player;
 
     public AdventureSettings(Player player) {
         this.player = player;
+    }
+
+    public AdventureSettings(Player player, Map<Type, Boolean> values) {
+        this.player = player;
+        this.values.putAll(values);
     }
 
     public AdventureSettings clone(Player newPlayer) {

@@ -43,7 +43,7 @@ public class PlayerData {
                     tag.getInt(TAG_SPAWN_Z)
             ));
         }
-        tag.listenForInt(TAG_GAME_TYPE, gm -> setGamemode(GameMode.values()[gm & 0x03]));
+        tag.listenForInt(TAG_GAME_TYPE, gm -> setGamemode(GameMode.from(gm)));
         tag.listenForString(TAG_LAST_ADDRESS, this::setLastAddress);
         tag.listenForCompound(TAG_ACHIEVEMENTS, achievementsTag -> {
             achievementsTag.getValue().forEach((achievement, tag1) -> {

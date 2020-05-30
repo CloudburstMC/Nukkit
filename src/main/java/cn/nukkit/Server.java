@@ -1107,9 +1107,9 @@ public class Server {
 
     public GameMode getGamemode() {
         try {
-            return GameMode.values()[this.getPropertyInt("gamemode", 0) & 0x03];
+            return GameMode.from(this.getPropertyInt("gamemode", 0));
         } catch (NumberFormatException exception) {
-            return GameMode.valueOf(this.getProperty("gamemode"));
+            return GameMode.from(this.getProperty("gamemode"));
         }
     }
 
@@ -1347,7 +1347,7 @@ public class Server {
                             new FloatTag("", spawn.getPosition().getZ())
                     ))
                     .stringTag("Level", this.getDefaultLevel().getName())
-                    .intTag("playerGameType", this.getGamemode().ordinal())
+                    .intTag("playerGameType", this.getGamemode().getVanillaId())
                     .listTag("Rotation", FloatTag.class, Arrays.asList(
                             new FloatTag("", spawn.getYaw()),
                             new FloatTag("", spawn.getPitch())

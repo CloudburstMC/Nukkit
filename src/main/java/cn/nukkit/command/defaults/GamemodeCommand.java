@@ -47,7 +47,7 @@ public class GamemodeCommand extends Command {
 
         GameMode gameMode;
         try {
-            gameMode = GameMode.valueOf(args[0].toUpperCase());
+            gameMode = GameMode.from(args[0].toLowerCase());
         } catch (IllegalArgumentException e) {
             sender.sendMessage("Unknown game mode"); //TODO: translate?
             return true;
@@ -69,7 +69,7 @@ public class GamemodeCommand extends Command {
             return false;
         }
 
-        if (sender.hasPermission("nukkit.command.gamemode." + gameMode.name().toLowerCase())) {
+        if (sender.hasPermission("nukkit.command.gamemode." + gameMode.getName())) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
             return true;
         }

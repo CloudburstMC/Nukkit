@@ -37,9 +37,9 @@ public class DefaultGamemodeCommand extends Command {
             return false;
         }
         try {
-            GameMode gameMode = GameMode.valueOf(args[0].toUpperCase());
+            GameMode gameMode = GameMode.from(args[0].toLowerCase());
 
-            sender.getServer().setPropertyInt("gamemode", gameMode.ordinal());
+            sender.getServer().setPropertyInt("gamemode", gameMode.getVanillaId());
             sender.sendMessage(new TranslationContainer("commands.defaultgamemode.success", gameMode.getTranslation()));
         } catch (IllegalArgumentException e) {
             sender.sendMessage("Unknown game mode"); //TODO: translate?

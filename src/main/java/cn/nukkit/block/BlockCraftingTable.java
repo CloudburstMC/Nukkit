@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.player.Player;
+import cn.nukkit.player.Player.CraftingType;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
 
@@ -38,7 +39,7 @@ public class BlockCraftingTable extends BlockSolid {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            player.craftingType = Player.CRAFTING_BIG;
+            player.craftingType = CraftingType.BIG;
             player.setCraftingGrid(player.getUIInventory().getBigCraftingGrid());
         }
         return true;
