@@ -81,6 +81,7 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -215,6 +216,8 @@ public class Server {
     private volatile Identifier defaultStorageId;
 
     private final Set<String> ignoredPackets = new HashSet<>();
+
+    private static final Pattern UUID_PATTERN = Pattern.compile("^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}.dat$", Pattern.CASE_INSENSITIVE);
 
     public Server(String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
@@ -1483,11 +1486,11 @@ public class Server {
 
     private void convertLegacyPlayerData() {
         File dataDirectory = new File(getDataPath(), "players/");
-        Pattern uuidPattern = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}.dat$");
 
         File[] files = dataDirectory.listFiles(file -> {
             String name = file.getName();
-            return !uuidPattern.matcher(name).matches() && name.endsWith(".dat");
+            Matcher matcher = UUID_PATTERN.matcher(name);
+            return !matcher.matches();
         });
 
         if (files == null) {
@@ -1501,7 +1504,7 @@ public class Server {
 
             log.debug("Attempting legacy player data conversion for {}", name);
 
-            CompoundTag tag = getOfflinePlayerDataInternal(name, false, false);
+            CompoundTag tag = this.getOfflinePlayerDataInternal(name, false, false);
 
             if (tag == null || !tag.contains("UUIDLeast") || !tag.contains("UUIDMost")) {
                 // No UUID so we cannot convert. Wait until player logs in.
@@ -1518,10 +1521,10 @@ public class Server {
                 continue;
             }
 
-            saveOfflinePlayerData(uuid.toString(), tag, false, false);
+            this.saveOfflinePlayerData(uuid.toString(), tag, false, false);
 
             // Add name to lookup table
-            updateName(uuid, name);
+            this.updateName(uuid, name);
 
             // Delete legacy data
             if (!legacyData.delete()) {
