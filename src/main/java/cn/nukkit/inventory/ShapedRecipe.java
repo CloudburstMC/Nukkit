@@ -173,8 +173,9 @@ public class ShapedRecipe implements CraftingRecipe {
 
     @Override
     public List<Item> getAllResults() {
-        List<Item> list = new ArrayList<>(this.extraResults);
+        List<Item> list = new ArrayList<>();
         list.add(primaryResult);
+        list.addAll(this.extraResults);
 
         return list;
     }
