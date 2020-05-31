@@ -852,9 +852,16 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
             }
 
             return true;
-        } else if (player.getCraftingTransaction() != null) {
-            log.debug("Got unexpected normal inventory action with incomplete crafting transaction from " + player.getName() + ", refusing to execute crafting");
-            player.setCraftingTransaction(null);
+        } else if(player.getCraftingTransaction() != null) {
+            if(player.getCraftingTransaction().checkForCraftingPart(actions)){
+                for (InventoryAction action : actions) {
+                    player.getCraftingTransaction().addAction(action);
+                }
+                return true;
+            } else {
+                log.debug("Got unexpected normal inventory action with incomplete crafting transaction from " + player.getName() + ", refusing to execute crafting");
+                player.setCraftingTransaction(null);
+            }
         }
 
         switch (packet.getTransactionType()) {

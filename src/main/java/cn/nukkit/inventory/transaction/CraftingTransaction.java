@@ -1,9 +1,9 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.event.inventory.CraftItemEvent;
-import cn.nukkit.inventory.BigCraftingGrid;
-import cn.nukkit.inventory.CraftingRecipe;
+import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.player.Player;
@@ -49,7 +49,7 @@ public class CraftingTransaction extends InventoryTransaction {
     }
 
     public void setInput(Item item) {
-        if (inputs.size() < gridSize*gridSize) {
+        if (inputs.size() < gridSize * gridSize) {
             for (Item existingInput : this.inputs) {
                 if (existingInput.equals(item, item.hasMeta(), item.hasCompoundTag())) {
                     existingInput.setCount(existingInput.getCount() + item.getCount());
@@ -63,7 +63,7 @@ public class CraftingTransaction extends InventoryTransaction {
     }
 
     public void setExtraOutput(Item item) {
-        if (inputs.size() < gridSize*gridSize) {
+        if (inputs.size() < gridSize * gridSize) {
             secondaryOutputs.add(item.clone());
         } else {
             throw new RuntimeException("Output list is full can't add " + item);
@@ -147,6 +147,19 @@ public class CraftingTransaction extends InventoryTransaction {
             return true;
         }
 
+        return false;
+    }
+
+    public boolean checkForCraftingPart(List<InventoryAction> actions) {
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (slotChangeAction.getInventory().getType() == InventoryType.UI && slotChangeAction.getSlot() == 50 &&
+                        !slotChangeAction.getSourceItem().equals(slotChangeAction.getTargetItem())) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 }
