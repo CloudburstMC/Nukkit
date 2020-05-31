@@ -117,24 +117,43 @@ public class ShapelessRecipe implements CraftingRecipe {
     }
 
     @Override
-    public boolean matchItems(List<Item> input, List<Item> output) {
-        List<Item> haveInputs = input.stream().map(Item::clone).collect(Collectors.toList());
-        List<Item> needInputs = ingredientsAggregate.stream().map(Item::clone).collect(Collectors.toList());
+    public boolean matchItems(List<Item> inputList, List<Item> extraOutputList) {
+        List<Item> haveInputs = new ArrayList<>();
+        for (Item item : inputList) {
+            if (item.isNull())
+                continue;
+            haveInputs.add(item.clone());
+        }
+        List<Item> needInputs = new ArrayList<>();
+        for (Item item : ingredientsAggregate) {
+            if (item.isNull())
+                continue;
+            needInputs.add(item.clone());
+        }
 
         if (!matchItemList(haveInputs, needInputs)) {
             return false;
         }
 
-        List<Item> haveOutputs = output.stream().map(Item::clone).sorted(CraftingManager.recipeComparator).collect(Collectors.toList());
-        List<Item> needOutputs = this.getExtraResults().stream().map(Item::clone).sorted(CraftingManager.recipeComparator).collect(Collectors.toList());
+        List<Item> haveOutputs = new ArrayList<>();
+        for (Item item : extraOutputList) {
+            if (item.isNull())
+                continue;
+            haveOutputs.add(item.clone());
+        }
+        haveOutputs.sort(CraftingManager.recipeComparator);
+        List<Item> needOutputs = new ArrayList<>();
+        for (Item item : this.getExtraResults()) {
+            if (item.isNull())
+                continue;
+            needOutputs.add(item.clone());
+        }
+        needOutputs.sort(CraftingManager.recipeComparator);
 
         return this.matchItemList(haveOutputs, needOutputs);
     }
 
     private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
-        haveItems.removeIf(Item::isNull);
-        needItems.removeIf(Item::isNull);
-
         for (Item needItem : new ArrayList<>(needItems)) {
             for (Item haveItem : new ArrayList<>(haveItems)) {
                 if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag())) {
@@ -151,7 +170,6 @@ public class ShapelessRecipe implements CraftingRecipe {
                 }
             }
         }
-
         return haveItems.isEmpty() && needItems.isEmpty();
     }
 

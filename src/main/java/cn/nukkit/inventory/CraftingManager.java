@@ -379,17 +379,19 @@ public class CraftingManager {
         Item recipeResult = recipe.getResult();
         if (primaryOutput.equals(recipeResult, recipeResult.hasMeta(), recipeResult.hasCompoundTag()) && primaryOutput.getCount() % recipeResult.getCount() == 0) {
             int div = primaryOutput.getCount() / recipeResult.getCount();
-            List<Item> inputListDiv = inputList.stream().map(item -> {
-                Item clone = item.clone();
-                clone.setCount(item.getCount() / div);
-                return clone;
-            }).collect(Collectors.toList());
-            List<Item> extraOutputListDiv = extraOutputList.stream().map(item -> {
-                Item clone = item.clone();
-                clone.setCount(item.getCount() / div);
-                return clone;
-            }).collect(Collectors.toList());
-            return recipe.matchItems(inputListDiv, extraOutputListDiv);
+            List<Item> inputListDivided = new ArrayList<>();
+            for(Item input : inputList){
+                Item inputClone = input.clone();
+                inputClone.setCount(input.getCount() / div);
+                inputListDivided.add(inputClone);
+            }
+            List<Item> extraOutputListDivided = new ArrayList<>();
+            for(Item input : extraOutputList){
+                Item inputClone = input.clone();
+                inputClone.setCount(input.getCount() / div);
+                extraOutputListDivided.add(inputClone);
+            }
+            return recipe.matchItems(inputListDivided, extraOutputListDivided);
         }
         return false;
     }
