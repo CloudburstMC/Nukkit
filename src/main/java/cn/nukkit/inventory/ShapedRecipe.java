@@ -2,7 +2,6 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Identifier;
-import cn.nukkit.utils.Utils;
 import com.google.common.collect.ImmutableList;
 import com.nukkitx.protocol.bedrock.data.CraftingData;
 import io.netty.util.collection.CharObjectHashMap;
@@ -21,6 +20,7 @@ public class ShapedRecipe implements CraftingRecipe {
     private final String recipeId;
     private final Item primaryResult;
     private final ImmutableList<Item> extraResults;
+    private final List<Item> ingredientsAggregate = new ArrayList<>();
     private final CharObjectHashMap<Item> ingredients = new CharObjectHashMap<>();
     private final String[] shape;
     private final int priority;
@@ -53,7 +53,7 @@ public class ShapedRecipe implements CraftingRecipe {
         }
 
         int columnCount = shape[0].length();
-        if (columnCount > 3 || rowCount <= 0) {
+        if (columnCount > 3 || columnCount <= 0) {
             throw new RuntimeException("Shaped recipes may only have 1, 2 or 3 columns, not " + columnCount);
         }
 
@@ -81,6 +81,22 @@ public class ShapedRecipe implements CraftingRecipe {
         for (Map.Entry<Character, Item> entry : ingredients.entrySet()) {
             this.setIngredient(entry.getKey(), entry.getValue());
         }
+
+        for (char c : String.join("", this.shape).toCharArray()) {
+            if (c == ' ')
+                continue;
+            Item ingredient = this.ingredients.get(c).clone();
+            for (Item existingIngredient : this.ingredientsAggregate) {
+                if (existingIngredient.equals(ingredient, ingredient.hasMeta(), ingredient.hasCompoundTag())) {
+                    existingIngredient.setCount(existingIngredient.getCount() + ingredient.getCount());
+                    ingredient = null;
+                    break;
+                }
+            }
+            if (ingredient != null)
+                this.ingredientsAggregate.add(ingredient);
+        }
+        this.ingredientsAggregate.sort(CraftingManager.recipeComparator);
     }
 
     public int getWidth() {
@@ -116,10 +132,6 @@ public class ShapedRecipe implements CraftingRecipe {
     }
 
     public ShapedRecipe setIngredient(char key, Item item) {
-        if (String.join("", this.shape).indexOf(key) < 0) {
-            throw new RuntimeException("Symbol does not appear in the shape: " + key);
-        }
-
         this.ingredients.put(key, item);
         return this;
     }
@@ -175,8 +187,7 @@ public class ShapedRecipe implements CraftingRecipe {
     @Override
     public boolean matchItems(List<Item> input, List<Item> output) {
         List<Item> haveInputs = new ArrayList<>(input);
-        List<Item> needInputs = this.getIngredientList();
-        needInputs.sort(CraftingManager.recipeComparator);
+        List<Item> needInputs = new ArrayList<>(ingredientsAggregate);
 
         if (!matchItemList(haveInputs, needInputs)) {
             return false;
@@ -235,5 +246,9 @@ public class ShapedRecipe implements CraftingRecipe {
         return CraftingData.fromShaped(this.recipeId, this.getWidth(), this.getHeight(),
                 Item.toNetwork(this.getIngredientList()), Item.toNetwork(this.getAllResults()), this.getId(),
                 this.block.getName(), this.priority);
+    }
+
+    public List<Item> getIngredientsAggregate() {
+        return ingredientsAggregate;
     }
 }

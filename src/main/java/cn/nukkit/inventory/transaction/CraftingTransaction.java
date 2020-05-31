@@ -50,6 +50,12 @@ public class CraftingTransaction extends InventoryTransaction {
 
     public void setInput(Item item) {
         if (inputs.size() < gridSize*gridSize) {
+            for (Item existingInput : this.inputs) {
+                if (existingInput.equals(item, item.hasMeta(), item.hasCompoundTag())) {
+                    existingInput.setCount(existingInput.getCount() + item.getCount());
+                    return;
+                }
+            }
             inputs.add(item.clone());
         } else {
             throw new RuntimeException("Input list is full can't add " + item);

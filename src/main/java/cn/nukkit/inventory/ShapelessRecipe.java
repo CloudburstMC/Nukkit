@@ -15,6 +15,7 @@ public class ShapelessRecipe implements CraftingRecipe {
     private final String recipeId;
     private final Item output;
     private final List<Item> ingredients;
+    private final List<Item> ingredientsAggregate = new ArrayList<>();
     private final int priority;
     private final Identifier block;
 
@@ -35,8 +36,20 @@ public class ShapelessRecipe implements CraftingRecipe {
             if (item.getCount() < 1) {
                 throw new IllegalArgumentException("Recipe '" + recipeId + "' Ingredient amount was not 1 (value: " + item.getCount() + ")");
             }
+            boolean found = false;
+            for (Item existingIngredient : this.ingredientsAggregate) {
+                if (existingIngredient.equals(item, item.hasMeta(), item.hasCompoundTag())) {
+                    existingIngredient.setCount(existingIngredient.getCount() + item.getCount());
+                    found = true;
+                    break;
+                }
+            }
+            if (!found)
+                this.ingredientsAggregate.add(item.clone());
             this.ingredients.add(item.clone());
         }
+
+        this.ingredientsAggregate.sort(CraftingManager.recipeComparator);
     }
 
     @Override
@@ -105,7 +118,7 @@ public class ShapelessRecipe implements CraftingRecipe {
     @Override
     public boolean matchItems(List<Item> input, List<Item> output) {
         List<Item> haveInputs = new LinkedList<>(input);
-        List<Item> needInputs = new LinkedList<>(ingredients);
+        List<Item> needInputs = new LinkedList<>(ingredientsAggregate);
 
         if (!this.matchItemList(haveInputs, needInputs)) {
             return false;
@@ -150,5 +163,9 @@ public class ShapelessRecipe implements CraftingRecipe {
     public CraftingData toNetwork() {
         return CraftingData.fromShapeless(this.recipeId, Item.toNetwork(this.getIngredientList()),
                 Item.toNetwork(this.getAllResults()), this.id, this.block.getName(), this.priority);
+    }
+
+    public List<Item> getIngredientsAggregate() {
+        return ingredientsAggregate;
     }
 }

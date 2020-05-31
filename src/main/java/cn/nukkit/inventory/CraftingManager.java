@@ -2,8 +2,6 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockIds;
-import cn.nukkit.event.inventory.InventoryMoveItemEvent;
-import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.player.Player;
@@ -13,7 +11,6 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
 import com.nukkitx.protocol.bedrock.packet.CraftingDataPacket;
-import com.nukkitx.protocol.bedrock.packet.InventoryTransactionPacket;
 import io.netty.util.collection.CharObjectHashMap;
 import io.netty.util.collection.CharObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -23,6 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static cn.nukkit.block.BlockIds.LIT_BLAST_FURNACE;
 
@@ -258,29 +256,8 @@ public class CraftingManager {
     public void registerShapedRecipe(ShapedRecipe recipe) {
         int resultHash = getItemHash(recipe.getResult());
         Map<UUID, ShapedRecipe> map = shapedRecipes.computeIfAbsent(resultHash, k -> new HashMap<>());
-        List<Item> inputList = new LinkedList<>(recipe.getIngredientList());
-        inputList.sort(recipeComparator);
+        List<Item> inputList = new LinkedList<>(recipe.getIngredientsAggregate());
         map.put(getMultiItemHash(inputList), recipe);
-    }
-
-    private Item[][] cloneItemMap(Item[][] map) {
-        Item[][] newMap = new Item[map.length][];
-        for (int i = 0; i < newMap.length; i++) {
-            Item[] old = map[i];
-            Item[] n = new Item[old.length];
-
-            System.arraycopy(old, 0, n, 0, n.length);
-            newMap[i] = n;
-        }
-
-        for (int y = 0; y < newMap.length; y++) {
-            Item[] row = newMap[y];
-            for (int x = 0; x < row.length; x++) {
-                Item item = newMap[y][x];
-                newMap[y][x] = item.clone();
-            }
-        }
-        return newMap;
     }
 
     public void registerRecipe(Recipe recipe) {
@@ -298,8 +275,7 @@ public class CraftingManager {
     }
 
     public void registerShapelessRecipe(ShapelessRecipe recipe) {
-        List<Item> list = recipe.getIngredientList();
-        list.sort(recipeComparator);
+        List<Item> list = recipe.getIngredientsAggregate();
 
         UUID hash = getMultiItemHash(list);
 
@@ -360,12 +336,12 @@ public class CraftingManager {
             if (recipeMap != null) {
                 ShapedRecipe recipe = recipeMap.get(inputHash);
 
-                if (recipe != null && recipe.matchItems(inputList, extraOutputList)) { //matched a recipe by hash
+                if (recipe != null && (recipe.matchItems(inputList, extraOutputList) || matchItemsAccumulation(recipe, inputList, primaryOutput, extraOutputList))) {
                     return recipe;
                 }
 
                 for (ShapedRecipe shapedRecipe : recipeMap.values()) {
-                    if (shapedRecipe.matchItems(inputList, extraOutputList)) {
+                    if (shapedRecipe.matchItems(inputList, extraOutputList) || matchItemsAccumulation(shapedRecipe, inputList, primaryOutput, extraOutputList)) {
                         return shapedRecipe;
                     }
                 }
@@ -385,18 +361,29 @@ public class CraftingManager {
 
             ShapelessRecipe recipe = recipes.get(inputHash);
 
-            if (recipe != null && recipe.matchItems(inputList, extraOutputList)) {
+            if (recipe != null && (recipe.matchItems(inputList, extraOutputList) || matchItemsAccumulation(recipe, inputList, primaryOutput, extraOutputList))) {
                 return recipe;
             }
 
             for (ShapelessRecipe shapelessRecipe : recipes.values()) {
-                if (shapelessRecipe.matchItems(inputList, extraOutputList)) {
+                if (shapelessRecipe.matchItems(inputList, extraOutputList) || matchItemsAccumulation(shapelessRecipe, inputList, primaryOutput, extraOutputList)) {
                     return shapelessRecipe;
                 }
             }
         }
 
         return null;
+    }
+
+    private boolean matchItemsAccumulation(CraftingRecipe recipe, List<Item> inputList, Item primaryOutput, List<Item> extraOutputList) {
+        Item recipeResult = recipe.getResult();
+        if (primaryOutput.equals(recipeResult, recipeResult.hasMeta(), recipeResult.hasCompoundTag()) && primaryOutput.getCount() % recipeResult.getCount() == 0) {
+            int div = primaryOutput.getCount() / recipeResult.getCount();
+            List<Item> inputListDiv = inputList.stream().peek(item -> item.setCount(item.getCount() / div)).collect(Collectors.toList());
+            List<Item> extraOutputListDiv = extraOutputList.stream().peek(item -> item.setCount(item.getCount() / div)).collect(Collectors.toList());
+            return recipe.matchItems(inputListDiv, extraOutputListDiv);
+        }
+        return false;
     }
 
     public static class Entry {
