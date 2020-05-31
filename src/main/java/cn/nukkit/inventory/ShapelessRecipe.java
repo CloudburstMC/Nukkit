@@ -5,6 +5,7 @@ import cn.nukkit.utils.Identifier;
 import com.nukkitx.protocol.bedrock.data.CraftingData;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * author: MagicDroidX
@@ -117,41 +118,41 @@ public class ShapelessRecipe implements CraftingRecipe {
 
     @Override
     public boolean matchItems(List<Item> input, List<Item> output) {
-        List<Item> haveInputs = new LinkedList<>(input);
-        List<Item> needInputs = new LinkedList<>(ingredientsAggregate);
+        List<Item> haveInputs = input.stream().map(Item::clone).collect(Collectors.toList());
+        List<Item> needInputs = ingredientsAggregate.stream().map(Item::clone).collect(Collectors.toList());
 
-        if (!this.matchItemList(haveInputs, needInputs)) {
+        if (!matchItemList(haveInputs, needInputs)) {
             return false;
         }
 
-        List<Item> haveOutputs = new LinkedList<>(output);
-        haveOutputs.sort(CraftingManager.recipeComparator);
-        List<Item> needOutputs = new LinkedList<>(this.getExtraResults());
-        needOutputs.sort(CraftingManager.recipeComparator);
+        List<Item> haveOutputs = output.stream().map(Item::clone).sorted(CraftingManager.recipeComparator).collect(Collectors.toList());
+        List<Item> needOutputs = this.getExtraResults().stream().map(Item::clone).sorted(CraftingManager.recipeComparator).collect(Collectors.toList());
 
         return this.matchItemList(haveOutputs, needOutputs);
     }
 
     private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
-        // Remove any air blocks that may have gotten through.
         haveItems.removeIf(Item::isNull);
+        needItems.removeIf(Item::isNull);
 
-        if (haveItems.size() != needItems.size()) {
-            return false;
-        }
-
-        int size = needItems.size();
-        int completed = 0;
-        for (int i = 0; i < size; i++) {
-            Item haveItem = haveItems.get(i);
-            Item needItem = needItems.get(i);
-
-            if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag())) {
-                completed++;
+        for (Item needItem : new ArrayList<>(needItems)) {
+            for (Item haveItem : new ArrayList<>(haveItems)) {
+                if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag())) {
+                    int amount = Math.min(haveItem.getCount(), needItem.getCount());
+                    needItem.setCount(needItem.getCount() - amount);
+                    haveItem.setCount(haveItem.getCount() - amount);
+                    if (haveItem.getCount() == 0) {
+                        haveItems.remove(haveItem);
+                    }
+                    if (needItem.getCount() == 0) {
+                        needItems.remove(needItem);
+                        break;
+                    }
+                }
             }
         }
 
-        return completed == size;
+        return haveItems.isEmpty() && needItems.isEmpty();
     }
 
     @Override
