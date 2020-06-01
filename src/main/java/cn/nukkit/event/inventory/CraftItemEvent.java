@@ -3,14 +3,10 @@ package cn.nukkit.event.inventory;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.inventory.Recipe;
+import cn.nukkit.inventory.crafting.recipe.Recipe;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.item.Item;
 import cn.nukkit.player.Player;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * author: MagicDroidX

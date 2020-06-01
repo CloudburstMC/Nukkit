@@ -7,7 +7,7 @@ import cn.nukkit.blockentity.Furnace;
 import cn.nukkit.event.inventory.FurnaceBurnEvent;
 import cn.nukkit.event.inventory.FurnaceSmeltEvent;
 import cn.nukkit.inventory.FurnaceInventory;
-import cn.nukkit.inventory.FurnaceRecipe;
+import cn.nukkit.inventory.crafting.recipe.FurnaceRecipe;
 import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemUtils;

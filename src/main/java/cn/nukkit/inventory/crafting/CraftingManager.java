@@ -1,7 +1,8 @@
-package cn.nukkit.inventory;
+package cn.nukkit.inventory.crafting;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.BlockIds;
+import cn.nukkit.inventory.crafting.recipe.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemIds;
 import cn.nukkit.player.Player;
@@ -20,7 +21,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static cn.nukkit.block.BlockIds.LIT_BLAST_FURNACE;
 

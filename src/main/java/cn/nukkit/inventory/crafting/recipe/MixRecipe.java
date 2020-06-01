@@ -1,4 +1,4 @@
-package cn.nukkit.inventory;
+package cn.nukkit.inventory.crafting.recipe;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Identifier;

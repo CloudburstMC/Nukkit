@@ -1,5 +1,6 @@
-package cn.nukkit.inventory;
+package cn.nukkit.inventory.crafting.recipe;
 
+import cn.nukkit.inventory.crafting.CraftingManager;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.protocol.bedrock.data.CraftingData;

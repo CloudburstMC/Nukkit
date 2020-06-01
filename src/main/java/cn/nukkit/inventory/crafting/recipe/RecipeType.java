@@ -1,4 +1,4 @@
-package cn.nukkit.inventory;
+package cn.nukkit.inventory.crafting.recipe;
 
 public enum RecipeType {
     SHAPELESS,
