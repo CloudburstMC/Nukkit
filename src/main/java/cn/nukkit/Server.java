@@ -1490,7 +1490,7 @@ public class Server {
         File[] files = dataDirectory.listFiles(file -> {
             String name = file.getName();
             Matcher matcher = UUID_PATTERN.matcher(name);
-            return !matcher.matches();
+            return !matcher.matches() && name.endsWith(".dat");
         });
 
         if (files == null) {
