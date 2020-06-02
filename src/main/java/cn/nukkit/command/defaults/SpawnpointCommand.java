@@ -70,9 +70,7 @@ public class SpawnpointCommand extends Command {
                 if (y > 256) y = 256;
                 target.setSpawn(Location.from(x, y, z, level));
                 CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.spawnpoint.success.single", target.getName(),
-                        NukkitMath.round(x, 2),
-                        NukkitMath.round(y, 2),
-                        NukkitMath.round(z, 2)));
+                        x, y, z));
                 return true;
             }
         } else if (args.length <= 1) {
