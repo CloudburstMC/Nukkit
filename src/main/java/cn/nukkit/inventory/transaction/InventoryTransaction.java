@@ -58,7 +58,7 @@ public class InventoryTransaction {
         return inventories;
     }
 
-    public List<InventoryAction> getActionsList() {
+    public List<InventoryAction> getActionList() {
         return actions;
     }
 
