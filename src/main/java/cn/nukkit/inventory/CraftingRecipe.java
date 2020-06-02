@@ -32,5 +32,9 @@ public interface CraftingRecipe extends Recipe {
      * @param output 2D array of items put back into the crafting grid (secondary results)
      * @return bool
      */
-    boolean matchItems(Item[][] input, Item[][] output);
+    boolean matchItems(List<Item> input, List<Item> output);
+
+    boolean matchItems(List<Item> input, List<Item> output, int multiplier);
+
+    List<Item> getIngredientsAggregate();
 }
