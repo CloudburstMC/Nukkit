@@ -234,6 +234,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public Block breakingBlock = null;
 
     public int pickedXPOrb = 0;
+    public boolean canPickupOrb = true;
 
     protected int formWindowCount = 0;
     protected Map<Integer, FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
@@ -461,6 +462,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     public boolean canCollideWith(Entity entity) {
         return false;
+    }
+
+    public boolean canCollide(){
+        return false;
+    }
+
+    public boolean canPickupXP(){
+        return this.canPickupOrb;
+    }
+
+    public void setCanPickupXP(boolean canPickupXP) {
+        this.canPickupOrb = canPickupXP;
     }
 
     @Override
