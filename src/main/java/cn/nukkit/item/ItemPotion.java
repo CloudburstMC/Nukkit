@@ -1,12 +1,11 @@
 package cn.nukkit.item;
 
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
+import cn.nukkit.player.GameMode;
 import cn.nukkit.player.Player;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
-
-import static cn.nukkit.player.Player.SURVIVAL;
 
 public class ItemPotion extends Item {
 
@@ -71,7 +70,7 @@ public class ItemPotion extends Item {
         }
         Potion potion = Potion.getPotion(this.getMeta()).setSplash(false);
 
-        if (player.getGamemode() == SURVIVAL) {
+        if (player.getGamemode() == GameMode.SURVIVAL) {
             this.decrementCount();
             player.getInventory().setItemInHand(this);
             player.getInventory().addItem(Item.get(ItemIds.GLASS_BOTTLE));

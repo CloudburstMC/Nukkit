@@ -27,7 +27,7 @@ public class PlayerData {
     private String level;
     private String spawnLevel;
     private Vector3i spawnLocation;
-    private int gamemode;
+    private GameMode gamemode;
     private InetAddress lastAddress;
 
     public void loadData(CompoundTag tag) {
@@ -43,7 +43,7 @@ public class PlayerData {
                     tag.getInt(TAG_SPAWN_Z)
             ));
         }
-        tag.listenForInt(TAG_GAME_TYPE, this::setGamemode);
+        tag.listenForInt(TAG_GAME_TYPE, gm -> setGamemode(GameMode.from(gm)));
         tag.listenForString(TAG_LAST_ADDRESS, this::setLastAddress);
         tag.listenForCompound(TAG_ACHIEVEMENTS, achievementsTag -> {
             achievementsTag.getValue().forEach((achievement, tag1) -> {
@@ -111,11 +111,11 @@ public class PlayerData {
         this.spawnLocation = spawnLocation;
     }
 
-    public int getGamemode() {
+    public GameMode getGamemode() {
         return gamemode;
     }
 
-    public void setGamemode(int gamemode) {
+    public void setGamemode(GameMode gamemode) {
         this.gamemode = gamemode;
     }
 

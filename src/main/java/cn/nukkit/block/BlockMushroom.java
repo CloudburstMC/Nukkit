@@ -53,7 +53,7 @@ public abstract class BlockMushroom extends FloodableBlock {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == DYE && item.getMeta() == DyeColor.WHITE.getDyeData()) {
-            if (player != null && (player.getGamemode() & 0x01) == 0) {
+            if (player != null && player.getGamemode().isSurvival()) {
                 item.decrementCount();
             }
 

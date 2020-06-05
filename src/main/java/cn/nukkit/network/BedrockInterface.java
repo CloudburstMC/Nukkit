@@ -1,7 +1,6 @@
 package cn.nukkit.network;
 
 import cn.nukkit.Server;
-import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.player.Player;
 import cn.nukkit.player.handler.LoginPacketHandler;
@@ -16,12 +15,9 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.logging.log4j.Level;
 
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.Queue;
@@ -110,6 +106,7 @@ public class BedrockInterface implements AdvancedSourceInterface, BedrockServerE
         String[] names = name.split("!@#");  //Split double names within the program
         String motd = Utils.rtrim(names[0].replace(";", "\\;"), '\\');
         String subMotd = names.length > 1 ? Utils.rtrim(names[1].replace(";", "\\;"), '\\') : "";
+        String gm = this.server.getDefaultGamemode().getName();
 
         this.advertisement.setEdition("MCPE");
         this.advertisement.setMotd(motd);
@@ -118,7 +115,7 @@ public class BedrockInterface implements AdvancedSourceInterface, BedrockServerE
         this.advertisement.setMaximumPlayerCount(info.getMaxPlayerCount());
         this.advertisement.setVersion("");
         this.advertisement.setProtocolVersion(0);
-        this.advertisement.setGameType(Server.getGamemodeString(this.server.getDefaultGamemode(), true));
+        this.advertisement.setGameType(gm.substring(0, 1).toUpperCase() + gm.substring(1));
         this.advertisement.setNintendoLimited(false);
         this.advertisement.setIpv4Port(this.server.getPort());
         this.advertisement.setIpv6Port(this.server.getPort());
@@ -143,7 +140,7 @@ public class BedrockInterface implements AdvancedSourceInterface, BedrockServerE
         this.bedrock.close();
     }
 
-    public NukkitSessionListener initDisconnectHandler(Player player){
+    public NukkitSessionListener initDisconnectHandler(Player player) {
         return new NukkitSessionListener(player);
     }
 

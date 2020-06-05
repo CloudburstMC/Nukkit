@@ -1,10 +1,6 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockFire;
-import cn.nukkit.block.BlockIds;
-import cn.nukkit.block.BlockLeaves;
-import cn.nukkit.block.BlockSolid;
+import cn.nukkit.block.*;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -264,7 +260,7 @@ public class ItemFlintSteel extends ItemTool {
                 return true;
             }
 
-            if ((player.getGamemode() & 0x01) == 0 && this.useOn(block)) {
+            if (player.getGamemode().isSurvival() && this.useOn(block)) {
                 if (this.getMeta() >= this.getMaxDurability()) {
                     this.setCount(0);
                 } else {

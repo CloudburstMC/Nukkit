@@ -26,18 +26,13 @@ import static cn.nukkit.block.BlockIds.AIR;
 @Log4j2
 public class PlayerInventory extends BaseInventory {
 
+    public static final int SURVIVAL_SLOTS = 36;
+
     protected int itemInHandIndex = 0;
-    private int[] hotbar;
     private int offHandIndex = 40;
 
     public PlayerInventory(Human player) {
         super(player, InventoryType.PLAYER);
-        this.hotbar = new int[this.getHotbarSize()];
-
-        for (int i = 0; i < this.hotbar.length; i++) {
-            this.hotbar[i] = i;
-        }
-
     }
 
     @Override

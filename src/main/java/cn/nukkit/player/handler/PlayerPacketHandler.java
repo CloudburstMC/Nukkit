@@ -35,6 +35,7 @@ import cn.nukkit.level.particle.PunchBlockParticle;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.types.InventoryTransactionUtils;
+import cn.nukkit.player.GameMode;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
@@ -55,7 +56,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static cn.nukkit.block.BlockIds.AIR;
-import static cn.nukkit.player.Player.CRAFTING_SMALL;
+import static cn.nukkit.player.Player.CraftingType;
 import static cn.nukkit.player.Player.DEFAULT_SPEED;
 
 /**
@@ -305,7 +306,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                     break;
                 }
 
-                player.craftingType = CRAFTING_SMALL;
+                player.craftingType = CraftingType.SMALL;
                 player.resetCraftingGridType();
 
                 PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(player, player.getSpawn());
@@ -481,7 +482,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
             return true;
         }
 
-        player.craftingType = CRAFTING_SMALL;
+        player.craftingType = CraftingType.SMALL;
         //this.resetCraftingGridType();
 
         Entity targetEntity = player.getLevel().getEntity(packet.getRuntimeEntityId());
@@ -630,7 +631,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
         if (!player.spawned || !player.isAlive()) {
             return true;
         }
-        player.craftingType = CRAFTING_SMALL;
+        player.craftingType = CraftingType.SMALL;
         //player.resetCraftingGridType();
 
         if (packet.getType() == EntityEventType.EATING_ITEM) {
@@ -651,7 +652,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
         if (!player.spawned || !player.isAlive()) {
             return true;
         }
-        player.craftingType = CRAFTING_SMALL;
+        player.craftingType = CraftingType.SMALL;
         PlayerCommandPreprocessEvent playerCommandPreprocessEvent = new PlayerCommandPreprocessEvent(player, packet.getCommand());
         player.getServer().getPluginManager().callEvent(playerCommandPreprocessEvent);
         if (playerCommandPreprocessEvent.isCancelled()) {
@@ -690,7 +691,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
         }
 
         if (packet.getWindowId() == -1) {
-            player.craftingType = CRAFTING_SMALL;
+            player.craftingType = CraftingType.SMALL;
             player.resetCraftingGridType();
             player.addWindow(player.getCraftingGrid(), (byte) ContainerId.NONE);
         }
@@ -708,7 +709,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
             return true;
         }
 
-        player.craftingType = CRAFTING_SMALL;
+        player.craftingType = CraftingType.SMALL;
         player.resetCraftingGridType();
 
         Vector3i blockPos = packet.getBlockPosition();
@@ -733,16 +734,16 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
 
     @Override
     public boolean handle(SetPlayerGameTypePacket packet) {
-        if (packet.getGamemode() != player.getGamemode()) {
+        if (packet.getGamemode() != player.getGamemode().getVanillaId()) {
             if (!player.hasPermission("nukkit.command.gamemode")) {
                 SetPlayerGameTypePacket packet1 = new SetPlayerGameTypePacket();
-                packet1.setGamemode(player.getGamemode() & 0x01);
+                packet1.setGamemode(player.getGamemode().getVanillaId());
                 player.sendPacket(packet1);
                 player.getAdventureSettings().update();
                 return true;
             }
-            player.setGamemode(packet.getGamemode(), true);
-            CommandUtils.broadcastCommandMessage(player, new TranslationContainer("%commands.gamemode.success.self", Server.getGamemodeString(player.getGamemode())));
+            player.setGamemode(GameMode.from(packet.getGamemode()), true);
+            CommandUtils.broadcastCommandMessage(player, new TranslationContainer("%commands.gamemode.success.self", player.getGamemode().getTranslation()));
         }
         return true;
     }
@@ -1064,7 +1065,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                         if (!player.canInteract(target.getPosition(), player.isCreative() ? 8 : 5)) {
                             break;
                         } else if (target instanceof Player) {
-                            if ((((Player) target).getGamemode() & 0x01) > 0) {
+                            if (((Player) target).getGamemode() != GameMode.SURVIVAL) {
                                 break;
                             } else if (!player.getServer().getPropertyBoolean("pvp")) {
                                 break;

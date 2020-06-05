@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.player.Player;
+import cn.nukkit.player.Player.CraftingType;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
     @Override
     public void onClose(Player who) {
         super.onClose(who);
-        who.craftingType = Player.CRAFTING_SMALL;
+        who.craftingType = CraftingType.SMALL;
         who.resetCraftingGridType();
 
         for (int i = 0; i < 2; ++i) {
@@ -137,6 +138,6 @@ public class AnvilInventory extends FakeBlockUIComponent {
     @Override
     public void onOpen(Player who) {
         super.onOpen(who);
-        who.craftingType = Player.CRAFTING_ANVIL;
+        who.craftingType = CraftingType.ANVIL;
     }
 }

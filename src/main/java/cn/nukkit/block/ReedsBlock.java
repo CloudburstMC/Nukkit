@@ -67,7 +67,7 @@ public class ReedsBlock extends FloodableBlock {
                 }
 
                 if (success) {
-                    if (player != null && (player.getGamemode() & 0x01) == 0) {
+                    if (player != null && player.getGamemode().isSurvival()) {
                         item.decrementCount();
                     }
 

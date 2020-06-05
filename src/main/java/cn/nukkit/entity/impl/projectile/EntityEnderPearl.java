@@ -77,7 +77,7 @@ public class EntityEnderPearl extends EntityProjectile implements EnderPearl {
         Entity owner = this.getOwner();
         if (owner != null) {
             owner.teleport(this.getPosition().floor().add(0.5, 0, 0.5), TeleportCause.ENDER_PEARL);
-            if ((((Player) owner).getGamemode() & 0x01) == 0) {
+            if (((Player) owner).getGamemode().isSurvival()) {
                 owner.attack(new EntityDamageByEntityEvent(this, owner, EntityDamageEvent.DamageCause.PROJECTILE, 5f, 0f));
             }
             this.level.addSound(this.getPosition(), Sound.MOB_ENDERMEN_PORTAL);

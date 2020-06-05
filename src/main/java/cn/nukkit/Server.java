@@ -32,6 +32,7 @@ import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.permission.DefaultPermissions;
 import cn.nukkit.permission.Permissible;
+import cn.nukkit.player.GameMode;
 import cn.nukkit.player.IPlayer;
 import cn.nukkit.player.OfflinePlayer;
 import cn.nukkit.player.Player;
@@ -160,8 +161,8 @@ public class Server {
     private boolean alwaysTickPlayers = false;
     private int baseTickRate = 1;
     private Boolean getAllowFlight = null;
-    private int difficulty = Integer.MAX_VALUE;
-    private int defaultGamemode = Integer.MAX_VALUE;
+    private Difficulty difficulty = null;
+    private GameMode defaultGamemode = null;
 
     private int autoSaveTicker = 0;
     private int autoSaveTicks = 6000;
@@ -462,7 +463,7 @@ public class Server {
         this.maxPlayers = this.getPropertyInt("max-players", 20);
         this.setAutoSave(this.getPropertyBoolean("auto-save", true));
 
-        if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() < 3) {
+        if (this.getPropertyBoolean("hardcore", false) && this.getDifficulty() != Difficulty.HARD) {
             this.setPropertyInt("difficulty", 3);
         }
 
@@ -720,7 +721,7 @@ public class Server {
         //todo send usage setting
         this.tickCounter = 0;
 
-        log.info(this.getLanguage().translate("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
+        log.info(this.getLanguage().translate("nukkit.server.defaultGameMode", this.getGamemode().getTranslation()));
 
         log.info(this.getLanguage().translate("nukkit.server.startFinished", (System.currentTimeMillis() - Nukkit.START_TIME) / 1000d));
 
@@ -1107,11 +1108,11 @@ public class Server {
         return this.getPropertyBoolean("generate-structures", true);
     }
 
-    public int getGamemode() {
+    public GameMode getGamemode() {
         try {
-            return this.getPropertyInt("gamemode", 0) & 0b11;
+            return GameMode.from(this.getPropertyInt("gamemode", 0));
         } catch (NumberFormatException exception) {
-            return getGamemodeFromString(this.getProperty("gamemode")) & 0b11;
+            return GameMode.from(this.getProperty("gamemode"));
         }
     }
 
@@ -1119,79 +1120,9 @@ public class Server {
         return this.getPropertyBoolean("force-gamemode", false);
     }
 
-    public static String getGamemodeString(int mode) {
-        return getGamemodeString(mode, false);
-    }
-
-    public static String getGamemodeString(int mode, boolean direct) {
-        switch (mode) {
-            case Player.SURVIVAL:
-                return direct ? "Survival" : "%gameMode.survival";
-            case Player.CREATIVE:
-                return direct ? "Creative" : "%gameMode.creative";
-            case Player.ADVENTURE:
-                return direct ? "Adventure" : "%gameMode.adventure";
-            case Player.SPECTATOR:
-                return direct ? "Spectator" : "%gameMode.spectator";
-        }
-        return "UNKNOWN";
-    }
-
-    public static int getGamemodeFromString(String str) {
-        switch (str.trim().toLowerCase()) {
-            case "0":
-            case "survival":
-            case "s":
-                return Player.SURVIVAL;
-
-            case "1":
-            case "creative":
-            case "c":
-                return Player.CREATIVE;
-
-            case "2":
-            case "adventure":
-            case "a":
-                return Player.ADVENTURE;
-
-            case "3":
-            case "spectator":
-            case "spc":
-            case "view":
-            case "v":
-                return Player.SPECTATOR;
-        }
-        return -1;
-    }
-
-    public static int getDifficultyFromString(String str) {
-        switch (str.trim().toLowerCase()) {
-            case "0":
-            case "peaceful":
-            case "p":
-                return 0;
-
-            case "1":
-            case "easy":
-            case "e":
-                return 1;
-
-            case "2":
-            case "normal":
-            case "n":
-                return 2;
-
-            case "3":
-            case "hard":
-            case "h":
-                return 3;
-        }
-        return -1;
-    }
-
-    public int getDifficulty() {
-        if (this.difficulty == Integer.MAX_VALUE) {
-            this.difficulty = this.getPropertyInt("difficulty", 1);
+    public Difficulty getDifficulty() {
+        if (this.difficulty == null) {
+            this.difficulty = Difficulty.values()[this.getPropertyInt("difficulty", 1) & 0x03];
         }
         return this.difficulty;
     }
@@ -1215,10 +1146,11 @@ public class Server {
         return this.getPropertyBoolean("hardcore", false);
     }
 
-    public int getDefaultGamemode() {
-        if (this.defaultGamemode == Integer.MAX_VALUE) {
+    public GameMode getDefaultGamemode() {
+        if (this.defaultGamemode == null) {
             this.defaultGamemode = this.getGamemode();
         }
+
         return this.defaultGamemode;
     }
 
@@ -1418,7 +1350,7 @@ public class Server {
                             new FloatTag("", spawn.getPosition().getZ())
                     ))
                     .stringTag("Level", this.getDefaultLevel().getName())
-                    .intTag("playerGameType", this.getGamemode())
+                    .intTag("playerGameType", this.getGamemode().getVanillaId())
                     .listTag("Rotation", FloatTag.class, Arrays.asList(
                             new FloatTag("", spawn.getYaw()),
                             new FloatTag("", spawn.getPitch())

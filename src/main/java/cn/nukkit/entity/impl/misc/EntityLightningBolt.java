@@ -43,7 +43,7 @@ public class EntityLightningBolt extends BaseEntity implements LightningBolt {
         this.state = 2;
         this.liveTime = ThreadLocalRandom.current().nextInt(3) + 1;
 
-        if (isEffect && this.level.getGameRules().get(GameRules.DO_FIRE_TICK) && (this.server.getDifficulty() >= 2)) {
+        if (isEffect && this.level.getGameRules().get(GameRules.DO_FIRE_TICK) && (this.server.getDifficulty().ordinal() >= 2)) {
             Block block = this.getLevel().getBlock(this.getPosition());
             if (block.getId() == AIR || block.getId() == TALL_GRASS) {
                 BlockFire fire = (BlockFire) Block.get(BlockIds.FIRE);

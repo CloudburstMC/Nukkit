@@ -7,6 +7,7 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.player.PlayerFoodLevelChangeEvent;
 import cn.nukkit.item.food.Food;
+import cn.nukkit.level.Difficulty;
 import cn.nukkit.potion.Effect;
 
 /**
@@ -138,7 +139,7 @@ public class PlayerFood {
     public void update(int tickDiff) {
         if (!this.getPlayer().isFoodEnabled()) return;
         if (this.getPlayer().isAlive()) {
-            int diff = Server.getInstance().getDifficulty();
+            Difficulty diff = Server.getInstance().getDifficulty();
             if (this.getLevel() > 17) {
                 this.foodTickTimer += tickDiff;
                 if (this.foodTickTimer >= 80) {
@@ -154,9 +155,9 @@ public class PlayerFood {
                 if (this.foodTickTimer >= 80) {
                     EntityDamageEvent ev = new EntityDamageEvent(this.getPlayer(), DamageCause.HUNGER, 1);
                     float now = this.getPlayer().getHealth();
-                    if (diff == 1) {
+                    if (diff == Difficulty.EASY) {
                         if (now > 10) this.getPlayer().attack(ev);
-                    } else if (diff == 2) {
+                    } else if (diff == Difficulty.NORMAL) {
                         if (now > 1) this.getPlayer().attack(ev);
                     } else {
                         this.getPlayer().attack(ev);
@@ -173,7 +174,7 @@ public class PlayerFood {
 
     public void updateFoodExpLevel(double use) {
         if (!this.getPlayer().isFoodEnabled()) return;
-        if (Server.getInstance().getDifficulty() == 0) return;
+        if (Server.getInstance().getDifficulty() == Difficulty.PEACEFUL) return;
         if (this.getPlayer().hasEffect(Effect.SATURATION)) return;
         this.foodExpLevel += use;
         if (this.foodExpLevel > 4) {

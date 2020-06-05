@@ -37,6 +37,7 @@ import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.metadata.BlockMetadataStore;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
+import cn.nukkit.player.GameMode;
 import cn.nukkit.player.Player;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
@@ -282,7 +283,7 @@ public class Level implements ChunkManager, Metadatable {
         this.skyLightSubtracted = this.calculateSkylightSubtracted(1);
     }
 
-    public void reloadGenerator()   {
+    public void reloadGenerator() {
         this.generator = GeneratorRegistry.get().getGeneratorFactory(this.levelData.getGenerator()).create(this.getSeed(), this.levelData.getGeneratorOptions());
     }
 
@@ -1592,7 +1593,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Item useBreakOn(Vector3i pos, BlockFace face, Item item, Player player, boolean createParticles) {
-        if (player != null && player.getGamemode() > 2) {
+        if (player != null && player.getGamemode() == GameMode.SPECTATOR) {
             return null;
         }
         Block target = this.getBlock(pos);
@@ -1606,7 +1607,7 @@ public class Level implements ChunkManager, Metadatable {
         boolean isSilkTouch = item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null;
 
         if (player != null) {
-            if (player.getGamemode() == 2 && !item.canDestroy(target.getId())) {
+            if (player.getGamemode() == GameMode.ADVENTURE && !item.canDestroy(target.getId())) {
                 return null;
             }
 
@@ -1771,10 +1772,9 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
-            PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face,
-                    target.getId() == AIR ? Action.RIGHT_CLICK_AIR : Action.RIGHT_CLICK_BLOCK);
+            PlayerInteractEvent ev = new PlayerInteractEvent(player, item, target, face, Action.RIGHT_CLICK_BLOCK);
 
-            if (player.getGamemode() > 2) {
+            if (player.getGamemode() == GameMode.SPECTATOR) {
                 ev.setCancelled();
             }
 
@@ -1857,7 +1857,7 @@ public class Level implements ChunkManager, Metadatable {
 
         if (player != null) {
             BlockPlaceEvent event = new BlockPlaceEvent(player, hand, block, target, item);
-            if (player.getGamemode() == 2 && item.canPlaceOn(target.getId())) {
+            if (player.getGamemode() == GameMode.ADVENTURE && item.canPlaceOn(target.getId())) {
                 event.setCancelled();
             }
             if (!player.isOp() && isInSpawnRadius(target.getPosition())) {

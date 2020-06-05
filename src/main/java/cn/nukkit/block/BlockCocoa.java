@@ -18,8 +18,8 @@ import com.nukkitx.math.vector.Vector3f;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static cn.nukkit.block.BlockIds.*;
-import static cn.nukkit.item.ItemIds.*;
+import static cn.nukkit.block.BlockIds.LOG;
+import static cn.nukkit.item.ItemIds.DYE;
 
 /**
  * Created by CreeperFace on 27. 10. 2016.
@@ -187,7 +187,7 @@ public class BlockCocoa extends BlockTransparent implements Faceable {
                 this.getLevel().setBlock(this.getPosition(), ev.getNewState(), true, true);
                 this.level.addParticle(new BoneMealParticle(this.getPosition()));
 
-                if (player != null && (player.getGamemode() & 0x01) == 0) {
+                if (player != null && player.getGamemode().isSurvival()) {
                     item.decrementCount();
                 }
             }

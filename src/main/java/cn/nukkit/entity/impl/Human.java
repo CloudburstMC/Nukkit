@@ -195,7 +195,7 @@ public class Human extends EntityCreature implements InventoryHolder {
         super.saveAdditionalData(tag);
 
         List<CompoundTag> inventoryItems = new ArrayList<>();
-        int slotCount = Player.SURVIVAL_SLOTS + 9;
+        int slotCount = PlayerInventory.SURVIVAL_SLOTS + 9;
         for (int slot = 9; slot < slotCount; ++slot) {
             Item item = this.inventory.getItem(slot - 9);
             if (!item.isNull()) {
