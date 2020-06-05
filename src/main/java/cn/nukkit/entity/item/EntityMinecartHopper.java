@@ -58,7 +58,7 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         player.addWindow(this.inventory);
-        return true;
+        return false; // If true, the count of items player has in hand decreases
     }
 
     @Override

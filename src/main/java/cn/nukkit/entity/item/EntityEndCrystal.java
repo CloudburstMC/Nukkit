@@ -16,6 +16,8 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
 
     public static final int NETWORK_ID = 71;
 
+    protected boolean detonated = false;
+
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
@@ -55,7 +57,7 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-    if (source.getCause() == EntityDamageEvent.DamageCause.FIRE || source.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || source.getCause() == EntityDamageEvent.DamageCause.LAVA) {
+        if (source.getCause() == EntityDamageEvent.DamageCause.FIRE || source.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || source.getCause() == EntityDamageEvent.DamageCause.LAVA) {
             return false;
         }
 
@@ -70,15 +72,19 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
 
     @Override
     public void explode() {
-        Position pos = this.getPosition();
-        Explosion explode = new Explosion(pos, 6, this);
+        if (!this.detonated) {
+            this.detonated = true;
 
-        close();
+            Position pos = this.getPosition();
+            Explosion explode = new Explosion(pos, 6, this);
 
-        if (this.level.getGameRules().getBoolean(GameRule.MOB_GRIEFING)) {
-            explode.explodeA();
+            this.close();
+
+            if (this.level.getGameRules().getBoolean(GameRule.MOB_GRIEFING)) {
+                explode.explodeA();
+                explode.explodeB();
+            }
         }
-        explode.explodeB();
     }
 
     @Override

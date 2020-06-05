@@ -1,5 +1,7 @@
 package cn.nukkit.utils;
 
+import com.google.gson.JsonObject;
+
 import java.util.UUID;
 
 /**
@@ -40,4 +42,6 @@ public interface LoginChainData {
     String getCapeData();
 
     int getUIProfile();
+
+    JsonObject getRawData();
 }

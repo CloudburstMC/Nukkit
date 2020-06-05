@@ -38,7 +38,7 @@ public class EntityChicken extends EntityAnimal {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.RAW_CHICKEN), Item.get(Item.FEATHER)};
+        return new Item[]{Item.get(((this.isOnFire()) ? Item.COOKED_CHICKEN : Item.RAW_CHICKEN)), Item.get(Item.FEATHER)};
     }
 
     @Override
