@@ -24,6 +24,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.Identifier;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import com.nukkitx.math.vector.Vector2f;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.CompoundTagBuilder;
@@ -136,9 +137,9 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
                     this.setOnFire(2 * this.server.getDifficulty().ordinal());
                 }
 
-                double deltaX = this.getPosition().getX() - damager.getX();
-                double deltaZ = this.getPosition().getZ() - damager.getZ();
-                this.knockBack(damager, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
+                Vector2f diff = this.getPosition().sub(damager.getPosition()).toVector2(true);
+
+                this.knockBack(damager, ((EntityDamageByEntityEvent) source).getKnockBack(), diff.getX(), diff.getY());
             }
 
             EntityEventPacket pk = new EntityEventPacket();
@@ -154,23 +155,17 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
         }
     }
 
-    public void knockBack(Entity attacker, double damage, double x, double z) {
-        this.knockBack(attacker, damage, x, z, 0.4);
-    }
+    public void knockBack(Entity attacker, float strength, float diffX, float diffZ) {
+        //TODO: knockback resistance
+        float f = 1f / (float) Math.sqrt(diffX * diffX + diffZ * diffZ);
 
-    public void knockBack(Entity attacker, double damage, double x, double z, double base) {
-        double f = Math.sqrt(x * x + z * z);
-        if (f <= 0) {
-            return;
-        }
+        diffX = (diffX * f) * (0.4f * strength);
+        diffZ = (diffZ * f) * (0.4f * strength);
 
-        f = 1 / f;
+        Vector3f motion = Vector3f.from(diffX, 0.4f, diffZ);
 
-        motion = motion.div(2);
-        motion = motion.add(x * f * base, base, z * f * base);
-
-        if (motion.getY() > base) {
-            motion = Vector3f.from(motion.getX(), base, motion.getY());
+        if (motion.getY() > 0.4f) {
+            motion = Vector3f.from(motion.getX(), 0.4f, motion.getZ());
         }
 
         this.setMotion(motion);

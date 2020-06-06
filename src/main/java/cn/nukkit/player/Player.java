@@ -59,7 +59,6 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.player.handler.PlayerPacketHandler;
 import cn.nukkit.player.manager.PlayerChunkManager;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.potion.Effect;
 import cn.nukkit.registry.BlockRegistry;
 import cn.nukkit.registry.CommandRegistry;
 import cn.nukkit.registry.EntityRegistry;
@@ -173,7 +172,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     protected AdventureSettings adventureSettings;
 
-    protected boolean checkMovement = true;
     protected Vector3i sleeping = null;
 
     private PermissibleBase perm = null;
@@ -218,6 +216,37 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public int packetsRecieved;
 
     public long lastSkinChange;
+
+    public Player(BedrockServerSession session, ClientChainData chainData) {
+        super(EntityTypes.PLAYER, Location.from(Server.getInstance().getDefaultLevel()));
+        this.session = session;
+        this.packetHandler = new PlayerPacketHandler(this);
+        session.setBatchedHandler(new Handler());
+        this.perm = new PermissibleBase(this);
+        this.server = Server.getInstance();
+        this.lastBreak = -1;
+        this.chunksPerTick = this.server.getConfig("chunk-sending.per-tick", 4);
+        this.spawnThreshold = this.server.getConfig("chunk-sending.spawn-threshold", 56);
+        this.spawnLocation = null;
+        this.playerData.setGamemode(this.server.getGamemode());
+        this.viewDistance = this.server.getViewDistance();
+        //this.newPosition = new Vector3(0, 0, 0);
+        this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
+        this.lastSkinChange = -1;
+
+        this.loginChainData = chainData;
+
+        this.randomClientId = chainData.getClientId();
+        this.identity = chainData.getClientUUID();
+        this.username = TextFormat.clean(chainData.getUsername());
+        this.iusername = username.toLowerCase();
+        this.setDisplayName(this.username);
+        this.setNameTag(this.username);
+
+        this.setSkin(chainData.getSkin());
+
+        this.creationTime = System.currentTimeMillis();
+    }
 
     public int getStartActionTick() {
         return startAction;
@@ -319,37 +348,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     @Override
     public Player getPlayer() {
         return this;
-    }
-
-    public Player(BedrockServerSession session, ClientChainData chainData) {
-        super(EntityTypes.PLAYER, Location.from(Server.getInstance().getDefaultLevel()));
-        this.session = session;
-        this.packetHandler = new PlayerPacketHandler(this);
-        session.setBatchedHandler(new Handler());
-        this.perm = new PermissibleBase(this);
-        this.server = Server.getInstance();
-        this.lastBreak = -1;
-        this.chunksPerTick = this.server.getConfig("chunk-sending.per-tick", 4);
-        this.spawnThreshold = this.server.getConfig("chunk-sending.spawn-threshold", 56);
-        this.spawnLocation = null;
-        this.playerData.setGamemode(this.server.getGamemode());
-        this.viewDistance = this.server.getViewDistance();
-        //this.newPosition = new Vector3(0, 0, 0);
-        this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
-        this.lastSkinChange = -1;
-
-        this.loginChainData = chainData;
-
-        this.randomClientId = chainData.getClientId();
-        this.identity = chainData.getClientUUID();
-        this.username = TextFormat.clean(chainData.getUsername());
-        this.iusername = username.toLowerCase();
-        this.setDisplayName(this.username);
-        this.setNameTag(this.username);
-
-        this.setSkin(chainData.getSkin());
-
-        this.creationTime = System.currentTimeMillis();
     }
 
     private static boolean hasSubstantiallyMoved(Vector3f oldPos, Vector3f newPos) {
@@ -1217,26 +1215,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             }
 
             if (diffX != 0 || diffY != 0 || diffZ != 0) {
-                if (this.checkMovement && !server.getAllowFlight() && (this.isSurvival() || this.isAdventure())) {
-                    // Some say: I cant move my head when riding because the server
-                    // blocked my movement
-                    if (!this.isSleeping() && this.vehicle == null && !this.hasEffect(Effect.LEVITATION)) {
-                        double diffHorizontalSqr = (diffX * diffX + diffZ * diffZ) / ((double) (tickDiff * tickDiff));
-                        if (diffHorizontalSqr > 0.5) {
-                            PlayerInvalidMoveEvent ev;
-                            this.getServer().getPluginManager().callEvent(ev = new PlayerInvalidMoveEvent(this, true));
-                            if (!ev.isCancelled()) {
-                                revert = ev.isRevert();
-
-                                if (revert) {
-                                    log.warn(this.getServer().getLanguage().translate("nukkit.player.invalidMove", this.getName()));
-                                }
-                            }
-                        }
-                    }
-                }
-
-
                 this.position = newPosition;
                 float radius = this.getWidth() / 2;
                 this.boundingBox.setBounds(this.position.getX() - radius, this.position.getY(), this.position.getZ() - radius,
@@ -1274,7 +1252,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                     if (!to.equals(ev.getTo())) { //If plugins modify the destination
                         this.teleport(ev.getTo(), null);
                     } else {
-                        this.addMovement(this.getX(), this.getY(), this.getZ(), this.getYaw(), this.getPitch(), this.getYaw());
+                        this.addMovement(this.getX(), this.getY() + getBaseOffset(), this.getZ(), this.getYaw(), this.getPitch(), this.getYaw());
                     }
                 } else {
                     this.blocksAround = blocksAround;
@@ -1332,7 +1310,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     @Override
     public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
-        this.sendPosition(Vector3f.from(x, y, z), yaw, pitch, MovePlayerPacket.Mode.NORMAL, getViewers());
+        this.sendPosition(Vector3f.from(x, y - getBaseOffset() /*TODO: find better solution */, z), yaw, pitch, MovePlayerPacket.Mode.NORMAL, getViewers());
     }
 
     @Override
@@ -1408,25 +1386,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                         this.inAirTicks = 0;
                         this.highestPosition = this.getPosition().getY();
                     } else {
-                        if (this.checkMovement && !this.isGliding() && !server.getAllowFlight() && !this.getAdventureSettings().get(Type.ALLOW_FLIGHT) && this.inAirTicks > 20 && !this.isSleeping() && !this.isImmobile() && !this.isSwimming() && this.vehicle == null && !this.hasEffect(Effect.LEVITATION)) {
-                            double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
-                            double diff = (this.speed.getY() - expectedVelocity) * (this.speed.getY() - expectedVelocity);
-
-                            Identifier block = this.getLevel().getBlock(this.getPosition()).getId();
-                            boolean ignore = block == BlockIds.LADDER || block == BlockIds.VINE || block == BlockIds.WEB;
-
-                            if (!this.hasEffect(Effect.JUMP) && diff > 0.6 && expectedVelocity < this.speed.getY() && !ignore) {
-                                if (this.inAirTicks < 100) {
-                                    this.setMotion(Vector3f.from(0, expectedVelocity, 0));
-                                } else if (this.kick(PlayerKickEvent.Reason.FLYING_DISABLED, "Flying is not enabled on this server")) {
-                                    return false;
-                                }
-                            }
-                            if (ignore) {
-                                this.resetFallDistance();
-                            }
-                        }
-
                         float curY = this.getPosition().getY();
                         if (curY > highestPosition) {
                             this.highestPosition = curY;
@@ -2339,6 +2298,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         super.loadAdditionalData(tag);
 
+        tag.listenForInt("GameType", (id) -> this.playerData.setGamemode(GameMode.from(id)));
+
         int exp = tag.getInt("EXP");
         int expLevel = tag.getInt("expLevel");
         this.setExperience(exp, expLevel);
@@ -2358,6 +2319,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         }
 
         this.playerData.saveData(tag);
+
+        tag.intTag("GameType", this.getGamemode().getVanillaId());
 
         tag.intTag("EXP", this.getExperience());
         tag.intTag("expLevel", this.getExperienceLevel());
@@ -3086,10 +3049,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     @Override
     public void onChunkLoaded(Chunk chunk) {
 
-    }
-
-    public void setCheckMovement(boolean checkMovement) {
-        this.checkMovement = checkMovement;
     }
 
     public synchronized void setLocale(Locale locale) {

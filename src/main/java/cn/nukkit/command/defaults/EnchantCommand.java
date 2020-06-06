@@ -60,18 +60,18 @@ public class EnchantCommand extends Command {
         }
         Enchantment enchantment = Enchantment.getEnchantment(enchantId);
         if (enchantment == null) {
-            sender.sendMessage(new TranslationContainer("commands.enchant.notFound", String.valueOf(enchantId)));
+            sender.sendMessage(new TranslationContainer("%commands.enchant.notFound", enchantId));
             return true;
         }
         enchantment.setLevel(enchantLevel);
         Item item = player.getInventory().getItemInHand();
         if (item.getId() == AIR) {
-            sender.sendMessage(new TranslationContainer("commands.enchant.noItem"));
+            sender.sendMessage(new TranslationContainer("%commands.enchant.noItem", item.getName()));
             return true;
         }
         item.addEnchantment(enchantment);
         player.getInventory().setItemInHand(item);
-        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success"));
+        CommandUtils.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success", sender.getName()));
         return true;
     }
 

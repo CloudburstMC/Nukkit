@@ -8,6 +8,7 @@ import cn.nukkit.blockentity.ItemFrame;
 import cn.nukkit.blockentity.Lectern;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.entity.impl.projectile.EntityArrow;
 import cn.nukkit.entity.impl.vehicle.EntityAbstractMinecart;
 import cn.nukkit.entity.impl.vehicle.EntityBoat;
@@ -1072,6 +1073,13 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                             }
                         }
 
+                        int knockback = 0;
+
+                        Enchantment enchKnockback = player.getInventory().getItemInHand().getEnchantment(Enchantment.ID_KNOCKBACK);
+                        if (enchKnockback != null) {
+                            knockback = enchKnockback.getLevel();
+                        }
+
                         EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(player, target, EntityDamageEvent.DamageCause.ENTITY_ATTACK, damage);
                         if (player.isSpectator()) entityDamageByEntityEvent.setCancelled();
                         if ((target instanceof Player) && !player.getLevel().getGameRules().get(GameRules.PVP)) {
@@ -1085,8 +1093,19 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                             break;
                         }
 
-                        for (Enchantment enchantment : serverItem.getEnchantments()) {
-                            enchantment.doPostAttack(player, target);
+                        if (!entityDamageByEntityEvent.isCancelled()) {
+                            if (knockback > 0) {
+                                if (target instanceof EntityLiving) {
+                                    Vector3f diff = target.getPosition().sub(player.getPosition());
+                                    ((EntityLiving) target).knockBack(player, knockback * 2, diff.getX(), diff.getZ());
+                                }
+
+                                player.setSprinting(false);
+                            }
+
+                            for (Enchantment enchantment : serverItem.getEnchantments()) {
+                                enchantment.doPostAttack(player, target);
+                            }
                         }
 
                         if (serverItem.isTool() && player.isSurvival()) {
