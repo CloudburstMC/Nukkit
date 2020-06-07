@@ -16,11 +16,11 @@ public class EntityDamageByEntityEvent extends EntityDamageEvent {
     private float knockBack;
 
     public EntityDamageByEntityEvent(Entity damager, Entity entity, DamageCause cause, float damage) {
-        this(damager, entity, cause, damage, 0.3f);
+        this(damager, entity, cause, damage, 1f);
     }
 
     public EntityDamageByEntityEvent(Entity damager, Entity entity, DamageCause cause, Map<DamageModifier, Float> modifiers) {
-        this(damager, entity, cause, modifiers, 0.3f);
+        this(damager, entity, cause, modifiers, 1f);
     }
 
     public EntityDamageByEntityEvent(Entity damager, Entity entity, DamageCause cause, float damage, float knockBack) {
