@@ -135,7 +135,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                     int targetLevel = resultEnchantment != null? resultEnchantment.getLevel() : 0;
                     int resultLevel = sacrificeEnchantment.getLevel();
                     resultLevel = targetLevel == resultLevel ? resultLevel + 1 : Math.max(resultLevel, targetLevel);
-                    boolean compatible = sacrificeEnchantment.getPowerNukkit().isItemAcceptable(target);
+                    boolean compatible = sacrificeEnchantment.isItemAcceptable(target);
                     if (playerUI.getHolder().isCreative() || target.getId() == Item.ENCHANTED_BOOK) {
                         compatible = true;
                     }
