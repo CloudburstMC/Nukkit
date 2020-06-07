@@ -124,7 +124,6 @@ public class Config {
         return this.load(file, type, new ConfigSection());
     }
 
-    @SuppressWarnings("unchecked")
     public boolean load(String file, int type, ConfigSection defaultMap) {
         this.correct = true;
         this.type = type;
@@ -261,7 +260,6 @@ public class Config {
         return this.get(key, null);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T get(String key, T defaultValue) {
         return this.correct ? this.config.get(key, defaultValue) : defaultValue;
     }

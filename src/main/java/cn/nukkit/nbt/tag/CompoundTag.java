@@ -187,7 +187,6 @@ public class CompoundTag extends Tag implements Cloneable {
         return (CompoundTag) tags.get(name);
     }
 
-    @SuppressWarnings("unchecked")
     public ListTag<? extends Tag> getList(String name) {
         if (!tags.containsKey(name)) return new ListTag<>(name);
         return (ListTag<? extends Tag>) tags.get(name);

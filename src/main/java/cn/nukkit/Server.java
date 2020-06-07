@@ -1572,7 +1572,6 @@ public class Server {
     public IPlayer getOfflinePlayer(UUID uuid) {
         Preconditions.checkNotNull(uuid, "uuid");
         Optional<Player> onlinePlayer = getPlayer(uuid);
-        //noinspection OptionalIsPresent
         if (onlinePlayer.isPresent()) {
             return onlinePlayer.get();
         }
