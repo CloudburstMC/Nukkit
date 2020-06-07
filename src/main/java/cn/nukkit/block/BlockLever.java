@@ -99,7 +99,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isNormalBlock()) {
+        if (target.isNormalBlock() || target.getId() == SNOW_LAYER) {
             this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
             this.getLevel().setBlock(block, this, true, true);
             return true;
