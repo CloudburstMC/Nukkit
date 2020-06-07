@@ -44,7 +44,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isTransparent()) {
+        if (target.isTransparent() && target.getId() != SNOW_LAYER) {
             return false;
         }
 

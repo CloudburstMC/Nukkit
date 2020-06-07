@@ -16,6 +16,7 @@ Click the link above to see the future.
 - [#272] `EntityPortalEnterEvent` not being fired when entering end portals
 - [#279] `BlockEndPortal` missing collision bounding box
 - [#279] `Entity.checkBlockCollision()`'s over scaffolding logic outdated
+- [#281] Levers and buttons don't replace the snow layers
 
 ### Added
 - [#227] PlayerJumpEvent called when jump packets are received.
@@ -317,3 +318,4 @@ Fixes several anvil issues.
 [#276]: https://github.com/GameModsBR/PowerNukkit/pull/276
 [#277]: https://github.com/GameModsBR/PowerNukkit/pull/277
 [#279]: https://github.com/GameModsBR/PowerNukkit/pull/279
+[#281]: https://github.com/GameModsBR/PowerNukkit/pull/281
