@@ -7,8 +7,6 @@ import cn.nukkit.item.Item;
  * Nukkit Project
  */
 public class EnchantmentEfficiency extends Enchantment {
-    private PowerNukkit powerNukkit;
-    
     protected EnchantmentEfficiency() {
         super(ID_EFFICIENCY, "digging", 10, EnchantmentType.DIGGER);
     }
@@ -33,27 +31,12 @@ public class EnchantmentEfficiency extends Enchantment {
         return item.isShears() || super.canEnchant(item);
     }
     
-    /**
-     * @since 1.2.1.0-PN
-     */
     @Override
-    public PowerNukkit getPowerNukkit() {
-        PowerNukkit powerNukkit = this.powerNukkit;
-        if (powerNukkit == null) this.powerNukkit = powerNukkit = new PowerNukkit();
-        return powerNukkit;
-    }
-
-    /**
-     * @since 1.2.1.0-PN
-     */
-    public class PowerNukkit extends Enchantment.PowerNukkit {
-        @Override
-        public boolean isItemAcceptable(Item item) {
-            if (item.isShears()) {
-                return true;
-            }
-            return super.isItemAcceptable(item);
+    public boolean isItemAcceptable(Item item) {
+        if (item.isShears()) {
+            return true;
         }
+        return super.isItemAcceptable(item);
     }
 
 }

@@ -15,8 +15,6 @@ import java.util.concurrent.ThreadLocalRandom;
  * Nukkit Project
  */
 public class EnchantmentThorns extends Enchantment {
-    private PowerNukkit powerNukkit;
-    
     protected EnchantmentThorns() {
         super(ID_THORNS, "thorns", 1, EnchantmentType.ARMOR_TORSO);
     }
@@ -60,27 +58,12 @@ public class EnchantmentThorns extends Enchantment {
         }
     }
 
-    /**
-     * @since 1.2.1.0-PN
-     */
     @Override
-    public PowerNukkit getPowerNukkit() {
-        PowerNukkit powerNukkit = this.powerNukkit;
-        if (powerNukkit == null) this.powerNukkit = powerNukkit = new PowerNukkit();
-        return powerNukkit;
-    }
-
-    /**
-     * @since 1.2.1.0-PN
-     */
-    public class PowerNukkit extends Enchantment.PowerNukkit {
-        @Override
-        public boolean isItemAcceptable(Item item) {
-            if (item instanceof ItemArmor) {
-                return !(item instanceof ItemElytra);
-            }
-            return super.isItemAcceptable(item);
+    public boolean isItemAcceptable(Item item) {
+        if (item instanceof ItemArmor) {
+            return !(item instanceof ItemElytra);
         }
+        return super.isItemAcceptable(item);
     }
 
     private static boolean shouldHit(ThreadLocalRandom random, int level) {
