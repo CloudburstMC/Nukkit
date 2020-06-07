@@ -61,7 +61,7 @@ public class BlockDoublePlant extends BlockFlowable {
             if ((this.getDamage() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) {
                 // Top
                 if (!(this.down().getId() == DOUBLE_PLANT)) {
-                    this.getLevel().setBlock(this, new BlockAir(), false, true);
+                    this.getLevel().setBlock(this, Block.get(BlockID.AIR), false, true);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             } else {
@@ -82,7 +82,7 @@ public class BlockDoublePlant extends BlockFlowable {
 
         if (up.getId() == AIR && (down.getId() == GRASS || down.getId() == DIRT)) {
             this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
-            this.getLevel().setBlock(up, new BlockDoublePlant(getDamage() ^ TOP_HALF_BITMASK), true, true);
+            this.getLevel().setBlock(up, Block.get(BlockID.DOUBLE_PLANT, getDamage() ^ TOP_HALF_BITMASK), true, true);
             return true;
         }
 
@@ -96,7 +96,7 @@ public class BlockDoublePlant extends BlockFlowable {
         if ((this.getDamage() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) { // Top half
             this.getLevel().useBreakOn(down);
         } else {
-            this.getLevel().setBlock(this, new BlockAir(), true, true);
+            this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
         }
 
         return true;

@@ -3,7 +3,6 @@ package cn.nukkit.item.enchantment;
 import cn.nukkit.block.BlockPumpkin;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemArmor;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemBow;
 import cn.nukkit.item.ItemElytra;
 import cn.nukkit.item.ItemFishingRod;

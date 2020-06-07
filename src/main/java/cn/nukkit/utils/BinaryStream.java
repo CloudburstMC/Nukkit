@@ -17,9 +17,11 @@ import cn.nukkit.network.protocol.types.EntityLink;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * author: MagicDroidX
@@ -277,6 +279,28 @@ public class BinaryStream {
         this.putBoolean(skin.isCapeOnClassic());
         this.putString(skin.getCapeId());
         this.putString(skin.getFullSkinId());
+        this.putString(skin.getArmSize());
+        this.putString(skin.getSkinColor());
+        List<PersonaPiece> pieces = skin.getPersonaPieces();
+        this.putLInt(pieces.size());
+        for (PersonaPiece piece : pieces) {
+            this.putString(piece.id);
+            this.putString(piece.type);
+            this.putString(piece.packId);
+            this.putBoolean(piece.isDefault);
+            this.putString(piece.productId);
+        }
+
+        List<PersonaPieceTint> tints = skin.getTintColors();
+        this.putLInt(tints.size());
+        for (PersonaPieceTint tint : tints) {
+            this.putString(tint.pieceType);
+            List<String> colors = tint.colors;
+            this.putLInt(colors.size());
+            for (String color : colors) {
+                this.putString(color);
+            }
+        }
     }
 
     public Skin getSkin() {
@@ -301,6 +325,29 @@ public class BinaryStream {
         skin.setCapeOnClassic(this.getBoolean());
         skin.setCapeId(this.getString());
         this.getString(); // TODO: Full skin id
+        skin.setArmSize(this.getString());
+        skin.setSkinColor(this.getString());
+
+        int piecesLength = this.getLInt();
+        for (int i = 0; i < piecesLength; i++) {
+            String pieceId = this.getString();
+            String pieceType = this.getString();
+            String packId = this.getString();
+            boolean isDefault = this.getBoolean();
+            String productId = this.getString();
+            skin.getPersonaPieces().add(new PersonaPiece(pieceId, pieceType, packId, isDefault, productId));
+        }
+
+        int tintsLength = this.getLInt();
+        for (int i = 0; i < tintsLength; i++) {
+            String pieceType = this.getString();
+            List<String> colors = new ArrayList<>();
+            int colorsLength = this.getLInt();
+            for (int i2 = 0; i2 < colorsLength; i2++) {
+                colors.add(this.getString());
+            }
+            skin.getTintColors().add(new PersonaPieceTint(pieceType, colors));
+        }
         return skin;
     }
 
@@ -665,6 +712,16 @@ public class BinaryStream {
                 (byte) getByte(),
                 getBoolean()
         );
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T[] getArray(Class<T> clazz, Function<BinaryStream, T> function) {
+        ArrayDeque<T> deque = new ArrayDeque<>();
+        int count = (int) getUnsignedVarInt();
+        for (int i = 0; i < count; i++) {
+            deque.add(function.apply(this));
+        }
+        return deque.toArray((T[]) Array.newInstance(clazz, 0));
     }
 
     public boolean feof() {

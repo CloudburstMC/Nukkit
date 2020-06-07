@@ -1,8 +1,7 @@
 package cn.nukkit.level.generator.object.mushroom;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockHugeMushroomBrown;
-import cn.nukkit.block.BlockHugeMushroomRed;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.generator.object.BasicGenerator;
 import cn.nukkit.math.NukkitRandom;
@@ -44,7 +43,7 @@ public class BigMushroom extends BasicGenerator {
             block = rand.nextBoolean() ? RED : BROWN;
         }
 
-        Block mushroom = block == 0 ? new BlockHugeMushroomBrown() : new BlockHugeMushroomRed();
+        Block mushroom = block == 0 ? Block.get(BlockID.BROWN_MUSHROOM_BLOCK) : Block.get(BlockID.RED_MUSHROOM_BLOCK);
 
         int i = rand.nextBoundedInt(3) + 4;
 

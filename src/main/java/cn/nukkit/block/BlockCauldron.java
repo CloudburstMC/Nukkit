@@ -142,7 +142,7 @@ public class BlockCauldron extends BlockSolidMeta {
                     this.setDamage(0x06);
 
                 if (item.getCount() == 1) {
-                    player.getInventory().setItemInHand(new ItemBlock(new BlockAir()));
+                    player.getInventory().setItemInHand(new ItemBlock(Block.get(BlockID.AIR)));
                 } else if (item.getCount() > 1) {
                     item.setCount(item.getCount() - 1);
                     player.getInventory().setItemInHand(item);

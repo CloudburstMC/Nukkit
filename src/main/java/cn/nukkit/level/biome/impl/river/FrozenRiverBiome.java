@@ -23,4 +23,9 @@ public class FrozenRiverBiome extends RiverBiome {
     public boolean isFreezing() {
         return true;
     }
+
+    @Override
+    public boolean canRain() {
+        return false;
+    }
 }

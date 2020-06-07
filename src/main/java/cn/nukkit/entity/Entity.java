@@ -80,19 +80,22 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_DISPLAY_ITEM = 16; //int (id | (data << 16))
     public static final int DATA_DISPLAY_OFFSET = 17; //int
     public static final int DATA_HAS_DISPLAY = 18; //byte (must be 1 for minecart to show block inside)
-    //TODO: add more properties
+    public static final int DATA_SWELL = 19;
+    public static final int DATA_OLD_SWELL = 20;
+    public static final int DATA_SWELL_DIR = 21;
+    public static final int DATA_CHARGE_AMOUNT = 22;
     public static final int DATA_ENDERMAN_HELD_RUNTIME_ID = 23; //short
     public static final int DATA_ENTITY_AGE = 24; //short
     public static final int DATA_PLAYER_FLAGS = 26; //byte
-    /* 27 (int) player "index"? */
+    public static final int DATA_PLAYER_INDEX = 27;
     public static final int DATA_PLAYER_BED_POSITION = 28; //block coords
     public static final int DATA_FIREBALL_POWER_X = 29; //float
     public static final int DATA_FIREBALL_POWER_Y = 30;
     public static final int DATA_FIREBALL_POWER_Z = 31;
-    /* 32 (unknown)
-     * 33 (float) fishing bobber
-     * 34 (float) fishing bobber
-     * 35 (float) fishing bobber */
+    public static final int DATA_AUX_POWER = 32;
+    public static final int DATA_FISH_X = 33;
+    public static final int DATA_FISH_Z = 34;
+    public static final int DATA_FISH_ANGLE = 35;
     public static final int DATA_POTION_AUX_VALUE = 36; //short
     public static final int DATA_LEAD_HOLDER_EID = 37; //long
     public static final int DATA_SCALE = 38; //float
@@ -109,7 +112,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_WITHER_TARGET_1 = 49; //long
     public static final int DATA_WITHER_TARGET_2 = 50; //long
     public static final int DATA_WITHER_TARGET_3 = 51; //long
-    /* 52 (short) */
+    public static final int DATA_AERIAL_ATTACK = 52;
     public static final int DATA_BOUNDING_BOX_WIDTH = 53; //float
     public static final int DATA_BOUNDING_BOX_HEIGHT = 54; //float
     public static final int DATA_FUSE_LENGTH = 55; //int
@@ -120,33 +123,55 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = 60; //float
     public static final int DATA_AREA_EFFECT_CLOUD_WAITING = 61; //int
     public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = 62; //int
-    /* 63 (int) shulker-related */
+    public static final int DATA_SHULKER_PEEK_ID = 63; //int
     public static final int DATA_SHULKER_ATTACH_FACE = 64; //byte
-    /* 65 (short) shulker-related */
+    public static final int DATA_SHULKER_ATTACHED = 65; //short
     public static final int DATA_SHULKER_ATTACH_POS = 66; //block coords
     public static final int DATA_TRADING_PLAYER_EID = 67; //long
-
-    /* 69 (byte) command-block */
+    public static final int DATA_TRADING_CAREER = 68;
+    public static final int DATA_HAS_COMMAND_BLOCK = 69;
     public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
     public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = 71; //string
     public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = 72; //byte
     public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = 73; //byte
     public static final int DATA_STRENGTH = 74; //int
     public static final int DATA_MAX_STRENGTH = 75; //int
-    // 76 (int)
+    public static final int DATA_SPELL_CASTING_COLOR = 76; //int
     public static final int DATA_LIMITED_LIFE = 77;
     public static final int DATA_ARMOR_STAND_POSE_INDEX = 78; // int
     public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 79; // int
     public static final int DATA_ALWAYS_SHOW_NAMETAG = 80; // byte
     public static final int DATA_COLOR_2 = 81; // byte
-    // 82 unknown
+    public static final int DATA_NAME_AUTHOR = 82;
     public static final int DATA_SCORE_TAG = 83; //String
     public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
     public static final int DATA_PUFFERFISH_SIZE = 85;
-
+    public static final int DATA_BUBBLE_TIME = 86;
+    public static final int DATA_AGENT = 87;
+    public static final int DATA_SITTING_AMOUNT = 88;
+    public static final int DATA_SITTING_AMOUNT_PREVIOUS = 89;
+    public static final int DATA_EATING_COUNTER = 90;
     public static final int DATA_FLAGS_EXTENDED = 91;
-
+    public static final int DATA_LAYING_AMOUNT = 92;
+    public static final int DATA_LAYING_AMOUNT_PREVIOUS = 93;
+    public static final int DATA_DURATION = 94;
+    public static final int DATA_SPAWN_TIME = 95;
+    public static final int DATA_CHANGE_RATE = 96;
+    public static final int DATA_CHANGE_ON_PICKUP = 97;
+    public static final int DATA_PICKUP_COUNT = 98;
+    public static final int DATA_INTERACT_TEXT = 99;
+    public static final int DATA_TRADE_TIER = 100;
+    public static final int DATA_MAX_TRADE_TIER = 101;
+    public static final int DATA_TRADE_EXPERIENCE = 102;
     public static final int DATA_SKIN_ID = 103; // int ???
+    public static final int DATA_SPAWNING_FRAMES = 104;
+    public static final int DATA_COMMAND_BLOCK_TICK_DELAY = 105;
+    public static final int DATA_COMMAND_BLOCK_EXECUTE_ON_FIRST_TICK = 106;
+    public static final int DATA_AMBIENT_SOUND_INTERVAL = 107;
+    public static final int DATA_AMBIENT_SOUND_EVENT_NAME = 108;
+    public static final int DATA_FALL_DAMAGE_MULTIPLIER = 109;
+    public static final int DATA_NAME_RAW_TEXT = 110;
+    public static final int DATA_CAN_RIDE_TARGET = 111;
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
@@ -203,12 +228,44 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_ENCHANTED = 51;
     public static final int DATA_FLAG_SHOW_TRIDENT_ROPE = 52; // tridents show an animated rope when enchanted with loyalty after they are thrown and return to their owner. To be combined with DATA_OWNER_EID
     public static final int DATA_FLAG_CONTAINER_PRIVATE = 53; //inventory is private, doesn't drop contents when killed if true
-    //public static final int TransformationComponent 54; ???
+    public static final int DATA_FLAG_IS_TRANSFORMING = 54;
     public static final int DATA_FLAG_SPIN_ATTACK = 55;
     public static final int DATA_FLAG_SWIMMING = 56;
     public static final int DATA_FLAG_BRIBED = 57; //dolphins have this set when they go to find treasure for the player
     public static final int DATA_FLAG_PREGNANT = 58;
     public static final int DATA_FLAG_LAYING_EGG = 59;
+    public static final int DATA_FLAG_RIDER_CAN_PICK = 60;
+    public static final int DATA_FLAG_TRANSITION_SETTING = 61;
+    public static final int DATA_FLAG_EATING = 62;
+    public static final int DATA_FLAG_LAYING_DOWN = 63;
+    public static final int DATA_FLAG_SNEEZING = 64;
+    public static final int DATA_FLAG_TRUSTING = 65;
+    public static final int DATA_FLAG_ROLLING = 66;
+    public static final int DATA_FLAG_SCARED = 67;
+    public static final int DATA_FLAG_IN_SCAFFOLDING = 68;
+    public static final int DATA_FLAG_OVER_SCAFFOLDING = 69;
+    public static final int DATA_FLAG_FALL_THROUGH_SCAFFOLDING = 70;
+    public static final int DATA_FLAG_BLOCKING = 71;
+    public static final int DATA_FLAG_TRANSITION_BLOCKING = 72;
+    public static final int DATA_FLAG_BLOCKED_USING_SHIELD = 73;
+    public static final int DATA_FLAG_BLOCKED_USING_DAMAGED_SHIELD = 74;
+    public static final int DATA_FLAG_SLEEPING = 75;
+    public static final int DATA_FLAG_WANTS_TO_WAKE = 76;
+    public static final int DATA_FLAG_TRADE_INTEREST = 77;
+    public static final int DATA_FLAG_DOOR_BREAKER = 78;
+    public static final int DATA_FLAG_BREAKING_OBSTRUCTION = 79;
+    public static final int DATA_FLAG_DOOR_OPENER = 80;
+    public static final int DATA_FLAG_IS_ILLAGER_CAPTAIN = 81;
+    public static final int DATA_FLAG_STUNNED = 82;
+    public static final int DATA_FLAG_ROARING = 83;
+    public static final int DATA_FLAG_DELAYED_ATTACK = 84;
+    public static final int DATA_FLAG_IS_AVOIDING_MOBS = 85;
+    public static final int DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK = 86;
+    public static final int DATA_FLAG_HIDDEN_WHEN_INVISIBLE = 87;
+    public static final int DATA_FLAG_IS_IN_UI = 88;
+    public static final int DATA_FLAG_STALKING = 89;
+    public static final int DATA_FLAG_EMOTING = 90;
+    public static final int DATA_FLAG_CELEBRATING = 91;
 
     public static long entityCount = 1;
 
@@ -1596,7 +1653,7 @@ public abstract class Entity extends Location implements Metadatable {
                 if (ev.isCancelled()) {
                     return;
                 }
-                this.level.setBlock(down, new BlockDirt(), false, true);
+                this.level.setBlock(down, Block.get(BlockID.DIRT), false, true);
             }
         }
     }
@@ -1803,7 +1860,7 @@ public abstract class Entity extends Location implements Metadatable {
 
             AxisAlignedBB axisalignedbb = this.boundingBox.clone();
 
-            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.level.getTickRate() > 1 ? this.boundingBox.getOffsetBoundingBox(dx, dy, dz) : this.boundingBox.addCoord(dx, dy, dz), false, true);
+            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.boundingBox.addCoord(dx, dy, dz), false);
 
             for (AxisAlignedBB bb : list) {
                 dy = bb.calculateYOffset(this.boundingBox, dy);
