@@ -13,10 +13,8 @@ import java.util.*;
 public class ShapedRecipe implements CraftingRecipe {
 
     private String recipeId;
-    private final Item primaryResult;
-    private final List<Item> extraResults = new ArrayList<>();
-
-    private final List<Item> ingredientsAggregate;
+    private Item primaryResult;
+    private List<Item> extraResults = new ArrayList<>();
 
     private long least,most;
 
@@ -54,7 +52,7 @@ public class ShapedRecipe implements CraftingRecipe {
         }
 
         int columnCount = shape[0].length();
-        if (columnCount > 3 || columnCount <= 0) {
+        if (columnCount > 3 || rowCount <= 0) {
             throw new RuntimeException("Shaped recipes may only have 1, 2 or 3 columns, not " + columnCount);
         }
 
@@ -82,23 +80,6 @@ public class ShapedRecipe implements CraftingRecipe {
         for (Map.Entry<Character, Item> entry : ingredients.entrySet()) {
             this.setIngredient(entry.getKey(), entry.getValue());
         }
-
-        this.ingredientsAggregate = new ArrayList<>();
-        for (char c : String.join("", this.shape).toCharArray()) {
-            if (c == ' ')
-                continue;
-            Item ingredient = this.ingredients.get(c).clone();
-            for (Item existingIngredient : this.ingredientsAggregate) {
-                if (existingIngredient.equals(ingredient, ingredient.hasMeta(), ingredient.hasCompoundTag())) {
-                    existingIngredient.setCount(existingIngredient.getCount() + ingredient.getCount());
-                    ingredient = null;
-                    break;
-                }
-            }
-            if (ingredient != null)
-                this.ingredientsAggregate.add(ingredient);
-        }
-        this.ingredientsAggregate.sort(CraftingManager.recipeComparator);
     }
 
     public int getWidth() {
@@ -199,9 +180,8 @@ public class ShapedRecipe implements CraftingRecipe {
 
     @Override
     public List<Item> getAllResults() {
-        List<Item> list = new ArrayList<>();
+        List<Item> list = new ArrayList<>(this.extraResults);
         list.add(primaryResult);
-        list.addAll(extraResults);
 
         return list;
     }
@@ -211,93 +191,74 @@ public class ShapedRecipe implements CraftingRecipe {
         return this.priority;
     }
 
-    public boolean matchItems(List<Item> inputList, List<Item> extraOutputList, int multiplier) {
-        List<Item> haveInputs = new ArrayList<>();
-        for (Item item : inputList) {
-            if (item.isNull())
-                continue;
-            haveInputs.add(item.clone());
-        }
-        List<Item> needInputs = new ArrayList<>();
-        if(multiplier != 1){
-            for (Item item : ingredientsAggregate) {
-                if (item.isNull())
-                    continue;
-                Item itemClone = item.clone();
-                itemClone.setCount(itemClone.getCount() * multiplier);
-                needInputs.add(itemClone);
-            }
-        } else {
-            for (Item item : ingredientsAggregate) {
-                if (item.isNull())
-                    continue;
-                needInputs.add(item.clone());
-            }
-        }
-
-        if (!matchItemList(haveInputs, needInputs)) {
-            return false;
-        }
-
-        List<Item> haveOutputs = new ArrayList<>();
-        for (Item item : extraOutputList) {
-            if (item.isNull())
-                continue;
-            haveOutputs.add(item.clone());
-        }
-        haveOutputs.sort(CraftingManager.recipeComparator);
-        List<Item> needOutputs = new ArrayList<>();
-        if(multiplier != 1){
-            for (Item item : getExtraResults()) {
-                if (item.isNull())
-                    continue;
-                Item itemClone = item.clone();
-                itemClone.setCount(itemClone.getCount() * multiplier);
-                needOutputs.add(itemClone);
-            }
-        } else {
-            for (Item item : getExtraResults()) {
-                if (item.isNull())
-                    continue;
-                needOutputs.add(item.clone());
-            }
-        }
-        needOutputs.sort(CraftingManager.recipeComparator);
-
-        return this.matchItemList(haveOutputs, needOutputs);
-    }
-
-    /**
-     * Returns whether the specified list of crafting grid inputs and outputs matches this recipe. Outputs DO NOT
-     * include the primary result item.
-     *
-     * @param inputList  list of items taken from the crafting grid
-     * @param extraOutputList list of items put back into the crafting grid (secondary results)
-     * @return bool
-     */
     @Override
-    public boolean matchItems(List<Item> inputList, List<Item> extraOutputList) {
-        return matchItems(inputList, extraOutputList, 1);
-    }
+    public boolean matchItems(Item[][] input, Item[][] output) {
+        if (!matchInputMap(Utils.clone2dArray(input))) {
 
-    private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
-        for (Item needItem : new ArrayList<>(needItems)) {
-            for (Item haveItem : new ArrayList<>(haveItems)) {
-                if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag())) {
-                    int amount = Math.min(haveItem.getCount(), needItem.getCount());
-                    needItem.setCount(needItem.getCount() - amount);
-                    haveItem.setCount(haveItem.getCount() - amount);
-                    if (haveItem.getCount() == 0) {
-                        haveItems.remove(haveItem);
-                    }
-                    if (needItem.getCount() == 0) {
-                        needItems.remove(needItem);
-                        break;
-                    }
+            Item[][] reverse = Utils.clone2dArray(input);
+
+            for (int y = 0; y < reverse.length; y++) {
+                reverse[y] = Utils.reverseArray(reverse[y], false);
+            }
+
+            if (!matchInputMap(reverse)) {
+                return false;
+            }
+        }
+
+        //and then, finally, check that the output items are good:
+        List<Item> haveItems = new ArrayList<>();
+        for (Item[] items : output) {
+            haveItems.addAll(Arrays.asList(items));
+        }
+
+        List<Item> needItems = this.getExtraResults();
+
+        for (Item haveItem : new ArrayList<>(haveItems)) {
+            if (haveItem.isNull()) {
+                haveItems.remove(haveItem);
+                continue;
+            }
+
+            for (Item needItem : new ArrayList<>(needItems)) {
+                if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag()) && needItem.getCount() == haveItem.getCount()) {
+                    haveItems.remove(haveItem);
+                    needItems.remove(needItem);
+                    break;
                 }
             }
         }
+
         return haveItems.isEmpty() && needItems.isEmpty();
+    }
+
+    private boolean matchInputMap(Item[][] input) {
+        Map<Integer, Map<Integer, Item>> map = this.getIngredientMap();
+
+        //match the given items to the requested items
+        for (int y = 0, y2 = this.getHeight(); y < y2; ++y) {
+            for (int x = 0, x2 = this.getWidth(); x < x2; ++x) {
+                Item given = input[y][x];
+                Item required = map.get(y).get(x);
+
+                if (given == null || !required.equals(given, required.hasMeta(), required.hasCompoundTag()) || required.getCount() != given.getCount()) {
+                    return false;
+                }
+
+                input[y][x] = null;
+            }
+        }
+
+        //check if there are any items left in the grid outside of the recipe
+        for (Item[] items : input) {
+            for (Item item : items) {
+                if (item != null && !item.isNull()) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     @Override
@@ -311,11 +272,6 @@ public class ShapedRecipe implements CraftingRecipe {
     @Override
     public boolean requiresCraftingTable() {
         return this.getHeight() > 2 || this.getWidth() > 2;
-    }
-
-    @Override
-    public List<Item> getIngredientsAggregate() {
-        return ingredientsAggregate;
     }
 
     public static class Entry {

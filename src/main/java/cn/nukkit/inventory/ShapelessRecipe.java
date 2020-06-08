@@ -17,7 +17,6 @@ public class ShapelessRecipe implements CraftingRecipe {
     private long least,most;
 
     private final List<Item> ingredients;
-    private final List<Item> ingredientsAggregate;
 
     private final int priority;
 
@@ -34,26 +33,13 @@ public class ShapelessRecipe implements CraftingRecipe {
         }
 
         this.ingredients = new ArrayList<>();
-        this.ingredientsAggregate = new ArrayList<>();
 
         for (Item item : ingredients) {
             if (item.getCount() < 1) {
                 throw new IllegalArgumentException("Recipe '" + recipeId + "' Ingredient amount was not 1 (value: " + item.getCount() + ")");
             }
-            boolean found = false;
-            for (Item existingIngredient : this.ingredientsAggregate) {
-                if (existingIngredient.equals(item, item.hasMeta(), item.hasCompoundTag())) {
-                    existingIngredient.setCount(existingIngredient.getCount() + item.getCount());
-                    found = true;
-                    break;
-                }
-            }
-            if (!found)
-                this.ingredientsAggregate.add(item.clone());
             this.ingredients.add(item.clone());
         }
-
-        this.ingredientsAggregate.sort(CraftingManager.recipeComparator);
     }
 
     @Override
@@ -124,97 +110,50 @@ public class ShapelessRecipe implements CraftingRecipe {
         return this.priority;
     }
 
-    public boolean matchItems(List<Item> inputList, List<Item> extraOutputList, int multiplier) {
+    @Override
+    public boolean matchItems(Item[][] input, Item[][] output) {
         List<Item> haveInputs = new ArrayList<>();
-        for (Item item : inputList) {
-            if (item.isNull())
-                continue;
-            haveInputs.add(item.clone());
+        for (Item[] items : input) {
+            haveInputs.addAll(Arrays.asList(items));
         }
-        List<Item> needInputs = new ArrayList<>();
-        if(multiplier != 1){
-            for (Item item : ingredientsAggregate) {
-                if (item.isNull())
-                    continue;
-                Item itemClone = item.clone();
-                itemClone.setCount(itemClone.getCount() * multiplier);
-                needInputs.add(itemClone);
-            }
-        } else {
-            for (Item item : ingredientsAggregate) {
-                if (item.isNull())
-                    continue;
-                needInputs.add(item.clone());
-            }
-        }
+        haveInputs.sort(CraftingManager.recipeComparator);
 
-        if (!matchItemList(haveInputs, needInputs)) {
+        List<Item> needInputs = this.getIngredientList();
+
+        if (!this.matchItemList(haveInputs, needInputs)) {
             return false;
         }
 
         List<Item> haveOutputs = new ArrayList<>();
-        for (Item item : extraOutputList) {
-            if (item.isNull())
-                continue;
-            haveOutputs.add(item.clone());
+        for (Item[] items : output) {
+            haveOutputs.addAll(Arrays.asList(items));
         }
         haveOutputs.sort(CraftingManager.recipeComparator);
-        List<Item> needOutputs = new ArrayList<>();
-        if(multiplier != 1){
-            for (Item item : getExtraResults()) {
-                if (item.isNull())
-                    continue;
-                Item itemClone = item.clone();
-                itemClone.setCount(itemClone.getCount() * multiplier);
-                needOutputs.add(itemClone);
-            }
-        } else {
-            for (Item item : getExtraResults()) {
-                if (item.isNull())
-                    continue;
-                needOutputs.add(item.clone());
-            }
-        }
-        needOutputs.sort(CraftingManager.recipeComparator);
+        List<Item> needOutputs = this.getExtraResults();
 
         return this.matchItemList(haveOutputs, needOutputs);
     }
 
-    /**
-     * Returns whether the specified list of crafting grid inputs and outputs matches this recipe. Outputs DO NOT
-     * include the primary result item.
-     *
-     * @param inputList  list of items taken from the crafting grid
-     * @param extraOutputList list of items put back into the crafting grid (secondary results)
-     * @return bool
-     */
-    @Override
-    public boolean matchItems(List<Item> inputList, List<Item> extraOutputList) {
-        return matchItems(inputList, extraOutputList, 1);
-    }
 
     private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
-        for (Item needItem : new ArrayList<>(needItems)) {
-            for (Item haveItem : new ArrayList<>(haveItems)) {
-                if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag())) {
-                    int amount = Math.min(haveItem.getCount(), needItem.getCount());
-                    needItem.setCount(needItem.getCount() - amount);
-                    haveItem.setCount(haveItem.getCount() - amount);
-                    if (haveItem.getCount() == 0) {
-                        haveItems.remove(haveItem);
-                    }
-                    if (needItem.getCount() == 0) {
-                        needItems.remove(needItem);
-                        break;
-                    }
-                }
+        // Remove any air blocks that may have gotten through.
+        haveItems.removeIf(Item::isNull);
+
+        if (haveItems.size() != needItems.size()) {
+            return false;
+        }
+
+        int size = needItems.size();
+        int completed = 0;
+        for (int i = 0; i < size; i++) {
+            Item haveItem = haveItems.get(i);
+            Item needItem = needItems.get(i);
+
+            if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag())) {
+                completed++;
             }
         }
-        return haveItems.isEmpty() && needItems.isEmpty();
-    }
 
-    @Override
-    public List<Item> getIngredientsAggregate() {
-        return ingredientsAggregate;
+        return completed == size;
     }
 }
