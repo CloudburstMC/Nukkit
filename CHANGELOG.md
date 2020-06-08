@@ -6,12 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.2.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
+## [Unreleased 1.3.0.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
 Click the link above to see the future.
 
-### Upcoming breaking change
+### Breaking change
 The following breaking change will be pulled in `1.3.0.0-PN`
 - [8a09f93](https://github.com/GameModsBR/PowerNukkit/commit/8a09f933f83c9a52531ff8a184a58c6d733c9174) Quick craft implementation. ([NukkitX#1473](https://github.com/NukkitX/Nukkit/pull/1473)) Jedrzej* 05/06/2020
+
+### Planned:
+- Add support to the new 1.16 blocks, items, biomes and entities (without AI)
+- Inherit protocol support from NukkitX
+
+## [1.2.1.0-PN] - 2020-06-07 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
+Click the link above to see the future.
 
 ### Fixes
 - [#224] Enchantment compatibility rules when merging enchanted items in an anvil
@@ -253,7 +260,8 @@ Fixes several anvil issues.
 
 [updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/master/CHANGELOG.md
 
-[Unreleased 1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...master
+[Unreleased 1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...master
+[1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
 [1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
 [1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
