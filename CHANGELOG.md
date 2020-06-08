@@ -9,6 +9,10 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.2.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
 Click the link above to see the future.
 
+### Upcoming breaking change
+The following breaking change will be pulled in `1.3.0.0-PN`
+- [8a09f93](https://github.com/GameModsBR/PowerNukkit/commit/8a09f933f83c9a52531ff8a184a58c6d733c9174) Quick craft implementation. ([NukkitX#1473](https://github.com/NukkitX/Nukkit/pull/1473)) Jedrzej* 05/06/2020
+
 ### Fixes
 - [#224] Enchantment compatibility rules when merging enchanted items in an anvil
 - [#113] Beehives not dropping in creative when it has bees
@@ -17,6 +21,12 @@ Click the link above to see the future.
 - [#279] `BlockEndPortal` missing collision bounding box
 - [#279] `Entity.checkBlockCollision()`'s over scaffolding logic outdated
 - [#281] Levers and buttons don't replace the snow layers
+- [#285] Chicken, cow, pig, rabbit and sheep not dropping cooked food when on fire
+- [#285] Chorus plant and flower not dropping
+- [#285] Item string placing tripwire hooks instead of tripwires
+- [#285] Wrong block name and color for dark prismarine block and prismarine bricks
+- [#285] Nether bricks fence were burnable and flammable
+- [#285] Item on hands disappear (looses one from the stack) when interacting with chest minecarts and hopper minecarts
 
 ### Added
 - [#227] PlayerJumpEvent called when jump packets are received.
@@ -32,10 +42,14 @@ Click the link above to see the future.
 - [#276] `Block.afterRemoval()` called automatically when the block is replaced using any `Level.setBlock()`
 - [#277] `Block.mustSilkTouch()` and `Block.mustDrop()` to allow blocks to force the dropping behaviour when being broken
 - [#279] `Entity.isInEndPortal()` for public usage
+- [#285] `LoginChainData.getRawData()` for public usage
 
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
 - [#261] Kicked players can now view the kick reason on kick.
+- [#285] Limit the maximum size of BookEditPacket's text to 256, ignoring the packet if it exceeds the limit
+- [#285] Ender pearls will now be unable to teleport players across different dimensions
+- [#285] ShortTag.load(NBTInputStream) now reads a signed short. Used to read an unsigned short.
 
 ## [1.2.0.2-PN] - 2020-05-18 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/10?closed=1))
 Contains several fixes, including issues which cause item losses and performance issues
@@ -319,3 +333,4 @@ Fixes several anvil issues.
 [#277]: https://github.com/GameModsBR/PowerNukkit/pull/277
 [#279]: https://github.com/GameModsBR/PowerNukkit/pull/279
 [#281]: https://github.com/GameModsBR/PowerNukkit/pull/281
+[#285]: https://github.com/GameModsBR/PowerNukkit/pull/285
