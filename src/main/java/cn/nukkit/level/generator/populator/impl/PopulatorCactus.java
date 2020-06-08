@@ -1,12 +1,11 @@
 package cn.nukkit.level.generator.populator.impl;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.helper.EnsureBelow;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
 import cn.nukkit.math.NukkitRandom;
-
-import static cn.nukkit.block.BlockID.CACTUS;
 
 /**
  * @author DaPorkchop_
@@ -19,6 +18,6 @@ public class PopulatorCactus extends PopulatorSurfaceBlock {
 
     @Override
     protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
-        return (CACTUS << 4) | 1;
+        return (CACTUS << Block.DATA_BITS) | 1;
     }
 }

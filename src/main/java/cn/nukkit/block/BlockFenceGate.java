@@ -45,6 +45,11 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public boolean canBeActivated() {
         return true;
     }
@@ -184,6 +189,10 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
+        if (!this.level.getServer().isRedstoneEnabled()) {
+            return 0;
+        }
+
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
             if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
                 this.toggle(null);

@@ -54,6 +54,11 @@ public class BlockBeacon extends BlockTransparent {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
             BlockEntity t = this.getLevel().getBlockEntity(this);
@@ -104,5 +109,10 @@ public class BlockBeacon extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.DIAMOND_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canBePulled() {
+        return false;
     }
 }

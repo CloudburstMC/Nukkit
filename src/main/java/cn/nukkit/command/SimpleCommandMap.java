@@ -67,6 +67,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new ReloadCommand("reload"));
         this.register("nukkit", new WeatherCommand("weather"));
         this.register("nukkit", new XpCommand("xp"));
+        this.register("nukkit", new SetBlockCommand("setblock"));
 
 //        if ((boolean) this.server.getConfig("debug.commands", false)) {
         this.register("nukkit", new StatusCommand("status"));

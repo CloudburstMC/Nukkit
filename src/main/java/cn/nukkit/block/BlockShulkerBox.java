@@ -40,7 +40,7 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
 
     @Override
     public int getFullId() {
-        return (this.getId() << 4) + this.getDamage();
+        return (this.getId() << DATA_BITS) + this.getDamage();
     }
 
     @Override

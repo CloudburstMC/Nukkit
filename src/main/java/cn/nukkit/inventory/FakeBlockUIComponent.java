@@ -21,7 +21,12 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
     public FakeBlockMenu getHolder() {
         return (FakeBlockMenu) this.holder;
     }
-
+    
+    @Override
+    public InventoryType getType() {
+        return type;
+    }
+    
     @Override
     public boolean open(Player who) {
         InventoryOpenEvent ev = new InventoryOpenEvent(this, who);
@@ -52,6 +57,14 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
         who.dataPacket(pk);
 
         this.sendContents(who);
+    }
+
+    /**
+     * @apiNote Calls {@link #onClose(Player)} only in PowerNukkit
+     */
+    @Override
+    public void close(Player who) {
+        this.onClose(who);
     }
 
     @Override

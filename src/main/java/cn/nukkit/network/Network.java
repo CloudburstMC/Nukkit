@@ -4,14 +4,19 @@ import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.network.protocol.*;
+import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import cn.nukkit.utils.VarInt;
 import cn.nukkit.utils.Zlib;
+import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import lombok.extern.log4j.Log4j2;
 
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -102,9 +107,11 @@ public class Network {
         interfaz.setName(this.name + "!@#" + this.subName);
     }
 
-    public void unregisterInterface(SourceInterface interfaz) {
-        this.interfaces.remove(interfaz);
-        this.advancedInterfaces.remove(interfaz);
+    public void unregisterInterface(SourceInterface sourceInterface) {
+        this.interfaces.remove(sourceInterface);
+        if (sourceInterface instanceof AdvancedSourceInterface) {
+            this.advancedInterfaces.remove(sourceInterface);
+        }
     }
 
     public void setName(String name) {
@@ -180,9 +187,7 @@ public class Network {
             processPackets(player, packets);
 
         } catch (Exception e) {
-            if (log.isDebugEnabled()) {
-                log.debug("Error whilst decoding batch packet", e);
-            }
+            MainLogger.getLogger().error("Error whilst decoding batch packet", e);
         }
     }
 
@@ -218,25 +223,27 @@ public class Network {
         return null;
     }
 
-    public void sendPacket(String address, int port, byte[] payload) {
-        for (AdvancedSourceInterface interfaz : this.advancedInterfaces) {
-            interfaz.sendRawPacket(address, port, payload);
+    public void sendPacket(InetSocketAddress socketAddress, ByteBuf payload) {
+        for (AdvancedSourceInterface sourceInterface : this.advancedInterfaces) {
+            sourceInterface.sendRawPacket(socketAddress, payload);
         }
     }
 
-    public void blockAddress(String address) {
-        this.blockAddress(address, 300);
-    }
-
-    public void blockAddress(String address, int timeout) {
-        for (AdvancedSourceInterface interfaz : this.advancedInterfaces) {
-            interfaz.blockAddress(address, timeout);
+    public void blockAddress(InetAddress address) {
+        for (AdvancedSourceInterface sourceInterface : this.advancedInterfaces) {
+            sourceInterface.blockAddress(address);
         }
     }
 
-    public void unblockAddress(String address) {
-        for (AdvancedSourceInterface interfaz : this.advancedInterfaces) {
-            interfaz.unblockAddress(address);
+    public void blockAddress(InetAddress address, int timeout) {
+        for (AdvancedSourceInterface sourceInterface : this.advancedInterfaces) {
+            sourceInterface.blockAddress(address, timeout);
+        }
+    }
+
+    public void unblockAddress(InetAddress address) {
+        for (AdvancedSourceInterface sourceInterface : this.advancedInterfaces) {
+            sourceInterface.unblockAddress(address);
         }
     }
 

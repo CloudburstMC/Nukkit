@@ -75,11 +75,11 @@ public class BlockDoubleSlab extends BlockSolidMeta {
             case BlockDoubleSlab.WOODEN:
                 return BlockColor.WOOD_BLOCK_COLOR;
             default:
-                case BlockDoubleSlab.COBBLESTONE:
-                case BlockDoubleSlab.BRICK:
-                case BlockDoubleSlab.STONE_BRICK:
-                case BlockDoubleSlab.STONE:
-                    return BlockColor.STONE_BLOCK_COLOR;
+            case BlockDoubleSlab.COBBLESTONE:
+            case BlockDoubleSlab.BRICK:
+            case BlockDoubleSlab.STONE_BRICK:
+            case BlockDoubleSlab.STONE:
+                return BlockColor.STONE_BLOCK_COLOR;
             case BlockDoubleSlab.SANDSTONE:
                 return BlockColor.SAND_BLOCK_COLOR;
             case BlockDoubleSlab.QUARTZ:

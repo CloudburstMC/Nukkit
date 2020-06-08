@@ -67,13 +67,21 @@ public class BlockLever extends BlockFlowable implements Faceable {
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isPowerOn() ? 15 : 0, isPowerOn() ? 0 : 15));
         this.setDamage(this.getDamage() ^ 0x08);
 
-        this.getLevel().setBlock(this, this, false, true);
-        this.getLevel().addSound(this, Sound.RANDOM_CLICK); //TODO: correct pitch
+        boolean redstone = this.level.getServer().isRedstoneEnabled();
+
+        this.getLevel().setBlock(this, this, false, !redstone);
+        this.getLevel().addSound(this, Sound.RANDOM_CLICK, 0.8f, isPowerOn() ? 0.58f : 0.5f );
 
         LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage());
         BlockFace face = orientation.getFacing();
-        //this.level.updateAroundRedstone(this, null);
-        this.level.updateAroundRedstone(this.getLocation().getSide(face.getOpposite()), isPowerOn() ? face : null);
+
+        if (redstone) {
+            Block target = this.getSide(face.getOpposite());
+            target.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+
+            this.level.updateAroundRedstone(this.getLocation(), isPowerOn() ? face.getOpposite() : null);
+            this.level.updateAroundRedstone(target.getLocation(), isPowerOn() ? face : null);
+        }
         return true;
     }
 
@@ -91,7 +99,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isNormalBlock()) {
+        if (target.isNormalBlock() || target.getId() == SNOW_LAYER) {
             this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
             this.getLevel().setBlock(block, this, true, true);
             return true;
@@ -217,6 +225,16 @@ public class BlockLever extends BlockFlowable implements Faceable {
                 META_LOOKUP[face.getMetadata()] = face;
             }
         }
+    }
+
+    @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
     }
 
     @Override

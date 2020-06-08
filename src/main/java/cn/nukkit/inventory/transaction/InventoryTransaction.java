@@ -25,7 +25,7 @@ public class InventoryTransaction {
 
     protected Set<Inventory> inventories = new HashSet<>();
 
-    protected Set<InventoryAction> actions = new HashSet<>();
+    protected Set<InventoryAction> actions = new LinkedHashSet<>();
 
     public InventoryTransaction(Player source, List<InventoryAction> actions) {
         this(source, actions, true);

@@ -1,5 +1,7 @@
 package cn.nukkit.item.enchantment;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
@@ -140,7 +142,7 @@ public abstract class Enchantment implements Cloneable {
     protected int level = 1;
 
     protected final String name;
-
+    
     protected Enchantment(int id, String name, int weight, EnchantmentType type) {
         this.id = id;
         this.weight = weight;
@@ -241,6 +243,14 @@ public abstract class Enchantment implements Cloneable {
         } catch (CloneNotSupportedException e) {
             return null;
         }
+    }
+
+    /**
+     * Checks if an item can have this enchantment. It's not strict to the enchantment table.
+     */
+    @PowerNukkitOnly @Since("1.2.1.0-PN")
+    public boolean isItemAcceptable(Item item) {
+        return canEnchant(item);
     }
 
     public static final String[] words = {"the", "elder", "scrolls", "klaatu", "berata", "niktu", "xyzzy", "bless", "curse", "light", "darkness", "fire", "air", "earth", "water", "hot", "dry", "cold", "wet", "ignite", "snuff", "embiggen", "twist", "shorten", "stretch", "fiddle", "destroy", "imbue", "galvanize", "enchant", "free", "limited", "range", "of", "towards", "inside", "sphere", "cube", "self", "other", "ball", "mental", "physical", "grow", "shrink", "demon", "elemental", "spirit", "animal", "creature", "beast", "humanoid", "undead", "fresh", "stale"};

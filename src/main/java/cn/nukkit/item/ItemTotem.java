@@ -2,6 +2,10 @@ package cn.nukkit.item;
 
 public class ItemTotem extends Item {
 
+    public ItemTotem() {
+        this(0, 1);
+    }
+
     public ItemTotem(Integer meta) {
         this(meta, 1);
     }

@@ -10,7 +10,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacketV2;
 
 /**
  * @author CreeperFace
@@ -43,11 +43,9 @@ public abstract class ProjectileItem extends Item {
 
         Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
         if (projectile != null) {
-            if (projectile instanceof EntityEnderPearl) {
-                if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
-                    projectile.kill();
-                    return false;
-                }
+            projectile = correctProjectile(player, projectile);
+            if (projectile == null) {
+                return false;
             }
 
             projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
@@ -66,13 +64,21 @@ public abstract class ProjectileItem extends Item {
                         player.onThrowEnderPearl();
                     }
                     projectile.spawnToAll();
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
+                    addThrowSound(player);
                 }
             }
         } else {
             return false;
         }
         return true;
+    }
+
+    protected void addThrowSound(Player player) {
+        player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacketV2.SOUND_THROW, -1, "minecraft:player", false, false);
+    }
+
+    protected Entity correctProjectile(Player player, Entity projectile) {
+        return projectile;
     }
 
     protected void correctNBT(CompoundTag nbt) {

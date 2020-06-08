@@ -22,7 +22,7 @@ public class BlockButtonWooden extends BlockButton {
 
     @Override
     public String getName() {
-        return "Wooden Button";
+        return "Oak Button";
     }
 
     @Override

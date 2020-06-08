@@ -45,6 +45,13 @@ public class GameRules {
         gameRules.gameRules.put(SHOW_COORDINATES, new Value<>(Type.BOOLEAN, false));
         gameRules.gameRules.put(TNT_EXPLODES, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(SHOW_DEATH_MESSAGE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(EXPERIMENTAL_GAMEPLAY, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(MAX_COMMAND_CHAIN_LENGTH, new Value<>(Type.INTEGER, 131070));
+        gameRules.gameRules.put(DO_INSOMNIA, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(COMMAND_BLOCKS_ENABLED, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(FUNCTION_COMMAND_LIMIT, new Value<>(Type.INTEGER, 20000));
+        gameRules.gameRules.put(SPAWN_RADIUS, new Value<>(Type.INTEGER, 5));
+        gameRules.gameRules.put(SHOW_TAGS, new Value<>(Type.BOOLEAN, true));
 
         return gameRules;
     }

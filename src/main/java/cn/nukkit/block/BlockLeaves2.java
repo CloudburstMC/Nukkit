@@ -15,7 +15,7 @@ public class BlockLeaves2 extends BlockLeaves {
     }
 
     public BlockLeaves2(int meta) {
-        super(meta);
+        super(meta & 0x7); // Anything above this range is invalid
     }
 
     public String getName() {
@@ -37,7 +37,40 @@ public class BlockLeaves2 extends BlockLeaves {
     }
 
     @Override
+    public Item toItem() {
+        return Item.get(BlockID.LEAVES2, this.getDamage() & 0x1);
+    }
+
+    @Override
     protected Item getSapling() {
         return Item.get(BlockID.SAPLING, (this.getDamage() & 0x01) + 4);
+    }
+
+    @Override
+    public boolean isCheckDecay() {
+        return (this.getDamage() & 0x02) != 0;
+    }
+
+    @Override
+    public void setCheckDecay(boolean checkDecay) {
+        if (checkDecay) {
+            this.setDamage(this.getDamage() | 0x02);
+        } else {
+            this.setDamage(this.getDamage() & ~0x02);
+        }
+    }
+
+    @Override
+    public boolean isPersistent() {
+        return (this.getDamage() & 0x04) != 0;
+    }
+
+    @Override
+    public void setPersistent(boolean persistent) {
+        if (persistent) {
+            this.setDamage(this.getDamage() | 0x04);
+        } else {
+            this.setDamage(this.getDamage() & ~0x04);
+        }
     }
 }

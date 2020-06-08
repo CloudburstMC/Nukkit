@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockDragonEgg extends BlockFallable {
@@ -46,6 +47,11 @@ public class BlockDragonEgg extends BlockFallable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_TOUCH) {
             this.teleport();
@@ -72,5 +78,15 @@ public class BlockDragonEgg extends BlockFallable {
                 return;
             }
         }
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

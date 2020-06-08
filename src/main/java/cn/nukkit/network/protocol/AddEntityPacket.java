@@ -109,8 +109,8 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityLightning.NETWORK_ID, "minecraft:lightning_bolt")
             .put(94, "minecraft:small_fireball")
             .put(102, "minecraft:llama_spit")
-            .put(95, "minecraft:area_effect_cloud")
-            .put(101, "minecraft:lingering_potion")
+            .put(EntityAreaEffectCloud.NETWORK_ID, "minecraft:area_effect_cloud")
+            .put(EntityPotionLingering.NETWORK_ID, "minecraft:lingering_potion")
             .put(EntityFirework.NETWORK_ID, "minecraft:fireworks_rocket")
             .put(103, "minecraft:evocation_fang")
             .put(104, "minecraft:evocation_illager")
@@ -125,7 +125,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityVillager.NETWORK_ID, "minecraft:villager_v2")
             .put(EntityZombieVillager.NETWORK_ID, "minecraft:zombie_villager_v2")
             .put(121, "minecraft:fox")
-            .put(122, "minecraft:bee")
+            .put(EntityBee.NETWORK_ID, "minecraft:bee")
             .build();
 
     @Override

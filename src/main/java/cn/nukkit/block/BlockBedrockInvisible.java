@@ -23,6 +23,16 @@ public class BlockBedrockInvisible extends BlockSolid {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 2;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
     public double getHardness() {
         return -1;
     }
@@ -44,6 +54,11 @@ public class BlockBedrockInvisible extends BlockSolid {
 
     @Override
     public boolean canBePushed() {
+        return false;
+    }
+
+    @Override
+    public boolean canBePulled() {
         return false;
     }
 

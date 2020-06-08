@@ -6,7 +6,7 @@ import cn.nukkit.item.Item;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class FurnaceRecipe implements Recipe {
+public class FurnaceRecipe implements SmeltingRecipe {
 
     private final Item output;
 
@@ -21,6 +21,7 @@ public class FurnaceRecipe implements Recipe {
         this.ingredient = item.clone();
     }
 
+    @Override
     public Item getInput() {
         return this.ingredient.clone();
     }

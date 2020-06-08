@@ -50,6 +50,11 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public double getHardness() {
         return 0.4;
     }
@@ -176,12 +181,22 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-            Item.get(Item.LADDER, 0, 1)
+                Item.get(Item.LADDER, 0, 1)
         };
     }
 
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

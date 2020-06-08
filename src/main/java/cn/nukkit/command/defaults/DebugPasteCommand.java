@@ -1,6 +1,7 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Server;
+import cn.nukkit.command.CapturingCommandSender;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.plugin.Plugin;
@@ -9,6 +10,7 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.HastebinUtility;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -30,8 +32,11 @@ public class DebugPasteCommand extends VanillaCommand {
             @Override
             public void onRun() {
                 try {
-                    new StatusCommand("status").execute(server.getConsoleSender(), "status", new String[]{});
+                    CapturingCommandSender capturing = new CapturingCommandSender();
+                    capturing.setOp(true);
+                    new StatusCommand("status").execute(capturing, "status", new String[]{});
                     String dataPath = server.getDataPath();
+                    String status = HastebinUtility.upload(capturing.getCleanCapture());
                     String nukkitYML = HastebinUtility.upload(new File(dataPath, "nukkit.yml"));
                     String serverProperties = HastebinUtility.upload(new File(dataPath, "server.properties"));
                     String latestLog = HastebinUtility.upload(new File(dataPath, "/logs/server.log"));
@@ -41,12 +46,16 @@ public class DebugPasteCommand extends VanillaCommand {
                     b.append("# Files\n");
                     b.append("links.nukkit_yml: ").append(nukkitYML).append('\n');
                     b.append("links.server_properties: ").append(serverProperties).append('\n');
+                    b.append("links.server_status: ").append(status).append('\n');
                     b.append("links.server_log: ").append(latestLog).append('\n');
                     b.append("links.thread_dump: ").append(threadDump).append('\n');
                     b.append("\n# Server Information\n");
-
+    
+                    b.append("server.name: ").append(server.getName()).append('\n');
                     b.append("version.api: ").append(server.getApiVersion()).append('\n');
                     b.append("version.nukkit: ").append(server.getNukkitVersion()).append('\n');
+                    b.append("version.git: ").append(server.getGitCommit()).append('\n');
+                    b.append("version.codename: ").append(server.getCodename()).append('\n');
                     b.append("version.minecraft: ").append(server.getVersion()).append('\n');
                     b.append("version.protocol: ").append(ProtocolInfo.CURRENT_PROTOCOL).append('\n');
                     b.append("plugins:");
@@ -76,7 +85,7 @@ public class DebugPasteCommand extends VanillaCommand {
                     b.append("os.arch: '").append(System.getProperty("os.arch")).append("'\n");
                     b.append("os.name: '").append(System.getProperty("os.name")).append("'\n");
                     b.append("os.version: '").append(System.getProperty("os.version")).append("'\n\n");
-                    b.append("\n# Create a ticket: https://github.com/NukkitX/Nukkit/issues/new");
+                    b.append("\n# Create a ticket: https://github.com/GameModsBr/PowerNukkit/issues/new");
                     String link = HastebinUtility.upload(b.toString());
                     sender.sendMessage(link);
                 } catch (IOException e) {

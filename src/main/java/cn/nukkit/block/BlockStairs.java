@@ -137,6 +137,11 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }

@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockSignPost;
 
 /**
  * author: MagicDroidX
@@ -15,6 +16,11 @@ public class ItemSign extends Item {
 
     public ItemSign(Integer meta) {
         this(meta, 1);
+    }
+
+    protected ItemSign(int id, Integer meta, int count, String name, BlockSignPost block) {
+        super(id, meta, count, name);
+        this.block = block;
     }
 
     public ItemSign(Integer meta, int count) {

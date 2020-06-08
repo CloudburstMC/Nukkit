@@ -35,6 +35,7 @@ public class PlayerActionPacket extends DataPacket {
     public static final int ACTION_STOP_SWIMMING = 22;
     public static final int ACTION_START_SPIN_ATTACK = 23;
     public static final int ACTION_STOP_SPIN_ATTACK = 24;
+    public static final int ACTION_INTERACT_BLOCK = 25;
 
     public long entityId;
     public int action;

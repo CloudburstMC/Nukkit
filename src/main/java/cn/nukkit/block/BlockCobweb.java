@@ -45,6 +45,11 @@ public class BlockCobweb extends BlockFlowable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
     }
@@ -69,4 +74,10 @@ public class BlockCobweb extends BlockFlowable {
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Override
+    public boolean diffusesSkyLight() {
+        return true;
+    }
+
 }

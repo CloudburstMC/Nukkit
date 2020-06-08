@@ -22,4 +22,9 @@ public class BlockPiston extends BlockPistonBase {
     public String getName() {
         return "Piston";
     }
+
+    @Override
+    public int getPistonHeadBlockId() {
+        return PISTON_HEAD;
+    }
 }

@@ -59,6 +59,11 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public boolean onActivate(Item item) {
         return this.onActivate(item, null);
     }
@@ -119,6 +124,9 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
                 int meta = player.getDirection().getHorizontalIndex();
 
                 this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
+                if (next instanceof BlockLiquid && ((BlockLiquid) next).usesWaterLogging()) {
+                    this.getLevel().setBlock(next, 1, next, true, false);
+                }
                 this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
 
                 createBlockEntity(this, item.getDamage());
@@ -196,5 +204,15 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

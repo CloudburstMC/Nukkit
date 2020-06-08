@@ -1,5 +1,8 @@
 package cn.nukkit.item;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 public interface ItemID {
     int IRON_SHOVEL = 256;
     int IRON_PICKAXE = 257;
@@ -199,6 +202,10 @@ public interface ItemID {
     int DARK_OAK_DOOR = 431;
     int CHORUS_FRUIT = 432;
     int POPPED_CHORUS_FRUIT = 433;
+    
+    @Since("1.2.1.0-PN")
+    @PowerNukkitOnly 
+    int BANNER_PATTERN = 434;
 
     int DRAGON_BREATH = 437;
     int SPLASH_POTION = 438;
@@ -229,7 +236,13 @@ public interface ItemID {
     int SCUTE = 468;
     int TURTLE_SHELL = 469;
     int PHANTOM_MEMBRANE = 470;
-
+    int CROSSBOW = 471;
+    int SPRUCE_SIGN = 472;
+    int BIRCH_SIGN = 473;
+    int JUNGLE_SIGN = 474;
+    int ACACIA_SIGN = 475;
+    int DARKOAK_SIGN = 476;
+    int DARK_OAK_SIGN = 476;
     int SWEET_BERRIES = 477;
 
     int RECORD_13 = 500;
@@ -246,4 +259,11 @@ public interface ItemID {
     int RECORD_WAIT = 511;
 
     int SHIELD = 513;
+
+    int CAMPFIRE = 720;
+
+    int SUSPICIOUS_STEW = 734;
+
+    int HONEYCOMB = 736;
+    int HONEY_BOTTLE = 737;
 }

@@ -12,6 +12,11 @@ public class EnchantmentBowInfinity extends EnchantmentBow {
     }
 
     @Override
+    public boolean isCompatibleWith(Enchantment enchantment) {
+        return super.isCompatibleWith(enchantment) && enchantment.id != Enchantment.ID_MENDING;
+    }
+
+    @Override
     public int getMinEnchantAbility(int level) {
         return 20;
     }

@@ -43,7 +43,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!this.getSide(getFacing()).isSolid()) {
+            if (!this.getSideAtLayer(0, getFacing()).isSolid()) {
                 this.level.useBreakOn(this);
                 return type;
             }
@@ -58,9 +58,23 @@ public class BlockItemFrame extends BlockTransparentMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
+        if (itemFrame == null) {
+            itemFrame = (BlockEntityItemFrame) BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this,
+                    BlockEntity.getDefaultCompound(this, BlockEntity.ITEM_FRAME)
+                            .putByte("ItemRotation", 0)
+                            .putFloat("ItemDropChance", 1.0f));
+        }
+        if (itemFrame == null) {
+            return false;
+        }
         if (itemFrame.getItem().getId() == Item.AIR) {
         	Item itemOnFrame = item.clone();
         	if (player != null && player.isSurvival()) {
@@ -106,7 +120,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
+        this.getLevel().setBlock(this, layer, Block.get(BlockID.AIR), true, true);
         this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
         return true;
     }
@@ -171,5 +185,15 @@ public class BlockItemFrame extends BlockTransparentMeta {
     @Override
     public double getHardness() {
         return 0.25;
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

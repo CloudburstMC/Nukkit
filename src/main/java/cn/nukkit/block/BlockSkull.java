@@ -47,6 +47,16 @@ public class BlockSkull extends BlockTransparentMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return true;
+    }
+
+    @Override
     public String getName() {
         int itemMeta = 0;
 
@@ -124,4 +134,13 @@ public class BlockSkull extends BlockTransparentMeta {
         return BlockColor.AIR_BLOCK_COLOR;
     }
 
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }

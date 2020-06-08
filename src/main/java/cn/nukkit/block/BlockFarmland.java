@@ -81,9 +81,15 @@ public class BlockFarmland extends BlockTransparentMeta {
                             v.setComponents(x, y, z);
                             int block = this.level.getBlockIdAt(v.getFloorX(), v.getFloorY(), v.getFloorZ());
 
-                            if (block == WATER || block == STILL_WATER) {
+                            if (block == WATER || block == STILL_WATER || block == ICE_FROSTED) {
                                 found = true;
                                 break;
+                            } else {
+                                block = this.level.getBlockIdAt(v.getFloorX(), v.getFloorY(), v.getFloorZ(), 1);
+                                if (block == WATER || block == STILL_WATER || block == ICE_FROSTED) {
+                                    found = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -91,7 +97,7 @@ public class BlockFarmland extends BlockTransparentMeta {
             }
 
             Block block = this.level.getBlock(v.setComponents(x, y - 1, z));
-            if (found || block instanceof BlockWater) {
+            if (found || block instanceof BlockWater || block instanceof BlockIceFrosted) {
                 if (this.getDamage() < 7) {
                     this.setDamage(7);
                     this.level.setBlock(this, this, false, false);

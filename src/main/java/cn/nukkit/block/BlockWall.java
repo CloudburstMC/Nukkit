@@ -43,6 +43,11 @@ public class BlockWall extends BlockTransparentMeta {
     }
 
     @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
+
+    @Override
     public String getName() {
         if (this.getDamage() == 0x01) {
             return "Mossy Cobblestone Wall";

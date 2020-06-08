@@ -33,24 +33,36 @@ public interface FullChunk extends Cloneable {
     void setProvider(LevelProvider provider);
 
     int getFullBlock(int x, int y, int z);
+    int getFullBlock(int x, int y, int z, int layer);
 
     Block getAndSetBlock(int x, int y, int z, Block block);
+    Block getAndSetBlock(int x, int y, int z, int layer, Block block);
 
     default boolean setFullBlockId(int x, int y, int z, int fullId) {
-        return setBlock(x, y, z, fullId >> 4, fullId & 0xF);
+        return setFullBlockId(x, y, z, 0, fullId >> Block.DATA_BITS);
     }
 
-    boolean setBlock(int x, int y, int z, int  blockId);
+    default boolean setFullBlockId(int x, int y, int z, int layer, int fullId) {
+        return setBlockAtLayer(x, y, z, layer, fullId >> Block.DATA_BITS, fullId & Block.DATA_MASK);
+    }
+
+    boolean setBlock(int x, int y, int z, int blockId);
+    boolean setBlockAtLayer(int x, int y, int z, int layer, int  blockId);
 
     boolean setBlock(int x, int y, int z, int  blockId, int  meta);
+    boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int  meta);
 
     int getBlockId(int x, int y, int z);
+    int getBlockId(int x, int y, int z, int layer);
 
     void setBlockId(int x, int y, int z, int id);
+    void setBlockId(int x, int y, int z, int layer, int id);
 
     int getBlockData(int x, int y, int z);
+    int getBlockData(int x, int y, int z, int layer);
 
     void setBlockData(int x, int y, int z, int data);
+    void setBlockData(int x, int y, int z, int layer, int data);
 
     int getBlockExtraData(int x, int y, int z);
 
@@ -73,6 +85,8 @@ public interface FullChunk extends Cloneable {
     void setHeightMap(int x, int z, int value);
 
     void recalculateHeightMap();
+
+    int recalculateHeightMapColumn(int chunkX, int chunkZ);
 
     void populateSkyLight();
 
@@ -138,9 +152,15 @@ public interface FullChunk extends Cloneable {
 
     byte[] getHeightMapArray();
 
-    byte[] getBlockIdArray();
+    byte[] getBlockIdArray(int layer);
+    default byte[] getBlockIdArray() {
+        return getBlockIdArray(0);
+    }
 
-    byte[] getBlockDataArray();
+    byte[] getBlockDataArray(int layer);
+    default byte[] getBlockDataArray() {
+        return getBlockDataArray(0);
+    }
 
     Map<Integer, Integer> getBlockExtraDataArray();
 

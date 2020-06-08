@@ -61,10 +61,14 @@ public class BlockFlower extends BlockFlowable {
         return names[this.getDamage() & 0x0f];
     }
 
+    public boolean canPlantOn(Block block) {
+        return block.getId() == Block.GRASS || block.getId() == Block.DIRT || block.getId() == Block.FARMLAND || block.getId() == Block.PODZOL;
+    }
+
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND || down.getId() == Block.PODZOL) {
+        if (canPlantOn(down)) {
             this.getLevel().setBlock(block, this, true);
 
             return true;

@@ -76,6 +76,8 @@ public enum TerracottaColor {
         return BY_DYE_DATA[dyeColorMeta & 0x0f];
     }
 
-    public static TerracottaColor getByTerracottaData(int terracottaColorMeta) { return BY_TERRACOTA_DATA[terracottaColorMeta & 0x0f]; }
+    public static TerracottaColor getByTerracottaData(int terracottaColorMeta) {
+        return BY_TERRACOTA_DATA[terracottaColorMeta & 0x0f];
+    }
 
 }

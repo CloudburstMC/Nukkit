@@ -88,7 +88,33 @@ public class PlayerUIInventory extends BaseInventory {
             }
         }
     }
-
+    
+    @Override
+    public void onSlotChange(int index, Item before, boolean send) {
+        switch (player.craftingType) {
+            case Player.CRAFTING_GRINDSTONE:
+                if (index >= GrindstoneInventory.OFFSET) {
+                    Inventory inventory = player.getWindowById(Player.ANVIL_WINDOW_ID);
+                    if (inventory instanceof GrindstoneInventory && (index == 50 || index - GrindstoneInventory.OFFSET < inventory.getSize())) {
+                        inventory.onSlotChange(index == 50 ? 2 : index - GrindstoneInventory.OFFSET, before, send);
+                    }
+                }
+            case Player.CRAFTING_ANVIL:
+                if (index >= AnvilInventory.OFFSET) {
+                    Inventory inventory = player.getWindowById(Player.ANVIL_WINDOW_ID);
+                    if (inventory instanceof AnvilInventory && (index == 50 || index - AnvilInventory.OFFSET < inventory.getSize())) {
+                        inventory.onSlotChange(index == 50 ? 2 : index - AnvilInventory.OFFSET, before, send);
+                    }
+                }
+                return;
+        }
+        super.onSlotChange(index, before, send);
+    }
+    
+    public void onSlotChangeBase(int index, Item before, boolean send) {
+        super.onSlotChange(index, before, send);
+    }
+    
     @Override
     public int getSize() {
         return 51;

@@ -4,6 +4,7 @@ import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
 
 import java.io.IOException;
+import java.util.Objects;
 
 public class StringTag extends Tag {
     public String data;
@@ -56,5 +57,9 @@ public class StringTag extends Tag {
         }
         return false;
     }
-
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), data);
+    }
 }

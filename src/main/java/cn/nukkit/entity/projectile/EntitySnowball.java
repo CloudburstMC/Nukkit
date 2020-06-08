@@ -2,7 +2,11 @@ package cn.nukkit.entity.projectile;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.GenericParticle;
+import cn.nukkit.level.particle.Particle;
 import cn.nukkit.nbt.tag.CompoundTag;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * author: MagicDroidX
@@ -67,5 +71,13 @@ public class EntitySnowball extends EntityProjectile {
         this.timing.stopTiming();
 
         return hasUpdate;
+    }
+
+    @Override
+    protected void addHitEffect() {
+        int particles = ThreadLocalRandom.current().nextInt(10) + 5;
+        for (int i = 0; i < particles; i++) {
+            level.addParticle(new GenericParticle(this, Particle.TYPE_SNOWBALL_POOF));
+        }
     }
 }
