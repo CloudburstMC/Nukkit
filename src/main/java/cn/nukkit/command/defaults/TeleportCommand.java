@@ -47,7 +47,7 @@ public class TeleportCommand extends VanillaCommand {
         }
         CommandSender target;
         CommandSender origin = sender;
-        if (args.length == 1 || args.length == 3) {
+        if (args.length == 1 || args.length == 3 || args.length == 5) {
             if (sender instanceof Player) {
                 target = sender;
             } else {
@@ -96,17 +96,16 @@ public class TeleportCommand extends VanillaCommand {
                 x = parseTilde(args[pos++], ((Player) target).x);
                 y = parseTilde(args[pos++], ((Player) target).y);
                 z = parseTilde(args[pos++], ((Player) target).z);
-                yaw = ((Player) target).getYaw();
-                pitch = ((Player) target).getPitch();
+                if (args.length > pos) {
+                    yaw = Integer.parseInt(args[pos++]);
+                    pitch = Integer.parseInt(args[pos]);
+                } else {
+                    yaw = ((Player) target).getYaw();
+                    pitch = ((Player) target).getPitch();
+                }
             } catch (NumberFormatException e1) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
-            }
-            if (y < 0) y = 0;
-            if (y > 256) y = 256;
-            if (args.length == 6 || (args.length == 5 && pos == 3)) {
-                yaw = Integer.parseInt(args[pos++]);
-                pitch = Integer.parseInt(args[pos++]);
             }
             ((Player) target).teleport(new Location(x, y, z, yaw, pitch, ((Player) target).getLevel()), PlayerTeleportEvent.TeleportCause.COMMAND);
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success.coordinates", target.getName(), String.valueOf(NukkitMath.round(x, 2)), String.valueOf(NukkitMath.round(y, 2)), String.valueOf(NukkitMath.round(z, 2))));
