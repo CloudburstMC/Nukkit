@@ -134,7 +134,7 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         // Note: Vanilla actually forces the grindstone to be standing when
         // replacing a vine, but that's too odd
-        if (block.getId() != VINES && block.canBeReplaced() && block.getId() != AIR && block.getId() != BUBBLE_COLUMN && !(block instanceof BlockLiquid)) {
+        if (block.getId() == VINES && block.canBeReplaced()) {
             face = BlockFace.UP;
         }
         switch (face) {
