@@ -79,7 +79,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if((this.getDamage() & 0x04) == 0 && player != null && item.getId() == Item.ENDER_EYE) {
+        if ((this.getDamage() & 0x04) == 0 && player != null && item.getId() == Item.ENDER_EYE) {
             this.setDamage(this.getDamage() + 4);
             this.getLevel().setBlock(this, this, true, true);
             this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_END_PORTAL_FRAME_FILL);
@@ -90,78 +90,32 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
     }
 
     public void createPortal() {
-        Vector3 centerSpot = this.searchCenter();
-        if(centerSpot != null) {
-            for(int x = -2; x <= 2; x++) {
-                for(int z = -2; z <= 2; z++) {
-                    if((x == -2 || x == 2) && (z == -2 || z == 2))
-                        continue;
-                    if(x == -2 || x == 2 || z == -2 || z == 2) {
-                        if(!this.checkFrame(this.getLevel().getBlock(centerSpot.add(x, 0, z)), x, z)) {
-                            return;
+        for (int i = 0; i < 4; i++) {
+            for (int j = -1; j <= 1; j++) {
+                Block side = this.getSide(BlockFace.fromHorizontalIndex(i), 2).getSide(BlockFace.fromHorizontalIndex((i + 1) % 4), j);
+                if (this.isCompletedPortal(side)) {
+                    for (int k = -1; k <= 1; k++) {
+                        for (int l = -1; l <= 1; l++) {
+                            this.getLevel().setBlock(side.add(k, 0, l), Block.get(Block.END_PORTAL), true);
                         }
                     }
-                }
-            }
-
-            for(int x = -1; x <= 1; x++) {
-                for(int z = -1; z <= 1; z++) {
-                    Vector3 vector3 = centerSpot.add(x, 0, z);
-                    if(this.getLevel().getBlock(vector3).getId() != Block.AIR) {
-                        this.getLevel().useBreakOn(vector3);
-                    }
-                    this.getLevel().setBlock(vector3, Block.get(Block.END_PORTAL));
+                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_END_PORTAL_SPAWN);
+                    return;
                 }
             }
         }
     }
 
-    private Vector3 searchCenter() {
-        for(int x = -2; x <= 2; x++) {
-            if(x == 0)
-                continue;
-            Block block = this.getLevel().getBlock(this.add(x, 0, 0));
-            Block iBlock = this.getLevel().getBlock(this.add(x * 2, 0, 0));
-            if(this.checkFrame(block)) {
-                if((x == -1 || x == 1) && this.checkFrame(iBlock))
-                    return ((BlockEndPortalFrame) block).searchCenter();
-                for(int z = -4; z <= 4; z++) {
-                    if(z == 0)
-                        continue;
-                    block = this.getLevel().getBlock(this.add(x, 0, z));
-                    if(this.checkFrame(block)) {
-                        return this.add(x / 2, 0, z / 2);
-                    }
+    public boolean isCompletedPortal(Block center) {
+        for (int i = 0; i < 4; i++) {
+            for (int j = -1; j <= 1; j++) {
+                Block block = center.getSide(BlockFace.fromHorizontalIndex(i), 2).getSide(BlockFace.fromHorizontalIndex((i + 1) % 4), j);
+                if (block.getId() != Block.END_PORTAL_FRAME || (block.getDamage() & 0x4) == 0) {
+                    return false;
                 }
             }
         }
-        for(int z = -2; z <= 2; z++) {
-            if(z == 0)
-                continue;
-            Block block = this.getLevel().getBlock(this.add(0, 0, z));
-            Block iBlock = this.getLevel().getBlock(this.add(0, 0, z * 2));
-            if(this.checkFrame(block)) {
-                if((z == -1 || z == 1) && this.checkFrame(iBlock))
-                    return ((BlockEndPortalFrame) block).searchCenter();
-                for(int x = -4; x <= 4; x++) {
-                    if(x == 0)
-                        continue;
-                    block = this.getLevel().getBlock(this.add(x, 0, z));
-                    if(this.checkFrame(block)) {
-                        return this.add(x / 2, 0, z / 2);
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    private boolean checkFrame(Block block) {
-        return block.getId() == this.getId() && (block.getDamage() & 4) == 4;
-    }
-
-    private boolean checkFrame(Block block, int x, int z) {
-        return block.getId() == this.getId() && (block.getDamage() - 4) == (x == -2 ? 3 : x == 2 ? 1 : z == -2 ? 0 : z == 2 ? 2 : -1);
+        return true;
     }
 
     @Override
