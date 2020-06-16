@@ -17,6 +17,14 @@
         <jline.version>3.9.0</jline.version>
     </properties>
 
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub TRPIXEL Apache Maven Packages</name>
+            <url>https://maven.pkg.github.com/TRPIXEL/Nukkit</url>
+        </repository>
+    </distributionManagement>
+
     <repositories>
         <repository>
             <id>nukkitx-repo-release</id>
@@ -39,8 +47,13 @@
             </snapshots>
         </repository>
     </repositories>
-
+    <!--
     <distributionManagement>
+
+        <repository>
+            <id>internal</id>
+            <url>file://${project.build.directory}/mvn-repo</url>
+        </repository>
         <repository>
             <id>releases</id>
             <name>nukkitx-releases</name>
@@ -52,6 +65,7 @@
             <url>https://repo.nukkitx.com/snapshot</url>
         </snapshotRepository>
     </distributionManagement>
+    -->
 
     <dependencies>
         <dependency>
@@ -191,6 +205,13 @@
 
     <build>
         <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.8.1</version>
+                <configuration>
+                    <altDeploymentRepository>internal.repo::default::file://${project.build.directory}/mvn-repo</altDeploymentRepository>
+                </configuration>
+            </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
