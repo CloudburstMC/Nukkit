@@ -1,5 +1,6 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
@@ -156,7 +157,7 @@ public abstract class EntityProjectile extends Entity {
                 }
             }
 
-            if (nearEntity != null) {
+            if (nearEntity != null && (!(nearEntity instanceof Player) || ((Player) nearEntity).getGamemode() != 3)) {
                 movingObjectPosition = MovingObjectPosition.fromEntity(nearEntity);
             }
 

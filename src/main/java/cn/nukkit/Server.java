@@ -16,6 +16,7 @@ import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
+import cn.nukkit.event.plugin.ServerStartupCompleteEvent;
 import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
@@ -538,7 +539,7 @@ public class Server {
                 long seed;
                 String seedString = String.valueOf(this.getProperty("level-seed", System.currentTimeMillis()));
                 try {
-                    seed = Long.valueOf(seedString);
+                    seed = Long.parseLong(seedString);
                 } catch (NumberFormatException e) {
                     seed = seedString.hashCode();
                 }
@@ -582,26 +583,17 @@ public class Server {
     }
 
     public int broadcastMessage(String message, CommandSender[] recipients) {
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
-
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
         return recipients.length;
     }
 
     public int broadcastMessage(String message, Collection<? extends CommandSender> recipients) {
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
-
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
         return recipients.size();
     }
 
     public int broadcastMessage(TextContainer message, Collection<? extends CommandSender> recipients) {
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
-
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
         return recipients.size();
     }
 
@@ -616,9 +608,7 @@ public class Server {
             }
         }
 
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
 
         return recipients.size();
     }
@@ -634,9 +624,7 @@ public class Server {
             }
         }
 
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
 
         return recipients.size();
     }
@@ -884,7 +872,8 @@ public class Server {
         log.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
 
         log.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
-
+        ServerStartupCompleteEvent event = new ServerStartupCompleteEvent();
+        getPluginManager().callEvent(event);
         this.tickProcessor();
         this.forceShutdown();
     }
@@ -1247,7 +1236,8 @@ public class Server {
     }
 
     public String getName() {
-        return "Nukkit";
+        //return "Nukkit";
+        return "Pixie";
     }
 
     public boolean isRunning() {
@@ -2322,6 +2312,7 @@ public class Server {
 
         Entity.registerEntity("EndCrystal", EntityEndCrystal.class);
         Entity.registerEntity("FishingHook", EntityFishingHook.class);
+        Entity.registerEntity("ArmorStand", EntityArmorStand.class);
     }
 
     private void registerBlockEntities() {

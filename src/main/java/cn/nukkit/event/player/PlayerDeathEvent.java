@@ -3,6 +3,7 @@ package cn.nukkit.event.player;
 import cn.nukkit.Player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.TextContainer;
@@ -18,20 +19,26 @@ public class PlayerDeathEvent extends EntityDeathEvent implements Cancellable {
     private boolean keepInventory = false;
     private boolean keepExperience = false;
     private int experience;
-
-    public PlayerDeathEvent(Player player, Item[] drops, TextContainer deathMessage, int experience) {
+    private EntityDamageEvent cause;
+    public PlayerDeathEvent(Player player, Item[] drops, TextContainer deathMessage, int experience, EntityDamageEvent cause) {
         super(player, drops);
         this.deathMessage = deathMessage;
         this.experience = experience;
+        this.cause = cause;
     }
 
-    public PlayerDeathEvent(Player player, Item[] drops, String deathMessage, int experience) {
-        this(player, drops, new TextContainer(deathMessage), experience);
+    public PlayerDeathEvent(Player player, Item[] drops, String deathMessage, int experience, EntityDamageEvent cause) {
+        this(player, drops, new TextContainer(deathMessage), experience, cause);
     }
 
     @Override
     public Player getEntity() {
         return (Player) super.getEntity();
+    }
+
+
+    public EntityDamageEvent getCause() {
+        return cause;
     }
 
     public TextContainer getDeathMessage() {

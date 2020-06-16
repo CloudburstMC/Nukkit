@@ -246,6 +246,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[IRON_HORSE_ARMOR] = ItemHorseArmorIron.class; //417
             list[GOLD_HORSE_ARMOR] = ItemHorseArmorGold.class; //418
             list[DIAMOND_HORSE_ARMOR] = ItemHorseArmorDiamond.class; //419
+            list[ARMOR_STAND] = ItemArmorStand.class;
             //TODO: list[LEAD] = ItemLead.class; //420
             //TODO: list[NAME_TAG] = ItemNameTag.class; //421
             list[PRISMARINE_CRYSTALS] = ItemPrismarineCrystals.class; //422

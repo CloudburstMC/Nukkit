@@ -48,25 +48,62 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
         boolean equip = false;
-        if (this.isHelmet() && player.getInventory().getHelmet().isNull()) {
-            if (player.getInventory().setHelmet(this)) {
-                equip = true;
+        boolean swap = false;
+        if (this.isHelmet()) {
+            if (player.getInventory().getHelmet().isNull()){
+                if (player.getInventory().setHelmet(this)) {
+                    equip = true;
+                }
+            } else {
+                Item item = player.getInventory().getHelmet();
+                if (player.getInventory().setHelmet(this)){
+                    equip = true;
+                    swap = true;
+                    player.getInventory().setItemInHand(item);
+                }
             }
-        } else if (this.isChestplate() && player.getInventory().getChestplate().isNull()) {
-            if (player.getInventory().setChestplate(this)) {
-                equip = true;
+        } else if (this.isChestplate()) {
+            if (player.getInventory().getChestplate().isNull()){
+                if (player.getInventory().setChestplate(this)) {
+                    equip = true;
+                }
+            } else {
+                Item item = player.getInventory().getChestplate();
+                if (player.getInventory().setChestplate(this)){
+                    equip = true;
+                    swap = true;
+                    player.getInventory().setItemInHand(item);
+                }
             }
-        } else if (this.isLeggings() && player.getInventory().getLeggings().isNull()) {
-            if (player.getInventory().setLeggings(this)) {
-                equip = true;
+        } else if (this.isLeggings()) {
+            if (player.getInventory().getLeggings().isNull()){
+                if (player.getInventory().setLeggings(this)) {
+                    equip = true;
+                }
+            } else {
+                Item item = player.getInventory().getLeggings();
+                if (player.getInventory().setLeggings(this)){
+                    equip = true;
+                    swap = true;
+                    player.getInventory().setItemInHand(item);
+                }
             }
-        } else if (this.isBoots() && player.getInventory().getBoots().isNull()) {
-            if (player.getInventory().setBoots(this)) {
-                equip = true;
+        } else if (this.isBoots()) {
+            if (player.getInventory().getBoots().isNull()){
+                if (player.getInventory().setBoots(this)) {
+                    equip = true;
+                }
+            } else {
+                Item item = player.getInventory().getBoots();
+                if (player.getInventory().setBoots(this)){
+                    equip = true;
+                    swap = true;
+                    player.getInventory().setItemInHand(item);
+                }
             }
         }
         if (equip) {
-            player.getInventory().clear(player.getInventory().getHeldItemIndex());
+            if (!swap) player.getInventory().clear(player.getInventory().getHeldItemIndex());
             switch (this.getTier()) {
                 case TIER_CHAIN:
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_CHAIN);

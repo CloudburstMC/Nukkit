@@ -3,6 +3,7 @@ package cn.nukkit;
 import cn.nukkit.AdventureSettings.Type;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.Command;
@@ -873,12 +874,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this,
                 new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.joined", new String[]{
                         this.getDisplayName()
-                })
+                }), pos
         );
 
         this.server.getPluginManager().callEvent(playerJoinEvent);
 
-        if (playerJoinEvent.getJoinMessage().toString().trim().length() > 0) {
+        if (playerJoinEvent.getJoinMessage() != null
+                && playerJoinEvent.getJoinMessage().getText() != null
+                && playerJoinEvent.getJoinMessage().toString().trim().length() > 0) {
             this.server.broadcastMessage(playerJoinEvent.getJoinMessage());
         }
 
@@ -914,7 +917,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.sendExperienceLevel(this.getExperienceLevel());
         }
 
-        this.teleport(pos, null); // Prevent PlayerTeleportEvent during player spawn
+        this.teleport(playerJoinEvent.getPosition(), null); // Prevent PlayerTeleportEvent during player spawn
 
         if (!this.isSpectator()) {
             this.spawnToAll();
@@ -3218,6 +3221,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         entityDamageByEntityEvent.setCancelled();
                                     }
 
+                                    if (entityDamageByEntityEvent.isCancelled()){
+                                        break;
+                                    }
+
                                     if (!target.attack(entityDamageByEntityEvent)) {
                                         if (item.isTool() && this.isSurvival()) {
                                             this.inventory.sendContents(this);
@@ -3327,7 +3334,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (bookEditPacket.text.length() > 256) {
                         return;
                     }
-
                     Item newBook = oldBook.clone();
                     boolean success;
                     switch (bookEditPacket.action) {
@@ -3676,7 +3682,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.loggedIn = false;
 
-            if (ev != null && !Objects.equals(this.username, "") && this.spawned && !Objects.equals(ev.getQuitMessage().toString(), "")) {
+            if (ev != null && ev.getQuitMessage() != null && ev.getQuitMessage().getText() != null && !Objects.equals(this.username, "") && this.spawned && !Objects.equals(ev.getQuitMessage().toString(), "")) {
                 this.server.broadcastMessage(ev.getQuitMessage());
             }
 
@@ -3710,7 +3716,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.chunk = null;
-
         this.server.removePlayer(this);
     }
 
@@ -3887,8 +3892,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
             }
         }
-
-        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(new String[0])), this.expLevel);
+        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(new String[0])), this.expLevel, cause);
         ev.setKeepExperience(this.level.gameRules.getBoolean(GameRule.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());
 
@@ -4079,6 +4083,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     //todo something on performance, lots of exp orbs then lots of packets, could crash client
 
     public void setExperience(int exp, int level) {
+        if (level >= 1000000000){
+            level = 1000000000;
+        }
+        if (exp >= 1000000000){
+            exp = 1000000000;
+        }
+
         this.exp = exp;
         this.expLevel = level;
 
@@ -4134,7 +4145,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        if (!this.isAlive()) {
+        if (!this.isAlive() || source.isCancelled()) {
             return false;
         }
 
@@ -5021,9 +5032,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         .add(new DoubleTag("", y + this.getEyeHeight()))
                         .add(new DoubleTag("", z)))
                 .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", -Math.sin(yaw / 180 + Math.PI) * Math.cos(pitch / 180 * Math.PI)))
-                        .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
-                        .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                        .add(new DoubleTag("", -BukkitMathHelper.sin((float) yaw / 180.0F * 3.1415927F) * BukkitMathHelper.cos((float) pitch / 180.0F * 3.1415927F)))
+                        .add(new DoubleTag("", -BukkitMathHelper.sin((float) pitch / 180.0F * 3.1415927F)))
+                        .add(new DoubleTag("", BukkitMathHelper.cos((float) yaw / 180.0F * 3.1415927F) * BukkitMathHelper.cos((float) pitch / 180.0F * 3.1415927F))))
+                /*
+                                  .add(new DoubleTag("", -Math.sin(yaw / 180 + Math.PI) * Math.cos(pitch / 180 * Math.PI)))
+                                  .add(new DoubleTag("", -Math.sin(pitch / 180 * Math.PI)))
+                                  .add(new DoubleTag("", Math.cos(yaw / 180 * Math.PI) * Math.cos(pitch / 180 * Math.PI))))
+                                  */
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (float) yaw))
                         .add(new FloatTag("", (float) pitch)));
