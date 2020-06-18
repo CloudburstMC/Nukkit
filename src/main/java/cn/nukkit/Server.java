@@ -17,6 +17,7 @@ import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
+import cn.nukkit.event.plugin.ServerStartupCompleteEvent;
 import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
@@ -892,7 +893,8 @@ public class Server {
         log.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
 
         log.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
-
+        ServerStartupCompleteEvent event = new ServerStartupCompleteEvent();
+        getPluginManager().callEvent(event);
         this.tickProcessor();
         this.forceShutdown();
     }
@@ -1254,7 +1256,7 @@ public class Server {
     }
 
     public String getName() {
-        return "Nukkit";
+        return "Pixel";
     }
 
     public boolean isRunning() {
@@ -2328,7 +2330,7 @@ public class Server {
         Entity.registerEntity("MinecartHopper", EntityMinecartHopper.class);
         Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
         Entity.registerEntity("MinecartTnt", EntityMinecartTNT.class);
-
+        Entity.registerEntity("ArmorStand", EntityArmorStand.class);
         Entity.registerEntity("EndCrystal", EntityEndCrystal.class);
         Entity.registerEntity("FishingHook", EntityFishingHook.class);
     }
