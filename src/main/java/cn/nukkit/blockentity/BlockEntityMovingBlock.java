@@ -1,7 +1,11 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -10,10 +14,10 @@ import cn.nukkit.nbt.tag.CompoundTag;
  */
 public class BlockEntityMovingBlock extends BlockEntitySpawnable {
 
-    public Block block;
+    protected String blockString;
+    protected Block block;
 
-    public BlockVector3 piston;
-    public int progress;
+    protected BlockVector3 piston;
 
     public BlockEntityMovingBlock(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -21,8 +25,11 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
 
     @Override
     protected void initBlockEntity() {
-        if (namedTag.contains("movingBlockData") && namedTag.contains("movingBlockId")) {
-            this.block = Block.get(namedTag.getInt("movingBlockId"), namedTag.getInt("movingBlockData"));
+        if (namedTag.contains("movingBlock")) {
+            CompoundTag blockData = namedTag.getCompound("movingBlock");
+
+            this.blockString = blockData.getString("name");
+            this.block = Block.get(blockData.getInt("id"), blockData.getInt("meta"));
         } else {
             this.close();
         }
@@ -30,28 +37,50 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
         if (namedTag.contains("pistonPosX") && namedTag.contains("pistonPosY") && namedTag.contains("pistonPosZ")) {
             this.piston = new BlockVector3(namedTag.getInt("pistonPosX"), namedTag.getInt("pistonPosY"), namedTag.getInt("pistonPosZ"));
         } else {
-            this.close();
+            this.piston = new BlockVector3(0, -1, 0);
         }
 
         super.initBlockEntity();
     }
 
-    public Block getBlock() {
+    public CompoundTag getBlockEntity() {
+        if (this.namedTag.contains("movingEntity")) {
+            return this.namedTag.getCompound("movingEntity");
+        }
+
+        return null;
+    }
+
+    public Block getMovingBlock() {
         return this.block;
+    }
+
+    public String getMovingBlockString() {
+        return this.blockString;
+    }
+
+    public void moveCollidedEntities(BlockEntityPistonArm piston, BlockFace moveDirection) {
+        AxisAlignedBB bb = block.getBoundingBox();
+
+        if (bb == null) {
+            return;
+        }
+
+        bb = bb.getOffsetBoundingBox(
+                this.x + (piston.progress * moveDirection.getXOffset()) - moveDirection.getXOffset(),
+                this.y + (piston.progress * moveDirection.getYOffset()) - moveDirection.getYOffset(),
+                this.z + (piston.progress * moveDirection.getZOffset()) - moveDirection.getZOffset()
+        );
+
+        Entity[] entities = this.level.getCollidingEntities(bb);
+
+        for (Entity entity : entities) {
+            piston.moveEntity(entity, moveDirection);
+        }
     }
 
     @Override
     public boolean isBlockEntityValid() {
-        return true;
-    }
-
-    @Override
-    public CompoundTag getSpawnCompound() {
-        return getDefaultCompound(this, MOVING_BLOCK)
-                .putFloat("movingBlockId", this.block.getId())
-                .putFloat("movingBlockData", this.block.getDamage())
-                .putInt("pistonPosX", this.piston.x)
-                .putInt("pistonPosY", this.piston.y)
-                .putInt("pistonPosZ", this.piston.z);
+        return this.level.getBlockIdAt(getFloorX(), getFloorY(), getFloorZ()) == BlockID.MOVING_BLOCK;
     }
 }

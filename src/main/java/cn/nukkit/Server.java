@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.console.NukkitConsole;
+import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
@@ -16,7 +17,6 @@ import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
-import cn.nukkit.event.plugin.ServerStartupCompleteEvent;
 import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
@@ -157,6 +157,8 @@ public class Server {
     private int maxPlayers;
 
     private boolean autoSave = true;
+
+    private boolean redstoneEnabled = true;
 
     private RCON rcon;
 
@@ -388,6 +390,7 @@ public class Server {
         this.autoTickRateLimit = this.getConfig("level-settings.auto-tick-rate-limit", 20);
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
         this.baseTickRate = this.getConfig("level-settings.base-tick-rate", 1);
+        this.redstoneEnabled = this.getConfig("level-settings.tick-redstone", true);
 
         this.scheduler = new ServerScheduler();
 
@@ -462,6 +465,7 @@ public class Server {
         Effect.init();
         Potion.init();
         Attribute.init();
+        DispenseBehaviorRegister.init();
         GlobalBlockPalette.getOrCreateRuntimeId(0, 0); //Force it to load
 
         // Convert legacy data before plugins get the chance to mess with it.
@@ -539,7 +543,7 @@ public class Server {
                 long seed;
                 String seedString = String.valueOf(this.getProperty("level-seed", System.currentTimeMillis()));
                 try {
-                    seed = Long.parseLong(seedString);
+                    seed = Long.valueOf(seedString);
                 } catch (NumberFormatException e) {
                     seed = seedString.hashCode();
                 }
@@ -583,17 +587,26 @@ public class Server {
     }
 
     public int broadcastMessage(String message, CommandSender[] recipients) {
-        for (CommandSender recipient : recipients) recipient.sendMessage(message);
+        for (CommandSender recipient : recipients) {
+            recipient.sendMessage(message);
+        }
+
         return recipients.length;
     }
 
     public int broadcastMessage(String message, Collection<? extends CommandSender> recipients) {
-        for (CommandSender recipient : recipients) recipient.sendMessage(message);
+        for (CommandSender recipient : recipients) {
+            recipient.sendMessage(message);
+        }
+
         return recipients.size();
     }
 
     public int broadcastMessage(TextContainer message, Collection<? extends CommandSender> recipients) {
-        for (CommandSender recipient : recipients) recipient.sendMessage(message);
+        for (CommandSender recipient : recipients) {
+            recipient.sendMessage(message);
+        }
+
         return recipients.size();
     }
 
@@ -608,7 +621,9 @@ public class Server {
             }
         }
 
-        for (CommandSender recipient : recipients) recipient.sendMessage(message);
+        for (CommandSender recipient : recipients) {
+            recipient.sendMessage(message);
+        }
 
         return recipients.size();
     }
@@ -624,7 +639,9 @@ public class Server {
             }
         }
 
-        for (CommandSender recipient : recipients) recipient.sendMessage(message);
+        for (CommandSender recipient : recipients) {
+            recipient.sendMessage(message);
+        }
 
         return recipients.size();
     }
@@ -738,8 +755,11 @@ public class Server {
         if (!this.isPrimaryThread()) {
             getLogger().warning("Command Dispatched Async: " + commandLine);
             getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
-            // TODO: We should sync the command to the main thread too!
+
+            this.scheduler.scheduleTask(null, () -> dispatchCommand(sender, commandLine));
+            return true;
         }
+
         if (sender == null) {
             throw new ServerException("CommandSender is not valid");
         }
@@ -872,8 +892,7 @@ public class Server {
         log.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
 
         log.info(this.getLanguage().translateString("nukkit.server.startFinished", String.valueOf((double) (System.currentTimeMillis() - Nukkit.START_TIME) / 1000)));
-        ServerStartupCompleteEvent event = new ServerStartupCompleteEvent();
-        getPluginManager().callEvent(event);
+
         this.tickProcessor();
         this.forceShutdown();
     }
@@ -1011,11 +1030,11 @@ public class Server {
         pk.type = PlayerListPacket.TYPE_ADD;
         pk.entries = this.playerList.values().stream()
                 .map(p -> new PlayerListPacket.Entry(
-                p.getUniqueId(),
-                p.getId(),
-                p.getDisplayName(),
-                p.getSkin(),
-                p.getLoginChainData().getXUID()))
+                        p.getUniqueId(),
+                        p.getId(),
+                        p.getDisplayName(),
+                        p.getSkin(),
+                        p.getLoginChainData().getXUID()))
                 .toArray(PlayerListPacket.Entry[]::new);
 
         player.dataPacket(pk);
@@ -1030,7 +1049,6 @@ public class Server {
             /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
                 continue;
             }
-
             client freezes when applying resource packs
             todo: fix*/
 
@@ -1236,8 +1254,7 @@ public class Server {
     }
 
     public String getName() {
-        //return "Nukkit";
-        return "Pixie";
+        return "Nukkit";
     }
 
     public boolean isRunning() {
@@ -1970,12 +1987,9 @@ public class Server {
         this.getPluginManager().callEvent(new LevelLoadEvent(level));
 
         /*this.getLogger().notice(this.getLanguage().translateString("nukkit.level.backgroundGeneration", name));
-
         int centerX = (int) level.getSpawnLocation().getX() >> 4;
         int centerZ = (int) level.getSpawnLocation().getZ() >> 4;
-
         TreeMap<String, Integer> order = new TreeMap<>();
-
         for (int X = -3; X <= 3; ++X) {
             for (int Z = -3; Z <= 3; ++Z) {
                 int distance = X * X + Z * Z;
@@ -1984,16 +1998,13 @@ public class Server {
                 order.put(Level.chunkHash(chunkX, chunkZ), distance);
             }
         }
-
         List<Map.Entry<String, Integer>> sortList = new ArrayList<>(order.entrySet());
-
         Collections.sort(sortList, new Comparator<Map.Entry<String, Integer>>() {
             @Override
             public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
                 return o2.getValue() - o1.getValue();
             }
         });
-
         for (String index : order.keySet()) {
             Chunk.Entry entry = Level.getChunkXZ(index);
             level.populateChunk(entry.chunkX, entry.chunkZ, true);
@@ -2021,6 +2032,14 @@ public class Server {
 
     public boolean isLanguageForced() {
         return forceLanguage;
+    }
+
+    public boolean isRedstoneEnabled() {
+        return redstoneEnabled;
+    }
+
+    public void setRedstoneEnabled(boolean redstoneEnabled) {
+        this.redstoneEnabled = redstoneEnabled;
     }
 
     public Network getNetwork() {
@@ -2312,7 +2331,6 @@ public class Server {
 
         Entity.registerEntity("EndCrystal", EntityEndCrystal.class);
         Entity.registerEntity("FishingHook", EntityFishingHook.class);
-        Entity.registerEntity("ArmorStand", EntityArmorStand.class);
     }
 
     private void registerBlockEntities() {
@@ -2335,6 +2353,9 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
         BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
         BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DISPENSER, BlockEntityDispenser.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DROPPER, BlockEntityDropper.class);
+        BlockEntity.registerBlockEntity(BlockEntity.MOVING_BLOCK, BlockEntityMovingBlock.class);
     }
 
     public boolean isNetherAllowed() {
