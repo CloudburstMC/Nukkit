@@ -3,7 +3,6 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
-import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
@@ -450,7 +449,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     protected final void init(FullChunk chunk, CompoundTag nbt) {
         if ((chunk == null || chunk.getProvider() == null)) {
-            throw new ChunkException("Invalid garbage Chunk given to Entity");
+            throw new ChunkException("Invalid garbage WoolChunk given to Entity");
         }
 
         if (this.initialized) {
@@ -1292,12 +1291,11 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.checkBlockCollision();
 
-        if (this.y <= -16 && this.isAlive()) {
+        if (this.y <= -10 && this.isAlive()) {
             if (this instanceof Player) {
-                Player player = (Player) this;
-                if (player.getGamemode() != 1) this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+                this.attack(new EntityDamageEvent(this, DamageCause.VOID, 20));
             } else {
-                this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+                this.attack(new EntityDamageEvent(this, DamageCause.VOID, 20));
                 hasUpdate = true;
             }
         }
@@ -1579,10 +1577,6 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public boolean canBePushed() {
-        return true;
-    }
-
     public BlockFace getDirection() {
         double rotation = this.yaw % 360;
         if (rotation < 0) {
@@ -1725,10 +1719,6 @@ public abstract class Entity extends Location implements Metadatable {
                 this.setOnFire(8);
             }
         }
-    }
-
-    public void onPushByPiston(BlockEntityPistonArm piston) {
-
     }
 
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {

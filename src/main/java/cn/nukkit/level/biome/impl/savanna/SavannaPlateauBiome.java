@@ -16,4 +16,5 @@ public class SavannaPlateauBiome extends SavannaBiome {
     public String getName() {
         return "Savanna Plateau";
     }
+
 }

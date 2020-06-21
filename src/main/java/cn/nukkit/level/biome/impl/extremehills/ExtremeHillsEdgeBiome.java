@@ -17,4 +17,5 @@ public class ExtremeHillsEdgeBiome extends ExtremeHillsBiome {
     public String getName() {
         return "Extreme Hills Edge";
     }
+
 }

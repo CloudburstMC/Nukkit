@@ -30,4 +30,5 @@ public interface ChunkLoader {
     void onChunkPopulated(FullChunk chunk);
 
     void onBlockChanged(Vector3 block);
+
 }

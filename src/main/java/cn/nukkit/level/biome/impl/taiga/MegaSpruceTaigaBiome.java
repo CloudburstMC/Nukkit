@@ -7,10 +7,11 @@ import cn.nukkit.level.generator.populator.impl.tree.SpruceBigTreePopulator;
  * Nukkit Project
  */
 public class MegaSpruceTaigaBiome extends TaigaBiome {
+
     public MegaSpruceTaigaBiome() {
         super();
 
-        SpruceBigTreePopulator bigTrees = new SpruceBigTreePopulator();
+        final SpruceBigTreePopulator bigTrees = new SpruceBigTreePopulator();
         bigTrees.setBaseAmount(6);
         this.addPopulator(bigTrees);
     }
@@ -19,4 +20,5 @@ public class MegaSpruceTaigaBiome extends TaigaBiome {
     public String getName() {
         return "Mega Spruce Taiga";
     }
+
 }

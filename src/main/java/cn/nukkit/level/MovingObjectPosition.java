@@ -15,7 +15,9 @@ public class MovingObjectPosition {
     public int typeOfHit;
 
     public int blockX;
+
     public int blockY;
+
     public int blockZ;
 
     /**
@@ -28,8 +30,8 @@ public class MovingObjectPosition {
 
     public Entity entityHit;
 
-    public static MovingObjectPosition fromBlock(int x, int y, int z, int side, Vector3 hitVector) {
-        MovingObjectPosition objectPosition = new MovingObjectPosition();
+    public static MovingObjectPosition fromBlock(final int x, final int y, final int z, final int side, final Vector3 hitVector) {
+        final MovingObjectPosition objectPosition = new MovingObjectPosition();
         objectPosition.typeOfHit = 0;
         objectPosition.blockX = x;
         objectPosition.blockY = y;
@@ -38,11 +40,12 @@ public class MovingObjectPosition {
         return objectPosition;
     }
 
-    public static MovingObjectPosition fromEntity(Entity entity) {
-        MovingObjectPosition objectPosition = new MovingObjectPosition();
+    public static MovingObjectPosition fromEntity(final Entity entity) {
+        final MovingObjectPosition objectPosition = new MovingObjectPosition();
         objectPosition.typeOfHit = 1;
         objectPosition.entityHit = entity;
         objectPosition.hitVector = new Vector3(entity.x, entity.y, entity.z);
         return objectPosition;
     }
+
 }

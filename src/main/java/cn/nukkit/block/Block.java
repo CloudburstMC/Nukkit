@@ -179,7 +179,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[DRAGON_EGG] = BlockDragonEgg.class; //122
             list[REDSTONE_LAMP] = BlockRedstoneLamp.class; //123
             list[LIT_REDSTONE_LAMP] = BlockRedstoneLampLit.class; //124
-            list[DROPPER] = BlockDropper.class; //125
+            //TODO: list[DROPPER] = BlockDropper.class; //125
             list[ACTIVATOR_RAIL] = BlockRailActivator.class; //126
             list[COCOA] = BlockCocoa.class; //127
             list[SANDSTONE_STAIRS] = BlockStairsSandstone.class; //128
@@ -255,7 +255,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[PURPUR_BLOCK] = BlockPurpur.class; //201
 
             list[PURPUR_STAIRS] = BlockStairsPurpur.class; //203
-
+            
             list[UNDYED_SHULKER_BOX] = BlockUndyedShulkerBox.class; //205
             list[END_BRICKS] = BlockBricksEndStone.class; //206
 
@@ -296,7 +296,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class; //246
             //list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
 
-            list[MOVING_BLOCK] = BlockMoving.class; //250
+            //TODO: list[PISTON_EXTENSION] = BlockPistonExtension.class; //250
+
             list[OBSERVER] = BlockObserver.class; //251
 
             for (int id = 0; id < 256; id++) {
@@ -487,18 +488,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return true;
     }
 
-    public boolean canBePulled() {
-        return true;
-    }
-
-    public boolean breaksWhenMoved() {
-        return false;
-    }
-
-    public boolean sticksToPiston() {
-        return true;
-    }
-
     public boolean hasComparatorInputOverride() {
         return false;
     }
@@ -664,7 +653,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
                             (this.getToolType() == ItemTool.TYPE_AXE && item.isAxe()) ||
                             (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel())
-            ) {
+                    ) {
                 int tier = item.getTier();
                 switch (tier) {
                     case ItemTool.TIER_WOODEN:
@@ -707,10 +696,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public Block getSide(BlockFace face, int step) {
-        if (step == 0) {
-            return this;
-        }
-
         if (this.isValid()) {
             if (step == 1) {
                 return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());

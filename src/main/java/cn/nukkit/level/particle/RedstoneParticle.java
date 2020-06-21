@@ -7,11 +7,13 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class RedstoneParticle extends GenericParticle {
-    public RedstoneParticle(Vector3 pos) {
+
+    public RedstoneParticle(final Vector3 pos) {
         this(pos, 1);
     }
 
-    public RedstoneParticle(Vector3 pos, int lifetime) {
+    public RedstoneParticle(final Vector3 pos, final int lifetime) {
         super(pos, Particle.TYPE_REDSTONE, lifetime);
     }
+
 }

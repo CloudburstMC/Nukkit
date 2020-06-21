@@ -12,7 +12,7 @@ public class SavannaBiome extends GrassyBiome {
     public SavannaBiome() {
         super();
 
-        SavannaTreePopulator tree = new SavannaTreePopulator(BlockSapling.ACACIA);
+        final SavannaTreePopulator tree = new SavannaTreePopulator(BlockSapling.ACACIA);
         tree.setBaseAmount(1);
         this.addPopulator(tree);
 
@@ -29,4 +29,5 @@ public class SavannaBiome extends GrassyBiome {
     public boolean canRain() {
         return false;
     }
+
 }

@@ -7,7 +7,9 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class WaterDripParticle extends GenericParticle {
-    public WaterDripParticle(Vector3 pos) {
+
+    public WaterDripParticle(final Vector3 pos) {
         super(pos, Particle.TYPE_DRIP_WATER);
     }
+
 }

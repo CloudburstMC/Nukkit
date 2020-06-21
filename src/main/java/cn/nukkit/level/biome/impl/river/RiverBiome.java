@@ -17,4 +17,5 @@ public class RiverBiome extends WateryBiome {
     public String getName() {
         return "River";
     }
+
 }

@@ -10,11 +10,14 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 public class ObjectSavannaTree extends TreeGenerator {
+
     private static final Block TRUNK = Block.get(BlockID.WOOD2, BlockWood2.ACACIA);
+
     private static final Block LEAF = Block.get(BlockID.LEAVES2, BlockLeaves2.ACACIA);
 
-    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {
-        int i = rand.nextBoundedInt(3) + rand.nextBoundedInt(3) + 5;
+    @Override
+    public boolean generate(final ChunkManager level, final NukkitRandom rand, final Vector3 position) {
+        final int i = rand.nextBoundedInt(3) + rand.nextBoundedInt(3) + 5;
         boolean flag = true;
 
         if (position.getY() >= 1 && position.getY() + i + 1 <= 256) {
@@ -29,7 +32,7 @@ public class ObjectSavannaTree extends TreeGenerator {
                     k = 2;
                 }
 
-                Vector3 vector3 = new Vector3();
+                final Vector3 vector3 = new Vector3();
 
                 for (int l = (int) position.getX() - k; l <= position.getX() + k && flag; ++l) {
                     for (int i1 = (int) position.getZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
@@ -49,20 +52,20 @@ public class ObjectSavannaTree extends TreeGenerator {
             if (!flag) {
                 return false;
             } else {
-                Vector3 down = position.down();
-                int block = level.getBlockIdAt(down.getFloorX(), down.getFloorY(), down.getFloorZ());
+                final Vector3 down = position.down();
+                final int block = level.getBlockIdAt(down.getFloorX(), down.getFloorY(), down.getFloorZ());
 
-                if ((block == Block.GRASS || block == Block.DIRT) && position.getY() < 256 - i - 1) {
+                if ((block == BlockID.GRASS || block == BlockID.DIRT) && position.getY() < 256 - i - 1) {
                     this.setDirtAt(level, position.down());
-                    BlockFace face = BlockFace.Plane.HORIZONTAL.random(rand);
-                    int k2 = i - rand.nextBoundedInt(4) - 1;
+                    final BlockFace face = BlockFace.Plane.HORIZONTAL.random(rand);
+                    final int k2 = i - rand.nextBoundedInt(4) - 1;
                     int l2 = 3 - rand.nextBoundedInt(3);
                     int i3 = position.getFloorX();
                     int j1 = position.getFloorZ();
                     int k1 = 0;
 
                     for (int l1 = 0; l1 < i; ++l1) {
-                        int i2 = position.getFloorY() + l1;
+                        final int i2 = position.getFloorY() + l1;
 
                         if (l1 >= k2 && l2 > 0) {
                             i3 += face.getXOffset();
@@ -70,10 +73,10 @@ public class ObjectSavannaTree extends TreeGenerator {
                             --l2;
                         }
 
-                        Vector3 blockpos = new Vector3(i3, i2, j1);
-                        int material = level.getBlockIdAt(blockpos.getFloorX(), blockpos.getFloorY(), blockpos.getFloorZ());
+                        final Vector3 blockpos = new Vector3(i3, i2, j1);
+                        final int material = level.getBlockIdAt(blockpos.getFloorX(), blockpos.getFloorY(), blockpos.getFloorZ());
 
-                        if (material == Block.AIR || material == Block.LEAVES) {
+                        if (material == BlockID.AIR || material == BlockID.LEAVES) {
                             this.placeLogAt(level, blockpos);
                             k1 = i2;
                         }
@@ -103,22 +106,22 @@ public class ObjectSavannaTree extends TreeGenerator {
                     this.placeLeafAt(level, blockpos2.north(2));
                     i3 = position.getFloorX();
                     j1 = position.getFloorZ();
-                    BlockFace face1 = BlockFace.Plane.HORIZONTAL.random(rand);
+                    final BlockFace face1 = BlockFace.Plane.HORIZONTAL.random(rand);
 
                     if (face1 != face) {
-                        int l3 = k2 - rand.nextBoundedInt(2) - 1;
+                        final int l3 = k2 - rand.nextBoundedInt(2) - 1;
                         int k4 = 1 + rand.nextBoundedInt(3);
                         k1 = 0;
 
                         for (int l4 = l3; l4 < i && k4 > 0; --k4) {
                             if (l4 >= 1) {
-                                int j2 = position.getFloorY() + l4;
+                                final int j2 = position.getFloorY() + l4;
                                 i3 += face1.getXOffset();
                                 j1 += face1.getZOffset();
-                                Vector3 blockpos1 = new Vector3(i3, j2, j1);
-                                int material1 = level.getBlockIdAt(blockpos1.getFloorX(), blockpos1.getFloorY(), blockpos1.getFloorZ());
+                                final Vector3 blockpos1 = new Vector3(i3, j2, j1);
+                                final int material1 = level.getBlockIdAt(blockpos1.getFloorX(), blockpos1.getFloorY(), blockpos1.getFloorZ());
 
-                                if (material1 == Block.AIR || material1 == Block.LEAVES) {
+                                if (material1 == BlockID.AIR || material1 == BlockID.LEAVES) {
                                     this.placeLogAt(level, blockpos1);
                                     k1 = j2;
                                 }
@@ -158,15 +161,16 @@ public class ObjectSavannaTree extends TreeGenerator {
         }
     }
 
-    private void placeLogAt(ChunkManager worldIn, Vector3 pos) {
-        this.setBlockAndNotifyAdequately(worldIn, pos, TRUNK);
+    private void placeLogAt(final ChunkManager worldIn, final Vector3 pos) {
+        this.setBlockAndNotifyAdequately(worldIn, pos, ObjectSavannaTree.TRUNK);
     }
 
-    private void placeLeafAt(ChunkManager worldIn, Vector3 pos) {
-        int material = worldIn.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
+    private void placeLeafAt(final ChunkManager worldIn, final Vector3 pos) {
+        final int material = worldIn.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
 
-        if (material == Block.AIR || material == Block.LEAVES) {
-            this.setBlockAndNotifyAdequately(worldIn, pos, LEAF);
+        if (material == BlockID.AIR || material == BlockID.LEAVES) {
+            this.setBlockAndNotifyAdequately(worldIn, pos, ObjectSavannaTree.LEAF);
         }
     }
+
 }

@@ -4,13 +4,15 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
 
 public class NoiseGeneratorOctavesD {
+
     /**
      * Collection of noise generation functions.  Output is combined to produce different octaves of noise.
      */
     private final NoiseGeneratorImprovedD[] generatorCollection;
+
     private final int octaves;
 
-    public NoiseGeneratorOctavesD(NukkitRandom seed, int octavesIn) {
+    public NoiseGeneratorOctavesD(final NukkitRandom seed, final int octavesIn) {
         this.octaves = octavesIn;
         this.generatorCollection = new NoiseGeneratorImprovedD[octavesIn];
 
@@ -23,7 +25,7 @@ public class NoiseGeneratorOctavesD {
      * pars:(par2,3,4=noiseOffset ; so that adjacent noise segments connect) (pars5,6,7=x,y,zArraySize),(pars8,10,12 =
      * x,y,z noiseScale)
      */
-    public double[] generateNoiseOctaves(double[] noiseArray, int xOffset, int yOffset, int zOffset, int xSize, int ySize, int zSize, double xScale, double yScale, double zScale) {
+    public double[] generateNoiseOctaves(double[] noiseArray, final int xOffset, final int yOffset, final int zOffset, final int xSize, final int ySize, final int zSize, final double xScale, final double yScale, final double zScale) {
         if (noiseArray == null) {
             noiseArray = new double[xSize * ySize * zSize];
         } else {
@@ -36,7 +38,7 @@ public class NoiseGeneratorOctavesD {
 
         for (int j = 0; j < this.octaves; ++j) {
             double d0 = (double) xOffset * d3 * xScale;
-            double d1 = (double) yOffset * d3 * yScale;
+            final double d1 = (double) yOffset * d3 * yScale;
             double d2 = (double) zOffset * d3 * zScale;
             long k = MathHelper.floor_double_long(d0);
             long l = MathHelper.floor_double_long(d2);
@@ -56,7 +58,8 @@ public class NoiseGeneratorOctavesD {
     /*
      * Bouncer function to the main one with some default arguments.
      */
-    public double[] generateNoiseOctaves(double[] noiseArray, int xOffset, int zOffset, int xSize, int zSize, double xScale, double zScale, double p_76305_10_) {
+    public double[] generateNoiseOctaves(final double[] noiseArray, final int xOffset, final int zOffset, final int xSize, final int zSize, final double xScale, final double zScale, final double p_76305_10_) {
         return this.generateNoiseOctaves(noiseArray, xOffset, 10, zOffset, xSize, 1, zSize, xScale, 1.0D, zScale);
     }
+
 }

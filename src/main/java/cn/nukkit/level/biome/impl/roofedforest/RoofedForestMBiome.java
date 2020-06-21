@@ -13,4 +13,5 @@ public class RoofedForestMBiome extends RoofedForestBiome {
     public String getName() {
         return "Roofed Forest M";
     }
+
 }

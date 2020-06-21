@@ -2,7 +2,6 @@ package cn.nukkit.nbt.tag;
 
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
-
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -12,145 +11,165 @@ import java.util.StringJoiner;
 
 public class ListTag<T extends Tag> extends Tag {
 
-    private List<T> list = new ArrayList<>();
-
     public byte type;
+
+    private List<T> list = new ArrayList<>();
 
     public ListTag() {
         super("");
     }
 
-    public ListTag(String name) {
+    public ListTag(final String name) {
         super(name);
     }
 
-    @Override
-    void write(NBTOutputStream dos) throws IOException {
-        if (list.size() > 0) type = list.get(0).getId();
-        else type = 1;
-
-        dos.writeByte(type);
-        dos.writeInt(list.size());
-        for (T aList : list) aList.write(dos);
+    public ListTag(final String name, final List<T> list) {
+        super(name);
+        this.setList(list);
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    void load(NBTInputStream dis) throws IOException {
-        type = dis.readByte();
-        int size = dis.readInt();
+    public List<T> getList() {
+        return this.list;
+    }
 
-        list = new ArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            Tag tag = Tag.newTag(type, null);
-            tag.load(dis);
-            tag.setName("");
-            list.add((T) tag);
+    public void setList(final List<T> list) {
+        this.list = list;
+    }
+
+    public ListTag<T> add(final T tag) {
+        this.type = tag.getId();
+        tag.setName("");
+        this.list.add(tag);
+        return this;
+    }
+
+    public ListTag<T> add(final int index, final T tag) {
+        this.type = tag.getId();
+        tag.setName("");
+
+        if (index >= this.list.size()) {
+            this.list.add(index, tag);
+        } else {
+            this.list.set(index, tag);
         }
+        return this;
+    }
+
+    public T get(final int index) {
+        return this.list.get(index);
+    }
+
+    public List<T> getAll() {
+        return new ArrayList<>(this.list);
+    }
+
+    public void setAll(final List<T> tags) {
+        this.list = new ArrayList<>(tags);
+    }
+
+    public void remove(final T tag) {
+        this.list.remove(tag);
+    }
+
+    public void remove(final int index) {
+        this.list.remove(index);
+    }
+
+    public void removeAll(final Collection<T> tags) {
+        this.list.remove(tags);
+    }
+
+    public int size() {
+        return this.list.size();
     }
 
     @Override
     public byte getId() {
-        return TAG_List;
+        return Tag.TAG_List;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
+    public boolean equals(final Object obj) {
+        if (super.equals(obj)) {
+            final ListTag o = (ListTag) obj;
+            if (this.type == o.type) {
+                return this.list.equals(o.list);
+            }
+        }
+        return false;
     }
 
     @Override
     public String toString() {
-        StringJoiner joiner = new StringJoiner(",\n\t");
-        list.forEach(tag -> joiner.add(tag.toString().replace("\n", "\n\t")));
-        return "ListTag '" + this.getName() + "' (" + list.size() + " entries of type " + Tag.getTagName(type) + ") {\n\t" + joiner.toString() + "\n}";
+        final StringJoiner joiner = new StringJoiner(",\n\t");
+        this.list.forEach(tag -> joiner.add(tag.toString().replace("\n", "\n\t")));
+        return "ListTag '" + this.getName() + "' (" + this.list.size() + " entries of type " + Tag.getTagName(this.type) + ") {\n\t" + joiner.toString() + "\n}";
     }
 
-    public void print(String prefix, PrintStream out) {
+    @Override
+    public void print(String prefix, final PrintStream out) {
         super.print(prefix, out);
 
         out.println(prefix + "{");
-        String orgPrefix = prefix;
+        final String orgPrefix = prefix;
         prefix += "   ";
-        for (T aList : list) aList.print(prefix, out);
+        for (final T aList : this.list) {
+            aList.print(prefix, out);
+        }
         out.println(orgPrefix + "}");
     }
 
-    public ListTag<T> add(T tag) {
-        type = tag.getId();
-        tag.setName("");
-        list.add(tag);
-        return this;
-    }
-
-    public ListTag<T> add(int index, T tag) {
-        type = tag.getId();
-        tag.setName("");
-
-        if (index >= list.size()) {
-            list.add(index, tag);
-        } else {
-            list.set(index, tag);
+    @Override
+    public Tag copy() {
+        final ListTag<T> res = new ListTag<>(this.getName());
+        res.type = this.type;
+        for (final T t : this.list) {
+            @SuppressWarnings("unchecked") final T copy = (T) t.copy();
+            res.list.add(copy);
         }
-        return this;
+        return res;
     }
 
     @Override
     public List<Object> parseValue() {
-        List<Object> value = new ArrayList<>(this.list.size());
+        final List<Object> value = new ArrayList<>(this.list.size());
 
-        for (T t : this.list) {
+        for (final T t : this.list) {
             value.add(t.parseValue());
         }
 
         return value;
     }
 
-    public T get(int index) {
-        return list.get(index);
-    }
+    @Override
+    void write(final NBTOutputStream dos) throws IOException {
+        if (this.list.size() > 0) {
+            this.type = this.list.get(0).getId();
+        } else {
+            this.type = 1;
+        }
 
-    public List<T> getAll() {
-        return new ArrayList<>(list);
-    }
-
-    public void setAll(List<T> tags) {
-        this.list = new ArrayList<>(tags);
-    }
-
-    public void remove(T tag) {
-        list.remove(tag);
-    }
-
-    public void remove(int index) {
-        list.remove(index);
-    }
-
-    public void removeAll(Collection<T> tags) {
-        list.remove(tags);
-    }
-
-    public int size() {
-        return list.size();
+        dos.writeByte(this.type);
+        dos.writeInt(this.list.size());
+        for (final T aList : this.list) {
+            aList.write(dos);
+        }
     }
 
     @Override
-    public Tag copy() {
-        ListTag<T> res = new ListTag<>(getName());
-        res.type = type;
-        for (T t : list) {
-            @SuppressWarnings("unchecked")
-            T copy = (T) t.copy();
-            res.list.add(copy);
-        }
-        return res;
-    }
+    @SuppressWarnings("unchecked")
+    void load(final NBTInputStream dis) throws IOException {
+        this.type = dis.readByte();
+        final int size = dis.readInt();
 
-    @SuppressWarnings("rawtypes")
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            ListTag o = (ListTag) obj;
-            if (type == o.type) {
-                return list.equals(o.list);
-            }
+        this.list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            final Tag tag = Tag.newTag(this.type, null);
+            tag.load(dis);
+            tag.setName("");
+            this.list.add((T) tag);
         }
-        return false;
     }
 
 }

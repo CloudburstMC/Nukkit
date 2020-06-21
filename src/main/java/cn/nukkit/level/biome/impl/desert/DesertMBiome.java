@@ -5,6 +5,7 @@ package cn.nukkit.level.biome.impl.desert;
  * Nukkit Project
  */
 public class DesertMBiome extends DesertBiome {
+
     public DesertMBiome() {
         super();
 
@@ -16,4 +17,5 @@ public class DesertMBiome extends DesertBiome {
     public String getName() {
         return "Desert M";
     }
+
 }

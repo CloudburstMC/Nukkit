@@ -7,11 +7,13 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class CriticalParticle extends GenericParticle {
-    public CriticalParticle(Vector3 pos) {
+
+    public CriticalParticle(final Vector3 pos) {
         this(pos, 2);
     }
 
-    public CriticalParticle(Vector3 pos, int scale) {
+    public CriticalParticle(final Vector3 pos, final int scale) {
         super(pos, Particle.TYPE_CRITICAL, scale);
     }
+
 }

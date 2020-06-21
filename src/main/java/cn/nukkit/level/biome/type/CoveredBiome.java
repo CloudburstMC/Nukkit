@@ -1,5 +1,6 @@
 package cn.nukkit.level.biome.type;
 
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.biome.Biome;
 
 /**
@@ -10,6 +11,7 @@ import cn.nukkit.level.biome.Biome;
  * </p>
  */
 public abstract class CoveredBiome extends Biome {
+
     public final Object synchronizeCover = new Object();
 
     /**
@@ -18,7 +20,7 @@ public abstract class CoveredBiome extends Biome {
      * @return cover block
      */
     public int getCoverBlock() {
-        return AIR;
+        return BlockID.AIR;
     }
 
     /**
@@ -30,7 +32,7 @@ public abstract class CoveredBiome extends Biome {
      * @param y y
      * @return surface depth
      */
-    public int getSurfaceDepth(int y) {
+    public int getSurfaceDepth(final int y) {
         return 1;
     }
 
@@ -48,7 +50,7 @@ public abstract class CoveredBiome extends Biome {
      * @param y y
      * @return surface meta
      */
-    public int getSurfaceMeta(int y) {
+    public int getSurfaceMeta(final int y) {
         return 0;
     }
 
@@ -60,7 +62,7 @@ public abstract class CoveredBiome extends Biome {
      * @param y y
      * @return ground depth
      */
-    public int getGroundDepth(int y) {
+    public int getGroundDepth(final int y) {
         return 4;
     }
 
@@ -78,7 +80,7 @@ public abstract class CoveredBiome extends Biome {
      * @param y y
      * @return ground meta
      */
-    public int getGroundMeta(int y) {
+    public int getGroundMeta(final int y) {
         return 0;
     }
 
@@ -88,7 +90,7 @@ public abstract class CoveredBiome extends Biome {
      * @return stone block
      */
     public int getStoneBlock() {
-        return STONE;
+        return BlockID.STONE;
     }
 
     /**
@@ -100,7 +102,8 @@ public abstract class CoveredBiome extends Biome {
      * @param x x
      * @param z z
      */
-    public void preCover(int x, int z) {
+    public void preCover(final int x, final int z) {
 
     }
+
 }

@@ -11,13 +11,13 @@ public class BoneMealParticle extends Particle {
 
     private Vector3 position;
 
-    public BoneMealParticle(Vector3 pos) {
+    public BoneMealParticle(final Vector3 pos) {
         super(pos.x, pos.y, pos.z);
     }
 
     @Override
     public DataPacket[] encode() {
-        LevelEventPacket pk = new LevelEventPacket();
+        final LevelEventPacket pk = new LevelEventPacket();
         pk.evid = LevelEventPacket.EVENT_PARTICLE_BONEMEAL;
         pk.x = (float) this.x;
         pk.y = (float) this.y;
@@ -26,4 +26,5 @@ public class BoneMealParticle extends Particle {
 
         return new DataPacket[]{pk};
     }
+
 }

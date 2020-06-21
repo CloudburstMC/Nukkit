@@ -13,7 +13,6 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.LevelException;
 import cn.nukkit.utils.Utils;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -24,17 +23,34 @@ import java.util.regex.Pattern;
 
 class LevelProviderConverter {
 
-    private LevelProvider provider;
-    private Class<? extends LevelProvider> toClass;
-    private Level level;
-    private String path;
+    private final Level level;
 
-    LevelProviderConverter(Level level, String path) {
+    private final String path;
+
+    private LevelProvider provider;
+
+    private Class<? extends LevelProvider> toClass;
+
+    LevelProviderConverter(final Level level, final String path) {
         this.level = level;
         this.path = path;
     }
 
-    LevelProviderConverter from(LevelProvider provider) {
+    private static int getChunkX(final byte[] key) {
+        return key[3] << 24 |
+            key[2] << 16 |
+            key[1] << 8 |
+            key[0];
+    }
+
+    private static int getChunkZ(final byte[] key) {
+        return key[7] << 24 |
+            key[6] << 16 |
+            key[5] << 8 |
+            key[4];
+    }
+
+    LevelProviderConverter from(final LevelProvider provider) {
         if (!(provider instanceof McRegion) && !(provider instanceof LevelDB)) {
             throw new IllegalArgumentException("From type can be only McRegion or LevelDB");
         }
@@ -42,7 +58,7 @@ class LevelProviderConverter {
         return this;
     }
 
-    LevelProviderConverter to(Class<? extends LevelProvider> toClass) {
+    LevelProviderConverter to(final Class<? extends LevelProvider> toClass) {
         if (toClass != Anvil.class) {
             throw new IllegalArgumentException("To type can be only Anvil");
         }
@@ -51,72 +67,79 @@ class LevelProviderConverter {
     }
 
     LevelProvider perform() throws IOException {
-        new File(path).mkdir();
-        File dat = new File(provider.getPath(), "level.dat.old");
-        new File(provider.getPath(), "level.dat").renameTo(dat);
-        Utils.copyFile(dat, new File(path, "level.dat"));
-        LevelProvider result;
+        new File(this.path).mkdir();
+        final File dat = new File(this.provider.getPath(), "level.dat.old");
+        new File(this.provider.getPath(), "level.dat").renameTo(dat);
+        Utils.copyFile(dat, new File(this.path, "level.dat"));
+        final LevelProvider result;
         try {
-            if (provider instanceof LevelDB) {
-                try (FileInputStream stream = new FileInputStream(path + "level.dat")) {
+            if (this.provider instanceof LevelDB) {
+                try (final FileInputStream stream = new FileInputStream(this.path + "level.dat")) {
                     stream.skip(8);
-                    CompoundTag levelData = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
+                    final CompoundTag levelData = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
                     if (levelData != null) {
-                        NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"));
+                        NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(this.path + "level.dat"));
                     } else {
                         throw new IOException("LevelData can not be null");
                     }
-                } catch (IOException e) {
+                } catch (final IOException e) {
                     throw new LevelException("Invalid level.dat");
                 }
             }
-            result = toClass.getConstructor(Level.class, String.class).newInstance(level, path);
-        } catch (Exception e) {
+            result = this.toClass.getConstructor(Level.class, String.class).newInstance(this.level, this.path);
+        } catch (final Exception e) {
             throw new RuntimeException(e);
         }
-        if (toClass == Anvil.class) {
-            if (provider instanceof McRegion) {
-                new File(path, "region").mkdir();
-                for (File file : new File(provider.getPath() + "region/").listFiles()) {
-                    Matcher m = Pattern.compile("-?\\d+").matcher(file.getName());
-                    int regionX, regionZ;
+        if (this.toClass == Anvil.class) {
+            if (this.provider instanceof McRegion) {
+                new File(this.path, "region").mkdir();
+                for (final File file : new File(this.provider.getPath() + "region/").listFiles()) {
+                    final Matcher m = Pattern.compile("-?\\d+").matcher(file.getName());
+                    final int regionX;
+                    final int regionZ;
                     try {
                         if (m.find()) {
                             regionX = Integer.parseInt(m.group());
-                        } else continue;
+                        } else {
+                            continue;
+                        }
                         if (m.find()) {
                             regionZ = Integer.parseInt(m.group());
-                        } else continue;
-                    } catch (NumberFormatException e) {
+                        } else {
+                            continue;
+                        }
+                    } catch (final NumberFormatException e) {
                         continue;
                     }
-                    RegionLoader region = new RegionLoader(provider, regionX, regionZ);
-                    for (Integer index : region.getLocationIndexes()) {
-                        int chunkX = index & 0x1f;
-                        int chunkZ = index >> 5;
-                        BaseFullChunk old = region.readChunk(chunkX, chunkZ);
-                        if (old == null) continue;
-                        int x = (regionX << 5) | chunkX;
-                        int z = (regionZ << 5) | chunkZ;
-                        FullChunk chunk = new ChunkConverter(result)
-                                .from(old)
-                                .to(Chunk.class)
-                                .perform();
+                    final RegionLoader region = new RegionLoader(this.provider, regionX, regionZ);
+                    for (final Integer index : region.getLocationIndexes()) {
+                        final int chunkX = index & 0x1f;
+                        final int chunkZ = index >> 5;
+                        final BaseFullChunk old = region.readChunk(chunkX, chunkZ);
+                        if (old == null) {
+                            continue;
+                        }
+                        final int x = regionX << 5 | chunkX;
+                        final int z = regionZ << 5 | chunkZ;
+                        final FullChunk chunk = new ChunkConverter(result)
+                            .from(old)
+                            .to(Chunk.class)
+                            .perform();
                         result.saveChunk(x, z, chunk);
                     }
                     region.close();
                 }
             }
-            if (provider instanceof LevelDB) {
-                new File(path, "region").mkdir();
-                for (byte[] key : ((LevelDB) provider).getTerrainKeys()) {
-                    int x = getChunkX(key);
-                    int z = getChunkZ(key);
-                    BaseFullChunk old = ((LevelDB) provider).readChunk(x, z);
-                    FullChunk chunk = new ChunkConverter(result)
-                            .from(old)
-                            .to(Chunk.class)
-                            .perform();
+            if (this.provider instanceof LevelDB) {
+                new File(this.path, "region").mkdir();
+                for (final byte[] key : ((LevelDB) this.provider).getTerrainKeys()) {
+                    final int x = LevelProviderConverter.getChunkX(key);
+                    final int z = LevelProviderConverter.getChunkZ(key);
+                    final BaseFullChunk old = ((LevelDB) this.provider).readChunk(x, z);
+                    final FullChunk chunk = new ChunkConverter(result)
+                        .from(old)
+                        .to(Chunk.class)
+                        .perform();
                     result.saveChunk(x, z, chunk);
                 }
             }
@@ -125,17 +148,4 @@ class LevelProviderConverter {
         return result;
     }
 
-    private static int getChunkX(byte[] key) {
-        return (key[3] << 24) |
-                (key[2] << 16) |
-                (key[1] << 8) |
-                key[0];
-    }
-
-    private static int getChunkZ(byte[] key) {
-        return (key[7] << 24) |
-                (key[6] << 16) |
-                (key[5] << 8) |
-                key[4];
-    }
 }

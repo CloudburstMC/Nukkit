@@ -8,28 +8,43 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 public class BigMushroom extends BasicGenerator {
+
     public static final int NORTH_WEST = 1;
+
     public static final int NORTH = 2;
+
     public static final int NORTH_EAST = 3;
+
     public static final int WEST = 4;
+
     public static final int CENTER = 5;
+
     public static final int EAST = 6;
+
     public static final int SOUTH_WEST = 7;
+
     public static final int SOUTH = 8;
+
     public static final int SOUTH_EAST = 9;
+
     public static final int STEM = 10;
+
     public static final int ALL_INSIDE = 0;
+
     public static final int ALL_OUTSIDE = 14;
+
     public static final int ALL_STEM = 15;
 
     public static final int BROWN = 0;
+
     public static final int RED = 1;
+
     /**
      * The mushroom type. 0 for brown, 1 for red.
      */
-    private int mushroomType;
+    private final int mushroomType;
 
-    public BigMushroom(int mushroomType) {
+    public BigMushroom(final int mushroomType) {
         this.mushroomType = mushroomType;
     }
 
@@ -37,13 +52,14 @@ public class BigMushroom extends BasicGenerator {
         this.mushroomType = -1;
     }
 
-    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {
+    @Override
+    public boolean generate(final ChunkManager level, final NukkitRandom rand, final Vector3 position) {
         int block = this.mushroomType;
         if (block < 0) {
-            block = rand.nextBoolean() ? RED : BROWN;
+            block = rand.nextBoolean() ? BigMushroom.RED : BigMushroom.BROWN;
         }
 
-        Block mushroom = block == 0 ? Block.get(BlockID.BROWN_MUSHROOM_BLOCK) : Block.get(BlockID.RED_MUSHROOM_BLOCK);
+        final Block mushroom = block == 0 ? Block.get(BlockID.BROWN_MUSHROOM_BLOCK) : Block.get(BlockID.RED_MUSHROOM_BLOCK);
 
         int i = rand.nextBoundedInt(3) + 4;
 
@@ -61,15 +77,15 @@ public class BigMushroom extends BasicGenerator {
                     k = 0;
                 }
 
-                Vector3 pos = new Vector3();
+                final Vector3 pos = new Vector3();
 
                 for (int l = position.getFloorX() - k; l <= position.getX() + k && flag; ++l) {
                     for (int i1 = position.getFloorZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
                         if (j >= 0 && j < 256) {
                             pos.setComponents(l, j, i1);
-                            int material = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
+                            final int material = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
 
-                            if (material != Block.AIR && material != Block.LEAVES) {
+                            if (material != BlockID.AIR && material != BlockID.LEAVES) {
                                 flag = false;
                             }
                         } else {
@@ -82,15 +98,15 @@ public class BigMushroom extends BasicGenerator {
             if (!flag) {
                 return false;
             } else {
-                Vector3 pos2 = position.down();
-                int block1 = level.getBlockIdAt(pos2.getFloorX(), pos2.getFloorY(), pos2.getFloorZ());
+                final Vector3 pos2 = position.down();
+                final int block1 = level.getBlockIdAt(pos2.getFloorX(), pos2.getFloorY(), pos2.getFloorZ());
 
-                if (block1 != Block.DIRT && block1 != Block.GRASS && block1 != Block.MYCELIUM) {
+                if (block1 != BlockID.DIRT && block1 != BlockID.GRASS && block1 != BlockID.MYCELIUM) {
                     return false;
                 } else {
                     int k2 = position.getFloorY() + i;
 
-                    if (block == RED) {
+                    if (block == BigMushroom.RED) {
                         k2 = position.getFloorY() + i - 3;
                     }
 
@@ -101,14 +117,14 @@ public class BigMushroom extends BasicGenerator {
                             ++j3;
                         }
 
-                        if (block == BROWN) {
+                        if (block == BigMushroom.BROWN) {
                             j3 = 3;
                         }
 
-                        int k3 = position.getFloorX() - j3;
-                        int l3 = position.getFloorX() + j3;
-                        int j1 = position.getFloorZ() - j3;
-                        int k1 = position.getFloorZ() + j3;
+                        final int k3 = position.getFloorX() - j3;
+                        final int l3 = position.getFloorX() + j3;
+                        final int j1 = position.getFloorZ() - j3;
+                        final int k1 = position.getFloorZ() + j3;
 
                         for (int l1 = k3; l1 <= l3; ++l1) {
                             for (int i2 = j1; i2 <= k1; ++i2) {
@@ -128,50 +144,50 @@ public class BigMushroom extends BasicGenerator {
 
                                 int meta = j2;
 
-                                if (block == BROWN || l2 < position.getY() + i) {
+                                if (block == BigMushroom.BROWN || l2 < position.getY() + i) {
                                     if ((l1 == k3 || l1 == l3) && (i2 == j1 || i2 == k1)) {
                                         continue;
                                     }
 
                                     if (l1 == position.getX() - (j3 - 1) && i2 == j1) {
-                                        meta = NORTH_WEST;
+                                        meta = BigMushroom.NORTH_WEST;
                                     }
 
                                     if (l1 == k3 && i2 == position.getZ() - (j3 - 1)) {
-                                        meta = NORTH_WEST;
+                                        meta = BigMushroom.NORTH_WEST;
                                     }
 
                                     if (l1 == position.getX() + (j3 - 1) && i2 == j1) {
-                                        meta = NORTH_EAST;
+                                        meta = BigMushroom.NORTH_EAST;
                                     }
 
                                     if (l1 == l3 && i2 == position.getZ() - (j3 - 1)) {
-                                        meta = NORTH_EAST;
+                                        meta = BigMushroom.NORTH_EAST;
                                     }
 
                                     if (l1 == position.getX() - (j3 - 1) && i2 == k1) {
-                                        meta = SOUTH_WEST;
+                                        meta = BigMushroom.SOUTH_WEST;
                                     }
 
                                     if (l1 == k3 && i2 == position.getZ() + (j3 - 1)) {
-                                        meta = SOUTH_WEST;
+                                        meta = BigMushroom.SOUTH_WEST;
                                     }
 
                                     if (l1 == position.getX() + (j3 - 1) && i2 == k1) {
-                                        meta = SOUTH_EAST;
+                                        meta = BigMushroom.SOUTH_EAST;
                                     }
 
                                     if (l1 == l3 && i2 == position.getZ() + (j3 - 1)) {
-                                        meta = SOUTH_EAST;
+                                        meta = BigMushroom.SOUTH_EAST;
                                     }
                                 }
 
-                                if (meta == CENTER && l2 < position.getY() + i) {
-                                    meta = ALL_INSIDE;
+                                if (meta == BigMushroom.CENTER && l2 < position.getY() + i) {
+                                    meta = BigMushroom.ALL_INSIDE;
                                 }
 
-                                if (position.getY() >= position.getY() + i - 1 || meta != ALL_INSIDE) {
-                                    Vector3 blockPos = new Vector3(l1, l2, i2);
+                                if (position.getY() >= position.getY() + i - 1 || meta != BigMushroom.ALL_INSIDE) {
+                                    final Vector3 blockPos = new Vector3(l1, l2, i2);
 
                                     if (!Block.solid[level.getBlockIdAt(blockPos.getFloorX(), blockPos.getFloorY(), blockPos.getFloorZ())]) {
                                         mushroom.setDamage(meta);
@@ -183,11 +199,11 @@ public class BigMushroom extends BasicGenerator {
                     }
 
                     for (int i3 = 0; i3 < i; ++i3) {
-                        Vector3 pos = position.up(i3);
-                        int id = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
+                        final Vector3 pos = position.up(i3);
+                        final int id = level.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
 
                         if (!Block.solid[id]) {
-                            mushroom.setDamage(STEM);
+                            mushroom.setDamage(BigMushroom.STEM);
                             this.setBlockAndNotifyAdequately(level, pos, mushroom);
                         }
                     }
@@ -199,4 +215,5 @@ public class BigMushroom extends BasicGenerator {
             return false;
         }
     }
+
 }

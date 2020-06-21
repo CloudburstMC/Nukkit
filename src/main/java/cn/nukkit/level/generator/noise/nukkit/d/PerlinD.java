@@ -7,11 +7,12 @@ import cn.nukkit.math.NukkitRandom;
  * Nukkit Project
  */
 public class PerlinD extends NoiseD {
-    public PerlinD(NukkitRandom random, double octaves, double persistence) {
+
+    public PerlinD(final NukkitRandom random, final double octaves, final double persistence) {
         this(random, octaves, persistence, 1);
     }
 
-    public PerlinD(NukkitRandom random, double octaves, double persistence, double expansion) {
+    public PerlinD(final NukkitRandom random, final double octaves, final double persistence, final double expansion) {
         this.octaves = octaves;
         this.persistence = persistence;
         this.expansion = expansion;
@@ -23,8 +24,8 @@ public class PerlinD extends NoiseD {
             this.perm[i] = random.nextBoundedInt(256);
         }
         for (int i = 0; i < 256; ++i) {
-            int pos = random.nextBoundedInt(256 - i) + i;
-            int old = this.perm[i];
+            final int pos = random.nextBoundedInt(256 - i) + i;
+            final int old = this.perm[i];
             this.perm[i] = this.perm[pos];
             this.perm[pos] = old;
             this.perm[i + 256] = this.perm[i];
@@ -32,7 +33,7 @@ public class PerlinD extends NoiseD {
     }
 
     @Override
-    public double getNoise2D(double x, double y) {
+    public double getNoise2D(final double x, final double y) {
         return this.getNoise3D(x, y, 0);
     }
 
@@ -42,13 +43,13 @@ public class PerlinD extends NoiseD {
         y += this.offsetY;
         z += this.offsetZ;
 
-        int floorX = (int) x;
-        int floorY = (int) y;
-        int floorZ = (int) z;
+        final int floorX = (int) x;
+        final int floorY = (int) y;
+        final int floorZ = (int) z;
 
-        int X = floorX & 0xFF;
-        int Y = floorY & 0xFF;
-        int Z = floorZ & 0xFF;
+        final int X = floorX & 0xFF;
+        final int Y = floorY & 0xFF;
+        final int Z = floorZ & 0xFF;
 
         x -= floorX;
         y -= floorY;
@@ -58,35 +59,36 @@ public class PerlinD extends NoiseD {
         //fX = fade(x);
         //fY = fade(y);
         //fZ = fade(z);
-        double fX = x * x * x * (x * (x * 6 - 15) + 10);
-        double fY = y * y * y * (y * (y * 6 - 15) + 10);
-        double fZ = z * z * z * (z * (z * 6 - 15) + 10);
+        final double fX = x * x * x * (x * (x * 6 - 15) + 10);
+        final double fY = y * y * y * (y * (y * 6 - 15) + 10);
+        final double fZ = z * z * z * (z * (z * 6 - 15) + 10);
 
         //Cube corners
-        int A = this.perm[X] + Y;
-        int B = this.perm[X + 1] + Y;
+        final int A = this.perm[X] + Y;
+        final int B = this.perm[X + 1] + Y;
 
-        int AA = this.perm[A] + Z;
-        int AB = this.perm[A + 1] + Z;
-        int BA = this.perm[B] + Z;
-        int BB = this.perm[B + 1] + Z;
+        final int AA = this.perm[A] + Z;
+        final int AB = this.perm[A + 1] + Z;
+        final int BA = this.perm[B] + Z;
+        final int BB = this.perm[B + 1] + Z;
 
-        double AA1 = grad(this.perm[AA], x, y, z);
-        double BA1 = grad(this.perm[BA], x - 1, y, z);
-        double AB1 = grad(this.perm[AB], x, y - 1, z);
-        double BB1 = grad(this.perm[BB], x - 1, y - 1, z);
-        double AA2 = grad(this.perm[AA + 1], x, y, z - 1);
-        double BA2 = grad(this.perm[BA + 1], x - 1, y, z - 1);
-        double AB2 = grad(this.perm[AB + 1], x, y - 1, z - 1);
-        double BB2 = grad(this.perm[BB + 1], x - 1, y - 1, z - 1);
+        final double AA1 = NoiseD.grad(this.perm[AA], x, y, z);
+        final double BA1 = NoiseD.grad(this.perm[BA], x - 1, y, z);
+        final double AB1 = NoiseD.grad(this.perm[AB], x, y - 1, z);
+        final double BB1 = NoiseD.grad(this.perm[BB], x - 1, y - 1, z);
+        final double AA2 = NoiseD.grad(this.perm[AA + 1], x, y, z - 1);
+        final double BA2 = NoiseD.grad(this.perm[BA + 1], x - 1, y, z - 1);
+        final double AB2 = NoiseD.grad(this.perm[AB + 1], x, y - 1, z - 1);
+        final double BB2 = NoiseD.grad(this.perm[BB + 1], x - 1, y - 1, z - 1);
 
-        double xLerp11 = AA1 + fX * (BA1 - AA1);
+        final double xLerp11 = AA1 + fX * (BA1 - AA1);
 
-        double zLerp1 = xLerp11 + fY * (AB1 + fX * (BB1 - AB1) - xLerp11);
+        final double zLerp1 = xLerp11 + fY * (AB1 + fX * (BB1 - AB1) - xLerp11);
 
-        double xLerp21 = AA2 + fX * (BA2 - AA2);
+        final double xLerp21 = AA2 + fX * (BA2 - AA2);
 
         return zLerp1 + fZ * (xLerp21 + fY * (AB2 + fX * (BB2 - AB2) - xLerp21) - zLerp1);
 
     }
+
 }

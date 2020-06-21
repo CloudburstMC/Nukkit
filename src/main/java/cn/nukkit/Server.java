@@ -4,7 +4,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.console.NukkitConsole;
-import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
@@ -38,10 +37,12 @@ import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.format.leveldb.LevelDB;
 import cn.nukkit.level.format.mcregion.McRegion;
+import cn.nukkit.level.format.wool.WoolFormat;
 import cn.nukkit.level.generator.Flat;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.Nether;
 import cn.nukkit.level.generator.Normal;
+import cn.nukkit.level.generator.Void;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
@@ -158,8 +159,6 @@ public class Server {
     private int maxPlayers;
 
     private boolean autoSave = true;
-
-    private boolean redstoneEnabled = true;
 
     private RCON rcon;
 
@@ -391,7 +390,6 @@ public class Server {
         this.autoTickRateLimit = this.getConfig("level-settings.auto-tick-rate-limit", 20);
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
         this.baseTickRate = this.getConfig("level-settings.base-tick-rate", 1);
-        this.redstoneEnabled = this.getConfig("level-settings.tick-redstone", true);
 
         this.scheduler = new ServerScheduler();
 
@@ -466,7 +464,6 @@ public class Server {
         Effect.init();
         Potion.init();
         Attribute.init();
-        DispenseBehaviorRegister.init();
         GlobalBlockPalette.getOrCreateRuntimeId(0, 0); //Force it to load
 
         // Convert legacy data before plugins get the chance to mess with it.
@@ -499,11 +496,13 @@ public class Server {
         LevelProviderManager.addProvider(this, Anvil.class);
         LevelProviderManager.addProvider(this, McRegion.class);
         LevelProviderManager.addProvider(this, LevelDB.class);
+        LevelProviderManager.addProvider(this, WoolFormat.class);
 
         Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
         Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
         Generator.addGenerator(Normal.class, "default", Generator.TYPE_INFINITE);
         Generator.addGenerator(Nether.class, "nether", Generator.TYPE_NETHER);
+        Generator.addGenerator(Void.class, "void", Generator.TYPE_VOID);
         //todo: add old generator and hell generator
 
         for (String name : this.getConfig("worlds", new HashMap<String, Object>()).keySet()) {
@@ -544,7 +543,7 @@ public class Server {
                 long seed;
                 String seedString = String.valueOf(this.getProperty("level-seed", System.currentTimeMillis()));
                 try {
-                    seed = Long.valueOf(seedString);
+                    seed = Long.parseLong(seedString);
                 } catch (NumberFormatException e) {
                     seed = seedString.hashCode();
                 }
@@ -588,26 +587,17 @@ public class Server {
     }
 
     public int broadcastMessage(String message, CommandSender[] recipients) {
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
-
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
         return recipients.length;
     }
 
     public int broadcastMessage(String message, Collection<? extends CommandSender> recipients) {
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
-
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
         return recipients.size();
     }
 
     public int broadcastMessage(TextContainer message, Collection<? extends CommandSender> recipients) {
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
-
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
         return recipients.size();
     }
 
@@ -622,9 +612,7 @@ public class Server {
             }
         }
 
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
 
         return recipients.size();
     }
@@ -640,9 +628,7 @@ public class Server {
             }
         }
 
-        for (CommandSender recipient : recipients) {
-            recipient.sendMessage(message);
-        }
+        for (CommandSender recipient : recipients) recipient.sendMessage(message);
 
         return recipients.size();
     }
@@ -756,11 +742,8 @@ public class Server {
         if (!this.isPrimaryThread()) {
             getLogger().warning("Command Dispatched Async: " + commandLine);
             getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
-
-            this.scheduler.scheduleTask(null, () -> dispatchCommand(sender, commandLine));
-            return true;
+            // TODO: We should sync the command to the main thread too!
         }
-
         if (sender == null) {
             throw new ServerException("CommandSender is not valid");
         }
@@ -1032,11 +1015,11 @@ public class Server {
         pk.type = PlayerListPacket.TYPE_ADD;
         pk.entries = this.playerList.values().stream()
                 .map(p -> new PlayerListPacket.Entry(
-                        p.getUniqueId(),
-                        p.getId(),
-                        p.getDisplayName(),
-                        p.getSkin(),
-                        p.getLoginChainData().getXUID()))
+                p.getUniqueId(),
+                p.getId(),
+                p.getDisplayName(),
+                p.getSkin(),
+                p.getLoginChainData().getXUID()))
                 .toArray(PlayerListPacket.Entry[]::new);
 
         player.dataPacket(pk);
@@ -1051,6 +1034,7 @@ public class Server {
             /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
                 continue;
             }
+
             client freezes when applying resource packs
             todo: fix*/
 
@@ -1256,7 +1240,8 @@ public class Server {
     }
 
     public String getName() {
-        return "Pixel";
+        //return "Nukkit";
+        return "Pixie";
     }
 
     public boolean isRunning() {
@@ -1929,6 +1914,30 @@ public class Server {
         return true;
     }
 
+    public boolean loadWoolLevelFromBytes(String name, byte[] serializedWorld) {
+        if (Objects.equals(name.trim(), "")) {
+            throw new LevelException("Invalid empty level name");
+        }
+
+        Level level;
+        try {
+            level = new Level(this, name, serializedWorld);
+        } catch (Exception e) {
+            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
+            return false;
+        }
+
+        this.levels.put(level.getId(), level);
+
+        level.initLevel();
+
+        this.getPluginManager().callEvent(new LevelLoadEvent(level));
+
+        level.setTickRate(this.baseTickRate);
+
+        return true;
+    }
+
     public boolean generateLevel(String name) {
         return this.generateLevel(name, new java.util.Random().nextLong());
     }
@@ -1989,9 +1998,12 @@ public class Server {
         this.getPluginManager().callEvent(new LevelLoadEvent(level));
 
         /*this.getLogger().notice(this.getLanguage().translateString("nukkit.level.backgroundGeneration", name));
+
         int centerX = (int) level.getSpawnLocation().getX() >> 4;
         int centerZ = (int) level.getSpawnLocation().getZ() >> 4;
+
         TreeMap<String, Integer> order = new TreeMap<>();
+
         for (int X = -3; X <= 3; ++X) {
             for (int Z = -3; Z <= 3; ++Z) {
                 int distance = X * X + Z * Z;
@@ -2000,15 +2012,18 @@ public class Server {
                 order.put(Level.chunkHash(chunkX, chunkZ), distance);
             }
         }
+
         List<Map.Entry<String, Integer>> sortList = new ArrayList<>(order.entrySet());
+
         Collections.sort(sortList, new Comparator<Map.Entry<String, Integer>>() {
             @Override
             public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
                 return o2.getValue() - o1.getValue();
             }
         });
+
         for (String index : order.keySet()) {
-            Chunk.Entry entry = Level.getChunkXZ(index);
+            WoolChunk.Entry entry = Level.getChunkXZ(index);
             level.populateChunk(entry.chunkX, entry.chunkZ, true);
         }*/
         return true;
@@ -2034,14 +2049,6 @@ public class Server {
 
     public boolean isLanguageForced() {
         return forceLanguage;
-    }
-
-    public boolean isRedstoneEnabled() {
-        return redstoneEnabled;
-    }
-
-    public void setRedstoneEnabled(boolean redstoneEnabled) {
-        this.redstoneEnabled = redstoneEnabled;
     }
 
     public Network getNetwork() {
@@ -2330,9 +2337,10 @@ public class Server {
         Entity.registerEntity("MinecartHopper", EntityMinecartHopper.class);
         Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
         Entity.registerEntity("MinecartTnt", EntityMinecartTNT.class);
-        Entity.registerEntity("ArmorStand", EntityArmorStand.class);
+
         Entity.registerEntity("EndCrystal", EntityEndCrystal.class);
         Entity.registerEntity("FishingHook", EntityFishingHook.class);
+        Entity.registerEntity("ArmorStand", EntityArmorStand.class);
     }
 
     private void registerBlockEntities() {
@@ -2355,9 +2363,6 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SHULKER_BOX, BlockEntityShulkerBox.class);
         BlockEntity.registerBlockEntity(BlockEntity.BANNER, BlockEntityBanner.class);
         BlockEntity.registerBlockEntity(BlockEntity.MUSIC, BlockEntityMusic.class);
-        BlockEntity.registerBlockEntity(BlockEntity.DISPENSER, BlockEntityDispenser.class);
-        BlockEntity.registerBlockEntity(BlockEntity.DROPPER, BlockEntityDropper.class);
-        BlockEntity.registerBlockEntity(BlockEntity.MOVING_BLOCK, BlockEntityMovingBlock.class);
     }
 
     public boolean isNetherAllowed() {

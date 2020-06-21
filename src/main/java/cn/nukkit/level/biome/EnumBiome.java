@@ -67,7 +67,7 @@ public enum EnumBiome {
     STONE_BEACH(25, new StoneBeachBiome()),
     COLD_BEACH(26, new ColdBeachBiome()),
     BIRCH_FOREST(27, new ForestBiome(ForestBiome.TYPE_BIRCH)),
-    BIRCH_FOREST_HILLS(28, new ForestHillsBiome(ForestHillsBiome.TYPE_BIRCH)),
+    BIRCH_FOREST_HILLS(28, new ForestHillsBiome(ForestBiome.TYPE_BIRCH)),
     ROOFED_FOREST(29, new RoofedForestBiome()),
     COLD_TAIGA(30, new ColdTaigaBiome()),
     COLD_TAIGA_HILLS(31, new ColdTaigaHillsBiome()),
@@ -103,9 +103,10 @@ public enum EnumBiome {
     MESA_PLATEAU_M(167, new MesaPlateauMBiome());
 
     public final int id;
+
     public final Biome biome;
 
-    EnumBiome(int id, Biome biome) {
+    EnumBiome(final int id, final Biome biome) {
         Biome.register(id, biome);
         this.id = id;
         this.biome = biome;
@@ -118,7 +119,7 @@ public enum EnumBiome {
      * @return biome
      */
     @Deprecated
-    public static Biome getBiome(int id) {
+    public static Biome getBiome(final int id) {
         return Biome.getBiome(id);
     }
 
@@ -129,7 +130,7 @@ public enum EnumBiome {
      * @return biome
      */
     @Deprecated
-    public static Biome getBiome(String name) {
+    public static Biome getBiome(final String name) {
         return Biome.getBiome(name);
     }
 }

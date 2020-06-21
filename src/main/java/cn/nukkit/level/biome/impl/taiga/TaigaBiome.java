@@ -9,10 +9,11 @@ import cn.nukkit.level.generator.populator.impl.PopulatorTree;
  * Nukkit Project
  */
 public class TaigaBiome extends GrassyBiome {
+
     public TaigaBiome() {
         super();
 
-        PopulatorTree trees = new PopulatorTree(BlockSapling.SPRUCE);
+        final PopulatorTree trees = new PopulatorTree(BlockSapling.SPRUCE);
         trees.setBaseAmount(10);
         this.addPopulator(trees);
 
@@ -24,4 +25,5 @@ public class TaigaBiome extends GrassyBiome {
     public String getName() {
         return "Taiga";
     }
+
 }

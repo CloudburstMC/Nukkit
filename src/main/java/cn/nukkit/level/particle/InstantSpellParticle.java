@@ -8,22 +8,23 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.level.particle in project nukkit .
  */
 public class InstantSpellParticle extends SpellParticle {
+
     protected int data;
 
-    public InstantSpellParticle(Vector3 pos) {
+    public InstantSpellParticle(final Vector3 pos) {
         this(pos, 0);
     }
 
-    public InstantSpellParticle(Vector3 pos, int data) {
+    public InstantSpellParticle(final Vector3 pos, final int data) {
         super(pos, data);
     }
 
-    public InstantSpellParticle(Vector3 pos, BlockColor blockColor) {
+    public InstantSpellParticle(final Vector3 pos, final BlockColor blockColor) {
         //alpha is ignored
         this(pos, blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());
     }
 
-    public InstantSpellParticle(Vector3 pos, int r, int g, int b) {
+    public InstantSpellParticle(final Vector3 pos, final int r, final int g, final int b) {
         //this 0x01 is the only difference between instant spell and non-instant one
         super(pos, r, g, b, 0x01);
     }

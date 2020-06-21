@@ -6,10 +6,11 @@ import cn.nukkit.level.generator.populator.impl.tree.JungleFloorPopulator;
  * @author DaPorkchop_
  */
 public class JungleMBiome extends JungleBiome {
+
     public JungleMBiome() {
         super();
 
-        JungleFloorPopulator floor = new JungleFloorPopulator();
+        final JungleFloorPopulator floor = new JungleFloorPopulator();
         floor.setBaseAmount(10);
         floor.setRandomAmount(5);
         this.addPopulator(floor);
@@ -22,4 +23,5 @@ public class JungleMBiome extends JungleBiome {
     public String getName() {
         return "Jungle M";
     }
+
 }

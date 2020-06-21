@@ -5,11 +5,13 @@ package cn.nukkit.level.format.leveldb.key;
  * Nukkit Project
  */
 public class TicksKey extends BaseKey {
-    protected TicksKey(int chunkX, int chunkZ) {
-        super(chunkX, chunkZ, DATA_TICKS);
+
+    protected TicksKey(final int chunkX, final int chunkZ) {
+        super(chunkX, chunkZ, BaseKey.DATA_TICKS);
     }
 
-    public static TicksKey create(int chunkX, int chunkZ) {
+    public static TicksKey create(final int chunkX, final int chunkZ) {
         return new TicksKey(chunkX, chunkZ);
     }
+
 }

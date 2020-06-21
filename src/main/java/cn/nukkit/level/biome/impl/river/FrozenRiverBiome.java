@@ -7,10 +7,11 @@ import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
  * Nukkit Project
  */
 public class FrozenRiverBiome extends RiverBiome {
+
     public FrozenRiverBiome() {
         super();
 
-        WaterIcePopulator ice = new WaterIcePopulator();
+        final WaterIcePopulator ice = new WaterIcePopulator();
         this.addPopulator(ice);
     }
 
@@ -28,4 +29,5 @@ public class FrozenRiverBiome extends RiverBiome {
     public boolean canRain() {
         return false;
     }
+
 }

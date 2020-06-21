@@ -9,12 +9,14 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 public class ObjectJungleBigTree extends HugeTreesGenerator {
-    public ObjectJungleBigTree(int baseHeightIn, int extraRandomHeight, Block woodMetadata, Block leavesMetadata) {
+
+    public ObjectJungleBigTree(final int baseHeightIn, final int extraRandomHeight, final Block woodMetadata, final Block leavesMetadata) {
         super(baseHeightIn, extraRandomHeight, woodMetadata, leavesMetadata);
     }
 
-    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {
-        int height = this.getHeight(rand);
+    @Override
+    public boolean generate(final ChunkManager level, final NukkitRandom rand, final Vector3 position) {
+        final int height = this.getHeight(rand);
 
         if (!this.ensureGrowable(level, rand, position, height)) {
             return false;
@@ -22,7 +24,7 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
             this.createCrown(level, position.up(height), 2);
 
             for (int j = (int) position.getY() + height - 2 - rand.nextBoundedInt(4); j > position.getY() + height / 2; j -= 2 + rand.nextBoundedInt(4)) {
-                float f = rand.nextFloat() * ((float) Math.PI * 2F);
+                final float f = rand.nextFloat() * ((float) Math.PI * 2F);
                 int k = (int) (position.getX() + (0.5F + MathHelper.cos(f) * 4.0F));
                 int l = (int) (position.getZ() + (0.5F + MathHelper.sin(f) * 4.0F));
 
@@ -32,16 +34,16 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
                     this.setBlockAndNotifyAdequately(level, new BlockVector3(k, j - 3 + i1 / 2, l), this.woodMetadata);
                 }
 
-                int j2 = 1 + rand.nextBoundedInt(2);
+                final int j2 = 1 + rand.nextBoundedInt(2);
 
                 for (int k1 = j - j2; k1 <= j; ++k1) {
-                    int l1 = k1 - j;
+                    final int l1 = k1 - j;
                     this.growLeavesLayer(level, new Vector3(k, k1, l), 1 - l1);
                 }
             }
 
             for (int i2 = 0; i2 < height; ++i2) {
-                Vector3 blockpos = position.up(i2);
+                final Vector3 blockpos = position.up(i2);
 
                 if (this.canGrowInto(level.getBlockIdAt((int) blockpos.x, (int) blockpos.y, (int) blockpos.z))) {
                     this.setBlockAndNotifyAdequately(level, blockpos, this.woodMetadata);
@@ -53,7 +55,7 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
                 }
 
                 if (i2 < height - 1) {
-                    Vector3 blockpos1 = blockpos.east();
+                    final Vector3 blockpos1 = blockpos.east();
 
                     if (this.canGrowInto(level.getBlockIdAt((int) blockpos1.x, (int) blockpos1.y, (int) blockpos1.z))) {
                         this.setBlockAndNotifyAdequately(level, blockpos1, this.woodMetadata);
@@ -64,7 +66,7 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
                         }
                     }
 
-                    Vector3 blockpos2 = blockpos.south().east();
+                    final Vector3 blockpos2 = blockpos.south().east();
 
                     if (this.canGrowInto(level.getBlockIdAt((int) blockpos2.x, (int) blockpos2.y, (int) blockpos2.z))) {
                         this.setBlockAndNotifyAdequately(level, blockpos2, this.woodMetadata);
@@ -75,7 +77,7 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
                         }
                     }
 
-                    Vector3 blockpos3 = blockpos.south();
+                    final Vector3 blockpos3 = blockpos.south();
 
                     if (this.canGrowInto(level.getBlockIdAt((int) blockpos3.x, (int) blockpos3.y, (int) blockpos3.z))) {
                         this.setBlockAndNotifyAdequately(level, blockpos3, this.woodMetadata);
@@ -92,15 +94,16 @@ public class ObjectJungleBigTree extends HugeTreesGenerator {
         }
     }
 
-    private void placeVine(ChunkManager level, NukkitRandom random, Vector3 pos, int meta) {
+    private void placeVine(final ChunkManager level, final NukkitRandom random, final Vector3 pos, final int meta) {
         if (random.nextBoundedInt(3) > 0 && level.getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z) == 0) {
             this.setBlockAndNotifyAdequately(level, pos, Block.get(BlockID.VINE, meta));
         }
     }
 
-    private void createCrown(ChunkManager level, Vector3 pos, int i1) {
+    private void createCrown(final ChunkManager level, final Vector3 pos, final int i1) {
         for (int j = -2; j <= 0; ++j) {
             this.growLeavesLayerStrict(level, pos.up(j), i1 + 1 - j);
         }
     }
+
 }

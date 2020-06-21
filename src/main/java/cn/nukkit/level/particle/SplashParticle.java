@@ -7,7 +7,9 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class SplashParticle extends GenericParticle {
-    public SplashParticle(Vector3 pos) {
+
+    public SplashParticle(final Vector3 pos) {
         super(pos, Particle.TYPE_WATER_SPLASH);
     }
+
 }

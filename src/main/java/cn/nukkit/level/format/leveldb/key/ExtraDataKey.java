@@ -5,11 +5,13 @@ package cn.nukkit.level.format.leveldb.key;
  * Nukkit Project
  */
 public class ExtraDataKey extends BaseKey {
-    protected ExtraDataKey(int chunkX, int chunkZ) {
-        super(chunkX, chunkZ, DATA_EXTRA_DATA);
+
+    protected ExtraDataKey(final int chunkX, final int chunkZ) {
+        super(chunkX, chunkZ, BaseKey.DATA_EXTRA_DATA);
     }
 
-    public static ExtraDataKey create(int chunkX, int chunkZ) {
+    public static ExtraDataKey create(final int chunkX, final int chunkZ) {
         return new ExtraDataKey(chunkX, chunkZ);
     }
+
 }

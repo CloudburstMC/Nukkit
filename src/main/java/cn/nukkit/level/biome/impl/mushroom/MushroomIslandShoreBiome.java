@@ -4,6 +4,7 @@ package cn.nukkit.level.biome.impl.mushroom;
  * @author DaPorkchop_
  */
 public class MushroomIslandShoreBiome extends MushroomIslandBiome {
+
     public MushroomIslandShoreBiome() {
         super();
 
@@ -15,4 +16,5 @@ public class MushroomIslandShoreBiome extends MushroomIslandBiome {
     public String getName() {
         return "Mushroom Island Shore";
     }
+
 }

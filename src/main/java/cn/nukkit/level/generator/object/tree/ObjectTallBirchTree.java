@@ -10,8 +10,9 @@ import cn.nukkit.math.NukkitRandom;
 public class ObjectTallBirchTree extends ObjectBirchTree {
 
     @Override
-    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
+    public void placeObject(final ChunkManager level, final int x, final int y, final int z, final NukkitRandom random) {
         this.treeHeight = random.nextBoundedInt(3) + 10;
         super.placeObject(level, x, y, z, random);
     }
+
 }

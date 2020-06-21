@@ -14,8 +14,8 @@ public interface ChunkManager {
 
     void setBlockIdAt(int x, int y, int z, int id);
 
-    default void setBlockAt(int x, int y, int z, int id) {
-        setBlockAt(x, y, z, id, 0);
+    default void setBlockAt(final int x, final int y, final int z, final int id) {
+        this.setBlockAt(x, y, z, id, 0);
     }
 
     void setBlockAt(int x, int y, int z, int id, int data);
@@ -31,4 +31,5 @@ public interface ChunkManager {
     void setChunk(int chunkX, int chunkZ, BaseFullChunk chunk);
 
     long getSeed();
+
 }

@@ -5,11 +5,12 @@ package cn.nukkit.level.biome.impl.forest;
  * Nukkit Project
  */
 public class ForestHillsBiome extends ForestBiome {
+
     public ForestHillsBiome() {
-        this(TYPE_NORMAL);
+        this(ForestBiome.TYPE_NORMAL);
     }
 
-    public ForestHillsBiome(int type) {
+    public ForestHillsBiome(final int type) {
         super(type);
 
         this.setBaseHeight(0.45f);
@@ -19,12 +20,13 @@ public class ForestHillsBiome extends ForestBiome {
     @Override
     public String getName() {
         switch (this.type) {
-            case TYPE_BIRCH:
+            case ForestBiome.TYPE_BIRCH:
                 return "Birch Forest Hills";
-            case TYPE_BIRCH_TALL:
+            case ForestBiome.TYPE_BIRCH_TALL:
                 return "Birch Forest Hills M";
             default:
                 return "Forest Hills";
         }
     }
+
 }

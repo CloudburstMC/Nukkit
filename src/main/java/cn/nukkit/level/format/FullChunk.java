@@ -15,16 +15,16 @@ public interface FullChunk extends Cloneable {
 
     int getX();
 
-    int getZ();
-
-    default void setPosition(int x, int z) {
-        setX(x);
-        setZ(z);
-    }
-
     void setX(int x);
 
+    int getZ();
+
     void setZ(int z);
+
+    default void setPosition(final int x, final int z) {
+        this.setX(x);
+        this.setZ(z);
+    }
 
     long getIndex();
 
@@ -36,13 +36,13 @@ public interface FullChunk extends Cloneable {
 
     Block getAndSetBlock(int x, int y, int z, Block block);
 
-    default boolean setFullBlockId(int x, int y, int z, int fullId) {
-        return setBlock(x, y, z, fullId >> 4, fullId & 0xF);
+    default boolean setFullBlockId(final int x, final int y, final int z, final int fullId) {
+        return this.setBlock(x, y, z, fullId >> 4, fullId & 0xF);
     }
 
-    boolean setBlock(int x, int y, int z, int  blockId);
+    boolean setBlock(int x, int y, int z, int blockId);
 
-    boolean setBlock(int x, int y, int z, int  blockId, int  meta);
+    boolean setBlock(int x, int y, int z, int blockId, int meta);
 
     int getBlockId(int x, int y, int z);
 
@@ -80,31 +80,31 @@ public interface FullChunk extends Cloneable {
 
     void setBiomeId(int x, int z, byte biomeId);
 
-    default void setBiomeId(int x, int z, int biomeId)  {
-        setBiomeId(x, z, (byte) biomeId);
+    default void setBiomeId(final int x, final int z, final int biomeId) {
+        this.setBiomeId(x, z, (byte) biomeId);
     }
 
-    default void setBiome(int x, int z, Biome biome) {
-        setBiomeId(x, z, (byte) biome.getId());
+    default void setBiome(final int x, final int z, final Biome biome) {
+        this.setBiomeId(x, z, (byte) biome.getId());
     }
 
     boolean isLightPopulated();
 
-    void setLightPopulated();
-
     void setLightPopulated(boolean value);
+
+    void setLightPopulated();
 
     boolean isPopulated();
 
-    void setPopulated();
-
     void setPopulated(boolean value);
+
+    void setPopulated();
 
     boolean isGenerated();
 
-    void setGenerated();
-
     void setGenerated(boolean value);
+
+    void setGenerated();
 
     void addEntity(Entity entity);
 
@@ -157,4 +157,5 @@ public interface FullChunk extends Cloneable {
     void setChanged();
 
     void setChanged(boolean changed);
+
 }

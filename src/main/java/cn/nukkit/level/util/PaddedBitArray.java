@@ -2,7 +2,6 @@ package cn.nukkit.level.util;
 
 import cn.nukkit.math.MathHelper;
 import com.google.common.base.Preconditions;
-
 import java.util.Arrays;
 
 public class PaddedBitArray implements BitArray {
@@ -22,35 +21,35 @@ public class PaddedBitArray implements BitArray {
      */
     private final int size;
 
-    PaddedBitArray(BitArrayVersion version, int size, int[] words) {
+    PaddedBitArray(final BitArrayVersion version, final int size, final int[] words) {
         this.size = size;
         this.version = version;
         this.words = words;
-        int expectedWordsLength = MathHelper.ceil((float) size / version.entriesPerWord);
+        final int expectedWordsLength = MathHelper.ceil((float) size / version.entriesPerWord);
         if (words.length != expectedWordsLength) {
             throw new IllegalArgumentException("Invalid length given for storage, got: " + words.length +
-                    " but expected: " + expectedWordsLength);
+                " but expected: " + expectedWordsLength);
         }
     }
 
     @Override
-    public void set(int index, int value) {
+    public void set(final int index, final int value) {
         Preconditions.checkElementIndex(index, this.size);
         Preconditions.checkArgument(value >= 0 && value <= this.version.maxEntryValue,
-                "Max value: %s. Received value", this.version.maxEntryValue, value);
-        int arrayIndex = index / this.version.entriesPerWord;
-        int offset = (index % this.version.entriesPerWord) * this.version.bits;
+            "Max value: %s. Received value", this.version.maxEntryValue, value);
+        final int arrayIndex = index / this.version.entriesPerWord;
+        final int offset = index % this.version.entriesPerWord * this.version.bits;
 
         this.words[arrayIndex] = this.words[arrayIndex] & ~(this.version.maxEntryValue << offset) | (value & this.version.maxEntryValue) << offset;
     }
 
     @Override
-    public int get(int index) {
+    public int get(final int index) {
         Preconditions.checkElementIndex(index, this.size);
-        int arrayIndex = index / this.version.entriesPerWord;
-        int offset = (index % this.version.entriesPerWord) * this.version.bits;
+        final int arrayIndex = index / this.version.entriesPerWord;
+        final int offset = index % this.version.entriesPerWord * this.version.bits;
 
-        return (this.words[arrayIndex] >>> offset) & this.version.maxEntryValue;
+        return this.words[arrayIndex] >>> offset & this.version.maxEntryValue;
     }
 
     @Override
@@ -72,4 +71,5 @@ public class PaddedBitArray implements BitArray {
     public BitArray copy() {
         return new PaddedBitArray(this.version, this.size, Arrays.copyOf(this.words, this.words.length));
     }
+
 }

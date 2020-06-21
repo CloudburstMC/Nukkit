@@ -2,39 +2,53 @@ package cn.nukkit.nbt.tag;
 
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
-
 import java.io.IOException;
 
 public class LongTag extends NumberTag<Long> {
+
     public long data;
 
-    @Override
-    public Long getData() {
-        return data;
-    }
-
-    @Override
-    public void setData(Long data) {
-        this.data = data == null ? 0 : data;
-    }
-
-    public LongTag(String name) {
+    public LongTag(final String name) {
         super(name);
     }
 
-    public LongTag(String name, long data) {
+    public LongTag(final String name, final long data) {
         super(name);
         this.data = data;
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
-        dos.writeLong(data);
+    public Long getData() {
+        return this.data;
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-        data = dis.readLong();
+    public void setData(final Long data) {
+        this.data = data == null ? 0 : data;
+    }
+
+    @Override
+    public byte getId() {
+        return Tag.TAG_Long;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (super.equals(obj)) {
+            final LongTag o = (LongTag) obj;
+            return this.data == o.data;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "LongTag " + this.getName() + " (data:" + this.data + ")";
+    }
+
+    @Override
+    public Tag copy() {
+        return new LongTag(this.getName(), this.data);
     }
 
     @Override
@@ -43,27 +57,13 @@ public class LongTag extends NumberTag<Long> {
     }
 
     @Override
-    public byte getId() {
-        return TAG_Long;
+    void write(final NBTOutputStream dos) throws IOException {
+        dos.writeLong(this.data);
     }
 
     @Override
-    public String toString() {
-        return "LongTag " + this.getName() + " (data:" + data + ")";
-    }
-
-    @Override
-    public Tag copy() {
-        return new LongTag(getName(), data);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            LongTag o = (LongTag) obj;
-            return data == o.data;
-        }
-        return false;
+    void load(final NBTInputStream dis) throws IOException {
+        this.data = dis.readLong();
     }
 
 }

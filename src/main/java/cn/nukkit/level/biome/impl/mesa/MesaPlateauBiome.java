@@ -4,6 +4,7 @@ package cn.nukkit.level.biome.impl.mesa;
  * @author DaPorkchop_
  */
 public class MesaPlateauBiome extends MesaBiome {
+
     public MesaPlateauBiome() {
         super();
 
@@ -17,4 +18,5 @@ public class MesaPlateauBiome extends MesaBiome {
     public String getName() {
         return "Mesa Plateau";
     }
+
 }

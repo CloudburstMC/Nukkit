@@ -11,18 +11,18 @@ public class PunchBlockParticle extends Particle {
 
     protected final int data;
 
-    public PunchBlockParticle(Vector3 pos, Block block, BlockFace face) {
+    public PunchBlockParticle(final Vector3 pos, final Block block, final BlockFace face) {
         this(pos, block.getId(), block.getDamage(), face);
     }
 
-    public PunchBlockParticle(Vector3 pos, int blockId, int blockDamage, BlockFace face) {
+    public PunchBlockParticle(final Vector3 pos, final int blockId, final int blockDamage, final BlockFace face) {
         super(pos.x, pos.y, pos.z);
-        this.data = GlobalBlockPalette.getOrCreateRuntimeId(blockId, blockDamage) | (face.getIndex() << 24);
+        this.data = GlobalBlockPalette.getOrCreateRuntimeId(blockId, blockDamage) | face.getIndex() << 24;
     }
 
     @Override
     public DataPacket[] encode() {
-        LevelEventPacket pk = new LevelEventPacket();
+        final LevelEventPacket pk = new LevelEventPacket();
         pk.evid = LevelEventPacket.EVENT_PARTICLE_PUNCH_BLOCK;
         pk.x = (float) this.x;
         pk.y = (float) this.y;
@@ -31,4 +31,5 @@ public class PunchBlockParticle extends Particle {
 
         return new DataPacket[]{pk};
     }
+
 }

@@ -7,7 +7,9 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class LavaParticle extends GenericParticle {
-    public LavaParticle(Vector3 pos) {
+
+    public LavaParticle(final Vector3 pos) {
         super(pos, Particle.TYPE_LAVA);
     }
+
 }

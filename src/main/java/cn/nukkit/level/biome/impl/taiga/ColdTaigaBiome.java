@@ -1,5 +1,6 @@
 package cn.nukkit.level.biome.impl.taiga;
 
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
 
 /**
@@ -7,10 +8,11 @@ import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
  * Nukkit Project
  */
 public class ColdTaigaBiome extends TaigaBiome {
+
     public ColdTaigaBiome() {
         super();
 
-        WaterIcePopulator ice = new WaterIcePopulator();
+        final WaterIcePopulator ice = new WaterIcePopulator();
         this.addPopulator(ice);
 
         this.setBaseHeight(0.2f);
@@ -24,7 +26,7 @@ public class ColdTaigaBiome extends TaigaBiome {
 
     @Override
     public int getCoverBlock() {
-        return SNOW_LAYER;
+        return BlockID.SNOW_LAYER;
     }
 
     @Override
@@ -36,4 +38,5 @@ public class ColdTaigaBiome extends TaigaBiome {
     public boolean canRain() {
         return false;
     }
+
 }

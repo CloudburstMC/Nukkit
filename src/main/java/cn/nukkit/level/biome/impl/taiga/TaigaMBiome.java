@@ -6,6 +6,7 @@ package cn.nukkit.level.biome.impl.taiga;
  */
 //porktodo: this should be flat-ish in most places, and upheavals should be steep
 public class TaigaMBiome extends TaigaBiome {
+
     public TaigaMBiome() {
         super();
 
@@ -17,4 +18,5 @@ public class TaigaMBiome extends TaigaBiome {
     public String getName() {
         return "Taiga M";
     }
+
 }

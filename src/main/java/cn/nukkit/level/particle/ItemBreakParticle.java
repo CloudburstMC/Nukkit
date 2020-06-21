@@ -8,7 +8,9 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class ItemBreakParticle extends GenericParticle {
-    public ItemBreakParticle(Vector3 pos, Item item) {
-        super(pos, Particle.TYPE_ITEM_BREAK, (item.getId() << 16) | item.getDamage());
+
+    public ItemBreakParticle(final Vector3 pos, final Item item) {
+        super(pos, Particle.TYPE_ITEM_BREAK, item.getId() << 16 | item.getDamage());
     }
+
 }

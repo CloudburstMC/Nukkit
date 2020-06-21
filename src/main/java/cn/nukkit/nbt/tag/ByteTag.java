@@ -2,49 +2,43 @@ package cn.nukkit.nbt.tag;
 
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
-
 import java.io.IOException;
 
 public class ByteTag extends NumberTag<Integer> {
+
     public int data;
 
-    @Override
-    public Integer getData() {
-        return data;
-    }
-
-    @Override
-    public void setData(Integer data) {
-        this.data = data == null ? 0 : data;
-    }
-
-    public ByteTag(String name) {
+    public ByteTag(final String name) {
         super(name);
     }
 
-    public ByteTag(String name, int data) {
+    public ByteTag(final String name, final int data) {
         super(name);
         this.data = data;
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
-        dos.writeByte(data);
+    public Integer getData() {
+        return this.data;
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-        data = dis.readByte();
+    public void setData(final Integer data) {
+        this.data = data == null ? 0 : data;
     }
 
     @Override
     public byte getId() {
-        return TAG_Byte;
+        return Tag.TAG_Byte;
     }
 
     @Override
-    public Integer parseValue() {
-        return this.data;
+    public boolean equals(final Object obj) {
+        if (super.equals(obj)) {
+            final ByteTag byteTag = (ByteTag) obj;
+            return this.data == byteTag.data;
+        }
+        return false;
     }
 
     @Override
@@ -57,16 +51,23 @@ public class ByteTag extends NumberTag<Integer> {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            ByteTag byteTag = (ByteTag) obj;
-            return data == byteTag.data;
-        }
-        return false;
+    public Tag copy() {
+        return new ByteTag(this.getName(), this.data);
     }
 
     @Override
-    public Tag copy() {
-        return new ByteTag(getName(), data);
+    public Integer parseValue() {
+        return this.data;
     }
+
+    @Override
+    void write(final NBTOutputStream dos) throws IOException {
+        dos.writeByte(this.data);
+    }
+
+    @Override
+    void load(final NBTInputStream dis) throws IOException {
+        this.data = dis.readByte();
+    }
+
 }

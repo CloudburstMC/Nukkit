@@ -9,26 +9,29 @@ import cn.nukkit.level.generator.populator.impl.PopulatorTree;
  * Nukkit Project
  */
 public class ForestBiome extends GrassyBiome {
+
     public static final int TYPE_NORMAL = 0;
+
     public static final int TYPE_BIRCH = 1;
+
     public static final int TYPE_BIRCH_TALL = 2;
 
     public final int type;
 
     public ForestBiome() {
-        this(TYPE_NORMAL);
+        this(ForestBiome.TYPE_NORMAL);
     }
 
-    public ForestBiome(int type) {
+    public ForestBiome(final int type) {
         super();
 
         this.type = type;
 
-        PopulatorTree trees = new PopulatorTree(type == TYPE_BIRCH_TALL ? BlockSapling.BIRCH_TALL : BlockSapling.BIRCH);
-        trees.setBaseAmount(type == TYPE_NORMAL ? 3 : 6);
+        PopulatorTree trees = new PopulatorTree(type == ForestBiome.TYPE_BIRCH_TALL ? BlockSapling.BIRCH_TALL : BlockSapling.BIRCH);
+        trees.setBaseAmount(type == ForestBiome.TYPE_NORMAL ? 3 : 6);
         this.addPopulator(trees);
 
-        if (type == TYPE_NORMAL) {
+        if (type == ForestBiome.TYPE_NORMAL) {
             //normal forest biomes have both oak and birch trees
             trees = new PopulatorTree(BlockSapling.OAK);
             trees.setBaseAmount(3);
@@ -39,12 +42,13 @@ public class ForestBiome extends GrassyBiome {
     @Override
     public String getName() {
         switch (this.type) {
-            case TYPE_BIRCH:
+            case ForestBiome.TYPE_BIRCH:
                 return "Birch Forest";
-            case TYPE_BIRCH_TALL:
+            case ForestBiome.TYPE_BIRCH_TALL:
                 return "Birch Forest M";
             default:
                 return "Forest";
         }
     }
+
 }

@@ -13,4 +13,5 @@ public interface BitArray {
     BitArrayVersion getVersion();
 
     BitArray copy();
+
 }

@@ -27,12 +27,12 @@ public enum GameRule {
 
     private final String name;
 
-    GameRule(String name) {
+    GameRule(final String name) {
         this.name = name;
     }
 
-    public static Optional<GameRule> parseString(String gameRuleString) {
-        for (GameRule gameRule: values()) {
+    public static Optional<GameRule> parseString(final String gameRuleString) {
+        for (final GameRule gameRule : GameRule.values()) {
             if (gameRule.getName().equalsIgnoreCase(gameRuleString)) {
                 return Optional.of(gameRule);
             }
@@ -41,15 +41,15 @@ public enum GameRule {
     }
 
     public static String[] getNames() {
-        String[] stringValues = new String[values().length];
+        final String[] stringValues = new String[GameRule.values().length];
 
-        for (int i = 0; i < values().length; i++) {
-            stringValues[i] = values()[i].getName();
+        for (int i = 0; i < GameRule.values().length; i++) {
+            stringValues[i] = GameRule.values()[i].getName();
         }
         return stringValues;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 }

@@ -28,7 +28,7 @@ public class Network {
 
     public static final byte CHANNEL_NONE = 0;
     public static final byte CHANNEL_PRIORITY = 1; //Priority channel, only to be used when it matters
-    public static final byte CHANNEL_WORLD_CHUNKS = 2; //Chunk sending
+    public static final byte CHANNEL_WORLD_CHUNKS = 2; //WoolChunk sending
     public static final byte CHANNEL_MOVEMENT = 3; //Movement sending
     public static final byte CHANNEL_BLOCKS = 4; //Block updates or explosions
     public static final byte CHANNEL_WORLD_EVENTS = 5; //Entity, level or blockentity entity events

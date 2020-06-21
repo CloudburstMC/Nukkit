@@ -4,6 +4,7 @@ package cn.nukkit.level.biome.impl.jungle;
  * @author DaPorkchop_
  */
 public class JungleHillsBiome extends JungleBiome {
+
     public JungleHillsBiome() {
         super();
 
@@ -15,4 +16,5 @@ public class JungleHillsBiome extends JungleBiome {
     public String getName() {
         return "Jungle Hills";
     }
+
 }

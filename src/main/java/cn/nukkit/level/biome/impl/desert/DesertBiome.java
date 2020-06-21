@@ -9,12 +9,13 @@ import cn.nukkit.level.generator.populator.impl.PopulatorDeadBush;
  * Nukkit Project
  */
 public class DesertBiome extends SandyBiome {
+
     public DesertBiome() {
-        PopulatorCactus cactus = new PopulatorCactus();
+        final PopulatorCactus cactus = new PopulatorCactus();
         cactus.setBaseAmount(2);
         this.addPopulator(cactus);
 
-        PopulatorDeadBush deadbush = new PopulatorDeadBush();
+        final PopulatorDeadBush deadbush = new PopulatorDeadBush();
         deadbush.setBaseAmount(2);
         this.addPopulator(deadbush);
 
@@ -31,4 +32,5 @@ public class DesertBiome extends SandyBiome {
     public boolean canRain() {
         return false;
     }
+
 }

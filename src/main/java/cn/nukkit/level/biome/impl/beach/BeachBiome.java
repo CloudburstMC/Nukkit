@@ -8,8 +8,9 @@ import cn.nukkit.level.generator.populator.impl.PopulatorSugarcane;
  * Nukkit Project
  */
 public class BeachBiome extends SandyBiome {
+
     public BeachBiome() {
-        PopulatorSugarcane sugarcane = new PopulatorSugarcane();
+        final PopulatorSugarcane sugarcane = new PopulatorSugarcane();
         sugarcane.setBaseAmount(0);
         sugarcane.setRandomAmount(3);
         this.addPopulator(sugarcane);
@@ -22,4 +23,5 @@ public class BeachBiome extends SandyBiome {
     public String getName() {
         return "Beach";
     }
+
 }

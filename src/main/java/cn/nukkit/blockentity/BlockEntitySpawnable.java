@@ -26,38 +26,24 @@ public abstract class BlockEntitySpawnable extends BlockEntity {
         this.spawnToAll();
     }
 
-    public CompoundTag getSpawnCompound() {
-        return this.namedTag;
-    }
+    public abstract CompoundTag getSpawnCompound();
 
     public void spawnTo(Player player) {
         if (this.closed) {
             return;
         }
 
-        player.dataPacket(getSpawnPacket());
-    }
-
-    public BlockEntityDataPacket getSpawnPacket() {
-        return getSpawnPacket(null);
-    }
-
-    public BlockEntityDataPacket getSpawnPacket(CompoundTag nbt) {
-        if (nbt == null) {
-            nbt = this.getSpawnCompound();
-        }
-
+        CompoundTag tag = this.getSpawnCompound();
         BlockEntityDataPacket pk = new BlockEntityDataPacket();
         pk.x = (int) this.x;
         pk.y = (int) this.y;
         pk.z = (int) this.z;
         try {
-            pk.namedTag = NBTIO.write(nbt, ByteOrder.LITTLE_ENDIAN, true);
+            pk.namedTag = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        return pk;
+        player.dataPacket(pk);
     }
 
     public void spawnToAll() {

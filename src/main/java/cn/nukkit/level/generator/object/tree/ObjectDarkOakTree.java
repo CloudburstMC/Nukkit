@@ -13,21 +13,23 @@ import cn.nukkit.math.Vector3;
  * Created by CreeperFace on 23. 10. 2016.
  */
 public class ObjectDarkOakTree extends TreeGenerator {
+
     private static final Block DARK_OAK_LOG = Block.get(BlockID.WOOD2, BlockWood2.DARK_OAK);
+
     private static final Block DARK_OAK_LEAVES = Block.get(BlockID.LEAVES2, BlockLeaves2.DARK_OAK);
 
     @Override
-    public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {
-        int i = rand.nextBoundedInt(3) + rand.nextBoundedInt(2) + 6;
-        int j = position.getFloorX();
-        int k = position.getFloorY();
-        int l = position.getFloorZ();
+    public boolean generate(final ChunkManager level, final NukkitRandom rand, final Vector3 position) {
+        final int i = rand.nextBoundedInt(3) + rand.nextBoundedInt(2) + 6;
+        final int j = position.getFloorX();
+        final int k = position.getFloorY();
+        final int l = position.getFloorZ();
 
         if (k >= 1 && k + i + 1 < 256) {
-            Vector3 blockpos = position.down();
-            int block = level.getBlockIdAt(blockpos.getFloorX(), blockpos.getFloorY(), blockpos.getFloorZ());
+            final Vector3 blockpos = position.down();
+            final int block = level.getBlockIdAt(blockpos.getFloorX(), blockpos.getFloorY(), blockpos.getFloorZ());
 
-            if (block != Block.GRASS && block != Block.DIRT) {
+            if (block != BlockID.GRASS && block != BlockID.DIRT) {
                 return false;
             } else if (!this.placeTreeOfHeight(level, position, i)) {
                 return false;
@@ -36,12 +38,12 @@ public class ObjectDarkOakTree extends TreeGenerator {
                 this.setDirtAt(level, blockpos.east());
                 this.setDirtAt(level, blockpos.south());
                 this.setDirtAt(level, blockpos.south().east());
-                BlockFace enumfacing = BlockFace.Plane.HORIZONTAL.random(rand);
-                int i1 = i - rand.nextBoundedInt(4);
+                final BlockFace enumfacing = BlockFace.Plane.HORIZONTAL.random(rand);
+                final int i1 = i - rand.nextBoundedInt(4);
                 int j1 = 2 - rand.nextBoundedInt(3);
                 int k1 = j;
                 int l1 = l;
-                int i2 = k + i - 1;
+                final int i2 = k + i - 1;
 
                 for (int j2 = 0; j2 < i; ++j2) {
                     if (j2 >= i1 && j1 > 0) {
@@ -50,11 +52,11 @@ public class ObjectDarkOakTree extends TreeGenerator {
                         --j1;
                     }
 
-                    int k2 = k + j2;
-                    Vector3 blockpos1 = new Vector3(k1, k2, l1);
-                    int material = level.getBlockIdAt(blockpos1.getFloorX(), blockpos1.getFloorY(), blockpos1.getFloorZ());
+                    final int k2 = k + j2;
+                    final Vector3 blockpos1 = new Vector3(k1, k2, l1);
+                    final int material = level.getBlockIdAt(blockpos1.getFloorX(), blockpos1.getFloorY(), blockpos1.getFloorZ());
 
-                    if (material == Block.AIR || material == Block.LEAVES) {
+                    if (material == BlockID.AIR || material == BlockID.LEAVES) {
                         this.placeLogAt(level, blockpos1);
                         this.placeLogAt(level, blockpos1.east());
                         this.placeLogAt(level, blockpos1.south());
@@ -98,7 +100,7 @@ public class ObjectDarkOakTree extends TreeGenerator {
                 for (int k3 = -1; k3 <= 2; ++k3) {
                     for (int j4 = -1; j4 <= 2; ++j4) {
                         if ((k3 < 0 || k3 > 1 || j4 < 0 || j4 > 1) && rand.nextBoundedInt(3) <= 0) {
-                            int l4 = rand.nextBoundedInt(3) + 2;
+                            final int l4 = rand.nextBoundedInt(3) + 2;
 
                             for (int i5 = 0; i5 < l4; ++i5) {
                                 this.placeLogAt(level, new Vector3(j + k3, i2 - i5 - 1, l + j4));
@@ -128,11 +130,11 @@ public class ObjectDarkOakTree extends TreeGenerator {
         }
     }
 
-    private boolean placeTreeOfHeight(ChunkManager worldIn, Vector3 pos, int height) {
-        int i = pos.getFloorX();
-        int j = pos.getFloorY();
-        int k = pos.getFloorZ();
-        Vector3 blockPos = new Vector3();
+    private boolean placeTreeOfHeight(final ChunkManager worldIn, final Vector3 pos, final int height) {
+        final int i = pos.getFloorX();
+        final int j = pos.getFloorY();
+        final int k = pos.getFloorZ();
+        final Vector3 blockPos = new Vector3();
 
         for (int l = 0; l <= height + 1; ++l) {
             int i1 = 1;
@@ -158,18 +160,19 @@ public class ObjectDarkOakTree extends TreeGenerator {
         return true;
     }
 
-    private void placeLogAt(ChunkManager worldIn, Vector3 pos) {
+    private void placeLogAt(final ChunkManager worldIn, final Vector3 pos) {
         if (this.canGrowInto(worldIn.getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ()))) {
-            this.setBlockAndNotifyAdequately(worldIn, pos, DARK_OAK_LOG);
+            this.setBlockAndNotifyAdequately(worldIn, pos, ObjectDarkOakTree.DARK_OAK_LOG);
         }
     }
 
-    private void placeLeafAt(ChunkManager worldIn, int x, int y, int z) {
-        Vector3 blockpos = new Vector3(x, y, z);
-        int material = worldIn.getBlockIdAt(blockpos.getFloorX(), blockpos.getFloorY(), blockpos.getFloorZ());
+    private void placeLeafAt(final ChunkManager worldIn, final int x, final int y, final int z) {
+        final Vector3 blockpos = new Vector3(x, y, z);
+        final int material = worldIn.getBlockIdAt(blockpos.getFloorX(), blockpos.getFloorY(), blockpos.getFloorZ());
 
-        if (material == Block.AIR) {
-            this.setBlockAndNotifyAdequately(worldIn, blockpos, DARK_OAK_LEAVES);
+        if (material == BlockID.AIR) {
+            this.setBlockAndNotifyAdequately(worldIn, blockpos, ObjectDarkOakTree.DARK_OAK_LEAVES);
         }
     }
+
 }

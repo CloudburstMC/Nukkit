@@ -5,11 +5,13 @@ package cn.nukkit.level.format.leveldb.key;
  * Nukkit Project
  */
 public class FlagsKey extends BaseKey {
-    protected FlagsKey(int chunkX, int chunkZ) {
-        super(chunkX, chunkZ, DATA_FLAGS);
+
+    protected FlagsKey(final int chunkX, final int chunkZ) {
+        super(chunkX, chunkZ, BaseKey.DATA_FLAGS);
     }
 
-    public static FlagsKey create(int chunkX, int chunkZ) {
+    public static FlagsKey create(final int chunkX, final int chunkZ) {
         return new FlagsKey(chunkX, chunkZ);
     }
+
 }

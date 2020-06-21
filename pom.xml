@@ -69,6 +69,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.github.luben</groupId>
+            <artifactId>zstd-jni</artifactId>
+            <version>1.4.4-11</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
             <groupId>com.nukkitx</groupId>
             <artifactId>fastutil-lite</artifactId>
             <version>8.1.1</version>

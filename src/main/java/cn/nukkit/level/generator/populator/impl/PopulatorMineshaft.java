@@ -12,12 +12,12 @@ public class PopulatorMineshaft extends Populator {
      * <p>
      * Nukkit Project
      * </p>
-     *
+     * <p>
      * WIP
      */
 
     @Override
-    public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
+    public void populate(final ChunkManager level, final int chunkX, final int chunkZ, final NukkitRandom random, final FullChunk chunk) {
         // TODO Auto-generated method stub
 
     }

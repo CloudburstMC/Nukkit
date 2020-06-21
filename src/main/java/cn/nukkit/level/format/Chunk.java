@@ -5,6 +5,7 @@ package cn.nukkit.level.format;
  * Nukkit Project
  */
 public interface Chunk extends FullChunk {
+
     byte SECTION_COUNT = 16;
 
     boolean isSectionEmpty(float fY);
@@ -16,12 +17,16 @@ public interface Chunk extends FullChunk {
     ChunkSection[] getSections();
 
     class Entry {
+
         public final int chunkX;
+
         public final int chunkZ;
 
-        public Entry(int chunkX, int chunkZ) {
+        public Entry(final int chunkX, final int chunkZ) {
             this.chunkX = chunkX;
             this.chunkZ = chunkZ;
         }
+
     }
+
 }

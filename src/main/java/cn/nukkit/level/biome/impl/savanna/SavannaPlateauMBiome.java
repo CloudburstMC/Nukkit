@@ -23,4 +23,5 @@ public class SavannaPlateauMBiome extends SavannaPlateauBiome {
     public boolean doesOverhang() {
         return true;
     }
+
 }

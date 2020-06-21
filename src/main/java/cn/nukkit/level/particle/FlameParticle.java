@@ -7,7 +7,9 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class FlameParticle extends GenericParticle {
-    public FlameParticle(Vector3 pos) {
+
+    public FlameParticle(final Vector3 pos) {
         super(pos, Particle.TYPE_FLAME);
     }
+
 }

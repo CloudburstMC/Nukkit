@@ -12,12 +12,14 @@ import cn.nukkit.scheduler.AsyncTask;
  * Nukkit Project
  */
 public class GenerationTask extends AsyncTask {
+
     private final Level level;
+
     public boolean state;
+
     private BaseFullChunk chunk;
 
-
-    public GenerationTask(Level level, BaseFullChunk chunk) {
+    public GenerationTask(final Level level, final BaseFullChunk chunk) {
         this.state = true;
         this.chunk = chunk;
         this.level = level;
@@ -25,20 +27,20 @@ public class GenerationTask extends AsyncTask {
 
     @Override
     public void onRun() {
-        Generator generator = level.getGenerator();
+        final Generator generator = this.level.getGenerator();
         this.state = false;
         if (generator == null) {
             return;
         }
 
-        SimpleChunkManager manager = (SimpleChunkManager) generator.getChunkManager();
+        final SimpleChunkManager manager = (SimpleChunkManager) generator.getChunkManager();
 
         if (manager == null) {
             this.state = false;
             return;
         }
 
-        manager.cleanChunks(level.getSeed());
+        manager.cleanChunks(this.level.getSeed());
         synchronized (manager) {
             try {
                 BaseFullChunk chunk = this.chunk;
@@ -56,28 +58,29 @@ public class GenerationTask extends AsyncTask {
                     }
                 }
                 this.chunk = chunk;
-                state = true;
+                this.state = true;
             } finally {
-                manager.cleanChunks(level.getSeed());
+                manager.cleanChunks(this.level.getSeed());
             }
         }
 
     }
 
     @Override
-    public void onCompletion(Server server) {
-        if (level != null) {
+    public void onCompletion(final Server server) {
+        if (this.level != null) {
             if (!this.state) {
                 return;
             }
 
-            BaseFullChunk chunk = this.chunk;
+            final BaseFullChunk chunk = this.chunk;
 
             if (chunk == null) {
                 return;
             }
 
-            level.generateChunkCallback(chunk.getX(), chunk.getZ(), chunk);
+            this.level.generateChunkCallback(chunk.getX(), chunk.getZ(), chunk);
         }
     }
+
 }

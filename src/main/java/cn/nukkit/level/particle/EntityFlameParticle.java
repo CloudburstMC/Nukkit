@@ -7,7 +7,9 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class EntityFlameParticle extends GenericParticle {
-    public EntityFlameParticle(Vector3 pos) {
+
+    public EntityFlameParticle(final Vector3 pos) {
         super(pos, Particle.TYPE_MOB_FLAME);
     }
+
 }

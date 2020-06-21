@@ -9,10 +9,11 @@ import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
  * This biome does not generate naturally
  */
 public class FrozenOceanBiome extends OceanBiome {
+
     public FrozenOceanBiome() {
         super();
 
-        WaterIcePopulator ice = new WaterIcePopulator();
+        final WaterIcePopulator ice = new WaterIcePopulator();
         this.addPopulator(ice);
     }
 
@@ -30,4 +31,5 @@ public class FrozenOceanBiome extends OceanBiome {
     public boolean canRain() {
         return false;
     }
+
 }

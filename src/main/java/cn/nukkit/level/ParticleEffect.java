@@ -120,7 +120,7 @@ public enum ParticleEffect {
 
     private final String identifier;
 
-    ParticleEffect(String identifier) {
+    ParticleEffect(final String identifier) {
         this.identifier = identifier;
     }
 

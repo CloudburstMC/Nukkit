@@ -598,7 +598,7 @@ public enum Sound {
 
     private final String sound;
 
-    Sound(String sound) {
+    Sound(final String sound) {
         this.sound = sound;
     }
 

@@ -7,11 +7,13 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class SmokeParticle extends GenericParticle {
-    public SmokeParticle(Vector3 pos) {
+
+    public SmokeParticle(final Vector3 pos) {
         this(pos, 0);
     }
 
-    public SmokeParticle(Vector3 pos, int scale) {
+    public SmokeParticle(final Vector3 pos, final int scale) {
         super(pos, Particle.TYPE_SMOKE, scale);
     }
+
 }

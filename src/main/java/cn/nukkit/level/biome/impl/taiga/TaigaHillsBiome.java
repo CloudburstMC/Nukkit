@@ -17,4 +17,5 @@ public class TaigaHillsBiome extends TaigaBiome {
     public String getName() {
         return "Taiga Hills";
     }
+
 }

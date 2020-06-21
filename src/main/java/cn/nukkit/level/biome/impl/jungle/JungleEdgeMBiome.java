@@ -5,6 +5,7 @@ package cn.nukkit.level.biome.impl.jungle;
  */
 //porktodo: this biome has steep cliffs and flat plains
 public class JungleEdgeMBiome extends JungleEdgeBiome {
+
     public JungleEdgeMBiome() {
         super();
     }
@@ -13,4 +14,5 @@ public class JungleEdgeMBiome extends JungleEdgeBiome {
     public String getName() {
         return "Jungle Edge M";
     }
+
 }

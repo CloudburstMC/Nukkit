@@ -15,4 +15,5 @@ public class SwamplandMBiome extends SwampBiome {
     public String getName() {
         return "Swampland M";
     }
+
 }

@@ -9,6 +9,7 @@ import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandDataVersions;
+import cn.nukkit.command.defaults.SayCommand;
 import cn.nukkit.entity.*;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.*;
@@ -837,7 +838,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
         }
-        if (this.chunkLoadCount >= this.spawnThreshold && !this.spawned && this.teleportPosition == null) {
+        if (this.chunkLoadCount >= this.spawnThreshold && !this.spawned/* && this.teleportPosition == null*/) {
             this.doFirstSpawn();
         }
         Timings.playerChunkSendTimer.stopTiming();
@@ -1448,7 +1449,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             revert = true;
         } else {
             if (this.chunk == null || !this.chunk.isGenerated()) {
-                BaseFullChunk chunk = this.level.getChunk((int) newPos.x >> 4, (int) newPos.z >> 4, false);
+                BaseFullChunk chunk = this.level.getChunk((int) newPos.x >> 4, (int) newPos.z >> 4, true);
                 if (chunk == null || !chunk.isGenerated()) {
                     revert = true;
                     this.nextChunkOrderRun = 0;
@@ -1996,7 +1997,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         ListTag<DoubleTag> posList = nbt.getList("Pos", DoubleTag.class);
 
-        super.init(this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true), nbt);
+        try {
+            super.init(this.level.getChunk((int) posList.get(0).data >> 4, (int) posList.get(2).data >> 4, true), nbt);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
 
         if (!this.namedTag.contains("foodLevel")) {
             this.namedTag.putInt("foodLevel", 20);
@@ -2028,8 +2033,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         Level level = this.server.getLevelByName(this.namedTag.getString("SpawnLevel"));
         if(level != null){
-            this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
-        }else{
+            this.spawnPosition = new Position(level.getProvider().getSpawn().x,level.getProvider().getSpawn().y,level.getProvider().getSpawn().z);
+            //this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
+        } else {
             this.spawnPosition = this.level.getSafeSpawn();
         }
 

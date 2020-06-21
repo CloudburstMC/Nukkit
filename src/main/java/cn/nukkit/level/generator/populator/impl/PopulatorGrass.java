@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator.populator.impl;
 
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.helper.PopulatorHelpers;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
@@ -10,13 +11,15 @@ import cn.nukkit.math.NukkitRandom;
  * Nukkit Project
  */
 public class PopulatorGrass extends PopulatorSurfaceBlock {
+
     @Override
-    protected boolean canStay(int x, int y, int z, FullChunk chunk) {
+    protected boolean canStay(final int x, final int y, final int z, final FullChunk chunk) {
         return PopulatorHelpers.canGrassStay(x, y, z, chunk);
     }
 
     @Override
-    protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
-        return (TALL_GRASS << 4) | 1;
+    protected int getBlockId(final int x, final int z, final NukkitRandom random, final FullChunk chunk) {
+        return BlockID.TALL_GRASS << 4 | 1;
     }
+
 }

@@ -6,6 +6,7 @@ package cn.nukkit.level.biome.impl.taiga;
  */
 //porktodo: this biome has very steep cliffs
 public class ColdTaigaMBiome extends ColdTaigaBiome {
+
     public ColdTaigaMBiome() {
         super();
     }
@@ -19,4 +20,5 @@ public class ColdTaigaMBiome extends ColdTaigaBiome {
     public boolean doesOverhang() {
         return true;
     }
+
 }

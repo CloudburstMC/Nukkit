@@ -6,11 +6,14 @@ import java.util.Arrays;
 
 @Deprecated
 public final class BiomePalette {
+
     private int biome;
+
     private BitArray256 encodedData;
+
     private IntPalette palette;
 
-    private BiomePalette(BiomePalette clone) {
+    private BiomePalette(final BiomePalette clone) {
         this.biome = clone.biome;
         if (clone.encodedData != null) {
             this.encodedData = clone.encodedData.clone();
@@ -18,9 +21,9 @@ public final class BiomePalette {
         }
     }
 
-    public BiomePalette(int[] biomeColors) {
+    public BiomePalette(final int[] biomeColors) {
         for (int i = 0; i < 256; i++) {
-            set(i, biomeColors[i]);
+            this.set(i, biomeColors[i]);
         }
     }
 
@@ -28,72 +31,76 @@ public final class BiomePalette {
         this.biome = Integer.MIN_VALUE;
     }
 
-    public int get(int x, int z) {
-        return get(getIndex(x, z));
+    public int get(final int x, final int z) {
+        return this.get(this.getIndex(x, z));
     }
 
-    public synchronized int get(int index) {
-        if (encodedData == null) return biome;
-        return palette.getKey(encodedData.getAt(index));
+    public synchronized int get(final int index) {
+        if (this.encodedData == null) {
+            return this.biome;
+        }
+        return this.palette.getKey(this.encodedData.getAt(index));
     }
 
-    public void set(int x, int z, int value) {
-        set(getIndex(x, z), value);
+    public void set(final int x, final int z, final int value) {
+        this.set(this.getIndex(x, z), value);
     }
 
-    public synchronized void set(int index, int value) {
-        if (encodedData == null) {
-            if (value == biome) return;
-            if (biome == Integer.MIN_VALUE) {
-                biome = value;
+    public synchronized void set(final int index, final int value) {
+        if (this.encodedData == null) {
+            if (value == this.biome) {
+                return;
+            }
+            if (this.biome == Integer.MIN_VALUE) {
+                this.biome = value;
                 return;
             }
             synchronized (this) {
-                palette = new IntPalette();
-                palette.add(biome);
-                palette.add(value);
-                encodedData = new BitArray256(1);
-                if (value < biome) {
-                    Arrays.fill(encodedData.data, -1);
-                    encodedData.setAt(index, 0);
+                this.palette = new IntPalette();
+                this.palette.add(this.biome);
+                this.palette.add(value);
+                this.encodedData = new BitArray256(1);
+                if (value < this.biome) {
+                    Arrays.fill(this.encodedData.data, -1);
+                    this.encodedData.setAt(index, 0);
                 } else {
-                    encodedData.setAt(index, 1);
+                    this.encodedData.setAt(index, 1);
                 }
                 return;
             }
         }
 
-        int encodedValue = palette.getValue(value);
+        final int encodedValue = this.palette.getValue(value);
         if (encodedValue != Integer.MIN_VALUE) {
-            encodedData.setAt(index, encodedValue);
+            this.encodedData.setAt(index, encodedValue);
         } else {
             synchronized (this) {
-                int[] raw = encodedData.toRaw(ThreadCache.intCache256.get());
+                final int[] raw = this.encodedData.toRaw(ThreadCache.intCache256.get());
 
                 // TODO skip remapping of raw data and use grow instead if `remap`
                 // boolean remap = value < palette.getValue(palette.length() - 1);
 
                 for (int i = 0; i < 256; i++) {
-                    raw[i] = palette.getKey(raw[i]);
+                    raw[i] = this.palette.getKey(raw[i]);
                 }
 
-                int oldRaw = raw[4];
+                final int oldRaw = raw[4];
 
                 raw[index] = value;
 
-                palette.add(value);
+                this.palette.add(value);
 
-                int oldBits = MathHelper.log2(palette.length() - 2);
-                int newBits = MathHelper.log2(palette.length() - 1);
+                final int oldBits = MathHelper.log2(this.palette.length() - 2);
+                final int newBits = MathHelper.log2(this.palette.length() - 1);
                 if (oldBits != newBits) {
-                    encodedData = new BitArray256(newBits);
+                    this.encodedData = new BitArray256(newBits);
                 }
 
                 for (int i = 0; i < raw.length; i++) {
-                    raw[i] = palette.getValue(raw[i]);
+                    raw[i] = this.palette.getValue(raw[i]);
                 }
 
-                encodedData.fromRaw(raw);
+                this.encodedData.fromRaw(raw);
             }
         }
 
@@ -101,24 +108,26 @@ public final class BiomePalette {
 
     public synchronized int[] toRaw() {
         int[] buffer = ThreadCache.intCache256.get();
-        if (encodedData == null) {
-            Arrays.fill(buffer, biome);
+        if (this.encodedData == null) {
+            Arrays.fill(buffer, this.biome);
         } else {
             synchronized (this) {
-                buffer = encodedData.toRaw(buffer);
+                buffer = this.encodedData.toRaw(buffer);
                 for (int i = 0; i < 256; i++) {
-                    buffer[i] = palette.getKey(buffer[i]);
+                    buffer[i] = this.palette.getKey(buffer[i]);
                 }
             }
         }
         return buffer;
     }
 
-    public int getIndex(int x, int z) {
-        return (z << 4) | x;
+    public int getIndex(final int x, final int z) {
+        return z << 4 | x;
     }
 
+    @Override
     public synchronized BiomePalette clone() {
         return new BiomePalette(this);
     }
+
 }

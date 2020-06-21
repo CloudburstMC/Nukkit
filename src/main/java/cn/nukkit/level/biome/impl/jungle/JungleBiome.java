@@ -9,18 +9,19 @@ import cn.nukkit.level.generator.populator.impl.tree.JungleTreePopulator;
  * @author DaPorkchop_
  */
 public class JungleBiome extends GrassyBiome {
+
     public JungleBiome() {
         super();
 
-        JungleTreePopulator trees = new JungleTreePopulator();
+        final JungleTreePopulator trees = new JungleTreePopulator();
         trees.setBaseAmount(10);
         this.addPopulator(trees);
 
-        JungleBigTreePopulator bigTrees = new JungleBigTreePopulator();
+        final JungleBigTreePopulator bigTrees = new JungleBigTreePopulator();
         bigTrees.setBaseAmount(6);
         this.addPopulator(bigTrees);
 
-        PopulatorMelon melon = new PopulatorMelon();
+        final PopulatorMelon melon = new PopulatorMelon();
         melon.setBaseAmount(-65);
         melon.setRandomAmount(70);
         this.addPopulator(melon);
@@ -30,4 +31,5 @@ public class JungleBiome extends GrassyBiome {
     public String getName() {
         return "Jungle";
     }
+
 }

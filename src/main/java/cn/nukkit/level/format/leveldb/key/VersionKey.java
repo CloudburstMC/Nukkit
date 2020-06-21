@@ -5,11 +5,13 @@ package cn.nukkit.level.format.leveldb.key;
  * Nukkit Project
  */
 public class VersionKey extends BaseKey {
-    protected VersionKey(int chunkX, int chunkZ) {
-        super(chunkX, chunkZ, DATA_VERSION);
+
+    protected VersionKey(final int chunkX, final int chunkZ) {
+        super(chunkX, chunkZ, BaseKey.DATA_VERSION);
     }
 
-    public static VersionKey create(int chunkX, int chunkZ) {
+    public static VersionKey create(final int chunkX, final int chunkZ) {
         return new VersionKey(chunkX, chunkZ);
     }
+
 }

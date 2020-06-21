@@ -7,7 +7,9 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class SporeParticle extends GenericParticle {
-    public SporeParticle(Vector3 pos) {
+
+    public SporeParticle(final Vector3 pos) {
         super(pos, Particle.TYPE_TOWN_AURA);
     }
+
 }

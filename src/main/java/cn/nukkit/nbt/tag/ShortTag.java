@@ -2,39 +2,53 @@ package cn.nukkit.nbt.tag;
 
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
-
 import java.io.IOException;
 
 public class ShortTag extends NumberTag<Integer> {
+
     public int data;
 
-    @Override
-    public Integer getData() {
-        return data;
-    }
-
-    @Override
-    public void setData(Integer data) {
-        this.data = data == null ? 0 : data;
-    }
-
-    public ShortTag(String name) {
+    public ShortTag(final String name) {
         super(name);
     }
 
-    public ShortTag(String name, int data) {
+    public ShortTag(final String name, final int data) {
         super(name);
         this.data = data;
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
-        dos.writeShort(data);
+    public Integer getData() {
+        return this.data;
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-        data = dis.readShort();
+    public void setData(final Integer data) {
+        this.data = data == null ? 0 : data;
+    }
+
+    @Override
+    public byte getId() {
+        return Tag.TAG_Short;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (super.equals(obj)) {
+            final ShortTag o = (ShortTag) obj;
+            return this.data == o.data;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "" + this.data;
+    }
+
+    @Override
+    public Tag copy() {
+        return new ShortTag(this.getName(), this.data);
     }
 
     @Override
@@ -43,27 +57,13 @@ public class ShortTag extends NumberTag<Integer> {
     }
 
     @Override
-    public byte getId() {
-        return TAG_Short;
+    void write(final NBTOutputStream dos) throws IOException {
+        dos.writeShort(this.data);
     }
 
     @Override
-    public String toString() {
-        return "" + data;
-    }
-
-    @Override
-    public Tag copy() {
-        return new ShortTag(getName(), data);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            ShortTag o = (ShortTag) obj;
-            return data == o.data;
-        }
-        return false;
+    void load(final NBTInputStream dis) throws IOException {
+        this.data = dis.readUnsignedShort();
     }
 
 }

@@ -5,6 +5,7 @@ package cn.nukkit.level.biome.impl.taiga;
  * Nukkit Project
  */
 public class ColdTaigaHillsBiome extends ColdTaigaBiome {
+
     public ColdTaigaHillsBiome() {
         super();
 
@@ -16,4 +17,5 @@ public class ColdTaigaHillsBiome extends ColdTaigaBiome {
     public String getName() {
         return "Cold Taiga Hills";
     }
+
 }

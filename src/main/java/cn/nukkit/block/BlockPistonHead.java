@@ -3,12 +3,11 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.utils.Faceable;
 
 /**
  * @author CreeperFace
  */
-public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
+public class BlockPistonHead extends BlockTransparentMeta {
 
     public BlockPistonHead() {
         this(0);
@@ -46,33 +45,20 @@ public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean onBreak(Item item) {
         this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
-        Block piston = getSide(getBlockFace().getOpposite());
+        Block piston = getSide(getFacing().getOpposite());
 
-        if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getBlockFace() == this.getBlockFace()) {
+        if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getFacing() == this.getFacing()) {
             piston.onBreak(item);
         }
         return true;
     }
 
-    @Override
-    public BlockFace getBlockFace() {
-        BlockFace face = BlockFace.fromIndex(this.getDamage());
-
-        return face.getHorizontalIndex() >= 0 ? face.getOpposite() : face;
+    public BlockFace getFacing() {
+        return BlockFace.fromIndex(this.getDamage()).getOpposite();
     }
 
     @Override
     public boolean canBePushed() {
-        return false;
-    }
-
-    @Override
-    public boolean canBePulled() {
-        return false;
-    }
-
-    @Override
-    public boolean isSolid() {
         return false;
     }
 

@@ -19,4 +19,5 @@ public class PlainsBiome extends GrassyBiome {
     public String getName() {
         return "Plains";
     }
+
 }

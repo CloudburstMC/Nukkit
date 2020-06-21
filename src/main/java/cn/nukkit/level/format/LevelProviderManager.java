@@ -1,7 +1,6 @@
 package cn.nukkit.level.format;
 
 import cn.nukkit.Server;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,23 +9,24 @@ import java.util.Map;
  * Nukkit Project
  */
 public abstract class LevelProviderManager {
+
     protected static final Map<String, Class<? extends LevelProvider>> providers = new HashMap<>();
 
-    public static void addProvider(Server server, Class<? extends LevelProvider> clazz) {
+    public static void addProvider(final Server server, final Class<? extends LevelProvider> clazz) {
         try {
-            providers.put((String) clazz.getMethod("getProviderName").invoke(null), clazz);
-        } catch (Exception e) {
+            LevelProviderManager.providers.put((String) clazz.getMethod("getProviderName").invoke(null), clazz);
+        } catch (final Exception e) {
             Server.getInstance().getLogger().logException(e);
         }
     }
 
-    public static Class<? extends LevelProvider> getProvider(String path) {
-        for (Class<? extends LevelProvider> provider : providers.values()) {
+    public static Class<? extends LevelProvider> getProvider(final String path) {
+        for (final Class<? extends LevelProvider> provider : LevelProviderManager.providers.values()) {
             try {
                 if ((boolean) provider.getMethod("isValid", String.class).invoke(null, path)) {
                     return provider;
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 Server.getInstance().getLogger().logException(e);
             }
         }
@@ -35,7 +35,7 @@ public abstract class LevelProviderManager {
 
     public static Class<? extends LevelProvider> getProviderByName(String name) {
         name = name.trim().toLowerCase();
-        return providers.getOrDefault(name, null);
+        return LevelProviderManager.providers.getOrDefault(name, null);
     }
 
 }

@@ -2,41 +2,50 @@ package cn.nukkit.nbt.tag;
 
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
-
 import java.io.IOException;
 import java.util.Arrays;
 
 public class IntArrayTag extends Tag {
+
     public int[] data;
 
-    public IntArrayTag(String name) {
+    public IntArrayTag(final String name) {
         super(name);
     }
 
-    public IntArrayTag(String name, int[] data) {
+    public IntArrayTag(final String name, final int[] data) {
         super(name);
         this.data = data;
     }
 
-    @Override
-    void write(NBTOutputStream dos) throws IOException {
-        dos.writeInt(data.length);
-        for (int aData : data) {
-            dos.writeInt(aData);
-        }
-    }
-
-    @Override
-    void load(NBTInputStream dis) throws IOException {
-        int length = dis.readInt();
-        data = new int[length];
-        for (int i = 0; i < length; i++) {
-            data[i] = dis.readInt();
-        }
-    }
-
     public int[] getData() {
-        return data;
+        return this.data;
+    }
+
+    @Override
+    public byte getId() {
+        return Tag.TAG_Int_Array;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (super.equals(obj)) {
+            final IntArrayTag intArrayTag = (IntArrayTag) obj;
+            return this.data == null && intArrayTag.data == null || this.data != null && Arrays.equals(this.data, intArrayTag.data);
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "IntArrayTag " + this.getName() + " [" + this.data.length + " bytes]";
+    }
+
+    @Override
+    public Tag copy() {
+        final int[] cp = new int[this.data.length];
+        System.arraycopy(this.data, 0, cp, 0, this.data.length);
+        return new IntArrayTag(this.getName(), cp);
     }
 
     @Override
@@ -45,28 +54,20 @@ public class IntArrayTag extends Tag {
     }
 
     @Override
-    public byte getId() {
-        return TAG_Int_Array;
-    }
-
-    @Override
-    public String toString() {
-        return "IntArrayTag " + this.getName() + " [" + data.length + " bytes]";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (super.equals(obj)) {
-            IntArrayTag intArrayTag = (IntArrayTag) obj;
-            return ((data == null && intArrayTag.data == null) || (data != null && Arrays.equals(data, intArrayTag.data)));
+    void write(final NBTOutputStream dos) throws IOException {
+        dos.writeInt(this.data.length);
+        for (final int aData : this.data) {
+            dos.writeInt(aData);
         }
-        return false;
     }
 
     @Override
-    public Tag copy() {
-        int[] cp = new int[data.length];
-        System.arraycopy(data, 0, cp, 0, data.length);
-        return new IntArrayTag(getName(), cp);
+    void load(final NBTInputStream dis) throws IOException {
+        final int length = dis.readInt();
+        this.data = new int[length];
+        for (int i = 0; i < length; i++) {
+            this.data[i] = dis.readInt();
+        }
     }
+
 }

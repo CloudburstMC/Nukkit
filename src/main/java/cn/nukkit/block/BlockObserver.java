@@ -1,8 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityDropper;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
@@ -50,8 +48,6 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
             this.setDamage(0);
         }
         this.getLevel().setBlock(block, this, true, true);
-        new BlockEntityDropper(this.level.getChunk(getChunkX(), getChunkZ()),
-                BlockEntity.getDefaultCompound(this, BlockEntity.OBSERVER));
         return true;
     }
 
@@ -59,7 +55,6 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
     public boolean canHarvestWithHand() {
         return false;
     }
-
 
     @Override
     public int getToolType() {

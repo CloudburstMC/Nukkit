@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitRandom;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -13,11 +12,13 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 
 public class PopulatorTallSugarcane extends PopulatorSugarcane {
+
     @Override
-    protected void placeBlock(int x, int y, int z, int id, FullChunk chunk, NukkitRandom random) {
-        int height = ThreadLocalRandom.current().nextInt(3) + 1;
-        for (int i = 0; i < height; i++)    {
+    protected void placeBlock(final int x, final int y, final int z, final int id, final FullChunk chunk, final NukkitRandom random) {
+        final int height = ThreadLocalRandom.current().nextInt(3) + 1;
+        for (int i = 0; i < height; i++) {
             chunk.setFullBlockId(x, y + i, z, id);
         }
     }
+
 }

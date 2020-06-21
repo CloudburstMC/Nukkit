@@ -2,7 +2,6 @@ package cn.nukkit.nbt.tag;
 
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
-
 import java.io.IOException;
 
 public class EndTag extends Tag {
@@ -12,16 +11,8 @@ public class EndTag extends Tag {
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
-    }
-
-    @Override
-    void write(NBTOutputStream dos) throws IOException {
-    }
-
-    @Override
     public byte getId() {
-        return TAG_End;
+        return Tag.TAG_End;
     }
 
     @Override
@@ -38,4 +29,13 @@ public class EndTag extends Tag {
     public Object parseValue() {
         return null;
     }
+
+    @Override
+    void write(final NBTOutputStream dos) throws IOException {
+    }
+
+    @Override
+    void load(final NBTInputStream dis) throws IOException {
+    }
+
 }

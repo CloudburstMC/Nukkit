@@ -3,10 +3,12 @@ package cn.nukkit.level.generator.noise.vanilla.f;
 import cn.nukkit.math.NukkitRandom;
 
 public class NoiseGeneratorPerlinF {
+
     private final NoiseGeneratorSimplexF[] noiseLevels;
+
     private final int levels;
 
-    public NoiseGeneratorPerlinF(NukkitRandom p_i45470_1_, int p_i45470_2_) {
+    public NoiseGeneratorPerlinF(final NukkitRandom p_i45470_1_, final int p_i45470_2_) {
         this.levels = p_i45470_2_;
         this.noiseLevels = new NoiseGeneratorSimplexF[p_i45470_2_];
 
@@ -15,7 +17,7 @@ public class NoiseGeneratorPerlinF {
         }
     }
 
-    public float getValue(float p_151601_1_, float p_151601_3_) {
+    public float getValue(final float p_151601_1_, final float p_151601_3_) {
         float d0 = 0.0f;
         float d1 = 1.0f;
 
@@ -27,11 +29,11 @@ public class NoiseGeneratorPerlinF {
         return d0;
     }
 
-    public float[] getRegion(float[] p_151599_1_, float p_151599_2_, float p_151599_4_, int p_151599_6_, int p_151599_7_, float p_151599_8_, float p_151599_10_, float p_151599_12_) {
+    public float[] getRegion(final float[] p_151599_1_, final float p_151599_2_, final float p_151599_4_, final int p_151599_6_, final int p_151599_7_, final float p_151599_8_, final float p_151599_10_, final float p_151599_12_) {
         return this.getRegion(p_151599_1_, p_151599_2_, p_151599_4_, p_151599_6_, p_151599_7_, p_151599_8_, p_151599_10_, p_151599_12_, 0.5f);
     }
 
-    public float[] getRegion(float[] p_151600_1_, float p_151600_2_, float p_151600_4_, int p_151600_6_, int p_151600_7_, float p_151600_8_, float p_151600_10_, float p_151600_12_, float p_151600_14_) {
+    public float[] getRegion(float[] p_151600_1_, final float p_151600_2_, final float p_151600_4_, final int p_151600_6_, final int p_151600_7_, final float p_151600_8_, final float p_151600_10_, final float p_151600_12_, final float p_151600_14_) {
         if (p_151600_1_ != null && p_151600_1_.length >= p_151600_6_ * p_151600_7_) {
             for (int i = 0; i < p_151600_1_.length; ++i) {
                 p_151600_1_[i] = 0.0f;
@@ -51,4 +53,5 @@ public class NoiseGeneratorPerlinF {
 
         return p_151600_1_;
     }
+
 }
