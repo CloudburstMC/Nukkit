@@ -267,7 +267,8 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_STUNNED = 82;
     public static final int DATA_FLAG_ROARING = 83;
     public static final int DATA_FLAG_DELAYED_ATTACK = 84;
-    public static final int DATA_FLAG_IS_AVOIDING_MOBS = 86;
+    public static final int DATA_FLAG_IS_AVOIDING_MOBS = 85;
+    public static final int DATA_FLAG_IS_AVOIDING_BLOCKS = 86;
     public static final int DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK = 87;
     public static final int DATA_FLAG_HIDDEN_WHEN_INVISIBLE = 88;
     public static final int DATA_FLAG_IS_IN_UI = 89;
