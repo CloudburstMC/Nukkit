@@ -337,6 +337,7 @@ public class Server {
         }
 
         ignoredPackets.addAll(getConfig().getStringList("debug.ignored-packets"));
+        ignoredPackets.add("BatchPacket");
 
         log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
