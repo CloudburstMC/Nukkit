@@ -93,6 +93,7 @@ public class StartGamePacket extends DataPacket {
     public GameRules gameRules;
     public boolean bonusChest = false;
     public boolean hasStartWithMapEnabled = false;
+    public boolean trustingPlayers;
     public int permissionLevel = 1;
     public int serverChunkTickRange = 4;
     public boolean hasLockedBehaviorPack = false;
@@ -108,6 +109,7 @@ public class StartGamePacket extends DataPacket {
     public String premiumWorldTemplateId = "";
     public boolean isTrial = false;
     public boolean isMovementServerAuthoritative;
+    public boolean isInventoryServerAuthoritative;
     public long currentTick;
 
     public int enchantmentSeed;
@@ -130,6 +132,8 @@ public class StartGamePacket extends DataPacket {
         this.putLFloat(this.pitch);
 
         this.putVarInt(this.seed);
+        this.putLShort(0x00); // SpawnBiomeType
+        this.putString(""); // UserDefinedBiomeName
         this.putVarInt(this.dimension);
         this.putVarInt(this.generator);
         this.putVarInt(this.worldGamemode);
@@ -139,6 +143,7 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.dayCycleStopTime);
         this.putVarInt(this.eduEditionOffer);
         this.putBoolean(this.hasEduFeaturesEnabled);
+        this.putString(""); // UnknownString0
         this.putLFloat(this.rainLevel);
         this.putLFloat(this.lightningLevel);
         this.putBoolean(this.hasConfirmedPlatformLockedContent);
@@ -161,6 +166,10 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isWorldTemplateOptionLocked);
         this.putBoolean(this.isOnlySpawningV1Villagers);
         this.putString(this.vanillaVersion);
+        this.putLInt(0); // UnknownInt0
+        this.putLInt(0); // UnknownInt1
+        this.putBoolean(false);
+        this.putBoolean(false);
 
         this.putString(this.levelId);
         this.putString(this.worldName);
@@ -172,6 +181,7 @@ public class StartGamePacket extends DataPacket {
         this.put(GlobalBlockPalette.BLOCK_PALETTE);
         this.put(ITEM_DATA_PALETTE);
         this.putString(this.multiplayerCorrelationId);
+        this.putBoolean(this.isInventoryServerAuthoritative);
     }
 
     private static class ItemData {
