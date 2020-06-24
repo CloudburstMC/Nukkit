@@ -6,12 +6,14 @@ import java.util.List;
 import java.util.UUID;
 
 public class EmoteListPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.EMOTE_LIST_PACKET;
+
     public long runtimeId;
     public final List<UUID> pieceIds = new ObjectArrayList<>();
 
     @Override
     public byte pid() {
-        return ProtocolInfo.EMOTE_LIST_PACKET;
+        return NETWORK_ID;
     }
 
     @Override

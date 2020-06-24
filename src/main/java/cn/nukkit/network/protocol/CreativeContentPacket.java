@@ -5,11 +5,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 public class CreativeContentPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.CREATIVE_CONTENT_PACKET;
+
     public Int2ObjectMap<Item> entries = new Int2ObjectOpenHashMap<>();
 
     @Override
     public byte pid() {
-        return ProtocolInfo.CREATIVE_CONTENT_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
