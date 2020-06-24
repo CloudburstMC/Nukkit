@@ -4,12 +4,14 @@ import java.util.EnumSet;
 import java.util.Set;
 
 public class PlayerArmorDamagePacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ARMOR_DAMAGE_PACKET;
+
     public final Set<PlayerArmorDamageFlag> flags = EnumSet.noneOf(PlayerArmorDamageFlag.class);
     public final int[] damage = new int[4];
 
     @Override
     public byte pid() {
-        return ProtocolInfo.PLAYER_ARMOR_DAMAGE_PACKET;
+        return NETWORK_ID;
     }
 
     @Override

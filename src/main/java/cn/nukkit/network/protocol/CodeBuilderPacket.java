@@ -1,12 +1,14 @@
 package cn.nukkit.network.protocol;
 
 public class CodeBuilderPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.CODE_BUILDER_PACKET;
+
     public boolean isOpening;
     public String url = "";
 
     @Override
     public byte pid() {
-        return ProtocolInfo.CODE_BUILDER_PACKET;
+        return NETWORK_ID;
     }
 
     @Override

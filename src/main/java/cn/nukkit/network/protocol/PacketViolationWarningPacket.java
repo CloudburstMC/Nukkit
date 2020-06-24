@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 public class PacketViolationWarningPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET;
 
     public PacketViolationType type;
     public PacketViolationSeverity severity;
@@ -9,7 +10,7 @@ public class PacketViolationWarningPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
