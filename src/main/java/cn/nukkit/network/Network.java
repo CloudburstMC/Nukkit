@@ -97,6 +97,30 @@ public class Network {
         return bos.toByteArray();
     }
 
+    public static byte[] deflate_raw(byte[][] datas, int level) throws IOException {
+        Deflater deflater = DEFLATER_RAW.get();
+        deflater.reset();
+        deflater.setLevel(level);
+        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+        bos.reset();
+        byte[] buffer = BUFFER.get();
+
+        for (byte[] data : datas) {
+            deflater.setInput(data);
+            while (!deflater.needsInput()) {
+                int i = deflater.deflate(buffer);
+                bos.write(buffer, 0, i);
+            }
+        }
+        deflater.finish();
+        while (!deflater.finished()) {
+            int i = deflater.deflate(buffer);
+            bos.write(buffer, 0, i);
+        }
+        //Deflater::end is called the time when the process exits.
+        return bos.toByteArray();
+    }
+
     public void addStatistics(double upload, double download) {
         this.upload += upload;
         this.download += download;
