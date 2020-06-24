@@ -1,8 +1,11 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
 import java.util.EnumSet;
 import java.util.Set;
 
+@ToString
 public class PlayerArmorDamagePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ARMOR_DAMAGE_PACKET;
 

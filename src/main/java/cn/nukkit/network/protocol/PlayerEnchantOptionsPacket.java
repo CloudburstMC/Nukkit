@@ -1,11 +1,13 @@
 package cn.nukkit.network.protocol;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.ToString;
 import lombok.Value;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 public class PlayerEnchantOptionsPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ENCHANT_OPTIONS_PACKET;
 

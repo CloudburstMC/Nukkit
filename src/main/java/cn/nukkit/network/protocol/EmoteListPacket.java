@@ -1,10 +1,12 @@
 package cn.nukkit.network.protocol;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.UUID;
 
+@ToString
 public class EmoteListPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.EMOTE_LIST_PACKET;
 
