@@ -3,7 +3,9 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.item.Item;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.ToString;
 
+@ToString
 public class CreativeContentPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.CREATIVE_CONTENT_PACKET;
 

@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+@ToString
 public class CodeBuilderPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.CODE_BUILDER_PACKET;
 
