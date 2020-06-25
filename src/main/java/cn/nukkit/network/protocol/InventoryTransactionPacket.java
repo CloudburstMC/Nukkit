@@ -9,7 +9,6 @@ import lombok.ToString;
 
 import java.util.ArrayDeque;
 import java.util.Collection;
-import java.util.List;
 
 @ToString
 public class InventoryTransactionPacket extends DataPacket {
@@ -40,6 +39,8 @@ public class InventoryTransactionPacket extends DataPacket {
     public int transactionType;
     public NetworkInventoryAction[] actions;
     public TransactionData transactionData;
+    public boolean hasNetworkIds;
+    public int legacyRequestId;
 
     /**
      * NOTE: THIS FIELD DOES NOT EXIST IN THE PROTOCOL, it's merely used for convenience for PocketMine-MP to easily
@@ -55,8 +56,10 @@ public class InventoryTransactionPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
+        this.putVarInt(this.legacyRequestId);
+        //TODO legacySlot array
         this.putUnsignedVarInt(this.transactionType);
-
+        this.putBoolean(this.hasNetworkIds);
         this.putUnsignedVarInt(this.actions.length);
         for (NetworkInventoryAction action : this.actions) {
             action.write(this);
@@ -103,7 +106,11 @@ public class InventoryTransactionPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.legacyRequestId = this.getVarInt();
+        //TODO legacySlot array
         this.transactionType = (int) this.getUnsignedVarInt();
+
+        this.hasNetworkIds = this.getBoolean();
 
         int length = (int) this.getUnsignedVarInt();
         Collection<NetworkInventoryAction> actions = new ArrayDeque<>();

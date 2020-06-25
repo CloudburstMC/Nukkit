@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import com.google.common.primitives.Ints;
 
@@ -161,18 +160,18 @@ public interface ProtocolInfo {
     byte COMPLETED_USING_ITEM_PACKET = (byte) 0x8e;
     byte NETWORK_SETTINGS_PACKET = (byte) 0x8f;
     byte PLAYER_AUTH_INPUT_PACKET = (byte) 0x90;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte CREATIVE_CONTENT_PACKET = (byte) 0x91;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte PLAYER_ENCHANT_OPTIONS_PACKET = (byte) 0x92;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte ITEM_STACK_REQUEST_PACKET = (byte) 0x93;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte ITEM_STACK_RESPONSE_PACKET = (byte) 0x94;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte PLAYER_ARMOR_DAMAGE_PACKET = (byte) 0x95;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte CODE_BUILDER_PACKET = (byte) 0x96;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte UPDATE_PLAYER_GAME_TYPE_PACKET = (byte) 0x97;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte EMOTE_LIST_PACKET = (byte) 0x98;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte POSITION_TRACKING_DB_SERVER_BROADCAST_PACKET = (byte) 0x99;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte POSITION_TRACKING_DB_CLIENT_REQUEST_PACKET = (byte) 0x9a;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte DEBUG_INFO_PACKET = (byte) 0x9b;
-    @PowerNukkitOnly @Since("1.2.2.0-PN") byte PACKET_VIOLATION_WARNING_PACKET = (byte) 0x9c;
+    @Since("1.2.2.0-PN") byte CREATIVE_CONTENT_PACKET = (byte) 0x91;
+    @Since("1.2.2.0-PN") byte PLAYER_ENCHANT_OPTIONS_PACKET = (byte) 0x92;
+    @Since("1.2.2.0-PN") byte ITEM_STACK_REQUEST_PACKET = (byte) 0x93;
+    @Since("1.2.2.0-PN") byte ITEM_STACK_RESPONSE_PACKET = (byte) 0x94;
+    @Since("1.2.2.0-PN") byte PLAYER_ARMOR_DAMAGE_PACKET = (byte) 0x95;
+    @Since("1.2.2.0-PN") byte CODE_BUILDER_PACKET = (byte) 0x96;
+    @Since("1.2.2.0-PN") byte UPDATE_PLAYER_GAME_TYPE_PACKET = (byte) 0x97;
+    @Since("1.2.2.0-PN") byte EMOTE_LIST_PACKET = (byte) 0x98;
+    @Since("1.2.2.0-PN") byte POS_TRACKING_SERVER_BROADCAST_PACKET = (byte) 0x99;
+    @Since("1.2.2.0-PN") byte POS_TRACKING_CLIENT_REQUEST_PACKET = (byte) 0x9a;
+    @Since("1.2.2.0-PN") byte DEBUG_INFO_PACKET = (byte) 0x9b;
+    @Since("1.2.2.0-PN") byte PACKET_VIOLATION_WARNING_PACKET = (byte) 0x9c;
 
     byte BATCH_PACKET = (byte) 0xff;
 }

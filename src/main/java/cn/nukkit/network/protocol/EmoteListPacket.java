@@ -1,39 +1,42 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import lombok.ToString;
 
 import java.util.List;
 import java.util.UUID;
 
-@PowerNukkitOnly
 @Since("1.2.2.0-PN")
+@ToString
 public class EmoteListPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.EMOTE_LIST_PACKET;
 
-    public long runtimeEntityId;
-    public List<UUID> pieceIds = new ObjectArrayList<>();
-
-    @Override
-    public void encode() {
-        putUnsignedVarLong(runtimeEntityId);
-        putUnsignedVarInt(pieceIds.size());
-        pieceIds.forEach(this::putUUID);
-    }
-
-    @Override
-    public void decode() {
-        runtimeEntityId = getUnsignedVarLong();
-        int size = (int) getUnsignedVarInt();
-        pieceIds = new ObjectArrayList<>(size);
-        for (int i = 0; i < size; i++) {
-            pieceIds.add(getUUID());
-        }
-    }
+    public long runtimeId;
+    public final List<UUID> pieceIds = new ObjectArrayList<>();
 
     @Override
     public byte pid() {
         return NETWORK_ID;
+    }
+
+    @Override
+    public void decode() {
+        this.runtimeId = this.getEntityUniqueId();
+        int size = (int) this.getUnsignedVarInt();
+        for (int i = 0; i < size; i++) {
+            UUID id = this.getUUID();
+            pieceIds.add(id);
+        }
+    }
+
+    @Override
+    public void encode() {
+        this.reset();
+        this.putEntityUniqueId(runtimeId);
+        this.putUnsignedVarInt(pieceIds.size());
+        for (UUID id : pieceIds) {
+            this.putUUID(id);
+        }
     }
 }

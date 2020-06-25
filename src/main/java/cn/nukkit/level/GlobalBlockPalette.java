@@ -6,6 +6,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import it.unimi.dsi.fastutil.ints.*;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -14,6 +15,7 @@ import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Log4j2
 public class GlobalBlockPalette {
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
@@ -108,7 +110,7 @@ public class GlobalBlockPalette {
         if (runtimeId == -1) {
             runtimeId = legacyToRuntimeId.get(248 << 6);
             if (unknownRuntimeIds.computeIfAbsent(id, k -> new IntOpenHashSet(5)).add(meta)) {
-                Server.getInstance().getLogger().error("Found an unknown BlockId:Meta combination: "+id+":"+meta+", replacing with an \"UPDATE!\" block.");
+                log.error("Found an unknown BlockId:Meta combination: "+id+":"+meta+", replacing with an \"UPDATE!\" block.");
             }
         }
         return runtimeId;

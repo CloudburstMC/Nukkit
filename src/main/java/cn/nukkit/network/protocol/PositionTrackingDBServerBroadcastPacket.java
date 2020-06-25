@@ -12,7 +12,7 @@ import java.io.IOException;
 @PowerNukkitOnly
 @Since("1.2.2.0-PN")
 public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.POSITION_TRACKING_DB_SERVER_BROADCAST_PACKET;
+    public static final byte NETWORK_ID = ProtocolInfo.POS_TRACKING_SERVER_BROADCAST_PACKET;
     private static final Action[] ACTIONS = Action.values();
 
     private Action action;

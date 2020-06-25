@@ -114,6 +114,7 @@ public class CraftingDataPacket extends DataPacket {
                     this.putUUID(shapeless.getId());
                     this.putString(recipe.getType() == RecipeType.CARTOGRAPHY ? CRAFTING_TAG_CARTOGRAPHY_TABLE : CRAFTING_TAG_CRAFTING_TABLE);
                     this.putVarInt(shapeless.getPriority());
+                    this.putUnsignedVarInt(0);
                     break;
                 case SHAPED:
                     ShapedRecipe shaped = (ShapedRecipe) recipe;
@@ -136,6 +137,7 @@ public class CraftingDataPacket extends DataPacket {
                     this.putUUID(shaped.getId());
                     this.putString(CRAFTING_TAG_CRAFTING_TABLE);
                     this.putVarInt(shaped.getPriority());
+                    this.putUnsignedVarInt(0);
                     break;
                 case FURNACE:
                 case FURNACE_DATA:
@@ -176,8 +178,11 @@ public class CraftingDataPacket extends DataPacket {
 
         this.putUnsignedVarInt(this.brewingEntries.size());
         for (BrewingRecipe recipe : brewingEntries) {
+            this.putVarInt(recipe.getInput().getId());
             this.putVarInt(recipe.getInput().getDamage());
             this.putVarInt(recipe.getIngredient().getId());
+            this.putVarInt(recipe.getIngredient().getDamage());
+            this.putVarInt(recipe.getResult().getId());
             this.putVarInt(recipe.getResult().getDamage());
         }
 

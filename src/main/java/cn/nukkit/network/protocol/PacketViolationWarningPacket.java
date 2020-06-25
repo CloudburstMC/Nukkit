@@ -1,14 +1,12 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import lombok.ToString;
 
-@PowerNukkitOnly
 @Since("1.2.2.0-PN")
+@ToString
 public class PacketViolationWarningPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET;
-    private static final PacketViolationType[] TYPES = PacketViolationType.values();
-    private static final PacketViolationSeverity[] SEVERITIES = PacketViolationSeverity.values();
 
     public PacketViolationType type;
     public PacketViolationSeverity severity;
@@ -16,34 +14,33 @@ public class PacketViolationWarningPacket extends DataPacket {
     public String context;
 
     @Override
-    public void encode() {
-        putVarInt(type.ordinal() - 1);
-        putVarInt(severity.ordinal());
-        putVarInt(packetId);
-        putString(context);
-    }
-
-    @Override
-    public void decode() {
-        type = TYPES[getVarInt() + 1];
-        severity = SEVERITIES[getVarInt()];
-        packetId = getVarInt();
-        context = getString();
-    }
-
-    @Override
     public byte pid() {
         return NETWORK_ID;
     }
 
-    @PowerNukkitOnly
+    @Override
+    public void decode() {
+        this.type = PacketViolationType.values()[this.getVarInt() + 1];
+        this.severity = PacketViolationSeverity.values()[this.getVarInt()];
+        this.packetId = this.getVarInt();
+        this.context = this.getString();
+    }
+
+    @Override
+    public void encode() {
+        this.reset();
+        this.putVarInt(this.type.ordinal() - 1);
+        this.putVarInt(this.severity.ordinal());
+        this.putVarInt(this.packetId);
+        this.putString(this.context);
+    }
+
     @Since("1.2.2.0-PN")
     public enum PacketViolationType {
         UNKNOWN,
         MALFORMED_PACKET
     }
 
-    @PowerNukkitOnly
     @Since("1.2.2.0-PN")
     public enum PacketViolationSeverity {
         UNKNOWN,
