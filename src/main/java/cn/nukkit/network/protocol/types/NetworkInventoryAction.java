@@ -68,6 +68,7 @@ public class NetworkInventoryAction {
     public int inventorySlot;
     public Item oldItem;
     public Item newItem;
+    public int stackNetworkId;
 
     public NetworkInventoryAction read(InventoryTransactionPacket packet) {
         this.sourceType = (int) packet.getUnsignedVarInt();
@@ -98,6 +99,9 @@ public class NetworkInventoryAction {
         this.oldItem = packet.getSlot();
         this.newItem = packet.getSlot();
 
+        if (packet.hasNetworkIds) {
+            this.stackNetworkId = packet.getVarInt();
+        }
         return this;
     }
 
@@ -122,6 +126,10 @@ public class NetworkInventoryAction {
         packet.putUnsignedVarInt(this.inventorySlot);
         packet.putSlot(this.oldItem);
         packet.putSlot(this.newItem);
+
+        if (packet.hasNetworkIds) {
+            packet.putVarInt(this.stackNetworkId);
+        }
     }
 
     public InventoryAction createInventoryAction(Player player) {
