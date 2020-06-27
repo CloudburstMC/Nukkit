@@ -1,5 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import lombok.ToString;
 
 /**
@@ -17,7 +20,15 @@ public class SetSpawnPositionPacket extends DataPacket {
     public int y;
     public int z;
     public int x;
+    
+    @Since("1.2.2.0-PN")
     public int dimension = 0;
+    
+    @PowerNukkitOnly("Backward compatibility")
+    @Deprecated @DeprecationDetails(
+            since = "1.2.2.0-PN", toBeRemovedAt = "1.4.0.0-PN",
+            reason = "Removed from the Bedrock protocol since 1.16.0")
+    public boolean spawnForced = false;
 
     @Override
     public void decode() {

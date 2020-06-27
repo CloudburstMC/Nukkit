@@ -3,6 +3,9 @@ package cn.nukkit.network;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.*;
@@ -64,7 +67,16 @@ public class Network {
         this.server = server;
     }
 
+    @Since("1.2.2.0-PN")
+    @Deprecated @DeprecationDetails(since = "1.2.2.0-PN",
+            replaceWith = "inflateRaw",
+            reason = "Added by NukkitX. The name don't follow the correct java code style. Will be renamed to inflateRaw in future.")
     public static byte[] inflate_raw(byte[] data) throws IOException, DataFormatException {
+        return inflateRaw(data);
+    }
+    
+    @PowerNukkitOnly @Since("1.2.2.0-PN")
+    public static byte[] inflateRaw(byte[] data) throws IOException, DataFormatException {
         Inflater inflater = INFLATER_RAW.get();
         inflater.reset();
         inflater.setInput(data);
@@ -80,7 +92,16 @@ public class Network {
         return bos.toByteArray();
     }
 
+    @Since("1.2.2.0-PN")
+    @Deprecated @DeprecationDetails(since = "1.2.2.0-PN",
+            replaceWith = "deflateRaw",
+            reason = "Added by NukkitX. The name don't follow the correct java code style. Will be renamed to inflateRaw in future.")
     public static byte[] deflate_raw(byte[] data, int level) throws IOException {
+        return deflateRaw(data, level);
+    }
+    
+    @PowerNukkitOnly @Since("1.2.2.0-PN")
+    public static byte[] deflateRaw(byte[] data, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
         deflater.reset();
         deflater.setLevel(level);
@@ -97,7 +118,16 @@ public class Network {
         return bos.toByteArray();
     }
 
+    @Since("1.2.2.0-PN")
+    @Deprecated @DeprecationDetails(since = "1.2.2.0-PN",
+            replaceWith = "deflateRaw",
+            reason = "Added by NukkitX. The name don't follow the correct java code style. Will be renamed to inflateRaw in future.")
     public static byte[] deflate_raw(byte[][] datas, int level) throws IOException {
+        return deflateRaw(datas, level);
+    }
+
+    @Since("1.2.2.0-PN")
+    public static byte[] deflateRaw(byte[][] datas, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
         deflater.reset();
         deflater.setLevel(level);

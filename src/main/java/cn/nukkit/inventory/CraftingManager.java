@@ -3,6 +3,7 @@ package cn.nukkit.inventory;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.utils.BinaryStream;

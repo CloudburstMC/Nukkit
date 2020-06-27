@@ -82,6 +82,7 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
 
     }
 
+    @Since("1.2.2.0-PN")
     @Value
     public class EnchantOptionData {
         private final int cost;
@@ -93,6 +94,7 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
         private final int enchantNetId;
     }
 
+    @Since("1.2.2.0-PN")
     @Value
     public class EnchantData {
         private final int type;

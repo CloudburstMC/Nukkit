@@ -1,11 +1,9 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
-
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Created on 15-10-13.
@@ -29,6 +27,11 @@ public class TextPacket extends DataPacket {
     public static final byte TYPE_SYSTEM = 6;
     public static final byte TYPE_WHISPER = 7;
     public static final byte TYPE_ANNOUNCEMENT = 8;
+    @PowerNukkitOnly("Backward compatibility")
+    @Deprecated @DeprecationDetails(
+            since = "1.2.2.0-PN", toBeRemovedAt = "1.4.0.0-PN",
+            reason = "Renamed to TYPE_JSON by NukkitX", replaceWith = "TYPE_OBJECT")
+    public static final byte TYPE_JSON = 9;
     public static final byte TYPE_OBJECT = 9;
     public static final byte TYPE_OBJECT_WHISPER = 10;
 

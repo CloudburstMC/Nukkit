@@ -1,5 +1,6 @@
 package cn.nukkit;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
@@ -2428,6 +2429,7 @@ public class Server {
         this.playerDataSerializer = Preconditions.checkNotNull(playerDataSerializer, "playerDataSerializer");
     }
 
+    @Since("1.2.2.0-PN")
     public boolean isIgnoredPacket(Class<? extends DataPacket> clazz) {
         return this.ignoredPackets.contains(clazz.getSimpleName());
     }

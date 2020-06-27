@@ -29,6 +29,7 @@ public class PositionTrackingDBClientRequestPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Since("1.2.2.0-PN")
     public enum Action {
         QUERY
     }

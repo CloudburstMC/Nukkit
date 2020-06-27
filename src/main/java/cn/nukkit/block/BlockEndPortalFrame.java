@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
@@ -99,6 +100,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
         return false;
     }
 
+    @Since("1.2.2.0-PN")
     public void createPortal() {
         Vector3 centerSpot = this.searchCenter();
         if(centerSpot != null) {

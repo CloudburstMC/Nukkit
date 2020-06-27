@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.TransactionData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
@@ -39,8 +40,8 @@ public class InventoryTransactionPacket extends DataPacket {
     public int transactionType;
     public NetworkInventoryAction[] actions;
     public TransactionData transactionData;
-    public boolean hasNetworkIds;
-    public int legacyRequestId;
+    @Since("1.2.2.0-PN") public boolean hasNetworkIds;
+    @Since("1.2.2.0-PN") public int legacyRequestId;
 
     /**
      * NOTE: THIS FIELD DOES NOT EXIST IN THE PROTOCOL, it's merely used for convenience for PocketMine-MP to easily

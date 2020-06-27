@@ -68,14 +68,6 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
         this.sendContents(who);
     }
 
-    /**
-     * @apiNote Calls {@link #onClose(Player)} only in PowerNukkit
-     */
-    @Override
-    public void close(Player who) {
-        this.onClose(who);
-    }
-
     @Override
     public void onClose(Player who) {
         ContainerClosePacket pk = new ContainerClosePacket();
