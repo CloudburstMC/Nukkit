@@ -168,10 +168,18 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_COMMAND_BLOCK_TICK_DELAY = 105;
     public static final int DATA_COMMAND_BLOCK_EXECUTE_ON_FIRST_TICK = 106;
     public static final int DATA_AMBIENT_SOUND_INTERVAL = 107;
-    public static final int DATA_AMBIENT_SOUND_EVENT_NAME = 108;
-    public static final int DATA_FALL_DAMAGE_MULTIPLIER = 109;
-    public static final int DATA_NAME_RAW_TEXT = 110;
-    public static final int DATA_CAN_RIDE_TARGET = 111;
+    public static final int DATA_AMBIENT_SOUND_INTERVAL_RANGE = 108;
+    public static final int DATA_AMBIENT_SOUND_EVENT_NAME = 109;
+    public static final int DATA_FALL_DAMAGE_MULTIPLIER = 110;
+    public static final int DATA_NAME_RAW_TEXT = 111;
+    public static final int DATA_CAN_RIDE_TARGET = 112;
+    public static final int DATA_LOW_TIER_CURED_DISCOUNT = 113;
+    public static final int DATA_HIGH_TIER_CURED_DISCOUNT = 114;
+    public static final int DATA_NEARBY_CURED_DISCOUNT = 115;
+    public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = 116;
+    public static final int DATA_HITBOX = 117;
+    public static final int DATA_IS_BUOYANT = 118;
+    public static final int DATA_BUOYANCY_DATA = 119;
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
@@ -260,12 +268,15 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_ROARING = 83;
     public static final int DATA_FLAG_DELAYED_ATTACK = 84;
     public static final int DATA_FLAG_IS_AVOIDING_MOBS = 85;
-    public static final int DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK = 86;
-    public static final int DATA_FLAG_HIDDEN_WHEN_INVISIBLE = 87;
-    public static final int DATA_FLAG_IS_IN_UI = 88;
-    public static final int DATA_FLAG_STALKING = 89;
-    public static final int DATA_FLAG_EMOTING = 90;
-    public static final int DATA_FLAG_CELEBRATING = 91;
+    public static final int DATA_FLAG_IS_AVOIDING_BLOCKS = 86;
+    public static final int DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK = 87;
+    public static final int DATA_FLAG_HIDDEN_WHEN_INVISIBLE = 88;
+    public static final int DATA_FLAG_IS_IN_UI = 89;
+    public static final int DATA_FLAG_STALKING = 90;
+    public static final int DATA_FLAG_EMOTING = 91;
+    public static final int DATA_FLAG_CELEBRATING = 92;
+    public static final int DATA_FLAG_ADMIRING = 93;
+    public static final int DATA_FLAG_CELEBRATING_SPECIAL = 94;
 
     public static long entityCount = 1;
 
@@ -1000,7 +1011,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         addEntity.links = new EntityLink[this.passengers.size()];
         for (int i = 0; i < addEntity.links.length; i++) {
-            addEntity.links[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.TYPE_RIDER : TYPE_PASSENGER, false);
+            addEntity.links[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.TYPE_RIDER : TYPE_PASSENGER, false, false);
         }
 
         return addEntity;
