@@ -338,7 +338,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     private static void initCreativeItems() {
         clearCreativeItems();
 
-        Config config = new Config(Config.YAML);
+        Config config = new Config(Config.JSON);
         config.load(Server.class.getClassLoader().getResourceAsStream("creativeitems.json"));
         List<Map> list = config.getMapList("items");
 

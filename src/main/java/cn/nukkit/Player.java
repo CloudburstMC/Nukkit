@@ -2920,6 +2920,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.craftingType = CRAFTING_SMALL;
                         this.resetCraftingGridType();
                         this.addWindow(this.craftingGrid, ContainerIds.NONE);
+                        ContainerClosePacket pk = new ContainerClosePacket();
+                        pk.windowId = -1;
+                        this.dataPacket(pk);
                     }
                     break;
                 case ProtocolInfo.CRAFTING_EVENT_PACKET:

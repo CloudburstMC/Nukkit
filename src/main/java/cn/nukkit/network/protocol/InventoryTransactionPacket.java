@@ -107,7 +107,16 @@ public class InventoryTransactionPacket extends DataPacket {
     @Override
     public void decode() {
         this.legacyRequestId = this.getVarInt();
-        //TODO legacySlot array
+        if (legacyRequestId < -1 && (legacyRequestId & 1) == 0) {
+            int length = (int) this.getUnsignedVarInt();
+            for (int i = 0; i < length; i++) {
+                this.getByte();
+                int bufLen = (int) this.getUnsignedVarInt();
+                this.get(bufLen);
+            }
+
+        }
+
         this.transactionType = (int) this.getUnsignedVarInt();
 
         this.hasNetworkIds = this.getBoolean();
