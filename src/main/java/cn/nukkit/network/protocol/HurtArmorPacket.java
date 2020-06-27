@@ -18,7 +18,7 @@ public class HurtArmorPacket extends DataPacket {
     @Deprecated @DeprecationDetails(
             since = "1.2.2.0-PN", replaceWith = "damage", 
             toBeRemovedAt = "1.3.0.0-PN", reason = "Renamed to damage by NukkitX")
-    public int health = Integer.MIN_VALUE;
+    public int health;
 
     @Since("1.2.2.0-PN")
     public int cause;
@@ -35,7 +35,7 @@ public class HurtArmorPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putVarInt(this.cause);
-        this.putVarInt(health == Integer.MIN_VALUE? damage : health);
+        this.putVarInt(health == 0? damage : health);
     }
 
     @Override
