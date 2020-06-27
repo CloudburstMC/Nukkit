@@ -226,7 +226,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_TRADE_XP = 102; // int
     
     @Since("1.2.0.0-PN") public static final int DATA_TRADE_EXPERIENCE = 102;
-    public static final int DATA_SKIN_ID = 103; // int
+    @Since("1.1.1.0-PN") public static final int DATA_SKIN_ID = 103; // int
     @Since("1.2.0.0-PN") public static final int DATA_SPAWNING_FRAMES = 104;
     @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_TICK_DELAY = 105;
     @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_EXECUTE_ON_FIRST_TICK = 106;
@@ -236,13 +236,13 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.2.0.0-PN") public static final int DATA_FALL_DAMAGE_MULTIPLIER = 110;
     @Since("1.2.0.0-PN") public static final int DATA_NAME_RAW_TEXT = 111;
     @Since("1.2.0.0-PN") public static final int DATA_CAN_RIDE_TARGET = 112;
-    public static final int DATA_LOW_TIER_CURED_DISCOUNT = 113;
-    public static final int DATA_HIGH_TIER_CURED_DISCOUNT = 114;
-    public static final int DATA_NEARBY_CURED_DISCOUNT = 115;
-    public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = 116;
-    public static final int DATA_HITBOX = 117;
-    public static final int DATA_IS_BUOYANT = 118;
-    public static final int DATA_BUOYANCY_DATA = 119;
+    @Since("1.2.2.0-PN") public static final int DATA_LOW_TIER_CURED_DISCOUNT = 113;
+    @Since("1.2.2.0-PN") public static final int DATA_HIGH_TIER_CURED_DISCOUNT = 114;
+    @Since("1.2.2.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT = 115;
+    @Since("1.2.2.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = 116;
+    @Since("1.2.2.0-PN") public static final int DATA_HITBOX = 117;
+    @Since("1.2.2.0-PN") public static final int DATA_IS_BUOYANT = 118;
+    @Since("1.2.2.0-PN") public static final int DATA_BUOYANCY_DATA = 119;
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;

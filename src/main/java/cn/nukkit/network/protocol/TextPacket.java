@@ -2,6 +2,7 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
@@ -32,8 +33,8 @@ public class TextPacket extends DataPacket {
             since = "1.2.2.0-PN", toBeRemovedAt = "1.4.0.0-PN",
             reason = "Renamed to TYPE_JSON by NukkitX", replaceWith = "TYPE_OBJECT")
     public static final byte TYPE_JSON = 9;
-    public static final byte TYPE_OBJECT = 9;
-    public static final byte TYPE_OBJECT_WHISPER = 10;
+    @Since("1.2.2.0-PN") public static final byte TYPE_OBJECT = 9;
+    @Since("1.2.2.0-PN") public static final byte TYPE_OBJECT_WHISPER = 10;
 
     public byte type;
     public String source = "";
