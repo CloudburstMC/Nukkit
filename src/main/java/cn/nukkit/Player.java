@@ -81,6 +81,7 @@ import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -2353,7 +2354,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     break;
                 case ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET:
-                    log.warn("Received packet violation warning: " + packet.toString());
+                    Optional<String> packetName = Arrays.stream(ProtocolInfo.class.getDeclaredFields())
+                            .filter(field -> field.getType() == Byte.TYPE)
+                            .filter(field -> {
+                                try {
+                                    return field.getByte(null) == ((PacketViolationWarningPacket) packet).packetId;
+                                } catch (IllegalAccessException e) {
+                                    return false;
+                                }
+                            }).map(Field::getName).findFirst();
+                    log.warn("Received packet violation warning"+ packetName.map(name-> " for packet "+name).orElse("")+": " + packet.toString());
                     break;
                 case ProtocolInfo.PLAYER_INPUT_PACKET:
                     if (!this.isAlive() || !this.spawned) {
