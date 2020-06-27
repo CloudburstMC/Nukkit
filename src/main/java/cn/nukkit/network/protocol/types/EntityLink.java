@@ -31,7 +31,7 @@ public class EntityLink {
     @PowerNukkitOnly("Backward compatibility")
     @Deprecated
     @DeprecationDetails(
-            since = "1.2.2.0-PN", toBeRemovedAt = "1.4.0.0-PN",
+            since = "1.2.2.0-PN", toBeRemovedAt = "1.3.0.0-PN",
             reason = "NukkitX added the immediate riderInitiated", 
             replaceWith = "EntityLink(long fromEntityUniquieId, long toEntityUniquieId, byte type, boolean immediate, boolean riderInitiated)")
     public EntityLink(long fromEntityUniquieId, long toEntityUniquieId, byte type, boolean immediate) {

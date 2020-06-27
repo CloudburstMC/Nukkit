@@ -139,7 +139,7 @@ public abstract class Entity extends Location implements Metadatable {
     
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(reason = "NukkitX added this constant with a different name",
-            replaceWith = "DATA_HAS_COMMAND_BLOCK", since = "1.2.2.0-PN")
+            replaceWith = "DATA_HAS_COMMAND_BLOCK", since = "1.2.2.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_COMMAND_BLOCK_ENABLED = 69; //byte
     
     @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
@@ -152,7 +152,7 @@ public abstract class Entity extends Location implements Metadatable {
     
     @PowerNukkitOnly("Backward compatibility")
     @Deprecated @DeprecationDetails(reason = "NukkitX added this constant with a different name",
-            replaceWith = "DATA_SPELL_CASTING_COLOR", since = "1.2.2.0-PN")
+            replaceWith = "DATA_SPELL_CASTING_COLOR", since = "1.2.2.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_EVOKER_SPELL_COLOR = 76; // int
     
     public static final int DATA_LIMITED_LIFE = 77; // int
@@ -168,11 +168,11 @@ public abstract class Entity extends Location implements Metadatable {
     
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_BUBBLE_TIME", since = "1.2.0.0-PN")
+            replaceWith = "DATA_BUBBLE_TIME", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_BOAT_BUBBLE_TIME = 86;
     
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_AGENT", since = "1.2.0.0-PN")
+            replaceWith = "DATA_AGENT", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AGENT_ID = 87;
     
     @Since("1.2.0.0-PN") public static final int DATA_AGENT = 87;
@@ -184,37 +184,37 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.2.0.0-PN") public static final int DATA_LAYING_AMOUNT_PREVIOUS = 93;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_DURATION", since = "1.2.0.0-PN")
+            replaceWith = "DATA_DURATION", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_DURATION = 94; // int
     
     @Since("1.2.0.0-PN") public static final int DATA_DURATION = 94;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_SPAWN_TIME", since = "1.2.0.0-PN")
+            replaceWith = "DATA_SPAWN_TIME", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_SPAWN_TIME = 95; // long
     
     @Since("1.2.0.0-PN") public static final int DATA_SPAWN_TIME = 95;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_CHANGE_RATE", since = "1.2.0.0-PN")
+            replaceWith = "DATA_CHANGE_RATE", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_PER_TICK = 96; // float
     
     @Since("1.2.0.0-PN") public static final int DATA_CHANGE_RATE = 96;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_CHANGE_ON_PICK", since = "1.2.0.0-PN")
+            replaceWith = "DATA_CHANGE_ON_PICK", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP = 97; // float
     
     @Since("1.2.0.0-PN") public static final int DATA_CHANGE_ON_PICKUP = 97;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_PICKUP_COUNT", since = "1.2.0.0-PN")
+            replaceWith = "DATA_PICKUP_COUNT", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT = 98; // int
     
     @Since("1.2.0.0-PN") public static final int DATA_PICKUP_COUNT = 98;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_INTERACT_TEXT", since = "1.2.0.0-PN")
+            replaceWith = "DATA_INTERACT_TEXT", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_INTERACTIVE_TAG = 99; // string (button text)
     
     @Since("1.2.0.0-PN") public static final int DATA_INTERACT_TEXT = 99;
@@ -222,7 +222,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_MAX_TRADE_TIER = 101; // int
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_TRADE_EXPERIENCE", since = "1.2.0.0-PN")
+            replaceWith = "DATA_TRADE_EXPERIENCE", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_TRADE_XP = 102; // int
     
     @Since("1.2.0.0-PN") public static final int DATA_TRADE_EXPERIENCE = 102;
@@ -307,7 +307,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_LAYING_EGG = 59;
     
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_FLAG_RIDEN_CAN_PIXK", since = "1.2.0.0-PN")
+            replaceWith = "DATA_FLAG_RIDEN_CAN_PIXK", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_FLAG_RIDER_CAN_PICKUP = 60; // PowerNukkit
 
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_RIDER_CAN_PICK = 60; // NukkitX
@@ -319,7 +319,7 @@ public abstract class Entity extends Location implements Metadatable {
      */
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(reason = "Unsure if it's a typo or not, use with care", since = "1.2.0.0-PN",
-            replaceWith = "DATA_FLAG_TRANSITION_SETTING")
+            replaceWith = "DATA_FLAG_TRANSITION_SETTING", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_FLAG_TRANSITION_SITTING = 61; // PowerNukkit but without typo
     
     /**
@@ -327,7 +327,7 @@ public abstract class Entity extends Location implements Metadatable {
      * @see #DATA_FLAG_TRANSITION_SITTING
      */
     @Deprecated @DeprecationDetails(reason = "Unsure if it's a typo or not, use with care", since = "1.2.0.0-PN",
-            replaceWith = "DATA_FLAG_TRANSITION_SITTING")
+            replaceWith = "DATA_FLAG_TRANSITION_SITTING", toBeRemovedAt = "1.4.0.0-PN")
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRANSITION_SETTING = 61; // NukkitX with the same typo
     
     public static final int DATA_FLAG_EATING = 62;
@@ -345,7 +345,7 @@ public abstract class Entity extends Location implements Metadatable {
      * @deprecated Use {@link #DATA_FLAG_TRANSITION_BLOCKING} instead.
      */
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_FLAG_TRANSITION_BLOCKING", since = "1.2.0.0-PN")
+            replaceWith = "DATA_FLAG_TRANSITION_BLOCKING", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_FLAG_DISABLED_BLOCKING = 72;
     
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRANSITION_BLOCKING = 72;

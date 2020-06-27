@@ -17,6 +17,47 @@ The following breaking change will be pulled in `1.3.0.0-PN`
 - Add support to the new 1.16 blocks, items, biomes and entities (without AI)
 - Inherit protocol support from NukkitX
 
+## [Unreleased 1.2.2.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/12?closed=1))
+Adds protocol support to BE 1.16.0
+
+### Binary incompatibility!
+- [#293] A few `Entity` data constant values were changed, plugins which uses them might need to be recompiled, no code change required
+
+### Deprecation warnings!
+- [#293] Many `Entity` constants are deprecated and might be removed on 1.4.0.0-PN
+- [#293] `Entity.DATA_FLAG_TRANSITION_SITTING` and `DATA_FLAG_TRANSITION_SETTING` only one of them is correct, the incorrect will be removed
+- [#293] `Network.inflate_raw` and `deflate_raw` does not follow the correct naming convention and will be removed. Use `inflateRaw` and `deflateRaw` instead. 
+- [#293] `HurtArmorPacket.health` was renamed to `damage` and will be removed on `1.3.0.0-PN`. A backward compatibility code has been added.
+- [#293] `SetSpawnPositionPacket.spawnForce` is now unused and will be removed on `1.3.0.0-PN`
+- [#293] `TextPacket.TYPE_JSON` was renamed to `TYPE_OBJECT` and will be removed on `1.3.0.0-PN`
+- [#293] `riderInitiated` argument was added to the `EntityLink` constructor. The old constructor will be removed on `1.3.0.0-PN`
+
+### Fixes
+- [#293] Spectator colliding with vehicles
+- [#293] Ice melting into water in the Nether
+- [#293] `Player.removeWindow` was able to remove permanent windows
+
+### Added
+- [#293] End portals can now be formed using Eye of Ender
+- [#293] Setting to make the server ignore specific packets
+- [#293] New compression/decompression methods
+- [#293] Trace logging to outbound packets when trace is enabled
+- [#293] The server now logs a warning when a packet violation warning is correctly received
+- [#293] 12 new packets, please see the pull request file changes for details
+- [#293] Many new entity data constants, please see the `Entity.java` file in the PR for details
+ 
+### Changed
+- [#293] Thorns can now be applied to any armor while enchanting
+- [#293] The server now requires the clients to playing on Bedrock Edition 1.16.0
+- [#293] Updated RakNet to `1.6.18`
+- [#293] RakNet protocol version changed from `9` to `10`
+- [#293] 10 packets, please see the pull request file changes for details
+- [#293] The server have more control over the player UI now
+- [#293] New entity data constants
+- [#293] `FakeBlockUIComponent` now fires `InventoryCloseEvent` when the inventory is closed
+- [#293] The `runtime_block_states.dat`, `recipes.json`, `entity_identifiers.dat` and `biome_definitions.dat` files have been updated
+
+
 ## [1.2.1.0-PN] - 2020-06-07 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
 Click the link above to see the future.
 
@@ -260,7 +301,8 @@ Fixes several anvil issues.
 
 [updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/master/CHANGELOG.md
 
-[Unreleased 1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...master
+[Unreleased 1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...bleeding
+[Unreleased 1.2.2.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...bleeding-1.2
 [1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
 [1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
@@ -342,3 +384,4 @@ Fixes several anvil issues.
 [#279]: https://github.com/GameModsBR/PowerNukkit/pull/279
 [#281]: https://github.com/GameModsBR/PowerNukkit/pull/281
 [#285]: https://github.com/GameModsBR/PowerNukkit/pull/285
+[#293]: https://github.com/GameModsBR/PowerNukkit/pull/293
