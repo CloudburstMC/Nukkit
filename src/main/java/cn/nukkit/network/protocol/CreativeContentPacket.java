@@ -23,9 +23,9 @@ public class CreativeContentPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putVarInt(entries.length);
-        for (Item item : entries) {
-            this.putUnsignedVarInt(item.getId());
-            this.putSlot(item);
+        for (int i = 0; i < entries.length; i++) {
+            this.putUnsignedVarInt(i + 1);
+            this.putSlot(entries[i]);
         }
 
     }
