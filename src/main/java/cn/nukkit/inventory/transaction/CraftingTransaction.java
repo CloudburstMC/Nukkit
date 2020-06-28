@@ -4,18 +4,15 @@ import cn.nukkit.Player;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.DamageAnvilAction;
-import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.inventory.transaction.action.TakeLevelAction;
-import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.scheduler.Task;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
@@ -40,14 +37,13 @@ public class CraftingTransaction extends InventoryTransaction {
     public CraftingTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions, false);
 
-        Item air = Item.get(Item.AIR, 0, 1);
         this.craftingType = source.craftingType;
         if (source.craftingType == Player.CRAFTING_STONECUTTER) {
             this.gridSize = 1;
-            this.inputs = new Item[1][1];
-            this.inputs[0][0] = air;
-            this.secondaryOutputs = new Item[1][1];
-            this.secondaryOutputs[0][0] = air;
+            
+            this.inputs = new ArrayList<>(1);
+            
+            this.secondaryOutputs = new ArrayList<>(1);
         } else {
             this.gridSize = (source.getCraftingGrid() instanceof BigCraftingGrid) ? 3 : 2;
 
@@ -116,7 +112,7 @@ public class CraftingTransaction extends InventoryTransaction {
                     TakeLevelAction takeLevel = new TakeLevelAction(anvil.getLevelCost());
                     addAction(takeLevel);
                     if (takeLevel.isValid(source)) {
-                        recipe = new RepairRecipe(InventoryType.ANVIL, this.primaryOutput, Arrays.asList(inputs[0]));
+                        recipe = new RepairRecipe(InventoryType.ANVIL, this.primaryOutput, this.inputs);
                         PlayerUIInventory uiInventory = source.getUIInventory();
                         actions.add(new DamageAnvilAction(anvil, !source.isCreative() && ThreadLocalRandom.current().nextFloat() < 0.12F, this));
                         actions.stream()
@@ -140,7 +136,7 @@ public class CraftingTransaction extends InventoryTransaction {
                 GrindstoneInventory grindstone = (GrindstoneInventory) inventory;
                 addInventory(grindstone);
                 if (this.primaryOutput.equals(grindstone.getResult(), true, true)) {
-                    recipe = new RepairRecipe(InventoryType.GRINDSTONE, this.primaryOutput, Arrays.asList(inputs[0]));
+                    recipe = new RepairRecipe(InventoryType.GRINDSTONE, this.primaryOutput, this.inputs);
                     grindstone.setResult(Item.get(0), false);
                 }
             }
