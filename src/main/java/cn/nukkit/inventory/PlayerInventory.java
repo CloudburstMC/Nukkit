@@ -515,6 +515,8 @@ public class PlayerInventory extends BaseInventory {
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = who.getWindowId(this);
         who.dataPacket(pk);
-        super.onClose(who);
+
+        if (who.getId() != this.getHolder().getId())
+            super.onClose(who);
     }
 }
