@@ -54,7 +54,7 @@ The following breaking change will be pulled in `1.3.0.0-PN`
 
 
 ## [1.2.1.0-PN] - 2020-06-07 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
-Click the link above to see the future.
+Adds new methods to be used by plugins and fixes many issues. 
 
 ### Fixes
 - [#224] Enchantment compatibility rules when merging enchanted items in an anvil
@@ -90,9 +90,9 @@ Click the link above to see the future.
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
 - [#261] Kicked players can now view the kick reason on kick.
-- [#285] Limit the maximum size of BookEditPacket's text to 256, ignoring the packet if it exceeds the limit
+- [#285] Limit the maximum size of `BookEditPacket`'s text to 256, ignoring the packet if it exceeds the limit
 - [#285] Ender pearls will now be unable to teleport players across different dimensions
-- [#285] ShortTag.load(NBTInputStream) now reads a signed short. Used to read an unsigned short.
+- [#285] `ShortTag.load(NBTInputStream)` now reads a signed short. Used to read an unsigned short.
 
 ## [1.2.0.2-PN] - 2020-05-18 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/10?closed=1))
 Contains several fixes, including issues which cause item losses and performance issues
