@@ -51,6 +51,7 @@ The following breaking change will be pulled in `1.3.0.0-PN`
 - [#293] New entity data constants
 - [#293] `FakeBlockUIComponent` now fires `InventoryCloseEvent` when the inventory is closed
 - [#293] The `runtime_block_states.dat`, `recipes.json`, `entity_identifiers.dat` and `biome_definitions.dat` files have been updated
+- [#293] Grindstone now clears only the enchantments and sets the repair cost to `0`, it used to clear all NBT tags
 
 
 ## [1.2.1.0-PN] - 2020-06-07 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
@@ -297,7 +298,6 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/master/CHANGELOG.md
 
 [Unreleased 1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...bleeding
-[Unreleased 1.2.2.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...bleeding-1.2
 [1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
 [1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
