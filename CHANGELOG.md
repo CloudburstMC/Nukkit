@@ -9,16 +9,11 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.3.0.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
 Click the link above to see the future.
 
-### Breaking change
+### Breaking change!
+***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!*** 
+
 The following breaking change will be pulled in `1.3.0.0-PN`
 - [8a09f93](https://github.com/GameModsBR/PowerNukkit/commit/8a09f933f83c9a52531ff8a184a58c6d733c9174) Quick craft implementation. ([NukkitX#1473](https://github.com/NukkitX/Nukkit/pull/1473)) Jedrzej* 05/06/2020
-
-### Planned:
-- Add support to the new 1.16 blocks, items, biomes and entities (without AI)
-- Inherit protocol support from NukkitX
-
-## [Unreleased 1.2.2.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/12?closed=1))
-Adds protocol support to BE 1.16.0
 
 ### Binary incompatibility!
 - [#293] A few `Entity` data constant values were changed, plugins which uses them might need to be recompiled, no code change required
