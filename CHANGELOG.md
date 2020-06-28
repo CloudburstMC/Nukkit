@@ -19,13 +19,13 @@ The following breaking change will be pulled in `1.3.0.0-PN`
 - [#293] A few `Entity` data constant values were changed, plugins which uses them might need to be recompiled, no code change required
 
 ### Deprecation warnings!
-- [#293] Many `Entity` constants are deprecated and might be removed on 1.4.0.0-PN
+- [#293] Many `Entity` constants are deprecated and might be removed on `1.4.0.0-PN`
 - [#293] `Entity.DATA_FLAG_TRANSITION_SITTING` and `DATA_FLAG_TRANSITION_SETTING` only one of them is correct, the incorrect will be removed
 - [#293] `Network.inflate_raw` and `deflate_raw` does not follow the correct naming convention and will be removed. Use `inflateRaw` and `deflateRaw` instead. 
-- [#293] `HurtArmorPacket.health` was renamed to `damage` and will be removed on `1.3.0.0-PN`. A backward compatibility code has been added.
-- [#293] `SetSpawnPositionPacket.spawnForce` is now unused and will be removed on `1.3.0.0-PN`
-- [#293] `TextPacket.TYPE_JSON` was renamed to `TYPE_OBJECT` and will be removed on `1.3.0.0-PN`
-- [#293] `riderInitiated` argument was added to the `EntityLink` constructor. The old constructor will be removed on `1.3.0.0-PN`
+- [#293] `HurtArmorPacket.health` was renamed to `damage` and will be removed on `1.4.0.0-PN`. A backward compatibility code has been added.
+- [#293] `SetSpawnPositionPacket.spawnForce` is now unused and will be removed on `1.4.0.0-PN`
+- [#293] `TextPacket.TYPE_JSON` was renamed to `TYPE_OBJECT` and will be removed on `1.4.0.0-PN`
+- [#293] `riderInitiated` argument was added to the `EntityLink` constructor. The old constructor will be removed on `1.4.0.0-PN`
 
 ### Fixes
 - [#293] Spectator colliding with vehicles

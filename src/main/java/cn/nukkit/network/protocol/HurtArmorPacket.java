@@ -17,7 +17,7 @@ public class HurtArmorPacket extends DataPacket {
      */
     @Deprecated @DeprecationDetails(
             since = "1.2.2.0-PN", replaceWith = "damage", 
-            toBeRemovedAt = "1.3.0.0-PN", reason = "Renamed to damage by NukkitX")
+            toBeRemovedAt = "1.4.0.0-PN", reason = "Renamed to damage by NukkitX")
     public int health;
 
     @Since("1.2.2.0-PN")
