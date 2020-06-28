@@ -100,7 +100,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
         return false;
     }
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     public void createPortal() {
         Vector3 centerSpot = this.searchCenter();
         if(centerSpot != null) {

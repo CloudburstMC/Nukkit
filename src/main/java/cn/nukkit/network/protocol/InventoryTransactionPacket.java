@@ -40,8 +40,8 @@ public class InventoryTransactionPacket extends DataPacket {
     public int transactionType;
     public NetworkInventoryAction[] actions;
     public TransactionData transactionData;
-    @Since("1.2.2.0-PN") public boolean hasNetworkIds;
-    @Since("1.2.2.0-PN") public int legacyRequestId;
+    @Since("1.3.0.0-PN") public boolean hasNetworkIds;
+    @Since("1.3.0.0-PN") public int legacyRequestId;
 
     /**
      * NOTE: THIS FIELD DOES NOT EXIST IN THE PROTOCOL, it's merely used for convenience for PocketMine-MP to easily

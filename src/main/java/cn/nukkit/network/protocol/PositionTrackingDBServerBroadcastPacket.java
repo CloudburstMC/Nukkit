@@ -10,7 +10,7 @@ import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 import java.io.IOException;
 
 @PowerNukkitOnly
-@Since("1.2.2.0-PN")
+@Since("1.3.0.0-PN")
 public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.POS_TRACKING_SERVER_BROADCAST_PACKET;
     private static final Action[] ACTIONS = Action.values();
@@ -46,7 +46,7 @@ public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     public enum Action {
         UPDATE,
         DESTROY,

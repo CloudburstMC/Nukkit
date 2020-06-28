@@ -7,7 +7,7 @@ import lombok.ToString;
 import java.util.List;
 import java.util.UUID;
 
-@Since("1.2.2.0-PN")
+@Since("1.3.0.0-PN")
 @ToString
 public class EmoteListPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.EMOTE_LIST_PACKET;

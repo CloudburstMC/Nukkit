@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 
-@Since("1.2.2.0-PN")
+@Since("1.3.0.0-PN")
 public class ItemStackRequestPacket extends DataPacket {
     public final List<Request> requests = new ArrayList<>();
 
@@ -28,14 +28,14 @@ public class ItemStackRequestPacket extends DataPacket {
 
     }
     
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     @Value
     public static class Request {
         private final int requestId;
         private final List<ItemStackAction> actions;
     }
     
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     @Value
     public static class ItemStackAction {
         private final byte type;

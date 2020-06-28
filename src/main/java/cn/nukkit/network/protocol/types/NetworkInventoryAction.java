@@ -66,7 +66,7 @@ public class NetworkInventoryAction {
     public int inventorySlot;
     public Item oldItem;
     public Item newItem;
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     public int stackNetworkId;
 
     public NetworkInventoryAction read(InventoryTransactionPacket packet) {

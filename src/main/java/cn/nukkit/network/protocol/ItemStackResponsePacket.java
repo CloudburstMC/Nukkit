@@ -4,7 +4,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 @PowerNukkitOnly
-@Since("1.2.2.0-PN")
+@Since("1.3.0.0-PN")
 public class ItemStackResponsePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.ITEM_STACK_RESPONSE_PACKET;
 

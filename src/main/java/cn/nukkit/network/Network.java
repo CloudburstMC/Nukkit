@@ -67,15 +67,15 @@ public class Network {
         this.server = server;
     }
 
-    @Since("1.2.2.0-PN")
-    @Deprecated @DeprecationDetails(since = "1.2.2.0-PN",
+    @Since("1.3.0.0-PN")
+    @Deprecated @DeprecationDetails(since = "1.3.0.0-PN",
             replaceWith = "inflateRaw",
             reason = "Added by NukkitX. The name don't follow the correct java code style. Will be renamed to inflateRaw in future.")
     public static byte[] inflate_raw(byte[] data) throws IOException, DataFormatException {
         return inflateRaw(data);
     }
     
-    @PowerNukkitOnly @Since("1.2.2.0-PN")
+    @PowerNukkitOnly @Since("1.3.0.0-PN")
     public static byte[] inflateRaw(byte[] data) throws IOException, DataFormatException {
         Inflater inflater = INFLATER_RAW.get();
         inflater.reset();
@@ -92,15 +92,15 @@ public class Network {
         return bos.toByteArray();
     }
 
-    @Since("1.2.2.0-PN")
-    @Deprecated @DeprecationDetails(since = "1.2.2.0-PN",
+    @Since("1.3.0.0-PN")
+    @Deprecated @DeprecationDetails(since = "1.3.0.0-PN",
             replaceWith = "deflateRaw",
             reason = "Added by NukkitX. The name don't follow the correct java code style. Will be renamed to inflateRaw in future.")
     public static byte[] deflate_raw(byte[] data, int level) throws IOException {
         return deflateRaw(data, level);
     }
     
-    @PowerNukkitOnly @Since("1.2.2.0-PN")
+    @PowerNukkitOnly @Since("1.3.0.0-PN")
     public static byte[] deflateRaw(byte[] data, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
         deflater.reset();
@@ -118,15 +118,15 @@ public class Network {
         return bos.toByteArray();
     }
 
-    @Since("1.2.2.0-PN")
-    @Deprecated @DeprecationDetails(since = "1.2.2.0-PN",
+    @Since("1.3.0.0-PN")
+    @Deprecated @DeprecationDetails(since = "1.3.0.0-PN",
             replaceWith = "deflateRaw",
             reason = "Added by NukkitX. The name don't follow the correct java code style. Will be renamed to inflateRaw in future.")
     public static byte[] deflate_raw(byte[][] datas, int level) throws IOException {
         return deflateRaw(datas, level);
     }
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     public static byte[] deflateRaw(byte[][] datas, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
         deflater.reset();

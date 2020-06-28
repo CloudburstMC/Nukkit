@@ -3,7 +3,7 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.api.Since;
 import lombok.ToString;
 
-@Since("1.2.2.0-PN")
+@Since("1.3.0.0-PN")
 @ToString
 public class PacketViolationWarningPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET;
@@ -35,13 +35,13 @@ public class PacketViolationWarningPacket extends DataPacket {
         this.putString(this.context);
     }
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     public enum PacketViolationType {
         UNKNOWN,
         MALFORMED_PACKET
     }
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     public enum PacketViolationSeverity {
         UNKNOWN,
         WARNING,

@@ -6,7 +6,7 @@ import lombok.ToString;
 import java.util.EnumSet;
 import java.util.Set;
 
-@Since("1.2.2.0-PN")
+@Since("1.3.0.0-PN")
 @ToString
 public class PlayerArmorDamagePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ARMOR_DAMAGE_PACKET;
@@ -44,7 +44,7 @@ public class PlayerArmorDamagePacket extends DataPacket {
         }
     }
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     public enum PlayerArmorDamageFlag {
         HELMET,
         CHESTPLATE,

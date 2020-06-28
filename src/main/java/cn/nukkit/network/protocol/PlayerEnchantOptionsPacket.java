@@ -8,7 +8,7 @@ import lombok.Value;
 import java.util.ArrayList;
 import java.util.List;
 
-@Since("1.2.2.0-PN")
+@Since("1.3.0.0-PN")
 @ToString
 public class PlayerEnchantOptionsPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ENCHANT_OPTIONS_PACKET;
@@ -82,7 +82,7 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
 
     }
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     @Value
     public class EnchantOptionData {
         private final int cost;
@@ -94,7 +94,7 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
         private final int enchantNetId;
     }
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     @Value
     public class EnchantData {
         private final int type;

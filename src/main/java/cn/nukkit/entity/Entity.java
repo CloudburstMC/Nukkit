@@ -139,7 +139,7 @@ public abstract class Entity extends Location implements Metadatable {
     
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(reason = "NukkitX added this constant with a different name",
-            replaceWith = "DATA_HAS_COMMAND_BLOCK", since = "1.2.2.0-PN", toBeRemovedAt = "1.4.0.0-PN")
+            replaceWith = "DATA_HAS_COMMAND_BLOCK", since = "1.3.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_COMMAND_BLOCK_ENABLED = 69; //byte
     
     @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
@@ -152,7 +152,7 @@ public abstract class Entity extends Location implements Metadatable {
     
     @PowerNukkitOnly("Backward compatibility")
     @Deprecated @DeprecationDetails(reason = "NukkitX added this constant with a different name",
-            replaceWith = "DATA_SPELL_CASTING_COLOR", since = "1.2.2.0-PN", toBeRemovedAt = "1.4.0.0-PN")
+            replaceWith = "DATA_SPELL_CASTING_COLOR", since = "1.3.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_EVOKER_SPELL_COLOR = 76; // int
     
     public static final int DATA_LIMITED_LIFE = 77; // int
@@ -231,18 +231,18 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_TICK_DELAY = 105;
     @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_EXECUTE_ON_FIRST_TICK = 106;
     @Since("1.2.0.0-PN") public static final int DATA_AMBIENT_SOUND_INTERVAL = 107;
-    @Since("1.2.2.0-PN") public static final int DATA_AMBIENT_SOUND_INTERVAL_RANGE = 108;
+    @Since("1.3.0.0-PN") public static final int DATA_AMBIENT_SOUND_INTERVAL_RANGE = 108;
     @Since("1.2.0.0-PN") public static final int DATA_AMBIENT_SOUND_EVENT_NAME = 109;
     @Since("1.2.0.0-PN") public static final int DATA_FALL_DAMAGE_MULTIPLIER = 110;
     @Since("1.2.0.0-PN") public static final int DATA_NAME_RAW_TEXT = 111;
     @Since("1.2.0.0-PN") public static final int DATA_CAN_RIDE_TARGET = 112;
-    @Since("1.2.2.0-PN") public static final int DATA_LOW_TIER_CURED_DISCOUNT = 113;
-    @Since("1.2.2.0-PN") public static final int DATA_HIGH_TIER_CURED_DISCOUNT = 114;
-    @Since("1.2.2.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT = 115;
-    @Since("1.2.2.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = 116;
-    @Since("1.2.2.0-PN") public static final int DATA_HITBOX = 117;
-    @Since("1.2.2.0-PN") public static final int DATA_IS_BUOYANT = 118;
-    @Since("1.2.2.0-PN") public static final int DATA_BUOYANCY_DATA = 119;
+    @Since("1.3.0.0-PN") public static final int DATA_LOW_TIER_CURED_DISCOUNT = 113;
+    @Since("1.3.0.0-PN") public static final int DATA_HIGH_TIER_CURED_DISCOUNT = 114;
+    @Since("1.3.0.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT = 115;
+    @Since("1.3.0.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = 116;
+    @Since("1.3.0.0-PN") public static final int DATA_HITBOX = 117;
+    @Since("1.3.0.0-PN") public static final int DATA_IS_BUOYANT = 118;
+    @Since("1.3.0.0-PN") public static final int DATA_BUOYANCY_DATA = 119;
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
@@ -362,15 +362,15 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_ROARING = 83;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_DELAYED_ATTACK = 84;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_AVOIDING_MOBS = 85;
-    @Since("1.2.2.0-PN") public static final int DATA_FLAG_IS_AVOIDING_BLOCKS = 86;
+    @Since("1.3.0.0-PN") public static final int DATA_FLAG_IS_AVOIDING_BLOCKS = 86;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK = 87;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_HIDDEN_WHEN_INVISIBLE = 88;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_IN_UI = 89;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_STALKING = 90;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_EMOTING = 91;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_CELEBRATING = 92;
-    @Since("1.2.2.0-PN") public static final int DATA_FLAG_ADMIRING = 93;
-    @Since("1.2.2.0-PN") public static final int DATA_FLAG_CELEBRATING_SPECIAL = 94;
+    @Since("1.3.0.0-PN") public static final int DATA_FLAG_ADMIRING = 93;
+    @Since("1.3.0.0-PN") public static final int DATA_FLAG_CELEBRATING_SPECIAL = 94;
 
     public static long entityCount = 1;
 

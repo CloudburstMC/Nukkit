@@ -15,10 +15,10 @@ public class EntityLink {
     public byte type;
     public boolean immediate;
     
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     public boolean riderInitiated;
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     public EntityLink(long fromEntityUniquieId, long toEntityUniquieId, byte type, boolean immediate, boolean riderInitiated) {
         this.fromEntityUniquieId = fromEntityUniquieId;
         this.toEntityUniquieId = toEntityUniquieId;
@@ -27,11 +27,11 @@ public class EntityLink {
         this.riderInitiated = riderInitiated;
     }
 
-    @Since("1.2.2.0-PN")
+    @Since("1.3.0.0-PN")
     @PowerNukkitOnly("Backward compatibility")
     @Deprecated
     @DeprecationDetails(
-            since = "1.2.2.0-PN", toBeRemovedAt = "1.4.0.0-PN",
+            since = "1.3.0.0-PN", toBeRemovedAt = "1.4.0.0-PN",
             reason = "NukkitX added the immediate riderInitiated", 
             replaceWith = "EntityLink(long fromEntityUniquieId, long toEntityUniquieId, byte type, boolean immediate, boolean riderInitiated)")
     public EntityLink(long fromEntityUniquieId, long toEntityUniquieId, byte type, boolean immediate) {
