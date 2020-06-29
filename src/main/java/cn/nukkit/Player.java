@@ -4583,7 +4583,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected void addDefaultWindows() {
         this.addWindow(this.getInventory(), ContainerIds.INVENTORY, true);
-
+        this.getInventory().close(this);
         this.playerUIInventory = new PlayerUIInventory(this);
         this.addWindow(this.playerUIInventory, ContainerIds.UI, true);
         this.addWindow(this.offhandInventory, ContainerIds.OFFHAND, true);
