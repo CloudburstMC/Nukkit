@@ -6,7 +6,6 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
-import cn.nukkit.block.BlockStemMelon;
 import cn.nukkit.block.BlockWall;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.level.Level;
@@ -15,6 +14,7 @@ import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.ChunkException;
+import cn.nukkit.utils.Faceable;
 import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
@@ -443,9 +443,9 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                         offsetZ + z + blockFace.getZOffset()
                 );
                 if (sideId == productId) {
-                    BlockStemMelon blockStemMelon = (BlockStemMelon) Block.get(blockId, meta, level, offsetX + x, offsetY + y, offsetZ + z, 0);
-                    blockStemMelon.setBlockFace(blockFace);
-                    section.setBlockData(x, y, z, 0, blockStemMelon.getDamage());
+                    Block blockStem = Block.get(blockId, meta, level, offsetX + x, offsetY + y, offsetZ + z, 0);
+                    ((Faceable) blockStem).setBlockFace(blockFace);
+                    section.setBlockData(x, y, z, 0, blockStem.getDamage());
                     return true;
                 }
             }
