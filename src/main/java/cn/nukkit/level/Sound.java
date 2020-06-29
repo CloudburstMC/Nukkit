@@ -733,7 +733,7 @@ public enum Sound {
     BLOCK_LECTERN_BREAK("block.lectern.break"),
     BLOCK_LECTERN_HIT("block.lectern.hit"),
     BLOCK_LECTERN_STEP("block.lectern.step"),
-    BLOCK_LECTERN_FALL("block.lectern.fall"),;
+    BLOCK_LECTERN_FALL("block.lectern.fall"),
     RECORD_WARD("record.ward"),
     RESPAWN_ANCHOR_AMBIENT("respawn_anchor.ambient"),
     RESPAWN_ANCHOR_CHARGE("respawn_anchor.charge"),
