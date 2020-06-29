@@ -12,6 +12,7 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.EnumMap;
 import java.util.Iterator;
@@ -24,6 +25,7 @@ import static cn.nukkit.utils.BlockColor.*;
  * Nukkit Project
  */
 @PowerNukkitDifference(info = "Extends BlockTransparentHyperMeta instead of BlockTransparentMeta", since = "1.3.0.0-PN")
+@Log4j2
 public class BlockWall extends BlockTransparentHyperMeta {
     @Deprecated
     @DeprecationDetails(reason = "No longer matches the meta directly", replaceWith = "WallType.COBBLESTONE", since = "1.3.0.0-PN")
@@ -145,7 +147,12 @@ public class BlockWall extends BlockTransparentHyperMeta {
         for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
             Block side = getSideAtLayer(0, blockFace);
             if (canConnect(side)) {
-                connect(blockFace, above, forcePost);
+                try {
+                    connect(blockFace, above, forcePost);
+                } catch (RuntimeException e) {
+                    log.error("Failed to connect the block "+this+" at "+getLocation()+" to "+blockFace+" which is "+side+" at "+side.getLocation());
+                    throw e;
+                }
             }
         }
         
@@ -227,7 +234,7 @@ public class BlockWall extends BlockTransparentHyperMeta {
         }
 
         int bitIndex = 4 + horizontalIndex * 2;
-        int typeOrdinal = getDamage() >> bitIndex & 0x3; 
+        int typeOrdinal = getDamage() >> bitIndex & 0x3;
         return WallConnectionType.VALUES[typeOrdinal];
     }
 
