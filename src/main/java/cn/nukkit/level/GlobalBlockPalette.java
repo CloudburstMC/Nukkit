@@ -50,10 +50,14 @@ public class GlobalBlockPalette {
             if (!state.contains("LegacyStates")) continue;
 
             List<CompoundTag> legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
+            String name = state.getCompound("block").getString("name");
 
             // Resolve to first legacy id
             CompoundTag firstState = legacyStates.get(0);
             runtimeIdToLegacy.put(runtimeId, firstState.getInt("id") << 6 | firstState.getShort("val"));
+
+            stringToLegacyId.put(name, firstState.getInt("id"));
+            legacyIdToString.put(firstState.getInt("id"), name);
 
             for (CompoundTag legacyState : legacyStates) {
                 int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
