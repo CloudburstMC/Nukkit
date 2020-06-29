@@ -17,7 +17,8 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     public static final int TIER_CHAIN = 3;
     public static final int TIER_GOLD = 4;
     public static final int TIER_DIAMOND = 5;
-    public static final int TIER_OTHER = 6;
+    public static final int TIER_NETHERITE = 6;
+    public static final int TIER_OTHER = 7;
 
     public ItemArmor(int id) {
         super(id);
@@ -83,6 +84,8 @@ abstract public class ItemArmor extends Item implements ItemDurable {
                 case TIER_LEATHER:
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_LEATHER);
                     break;
+                case TIER_NETHERITE:
+                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_GENERIC); //TODO: Get NETHERITE Equip Sound ID
                 case TIER_OTHER:
                 default:
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_GENERIC);
@@ -101,6 +104,8 @@ abstract public class ItemArmor extends Item implements ItemDurable {
                 return 15;
             case TIER_DIAMOND:
                 return 10;
+            case TIER_NETHERITE:
+                return 10; //TODO: Insert Correct Value
             case TIER_GOLD:
                 return 25;
             case TIER_IRON:
