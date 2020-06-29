@@ -413,5 +413,5 @@ public interface BlockID {
     int HONEY_BLOCK = 475;
     int HONEYCOMB_BLOCK = 476;
 
-    int NETHERITE_BLOCK = 500; //TODO: CORRECT BLOCK ID
+    int NETHERITE_BLOCK = 525; //525
 }

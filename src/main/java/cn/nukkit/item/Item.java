@@ -322,17 +322,18 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[HONEYCOMB] = ItemHoneycomb.class; //736
             list[HONEY_BOTTLE] = ItemHoneyBottle.class; //737
 
-            list[NETHERITE_SCRAP] = ItemScrapNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_INGOT] = ItemIngotNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_SWORD] = ItemSwordNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_PICKAXE] = ItemPickaxeNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_SHOVEL] = ItemShovelNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_AXE] = ItemAxeNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_HOE] = ItemHoeNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_HELMET] = ItemHelmetNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_CHESTPLATE] = ItemChestplateNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_LEGGINGS] = ItemLeggingsNetherite.class; //TODO: IMPLEMENT CORRECT ID
-            list[NETHERITE_BOOTS] = ItemBootsNetherite.class; //TODO: IMPLEMENT CORRECT ID
+            list[NETHERITE_INGOT] = ItemIngotNetherite.class; //742
+            list[NETHERITE_SWORD] = ItemSwordNetherite.class; //743
+            list[NETHERITE_SHOVEL] = ItemShovelNetherite.class; //744
+            list[NETHERITE_PICKAXE] = ItemPickaxeNetherite.class; //745
+            list[NETHERITE_AXE] = ItemAxeNetherite.class; //746
+            list[NETHERITE_HOE] = ItemHoeNetherite.class; //747
+            list[NETHERITE_HELMET] = ItemHelmetNetherite.class; //748
+            list[NETHERITE_CHESTPLATE] = ItemChestplateNetherite.class; //749
+            list[NETHERITE_LEGGINGS] = ItemLeggingsNetherite.class; //750
+            list[NETHERITE_BOOTS] = ItemBootsNetherite.class; //751
+            list[NETHERITE_SCRAP] = ItemScrapNetherite.class; //752
+
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
                     list[i] = Block.list[i];
