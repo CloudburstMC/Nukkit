@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
@@ -9,6 +10,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
@@ -38,8 +40,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public static final int DATA_MASK = DATA_SIZE - 1;
 
     public static Class[] list = null;
+    
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @Deprecated
     public static Block[] fullList = null;
     public static int[] light = null;
+
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @Deprecated
     public static int[] fullLight = null;
     public static int[] lightFilter = null;
     public static boolean[] solid = null;
@@ -501,7 +509,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             id = 255 - id;
         }
         if (meta != null) {
-            return fullList[(id << DATA_BITS) + meta].clone();
+            int iMeta = meta;
+            if (iMeta <= DATA_SIZE) {
+                return fullList[(id << DATA_BITS) | meta].clone();
+            } else {
+                Block block = fullList[id << DATA_BITS].clone();
+                block.setDamage(iMeta);
+                return block;
+            }
         } else {
             return fullList[id << DATA_BITS].clone();
         }
@@ -517,7 +532,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             id = 255 - id;
         }
 
-        Block block = fullList[(id << DATA_BITS) | (meta == null ? 0 : meta)].clone();
+        Block block;
+        if (meta != null && meta > DATA_SIZE) {
+            block = fullList[id << DATA_BITS].clone();
+            block.setDamage(meta);
+        } else {
+            block = fullList[(id << DATA_BITS) | (meta == null ? 0 : meta)].clone();
+        }
+        
         if (pos != null) {
             block.x = pos.x;
             block.y = pos.y;
@@ -532,15 +554,49 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         if (id < 0) {
             id = 255 - id;
         }
-        return fullList[(id << DATA_BITS) + data].clone();
+        if (data < DATA_SIZE) {
+            return fullList[(id << DATA_BITS) | data].clone();
+        } else {
+            Block block = fullList[(id << DATA_BITS)].clone();
+            block.setDamage(data);
+            return block;
+        }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     public static Block get(int fullId, Level level, int x, int y, int z) {
         return get(fullId, level, x, y, z, 0);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     public static Block get(int fullId, Level level, int x, int y, int z, int layer) {
         Block block = fullList[fullId].clone();
+        block.x = x;
+        block.y = y;
+        block.z = z;
+        block.level = level;
+        block.layer = layer;
+        return block;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public static Block get(int id, int meta, Level level, int x, int y, int z) {
+        return get(id, meta, level, x, y, z, 0);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public static Block get(int id, int meta, Level level, int x, int y, int z, int layer) {
+        Block block;
+        if (meta <= DATA_SIZE) {
+            block = fullList[id << DATA_BITS | meta].clone();
+        } else {
+            block = fullList[id << DATA_BITS].clone();
+            block.setDamage(meta);
+        }
         block.x = x;
         block.y = y;
         block.z = z;
@@ -630,6 +686,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public boolean isSolid() {
         return true;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public boolean isSolid(BlockFace side) {
+        return isSolid();
+    }
 
     // https://minecraft.gamepedia.com/Opacity#Lighting
     public boolean diffusesSkyLight() {
@@ -640,6 +702,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return false;
     }
 
+    @PowerNukkitOnly
     public int getWaterloggingLevel() {
         return 0;
     }
@@ -708,9 +771,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     /**
      * The full id is a combination of the id and data.
      * @return full id
+     * @deprecated PowerNukkit: Does not support hyper ids
      */
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     public int getFullId() {
         return (getId() << DATA_BITS);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public int getRuntimeId() {
+        return GlobalBlockPalette.getOrCreateRuntimeId(getId(), getDamage());
     }
 
     public void addVelocityToEntity(Entity entity, Vector3 vector) {

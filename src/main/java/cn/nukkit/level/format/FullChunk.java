@@ -1,9 +1,14 @@
 package cn.nukkit.level.format;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.biome.Biome;
+
 import java.io.IOException;
 import java.util.Map;
 
@@ -32,16 +37,50 @@ public interface FullChunk extends Cloneable {
 
     void setProvider(LevelProvider provider);
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     int getFullBlock(int x, int y, int z);
+    
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     int getFullBlock(int x, int y, int z, int layer);
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    default int getBlockRuntimeId(int x, int y, int z) {
+        return getBlockRuntimeId(x, y, z, 0);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    default int getBlockRuntimeId(int x, int y, int z, int layer) {
+        return GlobalBlockPalette.getOrCreateRuntimeId(getBlockId(x, y, z, layer), getBlockData(x, y, z, layer));
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    default int[] getBlockState(int x, int y, int z) {
+        return getBlockState(x, y, z, 0);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    default int[] getBlockState(int x, int y, int z, int layer) {
+        int full = getFullBlock(x, y, z, layer);
+        return new int[] { full >> Block.DATA_BITS, full & Block.DATA_MASK };
+    }
 
     Block getAndSetBlock(int x, int y, int z, Block block);
     Block getAndSetBlock(int x, int y, int z, int layer, Block block);
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN", replaceWith = "setBlock(int x, int y, int z, int  blockId, int  meta)")
     default boolean setFullBlockId(int x, int y, int z, int fullId) {
         return setFullBlockId(x, y, z, 0, fullId >> Block.DATA_BITS);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN", replaceWith = "setBlockAtLayer(int x, int y, int z, int layer, int  blockId)")
     default boolean setFullBlockId(int x, int y, int z, int layer, int fullId) {
         return setBlockAtLayer(x, y, z, layer, fullId >> Block.DATA_BITS, fullId & Block.DATA_MASK);
     }

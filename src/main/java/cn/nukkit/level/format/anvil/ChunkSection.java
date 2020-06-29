@@ -1,10 +1,14 @@
 package cn.nukkit.level.format.anvil;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.format.anvil.util.BlockStorage;
 import cn.nukkit.level.format.anvil.util.NibbleArray;
+import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
+import cn.nukkit.nbt.tag.ByteArrayTag;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.*;
@@ -35,6 +39,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     protected byte[] compressedLight;
     protected boolean hasBlockLight;
     protected boolean hasSkyLight;
+    
+    private int contentVersion;
 
     private ChunkSection(int y, List<BlockStorage> storage, byte[] blockLight, byte[] skyLight, byte[] compressedLight,
                          boolean hasBlockLight, boolean hasSkyLight) {
@@ -48,6 +54,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     public ChunkSection(int y) {
         this.y = y;
+        this.contentVersion = BaseChunk.CONTENT_VERSION;
 
         hasBlockLight = false;
         hasSkyLight = false;
@@ -59,7 +66,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         this.y = nbt.getByte("Y");
 
         storage.add(new BlockStorage());
-
+        
+        contentVersion = nbt.getByte("ContentVersion");
+        
         int version = nbt.getByte("Version");
 
         ListTag<CompoundTag> storageList;
@@ -82,10 +91,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             } else {
                 hasBlockIds = true;
             }
+            
             byte[] blocksExtra = storageTag.getByteArray("BlocksExtra");
             if (blocksExtra.length == 0) {
                 blocksExtra = new byte[blocks.length];
             }
+            
             byte[] dataBytes = storageTag.getByteArray("Data");
             if (dataBytes.length == 0) {
                 dataBytes = new byte[BlockStorage.SECTION_SIZE / 2];
@@ -93,11 +104,15 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 hasBlockIds = true;
             }
             NibbleArray data = new NibbleArray(dataBytes);
+            
             byte[] dataExtraBytes = storageTag.getByteArray("DataExtra");
             if (dataExtraBytes.length == 0) {
                 dataExtraBytes = new byte[dataBytes.length];
             }
             NibbleArray dataExtra = new NibbleArray(dataExtraBytes);
+            
+            ListTag<ByteArrayTag> hyperDataList = storageTag.getList("DataHyper", ByteArrayTag.class);
+            int hyperDataSize = hyperDataList.size();
             
             if (hasBlockIds) {
                 BlockStorage storage = getOrSetStorage(i);
@@ -108,7 +123,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                         for (int y = 0; y < 16; y++) {
                             int index = getAnvilIndex(x, y, z);
                             storage.setBlockId(x, y, z, blocks[index] & 0xFF | ((blocksExtra[index] & 0xFF) << 8));
-                            storage.setBlockData(x, y, z, data.get(index) & 0xF | ((dataExtra.get(index) & 0xF) << 4));
+                            int fullData = data.get(index) & 0xF | ((dataExtra.get(index) & 0xF) << 4);
+                            for (int dataIndex = 0; dataIndex < hyperDataSize; dataIndex++) {
+                                int hyperData = (hyperDataList.get(dataIndex).data[index] & 0xFF) << (8 * dataIndex);
+                                fullData |= hyperData;
+                            }
+                            storage.setBlockData(x, y, z, fullData);
                         }
                     }
                 }
@@ -198,6 +218,14 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     @Override
+    public int[] getBlockState(int x, int y, int z, int layer) {
+        synchronized (storage) {
+            BlockStorage storage = getStorageIfExists(layer);
+            return storage != null? storage.getBlockState(x, y, z) : new int[]{0,0};
+        }
+    }
+
+    @Override
     public int getFullBlock(int x, int y, int z, int layer) {
         synchronized (storage) {
             BlockStorage storage = getStorageIfExists(layer);
@@ -223,8 +251,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public Block getAndSetBlock(int x, int y, int z, int layer, Block block) {
         synchronized (storage) {
-            int fullId = getOrSetStorage(layer).getAndSetFullBlock(x, y, z, block.getFullId());
-            return Block.fullList[fullId].clone();
+            int[] before = getOrSetStorage(layer).getAndSetBlock(x, y, z, block.getId(), block.getDamage());
+            return Block.get(before[0], before[1]);
         }
     }
 
@@ -235,10 +263,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
-        int newFullId = (blockId << Block.DATA_BITS) + meta;
         synchronized (storage) {
-            int previousFullId = getOrSetStorage(layer).getAndSetFullBlock(x, y, z, newFullId);
-            return (newFullId != previousFullId);
+            int[] previousState = getOrSetStorage(layer).getAndSetBlock(x, y, z, blockId, meta);
+            return previousState[0] != blockId || previousState[1] != meta;
         }
     }
 
@@ -348,6 +375,42 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 }
             }
             return anvil;
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    @Override
+    public byte[][] getHyperDataArray(int layer) {
+        synchronized (storage) {
+            BlockStorage storage = getStorageIfExists(layer);
+            if (storage == null) {
+                return new byte[0][];
+            }
+            
+            boolean hasA = storage.hasBlockDataHyperA();
+            boolean hasB = storage.hasBlockDataHyperB();
+            if (!hasA && !hasB) {
+                return new byte[0][];
+            }
+            byte[][] hyperData = new byte[hasB? 3 : 1][4096];
+            for (int x = 0; x < 16; x++) {
+                for (int z = 0; z < 16; z++) {
+                    for (int y = 0; y < 16; y++) {
+                        int index = getAnvilIndex(x, y, z);
+                        if (hasA) {
+                            hyperData[0][index] = storage.getHyperDataA(x, y, z);
+                        }
+                        if (hasB) {
+                            int hyperDataB = storage.getHyperDataB(x, y, z);
+                            hyperData[1][index] = (byte) (hyperDataB & 0xFF);
+                            hyperData[2][index] = (byte) (hyperDataB >>> 8 & 0xFF);
+                        }
+                    }
+                }
+            }
+            
+            return hyperData;
         }
     }
 
@@ -556,6 +619,14 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                     if (storage.hasBlockDataExtras()) {
                         storageTag.putByteArray("DataExtra", getDataExtraArray(layer));
                     }
+                    if (storage.hasBlockDataHyperA() || storage.hasBlockDataHyperB()) {
+                        byte[][] hyperDataArray = getHyperDataArray(layer);
+                        ListTag<ByteArrayTag> hyperDataListTag = new ListTag<>("DataHyper");
+                        for (byte[] hyperData : hyperDataArray) {
+                            hyperDataListTag.add(new ByteArrayTag("", hyperData));
+                        }
+                        storageTag.putList(hyperDataListTag);
+                    }
                 }
                 
                 if (version >= SAVE_STORAGE_VERSION) {
@@ -678,5 +749,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public int getMaximumLayer() {
         return 1;
+    }
+
+    @PowerNukkitOnly("Needed for level backward compatibility")
+    @Since("1.3.0.0-PN")
+    @Override
+    public int getContentVersion() {
+        return contentVersion;
     }
 }

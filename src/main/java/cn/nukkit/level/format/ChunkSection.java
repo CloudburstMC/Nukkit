@@ -1,5 +1,8 @@
 package cn.nukkit.level.format;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -16,6 +19,8 @@ public interface ChunkSection {
 
     void setBlockId(int x, int y, int z, int id);
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN", replaceWith = "setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta)")
     boolean setFullBlockId(int x, int y, int z, int layer, int fullId);
 
     int getBlockData(int x, int y, int z);
@@ -26,7 +31,21 @@ public interface ChunkSection {
 
     void setBlockData(int x, int y, int z, int layer, int data);
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     int getFullBlock(int x, int y, int z);
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    default int[] getBlockState(int x, int y, int z) {
+        return getBlockState(x, y, z, 0);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    default int[] getBlockState(int x, int y, int z, int layer) {
+        return new int[] {getBlockId(x, y, z, layer), getBlockData(x, y, z, layer)};
+    }
 
     Block getAndSetBlock(int x, int y, int z, int layer, Block block);
 
@@ -34,8 +53,12 @@ public interface ChunkSection {
 
     void setBlockId(int x, int y, int z, int layer, int id);
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN", replaceWith = "setBlock(int x, int y, int z, int blockId, int meta)")
     boolean setFullBlockId(int x, int y, int z, int fullId);
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     int getFullBlock(int x, int y, int z, int layer);
 
     boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId);
@@ -69,6 +92,18 @@ public interface ChunkSection {
     }
     
     byte[] getDataExtraArray(int layer);
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    default byte[][] getHyperDataArray() {
+        return getHyperDataArray(0);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    default byte[][] getHyperDataArray(int layer) {
+        return new byte[0][];
+    }
 
     byte[] getSkyLightArray();
 
@@ -83,4 +118,10 @@ public interface ChunkSection {
     CompoundTag toNBT();
 
     ChunkSection copy();
+    
+    @PowerNukkitOnly("Needed for level backward compatibility")
+    @Since("1.3.0.0-PN")
+    default int getContentVersion() {
+        return 0;
+    }
 }

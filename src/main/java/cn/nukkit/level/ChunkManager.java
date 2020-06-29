@@ -1,5 +1,6 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 
 /**
@@ -10,9 +11,13 @@ public interface ChunkManager {
 
     int getBlockIdAt(int x, int y, int z, int layer);
     int getBlockIdAt(int x, int y, int z);
-
+    
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     void setBlockFullIdAt(int x, int y, int z, int layer, int fullId);
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     void setBlockFullIdAt(int x, int y, int z, int fullId);
 
     void setBlockIdAt(int x, int y, int z, int layer, int id);

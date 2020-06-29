@@ -1,6 +1,8 @@
 package cn.nukkit.level.format.generic;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
@@ -115,6 +117,12 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             pk.trim();
         }
         return chunkPacket;
+    }
+    
+    @PowerNukkitOnly("Needed for level backward compatibility")
+    @Since("1.3.0.0-PN")
+    public void backwardCompatibilityUpdate(Level level) {
+        // Does nothing here
     }
 
     public void initChunk() {

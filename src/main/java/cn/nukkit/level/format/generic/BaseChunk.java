@@ -1,11 +1,16 @@
 package cn.nukkit.level.format.generic;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.ChunkException;
 
 import java.io.IOException;
@@ -19,8 +24,83 @@ import java.util.Arrays;
  */
 
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
+    @PowerNukkitOnly("Needed for level backward compatibility")
+    @Since("1.3.0.0-PN")
+    public static final int CONTENT_VERSION = 1;
 
     protected ChunkSection[] sections;
+
+    @PowerNukkitOnly("Needed for level backward compatibility")
+    @Since("1.3.0.0-PN")
+    @Override
+    public void backwardCompatibilityUpdate(Level level) {
+        super.backwardCompatibilityUpdate(level);
+        int offsetX = getX() << 4;
+        int offsetZ = getZ() << 4;
+        boolean updated = false;
+        for (ChunkSection section : sections) {
+            int contentVersion = section.getContentVersion();
+            if (contentVersion < 1) {
+                for (int x = 0; x <= 0xF; x++) {
+                    for (int z = 0; z <= 0xF; z++) {
+                        for (int y = 0; y <= 0xF; y++) {
+                            int offsetY = section.getY() << 4;
+                            int[] state = section.getBlockState(x, y, z, 0);
+                            switch (state[0]) {
+                                case BlockID.COBBLESTONE_WALL:
+                                    BlockWall blockWall = (BlockWall) Block.get(state[0], state[1], level, offsetX + x, offsetY + y, offsetZ + z, 0);
+                                    if (blockWall.autoConfigureState()) {
+                                        section.setBlockData(x, y, z, 0, blockWall.getDamage());
+                                        updated = true;
+                                    }
+                                    break;
+                                case BlockID.MELON_STEM:
+                                    for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
+                                        int sideId = level.getBlockIdAt(
+                                                offsetX + x + blockFace.getXOffset(),
+                                                offsetY + y,
+                                                offsetZ + z + blockFace.getZOffset()
+                                        );
+                                        if (sideId == BlockID.MELON_BLOCK) {
+                                            BlockStemMelon blockStemMelon = (BlockStemMelon) Block.get(state[0], state[1], level, offsetX + x, offsetY + y, offsetZ + z, 0);
+                                            blockStemMelon.setBlockFace(blockFace);
+                                            section.setBlockData(x, y, z, 0, blockStemMelon.getDamage());
+                                            updated = true;
+                                            break;
+                                        }
+                                    }
+
+                                    break;
+                                case BlockID.PUMPKIN_STEM:
+                                    for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
+                                        int sideId = level.getBlockIdAt(
+                                                offsetX + x + blockFace.getXOffset(),
+                                                offsetY + y,
+                                                offsetZ + z + blockFace.getZOffset()
+                                        );
+                                        if (sideId == BlockID.PUMPKIN) {
+                                            BlockStemPumpkin blockStemPumpkin = (BlockStemPumpkin) Block.get(state[0], state[1], level, offsetX + x, offsetY + y, offsetZ + z, 0);
+                                            blockStemPumpkin.setBlockFace(blockFace);
+                                            section.setBlockData(x, y, z, 0, blockStemPumpkin.getDamage());
+                                            updated = true;
+                                            break;
+                                        }
+                                    }
+
+                                    break;
+                                    
+                                default:
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        if (updated) {
+            setChanged();
+        }
+    }
 
     @Override
     public BaseChunk clone() {
@@ -51,6 +131,11 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @Override
     public int getFullBlock(int x, int y, int z, int layer) {
         return this.sections[y >> 4].getFullBlock(x, y & 0x0f, z, layer);
+    }
+
+    @Override
+    public int[] getBlockState(int x, int y, int z, int layer) {
+        return this.sections[y >> 4].getBlockState(x, y & 0x0f, z, layer);
     }
 
     @Override
@@ -86,11 +171,15 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     @Override
     public boolean setFullBlockId(int x, int y, int z, int fullId) {
         return this.setFullBlockId(x, y, z, 0, fullId);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     @Override
     public boolean setFullBlockId(int x, int y, int z, int layer, int fullId) {
         int Y = y >> 4;
