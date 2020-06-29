@@ -359,9 +359,9 @@ public class BlockStorage {
     public int[] getBlockDataExtended() {
         int[] data = new int[SECTION_SIZE];
         if (hasBlockIds) {
-            if (hasBlockDataExtras) {
+            if (hasBlockDataExtras || hasBlockDataHyperA || hasBlockDataHyperB) {
                 for (int i = 0; i < SECTION_SIZE; i++) {
-                    data[i] = blockData.get(i) & 0xF | (blockDataExtra.get(i) & 0xF) << 4;
+                    data[i] = blockData.get(i) & 0xF | ((blockDataExtra.get(i) & 0xF) << 4) | ((blockDataHyperA[i] & 0xFF) << 8) | ((blockDataHyperB[i] & 0xFFFF) << 16);
                 }
             } else {
                 for (int i = 0; i < SECTION_SIZE; i++) {
