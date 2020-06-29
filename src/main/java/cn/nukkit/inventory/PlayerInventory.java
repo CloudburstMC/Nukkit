@@ -503,13 +503,6 @@ public class PlayerInventory extends BaseInventory {
         if (who.equals(this.getHolder()) && this.openedByPlayer)
             return false;
         return super.open(who);
-        }
-
-    @Override
-    public boolean open(Player who) {
-        if (who.equals(this.getHolder()) && this.openedByPlayer)
-            return false;
-        return super.open(who);
     }
 
     @Override
