@@ -515,6 +515,9 @@ public class PlayerInventory extends BaseInventory {
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = who.getWindowId(this);
         who.dataPacket(pk);
-        super.onClose(who);
+        // player can never stop viewing their own inventory
+        if (who != holder) {
+            super.onClose(who);
+        }
     }
 }
