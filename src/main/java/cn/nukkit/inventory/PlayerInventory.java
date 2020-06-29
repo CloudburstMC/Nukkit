@@ -506,6 +506,13 @@ public class PlayerInventory extends BaseInventory {
         }
 
     @Override
+    public boolean open(Player who) {
+        if (who.equals(this.getHolder()) && this.openedByPlayer)
+            return false;
+        return super.open(who);
+    }
+
+    @Override
     public void onOpen(Player who) {
         super.onOpen(who);
         if (who.equals(this.getHolder())) this.openedByPlayer = true;
@@ -528,7 +535,7 @@ public class PlayerInventory extends BaseInventory {
         if (who.equals(this.getHolder())) {
             this.openedByPlayer = false;
             return;
-            }
-            super.onClose(who);
+        }
+        super.onClose(who);
     }
 }
