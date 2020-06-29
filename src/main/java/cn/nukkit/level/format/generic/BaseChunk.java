@@ -4,7 +4,10 @@ import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockStemMelon;
+import cn.nukkit.block.BlockWall;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.Chunk;
@@ -12,6 +15,7 @@ import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.ChunkException;
+import lombok.RequiredArgsConstructor;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -35,64 +39,22 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @Override
     public void backwardCompatibilityUpdate(Level level) {
         super.backwardCompatibilityUpdate(level);
-        int offsetX = getX() << 4;
-        int offsetZ = getZ() << 4;
+        
         boolean updated = false;
         for (ChunkSection section : sections) {
             int contentVersion = section.getContentVersion();
             if (contentVersion < 1) {
-                for (int x = 0; x <= 0xF; x++) {
-                    for (int z = 0; z <= 0xF; z++) {
-                        for (int y = 0; y <= 0xF; y++) {
-                            int offsetY = section.getY() << 4;
-                            int[] state = section.getBlockState(x, y, z, 0);
-                            switch (state[0]) {
-                                case BlockID.COBBLESTONE_WALL:
-                                    BlockWall blockWall = (BlockWall) Block.get(state[0], state[1], level, offsetX + x, offsetY + y, offsetZ + z, 0);
-                                    if (blockWall.autoConfigureState()) {
-                                        section.setBlockData(x, y, z, 0, blockWall.getDamage());
-                                        updated = true;
-                                    }
-                                    break;
-                                case BlockID.MELON_STEM:
-                                    for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
-                                        int sideId = level.getBlockIdAt(
-                                                offsetX + x + blockFace.getXOffset(),
-                                                offsetY + y,
-                                                offsetZ + z + blockFace.getZOffset()
-                                        );
-                                        if (sideId == BlockID.MELON_BLOCK) {
-                                            BlockStemMelon blockStemMelon = (BlockStemMelon) Block.get(state[0], state[1], level, offsetX + x, offsetY + y, offsetZ + z, 0);
-                                            blockStemMelon.setBlockFace(blockFace);
-                                            section.setBlockData(x, y, z, 0, blockStemMelon.getDamage());
-                                            updated = true;
-                                            break;
-                                        }
-                                    }
+                WallUpdater wallUpdater = new WallUpdater(level, section);
+                boolean sectionUpdated = walk(section, new GroupedUpdaters(
+                        wallUpdater,
+                        new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK),
+                        new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN)
+                ));
 
-                                    break;
-                                case BlockID.PUMPKIN_STEM:
-                                    for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
-                                        int sideId = level.getBlockIdAt(
-                                                offsetX + x + blockFace.getXOffset(),
-                                                offsetY + y,
-                                                offsetZ + z + blockFace.getZOffset()
-                                        );
-                                        if (sideId == BlockID.PUMPKIN) {
-                                            BlockStemPumpkin blockStemPumpkin = (BlockStemPumpkin) Block.get(state[0], state[1], level, offsetX + x, offsetY + y, offsetZ + z, 0);
-                                            blockStemPumpkin.setBlockFace(blockFace);
-                                            section.setBlockData(x, y, z, 0, blockStemPumpkin.getDamage());
-                                            updated = true;
-                                            break;
-                                        }
-                                    }
+                updated = updated || sectionUpdated;
 
-                                    break;
-                                    
-                                default:
-                            }
-                        }
-                    }
+                while (sectionUpdated) {
+                    sectionUpdated = walk(section, wallUpdater);
                 }
             }
         }
@@ -416,5 +378,97 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @Override
     public LevelProvider getProvider() {
         return this.provider;
+    }
+
+    private boolean walk(ChunkSection section, Updater updater) {
+        int offsetX = getX() << 4;
+        int offsetZ = getZ() << 4;
+        int offsetY = section.getY() << 4;
+        boolean updated = false;
+        for (int x = 0; x <= 0xF; x++) {
+            for (int z = 0; z <= 0xF; z++) {
+                for (int y = 0; y <= 0xF; y++) {
+                    int[] state = section.getBlockState(x, y, z, 0);
+                    updated |= updater.update(offsetX, offsetY, offsetZ, x, y, z, state[0], state[1]);
+                }
+            }
+        }
+        return updated;
+    }
+
+
+    @FunctionalInterface
+    private interface Updater {
+        boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, int blockId, int meta);
+    }
+
+    @RequiredArgsConstructor
+    private class WallUpdater implements Updater {
+        private final Level level;
+        private final ChunkSection section;
+
+        @Override
+        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, int blockId, int meta) {
+            if (blockId != BlockID.COBBLE_WALL) {
+                return false;
+            }
+
+            BlockWall blockWall = (BlockWall) Block.get(blockId, meta, level, offsetX + x, offsetY + y, offsetZ + z, 0);
+            if (blockWall.autoConfigureState()) {
+                section.setBlockData(x, y, z, 0, blockWall.getDamage());
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    @RequiredArgsConstructor
+    private class StemUpdater implements Updater {
+        private final Level level;
+        private final ChunkSection section;
+        private final int stemId;
+        private final int productId;
+
+        @Override
+        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, int blockId, int meta) {
+            if (blockId != stemId) {
+                return false;
+            }
+
+            for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
+                int sideId = level.getBlockIdAt(
+                        offsetX + x + blockFace.getXOffset(),
+                        offsetY + y,
+                        offsetZ + z + blockFace.getZOffset()
+                );
+                if (sideId == productId) {
+                    BlockStemMelon blockStemMelon = (BlockStemMelon) Block.get(blockId, meta, level, offsetX + x, offsetY + y, offsetZ + z, 0);
+                    blockStemMelon.setBlockFace(blockFace);
+                    section.setBlockData(x, y, z, 0, blockStemMelon.getDamage());
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    private class GroupedUpdaters implements Updater {
+        private final Updater[] updaters;
+
+        public GroupedUpdaters(Updater... updaters) {
+            this.updaters = updaters;
+        }
+
+        @Override
+        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, int blockId, int meta) {
+            for (Updater updater : updaters) {
+                if (updater.update(offsetX, offsetY, offsetZ, x, y, z, blockId, meta)) {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
