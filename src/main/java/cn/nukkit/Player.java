@@ -2650,11 +2650,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         case InteractPacket.ACTION_OPEN_INVENTORY:
                             if (targetEntity.getId() != this.getId()) break;
                             this.addWindow(this.getInventory(), ContainerIds.INVENTORY);
-                            ContainerOpenPacket openPacket = new ContainerOpenPacket();
-                            openPacket.entityId = this.getId();
-                            openPacket.windowId = this.getWindowId(this.getInventory());
-                            openPacket.type = getInventory().getType().getNetworkType();
-                            this.dataPacket(openPacket);
                             break;
                     }
                     break;
@@ -4601,7 +4596,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     protected void addDefaultWindows() {
-        this.addWindow(this.getInventory(), ContainerIds.INVENTORY, true);
+        this.addWindow(this.getInventory(), ContainerIds.INVENTORY, false);
 
         this.playerUIInventory = new PlayerUIInventory(this);
         this.addWindow(this.playerUIInventory, ContainerIds.UI, true);
