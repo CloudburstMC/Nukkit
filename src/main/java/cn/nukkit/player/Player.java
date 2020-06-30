@@ -85,7 +85,6 @@ import com.nukkitx.protocol.bedrock.data.PlayerPermission;
 import com.nukkitx.protocol.bedrock.data.command.CommandPermission;
 import com.nukkitx.protocol.bedrock.data.entity.EntityEventType;
 import com.nukkitx.protocol.bedrock.data.inventory.ContainerId;
-import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
 import com.nukkitx.protocol.bedrock.data.skin.SerializedSkin;
 import com.nukkitx.protocol.bedrock.handler.BatchHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
@@ -125,6 +124,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     private final PlayerPacketHandler packetHandler;
 
     private boolean initialized;
+    private boolean inventoryOpen;
     public boolean spawned = false;
     public boolean loggedIn = false;
     public long lastBreak;
@@ -773,15 +773,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.noDamageTicks = 60;
 
         this.getServer().sendRecipeList(this);
-
-        if (this.getGamemode() == GameMode.SPECTATOR) {
-            InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-            inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
-            inventoryContentPacket.setContents(new ItemData[0]);
-            this.sendPacket(inventoryContentPacket);
-        } else {
-            this.getInventory().sendCreativeContents();
-        }
+        getInventory().sendCreativeContents();
 
         this.getChunkManager().getLoadedChunks().forEach((LongConsumer) chunkKey -> {
             int chunkX = Chunk.fromKeyX(chunkKey);
@@ -1065,16 +1057,6 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         if (this.isSpectator()) {
             this.teleport(this.getPosition().add(0, 0.1, 0));
-
-            InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-            inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
-            inventoryContentPacket.setContents(new ItemData[0]);
-            this.sendPacket(inventoryContentPacket);
-        } else {
-            InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-            inventoryContentPacket.setContainerId(ContainerId.CREATIVE);
-            inventoryContentPacket.setContents(Item.toNetwork(Item.getCreativeItems().toArray(new Item[0])));
-            this.sendPacket(inventoryContentPacket);
         }
 
         this.resetFallDistance();
@@ -1087,6 +1069,22 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
         this.getInventory().sendCreativeContents();
         return true;
+    }
+
+    public boolean canOpenInventory() {
+        return !this.inventoryOpen;
+    }
+
+    public void openInventory(Player who) {
+        if (this == who) {
+            this.inventoryOpen = true;
+        }
+    }
+
+    public void closeInventory(Player who) {
+        if (this == who) {
+            this.inventoryOpen = false;
+        }
     }
 
     @Override
@@ -1503,6 +1501,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         startGamePacket.setRotation(Vector2f.from(this.getYaw(), this.getPitch()));
         startGamePacket.setSeed(-1);
         startGamePacket.setDimensionId(0);
+        startGamePacket.setTrustingPlayers(true);
         startGamePacket.setLevelGameType(GameType.from(this.getGamemode().getVanillaId()));
         startGamePacket.setDifficulty(this.server.getDifficulty().ordinal());
         startGamePacket.setDefaultSpawn(this.getSpawn().getPosition().toInt());
@@ -1525,6 +1524,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         startGamePacket.setVanillaVersion("*");
         startGamePacket.setPremiumWorldTemplateId("");
         startGamePacket.setMultiplayerCorrelationId("");
+        startGamePacket.setInventoriesServerAuthoritative(false);
         startGamePacket.setBlockPalette(BlockRegistry.get().getPaletteTag());
         startGamePacket.setItemEntries(ItemRegistry.get().getItemEntries());
         this.sendPacket(startGamePacket);
@@ -2826,7 +2826,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public void removeWindow(Inventory inventory) {
         inventory.close(this);
-        this.windows.remove(inventory);
+        if (!this.permanentWindows.contains(this.getWindowId(inventory)))
+            this.windows.remove(inventory);
     }
 
     public Inventory removeWindowById(byte id) {

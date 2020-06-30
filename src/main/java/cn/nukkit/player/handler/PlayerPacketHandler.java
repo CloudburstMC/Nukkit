@@ -201,6 +201,20 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
     }
 
     @Override
+    public boolean handle(EmotePacket packet) {
+        for (Player p : this.player.getViewers()) {
+            p.sendPacket(packet);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean handle(PacketViolationWarningPacket packet) {
+        log.warn("Recived Packet Violation Warning: {}", packet.toString());
+        return true;
+    }
+
+    @Override
     public boolean handle(MobEquipmentPacket packet) {
         if (!player.spawned || !player.isAlive()) {
             return true;
@@ -518,6 +532,13 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 }
                 player.dismount(player.getVehicle());
                 break;
+            case OPEN_INVENTORY:
+                if (targetEntity.getRuntimeId() != player.getRuntimeId()) break;
+                if (player.canOpenInventory()) {
+                    player.getInventory().open(player);
+                    player.openInventory(player);
+                }
+                break;
         }
         return true;
     }
@@ -687,21 +708,23 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
 
     @Override
     public boolean handle(ContainerClosePacket packet) {
-        if (!player.spawned) {
+        if (!player.spawned || packet.getId() == ContainerId.INVENTORY && player.canOpenInventory()) {
             return true;
         }
 
         if (player.getWindowById(packet.getId()) != null) {
             player.getServer().getPluginManager().callEvent(new InventoryCloseEvent(player.getWindowById(packet.getId()), player));
+            if (packet.getId() == ContainerId.INVENTORY) player.closeInventory(player);
             player.removeWindow(player.getWindowById(packet.getId()));
-        } else {
-            player.removeWindowById(packet.getId());
         }
 
         if (packet.getId() == -1) {
             player.craftingType = CraftingType.SMALL;
             player.resetCraftingGridType();
             player.addWindow(player.getCraftingGrid(), (byte) ContainerId.NONE);
+            ContainerClosePacket ccp = new ContainerClosePacket();
+            ccp.setId((byte) -1);
+            player.sendPacket(ccp);
         }
         return true;
     }

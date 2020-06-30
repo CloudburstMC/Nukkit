@@ -8,11 +8,9 @@ import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.player.Player;
 import com.nukkitx.protocol.bedrock.data.inventory.ContainerId;
+import com.nukkitx.protocol.bedrock.data.inventory.ContainerType;
 import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
-import com.nukkitx.protocol.bedrock.packet.InventoryContentPacket;
-import com.nukkitx.protocol.bedrock.packet.InventorySlotPacket;
-import com.nukkitx.protocol.bedrock.packet.MobArmorEquipmentPacket;
-import com.nukkitx.protocol.bedrock.packet.MobEquipmentPacket;
+import com.nukkitx.protocol.bedrock.packet.*;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.Collection;
@@ -566,13 +564,15 @@ public class PlayerInventory extends BaseInventory {
         }
         Player p = (Player) this.getHolder();
 
-        InventoryContentPacket pk = new InventoryContentPacket();
-        pk.setContainerId(ContainerId.CREATIVE);
+        CreativeContentPacket pk = new CreativeContentPacket();
 
         if (!p.isSpectator()) { //fill it for all gamemodes except spectator
-            pk.setContents(Item.toNetwork(Item.getCreativeItems().toArray(new Item[0])));
+            int i = 1;
+            for (Item item : Item.getCreativeItems()) {
+                pk.getEntries().put(i++, item.toNetwork());
+            }
         } else {
-            pk.setContents(new ItemData[0]);
+            pk.getEntries().clear();
         }
 
         p.sendPacket(pk);
@@ -581,5 +581,26 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public Human getHolder() {
         return (Human) super.getHolder();
+    }
+
+    @Override
+    public void onOpen(Player who) {
+        super.onOpen(who);
+        ContainerOpenPacket pk = new ContainerOpenPacket();
+        pk.setId(who.getWindowId(this));
+        pk.setType(ContainerType.INVENTORY);
+        pk.setBlockPosition(who.getPosition().toInt());
+        pk.setUniqueEntityId(who.getUniqueId());
+        who.sendPacket(pk);
+    }
+
+    @Override
+    public void onClose(Player who) {
+        ContainerClosePacket pk = new ContainerClosePacket();
+        pk.setId(who.getWindowId(this));
+        who.sendPacket(pk);
+        // Player can neer stop viewing their own inventory
+        if (who != holder)
+            super.onClose(who);
     }
 }

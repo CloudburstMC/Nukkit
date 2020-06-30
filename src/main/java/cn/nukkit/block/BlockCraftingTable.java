@@ -6,6 +6,8 @@ import cn.nukkit.player.Player;
 import cn.nukkit.player.Player.CraftingType;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Identifier;
+import com.nukkitx.protocol.bedrock.data.inventory.ContainerType;
+import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket;
 
 /**
  * Created on 2015/12/5 by xtypr.
@@ -41,6 +43,12 @@ public class BlockCraftingTable extends BlockSolid {
         if (player != null) {
             player.craftingType = CraftingType.BIG;
             player.setCraftingGrid(player.getUIInventory().getBigCraftingGrid());
+            ContainerOpenPacket pk = new ContainerOpenPacket();
+            pk.setId((byte) -1);
+            pk.setBlockPosition(this.getPosition());
+            pk.setType(ContainerType.WORKBENCH);
+            pk.setUniqueEntityId(player.getUniqueId());
+            player.sendPacket(pk);
         }
         return true;
     }
