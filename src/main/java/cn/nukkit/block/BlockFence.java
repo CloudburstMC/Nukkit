@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -11,7 +12,8 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/7 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockFence extends BlockTransparentMeta {
+@PowerNukkitDifference(info = "Implements BlockConnectable only on PowerNukkit")
+public class BlockFence extends BlockTransparentMeta implements BlockConnectable {
 
     public static final int FENCE_OAK = 0;
     public static final int FENCE_SPRUCE = 1;
@@ -98,6 +100,7 @@ public class BlockFence extends BlockTransparentMeta {
         return 20;
     }
 
+    @Override
     public boolean canConnect(Block block) {
         return (block instanceof BlockFence || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
     }

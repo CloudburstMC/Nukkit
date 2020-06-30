@@ -25,10 +25,11 @@ import static cn.nukkit.utils.BlockColor.*;
 /**
  * author: MagicDroidX
  * Nukkit Project
+ * @apiNote Implements BlockConnectable only on PowerNukkit
  */
-@PowerNukkitDifference(info = "Extends BlockTransparentHyperMeta instead of BlockTransparentMeta", since = "1.3.0.0-PN")
+@PowerNukkitDifference(info = "Extends BlockTransparentHyperMeta instead of BlockTransparentMeta, implements BlockConnectable only on PowerNukkit", since = "1.3.0.0-PN")
 @Log4j2
-public class BlockWall extends BlockTransparentHyperMeta {
+public class BlockWall extends BlockTransparentHyperMeta implements BlockConnectable {
     private static final boolean SHOULD_FAIL = false; 
     private static final boolean SHOULD_VALIDATE_META = true;
     
@@ -124,13 +125,13 @@ public class BlockWall extends BlockTransparentHyperMeta {
         switch (above.getId()) {
             case COBBLE_WALL:
                 return ((BlockWall) above).isWallPost();
-            case GLASS_PANE:
-            case IRON_BARS:
-                return !((BlockThin) above).isStraight();
             case FLOWER_POT_BLOCK:
                 return true;
             default:
-                return false;
+                if (above instanceof BlockConnectable) {
+                    return !((BlockConnectable) above).isStraight();
+                }
+                return above instanceof BlockSignPost;
         }
     }
 
@@ -138,13 +139,13 @@ public class BlockWall extends BlockTransparentHyperMeta {
         switch (above.getId()) {
             case COBBLE_WALL:
                 return ((BlockWall) above).getConnectionType(face) != WallConnectionType.NONE;
-            case GLASS_PANE:
-            case IRON_BARS:
-                return ((BlockThin) above).isConnected(face);
             case STAINED_GLASS_PANE:
                 return true;
             default:
-                return shouldBeTallBasedOnBoundingBox(above, face);
+                if (above instanceof BlockConnectable) {
+                    return ((BlockConnectable) above).isConnected(face);
+                }
+                return above.isSolid(BlockFace.DOWN) || shouldBeTallBasedOnBoundingBox(above, face);
         }
     }
     
@@ -153,7 +154,7 @@ public class BlockWall extends BlockTransparentHyperMeta {
         if (boundingBox == null) {
             return false;
         }
-        boundingBox = boundingBox.getOffsetBoundingBox(above.x, above.y, above.z);
+        boundingBox = boundingBox.getOffsetBoundingBox(-above.x, -above.y, -above.z);
         if (boundingBox.getMinY() > 0) {
             return false;
         }
@@ -263,7 +264,7 @@ public class BlockWall extends BlockTransparentHyperMeta {
 
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
-    public Map<BlockFace, WallConnectionType> getConnections() {
+    public Map<BlockFace, WallConnectionType> getWallConnections() {
         EnumMap<BlockFace, WallConnectionType> connections = new EnumMap<>(BlockFace.class);
         for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
             WallConnectionType connectionType = getConnectionType(blockFace);
@@ -335,7 +336,7 @@ public class BlockWall extends BlockTransparentHyperMeta {
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public boolean isSameHeightStraight() {
-        Map<BlockFace, WallConnectionType> connections = getConnections();
+        Map<BlockFace, WallConnectionType> connections = getWallConnections();
         if (connections.size() != 2) {
             return false;
         }
@@ -344,20 +345,6 @@ public class BlockWall extends BlockTransparentHyperMeta {
         Map.Entry<BlockFace, WallConnectionType> a = iterator.next();
         Map.Entry<BlockFace, WallConnectionType> b = iterator.next();
         return a.getValue() == b.getValue() && a.getKey().getOpposite() == b.getKey();
-    }
-
-    @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
-    public boolean isAnyHeightStraight() {
-        Map<BlockFace, WallConnectionType> connections = getConnections();
-        if (connections.size() != 2) {
-            return false;
-        }
-
-        Iterator<BlockFace> iterator = connections.keySet().iterator();
-        BlockFace a = iterator.next();
-        BlockFace b = iterator.next();
-        return a.getOpposite() == b;
     }
     
     @PowerNukkitOnly
@@ -427,6 +414,7 @@ public class BlockWall extends BlockTransparentHyperMeta {
     }
 
     @PowerNukkitDifference(info = "Will connect to glass panes", since = "1.3.0.0-PN")
+    @Override
     public boolean canConnect(Block block) {
         switch (block.getId()) {
             case COBBLE_WALL:
@@ -438,6 +426,13 @@ public class BlockWall extends BlockTransparentHyperMeta {
             default:
                 return block.isSolid() && !block.isTransparent();
         }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    @Override
+    public boolean isConnected(BlockFace face) {
+        return getConnectionType(face) != WallConnectionType.NONE;
     }
 
     @Override
