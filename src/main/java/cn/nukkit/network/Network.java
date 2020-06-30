@@ -239,7 +239,7 @@ public class Network {
     public void processBatch(BatchPacket packet, Player player) {
         byte[] data;
         try {
-            data = Network.inflate_raw(packet.payload);
+            data = Network.inflateRaw(packet.payload);
         } catch (Exception e) {
             log.warn("Failed to decompress a batch packet from "+player.getName(), e);
             return;
