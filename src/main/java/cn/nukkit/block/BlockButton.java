@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -42,9 +43,10 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return false;
     }
 
+    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isTransparent() && target.getId() != SNOW_LAYER) {
+        if (target.isTransparent() && target.getId() != SNOW_LAYER && (target.getId() != COBBLE_WALL || face != BlockFace.UP)) {
             return false;
         }
 
@@ -81,10 +83,13 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return true;
     }
 
+    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(getFacing().getOpposite()).isTransparent()) {
+            BlockFace face = getFacing().getOpposite();
+            Block side = this.getSide(face);
+            if (side.isTransparent() && (side.getId() != COBBLE_WALL || face != BlockFace.DOWN)) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -144,8 +149,9 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return Item.get(this.getItemId());
     }
 
+    @PowerNukkitDifference(info = "Was returning the wrong face", since = "1.3.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return getFacing();
     }
 }
