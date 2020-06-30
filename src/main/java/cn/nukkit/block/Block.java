@@ -64,6 +64,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public int layer;
 
     protected Block() {}
+    
+    private static boolean initializing;
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public static boolean isInitializing() {
+        return initializing;
+    }
 
     @SuppressWarnings("unchecked")
     public static void init() {
@@ -435,6 +443,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[HONEY_BLOCK] = BlockHoney.class; //475
             list[HONEYCOMB_BLOCK] = BlockHoneycombBlock.class; //476
             
+            initializing = true;
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
                 Class c = list[id];
                 if (c != null) {
@@ -508,6 +517,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     }
                 }
             }
+            initializing = false;
         }
     }
 

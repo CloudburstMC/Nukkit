@@ -29,6 +29,7 @@ import static cn.nukkit.utils.BlockColor.*;
 @Log4j2
 public class BlockWall extends BlockTransparentHyperMeta {
     private static final boolean SHOULD_FAIL = false; 
+    private static final boolean SHOULD_VALIDATE_META = true;
     
     @Deprecated
     @DeprecationDetails(reason = "No longer matches the meta directly", replaceWith = "WallType.COBBLESTONE", since = "1.3.0.0-PN")
@@ -62,17 +63,27 @@ public class BlockWall extends BlockTransparentHyperMeta {
 
     @Override
     public void setDamage(int meta) {
-        for (int invalidMetaCombination : INVALID_META_COMBINATIONS) {
-            if ((meta & invalidMetaCombination) == invalidMetaCombination) {
-                InvalidBlockDamageException exception = new InvalidBlockDamageException(getId(), meta, getDamage());
-                if (SHOULD_FAIL) {
-                    throw exception;
-                } else {
-                    log.warn("Tried to set an invalid wall meta, the bits " + invalidMetaCombination + " were removed." + (level != null ? " " + getLocation() : ""), exception);
-                    meta = meta & ~invalidMetaCombination;
-                }
-            }
+        if (!SHOULD_VALIDATE_META) {
+            super.setDamage(meta);
         }
+        
+        for (int invalidMetaCombination : INVALID_META_COMBINATIONS) {
+            if ((meta & invalidMetaCombination) != invalidMetaCombination) {
+                continue;
+            }
+            
+            InvalidBlockDamageException exception = new InvalidBlockDamageException(getId(), meta, getDamage());
+            if (SHOULD_FAIL) {
+                throw exception;
+            }
+            
+            if (!isInitializing()) {
+                log.warn("Tried to set an invalid wall meta, the bits " + invalidMetaCombination + " were removed." + (level != null ? " " + getLocation() : ""), exception);
+            }
+            
+            meta = meta & ~invalidMetaCombination;
+        }
+        
         super.setDamage(meta);
     }
 
