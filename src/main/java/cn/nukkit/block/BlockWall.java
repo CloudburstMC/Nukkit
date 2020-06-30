@@ -125,7 +125,8 @@ public class BlockWall extends BlockTransparentHyperMeta {
             case COBBLE_WALL:
                 return ((BlockWall) above).isWallPost();
             case GLASS_PANE:
-                return !((BlockGlassPane) above).isStraight();
+            case IRON_BARS:
+                return !((BlockThin) above).isStraight();
             case FLOWER_POT_BLOCK:
                 return true;
             default:
@@ -138,7 +139,8 @@ public class BlockWall extends BlockTransparentHyperMeta {
             case COBBLE_WALL:
                 return ((BlockWall) above).getConnectionType(face) != WallConnectionType.NONE;
             case GLASS_PANE:
-                return ((BlockGlassPane) above).isConnected(face);
+            case IRON_BARS:
+                return ((BlockThin) above).isConnected(face);
             case STAINED_GLASS_PANE:
                 return true;
             default:
@@ -431,6 +433,7 @@ public class BlockWall extends BlockTransparentHyperMeta {
             case FENCE_GATE:
             case GLASS_PANE:
             case STAINED_GLASS_PANE:
+            case IRON_BARS:
                 return true;
             default:
                 return block.isSolid() && !block.isTransparent();
