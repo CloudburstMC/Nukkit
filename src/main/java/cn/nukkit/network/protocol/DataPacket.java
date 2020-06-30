@@ -69,7 +69,7 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
         batchPayload[1] = buf;
         byte[] data = Binary.appendBytes(batchPayload);
         try {
-            batch.payload = Network.deflate_raw(data, level);
+            batch.payload = Network.deflateRaw(data, level);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
