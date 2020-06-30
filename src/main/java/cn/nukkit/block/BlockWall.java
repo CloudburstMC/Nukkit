@@ -6,6 +6,7 @@ import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -85,6 +86,11 @@ public class BlockWall extends BlockTransparentHyperMeta {
         }
         
         super.setDamage(meta);
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(this, getDamage() & 0xF);
     }
 
     @Override
