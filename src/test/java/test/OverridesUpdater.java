@@ -104,7 +104,7 @@ public class OverridesUpdater {
                 for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
                     String wallConnectionTypeStr = state.getString("wall_connection_type_"+blockFace.name().toLowerCase());
                     BlockWall.WallConnectionType wallConnectionType = BlockWall.WallConnectionType.valueOf(wallConnectionTypeStr.toUpperCase());
-                    wall.setConnection(blockFace, wallConnectionType, post);
+                    wall.setConnection(blockFace, wallConnectionType);
                 }
                 wall.setWallPost(post);
 

@@ -16,8 +16,9 @@ class ChunkSectionTest {
         ChunkSection section = new ChunkSection(4);
         BlockWall wall = new BlockWall();
         wall.setWallType(BlockWall.WallType.BRICK);
-        wall.setConnection(BlockFace.NORTH, BlockWall.WallConnectionType.SHORT, true);
-        wall.setConnection(BlockFace.EAST, BlockWall.WallConnectionType.TALL, true);
+        wall.setConnection(BlockFace.NORTH, BlockWall.WallConnectionType.SHORT);
+        wall.setConnection(BlockFace.EAST, BlockWall.WallConnectionType.TALL);
+        wall.setWallPost(true);
         int expected = 0b0001_1001_0000_0110;
         int x = 5, y = 6, z = 7, anvilIndex = 1653;
         assertEquals(expected, wall.getDamage());
