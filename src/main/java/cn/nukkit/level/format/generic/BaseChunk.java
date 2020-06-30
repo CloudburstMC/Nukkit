@@ -52,10 +52,19 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 ));
 
                 updated = updated || sectionUpdated;
-
+                
+                int attempts = 0;
                 while (sectionUpdated) {
+                    if (attempts++ >= 5) {
+                        int x = getX() << 4 | 0x6;
+                        int y = section.getY() << 4 | 0x6;
+                        int z = getZ() << 4 | 0x6;
+                        Server.getInstance().getLogger().warning("The chunk section at x:"+x+", y:"+y+", z:"+z+" failed to complete the backward compatibility update 1 after "+attempts+" attempts");
+                        break;
+                    }
                     sectionUpdated = walk(section, wallUpdater);
                 }
+                
             }
         }
         

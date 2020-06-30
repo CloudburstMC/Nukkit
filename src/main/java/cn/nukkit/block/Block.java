@@ -22,8 +22,10 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.InvalidBlockDamageException;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -432,7 +434,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BEEHIVE] = BlockBeehive.class; //474
             list[HONEY_BLOCK] = BlockHoney.class; //475
             list[HONEYCOMB_BLOCK] = BlockHoneycombBlock.class; //476
-
+            
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
                 Class c = list[id];
                 if (c != null) {
@@ -443,8 +445,20 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             Constructor constructor = c.getDeclaredConstructor(int.class);
                             constructor.setAccessible(true);
                             for (int data = 0; data < (1 << DATA_BITS); ++data) {
-                                Block b = (Block) constructor.newInstance(data);
                                 int fullId = (id << DATA_BITS) | data;
+                                Block b;
+                                try {
+                                    b = (Block) constructor.newInstance(data);
+                                    if (b.getDamage() != data) {
+                                        b = new BlockUnknown(id, data);
+                                    }
+                                } catch (InvocationTargetException wrapper) {
+                                    Throwable uncaught = wrapper.getTargetException();
+                                    if (!(uncaught instanceof InvalidBlockDamageException)) {
+                                        Server.getInstance().getLogger().error("Error while registering " + c.getName()+" with meta "+data, uncaught);
+                                    }
+                                    b = new BlockUnknown(id, data);
+                                }
                                 fullList[fullId] = b;
                                 fullLight[fullId] = b.getLightLevel();
                             }

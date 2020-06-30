@@ -125,7 +125,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                             storage.setBlockId(x, y, z, blocks[index] & 0xFF | ((blocksExtra[index] & 0xFF) << 8));
                             int fullData = data.get(index) & 0xF | ((dataExtra.get(index) & 0xF) << 4);
                             for (int dataIndex = 0; dataIndex < hyperDataSize; dataIndex++) {
-                                int hyperData = (hyperDataList.get(dataIndex).data[index] & 0xFF) << (8 * dataIndex);
+                                int hyperData = (hyperDataList.get(dataIndex).data[index] & 0xFF) << 8 << (8 * dataIndex);
                                 fullData |= hyperData;
                             }
                             storage.setBlockData(x, y, z, fullData);

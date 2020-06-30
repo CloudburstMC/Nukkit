@@ -12,6 +12,7 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.InvalidBlockDamageException;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.EnumMap;
@@ -27,6 +28,8 @@ import static cn.nukkit.utils.BlockColor.*;
 @PowerNukkitDifference(info = "Extends BlockTransparentHyperMeta instead of BlockTransparentMeta", since = "1.3.0.0-PN")
 @Log4j2
 public class BlockWall extends BlockTransparentHyperMeta {
+    private static final boolean SHOULD_FAIL = false; 
+    
     @Deprecated
     @DeprecationDetails(reason = "No longer matches the meta directly", replaceWith = "WallType.COBBLESTONE", since = "1.3.0.0-PN")
     public static final int NONE_MOSSY_WALL = 0;
@@ -34,18 +37,43 @@ public class BlockWall extends BlockTransparentHyperMeta {
     @Deprecated
     @DeprecationDetails(reason = "No longer matches the meta directly", replaceWith = "WallType.MOSSY_COBBLESTONE", since = "1.3.0.0-PN")
     public static final int MOSSY_WALL = 1;
+    
+    private static final int[] INVALID_META_COMBINATIONS = {
+            0b0_0000_0011_0000,
+            0b0_0000_1100_0000,
+            0b0_0011_0000_0000,
+            0b0_1100_0000_0000,
+            0b0_0000_0000_1110,
+            0b0_0000_0000_1111,
+    };
 
     public BlockWall() {
         this(0);
     }
 
     public BlockWall(int meta) {
-        super(meta);
+        setDamage(meta);
     }
 
     @Override
     public int getId() {
         return STONE_WALL;
+    }
+
+    @Override
+    public void setDamage(int meta) {
+        for (int invalidMetaCombination : INVALID_META_COMBINATIONS) {
+            if ((meta & invalidMetaCombination) == invalidMetaCombination) {
+                InvalidBlockDamageException exception = new InvalidBlockDamageException(getId(), meta, getDamage());
+                if (SHOULD_FAIL) {
+                    throw exception;
+                } else {
+                    log.warn("Tried to set an invalid wall meta, the bits " + invalidMetaCombination + " were removed." + (level != null ? " " + getLocation() : ""), exception);
+                    meta = meta & ~invalidMetaCombination;
+                }
+            }
+        }
+        super.setDamage(meta);
     }
 
     @Override
@@ -203,7 +231,7 @@ public class BlockWall extends BlockTransparentHyperMeta {
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void setWallType(WallType type) {
-        setDamage((getDamage() & ~0xF) | type.ordinal());
+        setDamage((getDamage() & ~0xF) | (type.ordinal() & 0xF));
     }
     
     @PowerNukkitOnly
@@ -225,15 +253,19 @@ public class BlockWall extends BlockTransparentHyperMeta {
         return connections;
     }
     
+    private int getBitIndex(BlockFace face) {
+        assert face.getHorizontalIndex() >= 0;
+        return 4 + face.getHorizontalIndex() * 2;
+    }
+    
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public WallConnectionType getConnectionType(BlockFace blockFace) {
-        int horizontalIndex = blockFace.getHorizontalIndex();
-        if (horizontalIndex < 0) {
+        if (blockFace.getHorizontalIndex() < 0) {
             return WallConnectionType.NONE;
         }
 
-        int bitIndex = 4 + horizontalIndex * 2;
+        int bitIndex = getBitIndex(blockFace);
         int typeOrdinal = getDamage() >> bitIndex & 0x3;
         return WallConnectionType.VALUES[typeOrdinal];
     }
@@ -248,13 +280,12 @@ public class BlockWall extends BlockTransparentHyperMeta {
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public boolean setConnection(BlockFace blockFace, WallConnectionType type, boolean forcePost) {
-        int horizontalIndex = blockFace.getHorizontalIndex();
-        if (horizontalIndex < 0) {
+        if (blockFace.getHorizontalIndex() < 0) {
             return false;
         }
         
         // Locate the 2 bit position
-        int bitIndex = 4 + horizontalIndex * 2;
+        int bitIndex = getBitIndex(blockFace);
         
         // Clear the 2 bits
         int damage = getDamage() & ~(0x3 << bitIndex);

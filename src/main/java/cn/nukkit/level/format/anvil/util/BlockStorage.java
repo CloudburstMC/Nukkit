@@ -164,9 +164,9 @@ public class BlockStorage {
         blockDataHyperA[index] = data3;
         blockDataHyperB[index] = data4;
         
-        hasBlockDataExtras |= data2 > 0;
-        hasBlockDataHyperA |= data3 > 0;
-        hasBlockDataHyperB |= data4 > 0;
+        hasBlockDataExtras |= data2 != 0;
+        hasBlockDataHyperA |= data3 != 0;
+        hasBlockDataHyperB |= data4 != 0;
         hasBlockIds |= data1 != 0 || hasBlockDataExtras || hasBlockDataHyperA || hasBlockDataHyperB;
     }
     
