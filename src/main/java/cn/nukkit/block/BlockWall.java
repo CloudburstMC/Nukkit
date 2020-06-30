@@ -9,9 +9,11 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Axis;
+import cn.nukkit.math.BlockFace.AxisDirection;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
@@ -34,6 +36,8 @@ import static cn.nukkit.utils.BlockColor.*;
 public class BlockWall extends BlockTransparentHyperMeta implements BlockConnectable {
     private static final boolean SHOULD_FAIL = false; 
     private static final boolean SHOULD_VALIDATE_META = true;
+    private static final double MIN_POST_BB =  5.0/16;
+    private static final double MAX_POST_BB = 11.0/16;
     
     @Deprecated
     @DeprecationDetails(reason = "No longer matches the meta directly", replaceWith = "WallType.COBBLESTONE", since = "1.3.0.0-PN")
@@ -129,15 +133,24 @@ public class BlockWall extends BlockTransparentHyperMeta implements BlockConnect
 
     private boolean shouldBeTall(Block above, BlockFace face) {
         switch (above.getId()) {
+            case AIR:
+            case SKULL_BLOCK:
+                return false;
+                
+            // If the bell is standing and follow the path, make it tall
+            case BELL:
+                BlockBell bell = (BlockBell) above;
+                return bell.getAttachmentType() == BlockBell.TYPE_ATTACHMENT_STANDING
+                        && bell.getBlockFace().getAxis() != face.getAxis();
             case COBBLE_WALL:
                 return ((BlockWall) above).getConnectionType(face) != WallConnectionType.NONE;
-            case STAINED_GLASS_PANE:
-                return true;
             default:
                 if (above instanceof BlockConnectable) {
                     return ((BlockConnectable) above).isConnected(face);
+                } else if (above instanceof BlockPressurePlateBase || above instanceof BlockStairs) {
+                    return true;
                 }
-                return above.isSolid(BlockFace.DOWN) || shouldBeTallBasedOnBoundingBox(above, face);
+                return above.isSolid() && !above.isTransparent() || shouldBeTallBasedOnBoundingBox(above, face);
         }
     }
     
@@ -152,23 +165,19 @@ public class BlockWall extends BlockTransparentHyperMeta implements BlockConnect
         }
         int offset = face.getXOffset();
         if (offset < 0) {
-            return boundingBox.getMinX() == 0 && boundingBox.getMaxX() <= 0.5
-                    && boundingBox.getMinZ() < 0.25 && boundingBox.getMaxZ() > 0.75
-                    ;
+            return boundingBox.getMinX() < MIN_POST_BB /*&& MIN_POST_BB <= boundingBox.getMaxX()*/
+                    && boundingBox.getMinZ() < MIN_POST_BB && MAX_POST_BB < boundingBox.getMaxZ();
         } else if (offset > 0) {
-            return boundingBox.getMaxX() == 0 && boundingBox.getMinX() <= 0.5
-                    && boundingBox.getMinZ() < 0.25 && boundingBox.getMaxZ() > 0.75
-                    ;
+            return /*boundingBox.getMinX() <= MAX_POST_BB &&*/ MAX_POST_BB < boundingBox.getMaxX()
+                    && MAX_POST_BB < boundingBox.getMaxZ() && boundingBox.getMinZ() < MAX_POST_BB; 
         } else {
             offset = face.getZOffset();
             if (offset < 0) {
-                return boundingBox.getMinZ() == 0 && boundingBox.getMaxZ() <= 0.5
-                        && boundingBox.getMinX() < 0.25 && boundingBox.getMaxX() > 0.75
-                        ;
+                return boundingBox.getMinZ() < MIN_POST_BB /*&& MIN_POST_BB <= boundingBox.getMaxZ()*/
+                        && boundingBox.getMinX() < MIN_POST_BB && MIN_POST_BB < boundingBox.getMaxX();
             } else if (offset > 0) {
-                return boundingBox.getMaxZ() == 0 && boundingBox.getMinZ() <= 0.5
-                        && boundingBox.getMinX() < 0.25 && boundingBox.getMaxX() > 0.75
-                        ;
+                return /*boundingBox.getMinZ() <= MAX_POST_BB &&*/ MAX_POST_BB < boundingBox.getMaxZ()
+                        && MAX_POST_BB < boundingBox.getMaxX() && boundingBox.getMinX() < MAX_POST_BB;
             }
         }
         return false;
@@ -509,19 +518,36 @@ public class BlockWall extends BlockTransparentHyperMeta implements BlockConnect
         );
     }
 
-    @PowerNukkitDifference(info = "Will connect to glass panes", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Will connect to glass panes, iron bars and fence gates", since = "1.3.0.0-PN")
     @Override
     public boolean canConnect(Block block) {
         switch (block.getId()) {
             case COBBLE_WALL:
-            case FENCE_GATE:
             case GLASS_PANE:
             case STAINED_GLASS_PANE:
             case IRON_BARS:
                 return true;
             default:
+                if (block instanceof BlockFenceGate) {
+                    BlockFenceGate fenceGate = (BlockFenceGate) block;
+                    return fenceGate.getBlockFace().getAxis() != calculateAxis(block);
+                } else if (block instanceof BlockStairs) {
+                    return ((BlockStairs) block).getBlockFace() == calculateFace(block);
+                }
                 return block.isSolid() && !block.isTransparent();
         }
+    }
+    
+    private Axis calculateAxis(Block side) {
+        Position vector = side.subtract(this);
+        return vector.x != 0? Axis.X : vector.z != 0? Axis.Z : Axis.Y;
+    }
+    
+    private BlockFace calculateFace(Block side) {
+        Position vector = side.subtract(this);
+        Axis axis = vector.x != 0? Axis.X : vector.z != 0? Axis.Z : Axis.Y;
+        double direction = axis == Axis.X? vector.x : axis == Axis.Y? vector.y : vector.z;
+        return BlockFace.fromAxis(direction < 0? AxisDirection.NEGATIVE : AxisDirection.POSITIVE, axis);
     }
 
     @PowerNukkitOnly
