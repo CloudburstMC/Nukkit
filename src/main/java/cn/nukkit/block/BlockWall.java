@@ -198,6 +198,8 @@ public class BlockWall extends BlockTransparentHyperMeta {
                     log.error("Failed to connect the block "+this+" at "+getLocation()+" to "+blockFace+" which is "+side+" at "+side.getLocation());
                     throw e;
                 }
+            } else {
+                disconnect(blockFace);
             }
         }
         
