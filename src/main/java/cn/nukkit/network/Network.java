@@ -64,7 +64,7 @@ public class Network {
         this.server = server;
     }
 
-    public static byte[] inflate_raw(byte[] data) throws IOException, DataFormatException {
+    public static byte[] inflateRaw(byte[] data) throws IOException, DataFormatException {
         Inflater inflater = INFLATER_RAW.get();
         inflater.reset();
         inflater.setInput(data);
@@ -80,7 +80,7 @@ public class Network {
         return bos.toByteArray();
     }
 
-    public static byte[] deflate_raw(byte[] data, int level) throws IOException {
+    public static byte[] deflateRaw(byte[] data, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
         deflater.reset();
         deflater.setLevel(level);
@@ -97,7 +97,7 @@ public class Network {
         return bos.toByteArray();
     }
 
-    public static byte[] deflate_raw(byte[][] datas, int level) throws IOException {
+    public static byte[] deflateRaw(byte[][] datas, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
         deflater.reset();
         deflater.setLevel(level);
@@ -207,7 +207,7 @@ public class Network {
     public void processBatch(BatchPacket packet, Player player) {
         byte[] data;
         try {
-            data = Network.inflate_raw(packet.payload);
+            data = Network.inflateRaw(packet.payload);
             //data = Zlib.inflate(packet.payload, 2 * 1024 * 1024); // Max 2MB
         } catch (Exception e) {
             log.debug("Exception while inflating batch packet", e);
@@ -407,6 +407,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.VIDEO_STREAM_CONNECT_PACKET, VideoStreamConnectPacket.class);
         this.registerPacket(ProtocolInfo.CLIENT_CACHE_STATUS_PACKET, ClientCacheStatusPacket.class);
         this.registerPacket(ProtocolInfo.MAP_CREATE_LOCKED_COPY_PACKET, MapCreateLockedCopyPacket.class);
+        this.registerPacket(ProtocolInfo.EMOTE_PACKET, EmotePacket.class);
         this.registerPacket(ProtocolInfo.ON_SCREEN_TEXTURE_ANIMATION_PACKET, OnScreenTextureAnimationPacket.class);
         this.registerPacket(ProtocolInfo.COMPLETED_USING_ITEM_PACKET, CompletedUsingItemPacket.class);
         this.registerPacket(ProtocolInfo.CODE_BUILDER_PACKET, CodeBuilderPacket.class);

@@ -2,7 +2,6 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.utils.BinaryStream;
@@ -165,19 +164,22 @@ public class CraftingManager {
         List<Map> potionMixes = config.getMapList("potionMixes");
 
         for (Map potionMix : potionMixes) {
-            int fromPotionId = ((Number) potionMix.get("fromPotionId")).intValue(); // gson returns doubles...
-            int ingredient = ((Number) potionMix.get("ingredient")).intValue();
-            int toPotionId = ((Number) potionMix.get("toPotionId")).intValue();
+            int fromPotionId = ((Number) potionMix.get("inputId")).intValue(); // gson returns doubles...
+            int fromPotionMeta = ((Number) potionMix.get("inputMeta")).intValue();
+            int ingredient = ((Number) potionMix.get("reagentId")).intValue();
+            int ingredientMeta = ((Number) potionMix.get("reagentMeta")).intValue();
+            int toPotionId = ((Number) potionMix.get("outputId")).intValue();
+            int toPotionMeta = ((Number) potionMix.get("outputMeta")).intValue();
 
-            registerBrewingRecipe(new BrewingRecipe(Item.get(ItemID.POTION, fromPotionId), Item.get(ingredient), Item.get(ItemID.POTION, toPotionId)));
+            registerBrewingRecipe(new BrewingRecipe(Item.get(fromPotionId, fromPotionMeta), Item.get(ingredient, ingredientMeta), Item.get(toPotionId, toPotionMeta)));
         }
 
         List<Map> containerMixes = config.getMapList("containerMixes");
 
         for (Map containerMix : containerMixes) {
-            int fromItemId = ((Number) containerMix.get("fromItemId")).intValue();
-            int ingredient = ((Number) containerMix.get("ingredient")).intValue();
-            int toItemId = ((Number) containerMix.get("toItemId")).intValue();
+            int fromItemId = ((Number) containerMix.get("inputId")).intValue();
+            int ingredient = ((Number) containerMix.get("reagentId")).intValue();
+            int toItemId = ((Number) containerMix.get("outputId")).intValue();
 
             registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
         }

@@ -259,7 +259,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                 }
                 buffer = packet.getBuffer();
                 try {
-                    buffer = Network.deflate_raw(
+                    buffer = Network.deflateRaw(
                             Binary.appendBytes(Binary.writeUnsignedVarInt(buffer.length), buffer),
                             Server.getInstance().networkCompressionLevel);
                 } catch (Exception e) {
