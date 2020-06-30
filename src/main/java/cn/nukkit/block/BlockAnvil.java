@@ -116,7 +116,9 @@ public class BlockAnvil extends BlockFallable implements Faceable {
             } else {
                 Collection<Player> players = getLevel().getChunkPlayers(getChunkX(), getChunkZ()).values();
                 players.remove(player);
-                getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F, players);
+                if (!players.isEmpty()) {
+                    getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F, players);
+                }
             }
             return true;
         }
