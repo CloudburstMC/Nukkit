@@ -13,7 +13,7 @@ import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
 import java.util.Set;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.POTION_AUX_VALUE;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.POTION_AUX_VALUE;
 
 /**
  * @author xtypr

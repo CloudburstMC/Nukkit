@@ -1,6 +1,6 @@
 package cn.nukkit.command.data;
 
-import com.nukkitx.protocol.bedrock.data.CommandEnumData;
+import com.nukkitx.protocol.bedrock.data.command.CommandEnumData;
 import lombok.ToString;
 
 import java.util.ArrayList;

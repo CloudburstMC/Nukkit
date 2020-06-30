@@ -19,7 +19,7 @@ import com.nukkitx.protocol.bedrock.data.SoundEvent;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.AIR;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.CRITICAL;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.CRITICAL;
 
 /**
  * Created by PetteriM1

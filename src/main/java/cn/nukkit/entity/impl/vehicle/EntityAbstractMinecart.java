@@ -30,7 +30,7 @@ import com.nukkitx.nbt.tag.CompoundTag;
 import java.util.Iterator;
 import java.util.Objects;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.*;
 
 /**
  * Created by: larryTheCoder on 2017/6/26.
@@ -720,11 +720,11 @@ public abstract class EntityAbstractMinecart extends EntityVehicle {
     }
 
     public boolean hasDisplay() {
-        return this.data.getBoolean(HAS_DISPLAY);
+        return this.data.getBoolean(CUSTOM_DISPLAY);
     }
 
     public void setDisplay(boolean display) {
-        this.data.setBoolean(HAS_DISPLAY, true);
+        this.data.setBoolean(CUSTOM_DISPLAY, true);
     }
 
     /**

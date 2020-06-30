@@ -1,7 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
-import com.nukkitx.protocol.bedrock.data.ContainerMixData;
+import com.nukkitx.protocol.bedrock.data.inventory.ContainerMixData;
 
 public class ContainerRecipe extends MixRecipe {
     public ContainerRecipe(Item input, Item ingredient, Item output) {

@@ -79,7 +79,14 @@ import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
 import com.nukkitx.protocol.bedrock.BedrockServerSession;
 import com.nukkitx.protocol.bedrock.BedrockSession;
-import com.nukkitx.protocol.bedrock.data.*;
+import com.nukkitx.protocol.bedrock.data.GamePublishSetting;
+import com.nukkitx.protocol.bedrock.data.GameType;
+import com.nukkitx.protocol.bedrock.data.PlayerPermission;
+import com.nukkitx.protocol.bedrock.data.command.CommandPermission;
+import com.nukkitx.protocol.bedrock.data.entity.EntityEventType;
+import com.nukkitx.protocol.bedrock.data.inventory.ContainerId;
+import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
+import com.nukkitx.protocol.bedrock.data.skin.SerializedSkin;
 import com.nukkitx.protocol.bedrock.handler.BatchHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
 import io.netty.buffer.ByteBuf;
@@ -99,8 +106,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.LongConsumer;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.nukkitx.protocol.bedrock.data.EntityData.*;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.USING_ITEM;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.BED_POSITION;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.INTERACTIVE_TAG;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.USING_ITEM;
 
 /**
  * @author MagicDroidX &amp; Box
@@ -221,7 +229,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         super(EntityTypes.PLAYER, Location.from(Server.getInstance().getDefaultLevel()));
         this.session = session;
         this.packetHandler = new PlayerPacketHandler(this);
-        session.setBatchedHandler(new Handler());
+        session.setBatchHandler(new Handler());
         this.perm = new PermissibleBase(this);
         this.server = Server.getInstance();
         this.lastBreak = -1;
@@ -385,7 +393,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public void setAllowModifyWorld(boolean value) {
         this.getAdventureSettings().set(Type.WORLD_IMMUTABLE, !value);
-        this.getAdventureSettings().set(Type.BUILD_AND_MINE, value);
+        this.getAdventureSettings().set(Type.BUILD, value);
+        this.getAdventureSettings().set(Type.MINE, value);
         this.getAdventureSettings().set(Type.WORLD_BUILDER, value);
         this.getAdventureSettings().update();
     }
@@ -840,8 +849,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.sleeping = pos.clone();
         this.teleport(Location.from(pos.toFloat().add(0.5, 0.5, 0.5), this.getYaw(), this.getPitch(), this.getLevel()), null);
 
-        this.data.setVector3i(BED_RESPAWN_POS, pos);
-        this.data.setBoolean(CAN_START_SLEEP, true);
+        this.data.setVector3i(BED_POSITION, pos);
+        //this.data.setBoolean(CAN_START_SLEEP, true); todo what did this change to?
 
         this.setSpawn(Location.from(pos.toFloat(), this.getLevel()));
 
@@ -855,8 +864,8 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             this.server.getPluginManager().callEvent(new PlayerBedLeaveEvent(this, this.getLevel().getBlock(this.sleeping)));
 
             this.sleeping = null;
-            this.data.setVector3i(BED_RESPAWN_POS, Vector3i.ZERO);
-            this.data.setBoolean(CAN_START_SLEEP, false);
+            this.data.setVector3i(BED_POSITION, Vector3i.ZERO);
+            //this.data.setBoolean(CAN_START_SLEEP, false); // TODO what did this change to?
 
 
             this.getLevel().sleepTicks = 0;
@@ -1105,7 +1114,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
     public void sendAttributes() {
         UpdateAttributesPacket pk = new UpdateAttributesPacket();
         pk.setRuntimeEntityId(this.getRuntimeId());
-        List<com.nukkitx.protocol.bedrock.data.Attribute> attributes = pk.getAttributes();
+        List<com.nukkitx.protocol.bedrock.data.AttributeData> attributes = pk.getAttributes();
         attributes.add(Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0).toNetwork());
         attributes.add(Attribute.getAttribute(Attribute.MAX_HUNGER).setValue(this.getFoodData().getLevel()).toNetwork());
         attributes.add(Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(this.getMovementSpeed()).toNetwork());
@@ -1298,7 +1307,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
             // We have to send slightly above otherwise the player will fall into the ground.
             Location location = from.add(0, 0.00001, 0);
             log.debug("processMovement REVERTING");
-            this.sendPosition(location.getPosition(), from.getYaw(), from.getPitch(), MovePlayerPacket.Mode.RESET);
+            this.sendPosition(location.getPosition(), from.getYaw(), from.getPitch(), MovePlayerPacket.Mode.RESPAWN); // TODO Check this
             //this.sendSettings();
             this.forceMovement = location.getPosition();
         } else {
@@ -1489,16 +1498,16 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.setUniqueEntityId(this.getUniqueId());
         startGamePacket.setRuntimeEntityId(this.getRuntimeId());
-        startGamePacket.setPlayerGamemode(this.getGamemode().getVanillaId());
+        startGamePacket.setPlayerGameType(GameType.from(this.getGamemode().getVanillaId()));
         startGamePacket.setPlayerPosition(pos);
         startGamePacket.setRotation(Vector2f.from(this.getYaw(), this.getPitch()));
         startGamePacket.setSeed(-1);
         startGamePacket.setDimensionId(0);
-        startGamePacket.setLevelGamemode(this.getGamemode().getVanillaId());
+        startGamePacket.setLevelGameType(GameType.from(this.getGamemode().getVanillaId()));
         startGamePacket.setDifficulty(this.server.getDifficulty().ordinal());
         startGamePacket.setDefaultSpawn(this.getSpawn().getPosition().toInt());
         startGamePacket.setAchievementsDisabled(true);
-        startGamePacket.setTime(this.getLevel().getTime());
+        startGamePacket.setDayCycleStopTime(this.getLevel().getTime());
         startGamePacket.setRainLevel(0);
         startGamePacket.setLightningLevel(0);
         startGamePacket.setCommandsEnabled(this.isEnableClientCommand());
@@ -1506,7 +1515,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         startGamePacket.setBroadcastingToLan(true);
         this.getLevel().getGameRules().toNetwork(startGamePacket.getGamerules());
         startGamePacket.setLevelId(""); // This is irrelevant since we have multiple levels
-        startGamePacket.setWorldName(this.getServer().getNetwork().getName()); // We might as well use the MOTD instead of the default level name
+        startGamePacket.setLevelName(this.getServer().getNetwork().getName()); // We might as well use the MOTD instead of the default level name
         startGamePacket.setGeneratorId(1); // 0 old, 1 infinite, 2 flat - Has no effect to my knowledge
         startGamePacket.setItemEntries(ItemRegistry.get().getItemEntries());
         startGamePacket.setXblBroadcastMode(GamePublishSetting.PUBLIC);
@@ -1843,7 +1852,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public void clearTitle() {
         SetTitlePacket packet = new SetTitlePacket();
-        packet.setType(SetTitlePacket.Type.CLEAR_TITLE);
+        packet.setType(SetTitlePacket.Type.CLEAR);
         packet.setText("");
         this.sendPacket(packet);
     }
@@ -1853,21 +1862,21 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
      */
     public void resetTitleSettings() {
         SetTitlePacket packet = new SetTitlePacket();
-        packet.setType(SetTitlePacket.Type.RESET_TITLE);
+        packet.setType(SetTitlePacket.Type.RESET);
         packet.setText("");
         this.sendPacket(packet);
     }
 
     public void setSubtitle(String subtitle) {
         SetTitlePacket packet = new SetTitlePacket();
-        packet.setType(SetTitlePacket.Type.SET_SUBTITLE);
+        packet.setType(SetTitlePacket.Type.SUBTITLE);
         packet.setText(subtitle);
         this.sendPacket(packet);
     }
 
     public void setTitleAnimationTimes(int fadein, int duration, int fadeout) {
         SetTitlePacket packet = new SetTitlePacket();
-        packet.setType(SetTitlePacket.Type.SET_ANIMATION_TIMES);
+        packet.setType(SetTitlePacket.Type.TIMES);
         packet.setFadeInTime(fadein);
         packet.setStayTime(duration);
         packet.setFadeOutTime(fadeout);
@@ -1877,7 +1886,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     private void setTitle(String text) {
         SetTitlePacket packet = new SetTitlePacket();
-        packet.setType(SetTitlePacket.Type.SET_TITLE);
+        packet.setType(SetTitlePacket.Type.TITLE);
         packet.setText(text);
         this.sendPacket(packet);
     }
@@ -1905,7 +1914,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
     public void sendActionBar(String title, int fadein, int duration, int fadeout) {
         SetTitlePacket packet = new SetTitlePacket();
-        packet.setType(SetTitlePacket.Type.SET_ACTIONBAR_MESSAGE);
+        packet.setType(SetTitlePacket.Type.ACTIONBAR);
         packet.setText(title);
         packet.setFadeInTime(fadein);
         packet.setStayTime(duration);
@@ -2220,7 +2229,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
                 }
                 EntityEventPacket packet = new EntityEventPacket();
                 packet.setRuntimeEntityId(this.getRuntimeId());
-                packet.setType(EntityEventType.HURT_ANIMATION);
+                packet.setType(EntityEventType.HURT);
                 this.sendPacket(packet);
             }
             return true;
@@ -2612,7 +2621,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
 
             this.forceMovement = this.getPosition();
             log.debug("teleportImmediate REVERTING");
-            this.sendPosition(this.getPosition(), this.getY(), this.getPitch(), MovePlayerPacket.Mode.RESET);
+            this.sendPosition(this.getPosition(), this.getY(), this.getPitch(), MovePlayerPacket.Mode.RESPAWN);
 
             this.resetFallDistance();
             this.newPosition = null;
@@ -2841,7 +2850,7 @@ public class Player extends Human implements CommandSender, InventoryHolder, Chu
         this.addWindow(this.getInventory(), (byte) ContainerId.INVENTORY, true);
 
         this.playerUIInventory = new PlayerUIInventory(this);
-        this.addWindow(this.playerUIInventory, (byte) ContainerId.CURSOR, true);
+        this.addWindow(this.playerUIInventory, (byte) ContainerId.UI, true);
 
         this.craftingGrid = this.playerUIInventory.getCraftingGrid();
         this.addWindow(this.craftingGrid, (byte) ContainerId.NONE);

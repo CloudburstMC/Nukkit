@@ -8,7 +8,7 @@ import com.nukkitx.protocol.bedrock.packet.*;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.*;
 
 /**
  * DummyBossBar
@@ -135,9 +135,9 @@ public class DummyBossBar {
         pkAdd.setMotion(Vector3f.ZERO);
         pkAdd.getMetadata()
                 // Default Metadata tags
-                .putShort(AIR, 400)
-                .putShort(MAX_AIR, 400)
-                .putLong(LEAD_HOLDER_EID, -1)
+                .putShort(AIR_SUPPLY, 400)
+                .putShort(MAX_AIR_SUPPLY, 400)
+                .putLong(LEASH_HOLDER_EID, -1)
                 .putString(NAMETAG, text) // Set the entity name
                 .putFloat(SCALE, 0); // And make it invisible
 
@@ -158,7 +158,7 @@ public class DummyBossBar {
         BossEventPacket pkBoss = new BossEventPacket();
         pkBoss.setBossUniqueEntityId(bossBarId);
         pkBoss.setPlayerUniqueEntityId(player.getUniqueId());
-        pkBoss.setAction(BossEventPacket.Action.SHOW);
+        pkBoss.setAction(BossEventPacket.Action.CREATE);
         pkBoss.setTitle(text);
         pkBoss.setHealthPercentage(this.length / 100);
         this.player.sendPacket(pkBoss);
@@ -168,7 +168,7 @@ public class DummyBossBar {
         BossEventPacket pkBoss = new BossEventPacket();
         pkBoss.setBossUniqueEntityId(bossBarId);
         pkBoss.setPlayerUniqueEntityId(player.getUniqueId());
-        pkBoss.setAction(BossEventPacket.Action.HIDE);
+        pkBoss.setAction(BossEventPacket.Action.REMOVE);
         player.sendPacket(pkBoss);
     }
 
@@ -176,7 +176,7 @@ public class DummyBossBar {
         BossEventPacket pk = new BossEventPacket();
         pk.setBossUniqueEntityId(this.bossBarId);
         pk.setPlayerUniqueEntityId(this.player.getUniqueId());
-        pk.setAction(BossEventPacket.Action.OVERLAY);
+        pk.setAction(BossEventPacket.Action.UPDATE_STYLE);
         pk.setColor(this.getMixedColor());
         player.sendPacket(pk);
     }
@@ -185,7 +185,7 @@ public class DummyBossBar {
         BossEventPacket pkBoss = new BossEventPacket();
         pkBoss.setBossUniqueEntityId(this.bossBarId);
         pkBoss.setPlayerUniqueEntityId(this.player.getUniqueId());
-        pkBoss.setAction(BossEventPacket.Action.TITLE);
+        pkBoss.setAction(BossEventPacket.Action.UPDATE_NAME);
         pkBoss.setTitle(text);
         pkBoss.setHealthPercentage(this.length / 100);
         player.sendPacket(pkBoss);
@@ -195,7 +195,7 @@ public class DummyBossBar {
         BossEventPacket pkBoss = new BossEventPacket();
         pkBoss.setBossUniqueEntityId(this.bossBarId);
         pkBoss.setPlayerUniqueEntityId(this.player.getUniqueId());
-        pkBoss.setAction(BossEventPacket.Action.HEALTH_PERCENTAGE);
+        pkBoss.setAction(BossEventPacket.Action.UPDATE_PERCENTAGE);
         pkBoss.setHealthPercentage(this.length / 100);
         player.sendPacket(pkBoss);
     }

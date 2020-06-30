@@ -6,9 +6,9 @@ import cn.nukkit.level.Location;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.OWNER_EID;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.SITTING;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.TAMED;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.OWNER_EID;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.SITTING;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.TAMED;
 
 /**
  * Author: BeYkeRYkt

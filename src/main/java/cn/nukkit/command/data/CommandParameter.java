@@ -1,9 +1,8 @@
 package cn.nukkit.command.data;
 
-
-import cn.nukkit.command.CommandUtils;
-import com.nukkitx.protocol.bedrock.data.CommandEnumData;
-import com.nukkitx.protocol.bedrock.data.CommandParamData;
+import com.nukkitx.protocol.bedrock.data.command.CommandEnumData;
+import com.nukkitx.protocol.bedrock.data.command.CommandParamData;
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class CommandParameter {
     }
 
     public CommandParameter(String name, boolean optional) {
-        this(name, CommandParamType.RAWTEXT, optional);
+        this(name, CommandParamType.TEXT, optional);
     }
 
     public CommandParameter(String name) {
@@ -59,14 +58,14 @@ public class CommandParameter {
 
     public CommandParameter(String name, boolean optional, String enumType) {
         this.name = name;
-        this.type = CommandParamType.RAWTEXT;
+        this.type = CommandParamType.TEXT;
         this.optional = optional;
         this.enumData = new CommandEnum(enumType, new ArrayList<>());
     }
 
     public CommandParameter(String name, boolean optional, String[] enumValues) {
         this.name = name;
-        this.type = CommandParamType.RAWTEXT;
+        this.type = CommandParamType.TEXT;
         this.optional = optional;
         this.enumData = new CommandEnum(name + "Enums", Arrays.asList(enumValues));
     }
@@ -82,7 +81,7 @@ public class CommandParameter {
     protected CommandParamData toNetwork() {
         return new CommandParamData(this.name, this.optional,
                 this.enumData != null ? new CommandEnumData(this.name, this.enumData.getValues().toArray(new String[0]), false) : null,
-                CommandUtils.NETWORK_TYPES.get(this.type), this.postFix, Collections.EMPTY_LIST);
+                this.type, this.postFix, Collections.EMPTY_LIST);
     }
 
     protected static CommandParamType fromString(String param) {
@@ -95,11 +94,11 @@ public class CommandParameter {
             case "blockpos":
                 return CommandParamType.POSITION;
             case "rawtext":
-                return CommandParamType.RAWTEXT;
+                return CommandParamType.TEXT;
             case "int":
                 return CommandParamType.INT;
         }
 
-        return CommandParamType.RAWTEXT;
+        return CommandParamType.TEXT;
     }
 }

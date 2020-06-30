@@ -12,7 +12,7 @@ import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.EXPERIENCE_VALUE;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.EXPERIENCE_VALUE;
 
 /**
  * Created on 2015/12/26 by xtypr.

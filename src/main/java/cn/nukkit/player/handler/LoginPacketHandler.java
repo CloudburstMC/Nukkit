@@ -51,11 +51,11 @@ public class LoginPacketHandler implements BedrockPacketHandler {
             if (protocolVersion < ProtocolInfo.getDefaultProtocolVersion()) {
                 message = "disconnectionScreen.outdatedClient";
 
-                statusPacket.setStatus(PlayStatusPacket.Status.FAILED_CLIENT);
+                statusPacket.setStatus(PlayStatusPacket.Status.LOGIN_FAILED_CLIENT_OLD);
             } else {
                 message = "disconnectionScreen.outdatedServer";
 
-                statusPacket.setStatus(PlayStatusPacket.Status.FAILED_SERVER);
+                statusPacket.setStatus(PlayStatusPacket.Status.LOGIN_FAILED_SERVER_OLD);
             }
             session.sendPacket(statusPacket);
             session.disconnect(message);

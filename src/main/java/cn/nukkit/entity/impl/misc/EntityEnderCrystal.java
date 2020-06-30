@@ -9,7 +9,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.gamerule.GameRules;
-import com.nukkitx.protocol.bedrock.data.EntityFlag;
+import com.nukkitx.protocol.bedrock.data.entity.EntityFlag;
 
 /**
  * Created by PetteriM1

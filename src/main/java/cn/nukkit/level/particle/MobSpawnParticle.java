@@ -23,7 +23,7 @@ public class MobSpawnParticle extends Particle {
     @Override
     public BedrockPacket[] encode() {
         LevelEventPacket packet = new LevelEventPacket();
-        packet.setType(LevelEventType.ENTITY_SPAWN);
+        packet.setType(LevelEventType.PARTICLE_GENERIC_SPAWN);
         packet.setPosition(getPosition());
         packet.setData((this.width & 0xff) + ((this.height & 0xff) << 8));
 

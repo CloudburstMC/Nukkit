@@ -25,7 +25,7 @@ public class PunchBlockParticle extends Particle {
     @Override
     public BedrockPacket[] encode() {
         LevelEventPacket packet = new LevelEventPacket();
-        packet.setType(LevelEventType.PUNCH_BLOCK);
+        packet.setType(LevelEventType.PARTICLE_CRACK_BLOCK);
         packet.setPosition(this.getPosition());
         packet.setData(this.data);
 

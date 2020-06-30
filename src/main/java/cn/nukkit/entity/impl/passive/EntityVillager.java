@@ -7,9 +7,9 @@ import cn.nukkit.entity.passive.Villager;
 import cn.nukkit.level.Location;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
-import com.nukkitx.protocol.bedrock.data.EntityData;
+import com.nukkitx.protocol.bedrock.data.entity.EntityData;
 
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.BABY;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.BABY;
 
 /**
  * Created by Pub4Game on 21.06.2016.

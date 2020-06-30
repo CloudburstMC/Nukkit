@@ -10,7 +10,7 @@ import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3f;
 
 import static cn.nukkit.item.ItemIds.NAME_TAG;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.BABY;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.BABY;
 
 /**
  * author: MagicDroidX

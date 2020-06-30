@@ -23,7 +23,7 @@ public class DestroyBlockParticle extends Particle {
     @Override
     public BedrockPacket[] encode() {
         LevelEventPacket packet = new LevelEventPacket();
-        packet.setType(LevelEventType.DESTROY);
+        packet.setType(LevelEventType.PARTICLE_DESTROY_BLOCK);
         packet.setPosition(this.getPosition());
         packet.setData(this.data);
 

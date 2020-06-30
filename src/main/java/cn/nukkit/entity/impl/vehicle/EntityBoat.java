@@ -4,7 +4,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.MountMode;
 import cn.nukkit.entity.impl.EntityLiving;
 import cn.nukkit.entity.impl.passive.EntityWaterAnimal;
 import cn.nukkit.entity.vehicle.Boat;
@@ -20,13 +19,13 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3f;
-import com.nukkitx.protocol.bedrock.data.EntityData;
-import com.nukkitx.protocol.bedrock.data.EntityLink;
+import com.nukkitx.protocol.bedrock.data.entity.EntityData;
+import com.nukkitx.protocol.bedrock.data.entity.EntityLinkData;
 import com.nukkitx.protocol.bedrock.packet.AnimatePacket;
 
 import java.util.ArrayList;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.*;
 
 /**
  * Created by yescallop on 2016/2/13.
@@ -239,7 +238,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
             super.updatePassengerPosition(ent);
 
             if (sendLinks) {
-                broadcastLinkPacket(ent, EntityLink.Type.RIDER);
+                broadcastLinkPacket(ent, EntityLinkData.Type.RIDER);
             }
         } else if (passengers.size() == 2) {
             if (!((ent = passengers.get(0)) instanceof Player)) { //swap
@@ -256,7 +255,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
             ent.setSeatPosition(getMountedOffset(ent).add(RIDER_PASSENGER_OFFSET));
             super.updatePassengerPosition(ent);
             if (sendLinks) {
-                broadcastLinkPacket(ent, EntityLink.Type.RIDER);
+                broadcastLinkPacket(ent, EntityLinkData.Type.RIDER);
             }
 
             (ent = this.passengers.get(1)).setSeatPosition(getMountedOffset(ent).add(PASSENGER_OFFSET));
@@ -264,7 +263,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
             super.updatePassengerPosition(ent);
 
             if (sendLinks) {
-                broadcastLinkPacket(this, EntityLink.Type.PASSENGER);
+                broadcastLinkPacket(this, EntityLinkData.Type.PASSENGER);
             }
 
             float yawDiff = ent.getUniqueId() % 2 == 0 ? 90 : 270;
@@ -308,10 +307,10 @@ public class EntityBoat extends EntityVehicle implements Boat {
     @Override
     public boolean mount(Entity entity) {
         boolean player = this.passengers.size() >= 1 && this.passengers.get(0) instanceof Player;
-        MountMode mode = MountMode.PASSENGER;
+        EntityLinkData.Type mode = EntityLinkData.Type.PASSENGER;
 
         if (!player && (entity instanceof Player || this.passengers.size() == 0)) {
-            mode = MountMode.RIDER;
+            mode = EntityLinkData.Type.RIDER;
         }
 
         return super.mount(entity, mode);
@@ -361,7 +360,7 @@ public class EntityBoat extends EntityVehicle implements Boat {
     }
 
     public void onPaddle(AnimatePacket.Action animation, float value) {
-        EntityData data = animation == AnimatePacket.Action.ROW_RIGHT ? PADDLE_TIME_RIGHT : PADDLE_TIME_LEFT;
+        EntityData data = animation == AnimatePacket.Action.ROW_RIGHT ? ROW_TIME_RIGHT : ROW_TIME_LEFT;
 
         if (this.data.getFloat(data) != value) {
             this.data.setFloat(data, value);
@@ -412,5 +411,10 @@ public class EntityBoat extends EntityVehicle implements Boat {
         if (this.getLevel().getGameRules().get(GameRules.DO_ENTITY_DROPS)) {
             this.getLevel().dropItem(this.getPosition(), Item.get(ItemIds.BOAT));
         }
+    }
+
+    @Override
+    public boolean mount(Entity entity, EntityLinkData.Type mode) {
+        return this.mount(entity);
     }
 }

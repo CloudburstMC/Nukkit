@@ -88,8 +88,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Log4j2
 public class Level implements ChunkManager, Metadatable {
 
-    private static int levelIdCounter = 1;
-    private static int chunkLoaderCounter = 1;
+    private static final int levelIdCounter = 1;
+    private static final int chunkLoaderCounter = 1;
     public static int COMPRESSION_LEVEL = 8;
 
     public static final int BLOCK_UPDATE_NORMAL = 1;
@@ -195,10 +195,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public int sleepTicks = 0;
 
-    private int chunkTickRadius;
+    private final int chunkTickRadius;
     private final Long2IntMap chunkTickList = new Long2IntOpenHashMap();
-    private int chunksPerTicks;
-    private boolean clearChunksOnTick;
+    private final int chunksPerTicks;
+    private final boolean clearChunksOnTick;
 
     private int updateLCG = ThreadLocalRandom.current().nextInt();
 
@@ -2436,11 +2436,11 @@ public class Level implements ChunkManager, Metadatable {
         // These numbers are from Minecraft
 
         if (raining) {
-            packet.setType(LevelEventType.START_RAIN);
+            packet.setType(LevelEventType.START_RAINING);
             packet.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
             setRainTime(ThreadLocalRandom.current().nextInt(12000) + 12000);
         } else {
-            packet.setType(LevelEventType.STOP_RAIN);
+            packet.setType(LevelEventType.STOP_RAINING);
             setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
         packet.setPosition(Vector3f.ZERO);
@@ -2479,11 +2479,11 @@ public class Level implements ChunkManager, Metadatable {
         LevelEventPacket packet = new LevelEventPacket();
         // These numbers are from Minecraft
         if (thundering) {
-            packet.setType(LevelEventType.START_THUNDER);
+            packet.setType(LevelEventType.START_THUNDERSTORM);
             packet.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
             setThunderTime(ThreadLocalRandom.current().nextInt(12000) + 3600);
         } else {
-            packet.setType(LevelEventType.STOP_THUNDER);
+            packet.setType(LevelEventType.STOP_THUNDERSTORM);
             setThunderTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
         packet.setPosition(Vector3f.ZERO);
@@ -2508,20 +2508,20 @@ public class Level implements ChunkManager, Metadatable {
 
         LevelEventPacket rainEvent = new LevelEventPacket();
         if (this.isRaining()) {
-            rainEvent.setType(LevelEventType.START_RAIN);
+            rainEvent.setType(LevelEventType.START_RAINING);
             rainEvent.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
         } else {
-            rainEvent.setType(LevelEventType.STOP_RAIN);
+            rainEvent.setType(LevelEventType.STOP_RAINING);
         }
         rainEvent.setPosition(Vector3f.ZERO);
         Server.broadcastPacket(players, rainEvent);
 
         LevelEventPacket thunderEvent = new LevelEventPacket();
         if (this.isThundering()) {
-            thunderEvent.setType(LevelEventType.START_THUNDER);
+            thunderEvent.setType(LevelEventType.START_THUNDERSTORM);
             thunderEvent.setData(ThreadLocalRandom.current().nextInt(50000) + 10000);
         } else {
-            thunderEvent.setType(LevelEventType.STOP_THUNDER);
+            thunderEvent.setType(LevelEventType.STOP_THUNDERSTORM);
         }
         thunderEvent.setPosition(Vector3f.ZERO);
         Server.broadcastPacket(players, thunderEvent);

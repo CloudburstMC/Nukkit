@@ -12,7 +12,7 @@ import cn.nukkit.event.vehicle.VehicleDestroyEvent;
 import cn.nukkit.level.Location;
 import cn.nukkit.player.Player;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.*;
 
 /**
  * author: MagicDroidX

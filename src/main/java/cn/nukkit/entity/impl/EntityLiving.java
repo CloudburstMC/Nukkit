@@ -29,9 +29,9 @@ import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
-import com.nukkitx.protocol.bedrock.data.EntityData;
-import com.nukkitx.protocol.bedrock.data.EntityEventType;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.data.entity.EntityData;
+import com.nukkitx.protocol.bedrock.data.entity.EntityEventType;
 import com.nukkitx.protocol.bedrock.packet.AnimatePacket;
 import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 
@@ -40,7 +40,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static cn.nukkit.block.BlockIds.AIR;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.BREATHING;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.BREATHING;
 
 /**
  * author: MagicDroidX
@@ -144,7 +144,7 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
 
             EntityEventPacket pk = new EntityEventPacket();
             pk.setRuntimeEntityId(this.getRuntimeId());
-            pk.setType(this.getHealth() <= 0 ? EntityEventType.DEATH_ANIMATION : EntityEventType.HURT_ANIMATION);
+            pk.setType(this.getHealth() <= 0 ? EntityEventType.DEATH : EntityEventType.HURT);
             Server.broadcastPacket(this.hasSpawned, pk);
 
             this.attackTime = source.getAttackCooldown();
@@ -368,10 +368,10 @@ public abstract class EntityLiving extends BaseEntity implements EntityDamageabl
     }
 
     public int getAirTicks() {
-        return this.data.getShort(EntityData.AIR);
+        return this.data.getShort(EntityData.AIR_SUPPLY);
     }
 
     public void setAirTicks(int ticks) {
-        this.data.setShort(EntityData.AIR, ticks);
+        this.data.setShort(EntityData.AIR_SUPPLY, ticks);
     }
 }

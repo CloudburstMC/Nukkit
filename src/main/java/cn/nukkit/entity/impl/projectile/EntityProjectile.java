@@ -17,7 +17,7 @@ import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.Set;
 
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.CRITICAL;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.CRITICAL;
 
 /**
  * author: MagicDroidX

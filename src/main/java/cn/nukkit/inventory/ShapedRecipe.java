@@ -4,7 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.utils.Identifier;
 import cn.nukkit.utils.Utils;
 import com.google.common.collect.ImmutableList;
-import com.nukkitx.protocol.bedrock.data.CraftingData;
+import com.nukkitx.protocol.bedrock.data.inventory.CraftingData;
 import io.netty.util.collection.CharObjectHashMap;
 import io.netty.util.collection.CharObjectMap;
 

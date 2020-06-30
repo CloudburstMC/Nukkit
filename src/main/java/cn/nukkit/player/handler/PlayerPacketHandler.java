@@ -48,7 +48,14 @@ import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.data.*;
+import com.nukkitx.protocol.bedrock.data.AdventureSetting;
+import com.nukkitx.protocol.bedrock.data.LevelEventType;
+import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.data.entity.EntityData;
+import com.nukkitx.protocol.bedrock.data.entity.EntityEventType;
+import com.nukkitx.protocol.bedrock.data.inventory.ContainerId;
+import com.nukkitx.protocol.bedrock.data.inventory.InventoryActionData;
+import com.nukkitx.protocol.bedrock.data.skin.SerializedSkin;
 import com.nukkitx.protocol.bedrock.handler.BedrockPacketHandler;
 import com.nukkitx.protocol.bedrock.packet.*;
 import lombok.extern.log4j.Log4j2;
@@ -147,7 +154,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
 
         if (currentPos.distance(newPos) > 50) {
             log.debug("packet too far REVERTING");
-            player.sendPosition(currentPos, yaw, pitch, MovePlayerPacket.Mode.RESET);
+            player.sendPosition(currentPos, yaw, pitch, MovePlayerPacket.Mode.RESPAWN);
             return true;
         }
 
@@ -160,7 +167,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
 
         if (player.getForceMovement() != null && (newPos.distanceSquared(player.getForceMovement()) > 0.1 || revert)) {
             log.debug("packet forceMovement {} REVERTING {}", player.getForceMovement(), newPos);
-            player.sendPosition(player.getForceMovement(), yaw, pitch, MovePlayerPacket.Mode.RESET);
+            player.sendPosition(player.getForceMovement(), yaw, pitch, MovePlayerPacket.Mode.RESPAWN);
         } else {
             player.setRotation(yaw, pitch);
             player.setNewPosition(newPos);
@@ -178,12 +185,12 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
 
     @Override
     public boolean handle(AdventureSettingsPacket packet) {
-        Set<AdventureSettingsPacket.Flag> flags = packet.getFlags();
-        if (!player.getServer().getAllowFlight() && flags.contains(AdventureSettingsPacket.Flag.FLYING) && !player.getAdventureSettings().get(AdventureSettings.Type.ALLOW_FLIGHT)) {
+        Set<AdventureSetting> flags = packet.getSettings();
+        if (!player.getServer().getAllowFlight() && flags.contains(AdventureSetting.FLYING) && !player.getAdventureSettings().get(AdventureSettings.Type.ALLOW_FLIGHT)) {
             player.kick(PlayerKickEvent.Reason.FLYING_DISABLED, "Flying is not enabled on player server");
             return true;
         }
-        PlayerToggleFlightEvent playerToggleFlightEvent = new PlayerToggleFlightEvent(player, flags.contains(AdventureSettingsPacket.Flag.FLYING));
+        PlayerToggleFlightEvent playerToggleFlightEvent = new PlayerToggleFlightEvent(player, flags.contains(AdventureSetting.FLYING));
         player.getServer().getPluginManager().callEvent(playerToggleFlightEvent);
         if (playerToggleFlightEvent.isCancelled()) {
             player.getAdventureSettings().update();
@@ -320,7 +327,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
                 player.setSprinting(false);
                 player.setSneaking(false);
 
-                player.getData().setShort(EntityData.AIR, 400);
+                player.getData().setShort(EntityData.AIR_SUPPLY, 400);
                 player.deadTicks = 0;
                 player.noDamageTicks = 60;
 
@@ -684,14 +691,14 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
             return true;
         }
 
-        if (player.getWindowById(packet.getWindowId()) != null) {
-            player.getServer().getPluginManager().callEvent(new InventoryCloseEvent(player.getWindowById(packet.getWindowId()), player));
-            player.removeWindow(player.getWindowById(packet.getWindowId()));
+        if (player.getWindowById(packet.getId()) != null) {
+            player.getServer().getPluginManager().callEvent(new InventoryCloseEvent(player.getWindowById(packet.getId()), player));
+            player.removeWindow(player.getWindowById(packet.getId()));
         } else {
-            player.removeWindowById(packet.getWindowId());
+            player.removeWindowById(packet.getId());
         }
 
-        if (packet.getWindowId() == -1) {
+        if (packet.getId() == -1) {
             player.craftingType = CraftingType.SMALL;
             player.resetCraftingGridType();
             player.addWindow(player.getCraftingGrid(), (byte) ContainerId.NONE);
@@ -879,7 +886,7 @@ public class PlayerPacketHandler implements BedrockPacketHandler {
             case ITEM_USE:
 
                 Vector3i blockVector = packet.getBlockPosition();
-                BlockFace face = BlockFace.fromIndex(packet.getFace());
+                BlockFace face = BlockFace.fromIndex(packet.getBlockFace());
 
                 switch (packet.getActionType()) {
                     case InventoryTransactionUtils.USE_ITEM_ACTION_CLICK_BLOCK:

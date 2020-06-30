@@ -3,11 +3,11 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandData;
-import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType;
 
 
 /**
@@ -22,7 +22,7 @@ public class MeCommand extends Command {
                 .setUsageMessage("/me <action>")
                 .setPermissions("nukkit.command.me")
                 .setParameters(new CommandParameter[]{
-                        new CommandParameter("action ...", CommandParamType.RAWTEXT, false)
+                        new CommandParameter("action ...", CommandParamType.TEXT, false)
                 })
                 .build());
     }

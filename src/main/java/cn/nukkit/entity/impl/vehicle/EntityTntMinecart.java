@@ -5,7 +5,6 @@ import cn.nukkit.block.BlockIds;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.EntityType;
-import cn.nukkit.entity.MountMode;
 import cn.nukkit.entity.vehicle.TntMinecart;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
@@ -17,11 +16,12 @@ import cn.nukkit.player.Player;
 import cn.nukkit.utils.MinecartType;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.data.entity.EntityLinkData;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.FUSE_LENGTH;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.CHARGED;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.FUSE_LENGTH;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.CHARGED;
 
 /**
  * Author: Adam Matthew [larryTheCoder]
@@ -134,7 +134,7 @@ public class EntityTntMinecart extends EntityAbstractMinecart implements TntMine
     }
 
     @Override
-    public boolean mount(Entity entity, MountMode mode) {
+    public boolean mount(Entity entity, EntityLinkData.Type mode) {
         return false;
     }
 }

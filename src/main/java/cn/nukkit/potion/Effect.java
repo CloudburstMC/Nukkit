@@ -9,7 +9,7 @@ import cn.nukkit.utils.ServerException;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.packet.MobEffectPacket;
 
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.INVISIBLE;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.INVISIBLE;
 
 /**
  * author: MagicDroidX

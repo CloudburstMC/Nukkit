@@ -18,7 +18,7 @@ import com.nukkitx.nbt.tag.CompoundTag;
 
 import static cn.nukkit.block.BlockIds.AIR;
 import static cn.nukkit.block.BlockIds.ANVIL;
-import static com.nukkitx.protocol.bedrock.data.EntityData.VARIANT;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.VARIANT;
 
 /**
  * @author MagicDroidX

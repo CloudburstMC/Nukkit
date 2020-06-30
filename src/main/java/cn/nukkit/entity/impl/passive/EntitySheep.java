@@ -16,8 +16,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import static cn.nukkit.block.BlockIds.WOOL;
 import static cn.nukkit.item.ItemIds.DYE;
 import static cn.nukkit.item.ItemIds.SHEARS;
-import static com.nukkitx.protocol.bedrock.data.EntityData.COLOR;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.SHEARED;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.COLOR;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.SHEARED;
 
 /**
  * Author: BeYkeRYkt Nukkit Project

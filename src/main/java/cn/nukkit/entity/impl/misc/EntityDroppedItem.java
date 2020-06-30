@@ -18,7 +18,7 @@ import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.data.EntityEventType;
+import com.nukkitx.protocol.bedrock.data.entity.EntityEventType;
 import com.nukkitx.protocol.bedrock.packet.AddItemEntityPacket;
 import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 
@@ -28,7 +28,7 @@ import static cn.nukkit.block.BlockIds.FLOWING_WATER;
 import static cn.nukkit.block.BlockIds.WATER;
 import static com.nukkitx.network.util.Preconditions.checkArgument;
 import static com.nukkitx.network.util.Preconditions.checkNotNull;
-import static com.nukkitx.protocol.bedrock.data.EntityData.OWNER_EID;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.OWNER_EID;
 
 /**
  * @author MagicDroidX
@@ -157,7 +157,7 @@ public class EntityDroppedItem extends BaseEntity implements DroppedItem {
                         this.getItem().setCount(newAmount);
                         EntityEventPacket packet = new EntityEventPacket();
                         packet.setRuntimeEntityId(this.getRuntimeId());
-                        packet.setType(EntityEventType.MERGE_ITEMS);
+                        packet.setType(EntityEventType.UPDATE_ITEM_STACK_SIZE);
                         packet.setData(newAmount);
                         Server.broadcastPacket(this.getLevel().getPlayers().values(), packet);
                     }

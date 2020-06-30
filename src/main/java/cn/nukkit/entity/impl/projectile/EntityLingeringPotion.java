@@ -10,7 +10,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.registry.EntityRegistry;
 
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.LINGERING;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.LINGERING;
 
 public class EntityLingeringPotion extends EntitySplashPotion implements LingeringPotion {
 

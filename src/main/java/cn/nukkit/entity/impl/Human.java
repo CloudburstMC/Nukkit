@@ -18,7 +18,12 @@ import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.data.*;
+import com.nukkitx.protocol.bedrock.data.PlayerPermission;
+import com.nukkitx.protocol.bedrock.data.command.CommandPermission;
+import com.nukkitx.protocol.bedrock.data.entity.EntityLinkData;
+import com.nukkitx.protocol.bedrock.data.skin.AnimationData;
+import com.nukkitx.protocol.bedrock.data.skin.ImageData;
+import com.nukkitx.protocol.bedrock.data.skin.SerializedSkin;
 import com.nukkitx.protocol.bedrock.packet.AddPlayerPacket;
 import com.nukkitx.protocol.bedrock.packet.RemoveEntityPacket;
 import com.nukkitx.protocol.bedrock.packet.SetEntityLinkPacket;
@@ -30,7 +35,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.block.BlockIds.AIR;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.*;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.*;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -101,7 +106,7 @@ public class Human extends EntityCreature implements InventoryHolder {
 
     @Override
     protected void initEntity() {
-        this.data.setBoolean(EntityData.CAN_START_SLEEP, false);
+        //this.data.setBoolean(EntityData.CAN_START_SLEEP, false); // TODO: what did this change to?
         this.data.setFlag(HAS_GRAVITY, true);
 
         super.initEntity();
@@ -280,7 +285,7 @@ public class Human extends EntityCreature implements InventoryHolder {
 
             if (this.vehicle != null) {
                 SetEntityLinkPacket packet = new SetEntityLinkPacket();
-                EntityLink link = new EntityLink(this.vehicle.getUniqueId(), this.getUniqueId(), EntityLink.Type.RIDER, true);
+                EntityLinkData link = new EntityLinkData(this.vehicle.getUniqueId(), this.getUniqueId(), EntityLinkData.Type.RIDER, true, false);
                 packet.setEntityLink(link);
 
                 player.sendPacket(packet);
