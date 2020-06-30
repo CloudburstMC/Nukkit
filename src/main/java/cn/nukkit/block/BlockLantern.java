@@ -33,7 +33,7 @@ public class BlockLantern extends BlockFlowable {
         Block up = up();
         if (up instanceof BlockLeaves) {
             return false;
-        } else if (up instanceof BlockFence) {
+        } else if (up instanceof BlockFence || up instanceof BlockWall) {
             return true;
         } else if (up instanceof BlockSlab) {
             return (up.getDamage() & 0x08) == 0x00;
@@ -50,7 +50,7 @@ public class BlockLantern extends BlockFlowable {
         Block down = down();
         if (down instanceof BlockLeaves) {
             return false;
-        } else if (down instanceof BlockFence) {
+        } else if (down instanceof BlockFence || down instanceof BlockWall) {
             return true;
         } else if (down instanceof BlockSlab) {
             return (down.getDamage() & 0x08) == 0x08;
