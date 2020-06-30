@@ -120,6 +120,7 @@ public enum Sound {
     ARMOR_EQUIP_GOLD("armor.equip_gold"),
     ARMOR_EQUIP_IRON("armor.equip_iron"),
     ARMOR_EQUIP_LEATHER("armor.equip_leather"),
+    ARMOR_EQUIP_NETHERITE("item.armor.equip_netherite"),
     LIQUID_LAVA("liquid.lava"),
     LIQUID_LAVAPOP("liquid.lavapop"),
     LIQUID_WATER("liquid.water"),

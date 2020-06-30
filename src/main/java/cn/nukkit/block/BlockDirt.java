@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Sound;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -11,6 +12,7 @@ import cn.nukkit.utils.BlockColor;
  * AMAZING COARSE DIRT added by kvetinac97
  * Nukkit Project
  */
+
 public class BlockDirt extends BlockSolidMeta {
 
     public BlockDirt() {
@@ -54,6 +56,9 @@ public class BlockDirt extends BlockSolidMeta {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
+            if(player != null){
+                player.getLevel().addSound(player, Sound.STEP_GRASS);
+            }
             item.useOn(this);
             this.getLevel().setBlock(this, this.getDamage() == 0 ? get(FARMLAND) : get(DIRT), true);
 
