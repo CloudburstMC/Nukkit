@@ -11,7 +11,7 @@
     Upstream is the NukkitX major version
     PN is a indicator that software is running PowerNukkit, it must be present both in releases and snapshot versions
     -->
-    <version>1.3.0.0-PN-SNAPSHOT</version>
+    <version>1.3.0.0-PN</version>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
