@@ -2,6 +2,9 @@ package cn.nukkit.level;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
@@ -1091,14 +1094,14 @@ public class Level implements ChunkManager, Metadatable {
             updateBlockPacket.z = (int) b.z;
             updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
             updateBlockPacket.dataLayer = dataLayer;
-            int fullId;
+            int runtimeId;
             if (b instanceof Block) {
-                fullId = ((Block) b).getFullId();
+                runtimeId = ((Block) b).getRuntimeId();
             } else {
-                fullId = getFullBlock((int) b.x, (int) b.y, (int) b.z, dataLayer);
+                runtimeId = getBlockRuntimeId((int) b.x, (int) b.y, (int) b.z, dataLayer);
             }
             try {
-                updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullId);
+                updateBlockPacket.blockRuntimeId = runtimeId;
             } catch (NoSuchElementException e) {
                 throw new IllegalStateException("Unable to create BlockUpdatePacket at (" +
                         b.x + ", " + b.y + ", " + b.z + ") in " + getName(), e);
@@ -1138,7 +1141,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        int blockTest = 0;
+        boolean blockTest = false;
 
         if (!chunkTickList.isEmpty()) {
             ObjectIterator<Long2IntMap.Entry> iter = chunkTickList.long2IntEntrySet().iterator();
@@ -1179,29 +1182,28 @@ public class Level implements ChunkManager, Metadatable {
                                     int y = lcg >>> 8 & 0x0f;
                                     int z = lcg >>> 16 & 0x0f;
 
-                                    int fullId = section.getFullBlock(x, y, z);
-                                    int blockId = fullId >> Block.DATA_BITS;
-                                    if (randomTickBlocks[blockId]) {
-                                        Block block = Block.get(fullId, this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
+                                    int[] state = section.getBlockState(x, y, z);
+                                    if (randomTickBlocks[state[0]]) {
+                                        Block block = Block.get(state[0], state[1], this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
                                         block.onUpdate(BLOCK_UPDATE_RANDOM);
                                     }
                                 }
                             }
                         }
                     } else {
-                        for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
-                            blockTest = 0;
+                        for (int Y = 0; Y < 8 && (Y < 3 || blockTest); ++Y) {
+                            blockTest = false;
                             for (int i = 0; i < tickSpeed; ++i) {
                                 int lcg = this.getUpdateLCG();
                                 int x = lcg & 0x0f;
                                 int y = lcg >>> 8 & 0x0f;
                                 int z = lcg >>> 16 & 0x0f;
 
-                                int fullId = chunk.getFullBlock(x, y + (Y << 4), z);
-                                int blockId = fullId >> Block.DATA_BITS;
-                                blockTest |= fullId;
+                                int[] state = chunk.getBlockState(x, y + (Y << 4), z);
+                                int blockId = state[0];
+                                blockTest |= state[0] != 0 && state[1] != 0;
                                 if (Level.randomTickBlocks[blockId]) {
-                                    Block block = Block.get(fullId, this, x, y + (Y << 4), z);
+                                    Block block = Block.get(state[0], state[1], this, x, y + (Y << 4), z);
                                     block.onUpdate(BLOCK_UPDATE_RANDOM);
                                 }
                             }
@@ -1527,12 +1529,28 @@ public class Level implements ChunkManager, Metadatable {
         return (int) (worldTime / 24000 % 8 + 8) % 8;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     public int getFullBlock(int x, int y, int z) {
         return getFullBlock(x, y, z, 0);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     public int getFullBlock(int x, int y, int z, int layer) {
         return this.getChunk(x >> 4, z >> 4, false).getFullBlock(x & 0x0f, y & 0xff, z & 0x0f, layer);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public int getBlockRuntimeId(int x, int y, int z) {
+        return getBlockRuntimeId(x, y, z, 0);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public int getBlockRuntimeId(int x, int y, int z, int layer) {
+        return this.getChunk(x >> 4, z >> 4, false).getBlockRuntimeId(x & 0x0f, y & 0xff, z & 0x0f, layer);
     }
 
     public synchronized Block getBlock(Vector3 pos) {
@@ -1564,7 +1582,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public synchronized Block getBlock(int x, int y, int z, int layer, boolean load) {
-        int fullState;
+        int[] fullState;
         if (y >= 0 && y < 256) {
             int cx = x >> 4;
             int cz = z >> 4;
@@ -1575,14 +1593,14 @@ public class Level implements ChunkManager, Metadatable {
                 chunk = getChunkIfLoaded(cx, cz);
             }
             if (chunk != null) {
-                fullState = chunk.getFullBlock(x & 0xF, y, z & 0xF, layer);
+                fullState = chunk.getBlockState(x & 0xF, y, z & 0xF, layer);
             } else {
-                fullState = 0;
+                fullState = new int[]{0,0};
             }
         } else {
-            fullState = 0;
+            fullState = new int[]{0,0};
         }
-        Block block = Block.fullList[fullState].clone();
+        Block block = Block.get(fullState[0], fullState[1]);
         block.x = x;
         block.y = y;
         block.z = z;
@@ -1841,7 +1859,7 @@ public class Level implements ChunkManager, Metadatable {
         Block blockPrevious;
 //        synchronized (chunk) {
         blockPrevious = chunk.getAndSetBlock(x & 0xF, y, z & 0xF, layer, block);
-        if (blockPrevious.getFullId() == block.getFullId()) {
+        if (Block.equals(blockPrevious, block, true)) {
             return false;
         }
 //        }
@@ -2981,7 +2999,8 @@ public class Level implements ChunkManager, Metadatable {
             this.timings.syncChunkLoadTimer.stopTiming();
             return chunk;
         }
-
+        
+        chunk.backwardCompatibilityUpdate(this);
         chunk.initChunk();
 
         if (!chunk.isLightPopulated() && chunk.isPopulated()
@@ -3113,8 +3132,8 @@ public class Level implements ChunkManager, Metadatable {
                 int y = (int) NukkitMath.clamp(v.y, 0, 254);
                 boolean wasAir = chunk.getBlockId(x, y - 1, z) == 0;
                 for (; y > 0; --y) {
-                    int b = chunk.getFullBlock(x, y, z);
-                    Block block = Block.get(b >> Block.DATA_BITS, b & Block.DATA_MASK);
+                    int[] b = chunk.getBlockState(x, y, z);
+                    Block block = Block.get(b[0], b[1]);
                     if (this.isFullBlock(block)) {
                         if (wasAir) {
                             y++;
@@ -3126,11 +3145,11 @@ public class Level implements ChunkManager, Metadatable {
                 }
 
                 for (; y >= 0 && y < 255; y++) {
-                    int b = chunk.getFullBlock(x, y + 1, z);
-                    Block block = Block.get(b >> Block.DATA_BITS, b & Block.DATA_MASK);
+                    int[] b = chunk.getBlockState(x, y + 1, z);
+                    Block block = Block.get(b[0], b[1]);
                     if (!this.isFullBlock(block)) {
-                        b = chunk.getFullBlock(x, y, z);
-                        block = Block.get(b >> Block.DATA_BITS, b & Block.DATA_MASK);
+                        b = chunk.getBlockState(x, y, z);
+                        block = Block.get(b[0], b[1]);
                         if (!this.isFullBlock(block)) {
                             return new Position(spawn.x, y == (int) spawn.y ? spawn.y : y, spawn.z, this);
                         }

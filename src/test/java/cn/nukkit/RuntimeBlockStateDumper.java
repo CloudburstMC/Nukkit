@@ -69,7 +69,7 @@ public class RuntimeBlockStateDumper {
                 bos.newLine();
 
                 List<String> metas = state.getList("LegacyStates", CompoundTag.class).getAll().stream()
-                        .map(t -> t.getInt("id") + ":" + t.getShort("val"))
+                        .map(t -> t.getInt("id") + ":" + t.getInt("val"))
                         .collect(Collectors.toList());
                 bos.write(metas.toString());
                 bos.newLine();
@@ -77,7 +77,7 @@ public class RuntimeBlockStateDumper {
                 List<CompoundTag> overrides = metaOverrides.get(block.copy().remove("version"));
                 if (overrides != null) {
                     List<String> overrideList = overrides.stream()
-                            .map(t -> t.getInt("id") + ":" + t.getShort("val"))
+                            .map(t -> t.getInt("id") + ":" + t.getInt("val"))
                             .collect(Collectors.toList());
                     bos.write(overrideList.toString());
                     bos.newLine();

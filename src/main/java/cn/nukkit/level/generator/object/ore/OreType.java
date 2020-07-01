@@ -1,5 +1,8 @@
 package cn.nukkit.level.generator.object.ore;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.MathHelper;
@@ -13,7 +16,16 @@ import static cn.nukkit.block.BlockID.STONE;
  */
 //porktodo: rewrite this, the whole class is terrible and generated ores look stupid
 public class OreType {
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     public final int fullId;
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN") public final int blockId;
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN") public final int blockData;
+    
     public final int clusterCount;
     public final int clusterSize;
     public final int maxHeight;
@@ -26,6 +38,8 @@ public class OreType {
 
     public OreType(Block material, int clusterCount, int clusterSize, int minHeight, int maxHeight, int replaceBlockId) {
         this.fullId = material.getFullId();
+        this.blockId = material.getId();
+        this.blockData = material.getDamage();
         this.clusterCount = clusterCount;
         this.clusterSize = clusterSize;
         this.maxHeight = maxHeight;
@@ -70,7 +84,7 @@ public class OreType {
 
                                 if (xVal * xVal + yVal * yVal + zVal * zVal < 1.0D) {
                                     if (level.getBlockIdAt(xSeg, ySeg, zSeg) == replaceBlockId) {
-                                        level.setBlockFullIdAt(xSeg, ySeg, zSeg, fullId);
+                                        level.setBlockAt(xSeg, ySeg, zSeg, blockId, blockData);
                                     }
                                 }
                             }

@@ -1,17 +1,24 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemItemFrame;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
 import java.util.Random;
+
+import static cn.nukkit.math.BlockFace.AxisDirection.POSITIVE;
 
 /**
  * Created by Pub4Game on 03.07.2016.
@@ -40,10 +47,12 @@ public class BlockItemFrame extends BlockTransparentMeta {
         return "Item Frame";
     }
 
+    @PowerNukkitDifference(info = "Allow to stay in walls", since = "1.3.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!this.getSideAtLayer(0, getFacing()).isSolid()) {
+            Block support = this.getSideAtLayer(0, getFacing());
+            if (!support.isSolid() && support.getId() != COBBLE_WALL) {
                 this.level.useBreakOn(this);
                 return type;
             }
@@ -91,9 +100,10 @@ public class BlockItemFrame extends BlockTransparentMeta {
         return true;
     }
 
+    @PowerNukkitDifference(info = "Allow to place on walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (face.getIndex() > 1 && target.isSolid() && (!block.isSolid() || block.canBeReplaced())) {
+        if (face.getIndex() > 1 && (target.getId() == COBBLE_WALL || target.isSolid() && (!block.isSolid() || block.canBeReplaced()))) {
             this.setDamage(FACING[face.getIndex()]);
             this.getLevel().setBlock(block, this, true, true);
             CompoundTag nbt = new CompoundTag()
@@ -195,5 +205,28 @@ public class BlockItemFrame extends BlockTransparentMeta {
     @Override
     public boolean sticksToPiston() {
         return false;
+    }
+
+    @PowerNukkitOnly("Will calculate the correct AABB")
+    @Since("1.3.0.0-PN")
+    @Override
+    protected AxisAlignedBB recalculateBoundingBox() {
+        double[][] aabb = {
+                {2.0/16, 14.0/16},
+                {2.0/16, 14.0/16},
+                {2.0/16, 14.0/16}
+        };
+        
+        BlockFace facing = getFacing();
+        if (facing.getAxisDirection() == POSITIVE) {
+            int axis = facing.getAxis().ordinal();
+            aabb[axis][0] = 0;
+            aabb[axis][1] = 1.0/16;
+        }
+        
+        return new SimpleAxisAlignedBB(
+                aabb[0][0] + x, aabb[1][0] + y, aabb[2][0] + z, 
+                aabb[0][1] + x, aabb[1][1] + y, aabb[2][1] + z
+        );
     }
 }

@@ -61,6 +61,11 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    public int[] getBlockState(int x, int y, int z, int layer) {
+        return new int[]{0,0};
+    }
+
+    @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId) {
         if (blockId != 0) throw new ChunkException("Tried to modify an empty Chunk");
         return false;

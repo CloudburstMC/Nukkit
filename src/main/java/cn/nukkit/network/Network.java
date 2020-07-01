@@ -3,7 +3,6 @@ package cn.nukkit.network;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
@@ -67,14 +66,6 @@ public class Network {
         this.server = server;
     }
 
-    @Since("1.3.0.0-PN")
-    @Deprecated @DeprecationDetails(since = "1.3.0.0-PN",
-            replaceWith = "inflateRaw",
-            reason = "Added by NukkitX. The name don't follow the correct java code style. Will be renamed to inflateRaw in future.")
-    public static byte[] inflate_raw(byte[] data) throws IOException, DataFormatException {
-        return inflateRaw(data);
-    }
-    
     @PowerNukkitOnly @Since("1.3.0.0-PN")
     public static byte[] inflateRaw(byte[] data) throws IOException, DataFormatException {
         Inflater inflater = INFLATER_RAW.get();
@@ -92,14 +83,6 @@ public class Network {
         return bos.toByteArray();
     }
 
-    @Since("1.3.0.0-PN")
-    @Deprecated @DeprecationDetails(since = "1.3.0.0-PN",
-            replaceWith = "deflateRaw",
-            reason = "Added by NukkitX. The name don't follow the correct java code style. Will be renamed to inflateRaw in future.")
-    public static byte[] deflate_raw(byte[] data, int level) throws IOException {
-        return deflateRaw(data, level);
-    }
-    
     @PowerNukkitOnly @Since("1.3.0.0-PN")
     public static byte[] deflateRaw(byte[] data, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
@@ -116,14 +99,6 @@ public class Network {
         }
 
         return bos.toByteArray();
-    }
-
-    @Since("1.3.0.0-PN")
-    @Deprecated @DeprecationDetails(since = "1.3.0.0-PN",
-            replaceWith = "deflateRaw",
-            reason = "Added by NukkitX. The name don't follow the correct java code style. Will be renamed to inflateRaw in future.")
-    public static byte[] deflate_raw(byte[][] datas, int level) throws IOException {
-        return deflateRaw(datas, level);
     }
 
     @Since("1.3.0.0-PN")
@@ -239,7 +214,7 @@ public class Network {
     public void processBatch(BatchPacket packet, Player player) {
         byte[] data;
         try {
-            data = Network.inflate_raw(packet.payload);
+            data = Network.inflateRaw(packet.payload);
         } catch (Exception e) {
             log.warn("Failed to decompress a batch packet from "+player.getName(), e);
             return;
@@ -438,6 +413,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.VIDEO_STREAM_CONNECT_PACKET, VideoStreamConnectPacket.class);
         this.registerPacket(ProtocolInfo.CLIENT_CACHE_STATUS_PACKET, ClientCacheStatusPacket.class);
         this.registerPacket(ProtocolInfo.MAP_CREATE_LOCKED_COPY_PACKET, MapCreateLockedCopyPacket.class);
+        this.registerPacket(ProtocolInfo.EMOTE_PACKET, EmotePacket.class);
         this.registerPacket(ProtocolInfo.ON_SCREEN_TEXTURE_ANIMATION_PACKET, OnScreenTextureAnimationPacket.class);
         this.registerPacket(ProtocolInfo.COMPLETED_USING_ITEM_PACKET, CompletedUsingItemPacket.class);
         this.registerPacket(ProtocolInfo.CODE_BUILDER_PACKET, CodeBuilderPacket.class);
