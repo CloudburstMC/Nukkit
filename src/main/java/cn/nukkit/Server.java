@@ -500,6 +500,7 @@ public class Server {
 
         this.network.registerInterface(new RakNetInterface(this));
 
+        this.pluginManager.loadPowerNukkitPlugins();
         this.pluginManager.loadPlugins(this.pluginPath);
 
         this.enablePlugins(PluginLoadOrder.STARTUP);

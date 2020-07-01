@@ -1,6 +1,7 @@
 package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.PluginIdentifiableCommand;
@@ -82,8 +83,12 @@ abstract public class PluginBase implements Plugin {
      * @param value {@code true}为加载，{@code false}为卸载。<br>{@code true} for enable, {@code false} for disable.
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
+    @PowerNukkitDifference(info = "Made impossible to disable special the PowerNukkitPlugin", since = "1.3.0.0-PN")
     public final void setEnabled(boolean value) {
         if (isEnabled != value) {
+            if (!value && PowerNukkitPlugin.getInstance() == this) {
+                throw new UnsupportedOperationException("The PowerNukkitPlugin cannot be disabled");
+            }
             isEnabled = value;
             if (isEnabled) {
                 onEnable();
