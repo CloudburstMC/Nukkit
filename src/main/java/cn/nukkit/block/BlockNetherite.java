@@ -25,12 +25,12 @@ public class BlockNetherite extends BlockSolid{
 
     @Override
     public double getHardness() {
-        return 50;
+        return 35;
     }
 
     @Override
     public double getResistance() {
-        return 30; //TODO: VERIFY
+        return 6000;
     }
 
     @Override
@@ -44,11 +44,10 @@ public class BlockNetherite extends BlockSolid{
         }
     }
 
-    //TODO: Block Color to Netherite Block
-    /*@Override
+    @Override
     public BlockColor getColor() {
-        return BlockColor.NETHERITE_BLOCK_COLOR;
-    }*/
+        return BlockColor.BLACK_BLOCK_COLOR;
+    }
 
     @Override
     public boolean canHarvestWithHand() {
