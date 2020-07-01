@@ -11,8 +11,8 @@ import java.util.Set;
 public class PlayerArmorDamagePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ARMOR_DAMAGE_PACKET;
 
-    public final Set<PlayerArmorDamageFlag> flags = EnumSet.noneOf(PlayerArmorDamageFlag.class);
-    public final int[] damage = new int[4];
+    @Since("1.3.0.0-PN") public final Set<PlayerArmorDamageFlag> flags = EnumSet.noneOf(PlayerArmorDamageFlag.class);
+    @Since("1.3.0.0-PN") public final int[] damage = new int[4];
 
     @Override
     public byte pid() {

@@ -1,6 +1,7 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.DamageAnvilAction;
@@ -223,6 +224,7 @@ public class CraftingTransaction extends InventoryTransaction {
         return false;
     }
 
+    @Since("1.3.0.0-PN")
     public boolean checkForCraftingPart(List<InventoryAction> actions) {
         for (InventoryAction action : actions) {
             if (action instanceof SlotChangeAction) {

@@ -13,7 +13,7 @@ import java.util.List;
 public class PlayerEnchantOptionsPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ENCHANT_OPTIONS_PACKET;
 
-    public final List<EnchantOptionData> options = new ArrayList<>();
+    @Since("1.3.0.0-PN") public final List<EnchantOptionData> options = new ArrayList<>();
 
     @Override
     public byte pid() {

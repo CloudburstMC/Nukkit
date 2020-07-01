@@ -634,6 +634,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 }
             }
             s.putByte("Version", version);
+            s.putByte("ContentVersion", getContentVersion());
             if (version >= SAVE_STORAGE_VERSION) {
                 s.putList(storageList);
             }
