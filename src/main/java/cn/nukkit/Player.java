@@ -2789,14 +2789,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.dataPacket(entityEventPacket);
                             Server.broadcastPacket(this.getViewers().values(), entityEventPacket);
                             break;
-                        case EntityEventPacket.ENCHANT:
-                            if (entityEventPacket.eid != this.id) {
-                                break;
-                            }
-
-                            int levels = entityEventPacket.data; // Sent as negative number of levels lost
-                            if (levels < 0) this.setExperience(this.exp, this.expLevel + levels);
-                            break;
                     }
                     break;
                 case ProtocolInfo.COMMAND_REQUEST_PACKET:
