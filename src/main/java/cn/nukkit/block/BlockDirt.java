@@ -57,7 +57,7 @@ public class BlockDirt extends BlockSolidMeta {
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             if(player != null){
-                player.getLevel().addSound(player, Sound.STEP_GRASS);
+                player.getLevel().addSound(player, Sound.USE_GRASS);
             }
             item.useOn(this);
             this.getLevel().setBlock(this, this.getDamage() == 0 ? get(FARMLAND) : get(DIRT), true);

@@ -60,7 +60,7 @@ public class BlockGrassPath extends BlockGrass {
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             if(player != null){
-                player.getLevel().addSound(player, Sound.STEP_GRASS);
+                player.getLevel().addSound(player, Sound.USE_GRASS);
             }
             item.useOn(this);
             this.getLevel().setBlock(this, get(FARMLAND), true);
