@@ -6,8 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.3.0.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
+## [Unreleased 1.3.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/13?closed=1))
 Click the link above to see the future.
+
+## [1.3.0.0-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
+Added support for Bedrock Edition 1.16.0 and 1.16.1
 
 ### Breaking change!
 ***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!*** 
@@ -313,7 +316,8 @@ Fixes several anvil issues.
 
 [updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/bleeding/CHANGELOG.md
 
-[Unreleased 1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...bleeding
+[Unreleased 1.3.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
+[1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.0-PN
 [1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
 [1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
