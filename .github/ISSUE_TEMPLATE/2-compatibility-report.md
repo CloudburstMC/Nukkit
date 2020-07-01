@@ -1,5 +1,5 @@
 ---
-name: "\U0001F50C Plugin compatibility issue"
+name: "\U0001F50C I found a compatibility issue"
 about: Report a plugin or backward compatibility problem
 title: ''
 labels: 'Type: compatibility'
@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-# 🐞 Plugin compatibility issue
+# 🔌 Plugin compatibility issue
 <!-- 
 👉 This template is helpful, but you may erase everything if you can express the issue clearly
       Feel free to ask questions or start related discussion 
