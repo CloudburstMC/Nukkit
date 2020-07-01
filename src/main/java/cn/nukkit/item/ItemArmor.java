@@ -102,11 +102,10 @@ abstract public class ItemArmor extends Item implements ItemDurable {
             case TIER_CHAIN:
                 return 12;
             case TIER_LEATHER:
+            case TIER_NETHERITE:
                 return 15;
             case TIER_DIAMOND:
                 return 10;
-            case TIER_NETHERITE:
-                return 10; //TODO: Insert Correct Value
             case TIER_GOLD:
                 return 25;
             case TIER_IRON:
