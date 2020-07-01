@@ -18,6 +18,22 @@ The following breaking change will be pulled in `1.3.0.0-PN`
 ### Binary incompatibility!
 - [#293] A few `Entity` data constant values were changed, plugins which uses them might need to be recompiled, no code change required
 
+### Save format changed!
+The save format has been changed to accommodate very high block data values. **Make a world backup before updating!**
+
+### Incomplete changelog warning!
+Due to the high amount of changes, and the urgency of this update, this changelog file will be released with outdated information,
+please check the current changelog file in the [updated changelog] online for further details about this update.
+
+### Disabled features warning!
+* Enchanting table GUI has been temporarily disabled due to an incompatible change to the Bedrock protocol,
+it's planned to be fixed on 1.3.1.0-PN
+* End portal formation has been disabled due to reported crashes, it's planned to be reviewed on 1.3.1.0-PN
+
+### Experimental warning!
+This is the first release of a huge set of changes to accommodate the new Bedrock Edition 1.16.0/1.16.1 release,
+please take extra cautions with this version, make constant backups and report any issues you find. 
+
 ### Deprecation warnings!
 - [#293] Many `Entity` constants are deprecated and might be removed on `1.4.0.0-PN`
 - [#293] `Entity.DATA_FLAG_TRANSITION_SITTING` and `DATA_FLAG_TRANSITION_SETTING` only one of them is correct, the incorrect will be removed
@@ -295,7 +311,7 @@ Fixes several anvil issues.
     - Loom
     - Bamboo
 
-[updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/master/CHANGELOG.md
+[updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/bleeding/CHANGELOG.md
 
 [Unreleased 1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...bleeding
 [1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
