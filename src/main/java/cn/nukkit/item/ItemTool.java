@@ -160,11 +160,10 @@ public abstract class ItemTool extends Item implements ItemDurable {
             case TIER_STONE:
                 return 5;
             case TIER_WOODEN:
+            case TIER_NETHERITE:
                 return 15;
             case TIER_DIAMOND:
                 return 10;
-            case TIER_NETHERITE:
-                return 10; //TODO: Implement Correct Value
             case TIER_GOLD:
                 return 22;
             case TIER_IRON:
