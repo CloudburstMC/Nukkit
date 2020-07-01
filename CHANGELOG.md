@@ -9,6 +9,12 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.3.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/13?closed=1))
 Click the link above to see the future.
 
+## [Unreleased 1.3.0.1-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/14?closed=1))
+Click the link above to see the future.
+
+### Fixes
+- [#320] Multiple output crafting, cake for example
+
 ## [1.3.0.0-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
 Added support for Bedrock Edition 1.16.0 and 1.16.1
 
@@ -400,3 +406,4 @@ Fixes several anvil issues.
 [#281]: https://github.com/GameModsBR/PowerNukkit/pull/281
 [#285]: https://github.com/GameModsBR/PowerNukkit/pull/285
 [#293]: https://github.com/GameModsBR/PowerNukkit/pull/293
+[#320]: https://github.com/GameModsBR/PowerNukkit/pull/320
