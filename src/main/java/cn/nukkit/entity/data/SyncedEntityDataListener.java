@@ -1,6 +1,6 @@
 package cn.nukkit.entity.data;
 
-import com.nukkitx.protocol.bedrock.data.EntityDataMap;
+import com.nukkitx.protocol.bedrock.data.entity.EntityDataMap;
 
 public interface SyncedEntityDataListener {
 

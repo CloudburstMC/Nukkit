@@ -7,6 +7,7 @@ package cn.nukkit.entity;
  */
 
 import cn.nukkit.utils.ServerException;
+import com.nukkitx.protocol.bedrock.data.AttributeData;
 import lombok.ToString;
 
 import java.util.HashMap;
@@ -173,7 +174,7 @@ public class Attribute implements Cloneable {
         }
     }
 
-    public com.nukkitx.protocol.bedrock.data.Attribute toNetwork() {
-        return new com.nukkitx.protocol.bedrock.data.Attribute(name, minValue, maxValue, currentValue, defaultValue);
+    public AttributeData toNetwork() {
+        return new AttributeData(name, minValue, maxValue, currentValue, defaultValue);
     }
 }

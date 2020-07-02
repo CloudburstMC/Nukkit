@@ -12,11 +12,13 @@ public class GameMode {
     private static final Map<String, GameMode> nameMap = new HashMap<>();
 
     public static final GameMode SURVIVAL = GameMode.builder(0, "survival", "s")
-            .set(Type.BUILD_AND_MINE, true)
+            .set(Type.BUILD, true)
+            .set(Type.MINE, true)
             .set(Type.WORLD_BUILDER, true)
             .survival().register().build();
     public static final GameMode CREATIVE = GameMode.builder(1, "creative", "c")
-            .set(Type.BUILD_AND_MINE, true)
+            .set(Type.BUILD, true)
+            .set(Type.MINE, true)
             .set(Type.WORLD_BUILDER, true)
             .set(Type.ALLOW_FLIGHT, true)
             .register().build();

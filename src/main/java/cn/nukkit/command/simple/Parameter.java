@@ -1,6 +1,6 @@
 package cn.nukkit.command.simple;
 
-import cn.nukkit.command.data.CommandParamType;
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 public @interface Parameter {
     String name();
 
-    CommandParamType type() default CommandParamType.RAWTEXT;
+    CommandParamType type() default CommandParamType.TEXT;
 
     boolean optional() default false;
 }

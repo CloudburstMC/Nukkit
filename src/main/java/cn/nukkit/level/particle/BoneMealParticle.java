@@ -24,7 +24,7 @@ public class BoneMealParticle extends Particle {
     @Override
     public BedrockPacket[] encode() {
         LevelEventPacket packet = new LevelEventPacket();
-        packet.setType(LevelEventType.BONEMEAL);
+        packet.setType(LevelEventType.PARTICLE_CROP_GROWTH);
         packet.setPosition(this.getPosition());
 
         return new BedrockPacket[]{packet};

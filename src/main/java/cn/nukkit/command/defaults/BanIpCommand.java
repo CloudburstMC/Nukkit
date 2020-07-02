@@ -4,7 +4,6 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandData;
-import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.locale.TranslationContainer;
@@ -12,6 +11,7 @@ import cn.nukkit.player.Player;
 import com.nukkitx.nbt.NbtUtils;
 import com.nukkitx.nbt.stream.NBTInputStream;
 import com.nukkitx.nbt.tag.CompoundTag;
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType;
 
 import java.io.File;
 import java.io.FileInputStream;

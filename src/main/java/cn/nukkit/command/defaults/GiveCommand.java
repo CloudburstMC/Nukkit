@@ -4,12 +4,12 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandData;
-import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
 import cn.nukkit.locale.TranslationContainer;
 import cn.nukkit.player.Player;
 import cn.nukkit.utils.TextFormat;
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType;
 import lombok.extern.log4j.Log4j2;
 
 import static cn.nukkit.block.BlockIds.AIR;
@@ -30,17 +30,17 @@ public class GiveCommand extends Command {
                         new CommandParameter("itemName", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
                         new CommandParameter("amount", CommandParamType.INT, true),
                         new CommandParameter("meta", CommandParamType.INT, true),
-                        new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
+                        new CommandParameter("tags...", CommandParamType.TEXT, true)
                 }, new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
                         new CommandParameter("item ID", CommandParamType.INT, false),
                         new CommandParameter("amount", CommandParamType.INT, true),
-                        new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
+                        new CommandParameter("tags...", CommandParamType.TEXT, true)
                 }, new CommandParameter[]{
                         new CommandParameter("player", CommandParamType.TARGET, false),
-                        new CommandParameter("item ID:meta", CommandParamType.RAWTEXT, false),
+                        new CommandParameter("item ID:meta", CommandParamType.TEXT, false),
                         new CommandParameter("amount", CommandParamType.INT, true),
-                        new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
+                        new CommandParameter("tags...", CommandParamType.TEXT, true)
                 })
                 .build());
     }

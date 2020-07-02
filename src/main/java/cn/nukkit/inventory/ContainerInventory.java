@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3i;
+import com.nukkitx.protocol.bedrock.data.inventory.ContainerType;
 import com.nukkitx.protocol.bedrock.packet.BlockEventPacket;
 import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket;
 import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket;
@@ -38,8 +39,8 @@ public abstract class ContainerInventory extends BaseInventory {
     public void onOpen(Player who) {
         super.onOpen(who);
         ContainerOpenPacket packet = new ContainerOpenPacket();
-        packet.setWindowId(who.getWindowId(this));
-        packet.setType((byte) this.getType().getNetworkType());
+        packet.setId(who.getWindowId(this));
+        packet.setType(ContainerType.from(this.getType().getNetworkType()));
         InventoryHolder holder = this.getHolder();
         if (holder instanceof BlockEntity) {
             packet.setBlockPosition(((BlockEntity) holder).getPosition());
@@ -54,7 +55,7 @@ public abstract class ContainerInventory extends BaseInventory {
     @Override
     public void onClose(Player who) {
         ContainerClosePacket packet = new ContainerClosePacket();
-        packet.setWindowId(who.getWindowId(this));
+        packet.setId(who.getWindowId(this));
         who.sendPacket(packet);
         super.onClose(who);
     }

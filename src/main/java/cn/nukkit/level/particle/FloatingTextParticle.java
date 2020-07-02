@@ -4,7 +4,14 @@ import cn.nukkit.level.Level;
 import com.google.common.base.Strings;
 import com.nukkitx.math.vector.Vector3f;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.data.*;
+import com.nukkitx.protocol.bedrock.data.PlayerPermission;
+import com.nukkitx.protocol.bedrock.data.command.CommandPermission;
+import com.nukkitx.protocol.bedrock.data.entity.EntityDataMap;
+import com.nukkitx.protocol.bedrock.data.entity.EntityFlag;
+import com.nukkitx.protocol.bedrock.data.entity.EntityFlags;
+import com.nukkitx.protocol.bedrock.data.inventory.ItemData;
+import com.nukkitx.protocol.bedrock.data.skin.ImageData;
+import com.nukkitx.protocol.bedrock.data.skin.SerializedSkin;
 import com.nukkitx.protocol.bedrock.packet.AddPlayerPacket;
 import com.nukkitx.protocol.bedrock.packet.PlayerListPacket;
 import com.nukkitx.protocol.bedrock.packet.RemoveEntityPacket;
@@ -14,7 +21,7 @@ import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.*;
 
 /**
  * Created on 2015/11/21 by xtypr.
@@ -55,7 +62,7 @@ public class FloatingTextParticle extends Particle {
         EntityFlags flags = new EntityFlags();
         flags.setFlag(EntityFlag.NO_AI, true);
         dataMap.putFlags(flags)
-                .putLong(LEAD_HOLDER_EID, -1)
+                .putLong(LEASH_HOLDER_EID, -1)
                 .putFloat(SCALE, 0.01f) //zero causes problems on debug builds?
                 .putFloat(BOUNDING_BOX_HEIGHT, 0.01f)
                 .putFloat(BOUNDING_BOX_WIDTH, 0.01f);

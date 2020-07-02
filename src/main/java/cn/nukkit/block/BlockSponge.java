@@ -65,7 +65,7 @@ public class BlockSponge extends BlockSolid {
 
                 for (int i = 0; i < 4; i++) {
                     LevelEventPacket packet = new LevelEventPacket();
-                    packet.setType(LevelEventType.DESTROY);
+                    packet.setType(LevelEventType.PARTICLE_DESTROY_BLOCK);
                     packet.setPosition(block.getPosition().toFloat().add(0.5, 0.5, 0.5));
                     packet.setData(BlockRegistry.get().getRuntimeId(FLOWING_WATER, 0));
                     level.addChunkPacket(this.getPosition(), packet);

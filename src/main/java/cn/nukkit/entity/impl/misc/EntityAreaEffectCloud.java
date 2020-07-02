@@ -20,9 +20,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.*;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.FIRE_IMMUNE;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.NO_AI;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.FIRE_IMMUNE;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.NO_AI;
 
 public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud {
     private static final String TAG_DURATION = "Duration";
@@ -110,12 +110,12 @@ public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud
 
     @Override
     public int getPotionColor() {
-        return this.data.getInt(POTION_COLOR);
+        return this.data.getInt(EFFECT_COLOR);
     }
 
     @Override
     public void setPotionColor(int argp) {
-        this.data.setInt(POTION_COLOR, argp);
+        this.data.setInt(EFFECT_COLOR, argp);
     }
 
     @Override
@@ -125,32 +125,32 @@ public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud
 
     @Override
     public int getPickupCount() {
-        return this.data.getInt(AREA_EFFECT_CLOUD_PICKUP_COUNT);
+        return this.data.getInt(AREA_EFFECT_CLOUD_COUNT);
     }
 
     @Override
     public void setPickupCount(int pickupCount) {
-        this.data.setInt(AREA_EFFECT_CLOUD_PICKUP_COUNT, pickupCount);
+        this.data.setInt(AREA_EFFECT_CLOUD_COUNT, pickupCount);
     }
 
     @Override
     public float getRadiusChangeOnPickup() {
-        return this.data.getFloat(AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP);
+        return this.data.getFloat(AREA_EFFECT_CLOUD_CHANGE_ON_PICKUP);
     }
 
     @Override
     public void setRadiusChangeOnPickup(float radiusChangeOnPickup) {
-        this.data.setFloat(AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP, radiusChangeOnPickup);
+        this.data.setFloat(AREA_EFFECT_CLOUD_CHANGE_ON_PICKUP, radiusChangeOnPickup);
     }
 
     @Override
     public float getRadiusPerTick() {
-        return this.data.getFloat(AREA_EFFECT_CLOUD_RADIUS_PER_TICK);
+        return this.data.getFloat(AREA_EFFECT_CLOUD_CHANGE_RATE);
     }
 
     @Override
     public void setRadiusPerTick(float radiusPerTick) {
-        this.data.setFloat(AREA_EFFECT_CLOUD_RADIUS_PER_TICK, radiusPerTick);
+        this.data.setFloat(AREA_EFFECT_CLOUD_CHANGE_RATE, radiusPerTick);
     }
 
     @Override
@@ -201,7 +201,7 @@ public class EntityAreaEffectCloud extends BaseEntity implements AreaEffectCloud
         this.data.setFlag(NO_AI, true);
         this.data.setShort(AREA_EFFECT_CLOUD_PARTICLE_ID, 32);
         this.data.setLong(AREA_EFFECT_CLOUD_SPAWN_TIME, this.level.getCurrentTick());
-        this.data.setInt(AREA_EFFECT_CLOUD_PICKUP_COUNT, 0);
+        this.data.setInt(AREA_EFFECT_CLOUD_COUNT, 0);
         this.setDuration(600);
         this.initialRadius = 3f;
         this.setRadius(this.initialRadius);

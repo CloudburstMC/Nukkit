@@ -4,9 +4,9 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.CommandUtils;
 import cn.nukkit.command.data.CommandData;
-import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.locale.TranslationContainer;
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType;
 
 /**
  * author: MagicDroidX

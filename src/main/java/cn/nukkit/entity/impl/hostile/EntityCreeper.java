@@ -13,7 +13,7 @@ import com.nukkitx.nbt.tag.CompoundTag;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.POWERED;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.POWERED;
 
 /**
  * @author Box.

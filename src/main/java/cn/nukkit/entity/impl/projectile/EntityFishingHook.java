@@ -21,7 +21,7 @@ import cn.nukkit.player.Player;
 import cn.nukkit.registry.EntityRegistry;
 import cn.nukkit.utils.Identifier;
 import com.nukkitx.math.vector.Vector3f;
-import com.nukkitx.protocol.bedrock.data.EntityEventType;
+import com.nukkitx.protocol.bedrock.data.entity.EntityEventType;
 import com.nukkitx.protocol.bedrock.packet.EntityEventPacket;
 
 import javax.annotation.Nullable;
@@ -155,7 +155,7 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
     public void fishBites() {
         EntityEventPacket hookPacket = new EntityEventPacket();
         hookPacket.setRuntimeEntityId(this.getRuntimeId());
-        hookPacket.setType(EntityEventType.FISH_HOOK_HOOK);
+        hookPacket.setType(EntityEventType.FISH_HOOK_TIME);
         Server.broadcastPacket(this.getViewers(), hookPacket);
 
         EntityEventPacket bubblePacket = new EntityEventPacket();
@@ -165,7 +165,7 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
 
         EntityEventPacket teasePacket = new EntityEventPacket();
         teasePacket.setRuntimeEntityId(this.getRuntimeId());
-        teasePacket.setType(EntityEventType.FISH_HOOK_LURED);
+        teasePacket.setType(EntityEventType.FISH_HOOK_TEASE);
         Server.broadcastPacket(this.getViewers(), teasePacket);
 
         Random random = ThreadLocalRandom.current();
@@ -198,10 +198,7 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
             this.getLevel().addParticle(new WaterParticle(this.fish));
         }
         double dist = Math.abs(Math.sqrt(this.getX() * this.getX() + this.getZ() * this.getZ()) - Math.sqrt(this.fish.getX() * this.fish.getX() + this.fish.getZ() * this.fish.getZ()));
-        if (dist < 0.15) {
-            return true;
-        }
-        return false;
+        return dist < 0.15;
     }
 
     public void reelLine() {
@@ -230,7 +227,7 @@ public class EntityFishingHook extends EntityProjectile implements FishingHook {
         if (owner instanceof Player) {
             EntityEventPacket packet = new EntityEventPacket();
             packet.setRuntimeEntityId(this.getRuntimeId());
-            packet.setType(EntityEventType.FISH_HOOK_LURED);
+            packet.setType(EntityEventType.FISH_HOOK_TEASE);
             Server.broadcastPacket(this.getViewers(), packet);
         }
         if (!this.closed) {

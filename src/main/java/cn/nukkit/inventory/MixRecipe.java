@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Identifier;
-import com.nukkitx.protocol.bedrock.data.CraftingData;
+import com.nukkitx.protocol.bedrock.data.inventory.CraftingData;
 import lombok.ToString;
 
 @ToString

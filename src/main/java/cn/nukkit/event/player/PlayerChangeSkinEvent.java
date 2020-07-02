@@ -3,7 +3,7 @@ package cn.nukkit.event.player;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.player.Player;
-import com.nukkitx.protocol.bedrock.data.SerializedSkin;
+import com.nukkitx.protocol.bedrock.data.skin.SerializedSkin;
 
 /**
  * author: KCodeYT

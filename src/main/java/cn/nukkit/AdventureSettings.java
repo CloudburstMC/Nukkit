@@ -1,8 +1,9 @@
 package cn.nukkit;
 
 import cn.nukkit.player.Player;
-import com.nukkitx.protocol.bedrock.data.CommandPermission;
+import com.nukkitx.protocol.bedrock.data.AdventureSetting;
 import com.nukkitx.protocol.bedrock.data.PlayerPermission;
+import com.nukkitx.protocol.bedrock.data.command.CommandPermission;
 import com.nukkitx.protocol.bedrock.packet.AdventureSettingsPacket;
 
 import java.util.EnumMap;
@@ -52,7 +53,7 @@ public class AdventureSettings implements Cloneable {
         AdventureSettingsPacket pk = new AdventureSettingsPacket();
         for (Type t : Type.values()) {
             if (get(t)) {
-                pk.getFlags().add(t.getFlag());
+                pk.getSettings().add(t.getSetting());
             }
         }
 
@@ -67,30 +68,34 @@ public class AdventureSettings implements Cloneable {
     }
 
     public enum Type {
-        WORLD_IMMUTABLE(AdventureSettingsPacket.Flag.IMMUTABLE_WORLD, false),
-        AUTO_JUMP(AdventureSettingsPacket.Flag.AUTO_JUMP, true),
-        ALLOW_FLIGHT(AdventureSettingsPacket.Flag.MAY_FLY, false),
-        NO_CLIP(AdventureSettingsPacket.Flag.NO_CLIP, false),
-        WORLD_BUILDER(AdventureSettingsPacket.Flag.WORLD_BUILDER, true),
-        FLYING(AdventureSettingsPacket.Flag.FLYING, false),
-        MUTED(AdventureSettingsPacket.Flag.MUTE, false),
-        BUILD_AND_MINE(AdventureSettingsPacket.Flag.MINE, true),
-        DOORS_AND_SWITCHED(AdventureSettingsPacket.Flag.DOORS_AND_SWITCHES, true),
-        OPEN_CONTAINERS(AdventureSettingsPacket.Flag.OPEN_CONTAINERS, true),
-        ATTACK_PLAYERS(AdventureSettingsPacket.Flag.ATTACK_PLAYERS, true),
-        ATTACK_MOBS(AdventureSettingsPacket.Flag.ATTACK_MOBS, true),
-        OPERATOR(AdventureSettingsPacket.Flag.OP, false),
-        TELEPORT(AdventureSettingsPacket.Flag.TELEPORT, false);
+        WORLD_IMMUTABLE(AdventureSetting.WORLD_IMMUTABLE, false),
+        NO_PVM(AdventureSetting.NO_PVM, false),
+        NO_MVP(AdventureSetting.NO_MVP, false),
+        SHOW_NAME_TAGS(AdventureSetting.SHOW_NAME_TAGS, true),
+        AUTO_JUMP(AdventureSetting.AUTO_JUMP, true),
+        ALLOW_FLIGHT(AdventureSetting.MAY_FLY, false),
+        NO_CLIP(AdventureSetting.NO_CLIP, false),
+        WORLD_BUILDER(AdventureSetting.WORLD_BUILDER, true),
+        FLYING(AdventureSetting.FLYING, false),
+        MUTED(AdventureSetting.MUTED, false),
+        MINE(AdventureSetting.MINE, true),
+        DOORS_AND_SWITCHED(AdventureSetting.DOORS_AND_SWITCHES, true),
+        OPEN_CONTAINERS(AdventureSetting.OPEN_CONTAINERS, true),
+        ATTACK_PLAYERS(AdventureSetting.ATTACK_PLAYERS, true),
+        ATTACK_MOBS(AdventureSetting.ATTACK_MOBS, true),
+        OPERATOR(AdventureSetting.OPERATOR, false),
+        TELEPORT(AdventureSetting.TELEPORT, false),
+        BUILD(AdventureSetting.BUILD, true);
 
-        private final AdventureSettingsPacket.Flag flag;
+        private final AdventureSetting flag;
         private final boolean defaultValue;
 
-        Type(AdventureSettingsPacket.Flag flag, boolean defaultValue) {
+        Type(AdventureSetting flag, boolean defaultValue) {
             this.flag = flag;
             this.defaultValue = defaultValue;
         }
 
-        public AdventureSettingsPacket.Flag getFlag() {
+        public AdventureSetting getSetting() {
             return flag;
         }
 

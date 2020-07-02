@@ -15,8 +15,8 @@ import com.nukkitx.nbt.CompoundTagBuilder;
 import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.FUSE_LENGTH;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.IGNITED;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.FUSE_LENGTH;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.IGNITED;
 
 /**
  * @author MagicDroidX

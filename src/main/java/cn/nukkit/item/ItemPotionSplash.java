@@ -5,7 +5,7 @@ import cn.nukkit.entity.EntityTypes;
 import cn.nukkit.entity.Projectile;
 import cn.nukkit.utils.Identifier;
 
-import static com.nukkitx.protocol.bedrock.data.EntityData.POTION_AUX_VALUE;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.POTION_AUX_VALUE;
 
 /**
  * Created on 2015/12/27 by xtypr.

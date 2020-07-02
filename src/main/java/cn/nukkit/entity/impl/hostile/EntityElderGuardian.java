@@ -4,7 +4,7 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.hostile.ElderGuardian;
 import cn.nukkit.level.Location;
 
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.ELDER;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.ELDER;
 
 /**
  * @author PikyCZ

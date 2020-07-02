@@ -59,7 +59,7 @@ public class EntityPainting extends HangingEntity implements Painting {
         addPainting.setRuntimeEntityId(this.getRuntimeId());
         addPainting.setPosition(this.getPosition());
         addPainting.setDirection(this.getDirection().getHorizontalIndex());
-        addPainting.setName(this.motive.title);
+        addPainting.setMotive(this.motive.title);
         return addPainting;
     }
 

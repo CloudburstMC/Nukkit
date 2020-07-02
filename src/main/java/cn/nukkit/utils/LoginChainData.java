@@ -1,6 +1,6 @@
 package cn.nukkit.utils;
 
-import com.nukkitx.protocol.bedrock.data.SerializedSkin;
+import com.nukkitx.protocol.bedrock.data.skin.SerializedSkin;
 
 import java.util.UUID;
 

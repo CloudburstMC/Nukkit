@@ -6,6 +6,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.player.Player;
 import com.nukkitx.math.vector.Vector3i;
 import com.nukkitx.protocol.bedrock.data.SoundEvent;
+import com.nukkitx.protocol.bedrock.data.inventory.ContainerType;
 import com.nukkitx.protocol.bedrock.packet.ContainerClosePacket;
 import com.nukkitx.protocol.bedrock.packet.ContainerOpenPacket;
 
@@ -27,8 +28,8 @@ public class PlayerEnderChestInventory extends BaseInventory {
         }
         super.onOpen(who);
         ContainerOpenPacket containerOpenPacket = new ContainerOpenPacket();
-        containerOpenPacket.setWindowId(who.getWindowId(this));
-        containerOpenPacket.setType((byte) this.getType().getNetworkType());
+        containerOpenPacket.setId(who.getWindowId(this));
+        containerOpenPacket.setType(ContainerType.from(this.getType().getNetworkType()));
         BlockEnderChest chest = who.getViewingEnderChest();
         if (chest != null) {
             containerOpenPacket.setBlockPosition(chest.getPosition());
@@ -52,7 +53,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
     @Override
     public void onClose(Player who) {
         ContainerClosePacket containerClosePacket = new ContainerClosePacket();
-        containerClosePacket.setWindowId(who.getWindowId(this));
+        containerClosePacket.setId(who.getWindowId(this));
         who.sendPacket(containerClosePacket);
         super.onClose(who);
 

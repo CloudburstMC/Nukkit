@@ -5,7 +5,7 @@ import cn.nukkit.entity.EntityType;
 import cn.nukkit.entity.impl.EntityCreature;
 import cn.nukkit.level.Location;
 
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.BABY;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.BABY;
 
 /**
  * author: MagicDroidX

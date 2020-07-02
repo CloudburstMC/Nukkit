@@ -2,7 +2,10 @@ package cn.nukkit.entity.impl;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
-import cn.nukkit.entity.*;
+import cn.nukkit.entity.Attribute;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityType;
+import cn.nukkit.entity.Rideable;
 import cn.nukkit.entity.data.SyncedEntityData;
 import cn.nukkit.entity.misc.LightningBolt;
 import cn.nukkit.event.Event;
@@ -39,9 +42,9 @@ import com.nukkitx.nbt.tag.CompoundTag;
 import com.nukkitx.nbt.tag.FloatTag;
 import com.nukkitx.nbt.tag.NumberTag;
 import com.nukkitx.protocol.bedrock.BedrockPacket;
-import com.nukkitx.protocol.bedrock.data.EntityData;
-import com.nukkitx.protocol.bedrock.data.EntityDataMap;
-import com.nukkitx.protocol.bedrock.data.EntityLink;
+import com.nukkitx.protocol.bedrock.data.entity.EntityData;
+import com.nukkitx.protocol.bedrock.data.entity.EntityDataMap;
+import com.nukkitx.protocol.bedrock.data.entity.EntityLinkData;
 import com.nukkitx.protocol.bedrock.packet.*;
 import com.spotify.futures.CompletableFutures;
 import it.unimi.dsi.fastutil.shorts.Short2ObjectMap;
@@ -57,8 +60,8 @@ import static cn.nukkit.block.BlockIds.FARMLAND;
 import static cn.nukkit.block.BlockIds.PORTAL;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-import static com.nukkitx.protocol.bedrock.data.EntityData.*;
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.*;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityData.*;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.*;
 
 /**
  * @author MagicDroidX
@@ -173,9 +176,9 @@ public abstract class BaseEntity implements Entity, Metadatable {
 
     protected void initEntity() {
         this.data.setFlag(HAS_COLLISION, true);
-        this.data.setShort(AIR, 400);
-        this.data.setShort(MAX_AIR, 400);
-        this.data.setLong(LEAD_HOLDER_EID, -1);
+        this.data.setShort(AIR_SUPPLY, 400);
+        this.data.setShort(MAX_AIR_SUPPLY, 400);
+        this.data.setLong(LEASH_HOLDER_EID, -1);
         this.data.setFloat(SCALE, 1f);
         this.data.setFloat(BOUNDING_BOX_HEIGHT, this.getHeight());
         this.data.setFloat(BOUNDING_BOX_WIDTH, this.getWidth());
@@ -290,7 +293,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
 
         tag.floatTag("FallDistance", this.fallDistance);
         tag.shortTag("Fire", (short) this.fireTicks);
-        tag.shortTag("Air", this.data.getShort(AIR));
+        tag.shortTag("Air", this.data.getShort(AIR_SUPPLY));
         tag.booleanTag("OnGround", this.onGround);
         tag.booleanTag("Invulnerable", this.invulnerable);
         tag.floatTag("Scale", this.scale);
@@ -334,11 +337,11 @@ public abstract class BaseEntity implements Entity, Metadatable {
     }
 
     public boolean isNameTagAlwaysVisible() {
-        return this.data.getByte(ALWAYS_SHOW_NAMETAG) == 1;
+        return this.data.getByte(NAMETAG_ALWAYS_SHOW) == 1;
     }
 
     public void setNameTagAlwaysVisible(boolean value) {
-        this.data.setByte(ALWAYS_SHOW_NAMETAG, value ? 1 : 0);
+        this.data.setByte(NAMETAG_ALWAYS_SHOW, value ? 1 : 0);
     }
 
     public void setNameTagAlwaysVisible() {
@@ -400,11 +403,11 @@ public abstract class BaseEntity implements Entity, Metadatable {
     }
 
     public short getAir() {
-        return this.data.getShort(AIR);
+        return this.data.getShort(AIR_SUPPLY);
     }
 
     public void setAir(short air) {
-        this.data.setShort(AIR, air);
+        this.data.setShort(AIR_SUPPLY, air);
     }
 
     public boolean isInvulnerable() {
@@ -516,11 +519,11 @@ public abstract class BaseEntity implements Entity, Metadatable {
             int g = (color[1] / count) & 0xff;
             int b = (color[2] / count) & 0xff;
 
-            this.data.setInt(POTION_COLOR, (r << 16) + (g << 8) + b);
-            this.data.setByte(POTION_AMBIENT, ambient ? 1 : 0);
+            this.data.setInt(EFFECT_COLOR, (r << 16) + (g << 8) + b);
+            this.data.setByte(EFFECT_AMBIENT, ambient ? 1 : 0);
         } else {
-            this.data.setInt(POTION_COLOR, 0);
-            this.data.setByte(POTION_AMBIENT, 0);
+            this.data.setInt(EFFECT_COLOR, 0);
+            this.data.setByte(EFFECT_AMBIENT, 0);
         }
     }
 
@@ -584,8 +587,8 @@ public abstract class BaseEntity implements Entity, Metadatable {
             this.vehicle.spawnTo(player);
 
             SetEntityLinkPacket packet = new SetEntityLinkPacket();
-            packet.setEntityLink(new com.nukkitx.protocol.bedrock.data.EntityLink(this.vehicle.getUniqueId(),
-                    this.getUniqueId(), com.nukkitx.protocol.bedrock.data.EntityLink.Type.RIDER, true));
+            packet.setEntityLink(new EntityLinkData(this.vehicle.getUniqueId(),
+                    this.getUniqueId(), EntityLinkData.Type.RIDER, true, false));
 
             player.sendPacket(packet);
         }
@@ -602,8 +605,8 @@ public abstract class BaseEntity implements Entity, Metadatable {
         this.data.putAllIn(addEntity.getMetadata());
 
         for (int i = 0; i < this.passengers.size(); i++) {
-            addEntity.getEntityLinks().add(new com.nukkitx.protocol.bedrock.data.EntityLink(this.getUniqueId(),
-                    this.passengers.get(i).getUniqueId(), i == 0 ? EntityLink.Type.RIDER : EntityLink.Type.PASSENGER, false));
+            addEntity.getEntityLinks().add(new EntityLinkData(this.getUniqueId(),
+                    this.passengers.get(i).getUniqueId(), i == 0 ? EntityLinkData.Type.RIDER : EntityLinkData.Type.PASSENGER, false, false));
         }
         return addEntity;
     }
@@ -1058,7 +1061,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
      * @return {@code true} if the mounting successful
      */
     @Override
-    public boolean mount(Entity vehicle, MountMode mode) {
+    public boolean mount(Entity vehicle, EntityLinkData.Type mode) {
         checkNotNull(vehicle, "The target of the mounting entity can't be null");
 
         if (this.vehicle != null && !this.vehicle.dismount(this)) {
@@ -1078,7 +1081,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
         vehicle.onMount(this); // Flags have to be set before
 //        this.data.setFlag(RIDING, true);
         this.data.update(); // force any data that needs to be sent
-        broadcastLinkPacket(vehicle, mode.getType());
+        broadcastLinkPacket(vehicle, mode);
 
         return true;
     }
@@ -1096,7 +1099,7 @@ public abstract class BaseEntity implements Entity, Metadatable {
             return false;
         }
 
-        broadcastLinkPacket(vehicle, EntityLink.Type.REMOVE);
+        broadcastLinkPacket(vehicle, EntityLinkData.Type.REMOVE);
 
         // Refurbish the entity
         this.vehicle = null;
@@ -1125,9 +1128,9 @@ public abstract class BaseEntity implements Entity, Metadatable {
         passenger.setSeatPosition(Vector3f.ZERO);
     }
 
-    protected void broadcastLinkPacket(Entity vehicle, EntityLink.Type type) {
+    protected void broadcastLinkPacket(Entity vehicle, EntityLinkData.Type type) {
         SetEntityLinkPacket packet = new SetEntityLinkPacket();
-        packet.setEntityLink(new EntityLink(getUniqueId(), vehicle.getUniqueId(), type, false));
+        packet.setEntityLink(new EntityLinkData(getUniqueId(), vehicle.getUniqueId(), type, false, false));
 
         Server.broadcastPacket(vehicle.getViewers(), packet);
     }

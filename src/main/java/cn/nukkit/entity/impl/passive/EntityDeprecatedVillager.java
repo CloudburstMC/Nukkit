@@ -6,7 +6,7 @@ import cn.nukkit.entity.impl.EntityCreature;
 import cn.nukkit.entity.passive.DeprecatedVillager;
 import cn.nukkit.level.Location;
 
-import static com.nukkitx.protocol.bedrock.data.EntityFlag.BABY;
+import static com.nukkitx.protocol.bedrock.data.entity.EntityFlag.BABY;
 
 public class EntityDeprecatedVillager extends EntityCreature implements DeprecatedVillager, EntityAgeable {
 

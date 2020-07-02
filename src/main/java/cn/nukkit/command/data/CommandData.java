@@ -1,7 +1,8 @@
 package cn.nukkit.command.data;
 
 import cn.nukkit.Server;
-import com.nukkitx.protocol.bedrock.data.CommandParamData;
+import com.nukkitx.protocol.bedrock.data.command.CommandParamData;
+import com.nukkitx.protocol.bedrock.data.command.CommandParamType;
 import lombok.NonNull;
 import lombok.ToString;
 
@@ -66,7 +67,7 @@ public class CommandData {
         this.aliases.getValues().remove(alias);
     }
 
-    public com.nukkitx.protocol.bedrock.data.CommandData toNetwork() {
+    public com.nukkitx.protocol.bedrock.data.command.CommandData toNetwork() {
         String description = Server.getInstance().getLanguage().translate(this.description);
 
         CommandParamData[][] overloadData = new CommandParamData[this.overloads.size()][];
@@ -80,7 +81,7 @@ public class CommandData {
             overloadData[i] = params;
         }
 
-        return new com.nukkitx.protocol.bedrock.data.CommandData(this.getRegisteredName(), description, Collections.emptyList(),
+        return new com.nukkitx.protocol.bedrock.data.command.CommandData(this.getRegisteredName(), description, Collections.emptyList(),
                 (byte) 0, this.aliases.toNetwork(), overloadData);
     }
 
@@ -111,7 +112,7 @@ public class CommandData {
 
         public CommandData build() {
             if (overloads.size() == 0) {
-                this.overloads.add(new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
+                this.overloads.add(new CommandParameter[]{new CommandParameter("args", CommandParamType.TEXT, true)});
             }
             return new CommandData(name, desc, usage, permMsg, perms, new CommandEnum(name, aliases), overloads);
         }

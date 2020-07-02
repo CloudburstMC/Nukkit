@@ -14,7 +14,7 @@ import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
 import com.google.common.collect.ImmutableMap;
 import com.nukkitx.network.util.Preconditions;
-import com.nukkitx.protocol.bedrock.data.CommandData;
+import com.nukkitx.protocol.bedrock.data.command.CommandData;
 import com.nukkitx.protocol.bedrock.packet.AvailableCommandsPacket;
 import lombok.extern.log4j.Log4j2;
 
