@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
@@ -23,6 +24,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.InvalidBlockDamageException;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +37,9 @@ import java.util.function.Predicate;
  * author: MagicDroidX
  * Nukkit Project
  */
+
+@Log4j2
+
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
 
     public static final int MAX_BLOCK_ID = 600;
@@ -878,7 +883,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 1.0 + (0.2 * hasteLoreLevel);
     }
 
-    private static int toolType0(Item item) {
+    @PowerNukkitDifference
+    private static int toolType0(Item item, int blockId, int blockToolType) {
+        if((blockId == LEAVES && item.isHoe()) ||
+                (blockId == LEAVES2 && item.isHoe()))
+            return 5;
         if (item.isSword()) return ItemTool.TYPE_SWORD;
         if (item.isShovel()) return ItemTool.TYPE_SHOVEL;
         if (item.isPickaxe()) return ItemTool.TYPE_PICKAXE;
@@ -887,8 +896,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return ItemTool.TYPE_NONE;
     }
 
-    private static boolean correctTool0(int blockToolType, Item item) {
-        return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
+    @PowerNukkitDifference
+    private static boolean correctTool0(int blockToolType, Item item, int blockId) {
+        if((blockId == LEAVES && item.isHoe()) ||
+           (blockId == LEAVES2 && item.isHoe())){
+            return (blockToolType == ItemTool.TYPE_SHEARS && item.isHoe());
+        } else return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
                 (blockToolType == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
                 (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
                 (blockToolType == ItemTool.TYPE_AXE && item.isAxe()) ||
@@ -911,6 +924,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 1.0 / speed;
     }
 
+    @PowerNukkitDifference
     public double getBreakTime(Item item, Player player) {
         Objects.requireNonNull(item, "getBreakTime: Item can not be null");
         Objects.requireNonNull(player, "getBreakTime: Player can not be null");
@@ -920,10 +934,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             return 0;
         }
 
-        boolean correctTool = correctTool0(getToolType(), item);
-        boolean canHarvestWithHand = canHarvestWithHand();
         int blockId = getId();
-        int itemToolType = toolType0(item);
+        boolean correctTool = correctTool0(getToolType(), item, blockId);
+        boolean canHarvestWithHand = canHarvestWithHand();
+        int itemToolType = toolType0(item, blockId, getToolType());
         int itemTier = item.getTier();
         int efficiencyLoreLevel = Optional.ofNullable(item.getEnchantment(Enchantment.ID_EFFICIENCY))
                 .map(Enchantment::getLevel).orElse(0);
@@ -951,12 +965,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public double getBreakTime(Item item) {
         double base = this.getHardness() * 1.5;
         if (this.canBeBrokenWith(item)) {
-            if (this.getToolType() == ItemTool.TYPE_SHEARS && item.isShears()) {
+            if (
+            (this.getToolType() == ItemTool.TYPE_SHEARS && item.isShears()) ||
+            (this.getToolType() == ItemTool.TYPE_SHEARS && item.isHoe())) {
                 base /= 15;
             } else if (
                     (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
                             (this.getToolType() == ItemTool.TYPE_AXE && item.isAxe()) ||
-                            (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel())
+                            (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
+                            (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isHoe())
                     ) {
                 int tier = item.getTier();
                 switch (tier) {
