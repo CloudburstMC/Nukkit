@@ -324,6 +324,7 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/bleeding/CHANGELOG.md
 
 [Unreleased 1.3.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
+[Unreleased 1.3.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
 [1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.1-PN
 [1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.0-PN
 [1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
