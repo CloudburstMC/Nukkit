@@ -9,6 +9,9 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.3.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/13?closed=1))
 Click the link above to see the future.
 
+### Fixes
+- [#326] Enchantment table not working
+
 ## [1.3.0.1-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/14?closed=1))
 Improves plugin compatibility and downgrade the RakNet lib to solve a memory leak
 
@@ -418,3 +421,4 @@ Fixes several anvil issues.
 [#315]: https://github.com/GameModsBR/PowerNukkit/pull/315
 [#320]: https://github.com/GameModsBR/PowerNukkit/pull/320
 [#323]: https://github.com/GameModsBR/PowerNukkit/issues/323
+[#326]: https://github.com/GameModsBR/PowerNukkit/pull/326
