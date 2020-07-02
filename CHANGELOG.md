@@ -16,6 +16,9 @@ Improves plugin compatibility and downgrade the RakNet lib to solve a memory lea
 - [#320] Multiple output crafting, cake for example
 - [#323] Compatibility issue with the regular version of GAC
 
+### Added
+- [#315] Hoglin, Piglin, Zoglin and Strider entities without AI
+
 ### Changed
 - [#319] The RakNet library were downgraded to 1.6.15 due to a potential memory leak issue
 
@@ -412,5 +415,6 @@ Fixes several anvil issues.
 [#281]: https://github.com/GameModsBR/PowerNukkit/pull/281
 [#285]: https://github.com/GameModsBR/PowerNukkit/pull/285
 [#293]: https://github.com/GameModsBR/PowerNukkit/pull/293
+[#315]: https://github.com/GameModsBR/PowerNukkit/pull/315
 [#320]: https://github.com/GameModsBR/PowerNukkit/pull/320
 [#323]: https://github.com/GameModsBR/PowerNukkit/issues/323
