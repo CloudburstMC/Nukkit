@@ -14,6 +14,7 @@ Click the link above to see the future.
 
 ### Fixes
 - [#320] Multiple output crafting, cake for example
+- [#323] Compatibility issue with the regular version of GAC
 
 ## [1.3.0.0-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
 Added support for Bedrock Edition 1.16.0 and 1.16.1
@@ -323,6 +324,8 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/bleeding/CHANGELOG.md
 
 [Unreleased 1.3.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
+[Unreleased 1.3.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
+[1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.1-PN
 [1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.0-PN
 [1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
 [1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
@@ -407,3 +410,4 @@ Fixes several anvil issues.
 [#285]: https://github.com/GameModsBR/PowerNukkit/pull/285
 [#293]: https://github.com/GameModsBR/PowerNukkit/pull/293
 [#320]: https://github.com/GameModsBR/PowerNukkit/pull/320
+[#323]: https://github.com/GameModsBR/PowerNukkit/issues/323

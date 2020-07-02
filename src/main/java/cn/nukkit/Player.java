@@ -1,6 +1,7 @@
 package cn.nukkit;
 
 import cn.nukkit.AdventureSettings.Type;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
@@ -28,7 +29,6 @@ import cn.nukkit.event.player.*;
 import cn.nukkit.event.player.PlayerAsyncPreLoginEvent.LoginResult;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import cn.nukkit.event.player.PlayerJumpEvent;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.form.window.FormWindow;
@@ -83,7 +83,9 @@ import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
@@ -607,7 +609,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public Map<String, PermissionAttachmentInfo> getEffectivePermissions() {
         return this.perm.getEffectivePermissions();
     }
-
+    
+    private static InetSocketAddress uncheckedNewInetSocketAddress(String ip, int port) {
+        try {
+            return new InetSocketAddress(InetAddress.getByName(ip), port);
+        } catch (UnknownHostException exception) {
+            throw new IllegalArgumentException(exception);
+        }
+    }
+    
+    public Player(SourceInterface interfaz, Long clientID, String ip, int port) {
+        this(interfaz, clientID, uncheckedNewInetSocketAddress(ip, port));
+    }
+    
+    @PowerNukkitOnly
     public Player(SourceInterface interfaz, Long clientID, InetSocketAddress socketAddress) {
         super(null, new CompoundTag());
         this.interfaz = interfaz;
