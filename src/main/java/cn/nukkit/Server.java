@@ -710,7 +710,7 @@ public class Server {
         } else {
             try {
                 byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Network.deflate_raw(data, this.networkCompressionLevel), targets);
+                this.broadcastPacketsCallback(Network.deflateRaw(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
