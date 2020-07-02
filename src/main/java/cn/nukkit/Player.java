@@ -2,6 +2,7 @@ package cn.nukkit;
 
 import cn.nukkit.AdventureSettings.Type;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
@@ -163,7 +164,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected PlayerUIInventory playerUIInventory;
     protected CraftingGrid craftingGrid;
     protected CraftingTransaction craftingTransaction;
-    protected EnchantTransaction enchantTransaction;
+    @Since("1.3.1.0-PN") protected EnchantTransaction enchantTransaction;
 
     public long creationTime = 0;
 
