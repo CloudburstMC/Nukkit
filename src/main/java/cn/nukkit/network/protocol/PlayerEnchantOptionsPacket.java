@@ -24,7 +24,7 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
     public void decode() {
         int size = (int) this.getUnsignedVarInt();
         for (int i = 0; i < size; i++) {
-            int cost = this.getVarInt();
+            int minLevel = this.getVarInt();
             int slot = this.getInt();
 
             int eSize = (int) this.getUnsignedVarInt();
@@ -49,7 +49,7 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
             }
             String enchantName = this.getString();
             int eNetId = (int) this.getUnsignedVarInt();
-            this.options.add(new EnchantOptionData(cost, slot, list1, list2, list3, enchantName, eNetId));
+            this.options.add(new EnchantOptionData(minLevel, slot, list1, list2, list3, enchantName, eNetId));
         }
 
     }
@@ -59,7 +59,7 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
         this.reset();
         this.putUnsignedVarInt(this.options.size());
         for (EnchantOptionData option : this.options) {
-            this.putVarInt(option.getCost());
+            this.putVarInt(option.getMinLevel());
             this.putInt(option.getPrimarySlot());
             this.putUnsignedVarInt(option.getEnchants0().size());
             for (EnchantData data : option.getEnchants0()) {
@@ -85,7 +85,7 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
     @Since("1.3.0.0-PN")
     @Value
     public class EnchantOptionData {
-        private final int cost;
+        private final int minLevel;
         private final int primarySlot;
         private final List<EnchantData> enchants0;
         private final List<EnchantData> enchants1;

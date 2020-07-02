@@ -44,10 +44,11 @@ public class InventoryTransactionPacket extends DataPacket {
     @Since("1.3.0.0-PN") public int legacyRequestId;
 
     /**
-     * NOTE: THIS FIELD DOES NOT EXIST IN THE PROTOCOL, it's merely used for convenience for PocketMine-MP to easily
-     * determine whether we're doing a crafting transaction.
+     * NOTE: THESE FIELDS DO NOT EXIST IN THE PROTOCOL, it's merely used for convenience for us to easily
+     * determine whether we're doing a crafting or enchanting transaction.
      */
     public boolean isCraftingPart = false;
+    public boolean isEnchantingPart = false;
 
     @Override
     public byte pid() {

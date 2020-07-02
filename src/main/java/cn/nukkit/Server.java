@@ -2312,9 +2312,11 @@ public class Server {
         Entity.registerEntity("Evoker", EntityEvoker.class);
         Entity.registerEntity("Ghast", EntityGhast.class);
         Entity.registerEntity("Guardian", EntityGuardian.class);
+        Entity.registerEntity("Hoglin", EntityHoglin.class);
         Entity.registerEntity("Husk", EntityHusk.class);
         Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
         Entity.registerEntity("Phantom", EntityPhantom.class);
+        Entity.registerEntity("Piglin", EntityPiglin.class);
         Entity.registerEntity("Pillager", EntityPillager.class);
         Entity.registerEntity("Ravager", EntityRavager.class);
         Entity.registerEntity("Shulker", EntityShulker.class);
@@ -2329,6 +2331,7 @@ public class Server {
         Entity.registerEntity("Wither", EntityWither.class);
         Entity.registerEntity("WitherSkeleton", EntityWitherSkeleton.class);
         Entity.registerEntity("Zombie", EntityZombie.class);
+        Entity.registerEntity("Zoglin", EntityZoglin.class);
         Entity.registerEntity("ZombiePigman", EntityZombiePigman.class);
         Entity.registerEntity("ZombieVillager", EntityZombieVillager.class);
         Entity.registerEntity("ZombieVillagerV1", EntityZombieVillagerV1.class);
@@ -2356,6 +2359,7 @@ public class Server {
         Entity.registerEntity("Sheep", EntitySheep.class);
         Entity.registerEntity("SkeletonHorse", EntitySkeletonHorse.class);
         Entity.registerEntity("Squid", EntitySquid.class);
+        Entity.registerEntity("Strider", EntityStrider.class);
         Entity.registerEntity("TropicalFish", EntityTropicalFish.class);
         Entity.registerEntity("Turtle", EntityTurtle.class);
         Entity.registerEntity("Villager", EntityVillager.class);
