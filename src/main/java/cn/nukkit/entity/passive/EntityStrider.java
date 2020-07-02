@@ -1,11 +1,13 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
  * @author Erik Miller | EinBexiii
  */
+@Since("1.3.1.0-PN")
 public class EntityStrider extends EntityAnimal {
 
     public final static int NETWORK_ID = 125;
