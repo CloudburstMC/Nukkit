@@ -16,6 +16,9 @@ Click the link above to see the future.
 - [#320] Multiple output crafting, cake for example
 - [#323] Compatibility issue with the regular version of GAC
 
+### Changed
+- [#319] The RakNet library were downgraded to 1.6.15 due to a potential memory leak issue
+
 ## [1.3.0.0-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
 Added support for Bedrock Edition 1.16.0 and 1.16.1
 
