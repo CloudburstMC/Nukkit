@@ -1,5 +1,6 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 
 import java.util.List;
@@ -32,9 +33,12 @@ public interface CraftingRecipe extends Recipe {
      * @param extraOutputList list of items put back into the crafting grid (secondary results)
      * @return bool
      */
+    @Since("1.3.0.0-PN")
     boolean matchItems(List<Item> inputList, List<Item> extraOutputList);
 
+    @Since("1.3.0.0-PN")
     boolean matchItems(List<Item> inputList, List<Item> extraOutputList, int multiplier);
 
+    @Since("1.3.0.0-PN")
     List<Item> getIngredientsAggregate();
 }

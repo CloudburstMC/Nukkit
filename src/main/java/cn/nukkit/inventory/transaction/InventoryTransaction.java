@@ -1,6 +1,7 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.Inventory;
@@ -8,10 +9,8 @@ import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.MainLogger;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * @author CreeperFace
@@ -58,6 +57,7 @@ public class InventoryTransaction {
         return inventories;
     }
 
+    @Since("1.3.0.0-PN")
     public List<InventoryAction> getActionList() {
         return actions;
     }

@@ -140,6 +140,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         }
     }
 
+    @PowerNukkitDifference(info = "The bounding box was fixed", since = "1.3.0.0-PN")
     private AxisAlignedBB getRelativeBoundingBox() {
         return boundingBoxDamage[this.getDamage()];
     }

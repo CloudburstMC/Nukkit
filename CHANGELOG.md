@@ -6,8 +6,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.3.0.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
+## [Unreleased 1.3.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/13?closed=1))
 Click the link above to see the future.
+
+### Fixes
+- [#326] Enchantment table not working
+
+## [1.3.0.1-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/14?closed=1))
+Improves plugin compatibility and downgrade the RakNet lib to solve a memory leak
+
+### Fixes
+- [#320] Multiple output crafting, cake for example
+- [#323] Compatibility issue with the regular version of GAC
+
+### Added
+- [#315] Hoglin, Piglin, Zoglin and Strider entities without AI
+
+### Changed
+- [#319] The RakNet library were downgraded to 1.6.15 due to a potential memory leak issue
+
+## [1.3.0.0-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
+Added support for Bedrock Edition 1.16.0 and 1.16.1
 
 ### Breaking change!
 ***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!*** 
@@ -17,6 +36,22 @@ The following breaking change will be pulled in `1.3.0.0-PN`
 
 ### Binary incompatibility!
 - [#293] A few `Entity` data constant values were changed, plugins which uses them might need to be recompiled, no code change required
+
+### Save format changed!
+The save format has been changed to accommodate very high block data values. **Make a world backup before updating!**
+
+### Incomplete changelog warning!
+Due to the high amount of changes, and the urgency of this update, this changelog file will be released with outdated information,
+please check the current changelog file in the [updated changelog] online for further details about this update.
+
+### Disabled features warning!
+* Enchanting table GUI has been temporarily disabled due to an incompatible change to the Bedrock protocol,
+it's planned to be fixed on 1.3.1.0-PN
+* End portal formation has been disabled due to reported crashes, it's planned to be reviewed on 1.3.1.0-PN
+
+### Experimental warning!
+This is the first release of a huge set of changes to accommodate the new Bedrock Edition 1.16.0/1.16.1 release,
+please take extra cautions with this version, make constant backups and report any issues you find. 
 
 ### Deprecation warnings!
 - [#293] Many `Entity` constants are deprecated and might be removed on `1.4.0.0-PN`
@@ -295,9 +330,12 @@ Fixes several anvil issues.
     - Loom
     - Bamboo
 
-[updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/master/CHANGELOG.md
+[updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/bleeding/CHANGELOG.md
 
-[Unreleased 1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...bleeding
+[Unreleased 1.3.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
+[1.3.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
+[1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.1-PN
+[1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.0-PN
 [1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
 [1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
@@ -380,3 +418,7 @@ Fixes several anvil issues.
 [#281]: https://github.com/GameModsBR/PowerNukkit/pull/281
 [#285]: https://github.com/GameModsBR/PowerNukkit/pull/285
 [#293]: https://github.com/GameModsBR/PowerNukkit/pull/293
+[#315]: https://github.com/GameModsBR/PowerNukkit/pull/315
+[#320]: https://github.com/GameModsBR/PowerNukkit/pull/320
+[#323]: https://github.com/GameModsBR/PowerNukkit/issues/323
+[#326]: https://github.com/GameModsBR/PowerNukkit/pull/326

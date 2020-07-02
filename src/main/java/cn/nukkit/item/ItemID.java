@@ -267,7 +267,7 @@ public interface ItemID {
     int HONEYCOMB = 736;
     int HONEY_BOTTLE = 737;
 
-
+    //int LODESTONECOMPASS = 741;
     int NETHERITE_INGOT = 742; //742
     int NETHERITE_SWORD = 743; //743
     int NETHERITE_SHOVEL = 744; //744
@@ -279,4 +279,14 @@ public interface ItemID {
     int NETHERITE_LEGGINGS = 750; //750
     int NETHERITE_BOOTS = 751; //751
     int NETHERITE_SCRAP = 752; //752
+    //int CRIMSON_SIGN = 753;
+    //int WARPED_SIGN = 754;
+    //int CRIMSON_DOOR = 755;
+    //int WARPED_DOOR = 756;
+    //int WARPED_FUNGUS_ON_A_STICK = 757;
+    //int CHAIN = 758;
+    //int RECORD_PIGSTEP = 759;
+    //int NETHER_SPROUTS = 760;
+    
+    //int SOUL_CAMPFIRE = 801;
 }

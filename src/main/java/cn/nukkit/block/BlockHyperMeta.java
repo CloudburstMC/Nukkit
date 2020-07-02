@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
@@ -30,6 +31,8 @@ public interface BlockHyperMeta {
 
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Does not hold all hyper-id metadata", since = "1.3.0.0-PN")
     default int getFullId() {
         return (getId() << Block.DATA_BITS) | (getDamage() & Block.DATA_MASK);
     }

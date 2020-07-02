@@ -60,6 +60,7 @@ public class BlockWall extends BlockTransparentHyperMeta implements BlockConnect
         this(0);
     }
 
+    @PowerNukkitDifference(since = "1.3.0.0-PN", info = "If an invalid metadata is given, it will remove the invalid bits automatically")
     public BlockWall(int meta) {
         setDamage(meta);
     }
@@ -69,6 +70,7 @@ public class BlockWall extends BlockTransparentHyperMeta implements BlockConnect
         return STONE_WALL;
     }
 
+    @PowerNukkitDifference(since = "1.3.0.0-PN", info = "If an invalid metadata is given, it will remove the invalid bits automatically")
     @Override
     public void setDamage(int meta) {
         if (!SHOULD_VALIDATE_META) {

@@ -86,6 +86,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
         return true;
     }
 
+    @PowerNukkitDifference(info = "Allows to be placed on walls", since = "1.3.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {

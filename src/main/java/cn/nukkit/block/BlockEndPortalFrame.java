@@ -94,7 +94,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
             this.setDamage(this.getDamage() + 4);
             this.getLevel().setBlock(this, this, true, true);
             this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_END_PORTAL_FRAME_FILL);
-            this.createPortal();
+            //this.createPortal(); TODO Re-enable this after testing
             return true;
         }
         return false;

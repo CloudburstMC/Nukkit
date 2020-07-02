@@ -12,8 +12,8 @@ import java.util.UUID;
 public class EmoteListPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.EMOTE_LIST_PACKET;
 
-    public long runtimeId;
-    public final List<UUID> pieceIds = new ObjectArrayList<>();
+    @Since("1.3.0.0-PN") public long runtimeId;
+    @Since("1.3.0.0-PN") public final List<UUID> pieceIds = new ObjectArrayList<>();
 
     @Override
     public byte pid() {

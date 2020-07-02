@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.event.block.BlockGrowEvent;
@@ -51,6 +52,7 @@ public class BlockStemPumpkin extends BlockCrops implements Faceable {
         setDamage(getDamage() & ~(0b111 << 3) | (face.getIndex() << 3));
     }
 
+    @PowerNukkitDifference(info = "Will bind to the pumpkin by the server-side", since = "1.3.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
