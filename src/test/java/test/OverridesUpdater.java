@@ -75,8 +75,8 @@ public class OverridesUpdater {
                 .filter(e-> e.getValue() >= 477)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-
-
+      
+      
         for (BlockInfo info : infoList.values()) {
             String stateName = info.getStateName();
 
@@ -98,7 +98,7 @@ public class OverridesUpdater {
 
             newOverrides.add(override);
         }
-
+      
         SortedMap<String, CompoundTag> sorted = new TreeMap<>(new HumanStringComparator());
         for (CompoundTag tag : originalTags.values()) {
             sorted.put(new BlockInfo(tag.getCompound("block"), tag, new ListTag<>(), new ListTag<>()).getStateName(), tag);
@@ -111,7 +111,7 @@ public class OverridesUpdater {
             if (blockId == null) {
                 continue;
             }
-
+            
             CompoundTag override = new CompoundTag();
             override.putCompound("block", tag.getCompound("block").remove("version"));
             override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", blockId).putInt("val", 0)));
