@@ -8,30 +8,28 @@
 Introduction
 -------------
 
-Nukkit is nuclear-powered server software for Minecraft: Pocket Edition.
+Cloudburst is nuclear-powered server software for Minecraft: Bedrock Edition.
 It has a few key advantages over other server software:
 
-* Written in Java, Nukkit is faster and more stable.
-* Having a friendly structure, it's easy to contribute to Nukkit's development and rewrite plugins from other platforms into Nukkit plugins.
+* Written in Java, Cloudburst is faster and more stable.
+* Having a friendly structure, it's easy to contribute to Cloudburst's development and rewrite plugins from other platforms into Cloudburst plugins.
 
-Nukkit is **under improvement** yet, we welcome contributions. 
+Cloudburst is **under improvement** yet, we welcome contributions. 
 
 Links
 --------------------
 
-* __[News](https://nukkitx.com)__
-* __[Forums](https://nukkitx.com/forums)__
+* __[News](https://cloudburstmc.org)__
+* __[Forums](https://cloudburstmc.org/forums)__
 * __[Discord](https://discord.gg/5PzMkyK)__
 * __[Download](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master)__
-* __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
-* __[Wiki](https://nukkitx.com/wiki/nukkit)__
-
-*Thank you for visiting our official sites. Our official websites are provided free of charge, and we do not like to place ads on the home page affecting your reading. If you like this project, please [donate to us](https://nukkitx.com/donate). All the donations will only be used for Nukkit websites and services.*
+* __[Plugins](https://cloudburstmc.org/resources/categories/nukkit-plugins.1)__
+* __[Wiki](https://cloudburstmc.org/wiki/nukkit)__
 
 Build JAR file
 -------------
-- `git clone https://github.com/NukkitX/Nukkit`
-- `cd Nukkit`
+- `git clone https://github.com/Cloudburst/Server`
+- `cd Server`
 - `git submodule update --init`
 - `./mvnw clean package`
 
@@ -43,7 +41,7 @@ Simply run `java -jar nukkit-1.0-SNAPSHOT.jar`.
 
 Plugin API
 -------------
-Information on Nukkit's API can be found at the [wiki](https://nukkitx.com/wiki/nukkit/).
+Information on Cloudburst's API can be found at the [wiki](https://cloudburstmc.org/wiki/nukkit/).
 
 Docker
 -------------
