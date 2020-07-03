@@ -2,7 +2,7 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 [![PowerNukkit v1.X](https://github.com/GameModsBR/PowerNukkit/workflows/PowerNukkit%20v1.X/badge.svg?branch=master)](https://github.com/GameModsBR/PowerNukkit/actions?query=branch%3Amaster)
-[![Discord](https://img.shields.io/discord/393465748535640064.svg)](https://discord.gg/5PzMkyK)
+[![Discord](https://img.shields.io/discord/728280425255927879)](https://discord.gg/JVwf39q)
 
 Introduction
 -------------
@@ -25,6 +25,7 @@ Links
 --------------------
 
 * __[Download PowerNukkit](https://github.com/GameModsBR/PowerNukkit/releases)__
+* __[PowerNukkit Discord](https://discord.gg/JVwf39q)__
 * __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
 * __[Wiki](https://nukkitx.com/wiki/nukkit)__
 * __[NukkitX](https://github.com/NukkitX/Nukkit)__
