@@ -62,18 +62,18 @@ public class BlockGrass extends BlockDirt {
             ObjectTallGrass.growGrass(this.getLevel(), this, new NukkitRandom());
             return true;
         } else if (item.isHoe()) {
-            if(player != null){
-                player.getLevel().addSound(player, Sound.USE_GRASS);
-            }
             item.useOn(this);
             this.getLevel().setBlock(this, Block.get(BlockID.FARMLAND));
-            return true;
-        } else if (item.isShovel()) {
             if(player != null){
                 player.getLevel().addSound(player, Sound.USE_GRASS);
             }
+            return true;
+        } else if (item.isShovel()) {
             item.useOn(this);
             this.getLevel().setBlock(this, Block.get(BlockID.GRASS_PATH));
+            if(player != null){
+                player.getLevel().addSound(player, Sound.USE_GRASS);
+            }
             return true;
         }
 

@@ -56,12 +56,11 @@ public class BlockDirt extends BlockSolidMeta {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
+            item.useOn(this);
+            this.getLevel().setBlock(this, this.getDamage() == 0 ? get(FARMLAND) : get(DIRT), true);
             if(player != null){
                 player.getLevel().addSound(player, Sound.USE_GRASS);
             }
-            item.useOn(this);
-            this.getLevel().setBlock(this, this.getDamage() == 0 ? get(FARMLAND) : get(DIRT), true);
-
             return true;
         }
 
