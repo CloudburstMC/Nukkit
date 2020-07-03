@@ -885,7 +885,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @PowerNukkitDifference
     private static int toolType0(Item item, int blockId, int blockToolType) {
-        if((blockId == LEAVES && item.isHoe()) || (blockId == LEAVES2 && item.isHoe())) return 5;
+        if((blockId == LEAVES && item.isHoe()) || (blockId == LEAVES2 && item.isHoe())) return ItemType.TYPE_SHEARS;
         if (item.isSword()) return ItemTool.TYPE_SWORD;
         if (item.isShovel()) return ItemTool.TYPE_SHOVEL;
         if (item.isPickaxe()) return ItemTool.TYPE_PICKAXE;
