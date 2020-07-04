@@ -421,6 +421,7 @@ Fixes several anvil issues.
 [#293]: https://github.com/GameModsBR/PowerNukkit/pull/293
 [#297]: https://github.com/GameModsBR/PowerNukkit/pull/297
 [#315]: https://github.com/GameModsBR/PowerNukkit/pull/315
+[#319]: https://github.com/GameModsBR/PowerNukkit/pull/319
 [#320]: https://github.com/GameModsBR/PowerNukkit/pull/320
 [#323]: https://github.com/GameModsBR/PowerNukkit/issues/323
 [#326]: https://github.com/GameModsBR/PowerNukkit/pull/326
