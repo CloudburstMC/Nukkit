@@ -11,6 +11,7 @@ Click the link above to see the future.
 
 ### Fixes
 - [#326] Enchantment table not working
+- [#297] Using the hoe or shovel doesn't emit any sound
 
 ## [1.3.0.1-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/14?closed=1))
 Improves plugin compatibility and downgrade the RakNet lib to solve a memory leak
