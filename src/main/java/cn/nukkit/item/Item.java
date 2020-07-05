@@ -906,11 +906,15 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     final public Short getFuelTime() {
+        int id = this.id;
+        if (this instanceof ItemBlock) {
+            id = 255 - this.id;
+        }
         if (!Fuel.duration.containsKey(id)) {
             return null;
         }
-        if (this.id != BUCKET || this.meta == 10) {
-            return Fuel.duration.get(this.id);
+        if (id != BUCKET || this.meta == 10) {
+            return Fuel.duration.get(id);
         }
         return null;
     }
