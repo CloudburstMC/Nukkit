@@ -2265,10 +2265,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.dataPacket(stackPacket);
                             break;
                         case ResourcePackClientResponsePacket.STATUS_COMPLETED:
+                            this.shouldLogin = true;
+
                             if (this.preLoginEventTask.isFinished()) {
                                 this.preLoginEventTask.onCompletion(server);
-                            } else {
-                                this.shouldLogin = true;
                             }
                             break;
                     }
