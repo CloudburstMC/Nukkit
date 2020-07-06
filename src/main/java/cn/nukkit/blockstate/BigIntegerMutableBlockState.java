@@ -9,34 +9,41 @@ import lombok.ToString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.math.BigInteger;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ParametersAreNonnullByDefault
-public class LongBlockState extends BlockState {
-    private long storage;
+public class BigIntegerMutableBlockState extends MutableBlockState {
+    private BigInteger storage;
     
-    public LongBlockState(int blockId, @Nonnull BlockProperties properties, long state) {
+    public BigIntegerMutableBlockState(int blockId, @Nonnull BlockProperties properties, BigInteger state) {
         super(blockId, properties);
         this.storage = state;
     }
 
 
-    public LongBlockState(int blockId, @Nonnull BlockProperties properties) {
-        this(blockId, properties, 0);
+    public BigIntegerMutableBlockState(int blockId, @Nonnull BlockProperties properties) {
+        this(blockId, properties, BigInteger.ZERO);
     }
 
     @Override
     public void setDataStorage(Number storage) {
-        long state = storage.longValue();
+        BigInteger state;
+        if (storage instanceof BigInteger) {
+            state = (BigInteger) storage;
+        } else if (storage instanceof Long || storage instanceof Integer) {
+            state = BigInteger.valueOf(storage.longValue());
+        } else {
+            state = new BigInteger(storage.toString());
+        }
         validate(state);
         this.storage = state;
     }
 
     @Override
     public void setDataStorageFromInt(int storage) {
-        //noinspection UnnecessaryLocalVariable
-        long state = storage;
+        BigInteger state = BigInteger.valueOf(storage);
         validate(state);
         this.storage = state;
     }
@@ -46,7 +53,7 @@ public class LongBlockState extends BlockState {
         validate(storage);
     }
     
-    private void validate(long state) {
+    private void validate(BigInteger state) {
         BlockProperties properties = this.properties;
         
         for (String name : properties.getNames()) {
@@ -57,12 +64,12 @@ public class LongBlockState extends BlockState {
 
     @Override
     public int getLegacyDamage() {
-        return (int) (storage & Block.DATA_MASK);
+        return storage.and(BigInteger.valueOf(Block.DATA_MASK)).intValue();
     }
 
     @Override
     public int getHyperDamage() {
-        return (int) (storage & BlockHyperMeta.HYPER_DATA_MASK);
+        return storage.and(BigInteger.valueOf(BlockHyperMeta.HYPER_DATA_MASK)).intValue();
     }
 
     @Override
@@ -97,7 +104,7 @@ public class LongBlockState extends BlockState {
     }
 
     @Override
-    public LongBlockState copy() {
-        return new LongBlockState(getBlockId(), properties, storage);
+    public BigIntegerMutableBlockState copy() {
+        return new BigIntegerMutableBlockState(getBlockId(), properties, storage);
     }
 }

@@ -4,43 +4,54 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
+import cn.nukkit.blockstate.BlockStateRegistry;
+import cn.nukkit.blockstate.MutableBlockState;
 import com.google.common.base.Preconditions;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 
+@ParametersAreNonnullByDefault
 public class BlockStorage {
+    private static final byte FLAG_HAS_ID           = 0b00001;
+    private static final byte FLAG_HAS_ID_EXTRA     = 0b00010;
+    private static final byte FLAG_HAS_DATA_EXTRA   = 0b00100;
+    private static final byte FLAG_HAS_DATA_HYPER_A = 0b01000;
+    private static final byte FLAG_HAS_DATA_HYPER_B = 0b10000;
+    
+    private static final byte FLAG_ENABLE_ID_EXTRA = FLAG_HAS_ID | FLAG_HAS_ID_EXTRA;
+    private static final byte FLAG_ENABLE_DATA_EXTRA = FLAG_HAS_ID | FLAG_HAS_DATA_EXTRA;
+    private static final byte FLAG_ENABLE_DATA_HYPER_A = FLAG_ENABLE_DATA_EXTRA | FLAG_HAS_DATA_HYPER_A;
+    private static final byte FLAG_ENABLE_DATA_HYPER_B = FLAG_ENABLE_DATA_HYPER_A | FLAG_HAS_DATA_HYPER_B;
+    
+    private static final byte FLAG_EVERYTHING_ENABLED = FLAG_ENABLE_DATA_HYPER_B | FLAG_ENABLE_ID_EXTRA;
+    
+    private static final int BLOCK_ID_MASK          = 0x00FF;
+    private static final int BLOCK_ID_EXTRA_MASK    = 0xFF00;
+    private static final int BLOCK_ID_FULL          = BLOCK_ID_MASK | BLOCK_ID_EXTRA_MASK;
+    
+    private static final int BLOCK_DATA_MASK        = 0x000F;
+    private static final int BLOCK_DATA_EXTRA_MASK  = 0x00F0;
+    private static final int BLOCK_DATA_EXTRA_HYPER = 0xFF00;
+
     public static final int SECTION_SIZE = 4096;
-    private final byte[] blockIds;
-    private final byte[] blockIdsExtra;
-    private final NibbleArray blockData;
-    private final NibbleArray blockDataExtra;
-    private final byte[] blockDataHyperA;
-    private final short[] blockDataHyperB;
-    private boolean hasBlockIds;
-    private boolean hasBlockIdExtras;
-    private boolean hasBlockDataExtras;
-    private boolean hasBlockDataHyperA;
-    private boolean hasBlockDataHyperB;
+    private static final MutableBlockState[] EMPTY = new MutableBlockState[SECTION_SIZE];
+    static {
+        Arrays.fill(EMPTY, BlockStateRegistry.getDefault(BlockID.AIR));
+    }
+    
+    
+    private final MutableBlockState[] states;
+    private byte flags;
 
     public BlockStorage() {
-        blockIds = new byte[SECTION_SIZE];
-        blockIdsExtra = new byte[SECTION_SIZE];
-        blockData = new NibbleArray(SECTION_SIZE);
-        blockDataExtra = new NibbleArray(SECTION_SIZE);
-        blockDataHyperA = new byte[SECTION_SIZE];
-        blockDataHyperB = new short[SECTION_SIZE];
+        states = EMPTY.clone();
     }
 
-    private BlockStorage(
-            byte[] blockIds, byte[] blockIdsExtra, NibbleArray blockData, NibbleArray blockDataExtra,
-            byte[] blockDataHyperA, short[] blockDataHyperB) {
-        this.blockIds = blockIds;
-        this.blockIdsExtra = blockIdsExtra;
-        this.blockData = blockData;
-        this.blockDataExtra = blockDataExtra;
-        this.blockDataHyperA = blockDataHyperA;
-        this.blockDataHyperB = blockDataHyperB;
-        recheckBlocks();
+    private BlockStorage(MutableBlockState[] states, byte flags) {
+        this.states = states;
+        this.flags = flags;
     }
 
     private static int getIndex(int x, int y, int z) {
@@ -256,197 +267,100 @@ public class BlockStorage {
         return (extra & 0xff) << Block.DATA_BITS + 8 | ((block & 0xff) << Block.DATA_BITS) | ((dataExtra & 0xF) << 4) | data;
     }
 
-    @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
-    private int[] getBlockState(int index) {
-        if (!hasBlockIds) {
-            return new int[]{0,0};
-        }
-        return new int[]{getBlockId(index), getBlockData(index)};
-    }
-
     @Deprecated
     @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     private void setFullBlock(int index, int value) {
-        Preconditions.checkArgument(value < (0x1FF << Block.DATA_BITS | Block.DATA_MASK), "Invalid full block");
-        byte extra = (byte) ((value >> (Block.DATA_BITS + 8)) & 0xFF);
-        byte block = (byte) ((value >> Block.DATA_BITS) & 0xFF);
-        byte dataExtra = (byte) (value >> 4 & Block.DATA_MASK >> 4 & 0xF);
-        byte data = (byte) (value & 0xf);
+        Preconditions.checkArgument(value < (BLOCK_ID_FULL << Block.DATA_BITS | Block.DATA_MASK), "Invalid full block");
+        int blockId = value >> Block.DATA_BITS & BLOCK_ID_FULL;
+        int data = value & Block.DATA_MASK;
+        MutableBlockState state = BlockStateRegistry.getFromIntMeta(blockId, data);
+        setBlockState(index, state);
+    }
 
-        blockIds[index] = block;
-        blockIdsExtra[index] = extra;
-        blockData.set(index, data);
-        blockDataExtra.set(index, dataExtra);
-        blockDataHyperA[index] = 0;
-        blockDataHyperB[index] = 0;
-        
-        hasBlockIdExtras |= extra != 0;
-        hasBlockDataExtras |= dataExtra != 0;
-        hasBlockIds |= block != 0 || hasBlockIdExtras || hasBlockDataExtras;
+    private void setBlockState(int index, MutableBlockState state) {
+        states[index] = state;
+        updateFlags(state);
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
-    public int[] getBlockState(int x, int y, int z) {
+    @Since("1.4.0.0-PN")
+    public MutableBlockState getBlockState(int x, int y, int z) {
         return getBlockState(getIndex(x, y, z));
     }
 
-    public byte[] getBlockIds() {
-        if (hasBlockIds) {
-            return Arrays.copyOf(blockIds, blockIds.length);
-        } else {
-            return new byte[SECTION_SIZE];
-        }
-    }
-
-    public byte[] getBlockIdsExtra() {
-        if (hasBlockIdExtras) {
-            return Arrays.copyOf(blockIdsExtra, blockIdsExtra.length);
-        } else {
-            return new byte[SECTION_SIZE];
-        }
-    }
-
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
-    public byte[] getBlockDataHyperA() {
-        if (hasBlockDataHyperB) {
-            return Arrays.copyOf(blockDataHyperA, blockDataHyperA.length);
-        } else {
-            return new byte[SECTION_SIZE];
-        }
-    }
-
-    @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
-    public short[] getBlockDataHyperB() {
-        if (hasBlockDataHyperB) {
-            return Arrays.copyOf(blockDataHyperB, blockDataHyperB.length);
-        } else {
-            return new short[SECTION_SIZE];
-        }
-    }
-
-    public byte[] getBlockData() {
-        if (hasBlockIds) {
-            return blockData.getData();
-        } else {
-            return new byte[SECTION_SIZE / 2];
-        }
-    }
-
-    public byte[] getBlockDataExtra() {
-        if (hasBlockDataExtras) {
-            return blockDataExtra.getData();
-        } else {
-            return new byte[SECTION_SIZE / 2];
-        }
-    }
-
-    public int[] getBlockIdsExtended() {
-        int[] ids = new int[SECTION_SIZE];
-        if (hasBlockIds) {
-            if (hasBlockIdExtras) {
-                for (int i = 0; i < SECTION_SIZE; i++) {
-                    ids[i] = blockIds[i] & 0xFF | (blockIdsExtra[i] & 0xFF) << 8;
-                }
-            } else {
-                for (int i = 0; i < SECTION_SIZE; i++) {
-                    ids[i] = blockIds[i] & 0xFF;
-                }
-            }
-        }
-        return ids;
-    }
-
-    public int[] getBlockDataExtended() {
-        int[] data = new int[SECTION_SIZE];
-        if (hasBlockIds) {
-            if (hasBlockDataExtras || hasBlockDataHyperA || hasBlockDataHyperB) {
-                for (int i = 0; i < SECTION_SIZE; i++) {
-                    data[i] = blockData.get(i) & 0xF | ((blockDataExtra.get(i) & 0xF) << 4) | ((blockDataHyperA[i] & 0xFF) << 8) | ((blockDataHyperB[i] & 0xFFFF) << 16);
-                }
-            } else {
-                for (int i = 0; i < SECTION_SIZE; i++) {
-                    data[i] = blockData.get(i) & 0xF;
-                }
-            }
-        }
-        return data;
+    @Since("1.4.0.0-PN")
+    private MutableBlockState getBlockState(int index) {
+        return states[index].copy();
     }
 
     public void recheckBlocks() {
-        boolean hasMeta = false;
-        for (byte blockId : blockIdsExtra) {
-            if (blockId != 0) {
-                hasBlockIdExtras = true;
-                hasMeta = true;
-                break;
-            }
+        flags = computeFlags((byte) 0, states);
+    }
+    
+    private void updateFlags(MutableBlockState state) {
+        if (flags != FLAG_EVERYTHING_ENABLED) {
+            flags = computeFlags(flags, state);
         }
-
-        for (short data : blockDataHyperB) {
-            if (data != 0) {
-                hasBlockDataHyperB = true;
-                hasMeta = true;
-                break;
+    }
+    
+    private byte computeFlags(byte newFlags, MutableBlockState... states) {
+        for (MutableBlockState state : states) {
+            int blockId = state.getBlockId();
+            if ((blockId & BLOCK_ID_EXTRA_MASK) != 0) {
+                newFlags |= FLAG_ENABLE_ID_EXTRA;
+            } else if (blockId != 0) {
+                newFlags |= FLAG_HAS_ID;
             }
-        }
 
-        for (short data : blockDataHyperA) {
-            if (data != 0) {
-                hasBlockDataHyperA = true;
-                hasMeta = true;
-                break;
+            int bitSize = state.getProperties().getBitSize();
+            if (bitSize > 16) {
+                newFlags |= FLAG_ENABLE_DATA_HYPER_B;
+            } else if (bitSize > 8) {
+                newFlags |= FLAG_HAS_DATA_HYPER_A;
+            } else if (bitSize > 4) {
+                newFlags |= FLAG_HAS_DATA_EXTRA;
+            } else if (bitSize > 0) {
+                newFlags |= FLAG_HAS_ID;
+            }
+
+            if (newFlags == FLAG_EVERYTHING_ENABLED) {
+                return newFlags;
             }
         }
         
-        for (byte dataId : blockDataExtra.getData()) {
-            if (dataId != 0) {
-                hasBlockDataExtras = true;
-                hasMeta = true;
-                break;
-            }
-        }
-    
-        if (hasMeta) {
-            hasBlockIds = true;
-        } else {
-            for (byte blockId : blockIds) {
-                if (blockId != 0) {
-                    hasBlockIds = true;
-                    break;
-                }
-            }
-        }
+        return newFlags; 
     }
 
     public BlockStorage copy() {
-        return new BlockStorage(blockIds.clone(), blockIdsExtra.clone(), blockData.copy(), blockDataExtra.copy(), blockDataHyperA.clone(), blockDataHyperB.clone());
+        return new BlockStorage(states.clone(), flags);
+    }
+    
+    private boolean getFlag(byte flag) {
+        return (flags & flag) == flag;
     }
 
     public boolean hasBlockIds() {
-        return hasBlockIds;
+        return getFlag(FLAG_HAS_ID);
     }
 
     public boolean hasBlockIdExtras() {
-        return hasBlockIdExtras;
+        return getFlag(FLAG_HAS_ID_EXTRA);
     }
 
     public boolean hasBlockDataExtras() {
-        return hasBlockDataExtras;
+        return getFlag(FLAG_HAS_DATA_EXTRA);
     }
 
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public boolean hasBlockDataHyperA() {
-        return hasBlockDataHyperA;
+        return getFlag(FLAG_HAS_DATA_HYPER_A);
     }
 
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public boolean hasBlockDataHyperB() {
-        return hasBlockDataHyperB;
+        return getFlag(FLAG_HAS_DATA_HYPER_B);
     }
 }

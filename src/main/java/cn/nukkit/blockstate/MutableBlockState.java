@@ -16,12 +16,11 @@ import java.util.Collection;
 @ToString
 @EqualsAndHashCode
 @ParametersAreNonnullByDefault
-public abstract class BlockState {
+public abstract class MutableBlockState {
     protected final int blockId;
     protected final BlockProperties properties;
     
-
-    BlockState(int blockId, BlockProperties properties) {
+    MutableBlockState(int blockId, BlockProperties properties) {
         this.blockId = blockId;
         this.properties = properties;
     }
@@ -95,7 +94,7 @@ public abstract class BlockState {
     
     public abstract String getPersistenceValue(String propertyName);
     
-    public abstract BlockState copy();
+    public abstract MutableBlockState copy();
 
     public int getRuntimeId() {
         return GlobalBlockPalette.getOrCreateRuntimeId(getBlockId(), getHyperDamage());

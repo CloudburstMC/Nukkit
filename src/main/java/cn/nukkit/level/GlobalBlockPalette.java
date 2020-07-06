@@ -24,4 +24,10 @@ public class GlobalBlockPalette {
     public static int getOrCreateRuntimeId(int legacyId) {
         return getOrCreateRuntimeId(legacyId >> Block.DATA_BITS, legacyId & Block.DATA_MASK);
     }
+
+    @Deprecated
+    @DeprecationDetails(reason = "Moved to BlockStateRegistry", replaceWith = "BlockStateRegistry.getPersistenceName(int)", since = "1.3.0.0-PN")
+    public static String getName(int blockId) {
+        return BlockStateRegistry.getPersistenceName(blockId);
+    }
 }

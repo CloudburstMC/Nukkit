@@ -2,10 +2,10 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.blockstate.BigIntegerBlockState;
-import cn.nukkit.blockstate.BlockState;
-import cn.nukkit.blockstate.IntBlockState;
-import cn.nukkit.blockstate.LongBlockState;
+import cn.nukkit.blockstate.BigIntegerMutableBlockState;
+import cn.nukkit.blockstate.IntMutableBlockState;
+import cn.nukkit.blockstate.LongMutableBlockState;
+import cn.nukkit.blockstate.MutableBlockState;
 import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 
@@ -46,35 +46,35 @@ public final class BlockProperties {
         bitSize = offset;
     }
     
-    public BlockState defaultState(int blockId) {
+    public MutableBlockState defaultState(int blockId) {
         if (bitSize <= 32) {
-            return new IntBlockState(blockId, this);
+            return new IntMutableBlockState(blockId, this);
         } else if (bitSize <= 64) {
-            return new LongBlockState(blockId, this);
+            return new LongMutableBlockState(blockId, this);
         } else {
-            return new BigIntegerBlockState(blockId, this);
+            return new BigIntegerMutableBlockState(blockId, this);
         }
     }
     
-    public BlockState loadState(int blockId, Number storage) {
+    public MutableBlockState loadState(int blockId, Number storage) {
         if (bitSize <= 32) {
             if (storage instanceof Integer) {
-                return new IntBlockState(blockId, this, storage.intValue());
+                return new IntMutableBlockState(blockId, this, storage.intValue());
             } else {
                 throw new IllegalArgumentException("Incompatible storage type "+storage.getClass()+", expected Integer");
             }
         } else if (bitSize <= 64) {
             if (storage instanceof Long || storage instanceof Integer) {
-                return new LongBlockState(blockId, this, storage.longValue());
+                return new LongMutableBlockState(blockId, this, storage.longValue());
             } else {
                 throw new IllegalArgumentException("Incompatible storage type "+storage.getClass()+", expected Long or Integer");
             }
         }
         
         if (storage instanceof BigInteger) {
-            return new BigIntegerBlockState(blockId, this, (BigInteger) storage);
+            return new BigIntegerMutableBlockState(blockId, this, (BigInteger) storage);
         } else if (storage instanceof Long || storage instanceof Integer) {
-            return new BigIntegerBlockState(blockId, this, new BigInteger(storage.toString()));
+            return new BigIntegerMutableBlockState(blockId, this, new BigInteger(storage.toString()));
         } else {
             throw new IllegalArgumentException("Incompatible storage type "+storage.getClass()+", expected BigInteger, Long or Integer");
         }
@@ -261,7 +261,11 @@ public final class BlockProperties {
     public boolean getBooleanValue(BigInteger currentMeta, String propertyName) {
         return getIntValue(currentMeta, propertyName) == 1;
     }
-    
+
+    public int getBitSize() {
+        return bitSize;
+    }
+
     public void forEach(BiConsumer<BlockProperty<?>, Integer> consumer) {
         for (RegisteredBlockProperty registry : byName.values()) {
             consumer.accept(registry.blockProperty, registry.offset);

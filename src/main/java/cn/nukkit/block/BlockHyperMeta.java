@@ -1,11 +1,14 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.MutableBlockState;
 
 @PowerNukkitOnly
 @Since("1.3.0.0-PN")
+@Deprecated
+@DeprecationDetails(reason = "Deprecated in favor of the new block properties system", since = "1.4.0.0-PN")
 public interface BlockHyperMeta {
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
@@ -25,10 +28,12 @@ public interface BlockHyperMeta {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    BlockState getBlockState();
+    MutableBlockState getBlockState();
     
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Deprecated in favor of the new block properties system", since = "1.4.0.0-PN")
     default long getHyperId() {
         return getBlockState().getHyperId();
     }

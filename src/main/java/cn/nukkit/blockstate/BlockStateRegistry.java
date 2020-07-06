@@ -2,6 +2,7 @@ package cn.nukkit.blockstate;
 
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockHyperMeta;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.nbt.NBTIO;
@@ -15,6 +16,7 @@ import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.BufferedInputStream;
@@ -31,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @ParametersAreNonnullByDefault
 @Log4j2
 public class BlockStateRegistry {
-    private final Map<BlockState, Integer> blockStateToRuntimeId = new ConcurrentHashMap<>();
+    private final Map<MutableBlockState, Integer> blockStateToRuntimeId = new ConcurrentHashMap<>();
     private final Long2IntMap hyperIdToRuntimeId = new Long2IntOpenHashMap();
     private final int updateBlockRuntimeId;
     
@@ -40,91 +42,8 @@ public class BlockStateRegistry {
     private final Map<CompoundTag, Integer> stateNbtToRuntimeId = new ConcurrentHashMap<>();
     
     private final byte[] blockPaletteBytes;
-    
-    public int getRuntimeId(BlockState state) {
-        return blockStateToRuntimeId.computeIfAbsent(state, BlockStateRegistry::discoverRuntimeId);
-    }
-    
-    @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", replaceWith = "getOrCreateRuntimeId(int id, int meta)", since = "1.3.0.0-PN")
-    public int getRuntimeId(int blockId, int meta) {
-        int runtimeId = hyperIdToRuntimeId.get((long)blockId << BlockHyperMeta.HYPER_DATA_BITS | meta);
-        return runtimeId == -1? updateBlockRuntimeId : runtimeId;
-    }
-    
-    private int discoverRuntimeId(BlockState state) {
-        if (state.getPropertyNames().equals(CommonBlockProperties.LEGACY_PROPERTIES.getNames())) {
-            return discoverRuntimeIdFromLegacy(state);
-        }
-        return discoverRuntimeIdByStateNbt(state);
-    }
-    
-    private int discoverRuntimeIdFromLegacy(BlockState state) {
-        long hyperId = state.getHyperId();
-        int runtimeId = hyperIdToRuntimeId.get(hyperId);
-        if (runtimeId == -1) {
-            logDiscoveryError(state);
-            return updateBlockRuntimeId;
-        }
-        return runtimeId;
-    }
-    
-    private int discoverRuntimeIdByStateNbt(BlockState state) {
-        CompoundTag nbt = new CompoundTag(getPersistenceName(state.blockId));
-        for (String propertyName : state.getPropertyNames()) {
-            nbt.putString(propertyName, state.getPersistenceValue(propertyName));
-        }
-        
-        Integer runtimeId = stateNbtToRuntimeId.remove(nbt);
-        if (runtimeId == null) {
-            runtimeId = blockStateToRuntimeId.get(state);
-        }
-        
-        if (runtimeId == null) {
-            runtimeId = blockStateToRuntimeId.putIfAbsent(state, -1);
-        }
-        
-        if (runtimeId == null) {
-            logDiscoveryError(state);
-            return -1;
-        }
-        
-        return runtimeId;
-    }
-    
-    private void logDiscoveryError(BlockState state) {
-        log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()+", replacing with an \"UPDATE!\" block.");
-    }
-    
-    @Nullable
-    public String getPersistenceName(int blockId) {
-        return blockIdToPersistenceName.get(blockId);
-    }
-    
-    public void registerPersistenceName(int blockId, String persistenceName) {
-        String oldName = blockIdToPersistenceName.putIfAbsent(blockId, persistenceName.toLowerCase());
-        if (oldName != null && !persistenceName.equalsIgnoreCase(oldName)) {
-            throw new UnsupportedOperationException("The persistence name registration tried to replaced a name. Name:"+persistenceName+", Old:"+oldName+", Id:"+blockId);
-        }
-    }
-    
-    private void registerStateNbt(CompoundTag state, int runtimeId) {
-        CompoundTag block = state.getCompound("block");
-        CompoundTag nbt = new CompoundTag(block.getString("name").toLowerCase());
-        for (Tag property : block.getCompound("states").getAllTags()) {
-            nbt.putString(property.getName(), property.parseValue().toString());
-        }
-        Integer old = stateNbtToRuntimeId.putIfAbsent(nbt, runtimeId);
-        if (old != null) {
-            throw new UnsupportedOperationException("The persistence NBT registration tried to replaced a runtime id. Old:"+old+", New:"+runtimeId+", State:"+nbt);
-        }
-    }
-    
-    private void registerHyperId(long blockId, long meta, int runtimeId) {
-        long hyperId = blockId << BlockHyperMeta.HYPER_DATA_BITS | meta;
-        hyperIdToRuntimeId.put(hyperId, runtimeId);
-    }
-    
+
+    //<editor-fold desc="static initialization" defaultstate="collapsed">
     static {
         hyperIdToRuntimeId.defaultReturnValue(-1);
 
@@ -200,7 +119,7 @@ public class BlockStateRegistry {
             state.remove("LegacyStates");
         }
 
-        updateBlockRuntimeId = getRuntimeId(new IntBlockState(248, CommonBlockProperties.EMPTY_PROPERTIES));
+        updateBlockRuntimeId = getRuntimeId(new IntMutableBlockState(248, CommonBlockProperties.EMPTY_PROPERTIES));
 
         try {
             blockPaletteBytes = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
@@ -208,13 +127,99 @@ public class BlockStateRegistry {
             throw new ExceptionInInitializerError(e);
         }
     }
-    
+    //</editor-fold>
+
+    public int getRuntimeId(MutableBlockState state) {
+        return blockStateToRuntimeId.computeIfAbsent(state, BlockStateRegistry::discoverRuntimeId);
+    }
+
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", replaceWith = "getOrCreateRuntimeId(int id, int meta)", since = "1.3.0.0-PN")
+    public int getRuntimeId(int blockId, int meta) {
+        int runtimeId = hyperIdToRuntimeId.get((long)blockId << BlockHyperMeta.HYPER_DATA_BITS | meta);
+        return runtimeId == -1? updateBlockRuntimeId : runtimeId;
+    }
+
+    private int discoverRuntimeId(MutableBlockState state) {
+        if (state.getPropertyNames().equals(CommonBlockProperties.LEGACY_PROPERTIES.getNames())) {
+            return discoverRuntimeIdFromLegacy(state);
+        }
+        return discoverRuntimeIdByStateNbt(state);
+    }
+
+    private int discoverRuntimeIdFromLegacy(MutableBlockState state) {
+        long hyperId = state.getHyperId();
+        int runtimeId = hyperIdToRuntimeId.get(hyperId);
+        if (runtimeId == -1) {
+            logDiscoveryError(state);
+            return updateBlockRuntimeId;
+        }
+        return runtimeId;
+    }
+
+    private int discoverRuntimeIdByStateNbt(MutableBlockState state) {
+        CompoundTag nbt = new CompoundTag(getPersistenceName(state.blockId));
+        for (String propertyName : state.getPropertyNames()) {
+            nbt.putString(propertyName, state.getPersistenceValue(propertyName));
+        }
+        
+        Integer runtimeId = stateNbtToRuntimeId.remove(nbt);
+        if (runtimeId == null) {
+            runtimeId = blockStateToRuntimeId.get(state);
+        }
+        
+        if (runtimeId == null) {
+            runtimeId = blockStateToRuntimeId.putIfAbsent(state, -1);
+        }
+        
+        if (runtimeId == null) {
+            logDiscoveryError(state);
+            return -1;
+        }
+        
+        return runtimeId;
+    }
+
+    private void logDiscoveryError(MutableBlockState state) {
+        log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()+", replacing with an \"UPDATE!\" block.");
+    }
+
+    @Nullable
+    public String getPersistenceName(int blockId) {
+        return blockIdToPersistenceName.get(blockId);
+    }
+
+    public void registerPersistenceName(int blockId, String persistenceName) {
+        String oldName = blockIdToPersistenceName.putIfAbsent(blockId, persistenceName.toLowerCase());
+        if (oldName != null && !persistenceName.equalsIgnoreCase(oldName)) {
+            throw new UnsupportedOperationException("The persistence name registration tried to replaced a name. Name:"+persistenceName+", Old:"+oldName+", Id:"+blockId);
+        }
+    }
+
+    private void registerStateNbt(CompoundTag state, int runtimeId) {
+        CompoundTag block = state.getCompound("block");
+        CompoundTag nbt = new CompoundTag(block.getString("name").toLowerCase());
+        for (Tag property : block.getCompound("states").getAllTags()) {
+            nbt.putString(property.getName(), property.parseValue().toString());
+        }
+        Integer old = stateNbtToRuntimeId.putIfAbsent(nbt, runtimeId);
+        if (old != null) {
+            throw new UnsupportedOperationException("The persistence NBT registration tried to replaced a runtime id. Old:"+old+", New:"+runtimeId+", State:"+nbt);
+        }
+    }
+
+    private void registerHyperId(long blockId, long meta, int runtimeId) {
+        long hyperId = blockId << BlockHyperMeta.HYPER_DATA_BITS | meta;
+        hyperIdToRuntimeId.put(hyperId, runtimeId);
+    }
+
     public int getBlockPaletteDataVersion() {
         @SuppressWarnings("UnnecessaryLocalVariable")
         Object obj = blockPaletteBytes;
         return obj.hashCode();
     }
 
+    @Nonnull
     public byte[] getBlockPaletteBytes() {
         return blockPaletteBytes.clone();
     }
@@ -225,5 +230,30 @@ public class BlockStateRegistry {
     
     public void copyBlockPaletteBytes(byte[] target, int targetIndex) {
         System.arraycopy(blockPaletteBytes, 0, target, targetIndex, blockPaletteBytes.length);
+    }
+
+    @Nonnull
+    public MutableBlockState getDefault(int blockId) {
+        int fullId = blockId << Block.DATA_BITS;
+        Block block;
+        if (fullId >= Block.fullList.length || (block = Block.fullList[fullId]) == null) {
+            return CommonBlockProperties.LEGACY_HYPER_PROPERTIES.defaultState(blockId);
+        }
+        
+        return block.getBlockState();
+    }
+    
+    @Nonnull
+    public MutableBlockState getFromIntMeta(int blockId, int meta) {
+        MutableBlockState blockState = getDefault(blockId);
+        blockState.setDataStorageFromInt(meta);
+        return blockState;
+    }
+
+    @Nonnull
+    public MutableBlockState getFromStorage(int blockId, Number meta) {
+        MutableBlockState blockState = getDefault(blockId);
+        blockState.setDataStorage(meta);
+        return blockState;
     }
 }

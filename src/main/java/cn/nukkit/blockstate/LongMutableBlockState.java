@@ -1,6 +1,7 @@
 package cn.nukkit.blockstate;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockHyperMeta;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import lombok.EqualsAndHashCode;
@@ -12,44 +13,32 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ParametersAreNonnullByDefault
-public class IntBlockState extends BlockState {
-    private int storage;
+public class LongMutableBlockState extends MutableBlockState {
+    private long storage;
     
-    public IntBlockState(int blockId, @Nonnull BlockProperties properties, int state) {
+    public LongMutableBlockState(int blockId, @Nonnull BlockProperties properties, long state) {
         super(blockId, properties);
         this.storage = state;
     }
-    
-    public IntBlockState(int blockId, @Nonnull BlockProperties properties) {
+
+
+    public LongMutableBlockState(int blockId, @Nonnull BlockProperties properties) {
         this(blockId, properties, 0);
     }
 
     @Override
-    public int getLegacyDamage() {
-        return storage & Block.DATA_MASK;
-    }
-
-    @Override
-    public int getHyperDamage() {
-        return storage;
-    }
-
-    @Override
-    public Integer getDataStorage() {
-        return getHyperDamage();
-    }
-
-    @Override
     public void setDataStorage(Number storage) {
-        int state = storage.intValue();
+        long state = storage.longValue();
         validate(state);
         this.storage = state;
     }
 
     @Override
     public void setDataStorageFromInt(int storage) {
-        validate(storage);
-        this.storage = storage;
+        //noinspection UnnecessaryLocalVariable
+        long state = storage;
+        validate(state);
+        this.storage = state;
     }
 
     @Override
@@ -57,12 +46,28 @@ public class IntBlockState extends BlockState {
         validate(storage);
     }
     
-    private void validate(int state) {
+    private void validate(long state) {
         BlockProperties properties = this.properties;
+        
         for (String name : properties.getNames()) {
             BlockProperty<?> property = properties.getBlockProperty(name);
             property.validateMeta(state, properties.getOffset(name));
         }
+    }
+
+    @Override
+    public int getLegacyDamage() {
+        return (int) (storage & Block.DATA_MASK);
+    }
+
+    @Override
+    public int getHyperDamage() {
+        return (int) (storage & BlockHyperMeta.HYPER_DATA_MASK);
+    }
+
+    @Override
+    public Number getDataStorage() {
+        return storage;
     }
 
     @Override
@@ -92,7 +97,7 @@ public class IntBlockState extends BlockState {
     }
 
     @Override
-    public IntBlockState copy() {
-        return new IntBlockState(blockId, properties, storage);
+    public LongMutableBlockState copy() {
+        return new LongMutableBlockState(getBlockId(), properties, storage);
     }
 }

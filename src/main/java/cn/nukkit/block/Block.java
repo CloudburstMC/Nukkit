@@ -7,8 +7,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
-import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.blockstate.BlockStateRegistry;
+import cn.nukkit.blockstate.MutableBlockState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -638,7 +638,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    protected final BlockState blockState = getProperties().defaultState(getId());
+    protected final MutableBlockState blockState = getProperties().defaultState(getId());
     
     @PowerNukkitOnly
     public int layer;
@@ -833,7 +833,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public final BlockState getBlockState() {
+    public final MutableBlockState getBlockState() {
         return blockState.copy();
     }
     
