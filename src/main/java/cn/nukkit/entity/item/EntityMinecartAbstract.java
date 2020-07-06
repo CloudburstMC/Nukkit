@@ -41,7 +41,6 @@ import java.util.Objects;
  */
 public abstract class EntityMinecartAbstract extends EntityVehicle {
 
-    private String entityName;
     private static final int[][][] matrix = new int[][][]{
             {{0, 0, -1}, {0, 0, 1}},
             {{-1, 0, 0}, {1, 0, 0}},
@@ -93,23 +92,9 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         return 0.1F;
     }
 
-    public void setName(String name) {
-        entityName = name;
-    }
-
-    @Override
-    public String getName() {
-        return entityName;
-    }
-
     @Override
     public float getBaseOffset() {
         return 0.35F;
-    }
-
-    @Override
-    public boolean hasCustomName() {
-        return entityName != null;
     }
 
     @Override
