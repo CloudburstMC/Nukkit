@@ -3,7 +3,11 @@ package cn.nukkit.entity.mob;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class EntitySnowGolem extends EntityMob {
+public class EntitySnowGolem extends EntityMob {    
+    public EntitySnowGolem(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+    
     public static final int NETWORK_ID = 21;
 
     @Override
@@ -30,9 +34,5 @@ public class EntitySnowGolem extends EntityMob {
     protected void initEntity() {
         super.initEntity();
         this.setMaxHealth(4);
-    }
-
-    public EntitySnowGolem(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
     }
 }
