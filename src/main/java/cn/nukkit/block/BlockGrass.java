@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -24,6 +26,11 @@ public class BlockGrass extends BlockDirt {
     public BlockGrass(int meta) {
         // Grass can't have meta.
         super(0);
+    }
+
+    @Override
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.EMPTY_PROPERTIES;
     }
 
     @Override
@@ -112,15 +119,5 @@ public class BlockGrass extends BlockDirt {
     @Override
     public boolean canSilkTouch() {
         return true;
-    }
-
-    @Override
-    public int getFullId() {
-        return this.getId() << DATA_BITS;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-
     }
 }

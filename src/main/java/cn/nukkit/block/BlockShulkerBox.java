@@ -8,15 +8,12 @@ import cn.nukkit.utils.DyeColor;
  */
 public class BlockShulkerBox extends BlockUndyedShulkerBox {
 
-    private int meta;
-
     public BlockShulkerBox() {
-        this(0);
+        // Does nothing
     }
 
     public BlockShulkerBox(int meta) {
-        super();
-        this.meta = meta;
+        blockState.setDataStorageFromInt(meta);
     }
 
     @Override
@@ -36,20 +33,5 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
 
     public DyeColor getDyeColor() {
         return DyeColor.getByWoolData(this.getDamage());
-    }
-
-    @Override
-    public int getFullId() {
-        return (this.getId() << DATA_BITS) + this.getDamage();
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-        this.meta = meta;
     }
 }

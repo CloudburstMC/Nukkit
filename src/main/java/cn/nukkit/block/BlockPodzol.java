@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
@@ -17,6 +19,11 @@ public class BlockPodzol extends BlockDirt {
     public BlockPodzol(int meta) {
         // Podzol can't have meta.
         super(0);
+    }
+
+    @Override
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.EMPTY_PROPERTIES;
     }
 
     @Override
@@ -42,16 +49,6 @@ public class BlockPodzol extends BlockDirt {
     @Override
     public boolean onActivate(Item item, Player player) {
         return false;
-    }
-
-    @Override
-    public int getFullId() {
-        return this.getId() << DATA_BITS;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-
     }
 
     @Override

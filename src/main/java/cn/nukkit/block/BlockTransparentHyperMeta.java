@@ -20,10 +20,5 @@ public abstract class BlockTransparentHyperMeta extends BlockTransparentMeta imp
     }
 
     @Override
-    public int getFullId() {
-        return BlockHyperMeta.super.getFullId();
-    }
-
-    @Override
     public abstract Item toItem();
 }

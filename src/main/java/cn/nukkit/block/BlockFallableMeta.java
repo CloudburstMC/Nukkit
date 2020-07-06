@@ -5,14 +5,18 @@ import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 
-public abstract class BlockMeta extends Block {
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
+public abstract class BlockFallableMeta extends BlockFallable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    protected BlockMeta(){
+    public BlockFallableMeta() {
         // Does nothing
     }
-    
-    protected BlockMeta(int meta) {
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockFallableMeta(int meta) {
         blockState.setDataStorageFromInt(meta);
     }
 

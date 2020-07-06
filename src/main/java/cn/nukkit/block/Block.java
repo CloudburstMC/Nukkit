@@ -5,12 +5,15 @@ import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.BlockStateRegistry;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
@@ -36,12 +39,14 @@ import java.util.function.Predicate;
  * Nukkit Project
  */
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
+
+    //<editor-fold desc="static fields" defaultstate="collapsed">
     public static final int MAX_BLOCK_ID = 600;
     public static final int DATA_BITS = 6;
     public static final int DATA_SIZE = 1 << DATA_BITS;
     public static final int DATA_MASK = DATA_SIZE - 1;
 
-    public static Class[] list = null;
+    public static Class<? extends Block>[] list = null;
     
     @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     @Deprecated
@@ -60,10 +65,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
      * if a block has can have variants
      */
     public static boolean[] hasMeta = null;
-
-    public int layer;
-
-    protected Block() {}
     
     private static boolean initializing;
     
@@ -72,7 +73,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public static boolean isInitializing() {
         return initializing;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="initialization" defaultstate="collapsed">
     @SuppressWarnings("unchecked")
     public static void init() {
         if (list == null) {
@@ -445,19 +448,20 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             
             initializing = true;
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
-                Class c = list[id];
+                Class<? extends Block> c = list[id];
                 if (c != null) {
                     Block block;
                     try {
-                        block = (Block) c.newInstance();
+                        block = c.getDeclaredConstructor().newInstance();
+                        BlockStateRegistry.registerPersistenceName(id, block.getPersistenceName());
                         try {
-                            Constructor constructor = c.getDeclaredConstructor(int.class);
+                            Constructor<? extends Block> constructor = c.getDeclaredConstructor(int.class);
                             constructor.setAccessible(true);
                             for (int data = 0; data < (1 << DATA_BITS); ++data) {
                                 int fullId = (id << DATA_BITS) | data;
                                 Block b;
                                 try {
-                                    b = (Block) constructor.newInstance(data);
+                                    b = constructor.newInstance(data);
                                     if (b.getDamage() != data) {
                                         b = new BlockUnknown(id, data);
                                     }
@@ -520,7 +524,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             initializing = false;
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="static getters" defaultstate="collapsed">
     public static Block get(int id) {
         if (id < 0) {
             id = 255 - id;
@@ -628,6 +634,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         block.layer = layer;
         return block;
     }
+    //</editor-fold>
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected final BlockState blockState = getProperties().defaultState(getId());
+    
+    @PowerNukkitOnly
+    public int layer;
+    
+    protected Block() {}
 
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         return this.getLevel().setBlock(this, this, true, true);
@@ -780,6 +796,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public abstract String getName();
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public String getPersistenceName() {
+        return BlockStateRegistry.getPersistenceName(getId());
+    }
 
     public abstract int getId();
 
@@ -800,27 +822,45 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Deprecated
     @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     public int getFullId() {
-        return (getId() << DATA_BITS);
+        return blockState.getFullId();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.EMPTY_PROPERTIES;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final BlockState getBlockState() {
+        return blockState.copy();
     }
     
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
-    public int getRuntimeId() {
-        return GlobalBlockPalette.getOrCreateRuntimeId(getId(), getDamage());
+    public final int getRuntimeId() {
+        return blockState.getRuntimeId();
     }
-
+    
     public void addVelocityToEntity(Entity entity, Vector3 vector) {
 
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public int getDamage() {
-        return 0;
+        return blockState.getLegacyDamage();
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public void setDamage(int meta) {
-        // Do nothing
+        blockState.setDataStorageFromInt(meta);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public final void setDamage(Integer meta) {
         setDamage((meta == null ? 0 : meta & 0x0f));
     }
