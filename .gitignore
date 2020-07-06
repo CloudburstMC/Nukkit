@@ -232,3 +232,7 @@ creativeitems.json
 recipes.json
 data/
 data/*
+
+### Operating System ###
+# macOS
+.DS_Store
