@@ -1,13 +1,16 @@
 package cn.nukkit.blockstate;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockHyperMeta;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigInteger;
 
@@ -17,13 +20,13 @@ import java.math.BigInteger;
 public class BigIntegerMutableBlockState extends MutableBlockState {
     private BigInteger storage;
     
-    public BigIntegerMutableBlockState(int blockId, @Nonnull BlockProperties properties, BigInteger state) {
+    public BigIntegerMutableBlockState(int blockId, BlockProperties properties, BigInteger state) {
         super(blockId, properties);
         this.storage = state;
     }
 
 
-    public BigIntegerMutableBlockState(int blockId, @Nonnull BlockProperties properties) {
+    public BigIntegerMutableBlockState(int blockId, BlockProperties properties) {
         this(blockId, properties, BigInteger.ZERO);
     }
 
@@ -62,23 +65,36 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
     public int getLegacyDamage() {
         return storage.and(BigInteger.valueOf(Block.DATA_MASK)).intValue();
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
-    public int getHyperDamage() {
-        return storage.and(BigInteger.valueOf(BlockHyperMeta.HYPER_DATA_MASK)).intValue();
+    public int getBigDamage() {
+        return storage.and(BigInteger.valueOf(BlockStateRegistry.BIG_META_MASK)).intValue();
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
     @Override
-    public Number getDataStorage() {
+    public BigInteger getHugeDamage() {
         return storage;
     }
 
+    @Nonnull
     @Override
-    public void setPropertyValue(String propertyName, Object value) {
+    public Number getDataStorage() {
+        return getHugeDamage();
+    }
+
+    @Override
+    public void setPropertyValue(String propertyName, @Nullable Object value) {
         storage = properties.setValue(storage, propertyName, value);
     }
 
@@ -98,11 +114,19 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         return properties.getBooleanValue(storage, propertyName);
     }
 
+    @Nonnull
     @Override
     public String getPersistenceValue(String propertyName) {
         return properties.getPersistenceValue(storage, propertyName);
     }
 
+    @Nonnull
+    @Override
+    public BlockState getCurrentState() {
+        return new BlockState(blockId, storage);
+    }
+
+    @Nonnull
     @Override
     public BigIntegerMutableBlockState copy() {
         return new BigIntegerMutableBlockState(getBlockId(), properties, storage);

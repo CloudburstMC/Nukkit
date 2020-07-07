@@ -8,6 +8,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockWall;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
@@ -20,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
 
 /**
  * author: MagicDroidX
@@ -105,7 +105,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     }
 
     @Override
-    public int[] getBlockState(int x, int y, int z, int layer) {
+    public BlockState getBlockState(int x, int y, int z, int layer) {
         return this.sections[y >> 4].getBlockState(x, y & 0x0f, z, layer);
     }
 
@@ -312,9 +312,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     @Override
     public boolean setSection(float fY, ChunkSection section) {
-        byte[] emptyIdArray = new byte[4096];
-        byte[] emptyDataArray = new byte[2048];
-        if (Arrays.equals(emptyIdArray, section.getIdArray()) && Arrays.equals(emptyDataArray, section.getDataArray())) {
+        if (!section.hasBlocks()) {
             this.sections[(int) fY] = EmptyChunkSection.EMPTY[(int) fY];
         } else {
             this.sections[(int) fY] = section;
@@ -336,24 +334,6 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @Override
     public boolean load(boolean generate) throws IOException {
         return this.getProvider() != null && this.getProvider().getChunk(this.getX(), this.getZ(), true) != null;
-    }
-
-    @Override
-    public byte[] getBlockIdArray(int layer) {
-        ByteBuffer buffer = ByteBuffer.allocate(4096 * SECTION_COUNT);
-        for (int y = 0; y < SECTION_COUNT; y++) {
-            buffer.put(this.sections[y].getIdArray(layer));
-        }
-        return buffer.array();
-    }
-
-    @Override
-    public byte[] getBlockDataArray(int layer) {
-        ByteBuffer buffer = ByteBuffer.allocate(2048 * SECTION_COUNT);
-        for (int y = 0; y < SECTION_COUNT; y++) {
-            buffer.put(this.sections[y].getDataArray(layer));
-        }
-        return buffer.array();
     }
 
     @Override
@@ -397,8 +377,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         for (int x = 0; x <= 0xF; x++) {
             for (int z = 0; z <= 0xF; z++) {
                 for (int y = 0; y <= 0xF; y++) {
-                    int[] state = section.getBlockState(x, y, z, 0);
-                    updated |= updater.update(offsetX, offsetY, offsetZ, x, y, z, state[0], state[1]);
+                    BlockState state = section.getBlockState(x, y, z, 0);
+                    updated |= updater.update(offsetX, offsetY, offsetZ, x, y, z, state);
                 }
             }
         }
@@ -408,23 +388,23 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     @FunctionalInterface
     private interface Updater {
-        boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, int blockId, int meta);
+        boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state);
     }
 
     @RequiredArgsConstructor
-    private class WallUpdater implements Updater {
+    private static class WallUpdater implements Updater {
         private final Level level;
         private final ChunkSection section;
 
         @Override
-        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, int blockId, int meta) {
-            if (blockId != BlockID.COBBLE_WALL) {
+        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
+            if (state.getBlockId() != BlockID.COBBLE_WALL) {
                 return false;
             }
 
-            BlockWall blockWall = (BlockWall) Block.get(blockId, meta, level, offsetX + x, offsetY + y, offsetZ + z, 0);
+            BlockWall blockWall = (BlockWall) state.getBlock(level, offsetX + x, offsetY + y, offsetZ + z, 0);
             if (blockWall.autoConfigureState()) {
-                section.setBlockData(x, y, z, 0, blockWall.getDamage());
+                section.setBlockStateAtLayer(x, y, z, 0, blockWall.getCurrentState());
                 return true;
             }
 
@@ -433,15 +413,15 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     }
 
     @RequiredArgsConstructor
-    private class StemUpdater implements Updater {
+    private static class StemUpdater implements Updater {
         private final Level level;
         private final ChunkSection section;
         private final int stemId;
         private final int productId;
 
         @Override
-        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, int blockId, int meta) {
-            if (blockId != stemId) {
+        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
+            if (state.getBlockId() != stemId) {
                 return false;
             }
 
@@ -452,9 +432,9 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                         offsetZ + z + blockFace.getZOffset()
                 );
                 if (sideId == productId) {
-                    Block blockStem = Block.get(blockId, meta, level, offsetX + x, offsetY + y, offsetZ + z, 0);
+                    Block blockStem = state.getBlock(level, offsetX + x, offsetY + y, offsetZ + z, 0);
                     ((Faceable) blockStem).setBlockFace(blockFace);
-                    section.setBlockData(x, y, z, 0, blockStem.getDamage());
+                    section.setBlockStateAtLayer(x, y, z, 0, blockStem.getCurrentState());
                     return true;
                 }
             }
@@ -463,7 +443,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         }
     }
 
-    private class GroupedUpdaters implements Updater {
+    private static class GroupedUpdaters implements Updater {
         private final Updater[] updaters;
 
         public GroupedUpdaters(Updater... updaters) {
@@ -471,9 +451,9 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         }
 
         @Override
-        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, int blockId, int meta) {
+        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
             for (Updater updater : updaters) {
-                if (updater.update(offsetX, offsetY, offsetZ, x, y, z, blockId, meta)) {
+                if (updater.update(offsetX, offsetY, offsetZ, x, y, z, state)) {
                     return true;
                 }
             }

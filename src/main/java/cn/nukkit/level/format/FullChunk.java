@@ -5,6 +5,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.biome.Biome;
@@ -58,16 +59,16 @@ public interface FullChunk extends Cloneable {
     }
     
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
-    default int[] getBlockState(int x, int y, int z) {
+    @Since("1.4.0.0-PN")
+    default BlockState getBlockState(int x, int y, int z) {
         return getBlockState(x, y, z, 0);
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
-    default int[] getBlockState(int x, int y, int z, int layer) {
+    @Since("1.4.0.0-PN")
+    default BlockState getBlockState(int x, int y, int z, int layer) {
         int full = getFullBlock(x, y, z, layer);
-        return new int[] { full >> Block.DATA_BITS, full & Block.DATA_MASK };
+        return new BlockState(full >> Block.DATA_BITS, full & Block.DATA_MASK);
     }
 
     Block getAndSetBlock(int x, int y, int z, Block block);
@@ -190,16 +191,6 @@ public interface FullChunk extends Cloneable {
     byte[] getBiomeIdArray();
 
     byte[] getHeightMapArray();
-
-    byte[] getBlockIdArray(int layer);
-    default byte[] getBlockIdArray() {
-        return getBlockIdArray(0);
-    }
-
-    byte[] getBlockDataArray(int layer);
-    default byte[] getBlockDataArray() {
-        return getBlockDataArray(0);
-    }
 
     Map<Integer, Integer> getBlockExtraDataArray();
 

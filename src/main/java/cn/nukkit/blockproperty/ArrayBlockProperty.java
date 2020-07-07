@@ -2,6 +2,7 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.math.NukkitMath;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
@@ -52,7 +53,7 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public ArrayBlockProperty(String name, @Nonnull E[] universe, @Nonnull E defaultValue) {
-        this(name, universe, defaultValue, calculateBitSize(universe.length - 1));
+        this(name, universe, defaultValue, NukkitMath.bitLength(universe.length - 1));
     }
 
     @PowerNukkitOnly

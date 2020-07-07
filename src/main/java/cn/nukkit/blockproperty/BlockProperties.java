@@ -10,6 +10,7 @@ import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigInteger;
 import java.util.Collection;
@@ -46,7 +47,7 @@ public final class BlockProperties {
         bitSize = offset;
     }
     
-    public MutableBlockState defaultState(int blockId) {
+    public MutableBlockState createMutableState(int blockId) {
         if (bitSize <= 32) {
             return new IntMutableBlockState(blockId, this);
         } else if (bitSize <= 64) {
@@ -105,7 +106,7 @@ public final class BlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
-    public int setValue(int currentMeta, String propertyName, Object value) {
+    public int setValue(int currentMeta, String propertyName, @Nullable Object value) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
         @SuppressWarnings("rawtypes") 
         BlockProperty unchecked = registry.blockProperty;
@@ -115,7 +116,7 @@ public final class BlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
-    public long setValue(long currentMeta, String propertyName, Object value) {
+    public long setValue(long currentMeta, String propertyName, @Nullable Object value) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
         @SuppressWarnings("rawtypes")
         BlockProperty unchecked = registry.blockProperty;
@@ -125,7 +126,8 @@ public final class BlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
-    public BigInteger setValue(BigInteger currentMeta, String propertyName, Object value) {
+    @Nonnull
+    public BigInteger setValue(BigInteger currentMeta, String propertyName, @Nullable Object value) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
         @SuppressWarnings("rawtypes")
         BlockProperty unchecked = registry.blockProperty;

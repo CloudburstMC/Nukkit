@@ -28,7 +28,7 @@ public abstract class BlockProperty<T> {
         return -1 >>> (32 - bitOffset);
     }
     
-    private long computeHyperRightMask(int bitOffset) {
+    private long computeBigRightMask(int bitOffset) {
         return -1L >>> (64 - bitOffset);
     }
 
@@ -47,13 +47,13 @@ public abstract class BlockProperty<T> {
         return ~rightMask & ~leftMask;
     }
     
-    private long computeHyperValueMask(int bitOffset) {
+    private long computeBigValueMask(int bitOffset) {
         Preconditions.checkArgument(bitOffset >= 0, "Bit offset can not be negative. Got %s", bitOffset);
         
         int maskBits = bitSize + bitOffset;
         Preconditions.checkArgument(0 < maskBits && maskBits <= 64, "The bit offset %s plus the bit size %s causes memory overflow (64 bits)", bitOffset, bitSize);
         
-        long rightMask = computeHyperRightMask(bitOffset);
+        long rightMask = computeBigRightMask(bitOffset);
         long leftMask = -1L << maskBits;
         return ~rightMask & ~leftMask;
     }
@@ -85,15 +85,15 @@ public abstract class BlockProperty<T> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public long setValue(long currentHyperMeta, int bitOffset, @Nullable T newValue) {
-        long mask = computeHyperValueMask(bitOffset);
+    public long setValue(long currentBigMeta, int bitOffset, @Nullable T newValue) {
+        long mask = computeBigValueMask(bitOffset);
         long value = getMetaForValue(newValue);
         
         if ((value & ~mask) != 0L) {
-            throw new IllegalStateException("Attempted to set a value which overflows the size of "+bitSize+" bits. Current:"+currentHyperMeta+", offset:"+bitOffset+", meta:"+value+", value:"+newValue);
+            throw new IllegalStateException("Attempted to set a value which overflows the size of "+bitSize+" bits. Current:"+currentBigMeta+", offset:"+bitOffset+", meta:"+value+", value:"+newValue);
         }
         
-        return currentHyperMeta & ~mask | (value << bitOffset & mask);
+        return currentBigMeta & ~mask | (value << bitOffset & mask);
     }
 
     @PowerNukkitOnly
@@ -113,8 +113,8 @@ public abstract class BlockProperty<T> {
         return (currentMeta & ~computeRightMask(bitOffset)) >>> bitOffset;
     }
     
-    private int getMetaFromHyper(long currentMeta, int bitOffset) {
-        return (int) ((currentMeta & ~computeHyperRightMask(bitOffset)) >>> bitOffset);
+    private int getMetaFromBig(long currentMeta, int bitOffset) {
+        return (int) ((currentMeta & ~computeBigRightMask(bitOffset)) >>> bitOffset);
     }
     
     private int getMetaFromHuge(BigInteger currentMeta, int bitOffset) {
@@ -131,8 +131,8 @@ public abstract class BlockProperty<T> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public T getValue(long currentHyperMeta, int bitOffset) {
-        return getValueForMeta(getMetaFromHyper(currentHyperMeta, bitOffset));
+    public T getValue(long currentBigMeta, int bitOffset) {
+        return getValueForMeta(getMetaFromBig(currentBigMeta, bitOffset));
     }
 
     @PowerNukkitOnly
@@ -151,7 +151,7 @@ public abstract class BlockProperty<T> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getIntValue(long currentMeta, int bitOffset) {
-        return getIntValueForMeta(getMetaFromHyper(currentMeta, bitOffset));
+        return getIntValueForMeta(getMetaFromBig(currentMeta, bitOffset));
     }
 
     @PowerNukkitOnly
@@ -171,7 +171,7 @@ public abstract class BlockProperty<T> {
     @Since("1.4.0.0-PN")
     @Nonnull
     public String getPersistenceValue(long currentMeta, int bitOffset) {
-        return getPersistenceValueForMeta(getMetaFromHyper(currentMeta, bitOffset));
+        return getPersistenceValueForMeta(getMetaFromBig(currentMeta, bitOffset));
     }
 
     @PowerNukkitOnly
@@ -217,7 +217,7 @@ public abstract class BlockProperty<T> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void validateMeta(long meta, int offset) {
-        validateMeta(getMetaFromHyper(meta, offset));
+        validateMeta(getMetaFromBig(meta, offset));
     }
 
     public void validateMeta(BigInteger meta, int offset) {
@@ -228,20 +228,6 @@ public abstract class BlockProperty<T> {
     @Since("1.4.0.0-PN")
     public int getBitSize() {
         return bitSize;
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    protected static int calculateBitSize(int delta) {
-        if (delta <= 0) {
-            return 1;
-        }
-        int bits = 1;
-        while (delta > 1) {
-            delta >>>= 1;
-            bits++;
-        }
-        return bits;
     }
 
     @PowerNukkitOnly

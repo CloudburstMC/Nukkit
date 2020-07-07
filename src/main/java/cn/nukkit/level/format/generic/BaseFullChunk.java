@@ -491,16 +491,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     }
 
     @Override
-    public byte[] getBlockIdArray() {
-        return this.blocks;
-    }
-
-    @Override
-    public byte[] getBlockDataArray() {
-        return this.data;
-    }
-
-    @Override
     public byte[] getBlockSkyLightArray() {
         return this.skyLight;
     }

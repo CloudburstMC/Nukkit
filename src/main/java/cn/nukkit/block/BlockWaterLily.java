@@ -10,6 +10,8 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created on 2015/12/1 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
@@ -25,6 +27,7 @@ public class BlockWaterLily extends BlockFlowable {
         super(0);
     }
 
+    @Nonnull
     @Override
     public BlockProperties getProperties() {
         return CommonBlockProperties.EMPTY_PROPERTIES;

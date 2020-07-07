@@ -1,22 +1,17 @@
 package cn.nukkit.blockstate;
 
 import cn.nukkit.api.DeprecationDetails;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockHyperMeta;
 import cn.nukkit.blockproperty.BlockProperties;
-import cn.nukkit.blockproperty.BlockProperty;
-import cn.nukkit.level.GlobalBlockPalette;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Collection;
 
 @ToString
 @EqualsAndHashCode
 @ParametersAreNonnullByDefault
-public abstract class MutableBlockState {
+public abstract class MutableBlockState implements IMutableBlockState {
     protected final int blockId;
     protected final BlockProperties properties;
     
@@ -24,79 +19,39 @@ public abstract class MutableBlockState {
         this.blockId = blockId;
         this.properties = properties;
     }
-    
-    public abstract void validate();
 
-    public final int getBlockId() {
-        return blockId;
-    }
-
-    @Deprecated
-    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "the BlockState itself")
-    public final int getFullId() {
-        return (blockId << Block.DATA_BITS) | (getLegacyDamage() & Block.DATA_MASK);
-    }
-    
-    @Deprecated
-    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
-    public abstract int getLegacyDamage();
-
-    @Deprecated
-    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
-    public abstract int getHyperDamage();
-
-    @Deprecated
-    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "the BlockState itself")
-    public final long getHyperId() {
-        return ((long)blockId << BlockHyperMeta.HYPER_DATA_BITS) | (getHyperDamage() & BlockHyperMeta.HYPER_DATA_MASK);
-    }
-    
-    public abstract Number getDataStorage();
-    
-    public abstract void setDataStorage(Number storage);
-    
-    public abstract void setDataStorageFromInt(int storage);
-
+    @Nonnull
+    @Override
     public final BlockProperties getProperties() {
         return properties;
     }
 
-    @SuppressWarnings("rawtypes")
-    public BlockProperty getProperty(String propertyName) {
-        return properties.getBlockProperty(propertyName);
+    @Override
+    public final int getBlockId() {
+        return blockId;
     }
 
-    public <T extends BlockProperty<?>> T getCheckedProperty(String propertyName, Class<T> tClass) {
-        return properties.getBlockProperty(propertyName, tClass);
+    @Override
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "the BlockState itself")
+    public final int getFullId() {
+        return IMutableBlockState.super.getFullId();
     }
 
-    public Collection<String> getPropertyNames() {
-        return properties.getNames();
+    @Override
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "the BlockState itself")
+    public final long getBigId() {
+        return IMutableBlockState.super.getBigId();
     }
 
-    public abstract void setPropertyValue(String propertyName, Object value);
+    @Override
+    public final int getBitSize() {
+        return getProperties().getBitSize();
+    }
+
+    public abstract void validate();
 
     @Nonnull
-    public abstract Object getPropertyValue(String propertyName);
-
-    public final <T> T getCheckedPropertyValue(String propertyName, Class<T> tClass) {
-        return tClass.cast(getPropertyValue(propertyName));
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> T getUncheckedPropertyValue(String propertyName) {
-        return (T) getPropertyValue(propertyName);
-    }
-
-    public abstract int getIntValue(String propertyName);
-
-    public abstract boolean getBooleanValue(String propertyName);
-    
-    public abstract String getPersistenceValue(String propertyName);
-    
     public abstract MutableBlockState copy();
-
-    public int getRuntimeId() {
-        return GlobalBlockPalette.getOrCreateRuntimeId(getBlockId(), getHyperDamage());
-    }
 }

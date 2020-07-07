@@ -33,9 +33,9 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
     }
 
     @Override
-    public long setValue(long currentHyperMeta, int bitOffset, @Nullable Boolean newValue) {
+    public long setValue(long currentBigMeta, int bitOffset, @Nullable Boolean newValue) {
         boolean value = newValue == null? defaultValue : newValue;
-        return setValue(currentHyperMeta, bitOffset, value);
+        return setValue(currentBigMeta, bitOffset, value);
     }
 
     @PowerNukkitOnly
@@ -60,8 +60,8 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
 
     @Nonnull
     @Override
-    public Boolean getValue(long currentHyperMeta, int bitOffset) {
-        return getBooleanValue(currentHyperMeta, bitOffset);
+    public Boolean getValue(long currentBigMeta, int bitOffset) {
+        return getBooleanValue(currentBigMeta, bitOffset);
     }
 
     @PowerNukkitOnly
@@ -73,9 +73,9 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public boolean getBooleanValue(long currentHyperMeta, int bitOffset) {
+    public boolean getBooleanValue(long currentBigMeta, int bitOffset) {
         long mask = 1L << bitOffset;
-        return (currentHyperMeta & mask) == mask;
+        return (currentBigMeta & mask) == mask;
     }
 
     @Override

@@ -1,10 +1,14 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public class BlockUnknown extends BlockMeta {
+    public static final BlockProperties PROPERTIES = CommonBlockProperties.LEGACY_BIG_PROPERTIES; 
 
     private final int id;
 

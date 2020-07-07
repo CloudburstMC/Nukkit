@@ -2,6 +2,7 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.math.NukkitMath;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
@@ -41,7 +42,7 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public UnsignedIntBlockProperty(String name, int maxValue, int minValue, int defaultValue) {
-        this(name, maxValue, minValue, defaultValue, calculateBitSize(maxValue - minValue));
+        this(name, maxValue, minValue, defaultValue, NukkitMath.bitLength(maxValue - minValue));
     }
 
     @PowerNukkitOnly

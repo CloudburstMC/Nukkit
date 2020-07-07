@@ -6,6 +6,8 @@ import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created on 2015/11/22 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
@@ -21,6 +23,7 @@ public class BlockPodzol extends BlockDirt {
         super(0);
     }
 
+    @Nonnull
     @Override
     public BlockProperties getProperties() {
         return CommonBlockProperties.EMPTY_PROPERTIES;

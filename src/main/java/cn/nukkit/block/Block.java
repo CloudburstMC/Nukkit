@@ -3,11 +3,14 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.blockstate.BlockStateRegistry;
+import cn.nukkit.blockstate.IMutableBlockState;
 import cn.nukkit.blockstate.MutableBlockState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
@@ -27,8 +30,11 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.InvalidBlockDamageException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,7 +44,9 @@ import java.util.function.Predicate;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
+@PowerNukkitDifference(info = "Implements IMutableBlockState only on PowerNukkit", since = "1.4.0.0-PN")
+@SuppressWarnings({"java:S2160", "java:S3400"})
+public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID, IMutableBlockState {
 
     //<editor-fold desc="static fields" defaultstate="collapsed">
     public static final int MAX_BLOCK_ID = 600;
@@ -46,24 +54,41 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public static final int DATA_SIZE = 1 << DATA_BITS;
     public static final int DATA_MASK = DATA_SIZE - 1;
 
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static Class<? extends Block>[] list = null;
     
     @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     @Deprecated
+    @SuppressWarnings({"java:S1444", "java:S2386", "java:S1123", "java:S1133", "DeprecatedIsStillUsed"})
     public static Block[] fullList = null;
+    
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static int[] light = null;
 
     @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     @Deprecated
+    @SuppressWarnings({"java:S1444", "java:S2386", "java:S1123", "java:S1133", "DeprecatedIsStillUsed"})
     public static int[] fullLight = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static int[] lightFilter = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static boolean[] solid = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static double[] hardness = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static boolean[] transparent = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static boolean[] diffusesSkyLight = null;
+    
     /**
      * if a block has can have variants
      */
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static boolean[] hasMeta = null;
     
     private static boolean initializing;
@@ -638,7 +663,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    protected final MutableBlockState blockState = getProperties().defaultState(getId());
+    protected final MutableBlockState blockState = getProperties().createMutableState(getId());
     
     @PowerNukkitOnly
     public int layer;
@@ -825,6 +850,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return blockState.getFullId();
     }
 
+    @Nonnull
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockProperties getProperties() {
@@ -833,8 +859,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public final MutableBlockState getBlockState() {
-        return blockState.copy();
+    public final BlockState getCurrentState() {
+        return blockState.getCurrentState();
     }
     
     @PowerNukkitOnly
@@ -1378,5 +1404,97 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
         
         return Optional.empty();
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setDataStorage(@Nonnull Number storage) {
+        blockState.setDataStorage(storage);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setDataStorageFromInt(int storage) {
+        blockState.setDataStorageFromInt(storage);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setPropertyValue(@Nonnull String propertyName, @Nullable Object value) {
+        blockState.setPropertyValue(propertyName, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public final int getBlockId() {
+        return getId();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public final Number getDataStorage() {
+        return blockState.getDataStorage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getLegacyDamage() {
+        return blockState.getLegacyDamage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getBigDamage() {
+        return blockState.getBigDamage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public BigInteger getHugeDamage() {
+        return blockState.getHugeDamage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public Object getPropertyValue(@Nonnull String propertyName) {
+        return blockState.getPropertyValue(propertyName);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public int getIntValue(@Nonnull String propertyName) {
+        return blockState.getIntValue(propertyName);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public boolean getBooleanValue(@Nonnull String propertyName) {
+        return blockState.getBooleanValue(propertyName);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getPersistenceValue(@Nonnull String propertyName) {
+        return blockState.getPersistenceValue(propertyName);
     }
 }

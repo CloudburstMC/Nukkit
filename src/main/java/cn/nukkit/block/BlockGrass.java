@@ -13,6 +13,8 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * author: Angelic47
  * Nukkit Project
@@ -28,6 +30,7 @@ public class BlockGrass extends BlockDirt {
         super(0);
     }
 
+    @Nonnull
     @Override
     public BlockProperties getProperties() {
         return CommonBlockProperties.EMPTY_PROPERTIES;
