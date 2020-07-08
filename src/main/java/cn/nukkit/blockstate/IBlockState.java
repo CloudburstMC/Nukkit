@@ -12,8 +12,8 @@ import cn.nukkit.utils.HumanStringComparator;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 @ParametersAreNonnullByDefault
@@ -128,7 +128,7 @@ public interface IBlockState {
     }
 
     @Nonnull
-    default Collection<String> getPropertyNames() {
+    default Set<String> getPropertyNames() {
         return getProperties().getNames();
     }
 

@@ -26,6 +26,12 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
         this.defaultValue = defaultValue;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BooleanBlockProperty(String name) {
+        this(name, false);
+    }
+
     @Override
     public int setValue(int currentMeta, int bitOffset, @Nullable Boolean newValue) {
         boolean value = newValue == null? defaultValue : newValue;
@@ -112,12 +118,12 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
     }
 
     @Override
-    public void validateMeta(int meta) {
+    protected void validateMeta(int meta) {
         Preconditions.checkArgument(meta == 1 || meta == 0, "Must be 1 or 0");
     }
 
     @Override
     public String getPersistenceValueForMeta(int meta) {
-        return Boolean.toString(getBooleanValueForMeta(meta));
+        return meta == 1? "1" : "0";
     }
 }

@@ -34,7 +34,7 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
         for (int i = 0; i < this.universe.length; i++) {
             E element = this.universe[i];
             Preconditions.checkNotNull(element, "The universe can not contain null values");
-            Preconditions.checkArgument(!elements.add(element), "The universe can not have duplicated elements");
+            Preconditions.checkArgument(elements.add(element), "The universe can not have duplicated elements");
             if (element.equals(defaultValue)) {
                 defaultMetaIndex = i;
             }
@@ -98,7 +98,7 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     }
 
     @Override
-    public void validate(@Nullable E value) {
+    protected void validate(@Nullable E value) {
         for (E object : universe) {
             if (object == value) {
                 return;
@@ -108,7 +108,7 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     }
 
     @Override
-    public void validateMeta(int meta) {
+    protected void validateMeta(int meta) {
         Preconditions.checkElementIndex(meta, universe.length);
     }
 }

@@ -13,7 +13,7 @@ public class BlockGlassStained extends BlockGlass {
     }
 
     public BlockGlassStained(int meta) {
-        blockState.setDataStorageFromInt(meta);
+        getMutableState().setDataStorageFromInt(meta);
     }
 
     @Override

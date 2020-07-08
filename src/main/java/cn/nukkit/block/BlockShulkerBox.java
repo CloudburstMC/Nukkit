@@ -13,7 +13,7 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
     }
 
     public BlockShulkerBox(int meta) {
-        blockState.setDataStorageFromInt(meta);
+        getMutableState().setDataStorageFromInt(meta);
     }
 
     @Override

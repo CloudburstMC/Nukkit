@@ -89,7 +89,7 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     }
 
     @Override
-    public void validate(@Nullable Integer value) {
+    protected void validate(@Nullable Integer value) {
         if (value == null) {
             return;
         }
@@ -102,7 +102,7 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     }
 
     @Override
-    public void validateMeta(int meta) {
+    protected void validateMeta(int meta) {
         long max = maxValue - minValue;
         Preconditions.checkArgument(0 <= meta && meta <= max, "The meta %s is outside the range of 0 .. ", meta, max);
     }

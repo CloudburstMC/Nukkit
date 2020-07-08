@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
@@ -28,7 +27,10 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.InvalidBlockDamageException;
+import cn.nukkit.utils.InvalidBlockPropertyException;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,6 +48,7 @@ import java.util.function.Predicate;
  */
 @PowerNukkitDifference(info = "Implements IMutableBlockState only on PowerNukkit", since = "1.4.0.0-PN")
 @SuppressWarnings({"java:S2160", "java:S3400"})
+@Log4j2
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID, IMutableBlockState {
 
     //<editor-fold desc="static fields" defaultstate="collapsed">
@@ -492,8 +495,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                                     }
                                 } catch (InvocationTargetException wrapper) {
                                     Throwable uncaught = wrapper.getTargetException();
-                                    if (!(uncaught instanceof InvalidBlockDamageException)) {
-                                        Server.getInstance().getLogger().error("Error while registering " + c.getName()+" with meta "+data, uncaught);
+                                    if (!(uncaught instanceof InvalidBlockPropertyException)) {
+                                        log.error("Error while registering " + c.getName()+" with meta "+data, uncaught);
                                     }
                                     b = new BlockUnknown(id, data);
                                 }
@@ -509,7 +512,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             }
                         }
                     } catch (Exception e) {
-                        Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
+                        log.error("Error while registering " + c.getName(), e);
                         for (int data = 0; data < DATA_SIZE; ++data) {
                             fullList[(id << DATA_BITS) | data] = new BlockUnknown(id, data);
                         }
@@ -663,7 +666,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    protected final MutableBlockState blockState = getProperties().createMutableState(getId());
+    @Getter(AccessLevel.PROTECTED)
+    private MutableBlockState mutableState = getProperties().createMutableState(getId());
     
     @PowerNukkitOnly
     public int layer;
@@ -841,7 +845,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Deprecated
     @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
     public int getFullId() {
-        return blockState.getFullId();
+        return mutableState.getFullId();
     }
 
     @Nonnull
@@ -854,13 +858,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public final BlockState getCurrentState() {
-        return blockState.getCurrentState();
+        return mutableState.getCurrentState();
     }
     
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public final int getRuntimeId() {
-        return blockState.getRuntimeId();
+        return mutableState.getRuntimeId();
     }
     
     public void addVelocityToEntity(Entity entity, Vector3 vector) {
@@ -870,13 +874,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Deprecated
     @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public int getDamage() {
-        return blockState.getBigDamage();
+        return mutableState.getBigDamage();
     }
 
     @Deprecated
     @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public void setDamage(int meta) {
-        blockState.setDataStorageFromInt(meta);
+        mutableState.setDataStorageFromInt(meta);
     }
 
     @Deprecated
@@ -1329,7 +1333,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public Block clone() {
-        return (Block) super.clone();
+        Block clone = (Block) super.clone();
+        clone.mutableState = this.mutableState.copy();
+        return clone;
     }
 
     public int getWeakPower(BlockFace face) {
@@ -1404,21 +1410,21 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public void setDataStorage(@Nonnull Number storage) {
-        blockState.setDataStorage(storage);
+        mutableState.setDataStorage(storage);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public void setDataStorageFromInt(int storage) {
-        blockState.setDataStorageFromInt(storage);
+        mutableState.setDataStorageFromInt(storage);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public void setPropertyValue(@Nonnull String propertyName, @Nullable Object value) {
-        blockState.setPropertyValue(propertyName, value);
+        mutableState.setPropertyValue(propertyName, value);
     }
 
     @PowerNukkitOnly
@@ -1435,7 +1441,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Nonnull
     @Override
     public final Number getDataStorage() {
-        return blockState.getDataStorage();
+        return mutableState.getDataStorage();
     }
 
     @PowerNukkitOnly
@@ -1444,7 +1450,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
     public int getLegacyDamage() {
-        return blockState.getLegacyDamage();
+        return mutableState.getLegacyDamage();
     }
 
     @PowerNukkitOnly
@@ -1453,7 +1459,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
     public int getBigDamage() {
-        return blockState.getBigDamage();
+        return mutableState.getBigDamage();
     }
 
     @PowerNukkitOnly
@@ -1461,7 +1467,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Nonnull
     @Override
     public BigInteger getHugeDamage() {
-        return blockState.getHugeDamage();
+        return mutableState.getHugeDamage();
     }
 
     @PowerNukkitOnly
@@ -1469,21 +1475,21 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Nonnull
     @Override
     public Object getPropertyValue(@Nonnull String propertyName) {
-        return blockState.getPropertyValue(propertyName);
+        return mutableState.getPropertyValue(propertyName);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public int getIntValue(@Nonnull String propertyName) {
-        return blockState.getIntValue(propertyName);
+        return mutableState.getIntValue(propertyName);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public boolean getBooleanValue(@Nonnull String propertyName) {
-        return blockState.getBooleanValue(propertyName);
+        return mutableState.getBooleanValue(propertyName);
     }
 
     @PowerNukkitOnly
@@ -1491,6 +1497,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Nonnull
     @Override
     public String getPersistenceValue(@Nonnull String propertyName) {
-        return blockState.getPersistenceValue(propertyName);
+        return mutableState.getPersistenceValue(propertyName);
     }
 }

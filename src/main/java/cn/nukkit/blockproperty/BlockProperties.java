@@ -13,10 +13,10 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigInteger;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
@@ -94,7 +94,7 @@ public final class BlockProperties {
         return getRegisteredProperty(propertyName).offset;
     }
     
-    public Collection<String> getNames() {
+    public Set<String> getNames() {
         return byName.keySet();
     }
     

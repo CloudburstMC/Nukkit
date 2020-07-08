@@ -6,7 +6,6 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
-import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.block.BlockWall;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockstate.BlockState;
@@ -17,7 +16,9 @@ import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.InvalidBlockPropertyMetaException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -27,7 +28,7 @@ import java.nio.ByteBuffer;
  * author: MagicDroidX
  * Nukkit Project
  */
-
+@Log4j2
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly("Needed for level backward compatibility")
     @Since("1.3.0.0-PN")
@@ -407,14 +408,17 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             int levelX = offsetX + x;
             int levelY = offsetY + y;
             int levelZ = offsetZ + z;
-            Block block = state.getBlock(level, levelX, levelY, levelZ, 0);
-            if (block instanceof BlockUnknown) {
+            Block block;
+            try {
+                block = state.getBlock(level, levelX, levelY, levelZ, 0);
+            } catch (InvalidBlockPropertyMetaException e) {
                 // Block was on an invalid state, clearing the state but keeping the material type
-                block = state.withData(state.getLegacyDamage() & 0xF).getBlock(level, levelX, levelY, levelZ, 0);
-                if (block instanceof BlockUnknown) {
-                    Server.getInstance().getLogger()
-                            .warning("Failed to update the block X:"+levelX+", Y:"+levelY+", Z:"+levelZ+" at "+level
-                                    +", could not cast it to BlockWall.");
+                try {
+                    block = state.withData(state.getLegacyDamage() & 0xF).getBlock(level, levelX, levelY, levelZ, 0);
+                } catch (InvalidBlockPropertyMetaException e2) {
+                    e.addSuppressed(e2);
+                    log.warn("Failed to update the block X:"+levelX+", Y:"+levelY+", Z:"+levelZ+" at "+level
+                                    +", could not cast it to BlockWall.", e2);
                     return false;
                 }
             }

@@ -2,6 +2,8 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.utils.InvalidBlockPropertyMetaException;
+import cn.nukkit.utils.InvalidBlockPropertyValueException;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
@@ -25,11 +27,11 @@ public abstract class BlockProperty<T> {
     }
     
     private int computeRightMask(int bitOffset) {
-        return -1 >>> (32 - bitOffset);
+        return bitOffset == 0? 0 : -1 >>> (32 - bitOffset);
     }
     
     private long computeBigRightMask(int bitOffset) {
-        return -1L >>> (64 - bitOffset);
+        return bitOffset == 0L? 0L : -1L >>> (64 - bitOffset);
     }
 
     private BigInteger computeHugeRightMask(int bitOffset) {
@@ -73,52 +75,97 @@ public abstract class BlockProperty<T> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int setValue(int currentMeta, int bitOffset, @Nullable T newValue) {
-        int mask = computeValueMask(bitOffset);
-        int value = getMetaForValue(newValue);
-        
-        if ((value & ~mask) != 0) {
-            throw new IllegalStateException("Attempted to set a value which overflows the size of "+bitSize+" bits. Current:"+currentMeta+", offset:"+bitOffset+", meta:"+value+", value:"+newValue);
+        try {
+            int mask = computeValueMask(bitOffset);
+            int value = getMetaForValue(newValue);
+
+            if ((value & ~mask) != 0) {
+                throw new IllegalStateException("Attempted to set a value which overflows the size of " + bitSize + " bits. Current:" + currentMeta + ", offset:" + bitOffset + ", meta:" + value + ", value:" + newValue);
+            }
+
+            return currentMeta & ~mask | (value << bitOffset & mask);
+        } catch (Exception e) {
+            T oldValue = null;
+            InvalidBlockPropertyMetaException suppressed = null;
+            try {
+                oldValue = getValue(currentMeta, bitOffset);
+            } catch (Exception e2) {
+                suppressed = new InvalidBlockPropertyMetaException(this, currentMeta, currentMeta & computeValueMask(bitOffset), e2);
+            }
+            InvalidBlockPropertyValueException toThrow = new InvalidBlockPropertyValueException(this, oldValue, newValue, e);
+            if (suppressed != null) {
+                toThrow.addSuppressed(suppressed);
+            }
+            throw toThrow;
         }
-        
-        return currentMeta & ~mask | (value << bitOffset & mask);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public long setValue(long currentBigMeta, int bitOffset, @Nullable T newValue) {
-        long mask = computeBigValueMask(bitOffset);
-        long value = getMetaForValue(newValue);
-        
-        if ((value & ~mask) != 0L) {
-            throw new IllegalStateException("Attempted to set a value which overflows the size of "+bitSize+" bits. Current:"+currentBigMeta+", offset:"+bitOffset+", meta:"+value+", value:"+newValue);
+        try {
+            long mask = computeBigValueMask(bitOffset);
+            long value = getMetaForValue(newValue);
+
+            if ((value & ~mask) != 0L) {
+                throw new IllegalStateException("Attempted to set a value which overflows the size of " + bitSize + " bits. Current:" + currentBigMeta + ", offset:" + bitOffset + ", meta:" + value + ", value:" + newValue);
+            }
+
+            return currentBigMeta & ~mask | (value << bitOffset & mask);
+        } catch (Exception e) {
+            T oldValue = null;
+            InvalidBlockPropertyMetaException suppressed = null;
+            try {
+                oldValue = getValue(currentBigMeta, bitOffset);
+            } catch (Exception e2) {
+                suppressed = new InvalidBlockPropertyMetaException(this, currentBigMeta, currentBigMeta & computeBigValueMask(bitOffset), e2);
+            }
+            InvalidBlockPropertyValueException toThrow = new InvalidBlockPropertyValueException(this, oldValue, newValue, e);
+            if (suppressed != null) {
+                toThrow.addSuppressed(suppressed);
+            }
+            throw toThrow;
         }
-        
-        return currentBigMeta & ~mask | (value << bitOffset & mask);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BigInteger setValue(BigInteger currentHugeMeta, int bitOffset, @Nullable T newValue) {
-        BigInteger mask = computeHugeValueMask(bitOffset);
-        BigInteger value = BigInteger.valueOf(getMetaForValue(newValue));
-        
-        if (!value.andNot(mask).equals(BigInteger.ZERO)) {
-            throw new IllegalStateException("Attempted to set a value which overflows the size of "+bitSize+" bits. Current:"+currentHugeMeta+", offset:"+bitOffset+", meta:"+value+", value:"+newValue);
+        try {
+            BigInteger mask = computeHugeValueMask(bitOffset);
+            BigInteger value = BigInteger.valueOf(getMetaForValue(newValue));
+
+            if (!value.andNot(mask).equals(BigInteger.ZERO)) {
+                throw new IllegalStateException("Attempted to set a value which overflows the size of " + bitSize + " bits. Current:" + currentHugeMeta + ", offset:" + bitOffset + ", meta:" + value + ", value:" + newValue);
+            }
+
+            return currentHugeMeta.andNot(mask).or(value.shiftLeft(bitOffset).and(mask));
+        } catch (Exception e) {
+            T oldValue = null;
+            InvalidBlockPropertyMetaException suppressed = null;
+            try {
+                oldValue = getValue(currentHugeMeta, bitOffset);
+            } catch (Exception e2) {
+                suppressed = new InvalidBlockPropertyMetaException(this, currentHugeMeta, currentHugeMeta.and(computeHugeValueMask(bitOffset)), e2);
+            }
+            InvalidBlockPropertyValueException toThrow = new InvalidBlockPropertyValueException(this, oldValue, newValue, e);
+            if (suppressed != null) {
+                toThrow.addSuppressed(suppressed);
+            }
+            throw toThrow;
         }
-        
-        return currentHugeMeta.andNot(mask).or(value.shiftLeft(bitOffset).and(mask));
     }
     
     private int getMeta(int currentMeta, int bitOffset) {
-        return (currentMeta & ~computeRightMask(bitOffset)) >>> bitOffset;
+        return (currentMeta & computeValueMask(bitOffset)) >>> bitOffset;
     }
     
     private int getMetaFromBig(long currentMeta, int bitOffset) {
-        return (int) ((currentMeta & ~computeBigRightMask(bitOffset)) >>> bitOffset);
+        return (int) ((currentMeta & computeBigValueMask(bitOffset)) >>> bitOffset);
     }
     
     private int getMetaFromHuge(BigInteger currentMeta, int bitOffset) {
-        return currentMeta.andNot(computeHugeRightMask(bitOffset)).shiftRight(bitOffset).intValue();
+        return currentMeta.and(computeHugeValueMask(bitOffset)).shiftRight(bitOffset).intValue();
     }
 
     @PowerNukkitOnly
@@ -200,28 +247,42 @@ public abstract class BlockProperty<T> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public void validate(@Nullable T value) {
+    protected void validate(@Nullable T value) {
         // Does nothing by default
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public abstract void validateMeta(int meta);
+    protected abstract void validateMeta(int meta);
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public void validateMeta(int meta, int offset) {
-        validateMeta(getMeta(meta, offset));
+    public final void validateMeta(int meta, int offset) {
+        try {
+            validateMeta(getMeta(meta, offset));
+        } catch (Exception e) {
+            throw new InvalidBlockPropertyMetaException(this, meta, meta & computeValueMask(offset), e);
+        }
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public void validateMeta(long meta, int offset) {
-        validateMeta(getMetaFromBig(meta, offset));
+    public final void validateMeta(long meta, int offset) {
+        try {
+            validateMeta(getMetaFromBig(meta, offset));
+        } catch (Exception e) {
+            throw new InvalidBlockPropertyMetaException(this, meta, meta & computeBigValueMask(offset), e);
+        }
     }
 
-    public void validateMeta(BigInteger meta, int offset) {
-        validateMeta(getMetaFromHuge(meta, offset));
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final void validateMeta(BigInteger meta, int offset) {
+        try {
+            validateMeta(getMetaFromHuge(meta, offset));
+        } catch (Exception e) {
+            throw new InvalidBlockPropertyMetaException(this, meta, meta.and(computeHugeRightMask(offset)), e);
+        }
     }
 
     @PowerNukkitOnly

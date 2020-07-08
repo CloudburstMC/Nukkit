@@ -15,7 +15,7 @@ public abstract class BlockMeta extends Block {
     }
     
     protected BlockMeta(int meta) {
-        blockState.setDataStorageFromInt(meta);
+        getMutableState().setDataStorageFromInt(meta);
     }
 
     @Nonnull

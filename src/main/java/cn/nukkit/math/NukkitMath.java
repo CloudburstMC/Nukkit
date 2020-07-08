@@ -73,7 +73,11 @@ public class NukkitMath {
             return 32;
         }
 
-        int bits = 1;
+        if (data == 0) {
+            return 1;
+        }
+
+        int bits = 0;
         while (data != 0) {
             data >>>= 1;
             bits++;
@@ -89,7 +93,11 @@ public class NukkitMath {
             return 64;
         }
 
-        int bits = 1;
+        if (data == 0) {
+            return 1;
+        }
+
+        int bits = 0;
         while (data != 0) {
             data >>>= 1;
             bits++;

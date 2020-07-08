@@ -19,7 +19,7 @@ public abstract class BlockFallableMeta extends BlockFallable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockFallableMeta(int meta) {
-        blockState.setDataStorageFromInt(meta);
+        getMutableState().setDataStorageFromInt(meta);
     }
 
     @Nonnull

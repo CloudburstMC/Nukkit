@@ -27,10 +27,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -39,6 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Log4j2
 public class BlockStateRegistry {
     public final int BIG_META_MASK = 0xFFFFFFFF;
+    private final Set<String> LEGACY_NAME_SET = Collections.singleton(CommonBlockProperties.LEGACY_PROPERTY_NAME);
     private final Map<BlockState, Integer> blockStateToRuntimeId = new ConcurrentHashMap<>();
     private final Long2IntMap bigIdToRuntimeId = new Long2IntOpenHashMap();
     private final int updateBlockRuntimeId;
@@ -195,40 +193,44 @@ public class BlockStateRegistry {
     }
 
     private int discoverRuntimeId(BlockState state) {
-        if (state.getPropertyNames().equals(CommonBlockProperties.LEGACY_PROPERTIES.getNames())) {
-            return discoverRuntimeIdFromLegacy(state);
+        int runtimeId;
+        Set<String> names = state.getPropertyNames();
+        if (names.isEmpty() || names.equals(LEGACY_NAME_SET)) {
+            runtimeId = discoverRuntimeIdFromLegacy(state);
+        } else {
+            runtimeId = discoverRuntimeIdByStateNbt(state);
         }
-        return discoverRuntimeIdByStateNbt(state);
+        removeStateIdsAsync(runtimeId);
+        return runtimeId;
     }
 
     private int discoverRuntimeIdFromLegacy(BlockState state) {
         long bigId = state.getBigId();
         int runtimeId = bigIdToRuntimeId.get(bigId);
         if (runtimeId == -1) {
-            logDiscoveryError(state);
-            return updateBlockRuntimeId;
+            return logDiscoveryError(state);
         }
         return runtimeId;
     }
 
     private int discoverRuntimeIdByStateNbt(BlockState state) {
         Integer runtimeId = stateIdToRuntimeId.remove(state.getStateId());
-        try {
-            if (runtimeId != null) {
-                return runtimeId;
-            }
-
-            runtimeId = stateIdToRuntimeId.remove(state.getLegacyStateId());
-            if (runtimeId != null) {
-                return runtimeId;
-            }
-
-            runtimeId = logDiscoveryError(state);
+        if (runtimeId != null) {
             return runtimeId;
-        } finally {
-            if (runtimeId != null && runtimeId != updateBlockRuntimeId) {
-                stateIdToRuntimeId.values().removeIf(runtimeId::equals);
-            }
+        }
+
+        runtimeId = stateIdToRuntimeId.remove(state.getLegacyStateId());
+        if (runtimeId != null) {
+            return runtimeId;
+        }
+
+        runtimeId = logDiscoveryError(state);
+        return runtimeId;
+    }
+    
+    private void removeStateIdsAsync(@Nullable Integer runtimeId) {
+        if (runtimeId != null && runtimeId != updateBlockRuntimeId) {
+            new Thread(() -> stateIdToRuntimeId.values().removeIf(runtimeId::equals)).start();
         }
     }
 
