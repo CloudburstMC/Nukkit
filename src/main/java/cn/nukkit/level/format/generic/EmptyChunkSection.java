@@ -3,6 +3,7 @@ package cn.nukkit.level.format.generic;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.ChunkSection;
+import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -38,7 +39,10 @@ public class EmptyChunkSection implements ChunkSection {
     static {
         BinaryStream stream = new BinaryStream();
         stream.putByte((byte) cn.nukkit.level.format.anvil.ChunkSection.STREAM_STORAGE_VERSION);
-        stream.putVarInt(0);
+        stream.putVarInt(2);
+        PalettedBlockStorage emptyStorage = new PalettedBlockStorage();
+        emptyStorage.writeTo(stream);
+        emptyStorage.writeTo(stream);
         EMPTY_CHUNK_DATA = stream.getBuffer();
     }
 
@@ -203,11 +207,6 @@ public class EmptyChunkSection implements ChunkSection {
     @Override
     public void writeTo(@Nonnull BinaryStream stream) {
         stream.putByteArray(EMPTY_CHUNK_DATA);
-    }
-    
-    @Override
-    public byte[] getBytes() {
-        return EMPTY_CHUNK_DATA;
     }
     
     @Override

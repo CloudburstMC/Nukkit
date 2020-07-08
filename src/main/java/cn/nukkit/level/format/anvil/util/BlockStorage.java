@@ -15,18 +15,19 @@ import java.util.Arrays;
 
 @ParametersAreNonnullByDefault
 public class BlockStorage {
-    private static final byte FLAG_HAS_ID           = 0b00001;
-    private static final byte FLAG_HAS_ID_EXTRA     = 0b00010;
-    private static final byte FLAG_HAS_DATA_EXTRA   = 0b00100;
-    private static final byte FLAG_HAS_DATA_BIG     = 0b01000;
-    private static final byte FLAG_HAS_DATA_HUGE    = 0b10000;
+    private static final byte FLAG_HAS_ID           = 0b00_0001;
+    private static final byte FLAG_HAS_ID_EXTRA     = 0b00_0010;
+    private static final byte FLAG_HAS_DATA_EXTRA   = 0b00_0100;
+    private static final byte FLAG_HAS_DATA_BIG     = 0b00_1000;
+    private static final byte FLAG_HAS_DATA_HUGE    = 0b01_0000;
+    private static final byte FLAG_PALETTE_UPDATED  = 0b10_0000;
     
     private static final byte FLAG_ENABLE_ID_EXTRA  = FLAG_HAS_ID | FLAG_HAS_ID_EXTRA;
     private static final byte FLAG_ENABLE_DATA_EXTRA= FLAG_HAS_ID | FLAG_HAS_DATA_EXTRA;
     private static final byte FLAG_ENABLE_DATA_BIG  = FLAG_ENABLE_DATA_EXTRA | FLAG_HAS_DATA_BIG;
     private static final byte FLAG_ENABLE_DATA_HUGE = FLAG_ENABLE_DATA_BIG | FLAG_HAS_DATA_HUGE;
     
-    private static final byte FLAG_EVERYTHING_ENABLED = FLAG_ENABLE_DATA_HUGE | FLAG_ENABLE_ID_EXTRA;
+    private static final byte FLAG_EVERYTHING_ENABLED = FLAG_ENABLE_DATA_HUGE | FLAG_ENABLE_ID_EXTRA | FLAG_PALETTE_UPDATED;
     
     private static final int BLOCK_ID_MASK          = 0x00FF;
     private static final int BLOCK_ID_EXTRA_MASK    = 0xFF00;
@@ -41,7 +42,7 @@ public class BlockStorage {
     
     private final PalettedBlockStorage palette;
     private final BlockState[] states;
-    private byte flags;
+    private byte flags = FLAG_PALETTE_UPDATED;
 
     public BlockStorage() {
         states = EMPTY.clone();
@@ -169,7 +170,13 @@ public class BlockStorage {
         
         states[index] = state;
         updateFlags(state);
-        palette.setBlock(index, state.getRuntimeId());
+        try {
+            palette.setBlock(index, state.getRuntimeId());
+        } catch (Exception ignored) {
+            // This allow the API to be used before the Block.init() gets called, useful for testing or usage on early
+            // states of the server initialization
+            setFlag(FLAG_PALETTE_UPDATED, false);
+        }
     }
 
     @PowerNukkitOnly
@@ -179,7 +186,7 @@ public class BlockStorage {
     }
 
     public void recheckBlocks() {
-        flags = computeFlags((byte) 0, states);
+        flags = computeFlags((byte)(flags & FLAG_PALETTE_UPDATED), states);
     }
     
     private void updateFlags(BlockState state) {
@@ -223,6 +230,14 @@ public class BlockStorage {
     private boolean getFlag(byte flag) {
         return (flags & flag) == flag;
     }
+    
+    private void setFlag(byte flag, boolean value) {
+        if (value) {
+            flags |= flag;
+        } else {
+            flags &= ~flag;
+        }
+    }
 
     public boolean hasBlockIds() {
         return getFlag(FLAG_HAS_ID);
@@ -247,18 +262,29 @@ public class BlockStorage {
     public boolean hasBlockDataHuge() {
         return getFlag(FLAG_HAS_DATA_HUGE);
     }
+    
+    private boolean isPaletteUpdated() {
+        return getFlag(FLAG_PALETTE_UPDATED);
+    }
 
     public void writeTo(BinaryStream stream) {
+        if (!isPaletteUpdated()) {
+            for (int i = 0; i < states.length; i++) {
+                palette.setBlock(i, states[i].getRuntimeId());
+            }
+            setFlag(FLAG_PALETTE_UPDATED, true);
+        }
         palette.writeTo(stream);
     }
 
     public void iterateStates(BlockPositionDataConsumer<BlockState> consumer) {
         for (int i = 0; i < states.length; i++) {
             // XZY = Bedrock format
+            //int index = (x << 8) + (z << 4) + y; // XZY = Bedrock format
             int x = (i >> 8) & 0xF;
             int z = (i >> 4) & 0xF;
             int y = i & 0xF;
-            consumer.accept(x, z, y, states[i]);
+            consumer.accept(x, y, z, states[i]);
         }
     }
 }

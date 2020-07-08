@@ -23,7 +23,7 @@ public class IntBlockProperty extends BlockProperty<Integer> {
         Preconditions.checkArgument(delta > 0, "maxValue must be higher than minValue. Got min:%s and max:%s", minValue, maxValue);
         
         int mask = -1 >>> (32 - bitSize);
-        Preconditions.checkArgument(delta <= mask, "The data range from %s to %s can't be stored in %d bits", minValue, maxValue, bitSize);
+        Preconditions.checkArgument(delta <= mask, "The data range from %s to %s can't be stored in %s bits", minValue, maxValue, bitSize);
 
         Preconditions.checkArgument(minValue <= defaultValue && defaultValue <= maxValue, "The default value %s is not inside the %s .. %s range", defaultValue, minValue, maxValue);
         this.minValue = minValue;
@@ -46,7 +46,7 @@ public class IntBlockProperty extends BlockProperty<Integer> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public IntBlockProperty(String name, int maxValue, int minValue) {
-        this(name, minValue, maxValue, minValue);
+        this(name, maxValue, minValue, minValue);
     }
 
     @PowerNukkitOnly
@@ -93,7 +93,7 @@ public class IntBlockProperty extends BlockProperty<Integer> {
     @Override
     public void validateMeta(int meta) {
         int max = maxValue - minValue;
-        Preconditions.checkArgument(0 >= meta && meta >= max, "The meta %s is outside the range of 0 .. ", meta, max);
+        Preconditions.checkArgument(0 <= meta && meta <= max, "The meta %s is outside the range of 0 .. ", meta, max);
     }
 
     @PowerNukkitOnly

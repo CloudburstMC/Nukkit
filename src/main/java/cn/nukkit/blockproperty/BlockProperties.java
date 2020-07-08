@@ -39,8 +39,8 @@ public final class BlockProperties {
             RegisteredBlockProperty register = new RegisteredBlockProperty(property, offset);
             offset += property.getBitSize();
 
-            Preconditions.checkArgument(registry.put(property.getName(), register) != null, "The property %s is duplicated by it's normal name", property.getName());
-            Preconditions.checkArgument(byPersistenceName.put(property.getName(), register) != null, "The property %s is duplicated by it's persistence name", property.getPersistenceName());
+            Preconditions.checkArgument(registry.put(property.getName(), register) == null, "The property %s is duplicated by it's normal name", property.getName());
+            Preconditions.checkArgument(byPersistenceName.put(property.getPersistenceName(), register) == null, "The property %s is duplicated by it's persistence name", property.getPersistenceName());
         }
         
         this.byName = Collections.unmodifiableMap(registry);

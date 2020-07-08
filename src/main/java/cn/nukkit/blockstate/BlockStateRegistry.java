@@ -3,6 +3,7 @@ package cn.nukkit.blockstate;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
@@ -10,6 +11,8 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.HumanStringComparator;
+import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
@@ -27,6 +30,7 @@ import java.nio.ByteOrder;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -41,7 +45,7 @@ public class BlockStateRegistry {
     
     private final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     private final Int2ObjectMap<String> blockIdToPersistenceName = new Int2ObjectOpenHashMap<>();
-    private final Map<CompoundTag, Integer> stateNbtToRuntimeId = new ConcurrentHashMap<>();
+    private final Map<String, Integer> stateIdToRuntimeId = new ConcurrentHashMap<>();
     
     private final byte[] blockPaletteBytes;
 
@@ -89,14 +93,22 @@ public class BlockStateRegistry {
 
         //</editor-fold>
 
+        int infoUpdateRuntimeId = -1;
+        
         for (CompoundTag state : tag.getAll()) {
             int runtimeId = runtimeIdAllocator.getAndIncrement();
             CompoundTag stateKey = state.getCompound("block").copy().remove("version");
             String name = state.getCompound("block").getString("name").toLowerCase();
+
+            registerStateNbt(state, runtimeId);
+            
+            if (name.equals("minecraft:info_update")) {
+                infoUpdateRuntimeId = runtimeId;
+            }
+            
             List<CompoundTag> legacyStates = metaOverrides.get(stateKey);
             if (legacyStates == null) {
                 if (!state.contains("LegacyStates")) {
-                    registerStateNbt(state, runtimeId);
                     continue;
                 } else {
                     legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
@@ -108,20 +120,35 @@ public class BlockStateRegistry {
             int firstId = firstState.getInt("id");
             int firstMeta = firstState.getInt("val");
 
+            // Special condition: minecraft:wood maps 3 blocks, minecraft:wood, minecraft:log and minecraft:log2
+            // All other cases, register the name normally
+            if (isNameOwnerOfId(name, firstId)) {
+                registerPersistenceName(firstId, name);
+                registerLegacyState(name, firstMeta, runtimeId);
+            }
+
             registerBigId(firstId, firstMeta, runtimeId);
-            registerPersistenceName(firstId, name);
 
             for (CompoundTag legacyState : legacyStates) {
                 int newBlockId = legacyState.getInt("id");
                 int meta = legacyState.getInt("val");
                 registerBigId(newBlockId, meta, runtimeId);
+                
+                if (isNameOwnerOfId(name, newBlockId)) {
+                    registerLegacyState(name, meta, runtimeId);
+                }
             }
             // No point in sending this since the client doesn't use it.
             state.remove("meta");
             state.remove("LegacyStates");
         }
 
-        updateBlockRuntimeId = getRuntimeId(new BlockState(248, 0));
+        if (infoUpdateRuntimeId == -1) {
+            log.error("Could not find the minecraft:info_update runtime id!");
+            infoUpdateRuntimeId = 0;
+        }
+        
+        updateBlockRuntimeId = infoUpdateRuntimeId;
         
         try {
             blockPaletteBytes = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
@@ -131,6 +158,24 @@ public class BlockStateRegistry {
         
     }
     //</editor-fold>
+    
+    private boolean isNameOwnerOfId(String name, int blockId) {
+        return !name.equals("minecraft:wood") || blockId == BlockID.WOOD_BARK;
+    }
+    
+    @Nonnull
+    private String getStateId(CompoundTag block) {
+        Map<String, String> propertyMap = new TreeMap<>(HumanStringComparator.getInstance());
+        for (Tag tag : block.getCompound("states").getAllTags()) {
+            propertyMap.put(tag.getName(), tag.parseValue().toString());
+        }
+
+        String blockName = block.getString("name");
+        Preconditions.checkArgument(!blockName.isEmpty(), "Couldn't find the block name!");
+        StringBuilder stateId = new StringBuilder(blockName);
+        propertyMap.forEach((name, value) -> stateId.append(';').append(name).append('=').append(value));
+        return stateId.toString();
+    }
 
     public int getRuntimeId(BlockState state) {
         return blockStateToRuntimeId.computeIfAbsent(state, BlockStateRegistry::discoverRuntimeId);
@@ -139,8 +184,14 @@ public class BlockStateRegistry {
     @Deprecated
     @DeprecationDetails(reason = "Does not support hyper ids", replaceWith = "getOrCreateRuntimeId(int id, int meta)", since = "1.3.0.0-PN")
     public int getRuntimeId(int blockId, int meta) {
-        int runtimeId = bigIdToRuntimeId.get((long)blockId << 32 | meta);
-        return runtimeId == -1? updateBlockRuntimeId : runtimeId;
+        long bigId = (long)blockId << 32 | meta;
+        int runtimeId = bigIdToRuntimeId.get(bigId);
+        if (runtimeId == -1) {
+            synchronized (bigIdToRuntimeId) {
+                return bigIdToRuntimeId.computeIfAbsent(bigId, k-> logDiscoveryError(new BlockState(blockId, meta)));
+            }
+        }
+        return runtimeId;
     }
 
     private int discoverRuntimeId(BlockState state) {
@@ -161,30 +212,29 @@ public class BlockStateRegistry {
     }
 
     private int discoverRuntimeIdByStateNbt(BlockState state) {
-        CompoundTag nbt = new CompoundTag(getPersistenceName(state.getBlockId()));
-        for (String propertyName : state.getPropertyNames()) {
-            nbt.putString(propertyName, state.getPersistenceValue(propertyName));
+        Integer runtimeId = stateIdToRuntimeId.remove(state.getStateId());
+        try {
+            if (runtimeId != null) {
+                return runtimeId;
+            }
+
+            runtimeId = stateIdToRuntimeId.remove(state.getLegacyStateId());
+            if (runtimeId != null) {
+                return runtimeId;
+            }
+
+            runtimeId = logDiscoveryError(state);
+            return runtimeId;
+        } finally {
+            if (runtimeId != null && runtimeId != updateBlockRuntimeId) {
+                stateIdToRuntimeId.values().removeIf(runtimeId::equals);
+            }
         }
-        
-        Integer runtimeId = stateNbtToRuntimeId.remove(nbt);
-        if (runtimeId == null) {
-            runtimeId = blockStateToRuntimeId.get(state);
-        }
-        
-        if (runtimeId == null) {
-            runtimeId = blockStateToRuntimeId.putIfAbsent(state, -1);
-        }
-        
-        if (runtimeId == null) {
-            logDiscoveryError(state);
-            return -1;
-        }
-        
-        return runtimeId;
     }
 
-    private void logDiscoveryError(BlockState state) {
+    private int logDiscoveryError(BlockState state) {
         log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()+", replacing with an \"UPDATE!\" block.");
+        return updateBlockRuntimeId;
     }
 
     @Nullable
@@ -193,27 +243,32 @@ public class BlockStateRegistry {
     }
 
     public void registerPersistenceName(int blockId, String persistenceName) {
-        String oldName = blockIdToPersistenceName.putIfAbsent(blockId, persistenceName.toLowerCase());
-        if (oldName != null && !persistenceName.equalsIgnoreCase(oldName)) {
-            throw new UnsupportedOperationException("The persistence name registration tried to replaced a name. Name:"+persistenceName+", Old:"+oldName+", Id:"+blockId);
+        synchronized (blockIdToPersistenceName) {
+            String oldName = blockIdToPersistenceName.putIfAbsent(blockId, persistenceName.toLowerCase());
+            if (oldName != null && !persistenceName.equalsIgnoreCase(oldName)) {
+                throw new UnsupportedOperationException("The persistence name registration tried to replaced a name. Name:" + persistenceName + ", Old:" + oldName + ", Id:" + blockId);
+            }
         }
     }
 
     private void registerStateNbt(CompoundTag state, int runtimeId) {
-        CompoundTag block = state.getCompound("block");
-        CompoundTag nbt = new CompoundTag(block.getString("name").toLowerCase());
-        for (Tag property : block.getCompound("states").getAllTags()) {
-            nbt.putString(property.getName(), property.parseValue().toString());
-        }
-        Integer old = stateNbtToRuntimeId.putIfAbsent(nbt, runtimeId);
-        if (old != null) {
-            throw new UnsupportedOperationException("The persistence NBT registration tried to replaced a runtime id. Old:"+old+", New:"+runtimeId+", State:"+nbt);
+        registerStateId(getStateId(state.getCompound("block")), runtimeId);
+    }
+    
+    private void registerStateId(String stateId, int runtimeId) {
+        Integer old = stateIdToRuntimeId.putIfAbsent(stateId, runtimeId);
+        if (old != null && !old.equals(runtimeId)) {
+            throw new UnsupportedOperationException("The persistence NBT registration tried to replaced a runtime id. Old:"+old+", New:"+runtimeId+", State:"+stateId);
         }
     }
 
     private void registerBigId(long blockId, long meta, int runtimeId) {
         long bigId = blockId << 32 | meta;
         bigIdToRuntimeId.put(bigId, runtimeId);
+    }
+    
+    private void registerLegacyState(String blockName, int meta, int runtimeId) {
+        registerStateId(blockName+";nukkit-legacy="+meta, runtimeId);
     }
 
     public int getBlockPaletteDataVersion() {

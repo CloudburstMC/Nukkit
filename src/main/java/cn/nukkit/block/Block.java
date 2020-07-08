@@ -822,12 +822,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public abstract String getName();
     
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public String getPersistenceName() {
-        return BlockStateRegistry.getPersistenceName(getId());
-    }
-
     public abstract int getId();
 
     public int getItemId() {
@@ -876,7 +870,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Deprecated
     @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public int getDamage() {
-        return blockState.getLegacyDamage();
+        return blockState.getBigDamage();
     }
 
     @Deprecated
@@ -1430,6 +1424,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
+    @Deprecated
+    @DeprecationDetails(reason = "Does the same as getId() but the other is compatible with NukkitX and this is not", since = "1.4.0.0-PN")
     public final int getBlockId() {
         return getId();
     }

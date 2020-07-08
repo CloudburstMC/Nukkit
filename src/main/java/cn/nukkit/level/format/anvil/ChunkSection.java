@@ -206,7 +206,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     private static int getAnvilIndex(int x, int y, int z) {
-        return (y << 8) + (z << 4) + x;
+        return (y << 8) + (z << 4) + x; // YZX
     }
 
     @Override
@@ -496,13 +496,6 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
-    @Override
-    public byte[] getBytes() {
-        BinaryStream stream = new BinaryStream();
-        writeTo(stream);
-        return stream.getBuffer();
-    }
-    
     @Nullable
     private List<byte[]> saveData(
             BlockStorage storage, byte[] idsBase, @Nullable byte[] idsExtra, 
@@ -517,6 +510,10 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         storage.iterateStates(((bx, by, bz, state) -> {
             int anvil = getAnvilIndex(bx, by, bz);
             int blockId = state.getBlockId();
+            if (blockId == 0) {
+                return;
+            }
+            
             idsBase[anvil] = (byte)(blockId & 0xFF);
             if (idsExtra != null) {
                 idsExtra[anvil] = (byte)(blockId >>> 8 & 0xFF);

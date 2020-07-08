@@ -1950,7 +1950,7 @@ public class Server {
         try {
             level = new Level(this, name, path, provider);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
+            log.error(this.getLanguage().translateString("nukkit.level.loadError", name, e.getMessage()), e);
             return false;
         }
 

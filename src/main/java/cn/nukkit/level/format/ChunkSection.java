@@ -103,13 +103,8 @@ public interface ChunkSection {
 
     boolean isEmpty();
 
-    @Deprecated
-    @DeprecationDetails(since = "1.4.0.0-PN", reason = "New write scheme", replaceWith = "toNBT()")
     void writeTo(BinaryStream stream);
 
-    @PowerNukkitOnly
-    byte[] getBytes();
-    
     @PowerNukkitOnly
     int getMaximumLayer();
 

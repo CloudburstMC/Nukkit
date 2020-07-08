@@ -7,11 +7,14 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.HumanStringComparator;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigInteger;
 import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
 
 @ParametersAreNonnullByDefault
 public interface IBlockState {
@@ -45,6 +48,30 @@ public interface IBlockState {
 
     @Nonnull
     String getPersistenceValue(String propertyName);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    default String getPersistenceName() {
+        return BlockStateRegistry.getPersistenceName(getBlockId());
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    default String getStateId() {
+        BlockProperties properties = getProperties();
+        Map<String, String> propertyMap = new TreeMap<>(HumanStringComparator.getInstance());
+        properties.getNames().forEach(name-> propertyMap.put(properties.getBlockProperty(name).getPersistenceName(), getPersistenceValue(name)));
+
+        StringBuilder stateId = new StringBuilder(getPersistenceName());
+        propertyMap.forEach((name, value) -> stateId.append(';').append(name).append('=').append(value));
+        return stateId.toString();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    default String getLegacyStateId() {
+        return getPersistenceName()+";nukkit-legacy="+getDataStorage();
+    }
 
     @Nonnull
     BlockState getCurrentState();

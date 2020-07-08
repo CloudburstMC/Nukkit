@@ -268,6 +268,11 @@ public class Level implements ChunkManager, Metadatable {
         this.blockMetadata = new BlockMetadataStore(this);
         this.server = server;
         this.autoSave = server.getAutoSave();
+        try {
+            this.provider = provider.getConstructor(Level.class, String.class).newInstance(this, path);
+        } catch (Exception e) {
+            throw new LevelException("Caused by " + Utils.getExceptionMessage(e), e);
+        }
         this.timings = new LevelTimings(this);
         this.provider.updateLevelName(name);
 

@@ -22,12 +22,13 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
         long unsignedMinValue = removeSign(minValue);
         long unsignedMaxValue = removeSign(maxValue);
         long delta = unsignedMaxValue - unsignedMinValue;
-        Preconditions.checkArgument(delta > 0, "maxValue must be higher than minValue. Got min:%s and max:%s", minValue, maxValue);
+        Preconditions.checkArgument(delta > 0, "maxValue must be higher than minValue. Got min:%s and max:%s", unsignedMinValue, unsignedMaxValue);
         
-        long mask = -1 >>> (32 - bitSize);
-        Preconditions.checkArgument(delta <= mask, "The data range from %s to %s can't be stored in %d bits", minValue, maxValue, bitSize);
-
-        Preconditions.checkArgument(minValue <= defaultValue && defaultValue <= maxValue, "The default value %s is not inside the %s .. %s range", defaultValue, minValue, maxValue);
+        long mask = removeSign(-1 >>> (32 - bitSize));
+        Preconditions.checkArgument(delta <= mask, "The data range from %s to %s can't be stored in %s bits", unsignedMinValue, unsignedMaxValue, bitSize);
+        
+        long unsignedDefault = removeSign(defaultValue);
+        Preconditions.checkArgument(unsignedMinValue <= unsignedDefault && unsignedDefault <= unsignedMaxValue, "The default value %s is not inside the %s .. %s range", unsignedDefault, unsignedMinValue, unsignedMaxValue);
         this.minValue = unsignedMinValue;
         this.maxValue = unsignedMaxValue;
         this.defaultMeta = getMetaForValue(defaultValue);
@@ -48,7 +49,7 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public UnsignedIntBlockProperty(String name, int maxValue, int minValue) {
-        this(name, minValue, maxValue, minValue);
+        this(name, maxValue, minValue, minValue);
     }
 
     @PowerNukkitOnly
@@ -57,7 +58,7 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
         this(name, maxValue, 0);
     }
     
-    private long removeSign(int value) {
+    private static long removeSign(int value) {
         return (long)value & 0xFFFFFFFFL;
     }
 
@@ -103,7 +104,7 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     @Override
     public void validateMeta(int meta) {
         long max = maxValue - minValue;
-        Preconditions.checkArgument(0 >= meta && meta >= max, "The meta %s is outside the range of 0 .. ", meta, max);
+        Preconditions.checkArgument(0 <= meta && meta <= max, "The meta %s is outside the range of 0 .. ", meta, max);
     }
 
     @PowerNukkitOnly

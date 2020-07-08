@@ -18,7 +18,6 @@ import java.math.BigInteger;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-@EqualsAndHashCode
 @ToString
 @ParametersAreNonnullByDefault
 public class BlockState implements Serializable, IBlockState {
@@ -148,6 +147,49 @@ public class BlockState implements Serializable, IBlockState {
         return storage.getBitSize();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BlockState that = (BlockState) o;
+
+        if (blockId != that.blockId) return false;
+        if (storage.getBitSize() != that.storage.getBitSize()) return false;
+        return compareDataEquality(storage.getNumber(), that.storage.getNumber());
+    }
+
+    @Override
+    public int hashCode() {
+        int bitSize = storage.getBitSize();
+        int result = blockId;
+        result = 31 * result + bitSize;
+        if (bitSize <= 32) {
+            result = 31 * result + storage.getBigDamage();
+        } else if (bitSize <= 64) {
+            result = 31 * result + Long.hashCode(storage.getNumber().longValue());
+        } else {
+            result = 31 * result + storage.getHugeDamage().hashCode();
+        }
+        return result;
+    }
+    
+
+    private static boolean compareDataEquality(Number a, Number b) {
+        Class<? extends Number> aClass = a.getClass();
+        Class<? extends Number> bClass = b.getClass();
+        if (aClass == bClass) {
+            return a.equals(b);
+        }
+        if (aClass != BigInteger.class && bClass != BigInteger.class) {
+            return a.longValue() == b.longValue();
+        }
+        
+        BigInteger aBig = aClass == BigInteger.class? (BigInteger) a : new BigInteger(a.toString());
+        BigInteger bBig = bClass == BigInteger.class? (BigInteger) b : new BigInteger(b.toString());
+        return aBig.equals(bBig);
+    }
+    
     @ParametersAreNonnullByDefault
     private interface Storage extends Serializable {
         @Nonnull
@@ -176,7 +218,6 @@ public class BlockState implements Serializable, IBlockState {
         BigInteger getHugeDamage();
     }
     
-    @EqualsAndHashCode(callSuper = false)
     @ParametersAreNonnullByDefault
     private class IntStorage implements Storage {
         private final int data;
@@ -246,7 +287,6 @@ public class BlockState implements Serializable, IBlockState {
         }
     }
     
-    @EqualsAndHashCode(callSuper = false)
     @ParametersAreNonnullByDefault
     private class LongStorage implements Storage {
         private final long data;
@@ -317,7 +357,6 @@ public class BlockState implements Serializable, IBlockState {
         
     }
     
-    @EqualsAndHashCode(callSuper = false)
     @ParametersAreNonnullByDefault
     private class BigIntegerStorage implements Storage {
         private final BigInteger data;
