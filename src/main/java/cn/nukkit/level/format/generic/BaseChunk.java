@@ -6,6 +6,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.block.BlockWall;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockstate.BlockState;
@@ -30,7 +31,7 @@ import java.nio.ByteBuffer;
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly("Needed for level backward compatibility")
     @Since("1.3.0.0-PN")
-    public static final int CONTENT_VERSION = 1;
+    public static final int CONTENT_VERSION = 2;
 
     protected ChunkSection[] sections;
 
@@ -43,12 +44,12 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         boolean updated = false;
         for (ChunkSection section : sections) {
             int contentVersion = section.getContentVersion();
-            if (contentVersion < 1) {
+            if (contentVersion < 2) {
                 WallUpdater wallUpdater = new WallUpdater(level, section);
                 boolean sectionUpdated = walk(section, new GroupedUpdaters(
                         wallUpdater,
-                        new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK),
-                        new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN)
+                        contentVersion < 1? new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK) : null,
+                        contentVersion < 1? new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN) : null
                 ));
 
                 updated = updated || sectionUpdated;
@@ -65,6 +66,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                     sectionUpdated = walk(section, wallUpdater);
                 }
                 
+                section.setContentVersion(2);
             }
         }
         
@@ -402,7 +404,22 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 return false;
             }
 
-            BlockWall blockWall = (BlockWall) state.getBlock(level, offsetX + x, offsetY + y, offsetZ + z, 0);
+            int levelX = offsetX + x;
+            int levelY = offsetY + y;
+            int levelZ = offsetZ + z;
+            Block block = state.getBlock(level, levelX, levelY, levelZ, 0);
+            if (block instanceof BlockUnknown) {
+                // Block was on an invalid state, clearing the state but keeping the material type
+                block = state.withData(state.getLegacyDamage() & 0xF).getBlock(level, levelX, levelY, levelZ, 0);
+                if (block instanceof BlockUnknown) {
+                    Server.getInstance().getLogger()
+                            .warning("Failed to update the block X:"+levelX+", Y:"+levelY+", Z:"+levelZ+" at "+level
+                                    +", could not cast it to BlockWall.");
+                    return false;
+                }
+            }
+            
+            BlockWall blockWall = (BlockWall) block;
             if (blockWall.autoConfigureState()) {
                 section.setBlockStateAtLayer(x, y, z, 0, blockWall.getCurrentState());
                 return true;
@@ -453,7 +470,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         @Override
         public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
             for (Updater updater : updaters) {
-                if (updater.update(offsetX, offsetY, offsetZ, x, y, z, state)) {
+                if (updater != null && updater.update(offsetX, offsetY, offsetZ, x, y, z, state)) {
                     return true;
                 }
             }
