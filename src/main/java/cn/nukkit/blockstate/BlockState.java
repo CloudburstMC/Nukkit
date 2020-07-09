@@ -26,6 +26,10 @@ public class BlockState implements Serializable, IBlockState {
     @Getter
     private final int blockId;
     private final Storage storage;
+
+    public BlockState(int blockId) {
+        this(blockId, 0);
+    }
     
     public BlockState(int blockId, int blockData) {
         this.blockId = blockId;

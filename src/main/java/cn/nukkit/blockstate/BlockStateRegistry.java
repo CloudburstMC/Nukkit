@@ -179,6 +179,10 @@ public class BlockStateRegistry {
         return blockStateToRuntimeId.computeIfAbsent(state, BlockStateRegistry::discoverRuntimeId);
     }
 
+    public int getRuntimeId(int blockId) {
+        return getRuntimeId(blockId, 0);
+    }
+
     @Deprecated
     @DeprecationDetails(reason = "Does not support hyper ids", replaceWith = "getOrCreateRuntimeId(int id, int meta)", since = "1.3.0.0-PN")
     public int getRuntimeId(int blockId, int meta) {
@@ -186,7 +190,7 @@ public class BlockStateRegistry {
         int runtimeId = bigIdToRuntimeId.get(bigId);
         if (runtimeId == -1) {
             synchronized (bigIdToRuntimeId) {
-                return bigIdToRuntimeId.computeIfAbsent(bigId, k-> logDiscoveryError(new BlockState(blockId, meta)));
+                return bigIdToRuntimeId.computeIfAbsent(bigId, k-> discoverRuntimeId(new BlockState(blockId, meta)));
             }
         }
         return runtimeId;
