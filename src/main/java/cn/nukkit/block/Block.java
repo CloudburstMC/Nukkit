@@ -854,6 +854,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public BlockProperties getProperties() {
         return CommonBlockProperties.EMPTY_PROPERTIES;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getMaxItemDamage() {
+        return 0xF;
+    }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -1370,8 +1376,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getDamage() == b2.getDamage());
     }
 
+    @PowerNukkitDifference(
+            info = "Prevents players from getting invalid items by limiting the return to the maximum damage defined in getMaxItemDamage()", 
+            since = "1.4.0.0-PN")
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage(), 1);
+        return new ItemBlock(this, Math.min(getMaxItemDamage(), this.getDamage()), 1);
     }
 
     public boolean canSilkTouch() {
