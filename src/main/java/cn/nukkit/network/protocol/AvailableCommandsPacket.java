@@ -6,7 +6,6 @@ import lombok.ToString;
 
 import java.util.*;
 import java.util.function.ObjIntConsumer;
-import java.util.function.ToIntFunction;
 
 /**
  * author: MagicDroidX
@@ -20,9 +19,6 @@ public class AvailableCommandsPacket extends DataPacket {
     private static final ObjIntConsumer<BinaryStream> WRITE_BYTE = (s, v) -> s.putByte((byte) v);
     private static final ObjIntConsumer<BinaryStream> WRITE_SHORT = BinaryStream::putLShort;
     private static final ObjIntConsumer<BinaryStream> WRITE_INT = BinaryStream::putLInt;
-    private static final ToIntFunction<BinaryStream> READ_BYTE = BinaryStream::getByte;
-    private static final ToIntFunction<BinaryStream> READ_SHORT = BinaryStream::getLShort;
-    private static final ToIntFunction<BinaryStream> READ_INT = BinaryStream::getLInt;
 
     public static final int ARG_FLAG_VALID = 0x100000;
     public static final int ARG_FLAG_ENUM = 0x200000;
@@ -58,117 +54,7 @@ public class AvailableCommandsPacket extends DataPacket {
 
     @Override
     public void decode() {
-        commands = new HashMap<>();
 
-        List<String> enumValues = new ArrayList<>();
-        List<String> postFixes = new ArrayList<>();
-        List<CommandEnum> enums = new ArrayList<>();
-
-        int len = (int) getUnsignedVarInt();
-        while (len-- > 0) {
-            enumValues.add(getString());
-        }
-
-        len = (int) getUnsignedVarInt();
-        while (len-- > 0) {
-            postFixes.add(getString());
-        }
-
-        ToIntFunction<BinaryStream> indexReader;
-        if (enumValues.size() < 256) {
-            indexReader = READ_BYTE;
-        } else if (enumValues.size() < 65536) {
-            indexReader = READ_SHORT;
-        } else {
-            indexReader = READ_INT;
-        }
-
-        len = (int) getUnsignedVarInt();
-        while (len-- > 0) {
-            String enumName = getString();
-            int enumLength = (int) getUnsignedVarInt();
-
-            List<String> values = new ArrayList<>();
-
-            while (enumLength-- > 0) {
-                int index = indexReader.applyAsInt(this);
-
-                String enumValue;
-
-                if (index < 0 || (enumValue = enumValues.get(index)) == null) {
-                    throw new IllegalStateException("Enum value not found for index " + index);
-                }
-
-                values.add(enumValue);
-            }
-
-            enums.add(new CommandEnum(enumName, values));
-        }
-
-        len = (int) getUnsignedVarInt();
-
-        while (len-- > 0) {
-            String name = getString();
-            String description = getString();
-            int flags = getByte();
-            int permission = getByte();
-            CommandEnum alias = null;
-
-            int aliasIndex = getLInt();
-            if (aliasIndex >= 0) {
-                alias = enums.get(aliasIndex);
-            }
-
-            Map<String, CommandOverload> overloads = new HashMap<>();
-
-            int length = (int) getUnsignedVarInt();
-            while (length-- > 0) {
-                CommandOverload overload = new CommandOverload();
-
-                int paramLen = (int) getUnsignedVarInt();
-
-                overload.input.parameters = new CommandParameter[paramLen];
-                for (int i = 0; i < paramLen; i++) {
-                    String paramName = getString();
-                    int type = getLInt();
-                    boolean optional = getBoolean();
-
-                    CommandParameter parameter = new CommandParameter(paramName, optional);
-
-
-                    if ((type & ARG_FLAG_POSTFIX) != 0) {
-                        parameter.postFix = postFixes.get(type & 0xffff);
-                    } else if ((type & ARG_FLAG_VALID) == 0) {
-                        throw new IllegalStateException("Invalid parameter type received");
-                    } else {
-                        int index = type & 0xffff;
-                        if ((type & ARG_FLAG_ENUM) != 0) {
-                            parameter.enumData = enums.get(index);
-                        } else if ((type & ARG_FLAG_SOFT_ENUM) != 0) {
-                            // TODO: 22/01/2019 soft enums
-                        } else {
-                            throw new IllegalStateException("Unknown parameter type!");
-                        }
-                    }
-
-                    overload.input.parameters[i] = parameter;
-                }
-
-                overloads.put(Integer.toString(length), overload);
-            }
-
-            CommandData data = new CommandData();
-            data.aliases = alias;
-            data.overloads = overloads;
-            data.description = description;
-            data.flags = flags;
-            data.permission = permission;
-
-            CommandDataVersions versions = new CommandDataVersions();
-            versions.versions.add(data);
-
-            this.commands.put(name, versions);
-        }
     }
 
     @Override
@@ -289,5 +175,7 @@ public class AvailableCommandsPacket extends DataPacket {
             this.putUnsignedVarInt(values.size());
             values.forEach(this::putString);
         });
+
+        this.putUnsignedVarInt(0);
     }
 }

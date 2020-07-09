@@ -4,12 +4,15 @@ import cn.nukkit.Player;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.inventory.BigCraftingGrid;
 import cn.nukkit.inventory.CraftingRecipe;
+import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.scheduler.Task;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,9 +23,9 @@ public class CraftingTransaction extends InventoryTransaction {
 
     protected int gridSize;
 
-    protected Item[][] inputs;
+    protected List<Item> inputs;
 
-    protected Item[][] secondaryOutputs;
+    protected List<Item> secondaryOutputs;
 
     protected Item primaryOutput;
 
@@ -32,43 +35,37 @@ public class CraftingTransaction extends InventoryTransaction {
         super(source, actions, false);
 
         this.gridSize = (source.getCraftingGrid() instanceof BigCraftingGrid) ? 3 : 2;
-        Item air = Item.get(Item.AIR, 0, 1);
-        this.inputs = new Item[gridSize][gridSize];
-        for (Item[] a : this.inputs) {
-            Arrays.fill(a, air);
-        }
 
-        this.secondaryOutputs = new Item[gridSize][gridSize];
-        for (Item[] a : this.secondaryOutputs) {
-            Arrays.fill(a, air);
-        }
+        this.inputs = new ArrayList<>();
+
+        this.secondaryOutputs = new ArrayList<>();
 
         init(source, actions);
     }
 
-    public void setInput(int index, Item item) {
-        int y = index / this.gridSize;
-        int x = index % this.gridSize;
-
-        if (this.inputs[y][x].isNull()) {
-            inputs[y][x] = item.clone();
-        } else if (!inputs[y][x].equals(item)) {
-            throw new RuntimeException("Input " + index + " has already been set and does not match the current item (expected " + inputs[y][x] + ", got " + item + ")");
+    public void setInput(Item item) {
+        if (inputs.size() < gridSize * gridSize) {
+            for (Item existingInput : this.inputs) {
+                if (existingInput.equals(item, item.hasMeta(), item.hasCompoundTag())) {
+                    existingInput.setCount(existingInput.getCount() + item.getCount());
+                    return;
+                }
+            }
+            inputs.add(item.clone());
+        } else {
+            throw new RuntimeException("Input list is full can't add " + item);
         }
     }
 
-    public Item[][] getInputMap() {
+    public List<Item> getInputList() {
         return inputs;
     }
 
-    public void setExtraOutput(int index, Item item) {
-        int y = (index / this.gridSize);
-        int x = index % gridSize;
-
-        if (secondaryOutputs[y][x].isNull()) {
-            secondaryOutputs[y][x] = item.clone();
-        } else if (!secondaryOutputs[y][x].equals(item)) {
-            throw new RuntimeException("Output " + index + " has already been set and does not match the current item (expected " + secondaryOutputs[y][x] + ", got " + item + ")");
+    public void setExtraOutput(Item item) {
+        if (secondaryOutputs.size() < gridSize * gridSize) {
+            secondaryOutputs.add(item.clone());
+        } else {
+            throw new RuntimeException("Output list is full can't add " + item);
         }
     }
 
@@ -88,50 +85,8 @@ public class CraftingTransaction extends InventoryTransaction {
         return recipe;
     }
 
-    private Item[][] reindexInputs() {
-        int xMin = gridSize - 1;
-        int yMin = gridSize - 1;
-
-        int xMax = 0;
-        int yMax = 0;
-
-        for (int y = 0; y < this.inputs.length; y++) {
-            Item[] row = this.inputs[y];
-
-            for (int x = 0; x < row.length; x++) {
-                Item item = row[x];
-
-                if (!item.isNull()) {
-                    xMin = Math.min(x, xMin);
-                    yMin = Math.min(y, yMin);
-
-                    xMax = Math.max(x, xMax);
-                    yMax = Math.max(y, yMax);
-                }
-            }
-        }
-
-        final int height = yMax - yMin + 1;
-        final int width = xMax - xMin + 1;
-
-        if (height < 1 || width < 1) {
-            return new Item[0][];
-        }
-
-        Item[][] reindexed = new Item[height][width];
-
-        for (int y = yMin, i = 0; y <= yMax; y++, i++) {
-            System.arraycopy(inputs[y], xMin, reindexed[i], 0, width);
-        }
-
-        return reindexed;
-    }
-
     public boolean canExecute() {
-        Item[][] inputs = reindexInputs();
-
         recipe = source.getServer().getCraftingManager().matchRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
-
         return this.recipe != null && super.canExecute();
     }
 
@@ -201,6 +156,19 @@ public class CraftingTransaction extends InventoryTransaction {
             return true;
         }
 
+        return false;
+    }
+
+    public boolean checkForCraftingPart(List<InventoryAction> actions) {
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (slotChangeAction.getInventory().getType() == InventoryType.UI && slotChangeAction.getSlot() == 50 &&
+                        !slotChangeAction.getSourceItem().equals(slotChangeAction.getTargetItem())) {
+                    return true;
+                }
+            }
+        }
         return false;
     }
 }

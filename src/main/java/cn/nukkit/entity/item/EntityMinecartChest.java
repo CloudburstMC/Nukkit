@@ -51,6 +51,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract implements Inven
         for (Item item : this.inventory.getContents().values()) {
             this.level.dropItem(this, item);
         }
+        this.inventory.clearAll();
     }
 
     @Override
@@ -61,7 +62,7 @@ public class EntityMinecartChest extends EntityMinecartAbstract implements Inven
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         player.addWindow(this.inventory);
-        return true;
+        return false; // If true, the count of items player has in hand decreases
     }
 
     @Override

@@ -25,4 +25,9 @@ public class FrozenOceanBiome extends OceanBiome {
     public boolean isFreezing() {
         return true;
     }
+
+    @Override
+    public boolean canRain() {
+        return false;
+    }
 }

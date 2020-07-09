@@ -108,6 +108,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         for (Item content : inventory.getContents().values()) {
             level.dropItem(this, content);
         }
+        this.inventory.clearAll();
     }
 
     @Override

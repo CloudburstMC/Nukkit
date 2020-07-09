@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.BlockEntityShulkerBox;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -14,6 +14,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityExplodeEvent;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
@@ -169,19 +170,22 @@ public class Explosion {
         }
 
         ItemBlock air = new ItemBlock(Block.get(BlockID.AIR));
+        BlockEntity container;
 
         //Iterator iter = this.affectedBlocks.entrySet().iterator();
         for (Block block : this.affectedBlocks) {
             //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
                 ((BlockTNT) block).prime(new NukkitRandom().nextRange(10, 30), this.what instanceof Entity ? (Entity) this.what : null);
-            } else if (block.getId() == Block.CHEST || block.getId() == Block.TRAPPED_CHEST) {
-                BlockEntity chest = block.getLevel().getBlockEntity(block);
-                if (chest != null) {
-                    for (Item drop : ((BlockEntityChest) chest).getInventory().getContents().values()) {
+            } else if ((container = block.getLevel().getBlockEntity(block)) instanceof InventoryHolder) {
+                if (container instanceof BlockEntityShulkerBox) {
+                    this.level.dropItem(block.add(0.5, 0.5, 0.5), block.toItem());
+                    ((InventoryHolder) container).getInventory().clearAll();
+                } else {
+                    for (Item drop : ((InventoryHolder) container).getInventory().getContents().values()) {
                         this.level.dropItem(block.add(0.5, 0.5, 0.5), drop);
                     }
-                    ((BlockEntityChest) chest).getInventory().clearAll();
+                    ((InventoryHolder) container).getInventory().clearAll();
                 }
             } else if (Math.random() * 100 < yield) {
                 for (Item drop : block.getDrops(air)) {

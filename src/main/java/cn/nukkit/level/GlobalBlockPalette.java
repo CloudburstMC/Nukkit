@@ -4,19 +4,24 @@ import cn.nukkit.Server;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import lombok.extern.log4j.Log4j2;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Log4j2
 public class GlobalBlockPalette {
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
@@ -29,27 +34,32 @@ public class GlobalBlockPalette {
         legacyToRuntimeId.defaultReturnValue(-1);
         runtimeIdToLegacy.defaultReturnValue(-1);
 
-        InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat");
-        if (stream == null) {
-            throw new AssertionError("Unable to locate block state nbt");
-        }
         ListTag<CompoundTag> tag;
-        try {
+        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat")) {
+            if (stream == null) {
+                throw new AssertionError("Unable to locate block state nbt");
+            }
             //noinspection unchecked
-            tag = (ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.LITTLE_ENDIAN, false);
+            tag = (ListTag<CompoundTag>) NBTIO.readTag(new ByteArrayInputStream(ByteStreams.toByteArray(stream)), ByteOrder.LITTLE_ENDIAN, false);
         } catch (IOException e) {
             throw new AssertionError("Unable to load block palette", e);
         }
 
         for (CompoundTag state : tag.getAll()) {
             int runtimeId = runtimeIdAllocator.getAndIncrement();
-            if (!state.contains("meta")) continue;
+            if (!state.contains("LegacyStates")) continue;
 
+            List<CompoundTag> legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
             int id = state.getShort("id");
             int[] meta = state.getIntArray("meta");
             String name = state.getCompound("block").getString("name");
 
             // Resolve to first legacy id
+            CompoundTag firstState = legacyStates.get(0);
+            runtimeIdToLegacy.put(runtimeId, firstState.getInt("id") << 6 | firstState.getShort("val"));
+
+            for (CompoundTag legacyState : legacyStates) {
+                int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
             runtimeIdToLegacy.put(runtimeId, id << 6 | meta[0]);
             stringToLegacyId.put(name, id);
             legacyIdToString.put(id, name);
@@ -72,8 +82,13 @@ public class GlobalBlockPalette {
         int legacyId = id << 6 | meta;
         int runtimeId = legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
-            //runtimeId = registerMapping(runtimeIdAllocator.incrementAndGet(), legacyId);
-            throw new NoSuchElementException("Unmapped block registered id:" + id + " meta:" + meta);
+            runtimeId = legacyToRuntimeId.get(id << 6);
+            if (runtimeId == -1) {
+                log.info("Creating new runtime ID for unknown block {}", id);
+                runtimeId = runtimeIdAllocator.getAndIncrement();
+                legacyToRuntimeId.put(id << 6, runtimeId);
+                runtimeIdToLegacy.put(runtimeId, id << 6);
+            }
         }
         return runtimeId;
     }

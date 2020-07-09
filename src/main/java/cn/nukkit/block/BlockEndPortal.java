@@ -70,6 +70,11 @@ public class BlockEndPortal extends BlockFlowable {
     }
 
     @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
     public Item toItem() {
         return new ItemBlock(Block.get(BlockID.AIR));
     }
