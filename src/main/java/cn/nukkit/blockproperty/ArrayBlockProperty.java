@@ -7,25 +7,27 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
 import java.util.Set;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
+@ParametersAreNonnullByDefault
 public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     @Nonnull
     private final E[] universe;
     
     private final int defaultMeta;
     
-    private static <E> E[] checkUniverseLength(@Nonnull E[] universe) {
+    private static <E> E[] checkUniverseLength(E[] universe) {
         Preconditions.checkArgument(universe.length > 0, "The universe can't be empty");
         return universe;
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, @Nonnull E[] universe, @Nonnull E defaultValue, int bitSize, String persistenceName) {
+    public ArrayBlockProperty(String name, E[] universe, E defaultValue, int bitSize, String persistenceName) {
         super(name, bitSize, persistenceName);
         this.universe = universe.clone();
         checkUniverseLength(universe);
@@ -46,25 +48,25 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, @Nonnull E[] universe, @Nonnull E defaultValue, int bitSize) {
+    public ArrayBlockProperty(String name, E[] universe, E defaultValue, int bitSize) {
         this(name, universe, defaultValue, bitSize, name);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, @Nonnull E[] universe, @Nonnull E defaultValue) {
+    public ArrayBlockProperty(String name, E[] universe, E defaultValue) {
         this(name, universe, defaultValue, NukkitMath.bitLength(universe.length - 1));
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, @Nonnull E[] universe) {
+    public ArrayBlockProperty(String name, E[] universe) {
         this(name, checkUniverseLength(universe), universe[0]);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, @Nonnull Class<E> enumClass) {
+    public ArrayBlockProperty(String name, Class<E> enumClass) {
         this(name, enumClass.getEnumConstants());
     }
 
@@ -91,7 +93,8 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     public int getIntValueForMeta(int meta) {
         return meta;
     }
-
+    
+    @Nonnull
     @Override
     public String getPersistenceValueForMeta(int meta) {
         return getValueForMeta(meta).toString().toLowerCase();

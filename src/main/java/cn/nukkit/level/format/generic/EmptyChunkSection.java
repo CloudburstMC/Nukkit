@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.generic;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
@@ -11,12 +12,14 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
+@ParametersAreNonnullByDefault
 public class EmptyChunkSection implements ChunkSection {
     @SuppressWarnings("java:S2386")
     public static final EmptyChunkSection[] EMPTY = new EmptyChunkSection[16];
@@ -111,12 +114,16 @@ public class EmptyChunkSection implements ChunkSection {
         return false;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public boolean setBlock(int x, int y, int z, int blockId, int meta) {
         if (blockId != 0) throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
         return false;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
         if (blockId != 0) throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
@@ -144,38 +151,52 @@ public class EmptyChunkSection implements ChunkSection {
         if (id != 0) throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public final int getBlockData(int x, int y, int z) {
         return 0;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public int getBlockData(int x, int y, int z, int layer) {
         return 0;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public void setBlockData(int x, int y, int z, int data) {
         if (data != 0) throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public void setBlockData(int x, int y, int z, int layer, int data) {
         if (data != 0) throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public boolean setFullBlockId(int x, int y, int z, int fullId) {
         if (fullId != 0) throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
         return false;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public boolean setFullBlockId(int x, int y, int z, int layer, int fullId) {
         if (fullId != 0) throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
         return false;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public int getFullBlock(int x, int y, int z, int layer) {
         return 0;
@@ -216,11 +237,13 @@ public class EmptyChunkSection implements ChunkSection {
         return 0;
     }
     
+    @Nonnull
     @Override
     public CompoundTag toNBT() {
-        return null;
+        return new CompoundTag();
     }
 
+    @Nonnull
     @Override
     public EmptyChunkSection copy() {
         return this;

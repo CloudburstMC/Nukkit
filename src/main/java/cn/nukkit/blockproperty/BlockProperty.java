@@ -8,10 +8,12 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigInteger;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
+@ParametersAreNonnullByDefault
 public abstract class BlockProperty<T> {
     private final int bitSize;
     private final String name;

@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.anvil;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
@@ -253,11 +254,15 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         return true;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public int getBlockData(int x, int y, int z) {
         return getBlockData(x, y, z, 0);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public int getBlockData(int x, int y, int z, int layer) {
         synchronized (storageList) {
@@ -266,11 +271,15 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public void setBlockData(int x, int y, int z, int data) {
         setBlockData(x, y, z, 0, data);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public void setBlockData(int x, int y, int z, int layer, int data) {
         synchronized (storageList) {
@@ -278,6 +287,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public int getFullBlock(int x, int y, int z) {
         return getFullBlock(x, y, z, 0);
@@ -292,6 +303,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public int getFullBlock(int x, int y, int z, int layer) {
         synchronized (storageList) {
@@ -325,11 +338,15 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public boolean setBlock(int x, int y, int z, int blockId, int meta) {
         return setBlockAtLayer(x, y, z, 0, blockId, meta);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
         return setBlockStateAtLayer(x, y, z, layer, new BlockState(blockId, meta));
@@ -574,6 +591,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         return blob;
     }
 
+    @Nonnull
     @Override
     public CompoundTag toNBT() {
         CompoundTag s = new CompoundTag();
@@ -735,6 +753,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
+    @Nonnull
     public ChunkSection copy() {
         BlockStorage[] storageCopy = new BlockStorage[Math.min(this.storageList.size(), getMaximumLayer() + 1)];
         for (int i = 0; i < storageCopy.length; i++) {

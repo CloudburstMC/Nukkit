@@ -418,7 +418,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 } catch (InvalidBlockPropertyMetaException e2) {
                     e.addSuppressed(e2);
                     log.warn("Failed to update the block X:"+levelX+", Y:"+levelY+", Z:"+levelZ+" at "+level
-                                    +", could not cast it to BlockWall.", e2);
+                                    +", could not cast it to BlockWall.", e);
                     return false;
                 }
             }

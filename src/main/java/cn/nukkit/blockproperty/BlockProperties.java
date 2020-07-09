@@ -57,7 +57,7 @@ public final class BlockProperties {
         }
     }
     
-    public MutableBlockState loadState(int blockId, Number storage) {
+    public MutableBlockState createMutableState(int blockId, Number storage) {
         if (bitSize <= 32) {
             if (storage instanceof Integer) {
                 return new IntMutableBlockState(blockId, this, storage.intValue());

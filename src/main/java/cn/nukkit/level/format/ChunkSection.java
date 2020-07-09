@@ -26,13 +26,19 @@ public interface ChunkSection {
 
     void setBlockId(int x, int y, int z, int id);
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     int getBlockData(int x, int y, int z);
 
     @PowerNukkitOnly
     int getBlockData(int x, int y, int z, int layer);
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     void setBlockData(int x, int y, int z, int data);
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @PowerNukkitOnly
     void setBlockData(int x, int y, int z, int layer, int data);
 
@@ -78,14 +84,16 @@ public interface ChunkSection {
     boolean setFullBlockId(int x, int y, int z, int layer, int fullId);
 
     @PowerNukkitOnly
-    @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN", replaceWith = "setBlock(int x, int y, int z, int blockId, int meta)")
     boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId);
 
     boolean setBlock(int x, int y, int z, int blockId);
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     boolean setBlock(int x, int y, int z, int blockId, int meta);
 
+    @Deprecated
+    @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @PowerNukkitOnly
     boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta);
 
