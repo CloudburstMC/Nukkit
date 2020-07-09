@@ -7,16 +7,16 @@ import cn.nukkit.nbt.tag.ListTag;
 import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
-import lombok.extern.log4j.Log4j2;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -50,22 +50,18 @@ public class GlobalBlockPalette {
             if (!state.contains("LegacyStates")) continue;
 
             List<CompoundTag> legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
-            int id = state.getShort("id");
-            int[] meta = state.getIntArray("meta");
             String name = state.getCompound("block").getString("name");
 
             // Resolve to first legacy id
             CompoundTag firstState = legacyStates.get(0);
-            runtimeIdToLegacy.put(runtimeId, firstState.getInt("id") << 6 | firstState.getShort("val"));
+
+            int legacyId = firstState.getInt("id") << 6 | firstState.getShort("val");
+            runtimeIdToLegacy.put(runtimeId, legacyId);
+            stringToLegacyId.put(name, legacyId);
 
             for (CompoundTag legacyState : legacyStates) {
-                int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
-            runtimeIdToLegacy.put(runtimeId, id << 6 | meta[0]);
-            stringToLegacyId.put(name, id);
-            legacyIdToString.put(id, name);
-
-            for (int val : meta) {
-                int legacyId = id << 6 | val;
+                legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
+                legacyIdToString.put(legacyId, name);
                 legacyToRuntimeId.put(legacyId, runtimeId);
             }
             state.remove("meta"); // No point in sending this since the client doesn't use it.
