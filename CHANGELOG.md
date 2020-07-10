@@ -13,6 +13,23 @@ Click the link above to see the future.
 - [#326] Enchantment table not working
 - [#297] Using the hoe or shovel doesn't emit any sound
 - [#328] ClassCastException and some logic errors while processing the chunk backward compatibility method
+- [#344] Sticky pistons not pulling other sticky piston
+- [#344] The technical block names weren't being saved in memory when `GlobalBlockPalette` was loaded
+- [#338] The Dried Kelp Block was not burnable as fuel
+
+### Added
+- [#352] The library jsr305 library at version `3.0.2` to add `@Nullable`, `@Nonnull` and related annotations
+- [#326] A couple of new classes, methods and fields to interact with the enchanting table transactions
+- [#326] The entities without AI: Hoglin, Piglin, Zoglin, Strider
+- [#352] Adds default runtime id to the new blocks with meta `0`
+
+### Changed
+- [#352] Updated the guava library from `21.0` to `24.1.1`
+- [#347] Updated the JWT library from `4.39.2` to `7.9`
+- [#346] Updated the Log4J library from `2.11.1` to `2.13.3`
+- [#326] Changed the Nukkit API version from `1.0.10` to `1.0.11`
+- [#335] The chunk content version from `1` to `2`, all cobblestone walls will be reprocessed on the chunk first load after the update
+- [#352] The `runtime_block_states_overrides.dat` file has been updated
 
 ## [1.3.0.1-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/14?closed=1))
 Improves plugin compatibility and downgrade the RakNet lib to solve a memory leak

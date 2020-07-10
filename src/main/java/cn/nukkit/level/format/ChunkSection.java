@@ -126,7 +126,7 @@ public interface ChunkSection {
     }
 
     @PowerNukkitOnly("Needed for level backward compatibility")
-    @Since("1.3.0.2-PN")
+    @Since("1.3.1.0-PN")
     default void setContentVersion(int contentVersion) {
         // Does nothing
     }

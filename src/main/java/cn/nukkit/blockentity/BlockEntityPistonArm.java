@@ -1,6 +1,7 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
@@ -22,6 +23,7 @@ import java.util.List;
 /**
  * @author CreeperFace
  */
+@PowerNukkitDifference(info = "The piston will work as close as possible to vanilla")
 public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
     public static final float MOVE_STEP = Float.valueOf(0.5f);

@@ -236,14 +236,14 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.2-PN")
+    @Since("1.3.1.0-PN")
     @Override
     public int getContentVersion() {
         return BaseChunk.CONTENT_VERSION;
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.2-PN")
+    @Since("1.3.1.0-PN")
     @Override
     public void setContentVersion(int contentVersion) {
         if (contentVersion != getContentVersion()) {
