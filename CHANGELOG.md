@@ -6,13 +6,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.3.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/13?closed=1))
+## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
+
+## [1.3.1.0-PN] - 2020-07-09 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/13?closed=1))
+Security, stability and enchanting table fixes alongside with few additions.
+
+PowerNukkit now has its own [discord guild], click the link below to join and have fun!  
+💬 https://discord.gg/JVwf39q 💬  
+[![Discord](https://img.shields.io/discord/728280425255927879)](https://discord.gg/JVwf39q)
 
 ### Fixes
 - [#326] Enchantment table not working
 - [#297] Using the hoe or shovel doesn't emit any sound
 - [#328] ClassCastException and some logic errors while processing the chunk backward compatibility method
+- [#344] Sticky pistons not pulling other sticky piston
+- [#344] The technical block names weren't being saved in memory when `GlobalBlockPalette` was loaded
+- [#338] The Dried Kelp Block was not burnable as fuel
+- [#232] The enchanting table level cost is now managed by the server
+
+### Added
+- [#330] The [discord guild] link to the readme
+- [#352] The library jsr305 library at version `3.0.2` to add `@Nullable`, `@Nonnull` and related annotations
+- [#326] A couple of new classes, methods and fields to interact with the enchanting table transactions
+- [#326] The entities without AI: Hoglin, Piglin, Zoglin, Strider
+- [#352] Adds default runtime id to the new blocks with meta `0`
+
+### Changed
+- [#348] Updated the guava library from `21.0` to `24.1.1`
+- [#347] Updated the JWT library from `4.39.2` to `7.9`
+- [#346] Updated the Log4J library from `2.11.1` to `2.13.3`
+- [#326] Changed the Nukkit API version from `1.0.10` to `1.0.11`
+- [#335] The chunk content version from `1` to `2`, all cobblestone walls will be reprocessed on the chunk first load after the update
+- [#352] The `runtime_block_states_overrides.dat` file has been updated
 
 ## [1.3.0.1-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/14?closed=1))
 Improves plugin compatibility and downgrade the RakNet lib to solve a memory leak
@@ -333,9 +359,11 @@ Fixes several anvil issues.
     - Bamboo
 
 [updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/bleeding/CHANGELOG.md
+[discord guild]: https://discord.gg/JVwf39q
 
-[Unreleased 1.3.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
-[1.3.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
+[Unreleased 1.4.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.1.0-PN...bleeding
+[1.3.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.1-PN...v1.3.1.0-PN
+[1.3.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...v1.3.0.1-PN
 [1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.1-PN
 [1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.0-PN
 [1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
@@ -346,7 +374,7 @@ Fixes several anvil issues.
 
 [a8247360]: https://github.com/GameModsBR/PowerNukkit/commit/a8247360
 
-[NukkitX]: https://github.com/NukkitX/Nukkit
+[NukkitX]: https://github.com/CloudburstMC/Nukkit
 
 [#12]: https://github.com/GameModsBR/PowerNukkit/issues/12
 [#44]: https://github.com/GameModsBR/PowerNukkit/issues/44
@@ -387,6 +415,7 @@ Fixes several anvil issues.
 [#226]: https://github.com/GameModsBR/PowerNukkit/issues/226
 [#227]: https://github.com/GameModsBR/PowerNukkit/pull/227
 [#228]: https://github.com/GameModsBR/PowerNukkit/issues/228
+[#232]: https://github.com/GameModsBR/PowerNukkit/issues/232
 [#234]: https://github.com/GameModsBR/PowerNukkit/issues/234
 [#235]: https://github.com/GameModsBR/PowerNukkit/issues/235
 [#239]: https://github.com/GameModsBR/PowerNukkit/issues/239
@@ -427,3 +456,11 @@ Fixes several anvil issues.
 [#323]: https://github.com/GameModsBR/PowerNukkit/issues/323
 [#326]: https://github.com/GameModsBR/PowerNukkit/pull/326
 [#328]: https://github.com/GameModsBR/PowerNukkit/issues/326
+[#330]: https://github.com/GameModsBR/PowerNukkit/issues/330
+[#335]: https://github.com/GameModsBR/PowerNukkit/issues/335
+[#338]: https://github.com/GameModsBR/PowerNukkit/issues/338
+[#344]: https://github.com/GameModsBR/PowerNukkit/issues/344
+[#346]: https://github.com/GameModsBR/PowerNukkit/issues/346
+[#347]: https://github.com/GameModsBR/PowerNukkit/issues/347
+[#348]: https://github.com/GameModsBR/PowerNukkit/issues/348
+[#352]: https://github.com/GameModsBR/PowerNukkit/issues/352
