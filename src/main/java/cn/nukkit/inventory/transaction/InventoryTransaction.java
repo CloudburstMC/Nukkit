@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.Inventory;
-import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
@@ -135,10 +134,11 @@ public class InventoryTransaction {
     }
 
     protected void sendInventories() {
-        for (Inventory inventory : this.inventories) {
-            inventory.sendContents(this.source);
-            if (inventory instanceof PlayerInventory) {
-                ((PlayerInventory) inventory).sendArmorContents(this.source);
+        for (InventoryAction action : this.actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction sca = (SlotChangeAction) action;
+
+                sca.getInventory().sendSlot(sca.getSlot(), this.source);
             }
         }
     }

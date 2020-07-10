@@ -1,8 +1,6 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.item.Item;
-import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 
@@ -65,28 +63,7 @@ public class PlayerUIInventory extends BaseInventory {
 
     @Override
     public void sendContents(Player... target) {
-        sendSlot(0, target); //update cursor slot
-
-        InventoryContentPacket pk = new InventoryContentPacket();
-        pk.slots = new Item[this.getSize()];
-        for (int i = 0; i < this.getSize(); ++i) {
-            pk.slots[i] = this.getItem(i);
-        }
-
-        for (Player p : target) {
-            if (p == this.getHolder()) {
-                pk.inventoryId = ContainerIds.UI;
-            } else {
-                int id;
-
-                if ((id = p.getWindowId(this)) == ContainerIds.NONE) {
-                    this.close(p);
-                    continue;
-                }
-                pk.inventoryId = id;
-            }
-            p.dataPacket(pk);
-        }
+        //doesn't work here
     }
 
     @Override
