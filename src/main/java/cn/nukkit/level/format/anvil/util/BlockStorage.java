@@ -214,7 +214,7 @@ public class BlockStorage {
                 newFlags |= FLAG_ENABLE_DATA_BIG;
             } else if (bitSize > 4) {
                 newFlags |= FLAG_ENABLE_DATA_EXTRA;
-            } else if (bitSize > 0) {
+            } else if (bitSize > 1 || blockId != 0) {
                 newFlags |= FLAG_HAS_ID;
             }
 
