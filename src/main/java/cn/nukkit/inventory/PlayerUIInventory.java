@@ -50,7 +50,6 @@ public class PlayerUIInventory extends BaseInventory {
         for (Player p : target) {
             if (p == this.getHolder()) {
                 pk.inventoryId = ContainerIds.UI;
-                p.dataPacket(pk);
             } else {
                 int id;
 
@@ -59,13 +58,15 @@ public class PlayerUIInventory extends BaseInventory {
                     continue;
                 }
                 pk.inventoryId = id;
-                p.dataPacket(pk);
             }
+            p.dataPacket(pk);
         }
     }
 
     @Override
     public void sendContents(Player... target) {
+        sendSlot(0, target); //update cursor slot
+
         InventoryContentPacket pk = new InventoryContentPacket();
         pk.slots = new Item[this.getSize()];
         for (int i = 0; i < this.getSize(); ++i) {
@@ -75,7 +76,6 @@ public class PlayerUIInventory extends BaseInventory {
         for (Player p : target) {
             if (p == this.getHolder()) {
                 pk.inventoryId = ContainerIds.UI;
-                p.dataPacket(pk);
             } else {
                 int id;
 
@@ -84,8 +84,8 @@ public class PlayerUIInventory extends BaseInventory {
                     continue;
                 }
                 pk.inventoryId = id;
-                p.dataPacket(pk);
             }
+            p.dataPacket(pk);
         }
     }
 
