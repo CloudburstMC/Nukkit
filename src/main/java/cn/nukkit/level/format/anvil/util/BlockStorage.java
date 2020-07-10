@@ -61,6 +61,8 @@ public class BlockStorage {
         return index;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     public int getBlockData(int x, int y, int z) {
         return states[getIndex(x, y, z)].getBigDamage();
     }
@@ -73,12 +75,16 @@ public class BlockStorage {
         int index = getIndex(x, y, z);
         setBlockState(index, states[index].withBlockId(id));    
     }
-    
+
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     public void setBlockData(int x, int y, int z, int data) {
         int index = getIndex(x, y, z);
         setBlockState(index, states[index].withData(data));
     }
-    
+
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void setBlock(int x, int y, int z, int id, int data) {
@@ -88,13 +94,13 @@ public class BlockStorage {
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public int getFullBlock(int x, int y, int z) {
         return getFullBlock(getIndex(x, y, z));
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public void setFullBlock(int x, int y, int z, int value) {
         this.setFullBlock(getIndex(x, y, z), value);
     }
@@ -102,14 +108,11 @@ public class BlockStorage {
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public BlockState getAndSetBlock(int x, int y, int z, int id, int meta) {
-        return getAndSetBlock(getIndex(x, y, z), id, meta);
+        return getAndSetBlockState(getIndex(x, y, z), new BlockState(id, meta));
     }
-    
-    private BlockState getAndSetBlock(int index, int id, int meta) {
-        BlockState newState = new BlockState(id, meta);
-        return getAndSetBlockState(index, newState);
-    }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockState getAndSetBlockState(int x, int y, int z, BlockState state) {
         return getAndSetBlockState(getIndex(x, y, z), state);
     }
@@ -127,13 +130,13 @@ public class BlockStorage {
     }
     
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN", replaceWith = "getAndSetFullBlock")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN", replaceWith = "getAndSetFullBlock")
     public int getAndSetFullBlock(int x, int y, int z, int value) {
         return getAndSetFullBlock(getIndex(x, y, z), value);
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     private int getAndSetFullBlock(int index, int value) {
         Preconditions.checkArgument(value < (0x1FF << Block.DATA_BITS | Block.DATA_MASK), "Invalid full block");
         int blockId = value >> Block.DATA_BITS & BLOCK_ID_FULL;
@@ -148,13 +151,13 @@ public class BlockStorage {
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     private int getFullBlock(int index) {
         return states[index].getFullId();
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     private void setFullBlock(int index, int value) {
         Preconditions.checkArgument(value < (BLOCK_ID_FULL << Block.DATA_BITS | Block.DATA_MASK), "Invalid full block");
         int blockId = value >> Block.DATA_BITS & BLOCK_ID_FULL;

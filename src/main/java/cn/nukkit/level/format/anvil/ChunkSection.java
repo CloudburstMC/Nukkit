@@ -240,12 +240,16 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public boolean setFullBlockId(int x, int y, int z, int fullId) {
         setFullBlockId(x, y, z, 0, fullId);
         return true;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public boolean setFullBlockId(int x, int y, int z, int layer, int fullId) {
         synchronized (storageList) {
@@ -315,12 +319,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public boolean setBlock(int x, int y, int z, int blockId) {
-        return setBlockAtLayer(x, y, z, 0, blockId, 0);
+        return setBlockStateAtLayer(x, y, z, 0, new BlockState(blockId));
     }
 
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId) {
-        return setBlockAtLayer(x, y, z, layer, blockId, 0);
+        return setBlockStateAtLayer(x, y, z, layer, new BlockState(blockId));
     }
 
     @Nonnull
@@ -333,8 +337,16 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public Block getAndSetBlock(int x, int y, int z, int layer, Block block) {
         synchronized (storageList) {
-            BlockState before = getOrSetStorage(layer).getAndSetBlockState(x, y, z, block.getCurrentState());
-            return before.getBlock();
+            return getOrSetStorage(layer).getAndSetBlockState(x, y, z, block.getCurrentState()).getBlock();
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public BlockState getAndSetBlockState(int x, int y, int z, int layer, BlockState state) {
+        synchronized (storageList) {
+            return getOrSetStorage(layer).getAndSetBlockState(x, y, z, state);
         }
     }
 
@@ -513,6 +525,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         }
     }
 
+    @SuppressWarnings("java:S1905")
     @Nullable
     private List<byte[]> saveData(
             BlockStorage storage, byte[] idsBase, @Nullable byte[] idsExtra, 
@@ -645,8 +658,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                     
                     if (dataHuge != null) {
                         ListTag<ByteArrayTag> hugeDataListTag = new ListTag<>(HUGE_TAG_NAME);
-                        for (byte[] hyperData : dataHuge) {
-                            hugeDataListTag.add(new ByteArrayTag("", hyperData));
+                        for (byte[] hugeData : dataHuge) {
+                            hugeDataListTag.add(new ByteArrayTag("", hugeData));
                         }
                         storageTag.putList(hugeDataListTag);
                     }

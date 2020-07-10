@@ -184,7 +184,7 @@ public class BlockStateRegistry {
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", replaceWith = "getOrCreateRuntimeId(int id, int meta)", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "getRuntimeId(BlockState state)", since = "1.3.0.0-PN")
     public int getRuntimeId(int blockId, int meta) {
         long bigId = (long)blockId << 32 | meta;
         int runtimeId = bigIdToRuntimeId.get(bigId);

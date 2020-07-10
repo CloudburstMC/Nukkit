@@ -43,12 +43,12 @@ public interface ChunkSection {
     void setBlockData(int x, int y, int z, int layer, int data);
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     int getFullBlock(int x, int y, int z);
 
     @PowerNukkitOnly
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     int getFullBlock(int x, int y, int z, int layer);
     
     @PowerNukkitOnly
@@ -71,16 +71,26 @@ public interface ChunkSection {
 
     @Nonnull
     Block getAndSetBlock(int x, int y, int z, Block block);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    BlockState getAndSetBlockState(int x, int y, int z, int layer, BlockState state);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    default BlockState getAndSetBlockState(int x, int y, int z, BlockState state) {
+        return getAndSetBlockState(x, y, z, 0, state);
+    }
 
     @PowerNukkitOnly
     void setBlockId(int x, int y, int z, int layer, int id);
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN", replaceWith = "setBlock(int x, int y, int z, int blockId, int meta)")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN", replaceWith = "setBlockState(int x, int y, int z, BlockState state)")
     boolean setFullBlockId(int x, int y, int z, int fullId);
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN", replaceWith = "setBlock(int x, int y, int z, int blockId, int meta)")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN", replaceWith = "setBlockStateAtLayer(int x, int y, int z, int layer, BlockState state)")
     boolean setFullBlockId(int x, int y, int z, int layer, int fullId);
 
     @PowerNukkitOnly

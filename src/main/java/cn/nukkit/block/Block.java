@@ -60,7 +60,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @SuppressWarnings({"java:S1444", "java:S2386"})
     public static Class<? extends Block>[] list = null;
     
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     @Deprecated
     @SuppressWarnings({"java:S1444", "java:S2386", "java:S1123", "java:S1133", "DeprecatedIsStillUsed"})
     public static Block[] fullList = null;
@@ -68,7 +68,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @SuppressWarnings({"java:S1444", "java:S2386"})
     public static int[] light = null;
 
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     @Deprecated
     @SuppressWarnings({"java:S1444", "java:S2386", "java:S1123", "java:S1133", "DeprecatedIsStillUsed"})
     public static int[] fullLight = null;
@@ -561,7 +561,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
         return fullList[id << DATA_BITS].clone();
     }
-
+    
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     public static Block get(int id, Integer meta) {
         if (id < 0) {
             id = 255 - id;
@@ -580,10 +582,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     public static Block get(int id, Integer meta, Position pos) {
         return get(id, meta, pos, 0);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     @SuppressWarnings("unchecked")
     public static Block get(int id, Integer meta, Position pos, int layer) {
         if (id < 0) {
@@ -608,6 +614,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return block;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     public static Block get(int id, int data) {
         if (id < 0) {
             id = 255 - id;
@@ -622,13 +630,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public static Block get(int fullId, Level level, int x, int y, int z) {
         return get(fullId, level, x, y, z, 0);
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public static Block get(int fullId, Level level, int x, int y, int z, int layer) {
         Block block = fullList[fullId].clone();
         block.x = x;
@@ -639,12 +647,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return block;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public static Block get(int id, int meta, Level level, int x, int y, int z) {
         return get(id, meta, level, x, y, z, 0);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public static Block get(int id, int meta, Level level, int x, int y, int z, int layer) {
@@ -840,10 +852,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     /**
      * The full id is a combination of the id and data.
      * @return full id
-     * @deprecated PowerNukkit: Does not support hyper ids
+     * @deprecated PowerNukkit: The meta is limited to 32 bits
      */
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public int getFullId() {
         return mutableState.getFullId();
     }

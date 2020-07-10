@@ -76,6 +76,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private static int levelIdCounter = 1;
     private static int chunkLoaderCounter = 1;
+    @SuppressWarnings({"java:S1444", "java:S3008"})
     public static int COMPRESSION_LEVEL = 8;
 
     public static final int BLOCK_UPDATE_NORMAL = 1;
@@ -106,37 +107,37 @@ public class Level implements ChunkManager, Metadatable {
     private static final boolean[] randomTickBlocks = new boolean[Block.MAX_BLOCK_ID];
 
     static {
-        randomTickBlocks[Block.GRASS] = true;
-        randomTickBlocks[Block.FARMLAND] = true;
-        randomTickBlocks[Block.MYCELIUM] = true;
-        randomTickBlocks[Block.SAPLING] = true;
-        randomTickBlocks[Block.LEAVES] = true;
-        randomTickBlocks[Block.LEAVES2] = true;
-        randomTickBlocks[Block.SNOW_LAYER] = true;
-        randomTickBlocks[Block.ICE] = true;
-        randomTickBlocks[Block.LAVA] = true;
-        randomTickBlocks[Block.STILL_LAVA] = true;
-        randomTickBlocks[Block.CACTUS] = true;
-        randomTickBlocks[Block.BEETROOT_BLOCK] = true;
-        randomTickBlocks[Block.CARROT_BLOCK] = true;
-        randomTickBlocks[Block.POTATO_BLOCK] = true;
-        randomTickBlocks[Block.MELON_STEM] = true;
-        randomTickBlocks[Block.PUMPKIN_STEM] = true;
-        randomTickBlocks[Block.WHEAT_BLOCK] = true;
-        randomTickBlocks[Block.SUGARCANE_BLOCK] = true;
-        randomTickBlocks[Block.RED_MUSHROOM] = true;
-        randomTickBlocks[Block.BROWN_MUSHROOM] = true;
-        randomTickBlocks[Block.NETHER_WART_BLOCK] = true;
-        randomTickBlocks[Block.FIRE] = true;
-        randomTickBlocks[Block.GLOWING_REDSTONE_ORE] = true;
-        randomTickBlocks[Block.COCOA_BLOCK] = true;
-        randomTickBlocks[Block.CORAL_FAN] = true;
-        randomTickBlocks[Block.CORAL_FAN_DEAD] = true;
-        randomTickBlocks[Block.BLOCK_KELP] = true;
-        randomTickBlocks[Block.SWEET_BERRY_BUSH] = true;
-        randomTickBlocks[Block.TURTLE_EGG] = true;
-        randomTickBlocks[Block.BAMBOO] = true;
-        randomTickBlocks[Block.BAMBOO_SAPLING] = true;
+        randomTickBlocks[BlockID.GRASS] = true;
+        randomTickBlocks[BlockID.FARMLAND] = true;
+        randomTickBlocks[BlockID.MYCELIUM] = true;
+        randomTickBlocks[BlockID.SAPLING] = true;
+        randomTickBlocks[BlockID.LEAVES] = true;
+        randomTickBlocks[BlockID.LEAVES2] = true;
+        randomTickBlocks[BlockID.SNOW_LAYER] = true;
+        randomTickBlocks[BlockID.ICE] = true;
+        randomTickBlocks[BlockID.LAVA] = true;
+        randomTickBlocks[BlockID.STILL_LAVA] = true;
+        randomTickBlocks[BlockID.CACTUS] = true;
+        randomTickBlocks[BlockID.BEETROOT_BLOCK] = true;
+        randomTickBlocks[BlockID.CARROT_BLOCK] = true;
+        randomTickBlocks[BlockID.POTATO_BLOCK] = true;
+        randomTickBlocks[BlockID.MELON_STEM] = true;
+        randomTickBlocks[BlockID.PUMPKIN_STEM] = true;
+        randomTickBlocks[BlockID.WHEAT_BLOCK] = true;
+        randomTickBlocks[BlockID.SUGARCANE_BLOCK] = true;
+        randomTickBlocks[BlockID.RED_MUSHROOM] = true;
+        randomTickBlocks[BlockID.BROWN_MUSHROOM] = true;
+        randomTickBlocks[BlockID.NETHER_WART_BLOCK] = true;
+        randomTickBlocks[BlockID.FIRE] = true;
+        randomTickBlocks[BlockID.GLOWING_REDSTONE_ORE] = true;
+        randomTickBlocks[BlockID.COCOA_BLOCK] = true;
+        randomTickBlocks[BlockID.CORAL_FAN] = true;
+        randomTickBlocks[BlockID.CORAL_FAN_DEAD] = true;
+        randomTickBlocks[BlockID.BLOCK_KELP] = true;
+        randomTickBlocks[BlockID.SWEET_BERRY_BUSH] = true;
+        randomTickBlocks[BlockID.TURTLE_EGG] = true;
+        randomTickBlocks[BlockID.BAMBOO] = true;
+        randomTickBlocks[BlockID.BAMBOO_SAPLING] = true;
     }
 
     private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();
@@ -1500,13 +1501,13 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public int getFullBlock(int x, int y, int z) {
         return getFullBlock(x, y, z, 0);
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason ="The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public int getFullBlock(int x, int y, int z, int layer) {
         return this.getChunk(x >> 4, z >> 4, false).getFullBlock(x & 0x0f, y & 0xff, z & 0x0f, layer);
     }
@@ -1777,11 +1778,15 @@ public class Level implements ChunkManager, Metadatable {
         currentMap.put(Level.localBlockHash(x, y, z), changeBlocksPresent);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized void setBlockFullIdAt(int x, int y, int z, int fullId) {
         setBlockFullIdAt(x, y, z, 0, fullId);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized void setBlockFullIdAt(int x, int y, int z, int layer, int fullId) {
         setBlock(x, y, z, layer, Block.fullList[fullId], false, false);
@@ -2485,6 +2490,11 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Override
+    public BlockState getBlockStateAt(int x, int y, int z, int layer) {
+        return getChunk(x >> 4, z >> 4, true).getBlockStateAt(x, y, z, layer);
+    }
+
+    @Override
     public int getBlockIdAt(int x, int y, int z) {
         return getBlockIdAt(x, y, z, 0);
     }
@@ -2509,17 +2519,25 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized void setBlockAt(int x, int y, int z, int id, int data) {
         setBlockAtLayer(x, y, z, 0, id, data);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized boolean setBlockAtLayer(int x, int y, int z, int layer, int id, int data) {
+        return setBlockStateAt(x, y, z, layer, new BlockState(id, data));
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public synchronized boolean setBlockStateAt(int x, int y, int z, int layer, BlockState state) {
         BaseFullChunk chunk = this.getChunk(x >> 4, z >> 4, true);
-        boolean changed = chunk.setBlockAtLayer(x & 0x0f, y & 0xff, z & 0x0f, layer, id & 0xff, data & 0xf);
-        chunk.setBlockId(x & 0x0f, y & 0xff, z & 0x0f, id & 0xff);
-        chunk.setBlockData(x & 0x0f, y & 0xff, z & 0x0f, data & 0xf);
+        boolean changed = chunk.setBlockStateAtLayer(x & 0x0f, y & 0xff, z & 0x0f, layer, state);
         addBlockChange(x, y, z);
         temporalVector.setComponents(x, y, z);
         for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {
@@ -2528,6 +2546,8 @@ public class Level implements ChunkManager, Metadatable {
         return changed;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public int getBlockDataAt(int x, int y, int z) {
         return getBlockDataAt(x, y, z, 0);
@@ -2543,19 +2563,25 @@ public class Level implements ChunkManager, Metadatable {
         this.sendBlockExtraData(x, y, z, id, data);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized int getBlockDataAt(int x, int y, int z, int layer) {
         return this.getChunk(x >> 4, z >> 4, true).getBlockData(x & 0x0f, y & 0xff, z & 0x0f, layer);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public void setBlockDataAt(int x, int y, int z, int data) {
         setBlockDataAt(x, y, z, 0, data);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized void setBlockDataAt(int x, int y, int z, int layer, int data) {
-        this.getChunk(x >> 4, z >> 4, true).setBlockData(x & 0x0f, y & 0xff, z & 0x0f, layer, data & 0x0f);
+        this.getChunk(x >> 4, z >> 4, true).setBlockData(x & 0x0f, y & 0xff, z & 0x0f, layer, data);
         addBlockChange(x, y, z);
         temporalVector.setComponents(x, y, z);
         for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {

@@ -98,6 +98,15 @@ public class EmptyChunkSection implements ChunkSection {
         if (block.getId() != 0) throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
         return Block.get(0);
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public BlockState getAndSetBlockState(int x, int y, int z, int layer, BlockState state) {
+        if (!BlockState.AIR.equals(state)) throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
+        return BlockState.AIR;
+    }
 
     @Override
     public void setBlockId(int x, int y, int z, int layer, int id) {
