@@ -5,13 +5,12 @@ import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.PlayerInventory;
+import cn.nukkit.inventory.PlayerUIInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.MainLogger;
 
 import java.util.*;
-import java.util.Map.Entry;
 
 /**
  * @author CreeperFace
@@ -67,19 +66,19 @@ public class InventoryTransaction {
     }
 
     public void addAction(InventoryAction action) {
-        if(action instanceof SlotChangeAction){
-            SlotChangeAction slotChangeAction = (SlotChangeAction)action;
+        if (action instanceof SlotChangeAction) {
+            SlotChangeAction slotChangeAction = (SlotChangeAction) action;
 
             ListIterator<InventoryAction> iterator = this.actions.listIterator();
 
-            while(iterator.hasNext()){
+            while (iterator.hasNext()) {
                 InventoryAction existingAction = iterator.next();
-                if(existingAction instanceof SlotChangeAction){
-                    SlotChangeAction existingSlotChangeAction = (SlotChangeAction)existingAction;
-                    if(!existingSlotChangeAction.getInventory().equals(slotChangeAction.getInventory()))
+                if (existingAction instanceof SlotChangeAction) {
+                    SlotChangeAction existingSlotChangeAction = (SlotChangeAction) existingAction;
+                    if (!existingSlotChangeAction.getInventory().equals(slotChangeAction.getInventory()))
                         continue;
                     Item existingTarget = existingSlotChangeAction.getTargetItem();
-                    if(existingSlotChangeAction.getSlot() == slotChangeAction.getSlot() && slotChangeAction.getSourceItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())){
+                    if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot() && slotChangeAction.getSourceItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
                         iterator.set(new SlotChangeAction(existingSlotChangeAction.getInventory(), existingSlotChangeAction.getSlot(), existingSlotChangeAction.getSourceItem(), slotChangeAction.getTargetItem()));
                         action.onAddToTransaction(this);
                         return;
@@ -165,7 +164,7 @@ public class InventoryTransaction {
             }
             SlotChangeAction slotChange = (SlotChangeAction) action;
 
-            if (slotChange.getInventory() instanceof PlayerInventory) {
+            if (slotChange.getInventory() instanceof PlayerUIInventory) {
                 who = (Player) slotChange.getInventory().getHolder();
             }
 
