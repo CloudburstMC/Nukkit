@@ -190,7 +190,7 @@ public class BlockStateRegistry {
         int runtimeId = bigIdToRuntimeId.get(bigId);
         if (runtimeId == -1) {
             synchronized (bigIdToRuntimeId) {
-                return bigIdToRuntimeId.computeIfAbsent(bigId, k-> discoverRuntimeId(new BlockState(blockId, meta)));
+                return bigIdToRuntimeId.computeIfAbsent(bigId, k-> discoverRuntimeId(BlockState.of(blockId, meta)));
             }
         }
         return runtimeId;

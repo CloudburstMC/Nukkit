@@ -68,7 +68,7 @@ public interface FullChunk extends Cloneable {
     @Since("1.4.0.0-PN")
     default BlockState getBlockState(int x, int y, int z, int layer) {
         int full = getFullBlock(x, y, z, layer);
-        return new BlockState(full >> Block.DATA_BITS, full & Block.DATA_MASK);
+        return BlockState.of(full >> Block.DATA_BITS, full & Block.DATA_MASK);
     }
 
     Block getAndSetBlock(int x, int y, int z, Block block);

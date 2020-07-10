@@ -35,7 +35,7 @@ public interface ChunkManager {
     }
 
     default void setBlockAt(int x, int y, int z, int id) {
-        setBlockStateAt(x, y, z, new BlockState(id));
+        setBlockStateAt(x, y, z, BlockState.of(id));
     }
     
     @PowerNukkitOnly

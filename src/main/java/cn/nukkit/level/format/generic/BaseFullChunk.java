@@ -588,14 +588,14 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId) {
-        return setBlockStateAtLayer(x, y, z, layer, new BlockState(blockId));
+        return setBlockStateAtLayer(x, y, z, layer, BlockState.of(blockId));
     }
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
-        return setBlockStateAtLayer(x, y, z, layer, new BlockState(blockId, meta));
+        return setBlockStateAtLayer(x, y, z, layer, BlockState.of(blockId, meta));
     }
 
     @Override
@@ -615,7 +615,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public void setBlockAt(int x, int y, int z, int id, int data) {
         if (x >> 4 == getX() && z >> 4 == getZ()) {
-            setBlockState(x & 15, y, z & 15, new BlockState(id, data));
+            setBlockState(x & 15, y, z & 15, BlockState.of(id, data));
         }
     }
 

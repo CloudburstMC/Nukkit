@@ -2530,7 +2530,7 @@ public class Level implements ChunkManager, Metadatable {
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized boolean setBlockAtLayer(int x, int y, int z, int layer, int id, int data) {
-        return setBlockStateAt(x, y, z, layer, new BlockState(id, data));
+        return setBlockStateAt(x, y, z, layer, BlockState.of(id, data));
     }
     
     @PowerNukkitOnly

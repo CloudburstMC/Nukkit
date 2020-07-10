@@ -121,12 +121,12 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId) {
-        return this.setBlockStateAtLayer(x, y, z, layer, new BlockState(blockId));
+        return this.setBlockStateAtLayer(x, y, z, layer, BlockState.of(blockId));
     }
 
     @Override
     public boolean setBlock(int x, int y, int z, int blockId) {
-        return setBlockState(x, y, z, new BlockState(blockId));
+        return setBlockState(x, y, z, BlockState.of(blockId));
     }
 
     @Override
@@ -202,7 +202,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
-        return setBlockStateAtLayer(x, y, z, layer, new BlockState(blockId, meta));
+        return setBlockStateAtLayer(x, y, z, layer, BlockState.of(blockId, meta));
     }
 
     @PowerNukkitOnly
@@ -227,7 +227,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     @Override
     public void setBlockId(int x, int y, int z, int id) {
-        setBlockStateAtLayer(x, y, z, 0, new BlockState(id));
+        setBlockStateAtLayer(x, y, z, 0, BlockState.of(id));
     }
 
     @Deprecated

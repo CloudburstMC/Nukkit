@@ -62,7 +62,7 @@ public interface ChunkSection {
     @Since("1.4.0.0-PN")
     @Nonnull
     default BlockState getBlockState(int x, int y, int z, int layer) {
-        return new BlockState(getBlockId(x, y, z, layer), getBlockData(x, y, z, layer));
+        return BlockState.of(getBlockId(x, y, z, layer), getBlockData(x, y, z, layer));
     }
 
     @PowerNukkitOnly

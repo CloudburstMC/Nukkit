@@ -89,7 +89,7 @@ public class BlockStorage {
     @Since("1.3.0.0-PN")
     public void setBlock(int x, int y, int z, int id, int data) {
         int index = getIndex(x, y, z);
-        BlockState state = new BlockState(id, data);
+        BlockState state = BlockState.of(id, data);
         setBlockState(index, state);
     }
 
@@ -108,7 +108,7 @@ public class BlockStorage {
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public BlockState getAndSetBlock(int x, int y, int z, int id, int meta) {
-        return getAndSetBlockState(getIndex(x, y, z), new BlockState(id, meta));
+        return getAndSetBlockState(getIndex(x, y, z), BlockState.of(id, meta));
     }
 
     @PowerNukkitOnly
@@ -141,7 +141,7 @@ public class BlockStorage {
         Preconditions.checkArgument(value < (0x1FF << Block.DATA_BITS | Block.DATA_MASK), "Invalid full block");
         int blockId = value >> Block.DATA_BITS & BLOCK_ID_FULL;
         int data = value & Block.DATA_MASK;
-        BlockState newState = new BlockState(blockId, data);
+        BlockState newState = BlockState.of(blockId, data);
         BlockState oldState = states[index];
         if (oldState.equals(newState)) {
             return value;
@@ -162,7 +162,7 @@ public class BlockStorage {
         Preconditions.checkArgument(value < (BLOCK_ID_FULL << Block.DATA_BITS | Block.DATA_MASK), "Invalid full block");
         int blockId = value >> Block.DATA_BITS & BLOCK_ID_FULL;
         int data = value & Block.DATA_MASK;
-        BlockState state = new BlockState(blockId, data);
+        BlockState state = BlockState.of(blockId, data);
         setBlockState(index, state);
     }
 

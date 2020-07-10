@@ -117,7 +117,7 @@ public class LongMutableBlockState extends MutableBlockState {
     @Nonnull
     @Override
     public BlockState getCurrentState() {
-        return new BlockState(blockId, storage);
+        return BlockState.of(blockId, storage);
     }
 
     @Nonnull

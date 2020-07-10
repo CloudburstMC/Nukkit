@@ -7,6 +7,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.math.NukkitMath;
+import com.google.common.collect.MapMaker;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -15,68 +16,112 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.concurrent.ConcurrentMap;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 @ToString
 @ParametersAreNonnullByDefault
-public class BlockState implements Serializable, IBlockState {
-    public static final BlockState AIR = new BlockState(BlockID.AIR, 0);
+public final class BlockState implements Serializable, IBlockState {
+    private static final ConcurrentMap<String, BlockState> STATES = new MapMaker().weakValues().makeMap();
+    public static final BlockState AIR = BlockState.of(BlockID.AIR, 0);
+    private static final BigInteger INT_MASK = BigInteger.valueOf(0xFFFFFFFFL);
+    private static final BigInteger LONG_MASK = new BigInteger("FFFFFFFFFFFFFFFF", 16);
+    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public static BlockState of(int blockId) {
+        return STATES.computeIfAbsent(blockId+":0", k-> new BlockState(blockId));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public static BlockState of(int blockId, int blockData) {
+        return STATES.computeIfAbsent(blockId+":"+blockData, k-> new BlockState(blockId, blockData));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public static BlockState of(int blockId, long blockData) {
+        return STATES.computeIfAbsent(blockId+":"+blockData, k-> new BlockState(blockId, blockData));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public static BlockState of(int blockId, BigInteger blockData) {
+        return STATES.computeIfAbsent(blockId+":"+blockData, k-> new BlockState(blockId, blockData));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public static BlockState of(int blockId, Number blockData) {
+        return STATES.computeIfAbsent(blockId+":"+blockData, l-> {
+            if (blockData instanceof Integer) {
+                return new BlockState(blockId, blockData.intValue());
+            } else if (blockData instanceof Long) {
+                return new BlockState(blockId, blockData.longValue());
+            } else if (blockData instanceof BigInteger) {
+                return new BlockState(blockId, (BigInteger) blockData);
+            } else {
+                throw new IllegalArgumentException("The block data " + blockData + " has an unsupported type " + blockData.getClass());
+            }
+        });
+    }
     
     @Getter
     private final int blockId;
+    @Nonnull
     private final Storage storage;
 
-    public BlockState(int blockId) {
+    private BlockState(int blockId) {
         this(blockId, 0);
     }
     
-    public BlockState(int blockId, int blockData) {
+    private BlockState(int blockId, int blockData) {
         this.blockId = blockId;
         storage = new IntStorage(blockData);
     }
     
-    public BlockState(int blockId, long blockData) {
+    private BlockState(int blockId, long blockData) {
         this.blockId = blockId;
-        storage = new LongStorage(blockData);
+        storage = blockData <= 0xFFFFFFFFL? new IntStorage((int)blockData) : new LongStorage(blockData);
     }
     
-    public BlockState(int blockId, BigInteger blockData) {
+    private BlockState(int blockId, BigInteger blockData) {
         this.blockId = blockId;
-        storage = new BigIntegerStorage(blockData);
-    }
-    
-    public BlockState(int blockId, Number blockData) {
-        this.blockId = blockId;
-        if (blockData instanceof Integer) {
+        if (blockData.compareTo(INT_MASK) < 0) {
             storage = new IntStorage(blockData.intValue());
-        } else if (blockData instanceof Long) {
+        } else if (blockData.compareTo(LONG_MASK) < 0) {
             storage = new LongStorage(blockData.longValue());
-        } else if (blockData instanceof BigInteger) {
-            storage = new BigIntegerStorage((BigInteger) blockData);
         } else {
-            throw new IllegalArgumentException("The block data "+blockData+" has an unsupported type "+blockData.getClass());
+            storage = new BigIntegerStorage(blockData);
         }
     }
     
     @Nonnull
     public BlockState withData(int data) {
-        return new BlockState(blockId, data);
+        return of(blockId, data);
     }
 
     @Nonnull
     public BlockState withData(long data) {
-        return new BlockState(blockId, data);
+        return of(blockId, data);
     }
 
     @Nonnull
     public BlockState withData(BigInteger data) {
-        return new BlockState(blockId, data);
+        return of(blockId, data);
     }
 
     @Nonnull
     public BlockState withData(Number data) {
-        return new BlockState(blockId, data);
+        return of(blockId, data);
     }
 
     @Nonnull
@@ -270,7 +315,7 @@ public class BlockState implements Serializable, IBlockState {
         @Nonnull
         @Override
         public BlockState withBlockId(int blockId) {
-            return new BlockState(blockId, data);
+            return BlockState.of(blockId, data);
         }
 
         @Nonnull
@@ -339,7 +384,7 @@ public class BlockState implements Serializable, IBlockState {
         @Nonnull
         @Override
         public BlockState withBlockId(int blockId) {
-            return new BlockState(blockId, data);
+            return BlockState.of(blockId, data);
         }
 
         @Nonnull
@@ -409,7 +454,7 @@ public class BlockState implements Serializable, IBlockState {
         @Nonnull
         @Override
         public BlockState withBlockId(int blockId) {
-            return new BlockState(blockId, data);
+            return BlockState.of(blockId, data);
         }
 
         @Nonnull

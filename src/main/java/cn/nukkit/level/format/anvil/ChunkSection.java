@@ -148,7 +148,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     
     private static BlockState loadState(int index, int blockId, int composedData, ListTag<ByteArrayTag> hugeDataList, int hugeDataSize) {
         if (hugeDataSize == 0) {
-            return new BlockState(blockId, composedData);
+            return BlockState.of(blockId, composedData);
         } else if (hugeDataSize <= 3) {
             return loadHugeIntData(index, blockId, composedData, hugeDataList, hugeDataSize);
         } else if (hugeDataSize <= 7) {
@@ -164,7 +164,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             int longPart = (hugeDataList.get(dataIndex).data[index] & 0xFF) << 8 << (8 * dataIndex);
             data |= longPart;
         }
-        return new BlockState(blockId, data);
+        return BlockState.of(blockId, data);
     }
 
     private static BlockState loadHugeLongData(int index, int blockId, int composedData, ListTag<ByteArrayTag> hugeDataList, int hugeDataSize) {
@@ -173,7 +173,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             long longPart = (hugeDataList.get(dataIndex).data[index] & 0xFFL) << 8 << (8 * dataIndex);
             data |= longPart;
         }
-        return new BlockState(blockId, data);
+        return BlockState.of(blockId, data);
     }
     
     private static BlockState loadHugeBigData(int index, int blockId, int composedData, ListTag<ByteArrayTag> hugeDataList, int hugeDataSize) {
@@ -182,7 +182,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             BigInteger hugePart = BigInteger.valueOf((hugeDataList.get(dataIndex).data[index] & 0xFFL) << 8).shiftLeft(8 * dataIndex);
             data = data.or(hugePart);
         }
-        return new BlockState(blockId, data);
+        return BlockState.of(blockId, data);
     }
 
     private static ListTag<CompoundTag> getStorageTagList(CompoundTag nbt, int version) {
@@ -319,12 +319,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     @Override
     public boolean setBlock(int x, int y, int z, int blockId) {
-        return setBlockStateAtLayer(x, y, z, 0, new BlockState(blockId));
+        return setBlockStateAtLayer(x, y, z, 0, BlockState.of(blockId));
     }
 
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId) {
-        return setBlockStateAtLayer(x, y, z, layer, new BlockState(blockId));
+        return setBlockStateAtLayer(x, y, z, layer, BlockState.of(blockId));
     }
 
     @Nonnull
@@ -361,7 +361,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @DeprecationDetails(reason = "The data is limited to 32 bits", replaceWith = "getBlockState", since = "1.4.0.0-PN")
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int blockId, int meta) {
-        return setBlockStateAtLayer(x, y, z, layer, new BlockState(blockId, meta));
+        return setBlockStateAtLayer(x, y, z, layer, BlockState.of(blockId, meta));
     }
 
     @Override
