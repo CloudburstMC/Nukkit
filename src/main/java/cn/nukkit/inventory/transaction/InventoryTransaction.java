@@ -5,7 +5,6 @@ import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.inventory.PlayerUIInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
@@ -164,7 +163,7 @@ public class InventoryTransaction {
             }
             SlotChangeAction slotChange = (SlotChangeAction) action;
 
-            if (slotChange.getInventory() instanceof PlayerUIInventory) {
+            if (slotChange.getInventory().getHolder() instanceof Player) {
                 who = (Player) slotChange.getInventory().getHolder();
             }
 
