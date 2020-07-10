@@ -48,7 +48,7 @@ The compiled JAR can be found in the `target/` directory.
 
 Running
 -------------
-Simply run `java -jar powernukkit-<version>.jar`.
+Simply run `java -jar powernukkit-<version>.jar` **in an empty folder**.
 
 Plugin API
 -------------
