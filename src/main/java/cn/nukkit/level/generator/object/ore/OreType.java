@@ -17,7 +17,7 @@ import static cn.nukkit.block.BlockID.STONE;
 //porktodo: rewrite this, the whole class is terrible and generated ores look stupid
 public class OreType {
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public final int fullId;
     
     @PowerNukkitOnly

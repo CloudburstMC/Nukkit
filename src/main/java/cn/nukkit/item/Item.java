@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
@@ -423,6 +424,9 @@ public class Item implements Cloneable, BlockID, ItemID {
         return get(id, meta, count, new byte[0]);
     }
 
+    @PowerNukkitDifference(
+            info = "Prevents players from getting invalid items by limiting the return to the maximum damage defined in Block.getMaxItemDamage()",
+            since = "1.4.0.0-PN")
     public static Item get(int id, Integer meta, int count, byte[] tags) {
         try {
             Class c = null;
@@ -438,7 +442,10 @@ public class Item implements Cloneable, BlockID, ItemID {
                 item = new Item(id, meta, count);
             } else if (id < 256) {
                 if (meta >= 0) {
-                    item = new ItemBlock(Block.get(id, meta), meta, count);
+                    // Prevent the players from getting invalid items which could get stuck in the inventory
+                    Block block = Block.get(id, meta);
+                    meta = Math.min(meta, block.getMaxItemDamage());
+                    item = new ItemBlock(block, meta, count);
                 } else {
                     item = new ItemBlock(Block.get(id), meta, count);
                 }

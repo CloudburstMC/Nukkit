@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFallingBlock;
 import cn.nukkit.item.Item;
@@ -12,16 +13,15 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockScaffolding extends BlockFallable {
-
-    private int meta = 0;
+@PowerNukkitOnly
+public class BlockScaffolding extends BlockFallableMeta {
 
     public BlockScaffolding() {
-        this(0);
+        // Does nothing
     }
 
     public BlockScaffolding(int meta) {
-        this.meta = meta;
+        super(meta);
     }
 
     @Override
@@ -30,23 +30,8 @@ public class BlockScaffolding extends BlockFallable {
     }
 
     @Override
-    public int getFullId() {
-        return (getId() << DATA_BITS) + getDamage();
-    }
-
-    @Override
     public String getName() {
         return "Scaffolding";
-    }
-
-    @Override
-    public int getDamage() {
-        return meta;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-        this.meta = meta;
     }
 
     public int getStability() {
