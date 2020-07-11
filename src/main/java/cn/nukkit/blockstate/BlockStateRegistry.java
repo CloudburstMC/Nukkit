@@ -208,8 +208,17 @@ public class BlockStateRegistry {
         return runtimeId;
     }
 
+    @SuppressWarnings("java:S1874")
     private int discoverRuntimeIdFromLegacy(BlockState state) {
-        long bigId = state.getBigId();
+        long bigId;
+        // Special case for PN-96 PowerNukkit#210 where the world contains blocks like 0:13, 0:7, etc
+        if (state.getBlockId() == BlockID.AIR) {
+            bigId = 0;
+        } else {
+            //noinspection deprecation
+            bigId = state.getBigId();
+        }
+        
         int runtimeId = bigIdToRuntimeId.get(bigId);
         if (runtimeId == -1) {
             return logDiscoveryError(state);
