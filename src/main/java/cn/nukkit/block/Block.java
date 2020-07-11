@@ -959,8 +959,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 1.0 + (0.2 * hasteLoreLevel);
     }
 
-    @PowerNukkitDifference
-    private static int toolType0(Item item, int blockId, int blockToolType) {
+    @PowerNukkitDifference(info = "Special condition for the leaves", since = "1.4.0.0-PN")
+    private static int toolType0(Item item, int blockId) {
         if((blockId == LEAVES && item.isHoe()) || (blockId == LEAVES2 && item.isHoe())) return ItemTool.TYPE_SHEARS;
         if (item.isSword()) return ItemTool.TYPE_SWORD;
         if (item.isShovel()) return ItemTool.TYPE_SHOVEL;
@@ -970,7 +970,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return ItemTool.TYPE_NONE;
     }
 
-    @PowerNukkitDifference
+    @PowerNukkitDifference(info = "Special condition for the leaves", since = "1.4.0.0-PN")
     private static boolean correctTool0(int blockToolType, Item item, int blockId) {
         if((blockId == LEAVES && item.isHoe()) ||
            (blockId == LEAVES2 && item.isHoe())){
@@ -998,7 +998,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 1.0 / speed;
     }
 
-    @PowerNukkitDifference
+    @PowerNukkitDifference(info = "Special condition for the leaves", since = "1.4.0.0-PN")
     public double getBreakTime(Item item, Player player) {
         Objects.requireNonNull(item, "getBreakTime: Item can not be null");
         Objects.requireNonNull(player, "getBreakTime: Player can not be null");
@@ -1011,7 +1011,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         int blockId = getId();
         boolean correctTool = correctTool0(getToolType(), item, blockId);
         boolean canHarvestWithHand = canHarvestWithHand();
-        int itemToolType = toolType0(item, blockId, getToolType());
+        int itemToolType = toolType0(item, blockId);
         int itemTier = item.getTier();
         int efficiencyLoreLevel = Optional.ofNullable(item.getEnchantment(Enchantment.ID_EFFICIENCY))
                 .map(Enchantment::getLevel).orElse(0);
@@ -1035,6 +1035,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
      * @param item item used
      * @return break time
      */
+    @PowerNukkitDifference(info = "Special condition for the hoe and netherie support", since = "1.4.0.0-PN")
     @Deprecated
     public double getBreakTime(Item item) {
         double base = this.getHardness() * 1.5;

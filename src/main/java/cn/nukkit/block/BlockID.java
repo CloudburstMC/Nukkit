@@ -462,7 +462,7 @@ public interface BlockID {
     //int WARPED_DOUBLE_SLAB = 522;
     //int SOUL_TORCH = 523;
     //int SOUL_LANTERN = 524;
-    int NETHERITE_BLOCK = 525; //525
+    int NETHERITE_BLOCK = 525;
     //int ANCIENT_DERBIS = 526;
     //int RESPAWN_ANCHOR = 527;
     //int BLACKSTONE = 528;
