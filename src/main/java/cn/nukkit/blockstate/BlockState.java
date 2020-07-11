@@ -6,6 +6,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.math.NukkitMath;
 import com.google.common.collect.MapMaker;
 import lombok.EqualsAndHashCode;
@@ -13,6 +14,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.math.BigInteger;
@@ -130,6 +132,16 @@ public final class BlockState implements Serializable, IBlockState {
     }
 
     @Nonnull
+    public <E> BlockState withProperty(BlockProperty<E> property, E value) {
+        return withProperty(property.getName(), value);
+    }
+    
+    @Nonnull
+    public BlockState withProperty(String propertyName, @Nullable Object value) {
+        return storage.withProperty(propertyName, value);
+    }
+
+    @Nonnull
     @Override
     public Number getDataStorage() {
         return storage.getNumber();
@@ -197,6 +209,14 @@ public final class BlockState implements Serializable, IBlockState {
     }
 
     @Override
+    public int getExactIntStorage() {
+        if (storage.getClass() != IntStorage.class) {
+            throw new ArithmeticException(getDataStorage()+" cant be stored in a 32 bits integer without losses. It has "+getBitSize()+" bits");
+        }
+        return getBigDamage();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -222,7 +242,7 @@ public final class BlockState implements Serializable, IBlockState {
         }
         return result;
     }
-    
+
 
     private static boolean compareDataEquality(Number a, Number b) {
         Class<? extends Number> aClass = a.getClass();
@@ -238,7 +258,7 @@ public final class BlockState implements Serializable, IBlockState {
         BigInteger bBig = bClass == BigInteger.class? (BigInteger) b : new BigInteger(b.toString());
         return aBig.equals(bBig);
     }
-    
+
     @ParametersAreNonnullByDefault
     private interface Storage extends Serializable {
         @Nonnull
@@ -265,6 +285,9 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         BigInteger getHugeDamage();
+
+        @Nonnull
+        BlockState withProperty(String propertyName, @Nullable Object value);
     }
     
     @ParametersAreNonnullByDefault
@@ -316,6 +339,12 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public BlockState withBlockId(int blockId) {
             return BlockState.of(blockId, data);
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withProperty(String propertyName, @Nullable Object value) {
+            return BlockState.of(blockId, getProperties().setValue(data, propertyName, value));
         }
 
         @Nonnull
@@ -389,6 +418,12 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         @Override
+        public BlockState withProperty(String propertyName, @Nullable Object value) {
+            return BlockState.of(blockId, getProperties().setValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
         public String getPersistenceValue(String propertyName) {
             return getProperties().getPersistenceValue(data, propertyName);
         }
@@ -455,6 +490,12 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public BlockState withBlockId(int blockId) {
             return BlockState.of(blockId, data);
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withProperty(String propertyName, @Nullable Object value) {
+            return BlockState.of(blockId, getProperties().setValue(data, propertyName, value));
         }
 
         @Nonnull

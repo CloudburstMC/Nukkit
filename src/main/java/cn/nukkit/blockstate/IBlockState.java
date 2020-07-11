@@ -41,13 +41,36 @@ public interface IBlockState {
 
     @Nonnull
     Object getPropertyValue(String propertyName);
+    
+    @Nonnull
+    default <V> V getPropertyValue(BlockProperty<V> property) {
+        return getCheckedPropertyValue(property.getName(), property.getValueClass());
+    }
+    
+    @Nonnull
+    default <V> V getUncheckedPropertyValue(BlockProperty<V> property) {
+        return getUncheckedPropertyValue(property.getName());
+    }
 
     int getIntValue(String propertyName);
+    
+    default int getIntValue(BlockProperty<?> property) {
+        return getIntValue(property.getName());
+    }
 
     boolean getBooleanValue(String propertyName);
+    
+    default boolean getBooleanValue(BlockProperty<?> property) {
+        return getBooleanValue(property.getName());
+    }
 
     @Nonnull
     String getPersistenceValue(String propertyName);
+    
+    @Nonnull
+    default String getPersistenceValue(BlockProperty<?> property) {
+        return getPersistenceValue(property.getName());
+    }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -146,4 +169,6 @@ public interface IBlockState {
     default int getBitSize() {
         return getProperties().getBitSize();
     }
+
+    int getExactIntStorage();
 }

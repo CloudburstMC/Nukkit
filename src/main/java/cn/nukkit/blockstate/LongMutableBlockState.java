@@ -120,6 +120,15 @@ public class LongMutableBlockState extends MutableBlockState {
         return BlockState.of(blockId, storage);
     }
 
+    @Override
+    public int getExactIntStorage() {
+        int bits = getBitSize();
+        if (bits > 32) {
+            throw new ArithmeticException(storage+" can't be stored in an 32 bits integer. It has "+bits+" bits");
+        }
+        return (int) storage;
+    }
+
     @Nonnull
     @Override
     public LongMutableBlockState copy() {

@@ -116,6 +116,11 @@ public class IntMutableBlockState extends MutableBlockState {
         return BlockState.of(blockId, storage);
     }
 
+    @Override
+    public int getExactIntStorage() {
+        return storage;
+    }
+
     @Nonnull
     @Override
     public IntMutableBlockState copy() {

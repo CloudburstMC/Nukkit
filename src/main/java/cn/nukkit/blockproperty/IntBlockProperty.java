@@ -113,4 +113,9 @@ public class IntBlockProperty extends BlockProperty<Integer> {
     public int getDefaultValue() {
         return getValueForMeta(defaultMeta);
     }
+
+    @Override
+    public Class<Integer> getValueClass() {
+        return Integer.class;
+    }
 }

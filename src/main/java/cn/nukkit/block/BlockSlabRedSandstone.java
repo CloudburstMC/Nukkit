@@ -1,14 +1,22 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.values.StoneSlab2Type;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by CreeperFace on 26. 11. 2016.
  */
 public class BlockSlabRedSandstone extends BlockSlab {
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+            StoneSlab2Type.PROPERTY,
+            TOP_SLOT_PROPERTY
+    );
 
     public static final int RED_SANDSTONE = 0;
     public static final int PURPUR = 1;
@@ -32,6 +40,12 @@ public class BlockSlabRedSandstone extends BlockSlab {
         return RED_SANDSTONE_SLAB;
     }
 
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
     @Override
     public String getName() {
         String[] names = new String[]{
@@ -46,6 +60,12 @@ public class BlockSlabRedSandstone extends BlockSlab {
         };
 
         return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
+    }
+
+
+    @Override
+    public boolean isSameType(BlockSlab slab) {
+        return slab.getId() == getId() && slab.getPropertyValue(StoneSlab2Type.PROPERTY).equals(slab.getPropertyValue(StoneSlab2Type.PROPERTY));
     }
 
     @Override

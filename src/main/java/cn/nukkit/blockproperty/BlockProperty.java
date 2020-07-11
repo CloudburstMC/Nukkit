@@ -304,4 +304,8 @@ public abstract class BlockProperty<T> {
     public String getPersistenceName() {
         return persistenceName;
     }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract Class<T> getValueClass();
 }

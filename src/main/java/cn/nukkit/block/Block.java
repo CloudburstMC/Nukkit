@@ -878,6 +878,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    @Nonnull
     public final BlockState getCurrentState() {
         return mutableState.getCurrentState();
     }
@@ -1537,5 +1538,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Override
     public String getPersistenceValue(@Nonnull String propertyName) {
         return mutableState.getPersistenceValue(propertyName);
+    }
+
+    @Override
+    public final int getExactIntStorage() {
+        return mutableState.getExactIntStorage();
     }
 }

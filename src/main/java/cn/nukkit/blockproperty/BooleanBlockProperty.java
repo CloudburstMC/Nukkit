@@ -123,6 +123,11 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
     }
 
     @Override
+    public Class<Boolean> getValueClass() {
+        return Boolean.class;
+    }
+
+    @Override
     public String getPersistenceValueForMeta(int meta) {
         return meta == 1? "1" : "0";
     }

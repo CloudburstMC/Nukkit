@@ -20,6 +20,8 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     
     private final int defaultMeta;
     
+    private final Class<E> eClass;
+    
     private static <E> E[] checkUniverseLength(E[] universe) {
         Preconditions.checkArgument(universe.length > 0, "The universe can't be empty");
         return universe;
@@ -30,6 +32,8 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     public ArrayBlockProperty(String name, E[] universe, E defaultValue, int bitSize, String persistenceName) {
         super(name, bitSize, persistenceName);
         this.universe = universe.clone();
+        //noinspection unchecked
+        this.eClass = (Class<E>) universe.getClass().getComponentType();
         checkUniverseLength(universe);
         Set<E> elements = new HashSet<>();
         int defaultMetaIndex = -1;
@@ -113,5 +117,10 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     @Override
     protected void validateMeta(int meta) {
         Preconditions.checkElementIndex(meta, universe.length);
+    }
+
+    @Override
+    public Class<E> getValueClass() {
+        return eClass;
     }
 }

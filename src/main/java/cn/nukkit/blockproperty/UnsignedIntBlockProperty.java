@@ -107,6 +107,11 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
         Preconditions.checkArgument(0 <= meta && meta <= max, "The meta %s is outside the range of 0 .. ", meta, max);
     }
 
+    @Override
+    public Class<Integer> getValueClass() {
+        return Integer.class;
+    }
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public long getMaxValue() {
