@@ -45,6 +45,8 @@ public class SimpleBlocksReader {
                 }
             }
         }
+        
+        SortedSet<String> properties = new TreeSet<>(humanStringComparator);
 
         try(FileWriter iniFW = new FileWriter("block-states.ini"); BufferedWriter iniBuff = new BufferedWriter(iniFW);
             FileWriter txtFW = new FileWriter("simple-blocks-nukkit.txt"); BufferedWriter txtBuff = new BufferedWriter(txtFW)) {
@@ -58,13 +60,25 @@ public class SimpleBlocksReader {
                 txtBuff.newLine();
                 iniBuff.newLine();
                 for (Map.Entry<String, SortedSet<String>> propertyEntry : topLevelEntry.getValue().entrySet()) {
-                    iniBuff.write(propertyEntry.getKey());
-                    iniBuff.write('=');
-                    iniBuff.write(String.join(",", propertyEntry.getValue()));
+                    String propertyLine = propertyEntry.getKey() + "=" + String.join(",", propertyEntry.getValue());
+                    properties.add(propertyLine);
+                    iniBuff.write(propertyLine);
                     iniBuff.newLine();
                 }
                 iniBuff.newLine();
             }
         }
+
+        try(FileWriter iniFW = new FileWriter("block-properties.ini"); BufferedWriter iniBuff = new BufferedWriter(iniFW)) {
+            iniBuff.write("# WARNING! Don't edit this file! It's automatically regenerated!");
+            iniBuff.newLine(); iniBuff.newLine();
+            iniBuff.write("[properties]");
+            iniBuff.newLine();
+            for (String property : properties) {
+                iniBuff.write(property);
+                iniBuff.newLine();
+            }
+        }
+        
     }
 }
