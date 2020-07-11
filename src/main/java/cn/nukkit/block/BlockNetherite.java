@@ -25,7 +25,7 @@ public class BlockNetherite extends BlockSolid{
 
     @Override
     public double getHardness() {
-        return 35;
+        return 35; // TODO Should be 50, but the break time is glitchy (same with obsidian but less noticeable because of the texture)
     }
 
     @Override
