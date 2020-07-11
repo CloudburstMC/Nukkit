@@ -7,6 +7,7 @@ import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.generator.object.ObjectTallGrass;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.NukkitRandom;
@@ -19,6 +20,7 @@ import javax.annotation.Nonnull;
  * author: Angelic47
  * Nukkit Project
  */
+
 public class BlockGrass extends BlockDirt {
 
     public BlockGrass() {
@@ -73,10 +75,16 @@ public class BlockGrass extends BlockDirt {
         } else if (item.isHoe()) {
             item.useOn(this);
             this.getLevel().setBlock(this, Block.get(BlockID.FARMLAND));
+            if(player != null){
+                player.getLevel().addSound(player, Sound.USE_GRASS);
+            }
             return true;
         } else if (item.isShovel()) {
             item.useOn(this);
             this.getLevel().setBlock(this, Block.get(BlockID.GRASS_PATH));
+            if(player != null){
+                player.getLevel().addSound(player, Sound.USE_GRASS);
+            }
             return true;
         }
 

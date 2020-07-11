@@ -1,3 +1,5 @@
+# WARNING! Don't edit this file! It's automatically regenerated!
+
 minecraft:acacia_button;button_pressed_bit=0;facing_direction=0
 [395:0, 395:6, 395:7]
 

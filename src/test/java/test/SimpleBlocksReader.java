@@ -48,6 +48,10 @@ public class SimpleBlocksReader {
 
         try(FileWriter iniFW = new FileWriter("block-states.ini"); BufferedWriter iniBuff = new BufferedWriter(iniFW);
             FileWriter txtFW = new FileWriter("simple-blocks-nukkit.txt"); BufferedWriter txtBuff = new BufferedWriter(txtFW)) {
+            iniBuff.write("# WARNING! Don't edit this file! It's automatically regenerated!");
+            iniBuff.newLine(); iniBuff.newLine();
+            txtBuff.write("# WARNING! Don't edit this file! It's automatically regenerated!");
+            txtBuff.newLine(); txtBuff.newLine();
             for (Map.Entry<String, SortedMap<String, SortedSet<String>>> topLevelEntry : states.entrySet()) {
                 iniBuff.write("["+topLevelEntry.getKey()+"]");
                 txtBuff.write(topLevelEntry.getKey());
