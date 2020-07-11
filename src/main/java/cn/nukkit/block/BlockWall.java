@@ -5,6 +5,9 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -20,6 +23,7 @@ import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.InvalidBlockDamageException;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -31,9 +35,20 @@ import static cn.nukkit.utils.BlockColor.*;
  * Nukkit Project
  * @apiNote Implements BlockConnectable only on PowerNukkit
  */
-@PowerNukkitDifference(info = "Extends BlockTransparentHyperMeta instead of BlockTransparentMeta, implements BlockConnectable only on PowerNukkit", since = "1.3.0.0-PN")
+@PowerNukkitDifference(info = "Implements BlockConnectable only on PowerNukkit", since = "1.3.0.0-PN")
 @Log4j2
-public class BlockWall extends BlockTransparentHyperMeta implements BlockConnectable {
+public class BlockWall extends BlockTransparentMeta implements BlockConnectable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+            new ArrayBlockProperty<>("wall_block_type", WallType.class),
+            new ArrayBlockProperty<>("wall_connection_type_south", WallConnectionType.class),
+            new ArrayBlockProperty<>("wall_connection_type_west", WallConnectionType.class),
+            new ArrayBlockProperty<>("wall_connection_type_north", WallConnectionType.class),
+            new ArrayBlockProperty<>("wall_connection_type_east", WallConnectionType.class),
+            new BooleanBlockProperty("wall_post_bit")
+    );
+
     private static final boolean SHOULD_FAIL = false; 
     private static final boolean SHOULD_VALIDATE_META = true;
     private static final double MIN_POST_BB =  5.0/16;
@@ -68,6 +83,14 @@ public class BlockWall extends BlockTransparentHyperMeta implements BlockConnect
     @Override
     public int getId() {
         return STONE_WALL;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @PowerNukkitDifference(since = "1.3.0.0-PN", info = "If an invalid metadata is given, it will remove the invalid bits automatically")

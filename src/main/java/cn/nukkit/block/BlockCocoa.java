@@ -46,12 +46,6 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
-    }
-
-
-    @Override
     public double getMinX() {
         return this.x + getRelativeBoundingBox().getMinX();
     }

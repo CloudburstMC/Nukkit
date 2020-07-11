@@ -5,7 +5,6 @@ import cn.nukkit.event.block.ComposterEmptyEvent;
 import cn.nukkit.event.block.ComposterFillEvent;
 import cn.nukkit.item.*;
 import cn.nukkit.level.Sound;
-import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.DyeColor;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
@@ -22,12 +21,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
     }
 
     public BlockComposter(int meta) {
-        super(MathHelper.clamp(meta, 0, 8));
-    }
-
-    @Override
-    public void setDamage(int meta) {
-        super.setDamage(MathHelper.clamp(meta, 0, 8));
+        super(meta);
     }
 
     @Override

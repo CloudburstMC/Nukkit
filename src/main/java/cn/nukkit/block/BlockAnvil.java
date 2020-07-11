@@ -16,7 +16,8 @@ import java.util.Collection;
 /**
  * Created by Pub4Game on 27.12.2015.
  */
-public class BlockAnvil extends BlockFallable implements Faceable {
+@PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable")
+public class BlockAnvil extends BlockFallableMeta implements Faceable {
 
     private static final String[] NAMES = new String[]{
             "Anvil",
@@ -33,29 +34,12 @@ public class BlockAnvil extends BlockFallable implements Faceable {
             "Very Damaged Anvil"
     };
 
-    private int meta;
-
     public BlockAnvil() {
-        this(0);
+        // Does nothing
     }
 
     public BlockAnvil(int meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public int getFullId() {
-        return (getId() << DATA_BITS) + getDamage();
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
+        super(meta);
     }
 
     @Override
