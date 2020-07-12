@@ -266,15 +266,32 @@ public class BlockBamboo extends BlockTransparentMeta {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if ((item.getId() == Item.DYE && item.getDamage() == 0x0F) || item.getId() == 255 - BlockID.BAMBOO) { //Bonemeal
+        boolean itemIsBoneMeal = item.getId() == Item.DYE && item.getDamage() == 0x0F;
+        if (itemIsBoneMeal || item.getId() == 255 - BlockID.BAMBOO) { //Bonemeal
             int top = (int) y;
-            for (int i = 1; i <= 255; i++) {
-                int id = this.level.getBlockIdAt(this.getFloorX(), this.getFloorY() + i, this.getFloorZ());
+            int count = 1;
+
+            for (int i = 1; i <= 16; i++) {
+                int id = this.level.getBlockIdAt(this.getFloorX(), this.getFloorY() - i, this.getFloorZ());
                 if (id == BAMBOO) {
-                    top++;
+                    count++;
                 } else {
                     break;
                 }
+            }
+
+            for (int i = 1; i <= 16; i++) {
+                int id = this.level.getBlockIdAt(this.getFloorX(), this.getFloorY() + i, this.getFloorZ());
+                if (id == BAMBOO) {
+                    top++;
+                    count++;
+                } else {
+                    break;
+                }
+            }
+
+            if (itemIsBoneMeal && count >= 15) {
+                return false;
             }
 
             boolean success = false;
@@ -288,7 +305,7 @@ public class BlockBamboo extends BlockTransparentMeta {
                 if (player != null && player.isSurvival()) {
                     item.count--;
                 }
-                if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
+                if (itemIsBoneMeal) {
                     this.level.addParticle(new BoneMealParticle(this));
                 } else {
                     level.addSound(block, Sound.BLOCK_BAMBOO_PLACE, 0.8F, 1.0F);
