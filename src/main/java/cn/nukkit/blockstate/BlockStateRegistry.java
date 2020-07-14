@@ -11,6 +11,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.HumanStringComparator;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -42,7 +43,6 @@ public class BlockStateRegistry {
     private final Registration updateBlockRegistration;
 
     private final Map<BlockState, Registration> blockStateRegistration = new ConcurrentHashMap<>();
-    private final Map<CompoundTag, Registration> originalStateRegistration = new ConcurrentHashMap<>();
     private final Map<String, Registration> stateIdRegistration = new ConcurrentHashMap<>();
 
     private final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
@@ -99,7 +99,7 @@ public class BlockStateRegistry {
             String name = state.getCompound("block").getString("name").toLowerCase();
             
             if (name.equals("minecraft:info_update")) {
-                infoUpdateRuntimeId = new Registration(state, BlockState.of(248), runtimeId);
+                infoUpdateRuntimeId = new Registration(BlockState.of(248), runtimeId);
             }
             
             List<CompoundTag> legacyStates = metaOverrides.get(state.getCompound("block").copy().remove("version"));
@@ -174,21 +174,8 @@ public class BlockStateRegistry {
         return stateId.toString();
     }
 
-    public CompoundTag getOriginalState(BlockState state) {
-        return getRegistration(state).original.clone();
-    }
-    
     public int getRuntimeId(BlockState state) {
         return getRegistration(state).runtimeId;
-    }
-    
-    @Nullable
-    public BlockState getBlockStateFromOriginal(CompoundTag original) {
-        Registration registration = originalStateRegistration.get(original);
-        if (registration == null) {
-            return null;
-        }
-        return registration.state;
     }
     
     private Registration getRegistration(BlockState state) {
@@ -210,7 +197,7 @@ public class BlockStateRegistry {
         if (state.getBlockId() == BlockID.AIR) {
             Registration airRegistration = blockStateRegistration.get(BlockState.AIR);
             if (airRegistration != null) {
-                return new Registration(airRegistration.original, state, airRegistration.runtimeId);
+                return new Registration(state, airRegistration.runtimeId);
             }
         }
         
@@ -268,7 +255,7 @@ public class BlockStateRegistry {
 
     private void registerStateId(CompoundTag state, int runtimeId) {
         String stateId = getStateId(state.getCompound("block"));
-        Registration registration = new Registration(state, null, runtimeId);
+        Registration registration = new Registration(null, runtimeId);
         
         Registration old = stateIdRegistration.putIfAbsent(stateId, registration);
         if (old != null && !old.equals(registration)) {
@@ -278,7 +265,7 @@ public class BlockStateRegistry {
     
     private void registerState(int blockId, int meta, CompoundTag originalState, int runtimeId) {
         BlockState state = BlockState.of(blockId, meta);
-        Registration registration = new Registration(originalState, state, runtimeId);
+        Registration registration = new Registration(state, runtimeId);
 
         Registration old = blockStateRegistration.putIfAbsent(state, registration);
         if (old != null && !registration.equals(old)) {
@@ -286,7 +273,6 @@ public class BlockStateRegistry {
         }
 
         CompoundTag block = originalState.getCompound("block");
-        originalStateRegistration.put(block, registration);
         stateIdRegistration.remove(getStateId(block));
         stateIdRegistration.remove(state.getLegacyStateId());
     }
@@ -300,6 +286,10 @@ public class BlockStateRegistry {
     @Nonnull
     public byte[] getBlockPaletteBytes() {
         return blockPaletteBytes.clone();
+    }
+    
+    public void putBlockPaletteBytes(BinaryStream stream) {
+        stream.put(blockPaletteBytes);
     }
     
     public int getBlockPaletteLength() {
@@ -348,8 +338,6 @@ public class BlockStateRegistry {
     @ToString
     @EqualsAndHashCode
     private class Registration {
-        @Nonnull
-        private final CompoundTag original;
         @Nullable
         private BlockState state;
         
