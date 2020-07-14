@@ -24,7 +24,6 @@ public class PlayerInventory extends BaseInventory {
 
     protected int itemInHandIndex = 0;
     private int[] hotbar;
-    private boolean openedByPlayer;
 
     public PlayerInventory(EntityHumanType player) {
         super(player, InventoryType.PLAYER);
@@ -499,16 +498,8 @@ public class PlayerInventory extends BaseInventory {
     }
 
     @Override
-    public boolean open(Player who) {
-        if (who.equals(this.getHolder()) && this.openedByPlayer)
-            return false;
-        return super.open(who);
-    }
-
-    @Override
     public void onOpen(Player who) {
         super.onOpen(who);
-        if (who.equals(this.getHolder())) this.openedByPlayer = true;
         ContainerOpenPacket pk = new ContainerOpenPacket();
         pk.windowId = who.getWindowId(this);
         pk.type = this.getType().getNetworkType();
@@ -524,11 +515,9 @@ public class PlayerInventory extends BaseInventory {
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = who.getWindowId(this);
         who.dataPacket(pk);
-
-        if (who.equals(this.getHolder())) {
-            this.openedByPlayer = false;
-            return;
+        // player can never stop viewing their own inventory
+        if (who != holder) {
+            super.onClose(who);
         }
-        super.onClose(who);
     }
 }

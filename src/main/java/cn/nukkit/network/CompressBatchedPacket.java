@@ -36,7 +36,7 @@ public class CompressBatchedPacket extends AsyncTask {
     @Override
     public void onRun() {
         try {
-            this.finalData = Network.deflate_raw(data, level);
+            this.finalData = Network.deflateRaw(data, level);
             this.data = null;
         } catch (Exception e) {
             //ignore
