@@ -1,27 +1,3 @@
-/*
- * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
- * ORACLE PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- *
- */
 package cn.nukkit.utils.functional;
 
 import java.util.Objects;
@@ -32,7 +8,7 @@ import java.util.function.LongUnaryOperator;
  * Represents a function that accepts three arguments where the last is long and produces a long result.
  * This is the three-arity specialization of {@link Function}.
  *
- * <p>This is a <a href="package-summary.html">functional interface</a>
+ * <p>This is a functional interface
  * whose functional method is {@link #apply(Object, Object, long)}.
  *
  * @param <F> the type of the first argument to the function
