@@ -205,7 +205,15 @@ public class BlockStateRegistry {
         return getRuntimeId(BlockState.of(blockId, meta));
     }
 
-    private Registration findRegistration(BlockState state) {
+    private Registration findRegistration(final BlockState state) {
+        // Special case for PN-96 PowerNukkit#210 where the world contains blocks like 0:13, 0:7, etc
+        if (state.getBlockId() == BlockID.AIR) {
+            Registration airRegistration = blockStateRegistration.get(BlockState.AIR);
+            if (airRegistration != null) {
+                return new Registration(airRegistration.original, state, airRegistration.runtimeId);
+            }
+        }
+        
         Registration registration;
         Set<String> names = state.getPropertyNames();
         if (names.isEmpty() || names.equals(LEGACY_NAME_SET)) {
