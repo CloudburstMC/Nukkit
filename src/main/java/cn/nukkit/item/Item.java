@@ -5,6 +5,10 @@ import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.UnknownRuntimeIdException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -22,8 +26,10 @@ import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -32,6 +38,7 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class Item implements Cloneable, BlockID, ItemID {
     //Normal Item IDs
 
@@ -450,19 +457,46 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
             Item item;
 
-            if (c == null) {
-                item = new Item(id, meta, count);
-            } else if (id < 256) {
-                if (meta >= 0) {
-                    // Prevent the players from getting invalid items which could get stuck in the inventory
-                    Block block = Block.get(id, meta);
-                    meta = Math.min(meta, block.getMaxItemDamage());
-                    item = new ItemBlock(block, meta, count);
+            if (id < 256) {
+                int blockId = id < 0? 255 - id : id;
+                if (meta == 0) {
+                    item = new ItemBlock(Block.get(blockId), 0, count);
+                } else if (meta == -1) {
+                    // Special case for item instances used in fuzzy recipes
+                    item = new ItemBlock(Block.get(blockId), -1);
                 } else {
-                    item = new ItemBlock(Block.get(id), meta, count);
+                    try {
+                        BlockState state = BlockState.of(blockId, meta);
+                        state.validate();
+                        item = state.asItemBlock(count);
+                    } catch (InvalidBlockPropertyMetaException e) {
+                        BlockState state = BlockState.of(blockId);
+                        BlockProperties properties = state.getProperties();
+                        BigInteger newStorage = properties.reduce(BigInteger.valueOf(meta), (property, offset, current) -> {
+                            try {
+                                if (property.isExportedToItem()) {
+                                    property.validateMeta(current, offset);
+                                    return current;
+                                }
+                            } catch (Exception invalid) {
+                                e.addSuppressed(invalid);
+                            }
+                            return property.setValue(current, offset, null);
+                        });
+                        newStorage = newStorage.and(BigInteger.ONE.shiftLeft(properties.getBitSize()).subtract(BigInteger.ONE)); 
+                        log.error("Attempted to get an illegal item block " + id + ":" + meta + " ("+blockId+"), the meta was changed to " + newStorage);
+                        item = BlockState.of(id, newStorage).asItemBlock(count);
+                    } catch (UnknownRuntimeIdException e) {
+                        log.warn("Attempted to get an illegal item block "+id+":"+meta+ " ("+blockId+"), the runtime id was unknown and the meta was changed to 0");
+                        item = BlockState.of(id).asItemBlock(count);
+                    }
                 }
+            } else if (c == null) {
+                item = new Item(id, meta, count);
             } else {
-                item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
+                int normalizedMeta = meta == -1? 0 : meta;
+                item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(normalizedMeta, count));
+                item.setDamage(meta);
             }
 
             if (tags.length != 0) {
@@ -471,6 +505,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             return item;
         } catch (Exception e) {
+            log.error("Error getting the item " + id + ":" + meta + (id < 0? " ("+(255 - id)+")":"") + "! Returning an unsafe item stack!", e);
             return new Item(id, meta, count).setCompoundTag(tags);
         }
     }

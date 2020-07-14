@@ -6,6 +6,9 @@ import cn.nukkit.blockstate.BigIntegerMutableBlockState;
 import cn.nukkit.blockstate.IntMutableBlockState;
 import cn.nukkit.blockstate.LongMutableBlockState;
 import cn.nukkit.blockstate.MutableBlockState;
+import cn.nukkit.utils.functional.ToIntTriFunctionTwoInts;
+import cn.nukkit.utils.functional.ToLongTriFunctionOneIntOneLong;
+import cn.nukkit.utils.functional.TriFunction;
 import com.google.common.base.Preconditions;
 import lombok.RequiredArgsConstructor;
 
@@ -13,12 +16,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.math.BigInteger;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.BiConsumer;
+import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.ObjIntConsumer;
 
 @PowerNukkitOnly
 @Since("1.4.0.0")
@@ -33,11 +33,19 @@ public final class BlockProperties {
         Map<String, RegisteredBlockProperty> registry = new LinkedHashMap<>(properties.length);
         Map<String, RegisteredBlockProperty> byPersistenceName = new LinkedHashMap<>(properties.length);
         int offset = 0;
+        boolean allowItemExport = true;  
         for (BlockProperty<?> property : properties) {
             Preconditions.checkArgument(property != null, "The properties can not contains null values");
+            if (property.isExportedToItem()) {
+                Preconditions.checkArgument(allowItemExport, "Cannot export a property to item if the previous property does not export");
+                Preconditions.checkArgument(offset <= 6); // Only 6 bits of data can be stored in item blocks, client side limitation.
+            } else {
+                allowItemExport = false;
+            }
 
             RegisteredBlockProperty register = new RegisteredBlockProperty(property, offset);
             offset += property.getBitSize();
+
 
             Preconditions.checkArgument(registry.put(property.getName(), register) == null, "The property %s is duplicated by it's normal name", property.getName());
             Preconditions.checkArgument(byPersistenceName.put(property.getPersistenceName(), register) == null, "The property %s is duplicated by it's persistence name", property.getPersistenceName());
@@ -81,13 +89,13 @@ public final class BlockProperties {
         }
     }
     
-    @SuppressWarnings("rawtypes")
-    public BlockProperty getBlockProperty(String propertyName) {
-        return getRegisteredProperty(propertyName).blockProperty;
+    @SuppressWarnings("java:S1452")
+    public BlockProperty<?> getBlockProperty(String propertyName) {
+        return getRegisteredProperty(propertyName).property;
     }
 
     public <T extends BlockProperty<?>> T getBlockProperty(String propertyName, Class<T> tClass) {
-        return tClass.cast(getRegisteredProperty(propertyName).blockProperty);
+        return tClass.cast(getRegisteredProperty(propertyName).property);
     }
     
     public int getOffset(String propertyName) {
@@ -108,8 +116,8 @@ public final class BlockProperties {
     @SuppressWarnings("unchecked")
     public int setValue(int currentMeta, String propertyName, @Nullable Object value) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        @SuppressWarnings("rawtypes") 
-        BlockProperty unchecked = registry.blockProperty;
+        @SuppressWarnings({"rawtypes", "java:S3740"}) 
+        BlockProperty unchecked = registry.property;
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
@@ -118,8 +126,8 @@ public final class BlockProperties {
     @SuppressWarnings("unchecked")
     public long setValue(long currentMeta, String propertyName, @Nullable Object value) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        @SuppressWarnings("rawtypes")
-        BlockProperty unchecked = registry.blockProperty;
+        @SuppressWarnings({"rawtypes", "java:S3740"})
+        BlockProperty unchecked = registry.property;
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
@@ -129,8 +137,8 @@ public final class BlockProperties {
     @Nonnull
     public BigInteger setValue(BigInteger currentMeta, String propertyName, @Nullable Object value) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        @SuppressWarnings("rawtypes")
-        BlockProperty unchecked = registry.blockProperty;
+        @SuppressWarnings({"rawtypes", "java:S3740"})
+        BlockProperty unchecked = registry.property;
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
@@ -139,7 +147,7 @@ public final class BlockProperties {
     @Nonnull
     public Object getValue(int currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return registry.blockProperty.getValue(currentMeta, registry.offset);
+        return registry.property.getValue(currentMeta, registry.offset);
     }
 
     @PowerNukkitOnly
@@ -147,7 +155,7 @@ public final class BlockProperties {
     @Nonnull
     public Object getValue(long currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return registry.blockProperty.getValue(currentMeta, registry.offset);
+        return registry.property.getValue(currentMeta, registry.offset);
     }
 
     @PowerNukkitOnly
@@ -155,7 +163,7 @@ public final class BlockProperties {
     @Nonnull
     public Object getValue(BigInteger currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return registry.blockProperty.getValue(currentMeta, registry.offset);
+        return registry.property.getValue(currentMeta, registry.offset);
     }
 
     @PowerNukkitOnly
@@ -163,7 +171,7 @@ public final class BlockProperties {
     @Nonnull
     public <T> T getCheckedValue(int currentMeta, String propertyName, Class<T> tClass) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return tClass.cast(registry.blockProperty.getValue(currentMeta, registry.offset));
+        return tClass.cast(registry.property.getValue(currentMeta, registry.offset));
     }
 
     @PowerNukkitOnly
@@ -171,7 +179,7 @@ public final class BlockProperties {
     @Nonnull
     public <T> T getCheckedValue(long currentMeta, String propertyName, Class<T> tClass) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return tClass.cast(registry.blockProperty.getValue(currentMeta, registry.offset));
+        return tClass.cast(registry.property.getValue(currentMeta, registry.offset));
     }
 
     @PowerNukkitOnly
@@ -179,7 +187,7 @@ public final class BlockProperties {
     @Nonnull
     public <T> T getCheckedValue(BigInteger currentMeta, String propertyName, Class<T> tClass) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return tClass.cast(registry.blockProperty.getValue(currentMeta, registry.offset));
+        return tClass.cast(registry.property.getValue(currentMeta, registry.offset));
     }
 
     @PowerNukkitOnly
@@ -188,7 +196,7 @@ public final class BlockProperties {
     @SuppressWarnings("unchecked")
     public <T> T getUncheckedValue(int currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return (T) registry.blockProperty.getValue(currentMeta, registry.offset);
+        return (T) registry.property.getValue(currentMeta, registry.offset);
     }
 
     @PowerNukkitOnly
@@ -197,7 +205,7 @@ public final class BlockProperties {
     @SuppressWarnings("unchecked")
     public <T> T getUncheckedValue(long currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return (T) registry.blockProperty.getValue(currentMeta, registry.offset);
+        return (T) registry.property.getValue(currentMeta, registry.offset);
     }
 
     @PowerNukkitOnly
@@ -206,21 +214,21 @@ public final class BlockProperties {
     @SuppressWarnings("unchecked")
     public <T> T getUncheckedValue(BigInteger currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return (T) registry.blockProperty.getValue(currentMeta, registry.offset);
+        return (T) registry.property.getValue(currentMeta, registry.offset);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getIntValue(int currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return registry.blockProperty.getIntValue(currentMeta, registry.offset);
+        return registry.property.getIntValue(currentMeta, registry.offset);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getIntValue(long currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return registry.blockProperty.getIntValue(currentMeta, registry.offset);
+        return registry.property.getIntValue(currentMeta, registry.offset);
     }
 
 
@@ -228,22 +236,22 @@ public final class BlockProperties {
     @Since("1.4.0.0-PN")
     public int getIntValue(BigInteger currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return registry.blockProperty.getIntValue(currentMeta, registry.offset);
+        return registry.property.getIntValue(currentMeta, registry.offset);
     }
     
     public String getPersistenceValue(int currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return registry.blockProperty.getPersistenceValue(currentMeta, registry.offset);
+        return registry.property.getPersistenceValue(currentMeta, registry.offset);
     }
 
     public String getPersistenceValue(long currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return registry.blockProperty.getPersistenceValue(currentMeta, registry.offset);
+        return registry.property.getPersistenceValue(currentMeta, registry.offset);
     }
 
     public String getPersistenceValue(BigInteger currentMeta, String propertyName) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
-        return registry.blockProperty.getPersistenceValue(currentMeta, registry.offset);
+        return registry.property.getPersistenceValue(currentMeta, registry.offset);
     }
 
     @PowerNukkitOnly
@@ -268,21 +276,58 @@ public final class BlockProperties {
         return bitSize;
     }
 
-    public void forEach(BiConsumer<BlockProperty<?>, Integer> consumer) {
+    public void forEach(ObjIntConsumer<BlockProperty<?>> consumer) {
         for (RegisteredBlockProperty registry : byName.values()) {
-            consumer.accept(registry.blockProperty, registry.offset);
+            consumer.accept(registry.property, registry.offset);
         }
     }
     
     public void forEach(Consumer<BlockProperty<?>> consumer) {
         for (RegisteredBlockProperty registry : byName.values()) {
-            consumer.accept(registry.blockProperty);
+            consumer.accept(registry.property);
         }
     }
-    
+
+    public <R> R reduce(R identity, TriFunction<BlockProperty<?>, Integer, R, R> accumulator) {
+        R result = identity;
+        for (RegisteredBlockProperty registry : byName.values()) {
+            result = accumulator.apply(registry.property, registry.offset, result);
+        }
+        return result;
+    }
+
+    public int reduceInt(int identity, ToIntTriFunctionTwoInts<BlockProperty<?>> accumulator) {
+        int result = identity;
+        for (RegisteredBlockProperty registry : byName.values()) {
+            result = accumulator.apply(registry.property, registry.offset, result);
+        }
+        return result;
+    }
+
+    public long reduceLong(long identity, ToLongTriFunctionOneIntOneLong<BlockProperty<?>> accumulator) {
+        long result = identity;
+        for (RegisteredBlockProperty registry : byName.values()) {
+            result = accumulator.apply(registry.property, registry.offset, result);
+        }
+        return result;
+    }
+
+    @Nonnull
+    public List<String> getItemPropertyNames() {
+        List<String> itemProperties = new ArrayList<>(byName.size());
+        for (RegisteredBlockProperty registry : byName.values()) {
+            if (registry.property.isExportedToItem()) {
+                itemProperties.add(registry.property.getName());
+            } else {
+                break;
+            }
+        }
+        return itemProperties;
+    }
+
     @RequiredArgsConstructor
-    private static class RegisteredBlockProperty {
-        private final BlockProperty<?> blockProperty;
+    private static final class RegisteredBlockProperty {
+        private final BlockProperty<?> property;
         private final int offset;
     }
 }

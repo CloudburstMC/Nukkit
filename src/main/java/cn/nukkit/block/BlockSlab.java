@@ -15,13 +15,20 @@ import cn.nukkit.math.BlockFace;
 public abstract class BlockSlab extends BlockTransparentMeta {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public static final BooleanBlockProperty TOP_SLOT_PROPERTY = new BooleanBlockProperty("top_slot_bit");
+    public static final BooleanBlockProperty TOP_SLOT_PROPERTY = new BooleanBlockProperty("top_slot_bit", false);
 
     protected final int doubleSlab;
 
     public BlockSlab(int meta, int doubleSlab) {
         super(meta);
         this.doubleSlab = doubleSlab;
+    }
+    
+    public abstract String getSlabName();
+
+    @Override
+    public String getName() {
+        return (isOnTop()? "Upper " : "") + getSlabName() + " Slab";
     }
 
     @Override

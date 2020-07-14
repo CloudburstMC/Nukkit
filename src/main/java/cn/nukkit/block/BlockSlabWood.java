@@ -3,9 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
-import cn.nukkit.blockproperty.values.WoodType;
+import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -31,7 +30,12 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public String getName() {
-        return (isOnTop()? "Upper " : "") + getWoodType().getEnglishName() + " Wood Slab";
+        return (isOnTop()? "Upper " : "") + getSlabName() + " Wood Slab";
+    }
+
+    @Override
+    public String getSlabName() {
+        return getWoodType().getEnglishName();
     }
 
     @Override
@@ -82,11 +86,6 @@ public class BlockSlabWood extends BlockSlab {
         return new Item[]{
                 toItem()
         };
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, getCurrentState().withProperty(TOP_SLOT_PROPERTY, false).getExactIntStorage());
     }
 
     @Override

@@ -1,9 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockproperty.BlockProperties;
-import cn.nukkit.blockproperty.values.StoneSlab3Type;
+import cn.nukkit.blockproperty.value.StoneSlab3Type;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -44,46 +43,28 @@ public class BlockSlabStone3 extends BlockSlab {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "End Stone Brick",
-                "Smooth Red Sandstone",
-                "Polished Andesite",
-                "Andesite",
-                "Diorite",
-                "Polished Diorite",
-                "Granite",
-                "Polisehd Granite"
-        };
+    public String getSlabName() {
+        return getSlabType().getEnglishName();
+    }
 
-        return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
+    public StoneSlab3Type getSlabType() {
+        return getPropertyValue(StoneSlab3Type.PROPERTY);
+    }
+    
+    public void setSlabType(StoneSlab3Type type) {
+        setPropertyValue(StoneSlab3Type.PROPERTY, type);
     }
 
 
     @Override
     public boolean isSameType(BlockSlab slab) {
-        return slab.getId() == getId() && slab.getPropertyValue(StoneSlab3Type.PROPERTY).equals(slab.getPropertyValue(StoneSlab3Type.PROPERTY));
+        return slab.getId() == getId() && getSlabType().equals(slab.getPropertyValue(StoneSlab3Type.PROPERTY));
     }
 
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            case END_STONE_BRICKS:
-                return BlockColor.SAND_BLOCK_COLOR;
-            case SMOOTH_RED_SANDSTONE:
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            default:
-            case POLISHED_ANDESITE:
-            case ANDESITE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case DIORITE:
-            case POLISHED_DIORITE:
-                return BlockColor.QUARTZ_BLOCK_COLOR;
-            case GRANITE:
-            case POLISHED_GRANITE:
-                return BlockColor.DIRT_BLOCK_COLOR;
-        }
+        return getSlabType().getColor();
     }
 
     @Override
@@ -95,11 +76,6 @@ public class BlockSlabStone3 extends BlockSlab {
         } else {
             return new Item[0];
         }
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
     }
 
     @Override

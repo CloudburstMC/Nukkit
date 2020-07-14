@@ -14,22 +14,22 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public BooleanBlockProperty(String name, boolean defaultValue, String persistenceName) {
-        super(name, 1, persistenceName);
+    public BooleanBlockProperty(String name, boolean exportedToItem, boolean defaultValue, String persistenceName) {
+        super(name, exportedToItem, 1, persistenceName);
         this.defaultValue = defaultValue;
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public BooleanBlockProperty(String name, boolean defaultValue) {
-        super(name, 1, name);
+    public BooleanBlockProperty(String name, boolean exportedToItem, boolean defaultValue) {
+        super(name, exportedToItem, 1, name);
         this.defaultValue = defaultValue;
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public BooleanBlockProperty(String name) {
-        this(name, false);
+    public BooleanBlockProperty(String name, boolean exportedToItem) {
+        this(name, exportedToItem, false);
     }
 
     @Override

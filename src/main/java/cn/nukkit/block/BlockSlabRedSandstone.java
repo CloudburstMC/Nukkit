@@ -1,9 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockproperty.BlockProperties;
-import cn.nukkit.blockproperty.values.StoneSlab2Type;
+import cn.nukkit.blockproperty.value.StoneSlab2Type;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -47,47 +46,26 @@ public class BlockSlabRedSandstone extends BlockSlab {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Red Sandstone",
-                "Purpur",
-                "Prismarine",
-                "Prismarine Bricks",
-                "Dark Prismarine",
-                "Mossy Cobblestone",
-                "Smooth Sandstone",
-                "Red Nether Brick"
-        };
-
-        return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
+    public String getSlabName() {
+        return getSlabType().getEnglishName();
     }
 
+    public StoneSlab2Type getSlabType() {
+        return getPropertyValue(StoneSlab2Type.PROPERTY);
+    }
+    
+    public void setSlabType(StoneSlab2Type type) {
+        setPropertyValue(StoneSlab2Type.PROPERTY, type);
+    }
 
     @Override
     public boolean isSameType(BlockSlab slab) {
-        return slab.getId() == getId() && slab.getPropertyValue(StoneSlab2Type.PROPERTY).equals(slab.getPropertyValue(StoneSlab2Type.PROPERTY));
+        return slab.getId() == getId() && getSlabType().equals(slab.getPropertyValue(StoneSlab2Type.PROPERTY));
     }
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            case RED_SANDSTONE:
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            case PURPUR:
-                return BlockColor.MAGENTA_BLOCK_COLOR;
-            case PRISMARINE:
-                return BlockColor.CYAN_BLOCK_COLOR;
-            case PRISMARINE_BRICKS:
-            case DARK_PRISMARINE:
-                return BlockColor.DIAMOND_BLOCK_COLOR;
-            default:
-            case MOSSY_COBBLESTONE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case SMOOTH_SANDSTONE:
-                return BlockColor.SAND_BLOCK_COLOR;
-            case RED_NETHER_BRICK:
-                return BlockColor.NETHERRACK_BLOCK_COLOR;
-        }
+        return getSlabType().getColor();
     }
 
     @Override
@@ -99,11 +77,6 @@ public class BlockSlabRedSandstone extends BlockSlab {
         } else {
             return new Item[0];
         }
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
     }
 
     @Override

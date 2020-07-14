@@ -1,4 +1,4 @@
-package cn.nukkit.blockproperty.values;
+package cn.nukkit.blockproperty.value;
 
 import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.utils.BlockColor;
@@ -18,7 +18,7 @@ public enum WoodType {
     @Getter
     private final String englishName;
     
-    public static final ArrayBlockProperty<WoodType> PROPERTY = new ArrayBlockProperty<>("wood_type", values());
+    public static final ArrayBlockProperty<WoodType> PROPERTY = new ArrayBlockProperty<>("wood_type", true, values());
 
     WoodType(BlockColor color) {
         this.color = color;

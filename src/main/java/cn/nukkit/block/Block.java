@@ -7,6 +7,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.blockstate.BlockStateRegistry;
 import cn.nukkit.blockstate.IMutableBlockState;
@@ -27,7 +28,6 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.InvalidBlockPropertyException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
@@ -872,12 +872,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public int getMaxItemDamage() {
-        return 0xF;
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
     @Nonnull
     public final BlockState getCurrentState() {
         return mutableState.getCurrentState();
@@ -1411,7 +1405,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             info = "Prevents players from getting invalid items by limiting the return to the maximum damage defined in getMaxItemDamage()", 
             since = "1.4.0.0-PN")
     public Item toItem() {
-        return new ItemBlock(this, Math.min(getMaxItemDamage(), this.getDamage()), 1);
+        return asItemBlock(1);
+    }
+
+    @Override
+    public final ItemBlock asItemBlock() {
+        return asItemBlock(1);
     }
 
     public boolean canSilkTouch() {
