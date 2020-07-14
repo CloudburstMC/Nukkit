@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
@@ -16,6 +17,7 @@ public abstract class BlockSlab extends BlockTransparentMeta {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final BooleanBlockProperty TOP_SLOT_PROPERTY = new BooleanBlockProperty("top_slot_bit", false);
+    public static final BlockProperties SIMPLE_SLAB_PROPERTIES = new BlockProperties(TOP_SLOT_PROPERTY);
 
     protected final int doubleSlab;
 
