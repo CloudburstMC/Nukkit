@@ -339,7 +339,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
     /**
      * @return true if it should be a post
      */
-    @PowerNukkitDifference
+    @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void autoUpdatePostFlag() {
         setWallPost(recheckPostConditions(up(1, 0)));
