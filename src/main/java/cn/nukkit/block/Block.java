@@ -917,7 +917,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean canHarvest(Item item) {
-        return getToolTier() == 0 || getToolType() == 0 || correctTool0(getToolType(), item) && item.getTier() >= getToolTier();
+        return getToolTier() == 0 || getToolType() == 0 || correctTool0(getToolType(), item, getId()) && item.getTier() >= getToolTier();
     }
 
     @PowerNukkitOnly
@@ -956,7 +956,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return mutableState.getFullId();
     }
 
-    @Nonnull
+    @NonNull
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockProperties getProperties() {
@@ -965,7 +965,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    @Nonnull
+    @NonNull
     public final BlockState getCurrentState() {
         return mutableState.getCurrentState();
     }
@@ -1017,7 +1017,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     private double toolBreakTimeBonus0(Item item) {
-        return toolBreakTimeBonus0(toolType0(item), item.getTier(), getId() == BlockID.WOOL, getId() == BlockID.COBWEB);
+        return toolBreakTimeBonus0(toolType0(item, getId()), item.getTier(), getId() == BlockID.WOOL, getId() == BlockID.COBWEB);
     }
 
     private static double toolBreakTimeBonus0(
@@ -1091,7 +1091,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 1.0 / speed;
     }
 
-
     @NonNull
     public double calculateBreakTime(@NonNull Item item, @NonNull Player player) {
         double seconds = 0;
@@ -1116,7 +1115,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         int miningFatigueLevel = Optional.ofNullable(player.getEffect(Effect.MINING_FATIGUE))
                 .map(Effect::getAmplifier).orElse(0);
 
-        if (correctTool0(getToolType(), item)) {
+        if (correctTool0(getToolType(), item, getId())) {
             speedMultiplier = toolBreakTimeBonus0(item);
 
             int efficiencyLevel = Optional.ofNullable(item.getEnchantment(Enchantment.ID_EFFICIENCY))
