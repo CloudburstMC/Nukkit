@@ -1,8 +1,8 @@
 ![nukkit](.github/images/banner.png)
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
-[![PowerNukkit v1.X](https://github.com/GameModsBR/PowerNukkit/workflows/PowerNukkit%20v1.X/badge.svg?branch=master)](https://github.com/GameModsBR/PowerNukkit/actions?query=branch%3Amaster)
-[![Discord](https://img.shields.io/discord/728280425255927879)](https://discord.gg/JVwf39q)
+[![PowerNukkit v1.X](https://github.com/PowerNukkit/PowerNukkit/workflows/PowerNukkit%20v1.X/badge.svg?branch=master)](https://github.com/PowerNukkit/PowerNukkit/actions?query=branch%3Amaster)
+[![Discord](https://img.shields.io/discord/728280425255927879)](https://powernukkit.org/discord)
 
 Introduction
 -------------
@@ -17,15 +17,15 @@ Nukkit is **under improvement** yet, we welcome contributions.
 
 **PowerNukkit** is a modified version of Nukkit which adds support to a huge amount of features like water-logging, all new blocks, more plugin events, offhand slot, bug fixes and many more.
 
-Please note that PowerNukkit is not handled by NukkitX's staff and is provided with love but without warranty. If you find any issue while running PowerNukkit you should [create a new issue](https://github.com/GameModsBR/PowerNukkit/issues) in this repository first.
+Please note that PowerNukkit is not handled by NukkitX's staff and is provided with love but without warranty. If you find any issue while running PowerNukkit you should [create a new issue](https://github.com/PowerNukkit/PowerNukkit/issues) in this repository first.
 
 It's also advisable to have a backup schedule set up. PowerNukkit is highly experimental and things may break, so make backups and stay safe.
 
 Links
 --------------------
 
-* __[Download PowerNukkit](https://github.com/GameModsBR/PowerNukkit/releases)__
-* __[PowerNukkit Discord](https://discord.gg/JVwf39q)__
+* __[Download PowerNukkit](https://github.com/PowerNukkit/PowerNukkit/releases)__
+* __[PowerNukkit Discord](https://powernukkit.org/discord)__
 * __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
 * __[Wiki](https://nukkitx.com/wiki/nukkit)__
 * __[NukkitX](https://github.com/NukkitX/Nukkit)__
@@ -39,7 +39,7 @@ Message from the official NukkitX's staff:
 
 Build JAR file
 -------------
-- `git clone https://github.com/GameModsBr/PowerNukkit`
+- `git clone https://github.com/PowerNukkit/PowerNukkit`
 - `cd PowerNukkit`
 - `git submodule update --init`
 - `./mvnw clean package`
