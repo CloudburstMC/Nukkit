@@ -1,10 +1,12 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
-public class BlockDoubleSlabWarped extends BlockSolid {
+public class BlockDoubleSlabWarped extends BlockDoubleSlabBase {
 
     public BlockDoubleSlabWarped() {
+        super(0);
     }
 
     @Override
@@ -13,8 +15,8 @@ public class BlockDoubleSlabWarped extends BlockSolid {
     }
     
     @Override
-    public String getName() {
-        return "Double Warped Slab";
+    public String getSlabName() {
+        return "Warped";
     }
 
     @Override
@@ -32,10 +34,10 @@ public class BlockDoubleSlabWarped extends BlockSolid {
         return ItemTool.TYPE_AXE;
     }
 
-    /*@Override
+    @Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+        return BlockColor.CYAN_BLOCK_COLOR;
+    }
     
     @Override
     public int getBurnChance() {

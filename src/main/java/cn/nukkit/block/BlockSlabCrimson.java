@@ -1,8 +1,11 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nonnull;
 
 public class BlockSlabCrimson extends BlockSlab {
 
@@ -15,13 +18,24 @@ public class BlockSlabCrimson extends BlockSlab {
     }
 
     @Override
-    public String getName() {
-        return "Crimson Slab";
+    public String getSlabName() {
+        return "Crimson";
     }
-
+    
     @Override
     public int getId() {
         return CRIMSON_SLAB;
+    }
+
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return SIMPLE_SLAB_PROPERTIES;
+    }
+
+    @Override
+    public boolean isSameType(BlockSlab slab) {
+        return getId() == slab.getId();
     }
 
     @Override
@@ -37,10 +51,10 @@ public class BlockSlabCrimson extends BlockSlab {
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(this);
+    public double getResistance() {
+        return 3;
     }
-    
+
     @Override
     public int getBurnChance() {
         return 0;
@@ -51,8 +65,8 @@ public class BlockSlabCrimson extends BlockSlab {
         return 0;
     }
 
-    /*@Override
+    @Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
+    }
 }

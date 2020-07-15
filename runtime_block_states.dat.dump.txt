@@ -12672,62 +12672,50 @@ minecraft:crafting_table
 
 minecraft:crimson_button;button_pressed_bit=0;facing_direction=0
 []
-[515:0, 515:6, 515:7]
+[515:0]
 
 minecraft:crimson_button;button_pressed_bit=0;facing_direction=1
 []
-[515:1]
 
 minecraft:crimson_button;button_pressed_bit=0;facing_direction=2
 []
-[515:2]
 
 minecraft:crimson_button;button_pressed_bit=0;facing_direction=3
 []
-[515:3]
 
 minecraft:crimson_button;button_pressed_bit=0;facing_direction=4
 []
-[515:4]
 
 minecraft:crimson_button;button_pressed_bit=0;facing_direction=5
 []
-[515:5]
 
 minecraft:crimson_button;button_pressed_bit=1;facing_direction=0
 []
-[515:8, 515:14, 515:15]
 
 minecraft:crimson_button;button_pressed_bit=1;facing_direction=1
 []
-[515:9]
 
 minecraft:crimson_button;button_pressed_bit=1;facing_direction=2
 []
-[515:10]
 
 minecraft:crimson_button;button_pressed_bit=1;facing_direction=3
 []
-[515:11]
 
 minecraft:crimson_button;button_pressed_bit=1;facing_direction=4
 []
-[515:12]
 
 minecraft:crimson_button;button_pressed_bit=1;facing_direction=5
 []
-[515:13]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 []
-[499:0, 449:16]
+[499:0]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 []
-[499:2, 449:18]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
 []
@@ -12737,25 +12725,21 @@ minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
 []
-[499:1, 449:17]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
 []
-[499:3, 449:19]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 []
-[499:8, 449:24]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 []
-[499:10, 449:26]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
 []
@@ -12765,25 +12749,21 @@ minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
 []
-[499:9, 449:25]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
 []
-[499:11, 449:27]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 []
-[499:4, 449:20]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 []
-[499:6, 449:22]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
 []
@@ -12793,25 +12773,21 @@ minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
 []
-[499:5, 449:21]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
 []
-[499:7, 449:23]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 []
-[499:12, 449:28]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 []
-[499:14, 449:30]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
 []
@@ -12821,14 +12797,12 @@ minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
 []
-[499:13, 449:29]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 []
-[499:15, 449:31]
 
 minecraft:crimson_double_slab;top_slot_bit=0
 []
@@ -13003,75 +12977,58 @@ minecraft:crimson_standing_sign;ground_sign_direction=0
 
 minecraft:crimson_standing_sign;ground_sign_direction=1
 []
-[505:1]
 
 minecraft:crimson_standing_sign;ground_sign_direction=2
 []
-[505:2]
 
 minecraft:crimson_standing_sign;ground_sign_direction=3
 []
-[505:3]
 
 minecraft:crimson_standing_sign;ground_sign_direction=4
 []
-[505:4]
 
 minecraft:crimson_standing_sign;ground_sign_direction=5
 []
-[505:5]
 
 minecraft:crimson_standing_sign;ground_sign_direction=6
 []
-[505:6]
 
 minecraft:crimson_standing_sign;ground_sign_direction=7
 []
-[505:7]
 
 minecraft:crimson_standing_sign;ground_sign_direction=8
 []
-[505:8]
 
 minecraft:crimson_standing_sign;ground_sign_direction=9
 []
-[505:9]
 
 minecraft:crimson_standing_sign;ground_sign_direction=10
 []
-[505:10]
 
 minecraft:crimson_standing_sign;ground_sign_direction=11
 []
-[505:11]
 
 minecraft:crimson_standing_sign;ground_sign_direction=12
 []
-[505:12]
 
 minecraft:crimson_standing_sign;ground_sign_direction=13
 []
-[505:13]
 
 minecraft:crimson_standing_sign;ground_sign_direction=14
 []
-[505:14]
 
 minecraft:crimson_standing_sign;ground_sign_direction=15
 []
-[505:15]
 
 minecraft:crimson_stem;pillar_axis=x
 []
-[480:1]
+[480:0]
 
 minecraft:crimson_stem;pillar_axis=y
 []
-[480:0, 480:3]
 
 minecraft:crimson_stem;pillar_axis=z
 []
-[480:2]
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=0;direction=0
 []
@@ -13079,87 +13036,67 @@ minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=0;direction=0
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=0;direction=1
 []
-[501:1]
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=0;direction=2
 []
-[501:2]
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=0;direction=3
 []
-[501:3]
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=1;direction=0
 []
-[501:4]
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=1;direction=1
 []
-[501:5]
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=1;direction=2
 []
-[501:6]
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=1;direction=3
 []
-[501:7]
 
 minecraft:crimson_trapdoor;open_bit=1;upside_down_bit=0;direction=0
 []
-[501:8]
 
 minecraft:crimson_trapdoor;open_bit=1;upside_down_bit=0;direction=1
 []
-[501:9]
 
 minecraft:crimson_trapdoor;open_bit=1;upside_down_bit=0;direction=2
 []
-[501:10]
 
 minecraft:crimson_trapdoor;open_bit=1;upside_down_bit=0;direction=3
 []
-[501:11]
 
 minecraft:crimson_trapdoor;open_bit=1;upside_down_bit=1;direction=0
 []
-[501:12]
 
 minecraft:crimson_trapdoor;open_bit=1;upside_down_bit=1;direction=1
 []
-[501:13]
 
 minecraft:crimson_trapdoor;open_bit=1;upside_down_bit=1;direction=2
 []
-[501:14]
 
 minecraft:crimson_trapdoor;open_bit=1;upside_down_bit=1;direction=3
 []
-[501:15]
 
 minecraft:crimson_wall_sign;facing_direction=0
 []
-[507:0, 507:6, 507:7]
+[507:0]
 
 minecraft:crimson_wall_sign;facing_direction=1
 []
-[507:1]
 
 minecraft:crimson_wall_sign;facing_direction=2
 []
-[507:2]
 
 minecraft:crimson_wall_sign;facing_direction=3
 []
-[507:3]
 
 minecraft:crimson_wall_sign;facing_direction=4
 []
-[507:4]
 
 minecraft:crimson_wall_sign;facing_direction=5
 []
-[507:5]
 
 minecraft:crying_obsidian
 []
@@ -21513,62 +21450,50 @@ minecraft:wall_sign;facing_direction=5
 
 minecraft:warped_button;button_pressed_bit=0;facing_direction=0
 []
-[516:0, 516:6, 516:7]
+[516:0]
 
 minecraft:warped_button;button_pressed_bit=0;facing_direction=1
 []
-[516:1]
 
 minecraft:warped_button;button_pressed_bit=0;facing_direction=2
 []
-[516:2]
 
 minecraft:warped_button;button_pressed_bit=0;facing_direction=3
 []
-[516:3]
 
 minecraft:warped_button;button_pressed_bit=0;facing_direction=4
 []
-[516:4]
 
 minecraft:warped_button;button_pressed_bit=0;facing_direction=5
 []
-[516:5]
 
 minecraft:warped_button;button_pressed_bit=1;facing_direction=0
 []
-[516:8, 516:14, 516:15]
 
 minecraft:warped_button;button_pressed_bit=1;facing_direction=1
 []
-[516:9]
 
 minecraft:warped_button;button_pressed_bit=1;facing_direction=2
 []
-[516:10]
 
 minecraft:warped_button;button_pressed_bit=1;facing_direction=3
 []
-[516:11]
 
 minecraft:warped_button;button_pressed_bit=1;facing_direction=4
 []
-[516:12]
 
 minecraft:warped_button;button_pressed_bit=1;facing_direction=5
 []
-[516:13]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 []
-[500:0, 500:16]
+[500:0]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 []
-[500:2, 500:18]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
 []
@@ -21578,25 +21503,21 @@ minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
 []
-[500:1, 500:17]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
 []
-[500:3, 500:19]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 []
-[500:8, 500:24]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 []
-[500:10, 500:26]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
 []
@@ -21606,25 +21527,21 @@ minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
 []
-[500:9, 500:25]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
 []
-[500:11, 500:27]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 []
-[500:4, 500:20]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 []
-[500:6, 500:22]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
 []
@@ -21634,25 +21551,21 @@ minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
 []
-[500:5, 500:21]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
 []
-[500:7, 500:23]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 []
-[500:12, 500:28]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 []
-[500:14, 500:30]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
 []
@@ -21662,14 +21575,12 @@ minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
 []
-[500:13, 500:29]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 []
-[500:15, 500:31]
 
 minecraft:warped_double_slab;top_slot_bit=0
 []
@@ -21844,75 +21755,58 @@ minecraft:warped_standing_sign;ground_sign_direction=0
 
 minecraft:warped_standing_sign;ground_sign_direction=1
 []
-[506:1]
 
 minecraft:warped_standing_sign;ground_sign_direction=2
 []
-[506:2]
 
 minecraft:warped_standing_sign;ground_sign_direction=3
 []
-[506:3]
 
 minecraft:warped_standing_sign;ground_sign_direction=4
 []
-[506:4]
 
 minecraft:warped_standing_sign;ground_sign_direction=5
 []
-[506:5]
 
 minecraft:warped_standing_sign;ground_sign_direction=6
 []
-[506:6]
 
 minecraft:warped_standing_sign;ground_sign_direction=7
 []
-[506:7]
 
 minecraft:warped_standing_sign;ground_sign_direction=8
 []
-[506:8]
 
 minecraft:warped_standing_sign;ground_sign_direction=9
 []
-[506:9]
 
 minecraft:warped_standing_sign;ground_sign_direction=10
 []
-[506:10]
 
 minecraft:warped_standing_sign;ground_sign_direction=11
 []
-[506:11]
 
 minecraft:warped_standing_sign;ground_sign_direction=12
 []
-[506:12]
 
 minecraft:warped_standing_sign;ground_sign_direction=13
 []
-[506:13]
 
 minecraft:warped_standing_sign;ground_sign_direction=14
 []
-[506:14]
 
 minecraft:warped_standing_sign;ground_sign_direction=15
 []
-[506:15]
 
 minecraft:warped_stem;pillar_axis=x
 []
-[481:1]
+[481:0]
 
 minecraft:warped_stem;pillar_axis=y
 []
-[481:0, 481:3]
 
 minecraft:warped_stem;pillar_axis=z
 []
-[481:2]
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=0;direction=0
 []
@@ -21920,87 +21814,67 @@ minecraft:warped_trapdoor;open_bit=0;upside_down_bit=0;direction=0
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=0;direction=1
 []
-[502:1]
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=0;direction=2
 []
-[502:2]
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=0;direction=3
 []
-[502:3]
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=1;direction=0
 []
-[502:4]
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=1;direction=1
 []
-[502:5]
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=1;direction=2
 []
-[502:6]
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=1;direction=3
 []
-[502:7]
 
 minecraft:warped_trapdoor;open_bit=1;upside_down_bit=0;direction=0
 []
-[502:8]
 
 minecraft:warped_trapdoor;open_bit=1;upside_down_bit=0;direction=1
 []
-[502:9]
 
 minecraft:warped_trapdoor;open_bit=1;upside_down_bit=0;direction=2
 []
-[502:10]
 
 minecraft:warped_trapdoor;open_bit=1;upside_down_bit=0;direction=3
 []
-[502:11]
 
 minecraft:warped_trapdoor;open_bit=1;upside_down_bit=1;direction=0
 []
-[502:12]
 
 minecraft:warped_trapdoor;open_bit=1;upside_down_bit=1;direction=1
 []
-[502:13]
 
 minecraft:warped_trapdoor;open_bit=1;upside_down_bit=1;direction=2
 []
-[502:14]
 
 minecraft:warped_trapdoor;open_bit=1;upside_down_bit=1;direction=3
 []
-[502:15]
 
 minecraft:warped_wall_sign;facing_direction=0
 []
-[508:0, 508:6, 508:7]
+[508:0]
 
 minecraft:warped_wall_sign;facing_direction=1
 []
-[508:1]
 
 minecraft:warped_wall_sign;facing_direction=2
 []
-[508:2]
 
 minecraft:warped_wall_sign;facing_direction=3
 []
-[508:3]
 
 minecraft:warped_wall_sign;facing_direction=4
 []
-[508:4]
 
 minecraft:warped_wall_sign;facing_direction=5
 []
-[508:5]
 
 minecraft:warped_wart_block
 []

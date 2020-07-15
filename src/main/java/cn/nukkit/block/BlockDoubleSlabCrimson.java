@@ -1,20 +1,31 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
-public class BlockDoubleSlabCrimson extends BlockSolid {
+import javax.annotation.Nonnull;
+
+public class BlockDoubleSlabCrimson extends BlockDoubleSlabBase {
 
     public BlockDoubleSlabCrimson() {
+        super(0);
     }
 
     @Override
     public int getId() {
         return CRIMSON_DOUBLE_SLAB;
     }
-    
+
+    @Nonnull
     @Override
-    public String getName() {
-        return "Double Crimson Slab";
+    public BlockProperties getProperties() {
+        return BlockSlab.SIMPLE_SLAB_PROPERTIES;
+    }
+
+    @Override
+    public String getSlabName() {
+        return "Crimson";
     }
 
     @Override
@@ -32,10 +43,10 @@ public class BlockDoubleSlabCrimson extends BlockSolid {
         return ItemTool.TYPE_AXE;
     }
 
-    /*@Override
+    @Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
+    }
     
     @Override
     public int getBurnChance() {
