@@ -17,7 +17,7 @@ public class BlockSeagrass extends BlockFlowable {
     }
     
     public BlockSeagrass(int meta) {
-        super(meta % 3);
+        super(meta);
     }
     
     @Override
@@ -28,11 +28,6 @@ public class BlockSeagrass extends BlockFlowable {
     @Override
     public String getName() {
         return "Seagrass";
-    }
-    
-    @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta % 3);
     }
     
     @Override

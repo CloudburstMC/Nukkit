@@ -3,12 +3,14 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Sound;
 import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/22 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
+
 public class BlockGrassPath extends BlockGrass {
 
     public BlockGrassPath() {
@@ -59,6 +61,9 @@ public class BlockGrassPath extends BlockGrass {
         if (item.isHoe()) {
             item.useOn(this);
             this.getLevel().setBlock(this, get(FARMLAND), true);
+            if(player != null){
+                player.getLevel().addSound(player, Sound.USE_GRASS);
+            }
             return true;
         }
 

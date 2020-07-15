@@ -4,7 +4,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
-import test.HumanStringComparator;
+import cn.nukkit.utils.HumanStringComparator;
 
 import java.io.*;
 import java.nio.ByteOrder;
@@ -61,6 +61,8 @@ public class RuntimeBlockStateDumper {
         }
 
         try (FileWriter fos = new FileWriter("runtime_block_states.dat.dump.txt"); BufferedWriter bos = new BufferedWriter(fos)) {
+            bos.write("# WARNING! Don't edit this file! It's automatically regenerated!");
+            bos.newLine(); bos.newLine();
             for (Map.Entry<String, CompoundTag> entry : states.entrySet()) {
                 CompoundTag state = entry.getValue();
                 CompoundTag block = state.getCompound("block");
