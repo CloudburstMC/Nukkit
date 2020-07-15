@@ -1145,7 +1145,4 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
-    public double getSpeedMultiplier() {
-        return 1;
-    }
 }

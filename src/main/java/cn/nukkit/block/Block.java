@@ -854,6 +854,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return new Item[0];
     }
 
+    private double toolBreakTimeBonus0(Item item) {
+        return toolBreakTimeBonus0(toolType0(item), item.getTier(), getId() == BlockID.WOOL, getId() == BlockID.COBWEB);
+    }
+
     private static double toolBreakTimeBonus0(
             int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
         if (toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0 : 1.0;
@@ -934,18 +938,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
         int conduitPowerLevel = Optional.ofNullable(player.getEffect(Effect.CONDUIT_POWER))
                 .map(Effect::getAmplifier).orElse(0);
-        boolean hasAcuaAffinity = Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
+        boolean hasAquaAffinity = Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
                 .map(Enchantment::getLevel).map(l -> l >= 1).orElse(false);
+        int hasteEffectLevel = Optional.ofNullable(player.getEffect(Effect.HASTE))
+                .map(Effect::getAmplifier).orElse(0);
+        int miningFatigueLevel = Optional.ofNullable(player.getEffect(Effect.MINING_FATIGUE))
+                .map(Effect::getAmplifier).orElse(0);
 
         if (correctTool0(getToolType(), item)) {
-            speedMultiplier = item.getSpeedMultiplier();
+            speedMultiplier = toolBreakTimeBonus0(item);
 
             int efficiencyLevel = Optional.ofNullable(item.getEnchantment(Enchantment.ID_EFFICIENCY))
                     .map(Enchantment::getLevel).orElse(0);
-            int hasteEffectLevel = Optional.ofNullable(player.getEffect(Effect.HASTE))
-                    .map(Effect::getAmplifier).orElse(0);
-            int miningFatigueLevel = Optional.ofNullable(player.getEffect(Effect.MINING_FATIGUE))
-                    .map(Effect::getAmplifier).orElse(0);
 
             if (canHarvest && efficiencyLevel > 0) {
                 speedMultiplier += efficiencyLevel ^ 2 + 1;
@@ -955,14 +959,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 speedMultiplier *= 1 + (0.2 * Integer.max(hasteEffectLevel, conduitPowerLevel));
             }
 
-            if (miningFatigueLevel > 0) {
-                speedMultiplier /= 3 ^ miningFatigueLevel;
-            }
+        }
+
+        if (miningFatigueLevel > 0) {
+            speedMultiplier /= 3 ^ miningFatigueLevel;
         }
 
         seconds /= speedMultiplier;
 
-        if (player.isInsideOfWater() && !hasAcuaAffinity) {
+        if (player.isInsideOfWater() && !hasAquaAffinity) {
             seconds *= 5;
         }
 
@@ -973,7 +978,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return seconds;
     }
     
-    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Not completely accurate")
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Not completely accurate", replaceWith = "calculateBreakeTime()")
     @Deprecated
     public double getBreakTime(Item item, Player player) {
         Objects.requireNonNull(item, "getBreakTime: Item can not be null");
