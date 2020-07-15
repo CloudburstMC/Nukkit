@@ -4031,6 +4031,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.getFoodData().setLevel(20, 20);
 
         this.sendData(this);
+        this.sendData(this.hasSpawned.values().toArray(new Player[0]));
 
         this.setMovementSpeed(DEFAULT_SPEED);
 
