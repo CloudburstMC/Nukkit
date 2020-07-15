@@ -248,6 +248,7 @@ public class Effect implements Cloneable {
             player.dataPacket(pk);
 
             if (this.id == Effect.SPEED) {
+                player.setSprinting(false);
                 if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 + 0.2f * (oldEffect.amplifier + 1)), false);
                 }
