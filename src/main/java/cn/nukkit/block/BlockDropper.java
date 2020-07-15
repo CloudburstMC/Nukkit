@@ -6,6 +6,7 @@ import cn.nukkit.dispenser.DefaultDispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemTool;
 
 public class BlockDropper extends BlockDispenser {
 
@@ -51,5 +52,15 @@ public class BlockDropper extends BlockDispenser {
     @Override
     protected DispenseBehavior getDispenseBehavior(Item item) {
         return new DefaultDispenseBehavior();
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 }

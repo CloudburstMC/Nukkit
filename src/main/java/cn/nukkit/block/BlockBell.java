@@ -406,6 +406,11 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public BlockColor getColor() {
         return BlockColor.GOLD_BLOCK_COLOR;
     }

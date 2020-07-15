@@ -55,13 +55,6 @@ public class BlockSlabWood extends BlockSlab {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                toItem()
-        };
-    }
-
-    @Override
     public Item toItem() {
         return new ItemBlock(this, this.getDamage() & 0x07);
     }

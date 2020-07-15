@@ -184,4 +184,9 @@ public class BlockLantern extends BlockFlowable {
         return BlockColor.IRON_BLOCK_COLOR;
     }
 
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
 }

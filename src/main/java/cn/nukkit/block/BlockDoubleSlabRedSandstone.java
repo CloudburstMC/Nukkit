@@ -61,13 +61,18 @@ public class BlockDoubleSlabRedSandstone extends BlockSolidMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             return new Item[]{
                     Item.get(Item.RED_SANDSTONE_SLAB, this.getDamage() & 0x07, 2)
             };
         } else {
             return new Item[0];
         }
+    }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

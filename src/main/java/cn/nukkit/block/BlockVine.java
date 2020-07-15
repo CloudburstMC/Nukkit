@@ -211,7 +211,7 @@ public class BlockVine extends BlockTransparentMeta {
 
     @Override
     public int getToolType() {
-        return ItemTool.TYPE_SHEARS;
+        return ItemTool.TYPE_AXE;
     }
 
     @Override

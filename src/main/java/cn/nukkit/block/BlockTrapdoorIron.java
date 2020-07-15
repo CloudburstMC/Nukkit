@@ -57,4 +57,9 @@ public class BlockTrapdoorIron extends BlockTrapdoor {
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
 }

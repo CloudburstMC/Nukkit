@@ -29,6 +29,11 @@ public class BlockObsidian extends BlockSolid {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_DIAMOND;
+    }
+
+    @Override
     public double getHardness() {
         return 35; //50 in PC
     }
@@ -36,17 +41,6 @@ public class BlockObsidian extends BlockSolid {
     @Override
     public double getResistance() {
         return 6000;
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_DIAMOND) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
     }
 
     @Override

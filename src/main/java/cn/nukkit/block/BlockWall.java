@@ -568,6 +568,11 @@ public class BlockWall extends BlockTransparentHyperMeta implements BlockConnect
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
     
     @Since("1.3.0.0-PN")
     @PowerNukkitOnly

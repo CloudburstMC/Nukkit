@@ -2038,27 +2038,13 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-            double breakTime = target.getBreakTime(item, player);
+            double breakTime = target.calculateBreakTime(item, player);
             // this in
             // block
             // class
 
             if ((setBlockDestroy || player.isCreative()) && breakTime > 0.15) {
                 breakTime = 0.15;
-            }
-
-            if (player.hasEffect(Effect.SWIFTNESS)) {
-                breakTime *= 1 - (0.2 * (player.getEffect(Effect.SWIFTNESS).getAmplifier() + 1));
-            }
-
-            if (player.hasEffect(Effect.MINING_FATIGUE)) {
-                breakTime *= 1 - (0.3 * (player.getEffect(Effect.MINING_FATIGUE).getAmplifier() + 1));
-            }
-
-            Enchantment eff = item.getEnchantment(Enchantment.ID_EFFICIENCY);
-
-            if (eff != null && eff.getLevel() > 0) {
-                breakTime *= 1 - (0.3 * eff.getLevel());
             }
 
             breakTime -= 0.15;

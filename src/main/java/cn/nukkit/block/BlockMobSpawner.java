@@ -27,6 +27,11 @@ public class BlockMobSpawner extends BlockSolid {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public double getHardness() {
         return 5;
     }

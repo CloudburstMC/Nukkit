@@ -29,4 +29,9 @@ public class BlockButtonStone extends BlockButton {
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
 }

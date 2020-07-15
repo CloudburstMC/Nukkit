@@ -33,16 +33,10 @@ public class BlockStonecutter extends BlockSolid {
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
-
+    
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    this.toItem()
-            };
-        } else {
-            return new Item[0];
-        }
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

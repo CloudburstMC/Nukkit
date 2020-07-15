@@ -169,4 +169,26 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
         return 0;
     }
+
+    //Values from: https://minecraft.gamepedia.com/Breaking
+    @Override
+    public double getSpeedMultiplier() {
+        if (this.isShears() || this.isSword()) {
+            return 1.5;
+        }
+        switch (this.getTier()) {
+            case TIER_WOODEN:
+                return 2;
+            case TIER_STONE:
+                return 4;
+            case TIER_IRON:
+                return 6;
+            case TIER_DIAMOND:
+                return 8;
+            case TIER_GOLD:
+                return 12;
+            //TODO: TIER_NETHERITE return 9
+        }
+        return 1;
+    }
 }

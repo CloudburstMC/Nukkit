@@ -47,17 +47,6 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
-    }
-
-    @Override
     public Item toItem() {
         Item item = super.toItem();
         item.setDamage(0);

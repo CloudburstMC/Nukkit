@@ -95,6 +95,11 @@ public class BlockStonecutterBlock extends BlockTransparentMeta implements Facea
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
         return new Item[] {  toItem() };
     }

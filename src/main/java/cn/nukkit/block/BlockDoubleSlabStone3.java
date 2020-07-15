@@ -64,8 +64,13 @@ public class BlockDoubleSlabStone3 extends BlockDoubleSlabStone {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             Item drop = Block.get(Block.STONE_SLAB3, this.getDamage() & 0x07).toItem();
             drop.setCount(2);
             return new Item[]{ drop };
