@@ -126,6 +126,11 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         return BlockState.of(blockId, storage);
     }
 
+    @Override
+    public int getExactIntStorage() {
+        return storage.intValueExact();
+    }
+
     @Nonnull
     @Override
     public BigIntegerMutableBlockState copy() {

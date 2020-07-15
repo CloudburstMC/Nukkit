@@ -1,14 +1,19 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.StoneSlab2Type;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by CreeperFace on 26. 11. 2016.
  */
-public class BlockDoubleSlabRedSandstone extends BlockSolidMeta {
+@PowerNukkitDifference(info = "Extends BlockDoubleSlabBase only in PowerNukkit")
+public class BlockDoubleSlabRedSandstone extends BlockDoubleSlabBase {
 
     public BlockDoubleSlabRedSandstone() {
         this(0);
@@ -21,6 +26,25 @@ public class BlockDoubleSlabRedSandstone extends BlockSolidMeta {
     @Override
     public int getId() {
         return DOUBLE_RED_SANDSTONE_SLAB;
+    }
+
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return BlockSlabRedSandstone.PROPERTIES;
+    }
+
+    public StoneSlab2Type getSlabType() {
+        return getPropertyValue(StoneSlab2Type.PROPERTY);
+    }
+
+    public void setSlabType(StoneSlab2Type type) {
+        setPropertyValue(StoneSlab2Type.PROPERTY, type);
+    }
+
+    @Override
+    public String getSlabName() {
+        return getSlabType().getEnglishName();
     }
 
     @Override
@@ -39,32 +63,16 @@ public class BlockDoubleSlabRedSandstone extends BlockSolidMeta {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Red Sandstone",
-                "Purpur",
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-        };
-
-        return "Double " + names[this.getDamage() & 0x07] + " Slab";
-    }
-
-    @Override
     public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.RED_SANDSTONE_SLAB), this.getDamage() & 0x07);
+        return getCurrentState().forItem().withBlockId(BlockID.RED_SANDSTONE_SLAB).asItemBlock();
     }
-
+    
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    Item.get(Item.RED_SANDSTONE_SLAB, this.getDamage() & 0x07, 2)
-            };
+            Item slab = toItem();
+            slab.setCount(2);
+            return new Item[]{ slab };
         } else {
             return new Item[0];
         }
@@ -77,13 +85,6 @@ public class BlockDoubleSlabRedSandstone extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            case 0:
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            case 1:
-                return BlockColor.PURPLE_BLOCK_COLOR;
-            default:
-                return BlockColor.STONE_BLOCK_COLOR;
-        }
+        return getSlabType().getColor();
     }
 }

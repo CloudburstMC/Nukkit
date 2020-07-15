@@ -17,8 +17,8 @@ public class IntBlockProperty extends BlockProperty<Integer> {
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public IntBlockProperty(String name, int maxValue, int minValue, int defaultValue, int bitSize, String persistenceName) {
-        super(name, bitSize, persistenceName);
+    public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int defaultValue, int bitSize, String persistenceName) {
+        super(name, exportedToItem, bitSize, persistenceName);
         int delta = maxValue - minValue;
         Preconditions.checkArgument(delta > 0, "maxValue must be higher than minValue. Got min:%s and max:%s", minValue, maxValue);
         
@@ -33,26 +33,26 @@ public class IntBlockProperty extends BlockProperty<Integer> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public IntBlockProperty(String name, int maxValue, int minValue, int defaultValue, int bitSize) {
-        this(name, maxValue, minValue, defaultValue, bitSize, name);
+    public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int defaultValue, int bitSize) {
+        this(name, exportedToItem, maxValue, minValue, defaultValue, bitSize, name);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public IntBlockProperty(String name, int maxValue, int minValue, int defaultValue) {
-        this(name, maxValue, minValue, defaultValue, NukkitMath.bitLength(maxValue - minValue));
+    public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int defaultValue) {
+        this(name, exportedToItem, maxValue, minValue, defaultValue, NukkitMath.bitLength(maxValue - minValue));
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public IntBlockProperty(String name, int maxValue, int minValue) {
-        this(name, maxValue, minValue, minValue);
+    public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue) {
+        this(name, exportedToItem, maxValue, minValue, minValue);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public IntBlockProperty(String name, int maxValue) {
-        this(name, maxValue, 0);
+    public IntBlockProperty(String name, boolean exportedToItem, int maxValue) {
+        this(name, exportedToItem, maxValue, 0);
     }
 
     @Override
@@ -112,5 +112,10 @@ public class IntBlockProperty extends BlockProperty<Integer> {
     @Since("1.4.0.0-PN")
     public int getDefaultValue() {
         return getValueForMeta(defaultMeta);
+    }
+
+    @Override
+    public Class<Integer> getValueClass() {
+        return Integer.class;
     }
 }

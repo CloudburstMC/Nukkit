@@ -1,4 +1,4 @@
-package cn.nukkit.utils;
+package cn.nukkit.blockproperty.exception;
 
 import cn.nukkit.blockproperty.BlockProperty;
 import lombok.Getter;

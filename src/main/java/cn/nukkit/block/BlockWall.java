@@ -9,7 +9,6 @@ import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
@@ -41,12 +40,12 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(
-            new ArrayBlockProperty<>("wall_block_type", WallType.class),
-            new ArrayBlockProperty<>("wall_connection_type_south", WallConnectionType.class),
-            new ArrayBlockProperty<>("wall_connection_type_west", WallConnectionType.class),
-            new ArrayBlockProperty<>("wall_connection_type_north", WallConnectionType.class),
-            new ArrayBlockProperty<>("wall_connection_type_east", WallConnectionType.class),
-            new BooleanBlockProperty("wall_post_bit")
+            new ArrayBlockProperty<>("wall_block_type", true, WallType.class),
+            new ArrayBlockProperty<>("wall_connection_type_south", false, WallConnectionType.class),
+            new ArrayBlockProperty<>("wall_connection_type_west", false, WallConnectionType.class),
+            new ArrayBlockProperty<>("wall_connection_type_north", false, WallConnectionType.class),
+            new ArrayBlockProperty<>("wall_connection_type_east", false, WallConnectionType.class),
+            new BooleanBlockProperty("wall_post_bit", false)
     );
 
     private static final boolean SHOULD_FAIL = false; 
@@ -122,11 +121,6 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
         }
         
         super.setDamage(meta);
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, getDamage() & 0xF);
     }
 
     @Override
@@ -345,7 +339,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
     /**
      * @return true if it should be a post
      */
-    @PowerNukkitDifference
+    @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void autoUpdatePostFlag() {
         setWallPost(recheckPostConditions(up(1, 0)));

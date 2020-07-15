@@ -4,6 +4,7 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

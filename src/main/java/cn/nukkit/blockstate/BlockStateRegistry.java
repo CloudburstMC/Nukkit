@@ -11,12 +11,14 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.HumanStringComparator;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 
@@ -37,20 +39,19 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BlockStateRegistry {
     public final int BIG_META_MASK = 0xFFFFFFFF;
     private final Set<String> LEGACY_NAME_SET = Collections.singleton(CommonBlockProperties.LEGACY_PROPERTY_NAME);
-    private final Map<BlockState, Integer> blockStateToRuntimeId = new ConcurrentHashMap<>();
-    private final Long2IntMap bigIdToRuntimeId = new Long2IntOpenHashMap();
-    private final int updateBlockRuntimeId;
     
+    private final Registration updateBlockRegistration;
+
+    private final Map<BlockState, Registration> blockStateRegistration = new ConcurrentHashMap<>();
+    private final Map<String, Registration> stateIdRegistration = new ConcurrentHashMap<>();
+
     private final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     private final Int2ObjectMap<String> blockIdToPersistenceName = new Int2ObjectOpenHashMap<>();
-    private final Map<String, Integer> stateIdToRuntimeId = new ConcurrentHashMap<>();
     
     private final byte[] blockPaletteBytes;
 
     //<editor-fold desc="static initialization" defaultstate="collapsed">
     static {
-        bigIdToRuntimeId.defaultReturnValue(-1);
-
         Map<CompoundTag, List<CompoundTag>> metaOverrides = new LinkedHashMap<>();
         //<editor-fold desc="Loading runtime_block_states_overrides.dat" defaultstate="collapsed">
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states_overrides.dat")) {
@@ -91,22 +92,20 @@ public class BlockStateRegistry {
 
         //</editor-fold>
 
-        int infoUpdateRuntimeId = -1;
+        Registration infoUpdateRuntimeId = null;
         
         for (CompoundTag state : tag.getAll()) {
             int runtimeId = runtimeIdAllocator.getAndIncrement();
-            CompoundTag stateKey = state.getCompound("block").copy().remove("version");
             String name = state.getCompound("block").getString("name").toLowerCase();
-
-            registerStateNbt(state, runtimeId);
             
             if (name.equals("minecraft:info_update")) {
-                infoUpdateRuntimeId = runtimeId;
+                infoUpdateRuntimeId = new Registration(BlockState.of(248), runtimeId);
             }
             
-            List<CompoundTag> legacyStates = metaOverrides.get(stateKey);
+            List<CompoundTag> legacyStates = metaOverrides.get(state.getCompound("block").copy().remove("version"));
             if (legacyStates == null) {
                 if (!state.contains("LegacyStates")) {
+                    registerStateId(state, runtimeId);
                     continue;
                 } else {
                     legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
@@ -122,18 +121,19 @@ public class BlockStateRegistry {
             // All other cases, register the name normally
             if (isNameOwnerOfId(name, firstId)) {
                 registerPersistenceName(firstId, name);
-                registerLegacyState(name, firstMeta, runtimeId);
+                registerStateId(state, runtimeId);
+                registerState(firstId, firstMeta, state, runtimeId);
             }
-
-            registerBigId(firstId, firstMeta, runtimeId);
+            
+            registerState(firstId, firstMeta, state, runtimeId);
 
             for (CompoundTag legacyState : legacyStates) {
                 int newBlockId = legacyState.getInt("id");
                 int meta = legacyState.getInt("val");
-                registerBigId(newBlockId, meta, runtimeId);
+                registerState(newBlockId, meta, state, runtimeId);
                 
                 if (isNameOwnerOfId(name, newBlockId)) {
-                    registerLegacyState(name, meta, runtimeId);
+                    registerState(newBlockId, meta, state, runtimeId);
                 }
             }
             // No point in sending this since the client doesn't use it.
@@ -141,12 +141,11 @@ public class BlockStateRegistry {
             state.remove("LegacyStates");
         }
 
-        if (infoUpdateRuntimeId == -1) {
-            log.error("Could not find the minecraft:info_update runtime id!");
-            infoUpdateRuntimeId = 0;
+        if (infoUpdateRuntimeId == null) {
+            throw new IllegalStateException("Could not find the minecraft:info_update runtime id!");
         }
         
-        updateBlockRuntimeId = infoUpdateRuntimeId;
+        updateBlockRegistration = infoUpdateRuntimeId;
         
         try {
             blockPaletteBytes = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
@@ -176,80 +175,68 @@ public class BlockStateRegistry {
     }
 
     public int getRuntimeId(BlockState state) {
-        return blockStateToRuntimeId.computeIfAbsent(state, BlockStateRegistry::discoverRuntimeId);
+        return getRegistration(state).runtimeId;
+    }
+    
+    private Registration getRegistration(BlockState state) {
+        return blockStateRegistration.computeIfAbsent(state, BlockStateRegistry::findRegistration);
     }
 
     public int getRuntimeId(int blockId) {
-        return getRuntimeId(blockId, 0);
+        return getRuntimeId(BlockState.of(blockId));
     }
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "getRuntimeId(BlockState state)", since = "1.3.0.0-PN")
     public int getRuntimeId(int blockId, int meta) {
-        long bigId = (long)blockId << 32 | meta;
-        int runtimeId = bigIdToRuntimeId.get(bigId);
-        if (runtimeId == -1) {
-            synchronized (bigIdToRuntimeId) {
-                return bigIdToRuntimeId.computeIfAbsent(bigId, k-> discoverRuntimeId(BlockState.of(blockId, meta)));
-            }
-        }
-        return runtimeId;
+        return getRuntimeId(BlockState.of(blockId, meta));
     }
 
-    private int discoverRuntimeId(BlockState state) {
-        int runtimeId;
-        Set<String> names = state.getPropertyNames();
-        if (names.isEmpty() || names.equals(LEGACY_NAME_SET)) {
-            runtimeId = discoverRuntimeIdFromLegacy(state);
-        } else {
-            runtimeId = discoverRuntimeIdByStateNbt(state);
-        }
-        removeStateIdsAsync(runtimeId);
-        return runtimeId;
-    }
-
-    @SuppressWarnings("java:S1874")
-    private int discoverRuntimeIdFromLegacy(BlockState state) {
-        long bigId;
+    private Registration findRegistration(final BlockState state) {
         // Special case for PN-96 PowerNukkit#210 where the world contains blocks like 0:13, 0:7, etc
         if (state.getBlockId() == BlockID.AIR) {
-            bigId = 0;
-        } else {
-            //noinspection deprecation
-            bigId = state.getBigId();
+            Registration airRegistration = blockStateRegistration.get(BlockState.AIR);
+            if (airRegistration != null) {
+                return new Registration(state, airRegistration.runtimeId);
+            }
         }
         
-        int runtimeId = bigIdToRuntimeId.get(bigId);
-        if (runtimeId == -1) {
-            return logDiscoveryError(state);
+        Registration registration;
+        Set<String> names = state.getPropertyNames();
+        if (names.isEmpty() || names.equals(LEGACY_NAME_SET)) {
+            registration = logDiscoveryError(state);
+        } else {
+            registration = findRegistrationByStateId(state);
         }
-        return runtimeId;
+        removeStateIdsAsync(registration);
+        return registration;
     }
 
-    private int discoverRuntimeIdByStateNbt(BlockState state) {
-        Integer runtimeId = stateIdToRuntimeId.remove(state.getStateId());
-        if (runtimeId != null) {
-            return runtimeId;
+    private Registration findRegistrationByStateId(BlockState state) {
+        Registration registration = stateIdRegistration.remove(state.getStateId());
+        if (registration != null) {
+            registration.state = state;
+            return registration;
         }
 
-        runtimeId = stateIdToRuntimeId.remove(state.getLegacyStateId());
-        if (runtimeId != null) {
-            return runtimeId;
+        registration = stateIdRegistration.remove(state.getLegacyStateId());
+        if (registration != null) {
+            registration.state = state;
+            return registration;
         }
 
-        runtimeId = logDiscoveryError(state);
-        return runtimeId;
+        return logDiscoveryError(state);
     }
     
-    private void removeStateIdsAsync(@Nullable Integer runtimeId) {
-        if (runtimeId != null && runtimeId != updateBlockRuntimeId) {
-            new Thread(() -> stateIdToRuntimeId.values().removeIf(runtimeId::equals)).start();
+    private void removeStateIdsAsync(@Nullable Registration registration) {
+        if (registration != null && registration != updateBlockRegistration) {
+            new Thread(() -> stateIdRegistration.values().removeIf(r -> r.runtimeId == registration.runtimeId)).start();
         }
     }
 
-    private int logDiscoveryError(BlockState state) {
+    private Registration logDiscoveryError(BlockState state) {
         log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()+", replacing with an \"UPDATE!\" block.");
-        return updateBlockRuntimeId;
+        return updateBlockRegistration;
     }
 
     @Nullable
@@ -266,26 +253,30 @@ public class BlockStateRegistry {
         }
     }
 
-    private void registerStateNbt(CompoundTag state, int runtimeId) {
-        registerStateId(getStateId(state.getCompound("block")), runtimeId);
-    }
-    
-    private void registerStateId(String stateId, int runtimeId) {
-        Integer old = stateIdToRuntimeId.putIfAbsent(stateId, runtimeId);
-        if (old != null && !old.equals(runtimeId)) {
+    private void registerStateId(CompoundTag state, int runtimeId) {
+        String stateId = getStateId(state.getCompound("block"));
+        Registration registration = new Registration(null, runtimeId);
+        
+        Registration old = stateIdRegistration.putIfAbsent(stateId, registration);
+        if (old != null && !old.equals(registration)) {
             throw new UnsupportedOperationException("The persistence NBT registration tried to replaced a runtime id. Old:"+old+", New:"+runtimeId+", State:"+stateId);
         }
     }
+    
+    private void registerState(int blockId, int meta, CompoundTag originalState, int runtimeId) {
+        BlockState state = BlockState.of(blockId, meta);
+        Registration registration = new Registration(state, runtimeId);
 
-    private void registerBigId(long blockId, long meta, int runtimeId) {
-        long bigId = blockId << 32 | meta;
-        bigIdToRuntimeId.put(bigId, runtimeId);
+        Registration old = blockStateRegistration.putIfAbsent(state, registration);
+        if (old != null && !registration.equals(old)) {
+            throw new UnsupportedOperationException("The persistence NBT registration tried to replaced a runtime id. Old:"+old+", New:"+runtimeId+", State:"+state);
+        }
+
+        CompoundTag block = originalState.getCompound("block");
+        stateIdRegistration.remove(getStateId(block));
+        stateIdRegistration.remove(state.getLegacyStateId());
     }
     
-    private void registerLegacyState(String blockName, int meta, int runtimeId) {
-        registerStateId(blockName+";nukkit-legacy="+meta, runtimeId);
-    }
-
     public int getBlockPaletteDataVersion() {
         @SuppressWarnings("UnnecessaryLocalVariable")
         Object obj = blockPaletteBytes;
@@ -295,6 +286,10 @@ public class BlockStateRegistry {
     @Nonnull
     public byte[] getBlockPaletteBytes() {
         return blockPaletteBytes.clone();
+    }
+    
+    public void putBlockPaletteBytes(BinaryStream stream) {
+        stream.put(blockPaletteBytes);
     }
     
     public int getBlockPaletteLength() {
@@ -333,5 +328,19 @@ public class BlockStateRegistry {
         MutableBlockState blockState = createMutableState(blockId);
         blockState.setDataStorage(storage);
         return blockState;
+    }
+
+    public int getUpdateBlockRegistration() {
+        return updateBlockRegistration.runtimeId;
+    }
+
+    @AllArgsConstructor
+    @ToString
+    @EqualsAndHashCode
+    private class Registration {
+        @Nullable
+        private BlockState state;
+        
+        private final int runtimeId;
     }
 }
