@@ -557,6 +557,42 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             //list[CRACKED_NETHER_BRICKS] = Block<Name>.class; //558
             //list[QUARTZ_BRICKS] = Block<Name>.class; //559
             
+            list[CRIMSON_STEM] = BlockCrimsonStem.class; //480
+            list[WARPED_STEM] = BlockWarpedStem.class; //481
+            
+            list[STRIPPED_CRIMSON_STEM] = BlockCrimsonStrippedStem.class; //495
+            list[STRIPPED_WARPED_STEM] = BlockWarpedStrippedStem.class; //496
+            list[CRIMSON_PLANKS] = BlockCrimsonPlanks.class; //497
+            list[WARPED_PLANKS] = BlockWarpedPlanks.class; //498
+            list[CRIMSON_DOOR_BLOCK] = BlockDoorCrimson.class; //499
+            list[WARPED_DOOR_BLOCK] = BlockDoorWarped.class; //500
+            list[CRIMSON_TRAPDOOR] = BlockTrapdoorCrimson.class; //501
+            list[WARPED_TRAPDOOR] = BlockTrapdoorWarped.class; //502
+            
+            list[CRIMSON_STANDING_SIGN] = BlockCrimsonSignPost.class; //505
+            list[CRIMSON_WALL_SIGN] = BlockCrimsonWallSign.class; //506
+            list[WARPED_STANDING_SIGN] = BlockWarpedSignPost.class; //507
+            list[WARPED_WALL_SIGN] = BlockWarpedWallSign.class; //508
+            list[CRIMSON_STAIRS] = BlockStairsCrimson.class; //509
+            list[WARPED_STAIRS] = BlockStairsWarped.class; //510
+            list[CRIMSON_FENCE] = BlockFenceCrimson.class; //511
+            list[WARPED_FENCE] = BlockFenceWarped.class; //512
+            list[CRIMSON_FENCE_GATE] = BlockFenceGateCrimson.class; //513
+            list[WARPED_FENCE_GATE] = BlockFenceGateWarped.class; //514
+            list[CRIMSON_BUTTON] = BlockButtonCrimson.class; //515
+            list[WARPED_BUTTON] = BlockButtonWarped.class; //516
+            list[CRIMSON_PRESSURE_PLATE] = BlockPressurePlateCrimson.class; //517
+            list[WARPED_PRESSURE_PLATE] = BlockPressurePlateWarped.class; //518
+            list[CRIMSON_SLAB] = BlockSlabCrimson.class; //519
+            list[WARPED_SLAB] = BlockSlabWarped.class; //520
+            list[CRIMSON_DOUBLE_SLAB] = BlockDoubleSlabCrimson.class; //521
+            list[WARPED_DOUBLE_SLAB] = BlockDoubleSlabWarped.class; //522
+            
+            list[WARPED_HYPHAE] = BlockWarpedHyphae.class; //553
+            list[CRIMSON_HYPHAE] = BlockCrimsonHyphae.class; //554
+            list[STRIPPED_CRIMSON_HYPHAE] = BlockCrimsonStrippedHyphae.class; //555
+            list[STRIPPED_WARPED_HYPHAE] = BlockWarpedStrippedHyphae.class; //556
+            
             initializing = true;
           
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
