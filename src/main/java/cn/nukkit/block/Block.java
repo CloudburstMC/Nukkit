@@ -28,11 +28,9 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.InvalidBlockDamageException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
-import lombok.NonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -956,7 +954,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return mutableState.getFullId();
     }
 
-    @NonNull
+    @Nonnull
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockProperties getProperties() {
@@ -965,7 +963,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    @NonNull
+    @Nonnull
     public final BlockState getCurrentState() {
         return mutableState.getCurrentState();
     }
@@ -1091,8 +1089,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 1.0 / speed;
     }
 
-    @NonNull
-    public double calculateBreakTime(@NonNull Item item, @NonNull Player player) {
+    @Nonnull
+    public double calculateBreakTime(@Nonnull Item item, @Nonnull Player player) {
         double seconds = 0;
         double blockHardness = getHardness();
         Item[] drops = getDrops(item);
