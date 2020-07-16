@@ -1,11 +1,11 @@
 package cn.nukkit.block;
 
-public class BlockWarpedStrippedStem extends BlockWoodStripped {
-    public BlockWarpedStrippedStem() {
+public class BlockStemStrippedWarped extends BlockStemStripped {
+    public BlockStemStrippedWarped() {
         this(0);
     }
     
-    public BlockWarpedStrippedStem(int meta) {
+    public BlockStemStrippedWarped(int meta) {
         super(meta);
     }
     

@@ -340,7 +340,7 @@ public final class BlockProperties {
 
         @Override
         public String toString() {
-            return offset+"-"+property.getBitSize()+":"+property.getName();
+            return offset+"-"+(offset+property.getBitSize())+":"+property.getName();
         }
     }
 }

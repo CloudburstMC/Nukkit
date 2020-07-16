@@ -12,41 +12,51 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ChunkUpdater {
+    public int getContentVersion() {
+        return 3;
+    }
+
     @PowerNukkitOnly("Needed for level backward compatibility")
     @Since("1.3.0.0-PN")
     public void backwardCompatibilityUpdate(Level level, BaseChunk chunk) {
         boolean updated = false;
         for (ChunkSection section : chunk.getSections()) {
-            int contentVersion = section.getContentVersion();
-            if (contentVersion < 2) {
-                WallUpdater wallUpdater = new WallUpdater(level, section);
-                boolean sectionUpdated = walk(chunk, section, new GroupedUpdaters(
-                        wallUpdater,
-                        contentVersion < 1? new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK) : null,
-                        contentVersion < 1? new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN) : null
-                ));
-
-                updated = updated || sectionUpdated;
-
-                int attempts = 0;
-                while (sectionUpdated) {
-                    if (attempts++ >= 5) {
-                        int x = chunk.getX() << 4 | 0x6;
-                        int y = section.getY() << 4 | 0x6;
-                        int z = chunk.getZ() << 4 | 0x6;
-                        Server.getInstance().getLogger().warning("The chunk section at x:"+x+", y:"+y+", z:"+z+" failed to complete the backward compatibility update 1 after "+attempts+" attempts");
-                        break;
-                    }
-                    sectionUpdated = walk(chunk, section, wallUpdater);
-                }
-
-                section.setContentVersion(2);
+            if (section.getContentVersion() < 3) {
+                updated = updateToV3(level, chunk, updated, section, section.getContentVersion());
             }
         }
 
         if (updated) {
             chunk.setChanged();
         }
+    }
+
+    private boolean updateToV3(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
+        WallUpdater wallUpdater = new WallUpdater(level, section);
+        boolean sectionUpdated = walk(chunk, section, new GroupedUpdaters(
+                wallUpdater,
+                contentVersion < 1? new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK) : null,
+                contentVersion < 1? new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN) : null,
+                contentVersion < 3? new OldWoodBarkUpdater(section, BlockID.LOG,  0b000) : null,
+                contentVersion < 3? new OldWoodBarkUpdater(section, BlockID.LOG2, 0b100) : null
+        ));
+
+        updated = updated || sectionUpdated;
+
+        int attempts = 0;
+        while (sectionUpdated) {
+            if (attempts++ >= 5) {
+                int x = chunk.getX() << 4 | 0x6;
+                int y = section.getY() << 4 | 0x6;
+                int z = chunk.getZ() << 4 | 0x6;
+                Server.getInstance().getLogger().warning("The chunk section at x:"+x+", y:"+y+", z:"+z+" failed to complete the backward compatibility update 1 after "+attempts+" attempts");
+                break;
+            }
+            sectionUpdated = walk(chunk, section, wallUpdater);
+        }
+
+        section.setContentVersion(3);
+        return updated;
     }
 
     private boolean walk(BaseChunk chunk, ChunkSection section, Updater updater) {

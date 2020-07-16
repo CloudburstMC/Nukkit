@@ -144,6 +144,11 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
         return eClass;
     }
 
+    @Nonnull
+    public E[] getUniverse() {
+        return universe.clone();
+    }
+
     public boolean isOrdinal() {
         return ordinal;
     }

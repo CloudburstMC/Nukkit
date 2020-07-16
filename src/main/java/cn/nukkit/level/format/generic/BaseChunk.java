@@ -27,7 +27,10 @@ import java.nio.ByteBuffer;
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly("Needed for level backward compatibility")
     @Since("1.3.0.0-PN")
-    public static final int CONTENT_VERSION = 2;
+    @Deprecated
+    @DeprecationDetails(reason = "It's not a constant value and was moved to ChunkUpdater", replaceWith = "ChunkUpdater.getContentVersion()", 
+            toBeRemovedAt = "1.5.0.0-PN", since = "1.4.0.0-PN")
+    public static final int CONTENT_VERSION = ChunkUpdater.getContentVersion();
 
     protected ChunkSection[] sections;
 

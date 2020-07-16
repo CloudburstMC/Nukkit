@@ -20,6 +20,12 @@ public final class CommonBlockProperties {
             BlockFace.fromHorizontalIndex(0), BlockFace.fromHorizontalIndex(1),
             BlockFace.fromHorizontalIndex(2), BlockFace.fromHorizontalIndex(3),
     }).ordinal(true);
+    
+    public static final BlockProperty<BlockFace.Axis> PILLAR_AXIS = new ArrayBlockProperty<>("pillar_axis", false, new BlockFace.Axis[]{
+            BlockFace.Axis.Y, BlockFace.Axis.X, BlockFace.Axis.Z
+    });
+    
+    public static final IntBlockProperty DEPRECATED = new IntBlockProperty("deprecated", false, 3);
 
     private CommonBlockProperties() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");

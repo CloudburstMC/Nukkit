@@ -6,6 +6,7 @@ import cn.nukkit.block.BlockWall;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.anvil.Anvil;
+import cn.nukkit.level.format.updater.ChunkUpdater;
 import cn.nukkit.math.BlockFace;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -63,7 +64,7 @@ class BaseChunkTest {
         
         chunk.backwardCompatibilityUpdate(level);
         
-        assertEquals(BaseChunk.CONTENT_VERSION, section.getContentVersion());
+        assertEquals(ChunkUpdater.getContentVersion(), section.getContentVersion());
         assertEquals(BlockID.COBBLE_WALL, chunk.getBlockId(x, y, z));
         assertEquals(BlockID.COBBLE_WALL, chunk.getBlockId(x, y+1, z));
         

@@ -23,9 +23,10 @@ public class BlockIdListGenerator {
                     continue;
                 }
                 String[] parts = line.split(",");
-                Preconditions.checkArgument(parts.length == 2);
-                ids.put(Integer.parseInt(parts[0]), parts[1]);
-                Preconditions.checkArgument(parts[1].isEmpty() || parts[1].startsWith("minecraft:"));
+                Preconditions.checkArgument(parts.length == 2 || parts[0].matches("^[0-9]+$"));
+                if (parts.length > 1 && parts[1].startsWith("minecraft:")) {
+                    ids.put(Integer.parseInt(parts[0]), parts[1]);
+                }
             }
         } catch (Exception e) {
             throw new IOException("Error reading the line "+count, e);

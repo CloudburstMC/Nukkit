@@ -557,11 +557,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             //list[CRACKED_NETHER_BRICKS] = Block<Name>.class; //558
             //list[QUARTZ_BRICKS] = Block<Name>.class; //559
             
-            list[CRIMSON_STEM] = BlockCrimsonStem.class; //480
-            list[WARPED_STEM] = BlockWarpedStem.class; //481
+            list[CRIMSON_STEM] = BlockStemCrimson.class; //480
+            list[WARPED_STEM] = BlockStemWarped.class; //481
             
-            list[STRIPPED_CRIMSON_STEM] = BlockCrimsonStrippedStem.class; //495
-            list[STRIPPED_WARPED_STEM] = BlockWarpedStrippedStem.class; //496
+            list[STRIPPED_CRIMSON_STEM] = BlockStemStrippedCrimson.class; //495
+            list[STRIPPED_WARPED_STEM] = BlockStemStrippedWarped.class; //496
             list[CRIMSON_PLANKS] = BlockCrimsonPlanks.class; //497
             list[WARPED_PLANKS] = BlockWarpedPlanks.class; //498
             list[CRIMSON_DOOR_BLOCK] = BlockDoorCrimson.class; //499
@@ -588,10 +588,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[CRIMSON_DOUBLE_SLAB] = BlockDoubleSlabCrimson.class; //521
             list[WARPED_DOUBLE_SLAB] = BlockDoubleSlabWarped.class; //522
             
-            list[WARPED_HYPHAE] = BlockWarpedHyphae.class; //553
-            list[CRIMSON_HYPHAE] = BlockCrimsonHyphae.class; //554
-            list[STRIPPED_CRIMSON_HYPHAE] = BlockCrimsonStrippedHyphae.class; //555
-            list[STRIPPED_WARPED_HYPHAE] = BlockWarpedStrippedHyphae.class; //556
+            list[WARPED_HYPHAE] = BlockHyphaeWarped.class; //553
+            list[CRIMSON_HYPHAE] = BlockHyphaeCrimson.class; //554
+            list[STRIPPED_CRIMSON_HYPHAE] = BlockHyphaeStrippedCrimson.class; //555
+            list[STRIPPED_WARPED_HYPHAE] = BlockHyphaeStrippedWarped.class; //556
             
             initializing = true;
           
@@ -601,7 +601,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     Block block;
                     try {
                         block = c.getDeclaredConstructor().newInstance();
-                        BlockStateRegistry.registerPersistenceName(id, block.getPersistenceName());
+                        String persistenceName = block.getPersistenceName();
+                        BlockStateRegistry.registerPersistenceName(id, persistenceName);
                         try {
                             Constructor<? extends Block> constructor = c.getDeclaredConstructor(int.class);
                             constructor.setAccessible(true);
