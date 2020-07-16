@@ -3,20 +3,20 @@ package cn.nukkit.block;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockCrimsonPlanks extends BlockSolid {
+public class BlockPlanksWarped extends BlockSolid {
 
-    public BlockCrimsonPlanks() {
+    public BlockPlanksWarped() {
         // Does nothing
     }
 
     @Override
     public int getId() {
-        return CRIMSON_PLANKS;
+        return WARPED_PLANKS;
     }
     
     @Override
     public String getName() {
-        return "Crimson Planks";
+        return "Warped Planks";
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BlockCrimsonPlanks extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.NETHERRACK_BLOCK_COLOR;
+        return BlockColor.CYAN_BLOCK_COLOR;
     }
     
     @Override
@@ -48,5 +48,4 @@ public class BlockCrimsonPlanks extends BlockSolid {
     public int getBurnAbility() {
         return 0;
     }
-
 }

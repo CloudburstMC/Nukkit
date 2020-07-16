@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDoorWarped;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockDoorWarped extends BlockDoorWood {
 
@@ -28,10 +29,10 @@ public class BlockDoorWarped extends BlockDoorWood {
         return new ItemDoorWarped();
     }
 
-    /*@Override
+    @Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+        return BlockColor.CYAN_BLOCK_COLOR;
+    }
     
     @Override
     public int getBurnChance() {

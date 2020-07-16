@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDoorCrimson;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockDoorCrimson extends BlockDoorWood {
 
@@ -28,10 +29,10 @@ public class BlockDoorCrimson extends BlockDoorWood {
         return new ItemDoorCrimson();
     }
 
-    /*@Override
+    @Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
+    }
     
     @Override
     public int getBurnChance() {

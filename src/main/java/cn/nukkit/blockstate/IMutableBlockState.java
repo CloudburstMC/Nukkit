@@ -16,4 +16,14 @@ public interface IMutableBlockState extends IBlockState {
     default <T> void setPropertyValue(BlockProperty<T> property, @Nullable T value) {
         setPropertyValue(property.getName(), value);
     }
+    
+    default boolean toggleBooleanProperty(String propertyName) {
+        boolean newValue = !getBooleanValue(propertyName);
+        setPropertyValue(propertyName, newValue);
+        return newValue;
+    }
+    
+    default boolean toggleBooleanProperty(BlockProperty<Boolean> property) {
+        return toggleBooleanProperty(property.getName());
+    }
 }

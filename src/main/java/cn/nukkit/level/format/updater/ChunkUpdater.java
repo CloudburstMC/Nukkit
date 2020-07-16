@@ -38,7 +38,8 @@ public class ChunkUpdater {
                 contentVersion < 1? new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK) : null,
                 contentVersion < 1? new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN) : null,
                 contentVersion < 3? new OldWoodBarkUpdater(section, BlockID.LOG,  0b000) : null,
-                contentVersion < 3? new OldWoodBarkUpdater(section, BlockID.LOG2, 0b100) : null
+                contentVersion < 3? new OldWoodBarkUpdater(section, BlockID.LOG2, 0b100) : null,
+                contentVersion < 3? new DoorUpdater(chunk, section) : null
         ));
 
         updated = updated || sectionUpdated;

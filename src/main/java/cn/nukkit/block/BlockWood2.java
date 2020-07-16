@@ -18,10 +18,7 @@ public class BlockWood2 extends BlockWood {
             WoodType.ACACIA, WoodType.DARK_OAK
     }, WoodType.ACACIA, 2);
 
-    public static final BlockProperties PROPERTIES;
-    static {
-        PROPERTIES = new BlockProperties(NEW_LOG_TYPE, PILLAR_AXIS);
-    }
+    public static final BlockProperties PROPERTIES = new BlockProperties(NEW_LOG_TYPE, PILLAR_AXIS);
 
     public static final int ACACIA = 0;
     public static final int DARK_OAK = 1;
