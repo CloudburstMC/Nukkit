@@ -29,8 +29,8 @@ Links
 * __[Download PowerNukkit](https://github.com/PowerNukkit/PowerNukkit/releases)__
 * __[PowerNukkit Discord](https://powernukkit.org/discord)__
 * __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
-* __[NukkitX Wiki](https://nukkitx.com/wiki/nukkit)__
 * __[NukkitX](https://github.com/NukkitX/Nukkit)__
+* __[NukkitX Wiki](https://nukkitx.com/wiki/nukkit)__
 * __[NukkitX News](https://nukkitx.com)__
 * __[NukkitX Forums](https://nukkitx.com/forums)__
 * __[NukkitX Discord](https://discord.gg/5PzMkyK)__

@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSnowball;
@@ -14,26 +15,15 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/6 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockSnowLayer extends BlockFallable {
-
-    private int meta;
+@PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable")
+public class BlockSnowLayer extends BlockFallableMeta {
 
     public BlockSnowLayer() {
-        this(0);
+        // Does nothing
     }
 
     public BlockSnowLayer(int meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
+        super(meta);
     }
 
     @Override

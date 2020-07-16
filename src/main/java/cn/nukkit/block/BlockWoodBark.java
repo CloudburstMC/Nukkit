@@ -15,11 +15,6 @@ public class BlockWoodBark extends BlockWood {
     }
     
     @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
-    }
-    
-    @Override
     public int getId() {
         return WOOD_BARK;
     }

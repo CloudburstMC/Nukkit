@@ -9,7 +9,7 @@ public class BlockLight extends BlockTransparentMeta {
     }
 
     public BlockLight(int meta) {
-        super(meta & 0xF);
+        super(meta);
     }
 
     @Override
@@ -20,11 +20,6 @@ public class BlockLight extends BlockTransparentMeta {
     @Override
     public int getId() {
         return LIGHT_BLOCK;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta & 0xF);
     }
 
     @Override

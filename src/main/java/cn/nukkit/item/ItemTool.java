@@ -18,6 +18,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TIER_STONE = 3;
     public static final int TIER_IRON = 4;
     public static final int TIER_DIAMOND = 5;
+    public static final int TIER_NETHERITE = 6;
 
     public static final int TYPE_NONE = 0;
     public static final int TYPE_SWORD = 1;
@@ -35,6 +36,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_STONE = 132;
     public static final int DURABILITY_IRON = 251;
     public static final int DURABILITY_DIAMOND = 1562;
+    public static final int DURABILITY_NETHERITE = 2032;
     public static final int DURABILITY_FLINT_STEEL = 65;
     public static final int DURABILITY_SHEARS = 239;
     public static final int DURABILITY_BOW = 385;
@@ -158,6 +160,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
             case TIER_STONE:
                 return 5;
             case TIER_WOODEN:
+            case TIER_NETHERITE:
                 return 15;
             case TIER_DIAMOND:
                 return 10;

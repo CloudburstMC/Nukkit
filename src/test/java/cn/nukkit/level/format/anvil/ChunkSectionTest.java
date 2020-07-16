@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ChunkSectionTest {
     @Test
-    void hyperIdPersistence() {
+    void hugeIdPersistence() {
         ChunkSection section = new ChunkSection(4);
         BlockWall wall = new BlockWall();
         wall.setWallType(BlockWall.WallType.BRICK);
