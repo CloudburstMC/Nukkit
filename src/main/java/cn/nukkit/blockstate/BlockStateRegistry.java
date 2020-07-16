@@ -25,9 +25,7 @@ import lombok.extern.log4j.Log4j2;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,6 +68,35 @@ public class BlockStateRegistry {
                 }
             }
 
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        //</editor-fold>
+
+        //<editor-fold desc="Loading block_ids.csv" defaultstate="collapsed">
+        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("block_ids.csv")) { 
+            if (stream == null) {
+                throw new AssertionError("Unable to locate block_ids.csv");
+            }
+
+            int count = 0;
+            try(BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim();
+                    if (line.isEmpty()) {
+                        continue;
+                    }
+                    String[] parts = line.split(",");
+                    Preconditions.checkArgument(parts.length == 2);
+                    if (parts[1].startsWith("minecraft:")) {
+                        blockIdToPersistenceName.put(Integer.parseInt(parts[0]), parts[1]);
+                    }
+                }
+            } catch (Exception e) {
+                throw new IOException("Error reading the line "+count+" of the block_ids.csv", e);
+            }
+            
         } catch (IOException e) {
             throw new AssertionError(e);
         }
