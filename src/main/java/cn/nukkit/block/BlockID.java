@@ -288,6 +288,7 @@ public interface BlockID {
     int GRAY_GLAZED_TERRACOTTA = 227;
     int SILVER_GLAZED_TERRACOTTA = 228;
     int CYAN_GLAZED_TERRACOTTA = 229;
+    
     int BLUE_GLAZED_TERRACOTTA = 231;
     int BROWN_GLAZED_TERRACOTTA = 232;
     int GREEN_GLAZED_TERRACOTTA = 233;
@@ -298,6 +299,7 @@ public interface BlockID {
 
     int CHORUS_PLANT = 240;
     int STAINED_GLASS = 241;
+    
     int PODZOL = 243;
     int BEETROOT_BLOCK = 244;
     int STONECUTTER = 245;
