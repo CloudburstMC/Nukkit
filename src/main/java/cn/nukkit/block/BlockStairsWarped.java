@@ -25,7 +25,7 @@ public class BlockStairsWarped extends BlockStairsWood {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
+        return BlockColor.CYAN_BLOCK_COLOR;
     }
     
     @Override
