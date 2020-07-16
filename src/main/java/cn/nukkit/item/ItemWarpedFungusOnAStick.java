@@ -13,4 +13,9 @@ public class ItemWarpedFungusOnAStick extends ItemTool {
     public ItemWarpedFungusOnAStick(Integer meta, int count) {
         super(WARPED_FUNGUS_ON_A_STICK, meta, count, "Warped Fungus on a stick");
     }
+    
+    @Override
+    public int getMaxDurability() {
+        return 100;
+    }
 }
