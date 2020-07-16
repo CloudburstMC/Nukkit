@@ -11,7 +11,7 @@ public class BlockGlassPane extends BlockThin {
 
     public BlockGlassPane() {
     }
-
+    
     @Override
     public String getName() {
         return "Glass Pane";

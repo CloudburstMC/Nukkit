@@ -9,11 +9,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.CampfireInventory;
 import cn.nukkit.inventory.CampfireRecipe;
 import cn.nukkit.inventory.ContainerInventory;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemCampfire;
-import cn.nukkit.item.ItemCoal;
-import cn.nukkit.item.ItemID;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
@@ -89,7 +85,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
             this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
         }
 
-        this.level.setBlock(block, this, true, false);
+        this.level.setBlock(block, this, true, true);
         createBlockEntity(item);
         return true;
     }

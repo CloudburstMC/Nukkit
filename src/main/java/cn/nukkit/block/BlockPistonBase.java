@@ -4,10 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMovingBlock;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
+import cn.nukkit.blockstate.BlockStateRegistry;
 import cn.nukkit.event.block.BlockPistonEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
@@ -228,7 +228,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                                 .putInt("id", newBlock.getId()) //only for nukkit purpose
                                 .putInt("meta", newBlock.getDamage()) //only for nukkit purpose
                                 .putShort("val", newBlock.getDamage())
-                                .putString("name", GlobalBlockPalette.getName(newBlock.getId()))
+                                .putString("name", BlockStateRegistry.getPersistenceName(newBlock.getId()))
                         );
 
                 if (blockEntity != null && !(blockEntity instanceof BlockEntityMovingBlock)) {

@@ -1,11 +1,18 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.StoneSlab4Type;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 public class BlockSlabStone4 extends BlockSlab {
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+            StoneSlab4Type.PROPERTY,
+            TOP_SLOT_PROPERTY
+    );
 
     public static final int MOSSY_STONE_BRICKS = 0;
     public static final int SMOOTH_QUARTZ = 1;
@@ -27,36 +34,34 @@ public class BlockSlabStone4 extends BlockSlab {
         return STONE_SLAB4;
     }
 
+    @Nonnull
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Mossy Stone Brick",
-                "Smooth Quartz",
-                "Stone",
-                "Cut Sandstone",
-                "Cut Red Sandstone",
-                "",
-                "",
-                ""
-        };
-
-        return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+    
+    public StoneSlab4Type getSlabType() {
+        return getPropertyValue(StoneSlab4Type.PROPERTY);
+    }
+    
+    public void setSlabType(StoneSlab4Type type) {
+        setPropertyValue(StoneSlab4Type.PROPERTY, type);
     }
 
     @Override
+    public String getSlabName() {
+        return getSlabType().getEnglishName();
+    }
+
+    @Override
+    public boolean isSameType(BlockSlab slab) {
+        return slab.getId() == getId() && getSlabType().equals(slab.getPropertyValue(StoneSlab4Type.PROPERTY));
+    }
+
+
+    @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            default:
-            case MOSSY_STONE_BRICKS:
-            case STONE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case SMOOTH_QUARTZ:
-                return BlockColor.QUARTZ_BLOCK_COLOR;
-            case CUT_SANDSTONE:
-                return BlockColor.SAND_BLOCK_COLOR;
-            case CUT_RED_SANDSTONE:
-                return BlockColor.ORANGE_BLOCK_COLOR;
-        }
+        return getSlabType().getColor();
     }
 
     @Override
@@ -68,11 +73,6 @@ public class BlockSlabStone4 extends BlockSlab {
         } else {
             return new Item[0];
         }
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
     }
 
     @Override

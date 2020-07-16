@@ -3,26 +3,27 @@ package cn.nukkit.network;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.network.protocol.*;
-import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.BinaryStream;
-import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.Utils;
-import cn.nukkit.utils.VarInt;
-import cn.nukkit.utils.Zlib;
+import cn.nukkit.utils.*;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
 import lombok.extern.log4j.Log4j2;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 /**
  * author: MagicDroidX
@@ -30,6 +31,11 @@ import java.util.Set;
  */
 @Log4j2
 public class Network {
+
+    private static final ThreadLocal<Inflater> INFLATER_RAW = ThreadLocal.withInitial(() -> new Inflater(true));
+    private static final ThreadLocal<Deflater> DEFLATER_RAW = ThreadLocal.withInitial(() -> new Deflater(7, true));
+    private static final ThreadLocal<byte[]> BUFFER = ThreadLocal.withInitial(() -> new byte[2 * 1024 * 1024]);
+
 
     public static final byte CHANNEL_NONE = 0;
     public static final byte CHANNEL_PRIORITY = 1; //Priority channel, only to be used when it matters
@@ -58,6 +64,66 @@ public class Network {
     public Network(Server server) {
         this.registerPackets();
         this.server = server;
+    }
+
+    @PowerNukkitOnly @Since("1.3.0.0-PN")
+    public static byte[] inflateRaw(byte[] data) throws IOException, DataFormatException {
+        Inflater inflater = INFLATER_RAW.get();
+        inflater.reset();
+        inflater.setInput(data);
+        inflater.finished();
+
+        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+        bos.reset();
+        byte[] buf = BUFFER.get();
+        while (!inflater.finished()) {
+            int i = inflater.inflate(buf);
+            bos.write(buf, 0, i);
+        }
+        return bos.toByteArray();
+    }
+
+    @PowerNukkitOnly @Since("1.3.0.0-PN")
+    public static byte[] deflateRaw(byte[] data, int level) throws IOException {
+        Deflater deflater = DEFLATER_RAW.get();
+        deflater.reset();
+        deflater.setLevel(level);
+        deflater.setInput(data);
+        deflater.finish();
+        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+        bos.reset();
+        byte[] buffer = BUFFER.get();
+        while (!deflater.finished()) {
+            int i = deflater.deflate(buffer);
+            bos.write(buffer, 0, i);
+        }
+
+        return bos.toByteArray();
+    }
+
+    @Since("1.3.0.0-PN")
+    public static byte[] deflateRaw(byte[][] datas, int level) throws IOException {
+        Deflater deflater = DEFLATER_RAW.get();
+        deflater.reset();
+        deflater.setLevel(level);
+        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+        bos.reset();
+        byte[] buffer = BUFFER.get();
+
+        for (byte[] data : datas) {
+            deflater.setInput(data);
+            while (!deflater.needsInput()) {
+                int i = deflater.deflate(buffer);
+                bos.write(buffer, 0, i);
+            }
+        }
+        deflater.finish();
+        while (!deflater.finished()) {
+            int i = deflater.deflate(buffer);
+            bos.write(buffer, 0, i);
+        }
+        //Deflater::end is called the time when the process exits.
+        return bos.toByteArray();
     }
 
     public void addStatistics(double upload, double download) {
@@ -148,8 +214,9 @@ public class Network {
     public void processBatch(BatchPacket packet, Player player) {
         byte[] data;
         try {
-            data = Zlib.inflate(packet.payload, 2 * 1024 * 1024); // Max 2MB
+            data = Network.inflateRaw(packet.payload);
         } catch (Exception e) {
+            log.warn("Failed to decompress a batch packet from "+player.getName(), e);
             return;
         }
 
@@ -346,7 +413,16 @@ public class Network {
         this.registerPacket(ProtocolInfo.VIDEO_STREAM_CONNECT_PACKET, VideoStreamConnectPacket.class);
         this.registerPacket(ProtocolInfo.CLIENT_CACHE_STATUS_PACKET, ClientCacheStatusPacket.class);
         this.registerPacket(ProtocolInfo.MAP_CREATE_LOCKED_COPY_PACKET, MapCreateLockedCopyPacket.class);
+        this.registerPacket(ProtocolInfo.EMOTE_PACKET, EmotePacket.class);
         this.registerPacket(ProtocolInfo.ON_SCREEN_TEXTURE_ANIMATION_PACKET, OnScreenTextureAnimationPacket.class);
         this.registerPacket(ProtocolInfo.COMPLETED_USING_ITEM_PACKET, CompletedUsingItemPacket.class);
+        this.registerPacket(ProtocolInfo.CODE_BUILDER_PACKET, CodeBuilderPacket.class);
+        this.registerPacket(ProtocolInfo.CREATIVE_CONTENT_PACKET, CreativeContentPacket.class);
+        this.registerPacket(ProtocolInfo.DEBUG_INFO_PACKET, DebugInfoPacket.class);
+        this.registerPacket(ProtocolInfo.EMOTE_LIST_PACKET, EmoteListPacket.class);
+        this.registerPacket(ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET, PacketViolationWarningPacket.class);
+        this.registerPacket(ProtocolInfo.PLAYER_ARMOR_DAMAGE_PACKET, PlayerArmorDamagePacket.class);
+        this.registerPacket(ProtocolInfo.PLAYER_ENCHANT_OPTIONS_PACKET, PlayerEnchantOptionsPacket.class);
+        this.registerPacket(ProtocolInfo.UPDATE_PLAYER_GAME_TYPE_PACKET, UpdatePlayerGameTypePacket.class);
     }
 }

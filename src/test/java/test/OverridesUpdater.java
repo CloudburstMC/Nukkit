@@ -1,10 +1,12 @@
 package test;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.HumanStringComparator;
 import lombok.Data;
 import lombok.NonNull;
 
@@ -13,8 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class OverridesUpdater {
     public static void main(String[] args) throws IOException {
@@ -43,7 +45,7 @@ public class OverridesUpdater {
             try (BufferedInputStream buffered = new BufferedInputStream(stream)) {
                 states = NBTIO.read(buffered).getList("Overrides", CompoundTag.class);
             }
-            
+
             for (CompoundTag override : states.getAll()) {
                 if (override.contains("block") && override.contains("LegacyStates")) {
                     CompoundTag key = override.getCompound("block").remove("version");
@@ -60,18 +62,31 @@ public class OverridesUpdater {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        
+
         ListTag<CompoundTag> newOverrides = new ListTag<>("Overrides");
-        
+
+        Map<String, Integer> newBlocks = Arrays.stream(BlockID.class.getDeclaredFields())
+                .map(field -> {
+                    try {
+                        return new AbstractMap.SimpleEntry<>("minecraft:"+field.getName().toLowerCase(), field.getInt(null));
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .filter(e-> e.getValue() >= 477)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+      
+      
         for (BlockInfo info : infoList.values()) {
             String stateName = info.getStateName();
-            
+
             CompoundTag override = new CompoundTag();
             override.putCompound("block", info.getKey().copy());
             override.putList((ListTag<? extends Tag>) info.getOverride().copy());
-            
-            switch (stateName) {
-                case "minecraft:light_block;block_light_level=14": 
+
+            /*switch (stateName) {
+                case "minecraft:light_block;block_light_level=14":
                     break;
                 case "minecraft:wood;wood_type=acacia;stripped_bit=0;pillar_axis=y":
                 case "minecraft:wood;wood_type=birch;stripped_bit=0;pillar_axis=y":
@@ -80,17 +95,36 @@ public class OverridesUpdater {
                 case "minecraft:wood;wood_type=oak;stripped_bit=0;pillar_axis=y":
                 case "minecraft:wood;wood_type=spruce;stripped_bit=0;pillar_axis=y":
                     continue;
-            }
-            
+            }*/
+
             newOverrides.add(override);
         }
-        
+      
+        SortedMap<String, CompoundTag> sorted = new TreeMap<>(new HumanStringComparator());
+        for (CompoundTag tag : originalTags.values()) {
+            sorted.put(new BlockInfo(tag.getCompound("block"), tag, new ListTag<>(), new ListTag<>()).getStateName(), tag);
+        }
+
+        for (CompoundTag tag : sorted.values()) {
+            String name = tag.getCompound("block").getString("name");
+
+            Integer blockId = newBlocks.remove(name);
+            if (blockId == null) {
+                continue;
+            }
+            
+            CompoundTag override = new CompoundTag();
+            override.putCompound("block", tag.getCompound("block").remove("version"));
+            override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", blockId).putInt("val", 0)));
+            newOverrides.add(override);
+        }
+
         byte[] bytes = NBTIO.write(new CompoundTag().putList(newOverrides));
         try(FileOutputStream fos = new FileOutputStream("runtime_block_states_overrides.dat")) {
             fos.write(bytes);
         }
     }
-    
+
     @Data
     static class BlockInfo {
         @NonNull
@@ -101,7 +135,7 @@ public class OverridesUpdater {
         private ListTag<CompoundTag> original;
         @NonNull
         private ListTag<CompoundTag> override;
-        
+
         public String getStateName() {
             StringBuilder stateName = new StringBuilder(key.getString("name"));
             for (Tag tag : key.getCompound("states").getAllTags()) {

@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.block.BlockRedstoneEvent;
@@ -86,10 +87,12 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
         return 1;
     }
 
+    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            Block down = this.down();
+            if (down.isTransparent() && down.getId() != COBBLE_WALL) {
                 this.level.useBreakOn(this);
             }
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
@@ -103,9 +106,11 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
         return 0;
     }
 
+    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (block.down().isTransparent()) {
+        Block down = block.down();
+        if (down.isTransparent() && down.getId() != COBBLE_WALL) {
             return false;
         }
 

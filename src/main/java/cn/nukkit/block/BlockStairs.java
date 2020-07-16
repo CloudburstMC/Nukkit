@@ -1,18 +1,23 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.Faceable;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
 public abstract class BlockStairs extends BlockTransparentMeta implements Faceable {
+    private static final IntList FACES = new IntArrayList(new int[]{2, 1, 3, 0});
+    
 
     protected BlockStairs(int meta) {
         super(meta);
@@ -32,8 +37,7 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = new int[]{2, 1, 3, 0};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setDamage(FACES.getInt(player != null ? player.getDirection().getHorizontalIndex() : 0));
         if ((fy > 0.5 && face != BlockFace.UP) || face == BlockFace.DOWN) {
             this.setDamage(this.getDamage() | 0x04); //Upside-down stairs
         }
@@ -141,8 +145,11 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
         return 1;
     }
 
+    @PowerNukkitDifference(info = "Was returning the wrong face", since = "1.3.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        int stairFace = this.getDamage() & 0x3;
+        int horizontalIndex = FACES.indexOf(stairFace);
+        return BlockFace.fromHorizontalIndex(horizontalIndex).getOpposite();
     }
 }

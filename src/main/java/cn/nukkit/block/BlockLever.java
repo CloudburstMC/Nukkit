@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -85,21 +86,24 @@ public class BlockLever extends BlockFlowable implements Faceable {
         return true;
     }
 
+    @PowerNukkitDifference(info = "Allows to be placed on walls", since = "1.3.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             int face = this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage();
-            BlockFace faces = LeverOrientation.byMetadata(face).getFacing().getOpposite();
-            if (!this.getSide(faces).isSolid()) {
+            BlockFace blockFace = LeverOrientation.byMetadata(face).getFacing().getOpposite();
+            Block side = this.getSide(blockFace);
+            if (!side.isSolid() && (side.getId() != COBBLE_WALL || blockFace != BlockFace.DOWN)) {
                 this.level.useBreakOn(this);
             }
         }
         return 0;
     }
 
+    @PowerNukkitDifference(info = "Allows to be placed on walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isNormalBlock() || target.getId() == SNOW_LAYER) {
+        if (target.isNormalBlock() || target.getId() == SNOW_LAYER || target.getId() == COBBLE_WALL && face == BlockFace.UP) {
             this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
             this.getLevel().setBlock(block, this, true, true);
             return true;
@@ -237,9 +241,10 @@ public class BlockLever extends BlockFlowable implements Faceable {
         return false;
     }
 
+    @PowerNukkitDifference(info = "Fixed the directions", since = "1.3.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromIndex(this.getDamage() & 0x07).getOpposite();
     }
 
     @Override
