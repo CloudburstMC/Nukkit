@@ -1061,6 +1061,8 @@ public class Item implements Cloneable, BlockID, ItemID {
         return false;
     }
 
+    public boolean damageWhenBreaking() { return true; }
+
     @Override
     final public String toString() {
         return "Item " + this.name + " (" + this.id + ":" + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count + (this.hasCompoundTag() ? " tags:0x" + Binary.bytesToHexString(this.getCompoundTag()) : "");
