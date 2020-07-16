@@ -28,6 +28,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
  * Nukkit Project
  */
 public abstract class BlockDoor extends BlockTransparentMeta implements Faceable {
+    private static final double THICKNESS = 0.1875;
+    
     public static final BooleanBlockProperty UPPER_BLOCK = new BooleanBlockProperty("upper_block_bit", false);
     public static final BooleanBlockProperty DOOR_HINGE = new BooleanBlockProperty("door_hinge_bit", false);
     public static final BlockProperty<BlockFace> DOOR_DIRECTION = new ArrayBlockProperty<>("direction", false, new BlockFace[]{
@@ -81,82 +83,32 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-
-        double thickness = 0.1875;
-
-        AxisAlignedBB bb = new SimpleAxisAlignedBB(
-                this.x,
-                this.y,
-                this.z,
-                this.x + 1,
-                this.y + 2,
-                this.z + 1
-        );
-
         BlockFace face = getBlockFace();
         boolean isOpen = isOpen();
         boolean isRight = isRightHinged();
-
-        if (face == BlockFace.EAST) {
-            if (isOpen) {
-                if (!isRight) {
-                    setBBAt(thickness, bb, BlockFace.NORTH);
-                } else {
-                    setBBAt(thickness, bb, BlockFace.SOUTH);
-                }
-            } else {
-                setBBAt(thickness, bb, BlockFace.EAST);
-            }
-        } else if (face == BlockFace.SOUTH) {
-            if (isOpen) {
-                if (!isRight) {
-                    setBBAt(thickness, bb, BlockFace.EAST);
-                } else {
-                    setBBAt(thickness, bb, BlockFace.WEST);
-                }
-            } else {
-                setBBAt(thickness, bb, BlockFace.SOUTH);
-            }
-        } else if (face == BlockFace.WEST) {
-            if (isOpen) {
-                if (!isRight) {
-                    setBBAt(thickness, bb, BlockFace.SOUTH);
-                } else {
-                    setBBAt(thickness, bb, BlockFace.NORTH);
-                }
-            } else {
-                setBBAt(thickness, bb, BlockFace.WEST);
-            }
-        } else if (face == BlockFace.NORTH) {
-            if (isOpen) {
-                if (!isRight) {
-                    setBBAt(thickness, bb, BlockFace.WEST);
-                } else {
-                    setBBAt(thickness, bb, BlockFace.EAST);
-                }
-            } else {
-                setBBAt(thickness, bb, BlockFace.NORTH);
-            }
+        
+        if (isOpen) {
+            return recalculateBoundingBoxWithPos(isRight? face.rotateY() : face.rotateYCCW());
+        } else {
+            return recalculateBoundingBoxWithPos(face);
         }
-
-        return bb;
     }
 
-    private void setBBAt(double thickness, AxisAlignedBB bb, BlockFace pos) {
+    private AxisAlignedBB recalculateBoundingBoxWithPos(BlockFace pos) {
         if (pos.getAxisDirection() == AxisDirection.NEGATIVE) {
-            bb.setBounds(
+            return new SimpleAxisAlignedBB (
                     this.x,
                     this.y,
                     this.z,
-                    this.x + 1 - (thickness * -pos.getXOffset()),
+                    this.x + 1 - (THICKNESS * -pos.getXOffset()),
                     this.y + 1,
-                    this.z + 1 - (thickness * -pos.getZOffset())
+                    this.z + 1 - (THICKNESS * -pos.getZOffset())
             );
         } else {
-            bb.setBounds(
-                    this.x + pos.getXOffset() - (thickness * -pos.getXOffset()),
+            return new SimpleAxisAlignedBB (
+                    this.x + pos.getXOffset() - (THICKNESS * -pos.getXOffset()),
                     this.y,
-                    this.z + pos.getZOffset() - (thickness * -pos.getZOffset()),
+                    this.z + pos.getZOffset() - (THICKNESS * -pos.getZOffset()),
                     this.x + 1,
                     this.y + 1,
                     this.z + 1
