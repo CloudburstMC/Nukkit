@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) 
-with an added upstream's major version number in front of the major version so we have an better distinction from
+with an added upstream's major version number in front of the major version, so we have a better distinction from
 Nukkit 1.X and 2.X.
 
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
@@ -13,7 +13,7 @@ Click the link above to see the future.
 Security, stability and enchanting table fixes alongside with few additions.
 
 PowerNukkit now has its own [discord guild], click the link below to join and have fun!  
-💬 https://discord.gg/JVwf39q 💬  
+💬 https://powernukkit.org/discord 💬  
 [![Discord](https://img.shields.io/discord/728280425255927879)](https://powernukkit.org/discord)
 
 ### Fixes
