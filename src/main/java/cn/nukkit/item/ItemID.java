@@ -285,7 +285,7 @@ public interface ItemID {
     //int WARPED_DOOR = 756;
     //int WARPED_FUNGUS_ON_A_STICK = 757;
     //int CHAIN = 758;
-    //int RECORD_PIGSTEP = 759;
+    int RECORD_PIGSTEP = 759;
     //int NETHER_SPROUTS = 760;
     
     //int SOUL_CAMPFIRE = 801;
