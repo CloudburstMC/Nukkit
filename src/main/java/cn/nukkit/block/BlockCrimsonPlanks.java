@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockCrimsonPlanks extends BlockSolid {
 
@@ -33,10 +34,10 @@ public class BlockCrimsonPlanks extends BlockSolid {
         return ItemTool.TYPE_AXE;
     }
 
-    /*@Override
+    @Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
+    }
     
     @Override
     public int getBurnChance() {

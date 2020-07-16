@@ -235,7 +235,11 @@ public class BlockStateRegistry {
     }
 
     private Registration logDiscoveryError(BlockState state) {
-        log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()+", replacing with an \"UPDATE!\" block.");
+        log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()
+                + " - " + state.getStateId()
+                + " - " + state.getProperties()
+                + " - " + blockIdToPersistenceName.get(state.getBlockId())
+                + ", replacing with an \"UPDATE!\" block.");
         return updateBlockRegistration;
     }
 

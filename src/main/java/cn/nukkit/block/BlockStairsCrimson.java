@@ -23,10 +23,10 @@ public class BlockStairsCrimson extends BlockStairsWood {
         return "Crimson Wood Stairs";
     }
 
-    /*@Override
+    @Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
+    }
     
     @Override
     public int getBurnChance() {

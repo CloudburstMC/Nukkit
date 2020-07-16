@@ -325,9 +325,22 @@ public final class BlockProperties {
         return itemProperties;
     }
 
+    @Override
+    public String toString() {
+        return "BlockProperties{" +
+                "bitSize=" + bitSize +
+                ", properties=" + byName.values() +
+                '}';
+    }
+
     @RequiredArgsConstructor
     private static final class RegisteredBlockProperty {
         private final BlockProperty<?> property;
         private final int offset;
+
+        @Override
+        public String toString() {
+            return offset+"-"+property.getBitSize()+":"+property.getName();
+        }
     }
 }

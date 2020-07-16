@@ -23,10 +23,10 @@ public class BlockStairsWarped extends BlockStairsWood {
         return "Warped Wood Stairs";
     }
 
-    /*@Override
+    @Override
     public BlockColor getColor() {
         return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+    }
     
     @Override
     public int getBurnChance() {
