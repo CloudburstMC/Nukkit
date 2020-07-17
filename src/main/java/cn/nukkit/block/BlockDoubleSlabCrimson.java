@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -26,6 +27,17 @@ public class BlockDoubleSlabCrimson extends BlockDoubleSlabBase {
     @Override
     public String getSlabName() {
         return "Crimson";
+    }
+
+    @Override
+    public int getSingleSlabId() {
+        return CRIMSON_SLAB;
+    }
+
+    //TODO Adjust or remove this when merging https://github.com/PowerNukkit/PowerNukkit/pull/370
+    @Override
+    protected boolean isCorrectTool(Item item) {
+        return true;
     }
 
     @Override

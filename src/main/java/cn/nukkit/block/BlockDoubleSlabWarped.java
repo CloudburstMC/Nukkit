@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -17,6 +18,17 @@ public class BlockDoubleSlabWarped extends BlockDoubleSlabBase {
     @Override
     public String getSlabName() {
         return "Warped";
+    }
+
+    @Override
+    public int getSingleSlabId() {
+        return WARPED_SLAB;
+    }
+
+    //TODO Adjust or remove this when merging https://github.com/PowerNukkit/PowerNukkit/pull/370
+    @Override
+    protected boolean isCorrectTool(Item item) {
+        return true;
     }
 
     @Override

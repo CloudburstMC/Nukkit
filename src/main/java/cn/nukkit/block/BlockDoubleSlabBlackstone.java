@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -42,21 +41,9 @@ public class BlockDoubleSlabBlackstone extends BlockDoubleSlabBase {
         return ItemTool.TYPE_PICKAXE;
     }
 
-
     @Override
-    public Item toItem() {
-        return getCurrentState().forItem().withBlockId(BlockID.BLACKSTONE_SLAB).asItemBlock();
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            Item slab = toItem();
-            slab.setCount(2);
-            return new Item[]{ slab };
-        } else {
-            return new Item[0];
-        }
+    public int getSingleSlabId() {
+        return RED_SANDSTONE_SLAB;
     }
 
     @Override
