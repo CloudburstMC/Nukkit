@@ -427,8 +427,8 @@ public interface BlockID {
     //int WARPED_FUNGUS = 484;
     //int SHROOMLIGHT = 485;
     //int WEEPING_VINES = 486;
-    //int CRIMSON_NYLIUM = 487;
-    //int WARPED_NYLIUM = 488;
+    int CRIMSON_NYLIUM = 487;
+    int WARPED_NYLIUM = 488;
     //int BASALT = 489;
     //int POLISHED_BASALT = 490; 
     //int SOUL_SOIL = 491;
