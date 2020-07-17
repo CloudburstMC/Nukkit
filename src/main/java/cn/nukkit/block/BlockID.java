@@ -422,7 +422,7 @@ public interface BlockID {
     //int WARPED_ROOTS = 479;
     int CRIMSON_STEM = 480;
     int WARPED_STEM = 481;
-    //int WARPED_WART_BLOCK = 482; 
+    int WARPED_WART_BLOCK = 482; 
     //int CRIMSON_FUNGUS = 483;
     //int WARPED_FUNGUS = 484;
     //int SHROOMLIGHT = 485;

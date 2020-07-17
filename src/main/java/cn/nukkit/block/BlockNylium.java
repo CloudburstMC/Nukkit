@@ -21,12 +21,12 @@ public abstract class BlockNylium extends BlockSolid {
 
     @Override
     public double getResistance() {
-        return 1;
+        return 0.4;
     }
 
     @Override
     public double getHardness() {
-        return 1;
+        return 0.4;
     }
 
     @Override
@@ -40,5 +40,10 @@ public abstract class BlockNylium extends BlockSolid {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
     }
 }
