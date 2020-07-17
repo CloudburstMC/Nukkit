@@ -15,6 +15,6 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 public @interface PowerNukkitDifference {
-    String info() default "";
+    String info();
     String since() default "";
 }

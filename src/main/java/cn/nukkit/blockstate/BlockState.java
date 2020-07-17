@@ -6,16 +6,23 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.math.NukkitMath;
-import com.google.common.collect.MapMaker;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 @PowerNukkitOnly
@@ -23,7 +30,7 @@ import java.util.concurrent.ConcurrentMap;
 @ToString
 @ParametersAreNonnullByDefault
 public final class BlockState implements Serializable, IBlockState {
-    private static final ConcurrentMap<String, BlockState> STATES = new MapMaker().weakValues().makeMap();
+    private static final ConcurrentMap<String, BlockState> STATES = new ConcurrentHashMap<>();
     public static final BlockState AIR = BlockState.of(BlockID.AIR, 0);
     private static final BigInteger INT_MASK = BigInteger.valueOf(0xFFFFFFFFL);
     private static final BigInteger LONG_MASK = new BigInteger("FFFFFFFFFFFFFFFF", 16);
@@ -130,6 +137,54 @@ public final class BlockState implements Serializable, IBlockState {
     }
 
     @Nonnull
+    public <E> BlockState withProperty(BlockProperty<E> property, @Nullable E value) {
+        return withProperty(property.getName(), value);
+    }
+    
+    @Nonnull
+    public BlockState withProperty(String propertyName, @Nullable Object value) {
+        return storage.withProperty(propertyName, value);
+    }
+
+    public BlockState onlyWithProperties(BlockProperty<?>... properties) {
+        String[] names = new String[properties.length];
+        for (int i = 0; i < properties.length; i++) {
+            names[i] = properties[i].getName();
+        }
+        return onlyWithProperties(names);
+    }
+    
+    public BlockState onlyWithProperties(String... propertyNames) {
+        return storage.onlyWithProperties(Arrays.asList(propertyNames));
+    }
+    
+    public BlockState onlyWithProperty(String name) {
+        return onlyWithProperties(name);
+    }
+
+    public BlockState onlyWithProperty(BlockProperty<?> property) {
+        return onlyWithProperties(property);
+    }
+
+    public BlockState onlyWithProperty(String name, Object value) {
+        return storage.onlyWithProperty(name, value);
+    }
+
+    public <T> BlockState onlyWithProperty(BlockProperty<T> property, T value) {
+        return onlyWithProperty(property.getName(), value);
+    }
+
+    public BlockState forItem() {
+        BlockProperties properties = getProperties();
+        Set<String> allNames = properties.getNames();
+        List<String> itemNames = properties.getItemPropertyNames();
+        if (allNames.size() == itemNames.size() && allNames.containsAll(itemNames)) {
+            return this;
+        }
+        return storage.onlyWithProperties(itemNames);
+    }
+
+    @Nonnull
     @Override
     public Number getDataStorage() {
         return storage.getNumber();
@@ -197,6 +252,14 @@ public final class BlockState implements Serializable, IBlockState {
     }
 
     @Override
+    public int getExactIntStorage() {
+        if (storage.getClass() != IntStorage.class) {
+            throw new ArithmeticException(getDataStorage()+" cant be stored in a 32 bits integer without losses. It has "+getBitSize()+" bits");
+        }
+        return getBigDamage();
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -222,7 +285,7 @@ public final class BlockState implements Serializable, IBlockState {
         }
         return result;
     }
-    
+
 
     private static boolean compareDataEquality(Number a, Number b) {
         Class<? extends Number> aClass = a.getClass();
@@ -238,7 +301,20 @@ public final class BlockState implements Serializable, IBlockState {
         BigInteger bBig = bClass == BigInteger.class? (BigInteger) b : new BigInteger(b.toString());
         return aBig.equals(bBig);
     }
-    
+
+    public void validate() {
+        BlockProperties properties = getProperties();
+        if (storage.getBitSize() > properties.getBitSize()) {
+            throw new InvalidBlockPropertyMetaException(
+                    CommonBlockProperties.LEGACY_BIG_PROPERTIES.getBlockProperty(CommonBlockProperties.LEGACY_PROPERTY_NAME),
+                    storage.getNumber(), storage.getNumber(), 
+                    "The stored data overflows the maximum properties bits. Stored bits: "+storage.getBitSize()+", " +
+                            "Properties Bits: "+properties.getBitSize()+", Stored data: "+storage.getNumber()
+            );
+        }
+        storage.validate(properties);
+    }
+
     @ParametersAreNonnullByDefault
     private interface Storage extends Serializable {
         @Nonnull
@@ -265,6 +341,17 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         BigInteger getHugeDamage();
+
+        @Nonnull
+        BlockState withProperty(String propertyName, @Nullable Object value);
+
+        @Nonnull
+        BlockState onlyWithProperties(List<String> propertyNames);
+
+        @Nonnull
+        BlockState onlyWithProperty(String name, Object value);
+
+        void validate(BlockProperties properties);
     }
     
     @ParametersAreNonnullByDefault
@@ -316,6 +403,38 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public BlockState withBlockId(int blockId) {
             return BlockState.of(blockId, data);
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withProperty(String propertyName, @Nullable Object value) {
+            return BlockState.of(blockId, getProperties().setValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
+        public BlockState onlyWithProperties(List<String> propertyNames) {
+            return BlockState.of(blockId,
+                getProperties().reduceInt(data, (property, offset, current) -> 
+                        propertyNames.contains(property.getName())? current : property.setValue(current, offset, null)
+                )
+            );
+        }
+
+        @Nonnull
+        @Override
+        @SuppressWarnings({"unchecked", "java:S1905", "rawtypes"})
+        public BlockState onlyWithProperty(String name, Object value) {
+            return BlockState.of(blockId,
+                    getProperties().reduceInt(data, (property, offset, current) ->
+                            ((BlockProperty)property).setValue(current, offset, name.equals(property.getName())? value : null)
+                    )
+            );
+        }
+
+        @Override
+        public void validate(BlockProperties properties) {
+            properties.forEach((property, offset) -> property.validateMeta(data, offset));
         }
 
         @Nonnull
@@ -389,6 +508,38 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         @Override
+        public BlockState withProperty(String propertyName, @Nullable Object value) {
+            return BlockState.of(blockId, getProperties().setValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
+        public BlockState onlyWithProperties(List<String> propertyNames) {
+            return BlockState.of(blockId,
+                    getProperties().reduceLong(data, (property, offset, current) ->
+                            propertyNames.contains(property.getName())? current : property.setValue(current, offset, null)
+                    )
+            );
+        }
+
+        @Nonnull
+        @Override
+        @SuppressWarnings({"unchecked", "java:S1905", "rawtypes"})
+        public BlockState onlyWithProperty(String name, Object value) {
+            return BlockState.of(blockId,
+                    getProperties().reduceLong(data, (property, offset, current) ->
+                            ((BlockProperty)property).setValue(current, offset, name.equals(property.getName())? value : null)
+                    )
+            );
+        }
+
+        @Override
+        public void validate(BlockProperties properties) {
+            properties.forEach((property, offset) -> property.validateMeta(data, offset));
+        }
+
+        @Nonnull
+        @Override
         public String getPersistenceValue(String propertyName) {
             return getProperties().getPersistenceValue(data, propertyName);
         }
@@ -455,6 +606,38 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public BlockState withBlockId(int blockId) {
             return BlockState.of(blockId, data);
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withProperty(String propertyName, @Nullable Object value) {
+            return BlockState.of(blockId, getProperties().setValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
+        public BlockState onlyWithProperties(List<String> propertyNames) {
+            return BlockState.of(blockId,
+                    getProperties().reduce(data, (property, offset, current) ->
+                            propertyNames.contains(property.getName())? current : property.setValue(current, offset, null)
+                    )
+            );
+        }
+
+        @Nonnull
+        @Override
+        @SuppressWarnings({"unchecked", "java:S1905", "rawtypes"})
+        public BlockState onlyWithProperty(String name, Object value) {
+            return BlockState.of(blockId,
+                    getProperties().reduce(data, (property, offset, current) ->
+                            ((BlockProperty)property).setValue(current, offset, name.equals(property.getName())? value : null)
+                    )
+            );
+        }
+
+        @Override
+        public void validate(BlockProperties properties) {
+            properties.forEach((property, offset) -> property.validateMeta(data, offset));
         }
 
         @Nonnull

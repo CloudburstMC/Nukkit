@@ -1,4 +1,4 @@
-package cn.nukkit.utils;
+package cn.nukkit.utils.functional;
 
 import cn.nukkit.math.IntIncrementSupplier;
 import cn.nukkit.math.NukkitMath;

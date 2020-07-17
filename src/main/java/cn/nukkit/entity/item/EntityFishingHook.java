@@ -62,7 +62,7 @@ public class EntityFishingHook extends EntityProjectile {
     @Override
     protected void initEntity() {
         super.initEntity();
-        // https://github.com/GameModsBR/PowerNukkit/issues/267
+        // https://github.com/PowerNukkit/PowerNukkit/issues/267
         if (age > 0) {
             close();
         }

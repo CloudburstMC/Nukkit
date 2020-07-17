@@ -2,8 +2,8 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.utils.InvalidBlockPropertyMetaException;
-import cn.nukkit.utils.InvalidBlockPropertyValueException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
@@ -18,14 +18,16 @@ public abstract class BlockProperty<T> {
     private final int bitSize;
     private final String name;
     private final String persistenceName;
+    private final boolean exportedToItem;
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public BlockProperty(String name, int bitSize, String persistenceName) {
+    public BlockProperty(String name, boolean exportedToItem, int bitSize, String persistenceName) {
         Preconditions.checkArgument(bitSize > 0, "Bit size (%s) must be positive", bitSize);
         this.bitSize = bitSize;
         this.name = name;
         this.persistenceName = persistenceName;
+        this.exportedToItem = exportedToItem;
     }
     
     private int computeRightMask(int bitOffset) {
@@ -303,5 +305,15 @@ public abstract class BlockProperty<T> {
     @Since("1.4.0.0-PN")
     public String getPersistenceName() {
         return persistenceName;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract Class<T> getValueClass();
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isExportedToItem() {
+        return exportedToItem;
     }
 }

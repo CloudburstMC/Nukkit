@@ -20,6 +20,8 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     
     private final int defaultMeta;
     
+    private final Class<E> eClass;
+    
     private static <E> E[] checkUniverseLength(E[] universe) {
         Preconditions.checkArgument(universe.length > 0, "The universe can't be empty");
         return universe;
@@ -27,9 +29,11 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, E[] universe, E defaultValue, int bitSize, String persistenceName) {
-        super(name, bitSize, persistenceName);
+    public ArrayBlockProperty(String name, boolean exportedToItem, E[] universe, E defaultValue, int bitSize, String persistenceName) {
+        super(name, exportedToItem, bitSize, persistenceName);
         this.universe = universe.clone();
+        //noinspection unchecked
+        this.eClass = (Class<E>) universe.getClass().getComponentType();
         checkUniverseLength(universe);
         Set<E> elements = new HashSet<>();
         int defaultMetaIndex = -1;
@@ -48,26 +52,26 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, E[] universe, E defaultValue, int bitSize) {
-        this(name, universe, defaultValue, bitSize, name);
+    public ArrayBlockProperty(String name, boolean exportedToItem, E[] universe, E defaultValue, int bitSize) {
+        this(name, exportedToItem, universe, defaultValue, bitSize, name);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, E[] universe, E defaultValue) {
-        this(name, universe, defaultValue, NukkitMath.bitLength(universe.length - 1));
+    public ArrayBlockProperty(String name, boolean exportedToItem, E[] universe, E defaultValue) {
+        this(name, exportedToItem, universe, defaultValue, NukkitMath.bitLength(universe.length - 1));
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, E[] universe) {
-        this(name, checkUniverseLength(universe), universe[0]);
+    public ArrayBlockProperty(String name, boolean exportedToItem, E[] universe) {
+        this(name, exportedToItem, checkUniverseLength(universe), universe[0]);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public ArrayBlockProperty(String name, Class<E> enumClass) {
-        this(name, enumClass.getEnumConstants());
+    public ArrayBlockProperty(String name, boolean exportedToItem, Class<E> enumClass) {
+        this(name, exportedToItem, enumClass.getEnumConstants());
     }
 
     @Override
@@ -113,5 +117,10 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     @Override
     protected void validateMeta(int meta) {
         Preconditions.checkElementIndex(meta, universe.length);
+    }
+
+    @Override
+    public Class<E> getValueClass() {
+        return eClass;
     }
 }

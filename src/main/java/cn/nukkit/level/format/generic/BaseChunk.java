@@ -8,6 +8,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockWall;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.Chunk;
@@ -16,7 +17,6 @@ import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.InvalidBlockPropertyMetaException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 

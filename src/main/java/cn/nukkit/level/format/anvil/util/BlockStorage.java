@@ -7,7 +7,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.utils.BinaryStream;
-import cn.nukkit.utils.BlockPositionDataConsumer;
+import cn.nukkit.utils.functional.BlockPositionDataConsumer;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.ParametersAreNonnullByDefault;
