@@ -52,7 +52,7 @@ public class BlockWallSign extends BlockSignPost {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(getBlockFace()).getId() == AIR) {
+            if (this.getSide(getBlockFace().getOpposite()).getId() == AIR) {
                 this.getLevel().useBreakOn(this);
             }
             return Level.BLOCK_UPDATE_NORMAL;
