@@ -1,24 +1,15 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.utils.BlockColor;
 
-/**
- * BlockFenceCrimson.java was made by using BlockFence.java and BlockFenceNetherBrick.java
- */
-/**
- * Created on 2015/12/7 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
- */
-public class BlockFenceCrimson extends BlockFence {
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
+public class BlockFenceCrimson extends BlockFenceBase {
 
     public BlockFenceCrimson() {
-        this(0);
-    }
-
-    public BlockFenceCrimson(int meta) {
-        super(meta);
+        // Do nothing
     }
 
     @Override
@@ -32,26 +23,6 @@ public class BlockFenceCrimson extends BlockFence {
     }
 
     @Override
-    public double getHardness() {
-        return 2;
-    }
-
-    @Override
-    public double getResistance() {
-        return 3;
-    }
-    
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_AXE;
-    }
-
-    @Override
-    public boolean canConnect(Block block) {
-        return (block instanceof BlockFence || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
-    }
-    
-    @Override
     public int getBurnChance() {
         return 0;
     }
@@ -61,13 +32,8 @@ public class BlockFenceCrimson extends BlockFence {
         return 0;
     }
     
-    /*@Override
-    public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
-    
     @Override
-    public Item toItem() {
-        return new ItemBlock(this);
+    public BlockColor getColor() {
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
     }
 }

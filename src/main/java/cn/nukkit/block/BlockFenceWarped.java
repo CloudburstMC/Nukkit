@@ -1,8 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 /**
  * BlockFenceWarped.java was made by using BlockFence.java and BlockFenceNetherBrick.java
@@ -11,7 +13,9 @@ import cn.nukkit.item.ItemTool;
  * Created on 2015/12/7 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockFenceWarped extends BlockFence {
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
+public class BlockFenceWarped extends BlockFenceBase {
 
     public BlockFenceWarped() {
         this(0);
@@ -32,21 +36,6 @@ public class BlockFenceWarped extends BlockFence {
     }
 
     @Override
-    public double getHardness() {
-        return 2;
-    }
-
-    @Override
-    public double getResistance() {
-        return 3;
-    }
-    
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_AXE;
-    }
-
-    @Override
     public boolean canConnect(Block block) {
         return (block instanceof BlockFence || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
     }
@@ -61,10 +50,10 @@ public class BlockFenceWarped extends BlockFence {
         return 0;
     }
     
-    /*@Override
+    @Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+        return BlockColor.CYAN_BLOCK_COLOR;
+    }
     
     @Override
     public Item toItem() {

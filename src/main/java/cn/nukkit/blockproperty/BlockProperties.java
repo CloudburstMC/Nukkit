@@ -88,12 +88,22 @@ public final class BlockProperties {
             throw new IllegalArgumentException("Incompatible storage type "+storage.getClass()+", expected BigInteger, Long or Integer");
         }
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean contains(String propertyName) {
+        return getRegisteredProperty(propertyName) != null;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @SuppressWarnings("java:S1452")
     public BlockProperty<?> getBlockProperty(String propertyName) {
         return getRegisteredProperty(propertyName).property;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public <T extends BlockProperty<?>> T getBlockProperty(String propertyName, Class<T> tClass) {
         return tClass.cast(getRegisteredProperty(propertyName).property);
     }
