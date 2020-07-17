@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockStemStrippedCrimson extends BlockStemStripped {
     public BlockStemStrippedCrimson() {
         this(0);
@@ -19,4 +21,8 @@ public class BlockStemStrippedCrimson extends BlockStemStripped {
         return "Stripped Crimson Stem";
     }
 
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.CRIMSON_STEM_BLOCK_COLOR;
+    }
 }

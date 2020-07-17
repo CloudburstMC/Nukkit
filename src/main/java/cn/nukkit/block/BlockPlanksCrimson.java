@@ -36,7 +36,7 @@ public class BlockPlanksCrimson extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.NETHERRACK_BLOCK_COLOR;
+        return BlockColor.CRIMSON_STEM_BLOCK_COLOR;
     }
     
     @Override

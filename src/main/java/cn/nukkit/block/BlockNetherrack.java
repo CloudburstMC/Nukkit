@@ -78,7 +78,7 @@ public class BlockNetherrack extends BlockSolid {
         } else if (size == 1) {
             nylium = options.getInt(0);
         } else {
-            nylium = options.getInt(ThreadLocalRandom.current().nextInt(options.size()));
+            nylium = options.getInt(ThreadLocalRandom.current().nextInt(size));
         }
         
         if (level.setBlock(this, Block.get(nylium), true)) {

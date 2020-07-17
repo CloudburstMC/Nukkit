@@ -30,6 +30,6 @@ public class BlockStemWarped extends BlockStem {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.CYAN_BLOCK_COLOR;
+        return BlockColor.WARPED_STEM_BLOCK_COLOR;
     }
 }

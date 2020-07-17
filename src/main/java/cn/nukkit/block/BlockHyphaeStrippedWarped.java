@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockHyphaeStrippedWarped extends BlockStemStripped {
 
     public BlockHyphaeStrippedWarped() {
@@ -23,5 +25,10 @@ public class BlockHyphaeStrippedWarped extends BlockStemStripped {
     @Override
     public double getHardness() {
         return 0.4;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WARPED_HYPHAE_BLOCK_COLOR;
     }
 }
