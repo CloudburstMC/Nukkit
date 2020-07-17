@@ -129,9 +129,10 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
         return new ItemBlock(this, getDamage() & 0xF);
     }
 
+    @PowerNukkitDifference(info = "Makes the up side of the block a solid side", since = "1.4.0.0-PN")
     @Override
-    public boolean isSolid() {
-        return false;
+    public boolean isSolid(BlockFace side){
+        return side == BlockFace.UP;
     }
 
     @Override

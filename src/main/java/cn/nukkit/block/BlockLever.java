@@ -86,24 +86,24 @@ public class BlockLever extends BlockFlowable implements Faceable {
         return true;
     }
 
-    @PowerNukkitDifference(info = "Allows to be placed on walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             int face = this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage();
             BlockFace blockFace = LeverOrientation.byMetadata(face).getFacing().getOpposite();
             Block side = this.getSide(blockFace);
-            if (!side.isSolid() && (side.getId() != COBBLE_WALL || blockFace != BlockFace.DOWN)) {
+            if (!side.isSolid()) {
                 this.level.useBreakOn(this);
             }
         }
         return 0;
     }
 
-    @PowerNukkitDifference(info = "Allows to be placed on walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isNormalBlock() || target.getId() == SNOW_LAYER || target.getId() == COBBLE_WALL && face == BlockFace.UP) {
+        if (target.isNormalBlock() || target.getId() == SNOW_LAYER || target.isSolid()) {
             this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
             this.getLevel().setBlock(block, this, true, true);
             return true;

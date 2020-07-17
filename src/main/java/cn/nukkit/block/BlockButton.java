@@ -43,16 +43,15 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return false;
     }
 
-    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isTransparent() && target.getId() != SNOW_LAYER && (target.getId() != COBBLE_WALL || face != BlockFace.UP)) {
-            return false;
+        if (target.isNormalBlock() || target.getId() == SNOW_LAYER || target.isSolid()) {
+            this.setDamage(face.getIndex());
+            this.getLevel().setBlock(block, this, true, true);
+            return true;
         }
-
-        this.setDamage(face.getIndex());
-        this.level.setBlock(block, this, true, true);
-        return true;
+        return false;
     }
 
     @Override
@@ -83,13 +82,13 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return true;
     }
 
-    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             BlockFace face = getFacing().getOpposite();
             Block side = this.getSide(face);
-            if (side.isTransparent() && (side.getId() != COBBLE_WALL || face != BlockFace.DOWN)) {
+            if (side.isTransparent() && !side.isSolid()) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
