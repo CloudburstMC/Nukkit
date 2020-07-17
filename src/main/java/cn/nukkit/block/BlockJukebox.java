@@ -40,6 +40,11 @@ public class BlockJukebox extends BlockSolid {
     }
 
     @Override
+    public double getHardness() {
+        return 1;
+    }
+
+    @Override
     public boolean onActivate(Item item, Player player) {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         if (!(blockEntity instanceof BlockEntityJukebox)) {

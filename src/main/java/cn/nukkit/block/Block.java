@@ -1090,10 +1090,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     @Nonnull
-    public double calculateBreakTime(@Nonnull Item item, @Nonnull Player player) {
+    public double calculateBreakTime(@Nonnull Item item) {
+        return calculateBreakTime(item, null);
+    }
+
+    @Nonnull
+    @PowerNukkitOnly()
+    public double calculateBreakTime(@Nonnull Item item, @Nullable Player player) {
         double seconds = 0;
         double blockHardness = getHardness();
-        Item[] drops = getDrops(item);
         boolean canHarvest = canHarvest(item);
 
         if (canHarvest) {
@@ -1103,15 +1108,21 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
 
         double speedMultiplier = 1;
+        int conduitPowerLevel = 0;
+        boolean hasAquaAffinity = false;
+        int hasteEffectLevel = 0;
+        int miningFatigueLevel = 0;
 
-        int conduitPowerLevel = Optional.ofNullable(player.getEffect(Effect.CONDUIT_POWER))
-                .map(Effect::getAmplifier).orElse(0);
-        boolean hasAquaAffinity = Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
-                .map(Enchantment::getLevel).map(l -> l >= 1).orElse(false);
-        int hasteEffectLevel = Optional.ofNullable(player.getEffect(Effect.HASTE))
-                .map(Effect::getAmplifier).orElse(0);
-        int miningFatigueLevel = Optional.ofNullable(player.getEffect(Effect.MINING_FATIGUE))
-                .map(Effect::getAmplifier).orElse(0);
+        if (player != null) {
+            conduitPowerLevel = Optional.ofNullable(player.getEffect(Effect.CONDUIT_POWER))
+                    .map(Effect::getAmplifier).orElse(0);
+            hasAquaAffinity = Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
+                    .map(Enchantment::getLevel).map(l -> l >= 1).orElse(false);
+            hasteEffectLevel = Optional.ofNullable(player.getEffect(Effect.HASTE))
+                    .map(Effect::getAmplifier).orElse(0);
+            miningFatigueLevel = Optional.ofNullable(player.getEffect(Effect.MINING_FATIGUE))
+                    .map(Effect::getAmplifier).orElse(0);
+        }
 
         if (correctTool0(getToolType(), item, getId())) {
             speedMultiplier = toolBreakTimeBonus0(item);
@@ -1135,12 +1146,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
         seconds /= speedMultiplier;
 
-        if (player.isInsideOfWater() && !hasAquaAffinity) {
-            seconds *= 5;
-        }
+        if (player != null) {
+            if (player.isInsideOfWater() && !hasAquaAffinity) {
+                seconds *= 5;
+            }
 
-        if (!player.isOnGround()) {
-            seconds *= 5;
+            if (!player.isOnGround()) {
+                seconds *= 5;
+            }
         }
 
         return seconds;
