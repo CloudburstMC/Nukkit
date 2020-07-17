@@ -1090,12 +1090,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     @Nonnull
+    @PowerNukkitOnly
     public double calculateBreakTime(@Nonnull Item item) {
         return calculateBreakTime(item, null);
     }
 
     @Nonnull
-    @PowerNukkitOnly()
+    @PowerNukkitOnly
     public double calculateBreakTime(@Nonnull Item item, @Nullable Player player) {
         double seconds = 0;
         double blockHardness = getHardness();
