@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockTrapdoorWarped extends BlockTrapdoor {
     public BlockTrapdoorWarped() {
         this(0);
@@ -27,5 +29,10 @@ public class BlockTrapdoorWarped extends BlockTrapdoor {
     @Override
     public int getBurnAbility() {
         return 0;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.CYAN_BLOCK_COLOR;
     }
 }

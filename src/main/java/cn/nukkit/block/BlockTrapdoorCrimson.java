@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockTrapdoorCrimson extends BlockTrapdoor {
     public BlockTrapdoorCrimson() {
         this(0);
@@ -27,5 +29,10 @@ public class BlockTrapdoorCrimson extends BlockTrapdoor {
     @Override
     public int getBurnAbility() {
         return 0;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
     }
 }
