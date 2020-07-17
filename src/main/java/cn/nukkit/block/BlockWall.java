@@ -9,7 +9,6 @@ import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
@@ -41,27 +40,27 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(
-            new ArrayBlockProperty<>("wall_block_type", WallType.class),
-            new ArrayBlockProperty<>("wall_connection_type_south", WallConnectionType.class),
-            new ArrayBlockProperty<>("wall_connection_type_west", WallConnectionType.class),
-            new ArrayBlockProperty<>("wall_connection_type_north", WallConnectionType.class),
-            new ArrayBlockProperty<>("wall_connection_type_east", WallConnectionType.class),
-            new BooleanBlockProperty("wall_post_bit")
+            new ArrayBlockProperty<>("wall_block_type", true, WallType.class),
+            new ArrayBlockProperty<>("wall_connection_type_south", false, WallConnectionType.class),
+            new ArrayBlockProperty<>("wall_connection_type_west", false, WallConnectionType.class),
+            new ArrayBlockProperty<>("wall_connection_type_north", false, WallConnectionType.class),
+            new ArrayBlockProperty<>("wall_connection_type_east", false, WallConnectionType.class),
+            new BooleanBlockProperty("wall_post_bit", false)
     );
 
-    private static final boolean SHOULD_FAIL = false; 
+    private static final boolean SHOULD_FAIL = false;
     private static final boolean SHOULD_VALIDATE_META = true;
     private static final double MIN_POST_BB =  5.0/16;
     private static final double MAX_POST_BB = 11.0/16;
-    
+
     @Deprecated
     @DeprecationDetails(reason = "No longer matches the meta directly", replaceWith = "WallType.COBBLESTONE", since = "1.3.0.0-PN")
     public static final int NONE_MOSSY_WALL = 0;
-    
+
     @Deprecated
     @DeprecationDetails(reason = "No longer matches the meta directly", replaceWith = "WallType.MOSSY_COBBLESTONE", since = "1.3.0.0-PN")
     public static final int MOSSY_WALL = 1;
-    
+
     private static final int[] INVALID_META_COMBINATIONS = {
             0b0_0000_0011_0000,
             0b0_0000_1100_0000,
@@ -84,7 +83,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
     public int getId() {
         return STONE_WALL;
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
@@ -99,34 +98,29 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
         if (!SHOULD_VALIDATE_META) {
             super.setDamage(meta);
         }
-        
+
         if (getDamage() == meta) {
             return;
         }
-        
+
         for (int invalidMetaCombination : INVALID_META_COMBINATIONS) {
             if ((meta & invalidMetaCombination) != invalidMetaCombination) {
                 continue;
             }
-            
+
             InvalidBlockDamageException exception = new InvalidBlockDamageException(getId(), meta, getDamage());
             if (SHOULD_FAIL) {
                 throw exception;
             }
-            
+
             if (!isInitializing()) {
                 log.warn("Tried to set an invalid wall meta, the bits " + invalidMetaCombination + " were removed." + (level != null ? " " + getLocation() : ""), exception);
             }
-            
+
             meta = meta & ~invalidMetaCombination;
         }
-        
-        super.setDamage(meta);
-    }
 
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, getDamage() & 0xF);
+        super.setDamage(meta);
     }
 
     @PowerNukkitDifference(info = "Makes the up side of the block a solid side", since = "1.4.0.0-PN")
@@ -162,7 +156,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
             case AIR:
             case SKULL_BLOCK:
                 return false;
-                
+
             // If the bell is standing and follow the path, make it tall
             case BELL:
                 BlockBell bell = (BlockBell) above;
@@ -179,7 +173,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
                 return above.isSolid() && !above.isTransparent() || shouldBeTallBasedOnBoundingBox(above, face);
         }
     }
-    
+
     private boolean shouldBeTallBasedOnBoundingBox(Block above, BlockFace face) {
         AxisAlignedBB boundingBox = above.getBoundingBox();
         if (boundingBox == null) {
@@ -195,7 +189,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
                     && boundingBox.getMinZ() < MIN_POST_BB && MAX_POST_BB < boundingBox.getMaxZ();
         } else if (offset > 0) {
             return /*boundingBox.getMinX() <= MAX_POST_BB &&*/ MAX_POST_BB < boundingBox.getMaxX()
-                    && MAX_POST_BB < boundingBox.getMaxZ() && boundingBox.getMinZ() < MAX_POST_BB; 
+                    && MAX_POST_BB < boundingBox.getMaxZ() && boundingBox.getMinZ() < MAX_POST_BB;
         } else {
             offset = face.getZOffset();
             if (offset < 0) {
@@ -215,7 +209,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
         final int previousMeta = getDamage();
 
         setWallPost(true);
-        
+
         Block above = up(1, 0);
 
         for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
@@ -231,12 +225,12 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
                 disconnect(blockFace);
             }
         }
-        
+
         recheckPostConditions(above);
-        
+
         return getDamage() != previousMeta;
     }
-    
+
     @PowerNukkitDifference(info = "Will connect as expected", since = "1.3.0.0-PN")
     @Override
     public int onUpdate(int type) {
@@ -261,13 +255,13 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
     public boolean isWallPost() {
         return (getDamage() & 0x1000) == 0x1000;
     }
-    
+
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void setWallPost(boolean wallPost) {
         setDamage(getDamage() & ~0x1000 | (wallPost? 0x1000 : 0x0000));
     }
-    
+
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public WallType getWallType() {
@@ -277,13 +271,13 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
         }
         return WallType.VALUES[type];
     }
-    
+
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void setWallType(WallType type) {
         setDamage((getDamage() & ~0xF) | (type.ordinal() & 0xF));
     }
-    
+
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void clearConnections() {
@@ -302,12 +296,12 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
         }
         return connections;
     }
-    
+
     private int getBitIndex(BlockFace face) {
         assert face.getHorizontalIndex() >= 0;
         return 4 + face.getHorizontalIndex() * 2;
     }
-    
+
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public WallConnectionType getConnectionType(BlockFace blockFace) {
@@ -327,16 +321,16 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
         if (blockFace.getHorizontalIndex() < 0) {
             return false;
         }
-        
+
         // Locate the 2 bit position
         int bitIndex = getBitIndex(blockFace);
-        
+
         // Clear the 2 bits
         int damage = getDamage() & ~(0x3 << bitIndex);
-        
+
         // Set the 2 bits values based on the connection type
         damage |= type.ordinal() << bitIndex;
-        
+
         // Save in memory
         setDamage(damage);
 
@@ -346,18 +340,18 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
     /**
      * @return true if it should be a post
      */
-    @PowerNukkitDifference
+    @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void autoUpdatePostFlag() {
         setWallPost(recheckPostConditions(up(1, 0)));
     }
-    
+
     private boolean recheckPostConditions(Block above) {
         // If nothing is connected, it should be a post
         if ((getDamage() & 0xFF0) == 0x000) {
             return true;
         }
-        
+
         // If it's not straight, it should be a post
         Map<BlockFace, WallConnectionType> connections = getWallConnections();
         if (connections.size() != 2) {
@@ -371,8 +365,8 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
             return true;
         }
 
-        Axis axis = entryA.getKey().getAxis(); 
-        
+        Axis axis = entryA.getKey().getAxis();
+
         switch (above.getId()) {
             // These special blocks forces walls to become a post
             case FLOWER_POT_BLOCK:
@@ -380,7 +374,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
             case CONDUIT:
             case STANDING_BANNER:
                 return true;
-                
+
             // End rods make it become a post if it's placed on the wall
             case END_ROD:
                 if (((Faceable) above).getBlockFace() == BlockFace.UP) {
@@ -394,7 +388,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
                     return true;
                 }
                 break;
-                
+
             // If the bell is standing and don't follow the path, make it a post
             case BELL:
                 BlockBell bell = (BlockBell) above;
@@ -402,9 +396,9 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
                         && bell.getBlockFace().getAxis() == axis) {
                     return true;
                 }
-                
+
                 break;
-                
+
             default:
                 if (above instanceof BlockLantern) {
                     // Lanterns makes this become a post if they are not hanging
@@ -422,11 +416,11 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
 
                 } else if (above instanceof BlockFenceGate) {
                     // If the gate don't follow the path, make it a post
-                    
+
                     if (((Faceable) above).getBlockFace().getAxis() == axis) {
                         return true;
                     }
-                    
+
                 } else if (above instanceof BlockConnectable) {
                     // If the connectable block above don't share 2 equal connections, then this should be a post
 
@@ -467,7 +461,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
     public boolean connect(BlockFace blockFace) {
         return connect(blockFace, true);
     }
-    
+
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public boolean connect(BlockFace blockFace, boolean recheckPost) {
@@ -489,14 +483,14 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
         }
         return false;
     }
-    
+
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public boolean disconnect(BlockFace blockFace) {
         if (blockFace.getHorizontalIndex() < 0) {
             return false;
         }
-        
+
         if (setConnection(blockFace, WallConnectionType.NONE)) {
             autoUpdatePostFlag();
             return true;
@@ -563,12 +557,12 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
                 return block.isSolid() && !block.isTransparent();
         }
     }
-    
+
     private Axis calculateAxis(Block side) {
         Position vector = side.subtract(this);
         return vector.x != 0? Axis.X : vector.z != 0? Axis.Z : Axis.Y;
     }
-    
+
     private BlockFace calculateFace(Block side) {
         Position vector = side.subtract(this);
         Axis axis = vector.x != 0? Axis.X : vector.z != 0? Axis.Z : Axis.Y;
@@ -592,26 +586,26 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
     public boolean canHarvestWithHand() {
         return false;
     }
-    
+
     @Since("1.3.0.0-PN")
     @PowerNukkitOnly
     public enum WallConnectionType {
         NONE, SHORT, TALL;
-        
+
         private static final WallConnectionType[] VALUES = values();
     }
-    
+
     @Since("1.3.0.0-PN")
     @PowerNukkitOnly
     public enum WallType {
         COBBLESTONE, MOSSY_COBBLESTONE, GRANITE(DIRT_BLOCK_COLOR), DIORITE(QUARTZ_BLOCK_COLOR), ANDESITE, SANDSTONE(SAND_BLOCK_COLOR),
         BRICK(RED_BLOCK_COLOR), STONE_BRICK, MOSSY_STONE_BRICK, NETHER_BRICK(NETHERRACK_BLOCK_COLOR), END_STONE_BRICK(SAND_BLOCK_COLOR),
         PRISMARINE(CYAN_BLOCK_COLOR), RED_SANDSTONE(ORANGE_BLOCK_COLOR), RED_NETHER_BRICK(NETHERRACK_BLOCK_COLOR);
-        
+
         private static final WallType[] VALUES = values();
-        
+
         private final BlockColor color;
-        
+
         WallType(BlockColor color) {
             this.color = color;
         }
