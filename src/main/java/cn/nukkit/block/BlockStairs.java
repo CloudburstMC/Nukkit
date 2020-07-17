@@ -22,8 +22,8 @@ import javax.annotation.Nonnull;
  * Nukkit Project
  */
 public abstract class BlockStairs extends BlockTransparentMeta implements Faceable {
-    protected static final BooleanBlockProperty UPSIDE_DOWN = new BooleanBlockProperty("upside_down_bit", false);
-    protected static final BlockProperty<BlockFace> STAIRS_DIRECTION = new ArrayBlockProperty<>("weirdo_direction", false, new BlockFace[]{
+    public static final BooleanBlockProperty UPSIDE_DOWN = new BooleanBlockProperty("upside_down_bit", false);
+    public static final BlockProperty<BlockFace> STAIRS_DIRECTION = new ArrayBlockProperty<>("weirdo_direction", false, new BlockFace[]{
             BlockFace.EAST, BlockFace.WEST,
             BlockFace.SOUTH, BlockFace.NORTH
     }).ordinal(true);

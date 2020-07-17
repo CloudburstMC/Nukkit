@@ -157,11 +157,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
             level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
 
             toggle(null);
-            if (isOpen()) {
-                playOpenSound();
-            } else {
-                playCloseSound();
-            }
+            playOpenCloseSound();
         }
     }
 
@@ -230,12 +226,18 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
             return false;
         }
         
+        playOpenCloseSound();
+        return true;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void playOpenCloseSound() {
         if (isOpen()) {
-           playOpenSound(); 
+            playOpenSound();
         } else {
             playCloseSound();
         }
-        return true;
     }
     
     @PowerNukkitOnly
