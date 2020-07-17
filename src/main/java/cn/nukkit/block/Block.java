@@ -1587,6 +1587,20 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
+    public void setBooleanValue(@Nonnull String propertyName, boolean value) {
+        mutableState.setBooleanValue(propertyName, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setIntValue(@Nonnull String propertyName, int value) {
+        mutableState.setIntValue(propertyName, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
     @Deprecated
     @DeprecationDetails(reason = "Does the same as getId() but the other is compatible with NukkitX and this is not", since = "1.4.0.0-PN")
     public final int getBlockId() {

@@ -55,6 +55,6 @@ public class BlockWoodBark extends BlockWood {
     }
     
     public void setStripped(boolean stripped) {
-        setPropertyValue(STRIPPED_BIT, stripped);
+        setBooleanValue(STRIPPED_BIT, stripped);
     }
 }

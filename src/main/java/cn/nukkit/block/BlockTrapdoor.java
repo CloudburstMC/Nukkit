@@ -268,7 +268,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setOpen(boolean open) {
-        setPropertyValue(OPEN, open);
+        setBooleanValue(OPEN, open);
     }
     
     public boolean isTop() {
@@ -278,7 +278,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setTop(boolean top) {
-        setPropertyValue(UPSIDE_DOWN, top);
+        setBooleanValue(UPSIDE_DOWN, top);
     }
 
     @PowerNukkitDifference(info = "Was returning the wrong face", since = "1.3.0.0-PN")

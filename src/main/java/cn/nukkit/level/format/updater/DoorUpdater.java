@@ -39,21 +39,21 @@ public class DoorUpdater implements Updater {
         int legacy = state.getLegacyDamage();
         MutableBlockState mutableState = BlockStateRegistry.createMutableState(state.getBlockId());
         if ((legacy & DOOR_TOP_BIT) > 0) {
-            mutableState.setPropertyValue(BlockDoor.UPPER_BLOCK, true);
-            mutableState.setPropertyValue(BlockDoor.DOOR_HINGE, (legacy & DOOR_HINGE_BIT) > 0);
+            mutableState.setBooleanValue(BlockDoor.UPPER_BLOCK, true);
+            mutableState.setBooleanValue(BlockDoor.DOOR_HINGE, (legacy & DOOR_HINGE_BIT) > 0);
             
             int underY = offsetY + y - 1;
             if (underY >= 0) {
                 BlockState underState = chunk.getBlockState(x, underY, z);
                 if (underState.getBlockId() == state.getBlockId()) {
                     mutableState.setPropertyValue(BlockDoor.DOOR_DIRECTION, underState.getPropertyValue(BlockDoor.DOOR_DIRECTION));
-                    mutableState.setPropertyValue(CommonBlockProperties.OPEN, underState.getPropertyValue(CommonBlockProperties.OPEN));
+                    mutableState.setBooleanValue(CommonBlockProperties.OPEN, underState.getPropertyValue(CommonBlockProperties.OPEN));
                 }
             }
         } else {
-            mutableState.setPropertyValue(BlockDoor.UPPER_BLOCK, false);
+            mutableState.setBooleanValue(BlockDoor.UPPER_BLOCK, false);
             mutableState.setPropertyValue(BlockDoor.DOOR_DIRECTION, BlockDoor.DOOR_DIRECTION.getValueForMeta(legacy & 0x3));
-            mutableState.setPropertyValue(CommonBlockProperties.OPEN, (legacy & DOOR_OPEN_BIT) > 0);
+            mutableState.setBooleanValue(CommonBlockProperties.OPEN, (legacy & DOOR_OPEN_BIT) > 0);
         }
         
         return section.setBlockState(x, y, z, mutableState.getCurrentState());

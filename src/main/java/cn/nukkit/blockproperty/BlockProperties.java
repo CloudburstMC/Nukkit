@@ -144,6 +144,102 @@ public final class BlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
+    public int setBooleanValue(int currentMeta, String propertyName, boolean value) {
+        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        BlockProperty<?> property = registry.property;
+        if (BooleanBlockProperty.class == property.getClass()) {
+            return ((BooleanBlockProperty) property).setValue(currentMeta, registry.offset, value);
+        }
+        
+        @SuppressWarnings({"rawtypes", "java:S3740"})
+        BlockProperty unchecked = registry.property;
+        return unchecked.setValue(currentMeta, registry.offset, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @SuppressWarnings("unchecked")
+    public long setBooleanValue(long currentMeta, String propertyName, boolean value) {
+        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        BlockProperty<?> property = registry.property;
+        if (BooleanBlockProperty.class == property.getClass()) {
+            return ((BooleanBlockProperty) property).setValue(currentMeta, registry.offset, value);
+        }
+
+        @SuppressWarnings({"rawtypes", "java:S3740"})
+        BlockProperty unchecked = registry.property;
+        return unchecked.setValue(currentMeta, registry.offset, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @SuppressWarnings("unchecked")
+    public BigInteger setBooleanValue(BigInteger currentMeta, String propertyName, boolean value) {
+        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        BlockProperty<?> property = registry.property;
+        if (BooleanBlockProperty.class == property.getClass()) {
+            return ((BooleanBlockProperty) property).setValue(currentMeta, registry.offset, value);
+        }
+
+        @SuppressWarnings({"rawtypes", "java:S3740"})
+        BlockProperty unchecked = registry.property;
+        return unchecked.setValue(currentMeta, registry.offset, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @SuppressWarnings("unchecked")
+    public int setIntValue(int currentMeta, String propertyName, int value) {
+        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        BlockProperty<?> property = registry.property;
+        if (IntBlockProperty.class == property.getClass()) {
+            return ((IntBlockProperty) property).setValue(currentMeta, registry.offset, value);
+        } else if (UnsignedIntBlockProperty.class == property.getClass()) {
+            return ((UnsignedIntBlockProperty) property).setValue(currentMeta, registry.offset, value);
+        }
+
+        @SuppressWarnings({"rawtypes", "java:S3740"})
+        BlockProperty unchecked = registry.property;
+        return unchecked.setValue(currentMeta, registry.offset, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @SuppressWarnings("unchecked")
+    public long setIntValue(long currentMeta, String propertyName, int value) {
+        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        BlockProperty<?> property = registry.property;
+        if (IntBlockProperty.class == property.getClass()) {
+            return ((IntBlockProperty) property).setValue(currentMeta, registry.offset, value);
+        } else if (UnsignedIntBlockProperty.class == property.getClass()) {
+            return ((UnsignedIntBlockProperty) property).setValue(currentMeta, registry.offset, value);
+        }
+
+        @SuppressWarnings({"rawtypes", "java:S3740"})
+        BlockProperty unchecked = registry.property;
+        return unchecked.setValue(currentMeta, registry.offset, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @SuppressWarnings("unchecked")
+    public BigInteger setIntValue(BigInteger currentMeta, String propertyName, int value) {
+        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        BlockProperty<?> property = registry.property;
+        if (IntBlockProperty.class == property.getClass()) {
+            return ((IntBlockProperty) property).setValue(currentMeta, registry.offset, value);
+        } else if (UnsignedIntBlockProperty.class == property.getClass()) {
+            return ((UnsignedIntBlockProperty) property).setValue(currentMeta, registry.offset, value);
+        }
+
+        @SuppressWarnings({"rawtypes", "java:S3740"})
+        BlockProperty unchecked = registry.property;
+        return unchecked.setValue(currentMeta, registry.offset, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @SuppressWarnings("unchecked")
     @Nonnull
     public BigInteger setValue(BigInteger currentMeta, String propertyName, @Nullable Object value) {
         RegisteredBlockProperty registry = getRegisteredProperty(propertyName);

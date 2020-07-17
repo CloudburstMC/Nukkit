@@ -289,7 +289,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setOpen(boolean open) {
-        setPropertyValue(OPEN, open);
+        setBooleanValue(OPEN, open);
     }
     
     public boolean isTop() {
@@ -299,7 +299,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setTop(boolean top) {
-        setPropertyValue(UPPER_BLOCK, top);
+        setBooleanValue(UPPER_BLOCK, top);
     }
 
     @Deprecated @DeprecationDetails(reason = "Use the properties API instead", since = "1.4.0.0-PN")
@@ -314,7 +314,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setRightHinged(boolean rightHinged) {
-        setPropertyValue(DOOR_HINGE, rightHinged);
+        setBooleanValue(DOOR_HINGE, rightHinged);
     }
 
     @Override

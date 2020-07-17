@@ -20,7 +20,7 @@ public final class CommonBlockProperties {
             BlockFace.WEST, BlockFace.EAST,
     }).ordinal(true);
     
-    public static final BlockProperty<BlockFace> DIRECTION = new ArrayBlockProperty<>("facing_direction", false, new BlockFace[]{
+    public static final BlockProperty<BlockFace> DIRECTION = new ArrayBlockProperty<>("direction", false, new BlockFace[]{
             // Horizontal-index based
             BlockFace.SOUTH, BlockFace.WEST,
             BlockFace.NORTH, BlockFace.EAST,

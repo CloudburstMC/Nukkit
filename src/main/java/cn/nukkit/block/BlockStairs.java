@@ -151,7 +151,7 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
     }
     
     public void setUpsideDown(boolean upsideDown) {
-        setPropertyValue(UPSIDE_DOWN, upsideDown);
+        setBooleanValue(UPSIDE_DOWN, upsideDown);
     }
     
     @PowerNukkitOnly

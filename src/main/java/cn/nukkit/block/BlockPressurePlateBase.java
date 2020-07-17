@@ -212,7 +212,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     }
 
     public void setRedstonePower(int power) {
-        setPropertyValue(REDSTONE_SIGNAL, power);
+        setIntValue(REDSTONE_SIGNAL, power);
     }
 
     protected void playOnSound() {

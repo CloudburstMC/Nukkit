@@ -142,7 +142,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setActivated(boolean activated) {
-        setPropertyValue(BUTTON_PRESSED, activated);
+        setBooleanValue(BUTTON_PRESSED, activated);
     }
 
     @Override

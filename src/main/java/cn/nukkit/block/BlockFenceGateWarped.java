@@ -1,14 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
+import cn.nukkit.utils.BlockColor;
 
-/**
- * BlockFenceGateWarped.java was made by using BlockFenceGate(Some Wood type).java
- */
-/**
- * Created on 2015/11/23 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
- */
 public class BlockFenceGateWarped extends BlockFenceGate {
     public BlockFenceGateWarped() {
         this(0);
@@ -29,14 +22,9 @@ public class BlockFenceGateWarped extends BlockFenceGate {
     }
 
     @Override
-    public Item toItem() {
-        return Item.get(WARPED_FENCE_GATE, 0, 1);
-    }
-
-    /*@Override
     public BlockColor getColor() {
-        return BlockColor.BLACK_BLOCK_COLOR;
-    }*/
+        return BlockColor.CYAN_BLOCK_COLOR;
+    }
     
     @Override
     public int getBurnChance() {
