@@ -28,7 +28,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
  * Nukkit Project
  */
 public abstract class BlockDoor extends BlockTransparentMeta implements Faceable {
-    private static final double THICKNESS = 0.1875;
+    private static final double THICKNESS = 3.0 /16;
     
     public static final BooleanBlockProperty UPPER_BLOCK = new BooleanBlockProperty("upper_block_bit", false);
     public static final BooleanBlockProperty DOOR_HINGE = new BooleanBlockProperty("door_hinge_bit", false);
@@ -83,14 +83,14 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-        BlockFace face = getBlockFace();
+        BlockFace position = getBlockFace().getOpposite();
         boolean isOpen = isOpen();
         boolean isRight = isRightHinged();
         
         if (isOpen) {
-            return recalculateBoundingBoxWithPos(isRight? face.rotateY() : face.rotateYCCW());
+            return recalculateBoundingBoxWithPos(isRight? position.rotateYCCW() : position.rotateY());
         } else {
-            return recalculateBoundingBoxWithPos(face);
+            return recalculateBoundingBoxWithPos(position);
         }
     }
 
@@ -100,15 +100,15 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
                     this.x,
                     this.y,
                     this.z,
-                    this.x + 1 - (THICKNESS * -pos.getXOffset()),
+                    this.x + 1 + pos.getXOffset() - (THICKNESS * pos.getXOffset()),
                     this.y + 1,
-                    this.z + 1 - (THICKNESS * -pos.getZOffset())
+                    this.z + 1 + pos.getZOffset() - (THICKNESS * pos.getZOffset())
             );
         } else {
             return new SimpleAxisAlignedBB (
-                    this.x + pos.getXOffset() - (THICKNESS * -pos.getXOffset()),
+                    this.x + pos.getXOffset() - (THICKNESS * pos.getXOffset()),
                     this.y,
-                    this.z + pos.getZOffset() - (THICKNESS * -pos.getZOffset()),
+                    this.z + pos.getZOffset() - (THICKNESS * pos.getZOffset()),
                     this.x + 1,
                     this.y + 1,
                     this.z + 1
