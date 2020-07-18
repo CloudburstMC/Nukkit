@@ -164,7 +164,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[SIGN] = ItemSign.class; //323
             list[WOODEN_DOOR] = ItemDoorWood.class; //324
             list[BUCKET] = ItemBucket.class; //325
-
+            
             list[MINECART] = ItemMinecart.class; //328
             list[SADDLE] = ItemSaddle.class; //329
             list[IRON_DOOR] = ItemDoorIron.class; //330
@@ -308,18 +308,18 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[DARKOAK_SIGN] = ItemDarkOakSign.class; //476
             list[SWEET_BERRIES] = ItemSweetBerries.class; //477
 
-            list[RECORD_11] = ItemRecord11.class;
-            list[RECORD_CAT] = ItemRecordCat.class;
-            list[RECORD_13] = ItemRecord13.class;
-            list[RECORD_BLOCKS] = ItemRecordBlocks.class;
-            list[RECORD_CHIRP] = ItemRecordChirp.class;
-            list[RECORD_FAR] = ItemRecordFar.class;
-            list[RECORD_WARD] = ItemRecordWard.class;
-            list[RECORD_MALL] = ItemRecordMall.class;
-            list[RECORD_MELLOHI] = ItemRecordMellohi.class;
-            list[RECORD_STAL] = ItemRecordStal.class;
-            list[RECORD_STRAD] = ItemRecordStrad.class;
-            list[RECORD_WAIT] = ItemRecordWait.class;
+            list[RECORD_13] = ItemRecord13.class; //500
+            list[RECORD_CAT] = ItemRecordCat.class; //501
+            list[RECORD_BLOCKS] = ItemRecordBlocks.class; //502
+            list[RECORD_CHIRP] = ItemRecordChirp.class; //503
+            list[RECORD_FAR] = ItemRecordFar.class; //504
+            list[RECORD_MALL] = ItemRecordMall.class; //505
+            list[RECORD_MELLOHI] = ItemRecordMellohi.class; //506
+            list[RECORD_STAL] = ItemRecordStal.class; //507
+            list[RECORD_STRAD] = ItemRecordStrad.class; //508
+            list[RECORD_WARD] = ItemRecordWard.class; //509
+            list[RECORD_11] = ItemRecord11.class; //510
+            list[RECORD_WAIT] = ItemRecordWait.class; //511
 
             list[SHIELD] = ItemShield.class; //513
 
@@ -329,7 +329,8 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             list[HONEYCOMB] = ItemHoneycomb.class; //736
             list[HONEY_BOTTLE] = ItemHoneyBottle.class; //737
-
+            
+            //list[LODESTONECOMPASS] = ItemCompassLodestone.class; //741;
             list[NETHERITE_INGOT] = ItemIngotNetherite.class; //742
             list[NETHERITE_SWORD] = ItemSwordNetherite.class; //743
             list[NETHERITE_SHOVEL] = ItemShovelNetherite.class; //744
@@ -341,6 +342,12 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[NETHERITE_LEGGINGS] = ItemLeggingsNetherite.class; //750
             list[NETHERITE_BOOTS] = ItemBootsNetherite.class; //751
             list[NETHERITE_SCRAP] = ItemScrapNetherite.class; //752
+            list[CRIMSON_SIGN] = ItemCrimsonSign.class; //753
+            list[WARPED_SIGN] = ItemWarpedSign.class; //754
+            list[CRIMSON_DOOR] = ItemDoorCrimson.class; //755
+            list[WARPED_DOOR] = ItemDoorWarped.class; //756
+            //list[RECORD_PIGSTEP] = ItemRecordPigstep.class; //759
+            list[NETHER_SPROUTS] = ItemNetherSprouts.class; //760
 
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {

@@ -67,7 +67,7 @@ public abstract class BlockSlab extends BlockTransparentMeta {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setOnTop(boolean top) {
-        setPropertyValue(TOP_SLOT_PROPERTY, top);
+        setBooleanValue(TOP_SLOT_PROPERTY, top);
     }
 
     @PowerNukkitOnly

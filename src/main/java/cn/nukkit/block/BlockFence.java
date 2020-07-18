@@ -1,25 +1,39 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Optional;
+
 /**
  * Created on 2015/12/7 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-@PowerNukkitDifference(info = "Implements BlockConnectable only on PowerNukkit")
+@PowerNukkitDifference(info = "Implements BlockConnectable only on PowerNukkit", since = "1.3.0.0-PN")
 public class BlockFence extends BlockTransparentMeta implements BlockConnectable {
+    public static final BlockProperties PROPERTIES = new BlockProperties(WoodType.PROPERTY);
 
+    @Deprecated @DeprecationDetails(reason = "Moved to the block property system", since = "1.4.0.0-PN", replaceWith = "getWoodType()")
     public static final int FENCE_OAK = 0;
+    @Deprecated @DeprecationDetails(reason = "Moved to the block property system", since = "1.4.0.0-PN", replaceWith = "getWoodType()")
     public static final int FENCE_SPRUCE = 1;
+    @Deprecated @DeprecationDetails(reason = "Moved to the block property system", since = "1.4.0.0-PN", replaceWith = "getWoodType()")
     public static final int FENCE_BIRCH = 2;
+    @Deprecated @DeprecationDetails(reason = "Moved to the block property system", since = "1.4.0.0-PN", replaceWith = "getWoodType()")
     public static final int FENCE_JUNGLE = 3;
+    @Deprecated @DeprecationDetails(reason = "Moved to the block property system", since = "1.4.0.0-PN", replaceWith = "getWoodType()")
     public static final int FENCE_ACACIA = 4;
+    @Deprecated @DeprecationDetails(reason = "Moved to the block property system", since = "1.4.0.0-PN", replaceWith = "getWoodType()")
     public static final int FENCE_DARK_OAK = 5;
 
     public BlockFence() {
@@ -35,6 +49,12 @@ public class BlockFence extends BlockTransparentMeta implements BlockConnectable
         return FENCE;
     }
 
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
     @Override
     public double getHardness() {
         return 2;
@@ -47,27 +67,29 @@ public class BlockFence extends BlockTransparentMeta implements BlockConnectable
 
     @Override
     public double getResistance() {
-        return 15;
+        return 3;
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setWoodType(@Nullable WoodType woodType) {
+        setPropertyValue(WoodType.PROPERTY, woodType);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public Optional<WoodType> getWoodType() {
+        return Optional.of(getPropertyValue(WoodType.PROPERTY));
+    }
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Oak Fence",
-                "Spruce Fence",
-                "Birch Fence",
-                "Jungle Fence",
-                "Acacia Fence",
-                "Dark Oak Fence",
-                "",
-                ""
-        };
-        return names[this.getDamage() & 0x07];
+        return getPropertyValue(WoodType.PROPERTY).getEnglishName() + " Fence";
     }
 
     @Override
@@ -102,30 +124,17 @@ public class BlockFence extends BlockTransparentMeta implements BlockConnectable
 
     @Override
     public boolean canConnect(Block block) {
-        return (block instanceof BlockFence || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
+        if (block instanceof BlockFence) {
+            if (block.getId() == NETHER_BRICK_FENCE || this.getId() == NETHER_BRICK_FENCE) {
+                return block.getId() == this.getId();
+            }
+            return true;
+        }
+        return block instanceof BlockFenceGate || block.isSolid() && !block.isTransparent();
     }
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            default:
-            case BlockFence.FENCE_OAK: //OAK
-                return BlockColor.WOOD_BLOCK_COLOR;
-            case BlockFence.FENCE_SPRUCE: //SPRUCE
-                return BlockColor.SPRUCE_BLOCK_COLOR;
-            case BlockFence.FENCE_BIRCH: //BIRCH
-                return BlockColor.SAND_BLOCK_COLOR;
-            case BlockFence.FENCE_JUNGLE: //JUNGLE
-                return BlockColor.DIRT_BLOCK_COLOR;
-            case BlockFence.FENCE_ACACIA: //ACACIA
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            case BlockFence.FENCE_DARK_OAK: //DARK OAK
-                return BlockColor.BROWN_BLOCK_COLOR;
-        }
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, this.getDamage());
+        return getPropertyValue(WoodType.PROPERTY).getColor();
     }
 }
