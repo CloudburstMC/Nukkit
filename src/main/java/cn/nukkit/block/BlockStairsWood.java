@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -34,18 +33,13 @@ public class BlockStairsWood extends BlockStairs {
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(this, 0);
-    }
-
-    @Override
     public double getHardness() {
         return 2;
     }
 
     @Override
     public double getResistance() {
-        return 15;
+        return 3;
     }
 
     @Override

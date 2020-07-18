@@ -92,6 +92,16 @@ public class LongMutableBlockState extends MutableBlockState {
         storage = properties.setValue(storage, propertyName, value);
     }
 
+    @Override
+    public void setBooleanValue(String propertyName, boolean value) {
+        storage = properties.setBooleanValue(storage, propertyName, value);
+    }
+
+    @Override
+    public void setIntValue(String propertyName, int value) {
+        storage = properties.setIntValue(storage, propertyName, value);
+    }
+
     @Nonnull
     @Override
     public Object getPropertyValue(String propertyName) {

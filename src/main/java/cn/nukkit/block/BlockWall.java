@@ -551,7 +551,7 @@ public class BlockWall extends BlockTransparentMeta implements BlockConnectable 
                     BlockFenceGate fenceGate = (BlockFenceGate) block;
                     return fenceGate.getBlockFace().getAxis() != calculateAxis(block);
                 } else if (block instanceof BlockStairs) {
-                    return ((BlockStairs) block).getBlockFace() == calculateFace(block);
+                    return ((BlockStairs) block).getBlockFace().getOpposite() == calculateFace(block);
                 }
                 return block.isSolid() && !block.isTransparent();
         }

@@ -1,23 +1,42 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSign;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.CompassRoseDirection;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
+import static cn.nukkit.math.CompassRoseDirection.*;
+
 /**
  * @author Nukkit Project Team
  */
 public class BlockSignPost extends BlockTransparentMeta implements Faceable {
+    public static final BlockProperty<CompassRoseDirection> GROUND_SIGN_DIRECTION = new ArrayBlockProperty<>("ground_sign_direction", false, new CompassRoseDirection[] {
+            SOUTH, SOUTH_SOUTH_WEST, SOUTH_WEST, WEST_SOUTH_WEST, 
+            WEST, WEST_NORTH_WEST, NORTH_WEST, NORTH_NORTH_WEST, 
+            NORTH, NORTH_NORTH_EAST, NORTH_EAST, EAST_NORTH_EAST,
+            EAST, EAST_SOUTH_EAST, SOUTH_EAST, SOUTH_SOUTH_EAST
+    }).ordinal(true);
+    
+    public static final BlockProperties PROPERTIES = new BlockProperties(GROUND_SIGN_DIRECTION); 
 
     public BlockSignPost() {
         this(0);
@@ -30,6 +49,12 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return SIGN_POST;
+    }
+
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -84,11 +109,15 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
                     .putString("Text4", "");
 
             if (face == BlockFace.UP) {
-                setDamage((int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                getLevel().setBlock(block, Block.get(getPostId(), getDamage()), true);
+                CompassRoseDirection direction = GROUND_SIGN_DIRECTION.getValueForMeta(
+                        (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f
+                );
+
+                BlockState post = BlockState.of(getPostId()).withProperty(GROUND_SIGN_DIRECTION, direction);
+                getLevel().setBlock(block, post.getBlock(), true);
             } else {
-                setDamage(face.getIndex());
-                getLevel().setBlock(block, Block.get(getWallId(), getDamage()), true);
+                BlockState wall = BlockState.of(getWallId()).withProperty(FACING_DIRECTION, face);
+                getLevel().setBlock(block, wall.getBlock(), true);
             }
 
             if (player != null) {
@@ -135,10 +164,24 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
-
+    
+    public CompassRoseDirection getSignDirection() {
+        return getPropertyValue(GROUND_SIGN_DIRECTION);
+    }
+    
+    public void setSignDirection(CompassRoseDirection direction) {
+        setPropertyValue(GROUND_SIGN_DIRECTION, direction);
+    }
+    
+    @PowerNukkitDifference(info = "Was returning the wrong face, it now return the closest face, or the left face if even", since = "1.4.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromIndex(this.getDamage() & 0x07);
+        return getSignDirection().getClosestBlockFace();
+    }
+
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setSignDirection(face.getCompassRoseDirection());
     }
 
     @Override

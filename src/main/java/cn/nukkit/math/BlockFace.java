@@ -1,5 +1,7 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import com.google.common.collect.Iterators;
 
 import java.util.Iterator;
@@ -266,6 +268,23 @@ public enum BlockFace {
                 return SOUTH;
             default:
                 throw new RuntimeException("Unable to get counter-clockwise Y-rotated face of " + this);
+        }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public CompassRoseDirection getCompassRoseDirection() {
+        switch (this) {
+            case NORTH:
+                return CompassRoseDirection.NORTH;
+            case SOUTH:
+                return CompassRoseDirection.SOUTH;
+            case WEST:
+                return CompassRoseDirection.WEST;
+            case EAST:
+                return CompassRoseDirection.EAST;
+            default:
+                return null;
         }
     }
 

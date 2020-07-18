@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.value.StoneSlab2Type;
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -63,21 +62,10 @@ public class BlockDoubleSlabRedSandstone extends BlockDoubleSlabBase {
     }
 
     @Override
-    public Item toItem() {
-        return getCurrentState().forItem().withBlockId(BlockID.RED_SANDSTONE_SLAB).asItemBlock();
+    public int getSingleSlabId() {
+        return RED_SANDSTONE_SLAB;
     }
     
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            Item slab = toItem();
-            slab.setCount(2);
-            return new Item[]{ slab };
-        } else {
-            return new Item[0];
-        }
-    }
-
     @Override
     public boolean canHarvestWithHand() {
         return false;
