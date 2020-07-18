@@ -3,6 +3,8 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.BlockProperties;
@@ -501,9 +503,11 @@ public class Item implements Cloneable, BlockID, ItemID {
             } else if (c == null) {
                 item = new Item(id, meta, count);
             } else {
-                int normalizedMeta = meta == -1? 0 : meta;
-                item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(normalizedMeta, count));
-                item.setDamage(meta);
+                if (meta == -1) {
+                    item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(0, count)).createFuzzyCraftingRecipe();
+                } else {
+                    item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
+                }
             }
 
             if (tags.length != 0) {
@@ -960,6 +964,15 @@ public class Item implements Cloneable, BlockID, ItemID {
         } else {
             this.hasMeta = false;
         }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public Item createFuzzyCraftingRecipe() {
+        Item item = clone();
+        item.meta = -1;
+        item.hasMeta = false;
+        return item;
     }
 
     public int getMaxStackSize() {
