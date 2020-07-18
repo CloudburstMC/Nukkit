@@ -2,7 +2,6 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 
@@ -50,7 +49,6 @@ public class PlayerUIInventory extends BaseInventory {
         for (Player p : target) {
             if (p == this.getHolder()) {
                 pk.inventoryId = ContainerIds.UI;
-                p.dataPacket(pk);
             } else {
                 int id;
 
@@ -59,34 +57,14 @@ public class PlayerUIInventory extends BaseInventory {
                     continue;
                 }
                 pk.inventoryId = id;
-                p.dataPacket(pk);
             }
+            p.dataPacket(pk);
         }
     }
 
     @Override
     public void sendContents(Player... target) {
-        InventoryContentPacket pk = new InventoryContentPacket();
-        pk.slots = new Item[this.getSize()];
-        for (int i = 0; i < this.getSize(); ++i) {
-            pk.slots[i] = this.getItem(i);
-        }
-
-        for (Player p : target) {
-            if (p == this.getHolder()) {
-                pk.inventoryId = ContainerIds.UI;
-                p.dataPacket(pk);
-            } else {
-                int id;
-
-                if ((id = p.getWindowId(this)) == ContainerIds.NONE) {
-                    this.close(p);
-                    continue;
-                }
-                pk.inventoryId = id;
-                p.dataPacket(pk);
-            }
-        }
+        //doesn't work here
     }
     
     @Override
@@ -99,6 +77,7 @@ public class PlayerUIInventory extends BaseInventory {
                         inventory.onSlotChange(index == 50 ? 2 : index - GrindstoneInventory.OFFSET, before, send);
                     }
                 }
+                return;
             case Player.CRAFTING_ANVIL:
                 if (index >= AnvilInventory.OFFSET) {
                     Inventory inventory = player.getWindowById(Player.ANVIL_WINDOW_ID);
@@ -107,8 +86,9 @@ public class PlayerUIInventory extends BaseInventory {
                     }
                 }
                 return;
+            default:
+                super.onSlotChange(index, before, send);
         }
-        super.onSlotChange(index, before, send);
     }
     
     public void onSlotChangeBase(int index, Item before, boolean send) {
