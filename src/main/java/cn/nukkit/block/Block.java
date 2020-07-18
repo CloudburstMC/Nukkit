@@ -479,8 +479,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             //list[CRIMSON_STEM] = Block<Name>.class; //480
             //list[WARPED_STEM] = Block<Name>.class; //481
             list[WARPED_WART_BLOCK] = BlockWarpedWartBlock.class; //482 
-            //list[CRIMSON_FUNGUS] = Block<Name>.class; //483
-            //list[WARPED_FUNGUS] = Block<Name>.class; //484
+            list[CRIMSON_FUNGUS] = BlockFungusCrimson.class; //483
+            list[WARPED_FUNGUS] = BlockFungusWarped.class; //484
             //list[SHROOMLIGHT] = Block<Name>.class; //485
             //list[WEEPING_VINES] = Block<Name>.class; //486
             list[CRIMSON_NYLIUM] = BlockNyliumCrimson.class; //487
