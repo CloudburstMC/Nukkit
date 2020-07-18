@@ -279,10 +279,6 @@ public interface ItemID {
     int NETHERITE_LEGGINGS = 750;
     int NETHERITE_BOOTS = 751;
     int NETHERITE_SCRAP = 752;
-    //int CRIMSON_SIGN = 753;
-    //int WARPED_SIGN = 754;
-    //int CRIMSON_DOOR = 755;
-    //int WARPED_DOOR = 756;
     int CRIMSON_SIGN = 753;
     int WARPED_SIGN = 754;
     int CRIMSON_DOOR = 755;
