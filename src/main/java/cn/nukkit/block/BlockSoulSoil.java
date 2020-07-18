@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockSoulSoil extends BlockSolid {
     @Override
@@ -31,5 +32,10 @@ public class BlockSoulSoil extends BlockSolid {
     @Override
     public boolean canHarvestWithHand() {
         return true;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.BROWN_BLOCK_COLOR;
     }
 }

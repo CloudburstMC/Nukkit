@@ -1,8 +1,14 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.generator.object.ObjectNyliumVegetation;
+import cn.nukkit.level.particle.BoneMealParticle;
+import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.DyeColor;
 
 public abstract class BlockNylium extends BlockSolid {
     @Override
@@ -17,6 +23,34 @@ public abstract class BlockNylium extends BlockSolid {
             return type;
         }
         return 0;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        Block up = up();
+        if (item.isNull() || item.getId() != ItemID.DYE || item.getDamage() != DyeColor.WHITE.getDyeData() || up.getId() != AIR) {
+            return false;
+        }
+
+        if (player != null && !player.isCreative()) {
+            item.count--;
+        }
+        
+        grow();
+
+        level.addParticle(new BoneMealParticle(up));
+        
+        return true;
+    }
+
+    public boolean grow() {
+        ObjectNyliumVegetation.growVegetation(level, this, new NukkitRandom());
+        return true;
     }
 
     @Override
