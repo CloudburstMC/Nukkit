@@ -487,7 +487,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[WARPED_NYLIUM] = BlockNyliumWarped.class; //488
             //list[BASALT] = Block<Name>.class; //489
             //list[POLISHED_BASALT] = Block<Name>.class; //490 
-            //list[SOUL_SOIL] = Block<Name>.class; //491
+            list[SOUL_SOIL] = BlockSoulSoil.class; //491
             //list[SOUL_FIRE] = Block<Name>.class; //492
             //list[NETHER_SPROUTS] = Block<Name>.class; //493 
             //list[TARGET] = Block<Name>.class; //494
@@ -637,7 +637,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                         for (int data = 0; data < DATA_SIZE; ++data) {
                             fullList[(id << DATA_BITS) | data] = new BlockUnknown(id, data);
                         }
-                        return;
+                        block = fullList[id << DATA_BITS];
                     }
 
                     solid[id] = block.isSolid();
