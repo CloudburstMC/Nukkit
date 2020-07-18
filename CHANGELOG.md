@@ -3,18 +3,18 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html) 
-with an added upstream's major version number in front of the major version so we have an better distinction from
+with an added upstream's major version number in front of the major version, so we have a better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/15?closed=1))
+## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
-## [1.3.1.0-PN] - 2020-07-09 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/13?closed=1))
+## [1.3.1.0-PN] - 2020-07-09 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/13?closed=1))
 Security, stability and enchanting table fixes alongside with few additions.
 
 PowerNukkit now has its own [discord guild], click the link below to join and have fun!  
-💬 https://discord.gg/JVwf39q 💬  
-[![Discord](https://img.shields.io/discord/728280425255927879)](https://discord.gg/JVwf39q)
+💬 https://powernukkit.org/discord 💬  
+[![Discord](https://img.shields.io/discord/728280425255927879)](https://powernukkit.org/discord)
 
 ### Fixes
 - [#326] Enchantment table not working
@@ -40,7 +40,7 @@ PowerNukkit now has its own [discord guild], click the link below to join and ha
 - [#335] The chunk content version from `1` to `2`, all cobblestone walls will be reprocessed on the chunk first load after the update
 - [#352] The `runtime_block_states_overrides.dat` file has been updated
 
-## [1.3.0.1-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/14?closed=1))
+## [1.3.0.1-PN] - 2020-07-01 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/14?closed=1))
 Improves plugin compatibility and downgrade the RakNet lib to solve a memory leak
 
 ### Fixes
@@ -53,14 +53,14 @@ Improves plugin compatibility and downgrade the RakNet lib to solve a memory lea
 ### Changed
 - [#319] The RakNet library were downgraded to 1.6.15 due to a potential memory leak issue
 
-## [1.3.0.0-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
+## [1.3.0.0-PN] - 2020-07-01 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/11?closed=1))
 Added support for Bedrock Edition 1.16.0 and 1.16.1
 
 ### Breaking change!
 ***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!*** 
 
 The following breaking change will be pulled in `1.3.0.0-PN`
-- [8a09f93](https://github.com/GameModsBR/PowerNukkit/commit/8a09f933f83c9a52531ff8a184a58c6d733c9174) Quick craft implementation. ([NukkitX#1473](https://github.com/NukkitX/Nukkit/pull/1473)) Jedrzej* 05/06/2020
+- [8a09f93](https://github.com/PowerNukkit/PowerNukkit/commit/8a09f933f83c9a52531ff8a184a58c6d733c9174) Quick craft implementation. ([NukkitX#1473](https://github.com/NukkitX/Nukkit/pull/1473)) Jedrzej* 05/06/2020
 
 ### Binary incompatibility!
 - [#293] A few `Entity` data constant values were changed, plugins which uses them might need to be recompiled, no code change required
@@ -117,7 +117,7 @@ please take extra cautions with this version, make constant backups and report a
 - [#293] Grindstone now clears only the enchantments and sets the repair cost to `0`, it used to clear all NBT tags
 
 
-## [1.2.1.0-PN] - 2020-06-07 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
+## [1.2.1.0-PN] - 2020-06-07 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/9?closed=1))
 Adds new methods to be used by plugins and fixes many issues. 
 
 ### Fixes
@@ -158,7 +158,7 @@ Adds new methods to be used by plugins and fixes many issues.
 - [#285] Ender pearls will now be unable to teleport players across different dimensions
 - [#285] `ShortTag.load(NBTInputStream)` now reads a signed short. Used to read an unsigned short.
 
-## [1.2.0.2-PN] - 2020-05-18 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/10?closed=1))
+## [1.2.0.2-PN] - 2020-05-18 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/10?closed=1))
 Contains several fixes, including issues which cause item losses and performance issues
 
 ### Fixes
@@ -197,7 +197,7 @@ Contains several fixes, including issues which cause item losses and performance
 - [#273] `FakeBlockUIComponent.close(Player)` now calls `onClose(Player)`
 - [#274] `Player.checkInteractNearby()` is now called once every 10 ticks, it was called every tick
 
-## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/8?closed=1))
+## [1.2.0.1-PN] - 2020-05-08 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/8?closed=1))
 Fixes several anvil issues.
 
 ### Added
@@ -219,7 +219,7 @@ Fixes several anvil issues.
 - [#234] `setResult` methods in `AnvilInventory` are now deprecated and marked for removal at 1.3.0.0-PN
          because it's not supported by the client and changing it will fail the transaction.
 
-## [1.2.0.0-PN] - 2020-05-03 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/6?closed=1))
+## [1.2.0.0-PN] - 2020-05-03 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/6?closed=1))
 **Note:** Effort has been made to keep this list accurate but some bufixes and new features might be missing here, specially those made by the NukkitX team and contributors.
 
 ### Added
@@ -250,7 +250,7 @@ Fixes several anvil issues.
 
 ### Changed
 - Make BlockLectern implements Faceable
-- The versioning convention now follows this pattern:<br>`upstream.major.minor.patch-PN`<br>[Click here for details.](https://github.com/GameModsBR/PowerNukkit/blob/7912aa4be68e94a52762361c2d5189b7bbc58d2a/pom.xml#L8-L14)
+- The versioning convention now follows this pattern:<br>`upstream.major.minor.patch-PN`<br>[Click here for details.](https://github.com/PowerNukkit/PowerNukkit/blob/7912aa4be68e94a52762361c2d5189b7bbc58d2a/pom.xml#L8-L14)
 
 ## [1.1.1.0-PN] - 2020-01-21
 ### Fixes
@@ -358,109 +358,109 @@ Fixes several anvil issues.
     - Loom
     - Bamboo
 
-[updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/bleeding/CHANGELOG.md
-[discord guild]: https://discord.gg/JVwf39q
+[updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
+[discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.4.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.1.0-PN...bleeding
-[1.3.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.1-PN...v1.3.1.0-PN
-[1.3.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...v1.3.0.1-PN
-[1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.1-PN
-[1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.0-PN
-[1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
-[1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
-[1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
-[1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
-[1.1.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN#files_bucket
+[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.0-PN...bleeding
+[1.3.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.0.1-PN...v1.3.1.0-PN
+[1.3.0.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.0.0-PN...v1.3.0.1-PN
+[1.3.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.1-PN
+[1.3.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.0-PN
+[1.2.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
+[1.2.0.2-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
+[1.2.0.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
+[1.2.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
+[1.1.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/1ac6d50d36f07b6f1a02df299d9591d78c379db9...v1.1.1.0-PN#files_bucket
 
-[a8247360]: https://github.com/GameModsBR/PowerNukkit/commit/a8247360
+[a8247360]: https://github.com/PowerNukkit/PowerNukkit/commit/a8247360
 
 [NukkitX]: https://github.com/CloudburstMC/Nukkit
 
-[#12]: https://github.com/GameModsBR/PowerNukkit/issues/12
-[#44]: https://github.com/GameModsBR/PowerNukkit/issues/44
-[#46]: https://github.com/GameModsBR/PowerNukkit/issues/46
-[#49]: https://github.com/GameModsBR/PowerNukkit/pull/49
-[#50]: https://github.com/GameModsBR/PowerNukkit/pull/50
-[#51]: https://github.com/GameModsBR/PowerNukkit/pull/51
-[#52]: https://github.com/GameModsBR/PowerNukkit/pull/52
-[#53]: https://github.com/GameModsBR/PowerNukkit/pull/53
-[#54]: https://github.com/GameModsBR/PowerNukkit/pull/54
-[#55]: https://github.com/GameModsBR/PowerNukkit/pull/55
-[#56]: https://github.com/GameModsBR/PowerNukkit/pull/56
-[#57]: https://github.com/GameModsBR/PowerNukkit/pull/57
-[#58]: https://github.com/GameModsBR/PowerNukkit/pull/58
-[#79]: https://github.com/GameModsBR/PowerNukkit/issues/79
-[#80]: https://github.com/GameModsBR/PowerNukkit/pull/80
-[#87]: https://github.com/GameModsBR/PowerNukkit/issues/87
-[#93]: https://github.com/GameModsBR/PowerNukkit/issues/93
-[#95]: https://github.com/GameModsBR/PowerNukkit/issues/95
-[#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
-[#103]: https://github.com/GameModsBR/PowerNukkit/issues/103
-[#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
-[#113]: https://github.com/GameModsBR/PowerNukkit/issues/113
-[#116]: https://github.com/GameModsBR/PowerNukkit/issues/116
-[#123]: https://github.com/GameModsBR/PowerNukkit/issues/123
-[#129]: https://github.com/GameModsBR/PowerNukkit/pull/129
-[#140]: https://github.com/GameModsBR/PowerNukkit/pull/140
-[#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
-[#157]: https://github.com/GameModsBR/PowerNukkit/issues/157
-[#170]: https://github.com/GameModsBR/PowerNukkit/pull/170
-[#193]: https://github.com/GameModsBR/PowerNukkit/issues/193
-[#210]: https://github.com/GameModsBR/PowerNukkit/issues/210
-[#212]: https://github.com/GameModsBR/PowerNukkit/issues/212
-[#220]: https://github.com/GameModsBR/PowerNukkit/issues/220
-[#219]: https://github.com/GameModsBR/PowerNukkit/pull/219
-[#222]: https://github.com/GameModsBR/PowerNukkit/issues/223
-[#224]: https://github.com/GameModsBR/PowerNukkit/pull/224
-[#226]: https://github.com/GameModsBR/PowerNukkit/issues/226
-[#227]: https://github.com/GameModsBR/PowerNukkit/pull/227
-[#228]: https://github.com/GameModsBR/PowerNukkit/issues/228
-[#232]: https://github.com/GameModsBR/PowerNukkit/issues/232
-[#234]: https://github.com/GameModsBR/PowerNukkit/issues/234
-[#235]: https://github.com/GameModsBR/PowerNukkit/issues/235
-[#239]: https://github.com/GameModsBR/PowerNukkit/issues/239
-[#240]: https://github.com/GameModsBR/PowerNukkit/issues/240
-[#242]: https://github.com/GameModsBR/PowerNukkit/pull/242
-[#243]: https://github.com/GameModsBR/PowerNukkit/issues/243
-[#244]: https://github.com/GameModsBR/PowerNukkit/pull/244
-[#246]: https://github.com/GameModsBR/PowerNukkit/issues/246
-[#247]: https://github.com/GameModsBR/PowerNukkit/pull/247
-[#248]: https://github.com/GameModsBR/PowerNukkit/pull/248
-[#253]: https://github.com/GameModsBR/PowerNukkit/pull/253
-[#254]: https://github.com/GameModsBR/PowerNukkit/issues/254
-[#255]: https://github.com/GameModsBR/PowerNukkit/pull/255
-[#256]: https://github.com/GameModsBR/PowerNukkit/pull/256
-[#259]: https://github.com/GameModsBR/PowerNukkit/pull/259
-[#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
-[#261]: https://github.com/GameModsBR/PowerNukkit/pull/261
-[#262]: https://github.com/GameModsBR/PowerNukkit/pull/262
-[#263]: https://github.com/GameModsBR/PowerNukkit/pull/263
-[#266]: https://github.com/GameModsBR/PowerNukkit/issues/266
-[#267]: https://github.com/GameModsBR/PowerNukkit/issues/267
-[#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
-[#270]: https://github.com/GameModsBR/PowerNukkit/issues/270
-[#272]: https://github.com/GameModsBR/PowerNukkit/issues/272
-[#273]: https://github.com/GameModsBR/PowerNukkit/pull/273
-[#274]: https://github.com/GameModsBR/PowerNukkit/pull/274
-[#275]: https://github.com/GameModsBR/PowerNukkit/pull/275
-[#276]: https://github.com/GameModsBR/PowerNukkit/pull/276
-[#277]: https://github.com/GameModsBR/PowerNukkit/pull/277
-[#279]: https://github.com/GameModsBR/PowerNukkit/pull/279
-[#281]: https://github.com/GameModsBR/PowerNukkit/pull/281
-[#285]: https://github.com/GameModsBR/PowerNukkit/pull/285
-[#293]: https://github.com/GameModsBR/PowerNukkit/pull/293
-[#297]: https://github.com/GameModsBR/PowerNukkit/pull/297
-[#315]: https://github.com/GameModsBR/PowerNukkit/pull/315
-[#319]: https://github.com/GameModsBR/PowerNukkit/pull/319
-[#320]: https://github.com/GameModsBR/PowerNukkit/pull/320
-[#323]: https://github.com/GameModsBR/PowerNukkit/issues/323
-[#326]: https://github.com/GameModsBR/PowerNukkit/pull/326
-[#328]: https://github.com/GameModsBR/PowerNukkit/issues/326
-[#330]: https://github.com/GameModsBR/PowerNukkit/issues/330
-[#335]: https://github.com/GameModsBR/PowerNukkit/issues/335
-[#338]: https://github.com/GameModsBR/PowerNukkit/issues/338
-[#344]: https://github.com/GameModsBR/PowerNukkit/issues/344
-[#346]: https://github.com/GameModsBR/PowerNukkit/issues/346
-[#347]: https://github.com/GameModsBR/PowerNukkit/issues/347
-[#348]: https://github.com/GameModsBR/PowerNukkit/issues/348
-[#352]: https://github.com/GameModsBR/PowerNukkit/issues/352
+[#12]: https://github.com/PowerNukkit/PowerNukkit/issues/12
+[#44]: https://github.com/PowerNukkit/PowerNukkit/issues/44
+[#46]: https://github.com/PowerNukkit/PowerNukkit/issues/46
+[#49]: https://github.com/PowerNukkit/PowerNukkit/pull/49
+[#50]: https://github.com/PowerNukkit/PowerNukkit/pull/50
+[#51]: https://github.com/PowerNukkit/PowerNukkit/pull/51
+[#52]: https://github.com/PowerNukkit/PowerNukkit/pull/52
+[#53]: https://github.com/PowerNukkit/PowerNukkit/pull/53
+[#54]: https://github.com/PowerNukkit/PowerNukkit/pull/54
+[#55]: https://github.com/PowerNukkit/PowerNukkit/pull/55
+[#56]: https://github.com/PowerNukkit/PowerNukkit/pull/56
+[#57]: https://github.com/PowerNukkit/PowerNukkit/pull/57
+[#58]: https://github.com/PowerNukkit/PowerNukkit/pull/58
+[#79]: https://github.com/PowerNukkit/PowerNukkit/issues/79
+[#80]: https://github.com/PowerNukkit/PowerNukkit/pull/80
+[#87]: https://github.com/PowerNukkit/PowerNukkit/issues/87
+[#93]: https://github.com/PowerNukkit/PowerNukkit/issues/93
+[#95]: https://github.com/PowerNukkit/PowerNukkit/issues/95
+[#102]: https://github.com/PowerNukkit/PowerNukkit/pull/102
+[#103]: https://github.com/PowerNukkit/PowerNukkit/issues/103
+[#108]: https://github.com/PowerNukkit/PowerNukkit/pull/108
+[#113]: https://github.com/PowerNukkit/PowerNukkit/issues/113
+[#116]: https://github.com/PowerNukkit/PowerNukkit/issues/116
+[#123]: https://github.com/PowerNukkit/PowerNukkit/issues/123
+[#129]: https://github.com/PowerNukkit/PowerNukkit/pull/129
+[#140]: https://github.com/PowerNukkit/PowerNukkit/pull/140
+[#152]: https://github.com/PowerNukkit/PowerNukkit/pull/152
+[#157]: https://github.com/PowerNukkit/PowerNukkit/issues/157
+[#170]: https://github.com/PowerNukkit/PowerNukkit/pull/170
+[#193]: https://github.com/PowerNukkit/PowerNukkit/issues/193
+[#210]: https://github.com/PowerNukkit/PowerNukkit/issues/210
+[#212]: https://github.com/PowerNukkit/PowerNukkit/issues/212
+[#220]: https://github.com/PowerNukkit/PowerNukkit/issues/220
+[#219]: https://github.com/PowerNukkit/PowerNukkit/pull/219
+[#222]: https://github.com/PowerNukkit/PowerNukkit/issues/223
+[#224]: https://github.com/PowerNukkit/PowerNukkit/pull/224
+[#226]: https://github.com/PowerNukkit/PowerNukkit/issues/226
+[#227]: https://github.com/PowerNukkit/PowerNukkit/pull/227
+[#228]: https://github.com/PowerNukkit/PowerNukkit/issues/228
+[#232]: https://github.com/PowerNukkit/PowerNukkit/issues/232
+[#234]: https://github.com/PowerNukkit/PowerNukkit/issues/234
+[#235]: https://github.com/PowerNukkit/PowerNukkit/issues/235
+[#239]: https://github.com/PowerNukkit/PowerNukkit/issues/239
+[#240]: https://github.com/PowerNukkit/PowerNukkit/issues/240
+[#242]: https://github.com/PowerNukkit/PowerNukkit/pull/242
+[#243]: https://github.com/PowerNukkit/PowerNukkit/issues/243
+[#244]: https://github.com/PowerNukkit/PowerNukkit/pull/244
+[#246]: https://github.com/PowerNukkit/PowerNukkit/issues/246
+[#247]: https://github.com/PowerNukkit/PowerNukkit/pull/247
+[#248]: https://github.com/PowerNukkit/PowerNukkit/pull/248
+[#253]: https://github.com/PowerNukkit/PowerNukkit/pull/253
+[#254]: https://github.com/PowerNukkit/PowerNukkit/issues/254
+[#255]: https://github.com/PowerNukkit/PowerNukkit/pull/255
+[#256]: https://github.com/PowerNukkit/PowerNukkit/pull/256
+[#259]: https://github.com/PowerNukkit/PowerNukkit/pull/259
+[#260]: https://github.com/PowerNukkit/PowerNukkit/pull/260
+[#261]: https://github.com/PowerNukkit/PowerNukkit/pull/261
+[#262]: https://github.com/PowerNukkit/PowerNukkit/pull/262
+[#263]: https://github.com/PowerNukkit/PowerNukkit/pull/263
+[#266]: https://github.com/PowerNukkit/PowerNukkit/issues/266
+[#267]: https://github.com/PowerNukkit/PowerNukkit/issues/267
+[#268]: https://github.com/PowerNukkit/PowerNukkit/pull/268
+[#270]: https://github.com/PowerNukkit/PowerNukkit/issues/270
+[#272]: https://github.com/PowerNukkit/PowerNukkit/issues/272
+[#273]: https://github.com/PowerNukkit/PowerNukkit/pull/273
+[#274]: https://github.com/PowerNukkit/PowerNukkit/pull/274
+[#275]: https://github.com/PowerNukkit/PowerNukkit/pull/275
+[#276]: https://github.com/PowerNukkit/PowerNukkit/pull/276
+[#277]: https://github.com/PowerNukkit/PowerNukkit/pull/277
+[#279]: https://github.com/PowerNukkit/PowerNukkit/pull/279
+[#281]: https://github.com/PowerNukkit/PowerNukkit/pull/281
+[#285]: https://github.com/PowerNukkit/PowerNukkit/pull/285
+[#293]: https://github.com/PowerNukkit/PowerNukkit/pull/293
+[#297]: https://github.com/PowerNukkit/PowerNukkit/pull/297
+[#315]: https://github.com/PowerNukkit/PowerNukkit/pull/315
+[#319]: https://github.com/PowerNukkit/PowerNukkit/pull/319
+[#320]: https://github.com/PowerNukkit/PowerNukkit/pull/320
+[#323]: https://github.com/PowerNukkit/PowerNukkit/issues/323
+[#326]: https://github.com/PowerNukkit/PowerNukkit/pull/326
+[#328]: https://github.com/PowerNukkit/PowerNukkit/issues/326
+[#330]: https://github.com/PowerNukkit/PowerNukkit/issues/330
+[#335]: https://github.com/PowerNukkit/PowerNukkit/issues/335
+[#338]: https://github.com/PowerNukkit/PowerNukkit/issues/338
+[#344]: https://github.com/PowerNukkit/PowerNukkit/issues/344
+[#346]: https://github.com/PowerNukkit/PowerNukkit/issues/346
+[#347]: https://github.com/PowerNukkit/PowerNukkit/issues/347
+[#348]: https://github.com/PowerNukkit/PowerNukkit/issues/348
+[#352]: https://github.com/PowerNukkit/PowerNukkit/issues/352
