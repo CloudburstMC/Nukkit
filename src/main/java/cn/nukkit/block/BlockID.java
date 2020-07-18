@@ -425,7 +425,7 @@ public interface BlockID {
     int WARPED_WART_BLOCK = 482; 
     int CRIMSON_FUNGUS = 483;
     int WARPED_FUNGUS = 484;
-    //int SHROOMLIGHT = 485;
+    int SHROOMLIGHT = 485;
     //int WEEPING_VINES = 486;
     int CRIMSON_NYLIUM = 487;
     int WARPED_NYLIUM = 488;

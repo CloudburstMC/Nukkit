@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nullable;
 
@@ -25,5 +26,10 @@ public class BlockFungusWarped extends BlockFungus {
     public boolean grow(@Nullable Player cause) {
         // TODO Make it grow
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.CYAN_BLOCK_COLOR;
     }
 }
