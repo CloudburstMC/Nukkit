@@ -1,6 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
@@ -10,11 +15,18 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
+
 /**
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
+    public static final BooleanBlockProperty IN_WALL = new BooleanBlockProperty("in_wall_bit", false);
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, OPEN, IN_WALL);
 
     public BlockFenceGate() {
         this(0);
@@ -27,6 +39,12 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return FENCE_GATE_OAK;
+    }
+
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -77,9 +95,9 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     }
 
     private int getOffsetIndex() {
-        switch (this.getDamage() & 0x03) {
-            case 0:
-            case 2:
+        switch (getBlockFace()) {
+            case SOUTH:
+            case NORTH:
                 return 0;
             default:
                 return 1;
@@ -106,12 +124,18 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         return this.z + offMaxZ[getOffsetIndex()];
     }
 
+    @PowerNukkitDifference(info = "InWall property is now properly set, returns false if setBlock fails", since = "1.4.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(player != null ? player.getDirection().getHorizontalIndex() : 0);
-        this.getLevel().setBlock(block, this, true, true);
-
-        return true;
+        BlockFace direction = player.getDirection();
+        setBlockFace(direction);
+        
+        if (getSide(direction.rotateY()) instanceof BlockWall 
+                || getSide(direction.rotateYCCW()) instanceof BlockWall) {
+            setInWall(true);
+        }
+        
+        return this.getLevel().setBlock(block, this, true, true);
     }
 
     @Override
@@ -143,8 +167,11 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
         player = event.getPlayer();
 
-        int direction;
+        BlockFace direction;
 
+
+        BlockFace originDirection = getBlockFace();
+        
         if (player != null) {
             double yaw = player.yaw;
             double rotation = (yaw - 90) % 360;
@@ -153,48 +180,58 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
                 rotation += 360.0;
             }
 
-            int originDirection = this.getDamage() & 0x01;
-
-            if (originDirection == 0) {
+            if (originDirection.getAxis() == BlockFace.Axis.Z) {
                 if (rotation >= 0 && rotation < 180) {
-                    direction = 2;
+                    direction = BlockFace.NORTH;
                 } else {
-                    direction = 0;
+                    direction = BlockFace.SOUTH;
                 }
             } else {
                 if (rotation >= 90 && rotation < 270) {
-                    direction = 3;
+                    direction = BlockFace.EAST;
                 } else {
-                    direction = 1;
+                    direction = BlockFace.WEST;
                 }
             }
         } else {
-            int originDirection = this.getDamage() & 0x01;
-
-            if (originDirection == 0) {
-                direction = 0;
+            if (originDirection.getAxis() == BlockFace.Axis.Z) {
+                direction = BlockFace.SOUTH;
             } else {
-                direction = 1;
+                direction = BlockFace.WEST;
             }
         }
-
-        this.setDamage(direction | ((~this.getDamage()) & 0x04));
+        
+        setBlockFace(direction);
+        toggleBooleanProperty(OPEN);
         this.level.setBlock(this, this, false, false);
         return true;
     }
 
     public boolean isOpen() {
-        return (this.getDamage() & 0x04) > 0;
+        return getBooleanValue(OPEN);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setOpen(boolean open) {
+        setBooleanValue(OPEN, open);
     }
 
+    @PowerNukkitDifference(info = "Will connect to walls correctly", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
-        if (!this.level.getServer().isRedstoneEnabled()) {
-            return 0;
-        }
-
-        if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            BlockFace face = getBlockFace();
+            boolean touchingWall = getSide(face.rotateY()) instanceof BlockWall || getSide(face.rotateYCCW()) instanceof BlockWall;
+            if (touchingWall != isInWall()) {
+                setInWall(touchingWall);
+                level.setBlock(this, this, true);
+                return type;
+            }
+        } else if (type == Level.BLOCK_UPDATE_REDSTONE && this.level.getServer().isRedstoneEnabled()) {
+            boolean isPowered = level.isBlockPowered(this.getLocation());
+            
+            if (isOpen() != isPowered) {
                 this.toggle(null);
                 return type;
             }
@@ -203,13 +240,27 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         return 0;
     }
 
-    @Override
-    public Item toItem() {
-        return Item.get(Item.FENCE_GATE, 0, 1);
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isInWall() {
+        return getBooleanValue(IN_WALL);
     }
-
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setInWall(boolean inWall) {
+        setBooleanValue(IN_WALL, inWall);
+    }
+    
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return getPropertyValue(DIRECTION);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(DIRECTION, face);
     }
 }

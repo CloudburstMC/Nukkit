@@ -81,13 +81,13 @@ public abstract class BlockProperty<T> {
     public int setValue(int currentMeta, int bitOffset, @Nullable T newValue) {
         try {
             int mask = computeValueMask(bitOffset);
-            int value = getMetaForValue(newValue);
+            int value = getMetaForValue(newValue) << bitOffset;
 
             if ((value & ~mask) != 0) {
                 throw new IllegalStateException("Attempted to set a value which overflows the size of " + bitSize + " bits. Current:" + currentMeta + ", offset:" + bitOffset + ", meta:" + value + ", value:" + newValue);
             }
 
-            return currentMeta & ~mask | (value << bitOffset & mask);
+            return currentMeta & ~mask | (value & mask);
         } catch (Exception e) {
             T oldValue = null;
             InvalidBlockPropertyMetaException suppressed = null;
@@ -109,13 +109,13 @@ public abstract class BlockProperty<T> {
     public long setValue(long currentBigMeta, int bitOffset, @Nullable T newValue) {
         try {
             long mask = computeBigValueMask(bitOffset);
-            long value = getMetaForValue(newValue);
+            long value = getMetaForValue(newValue) << bitOffset;
 
             if ((value & ~mask) != 0L) {
                 throw new IllegalStateException("Attempted to set a value which overflows the size of " + bitSize + " bits. Current:" + currentBigMeta + ", offset:" + bitOffset + ", meta:" + value + ", value:" + newValue);
             }
 
-            return currentBigMeta & ~mask | (value << bitOffset & mask);
+            return currentBigMeta & ~mask | (value & mask);
         } catch (Exception e) {
             T oldValue = null;
             InvalidBlockPropertyMetaException suppressed = null;
@@ -137,13 +137,13 @@ public abstract class BlockProperty<T> {
     public BigInteger setValue(BigInteger currentHugeMeta, int bitOffset, @Nullable T newValue) {
         try {
             BigInteger mask = computeHugeValueMask(bitOffset);
-            BigInteger value = BigInteger.valueOf(getMetaForValue(newValue));
+            BigInteger value = BigInteger.valueOf(getMetaForValue(newValue)).shiftLeft(bitOffset);
 
             if (!value.andNot(mask).equals(BigInteger.ZERO)) {
                 throw new IllegalStateException("Attempted to set a value which overflows the size of " + bitSize + " bits. Current:" + currentHugeMeta + ", offset:" + bitOffset + ", meta:" + value + ", value:" + newValue);
             }
 
-            return currentHugeMeta.andNot(mask).or(value.shiftLeft(bitOffset).and(mask));
+            return currentHugeMeta.andNot(mask).or(value.and(mask));
         } catch (Exception e) {
             T oldValue = null;
             InvalidBlockPropertyMetaException suppressed = null;

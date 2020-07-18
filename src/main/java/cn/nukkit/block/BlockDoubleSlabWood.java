@@ -69,15 +69,14 @@ public class BlockDoubleSlabWood extends BlockDoubleSlabBase {
     }
 
     @Override
-    public Item toItem() {
-        return getCurrentState().forItem().withBlockId(BlockID.WOOD_SLAB).asItemBlock();
+    public int getSingleSlabId() {
+        return WOOD_SLAB;
     }
 
+    //TODO Adjust or remove this when merging https://github.com/PowerNukkit/PowerNukkit/pull/370
     @Override
-    public Item[] getDrops(Item item) {
-        Item slab = toItem();
-        slab.setCount(2);
-        return new Item[]{ slab };
+    protected boolean isCorrectTool(Item item) {
+        return true;
     }
 
     @Override
