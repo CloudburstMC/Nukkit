@@ -18,4 +18,9 @@ public class ItemWarpedFungusOnAStick extends ItemTool {
     public int getMaxDurability() {
         return 100;
     }
+
+    @Override
+    public boolean damageWhenBreaking() {
+        return false;
+    }
 }
