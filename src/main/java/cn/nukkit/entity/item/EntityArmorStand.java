@@ -3,12 +3,18 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.inventory.EntityArmorInventory;
+import cn.nukkit.inventory.EntityEquipmentInventory;
 import cn.nukkit.inventory.InventoryHolder;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArmor;
+import cn.nukkit.item.ItemArmorStand;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.DestroyBlockParticle;
@@ -19,9 +25,6 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
 import cn.nukkit.scheduler.Task;
-import cn.nukkit.inventory.EntityArmorInventory;
-import cn.nukkit.inventory.EntityEquipmentInventory;
-import cn.nukkit.item.ItemArmorStand;
 
 import java.util.Collection;
 
@@ -30,12 +33,12 @@ public class EntityArmorStand extends EntityLiving implements InventoryHolder {
     private EntityEquipmentInventory equipmentInventory;
     private EntityArmorInventory armorInventory;
 
-    private final String TAG_MAINHAND = "Mainhand";
-    private final String TAG_POSE_INDEX = "PoseIndex";
-    private final String TAG_OFFHAND = "Offhand";
-    private final String TAG_ARMOR = "Armor";
+    private static final String TAG_MAINHAND = "Mainhand";
+    private static final String TAG_POSE_INDEX = "PoseIndex";
+    private static final String TAG_OFFHAND = "Offhand";
+    private static final String TAG_ARMOR = "Armor";
 
-    private final int DATA_FLAGS2 = 91; //long (extended data flags)
+    private static final int DATA_FLAGS2 = 91; //long (extended data flags)
     private int vibrateTimer = 0;
 
     @Override
@@ -58,23 +61,23 @@ public class EntityArmorStand extends EntityLiving implements InventoryHolder {
         this.equipmentInventory = new EntityEquipmentInventory(this);
         this.armorInventory = new EntityArmorInventory(this);
 
-        if (this.namedTag.contains(this.TAG_MAINHAND)) {
-            this.equipmentInventory.setItemInHand(NBTIO.getItemHelper(this.namedTag.getCompound(this.TAG_MAINHAND)), true);
+        if (this.namedTag.contains(TAG_MAINHAND)) {
+            this.equipmentInventory.setItemInHand(NBTIO.getItemHelper(this.namedTag.getCompound(TAG_MAINHAND)), true);
         }
 
-        if (this.namedTag.contains(this.TAG_OFFHAND)) {
-            this.equipmentInventory.setOffhandItem(NBTIO.getItemHelper(this.namedTag.getCompound(this.TAG_OFFHAND)), true);
+        if (this.namedTag.contains(TAG_OFFHAND)) {
+            this.equipmentInventory.setOffhandItem(NBTIO.getItemHelper(this.namedTag.getCompound(TAG_OFFHAND)), true);
         }
 
-        if (this.namedTag.contains(this.TAG_ARMOR)) {
-            ListTag<CompoundTag> armorList = this.namedTag.getList(this.TAG_ARMOR, CompoundTag.class);
+        if (this.namedTag.contains(TAG_ARMOR)) {
+            ListTag<CompoundTag> armorList = this.namedTag.getList(TAG_ARMOR, CompoundTag.class);
             for (CompoundTag armorTag : armorList.getAll()) {
                 this.armorInventory.setItem(armorTag.getByte("Slot"), NBTIO.getItemHelper(armorTag));
             }
         }
 
-        if (this.namedTag.contains(this.TAG_POSE_INDEX)) {
-            this.setPose(this.namedTag.getInt(this.TAG_POSE_INDEX));
+        if (this.namedTag.contains(TAG_POSE_INDEX)) {
+            this.setPose(this.namedTag.getInt(TAG_POSE_INDEX));
         }
     }
 
@@ -94,7 +97,7 @@ public class EntityArmorStand extends EntityLiving implements InventoryHolder {
     }
 
     @Override
-    public boolean onInteract(Player player, Item item, Vector3 clicedPos) {
+    public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         //Pose
         if (player.isSneaking()) {
             if (this.getPose() >= 12) {
@@ -116,12 +119,12 @@ public class EntityArmorStand extends EntityLiving implements InventoryHolder {
                 isArmorSlot = true;
             }
 
-            if (flag && (item.getId() == Item.SKULL) || item.getId() == Item.PUMPKIN) {
+            if (flag && (item.getId() == ItemID.SKULL) || item.getBlockId() == BlockID.PUMPKIN) {
                 i = 0;
             }
 
             int j =0;
-            double d3 = clicedPos.y - this.y;
+            double d3 = clickedPos.y - this.y;
             boolean flag2 = false;
 
             if (d3 >= 0.1 && d3 < 0.55 && !this.armorInventory.getItem(EntityArmorInventory.SLOT_FEET).isNull()) {
@@ -208,11 +211,11 @@ public class EntityArmorStand extends EntityLiving implements InventoryHolder {
     public void saveNBT() {
         super.saveNBT();
 
-        this.namedTag.put(this.TAG_MAINHAND, NBTIO.putItemHelper(this.equipmentInventory.getItemInHand()));
-        this.namedTag.put(this.TAG_OFFHAND, NBTIO.putItemHelper(this.equipmentInventory.getOffHandItem()));
+        this.namedTag.put(TAG_MAINHAND, NBTIO.putItemHelper(this.equipmentInventory.getItemInHand()));
+        this.namedTag.put(TAG_OFFHAND, NBTIO.putItemHelper(this.equipmentInventory.getOffHandItem()));
 
         if (this.armorInventory != null) {
-            ListTag<CompoundTag> armorTag = new ListTag<>(this.TAG_ARMOR);
+            ListTag<CompoundTag> armorTag = new ListTag<>(TAG_ARMOR);
             for (int i = 0; i < 4; i++) {
                 armorTag.add(NBTIO.putItemHelper(this.armorInventory.getItem(i), i));
             }
@@ -254,7 +257,7 @@ public class EntityArmorStand extends EntityLiving implements InventoryHolder {
             if (damager instanceof Player) {
                 Player damagerPlayer = (Player) damager;
                 if (damagerPlayer.isCreative()) {
-                    this.level.addParticle(new DestroyBlockParticle(this, Block.get(Block.WOODEN_PLANKS)));
+                    this.level.addParticle(new DestroyBlockParticle(this, Block.get(BlockID.WOODEN_PLANKS)));
                     this.close();
                     return true;
                 } else {
@@ -269,15 +272,19 @@ public class EntityArmorStand extends EntityLiving implements InventoryHolder {
             }
 
         }
-
-        if (source.getCause() == EntityDamageEvent.DamageCause.CONTACT) {
-            source.setCancelled(true);
+        
+        switch (source.getCause()) {
+            case CONTACT:
+            case FALL:
+                source.setCancelled(true);
+                break;
+            default:
         }
 
         super.attack(source);
 
         if (!source.isCancelled()) {
-            this.level.addParticle(new DestroyBlockParticle(this, Block.get(Block.WOODEN_PLANKS)));
+            this.level.addParticle(new DestroyBlockParticle(this, Block.get(BlockID.WOODEN_PLANKS)));
             this.setGenericFlag(Entity.DATA_FLAG_VIBRATING, true);
             this.vibrateTimer = 20;
             this.close();
@@ -330,5 +337,40 @@ public class EntityArmorStand extends EntityLiving implements InventoryHolder {
     @Override
     public EntityArmorInventory getInventory() {
         return this.armorInventory;
+    }
+
+    @Override
+    public boolean onUpdate(int currentTick) {
+        int tickDiff = currentTick - lastUpdate;
+        boolean hasUpdated = super.onUpdate(currentTick);
+        
+        if (closed || tickDiff <= 0 && !justCreated) {
+            return hasUpdated;
+        }
+        
+        this.timing.startTiming();
+
+        lastUpdate = currentTick;
+
+        boolean hasUpdate = entityBaseTick(tickDiff);
+
+        if (isAlive() && !onGround) {
+            motionY -= getGravity();
+
+            move(motionX, motionY, motionZ);
+
+            float friction = 1 - getDrag();
+
+            motionX *= friction;
+            motionY *= 1 - getDrag();
+            motionZ *= friction;
+            
+            updateMovement();
+            hasUpdate = true;
+        }
+
+        this.timing.stopTiming();
+
+        return hasUpdate || !onGround || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
     }
 }

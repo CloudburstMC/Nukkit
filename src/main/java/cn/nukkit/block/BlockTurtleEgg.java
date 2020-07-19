@@ -22,11 +22,7 @@ import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.BoneMealParticle;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
@@ -90,7 +86,7 @@ public class BlockTurtleEgg extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getBlock() != null && item.getBlock().getId() == TURTLE_EGG && (player == null || !player.isSneaking())) {
+        if (item.getBlock() != null && item.getBlockId() == TURTLE_EGG && (player == null || !player.isSneaking())) {
             int eggCount = getEggCount();
             if (eggCount >= 4) {
                 return false;

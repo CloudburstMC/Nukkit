@@ -955,6 +955,16 @@ public class Item implements Cloneable, BlockID, ItemID {
     public int getId() {
         return id;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getBlockId() {
+        if (block != null) {
+            return block.getId();
+        } else {
+            return -1;
+        }
+    }
 
     public int getDamage() {
         return meta;

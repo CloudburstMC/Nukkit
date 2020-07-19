@@ -268,7 +268,7 @@ public class BlockBamboo extends BlockTransparentMeta {
     @Override
     public boolean onActivate(Item item, Player player) {
         boolean itemIsBoneMeal = item.getId() == ItemID.DYE && item.getDamage() == 0x0F; //Bonemeal
-        if (itemIsBoneMeal || item.getBlock() != null && item.getBlock().getId() == BlockID.BAMBOO) {
+        if (itemIsBoneMeal || item.getBlock() != null && item.getBlockId() == BlockID.BAMBOO) {
             int top = (int) y;
             int count = 1;
 
