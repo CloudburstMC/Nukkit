@@ -2045,7 +2045,7 @@ public class Level implements ChunkManager, Metadatable {
 
             if (!setBlockDestroy) {
                 BlockBreakEvent ev = new BlockBreakEvent(player, target, face, item, eventDrops, player.isCreative(),
-                        (player.lastBreak + breakTime * 1000) > System.currentTimeMillis());
+                        (Long.sum(player.lastBreak, (long)breakTime*1000)) > System.currentTimeMillis());
 
                 if (player.isSurvival() && !target.isBreakable(item)) {
                     ev.setCancelled();
