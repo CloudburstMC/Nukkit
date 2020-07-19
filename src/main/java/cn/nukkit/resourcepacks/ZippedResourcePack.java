@@ -1,6 +1,7 @@
 package cn.nukkit.resourcepacks;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
 import com.google.gson.JsonParser;
 
 import java.io.File;
@@ -17,6 +18,7 @@ public class ZippedResourcePack extends AbstractResourcePack {
     private File file;
     private byte[] sha256 = null;
 
+    @PowerNukkitDifference(info = "Accepts resource packs with subfolder structure", since = "1.4.0.0-PN")
     public ZippedResourcePack(File file) {
         if (!file.exists()) {
             throw new IllegalArgumentException(Server.getInstance().getLanguage()
@@ -28,13 +30,23 @@ public class ZippedResourcePack extends AbstractResourcePack {
         try (ZipFile zip = new ZipFile(file)) {
             ZipEntry entry = zip.getEntry("manifest.json");
             if (entry == null) {
-                throw new IllegalArgumentException(Server.getInstance().getLanguage()
-                        .translateString("nukkit.resources.zip.no-manifest"));
-            } else {
-                this.manifest = new JsonParser()
-                        .parse(new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8))
-                        .getAsJsonObject();
+                entry = zip.stream()
+                        .filter(e-> e.getName().toLowerCase().endsWith("manifest.json") && !e.isDirectory())
+                        .filter(e-> {
+                            File fe = new File(e.getName());
+                            if (!fe.getName().equalsIgnoreCase("manifest.json")) {
+                                return false;
+                            }
+                            return fe.getParent() == null || fe.getParentFile().getParent() == null;
+                        })
+                        .findFirst()
+                        .orElseThrow(()-> new IllegalArgumentException(
+                                Server.getInstance().getLanguage().translateString("nukkit.resources.zip.no-manifest")));
             }
+            
+            this.manifest = new JsonParser()
+                    .parse(new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8))
+                    .getAsJsonObject();
         } catch (IOException e) {
             Server.getInstance().getLogger().logException(e);
         }

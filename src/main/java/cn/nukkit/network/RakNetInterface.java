@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
@@ -51,6 +50,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         InetSocketAddress bindAddress = new InetSocketAddress(Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp(), this.server.getPort());
 
         this.raknet = new RakNetServer(bindAddress, Runtime.getRuntime().availableProcessors());
+        this.raknet.setProtocolVersion(10);
         this.raknet.bind().join();
         this.raknet.setListener(this);
     }
@@ -204,16 +204,27 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         this.server.getPluginManager().callEvent(ev);
         Class<? extends Player> clazz = ev.getPlayerClass();
 
+        Player player;
+        InetSocketAddress socketAddress = ev.getSocketAddress();
         try {
-            Constructor constructor = clazz.getConstructor(SourceInterface.class, Long.class, InetSocketAddress.class);
-            Player player = (Player) constructor.newInstance(this, ev.getClientId(), ev.getSocketAddress());
-            this.server.addPlayer(session.getAddress(), player);
-            NukkitSessionListener listener = new NukkitSessionListener(player);
-            this.sessionListeners.add(listener);
-            session.setListener(listener);
-        } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            Server.getInstance().getLogger().logException(e);
+            Constructor<? extends Player> constructor = clazz.getConstructor(SourceInterface.class, Long.class, InetSocketAddress.class);
+            player = constructor.newInstance(this, ev.getClientId(), socketAddress);
+        } catch (ReflectiveOperationException e) {
+            try {
+                Constructor<? extends Player> constructor = clazz.getConstructor(SourceInterface.class, Long.class, String.class, Integer.TYPE);
+                player = constructor.newInstance(this, ev.getClientId(), socketAddress.getHostString(), socketAddress.getPort());
+            } catch (ReflectiveOperationException e2) {
+                e2.addSuppressed(e);
+                Server.getInstance().getLogger().logException(e);
+                session.disconnect();
+                return;
+            }
         }
+        
+        this.server.addPlayer(session.getAddress(), player);
+        NukkitSessionListener listener = new NukkitSessionListener(player);
+        this.sessionListeners.add(listener);
+        session.setListener(listener);
     }
 
     @Override

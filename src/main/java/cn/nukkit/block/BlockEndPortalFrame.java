@@ -1,9 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
@@ -92,10 +94,86 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
             this.setDamage(this.getDamage() + 4);
             this.getLevel().setBlock(this, this, true, true);
             this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_END_PORTAL_FRAME_FILL);
-            //TODO: create portal
+            //this.createPortal(); TODO Re-enable this after testing
             return true;
         }
         return false;
+    }
+
+    @Since("1.3.0.0-PN")
+    public void createPortal() {
+        Vector3 centerSpot = this.searchCenter();
+        if(centerSpot != null) {
+            for(int x = -2; x <= 2; x++) {
+                for(int z = -2; z <= 2; z++) {
+                    if((x == -2 || x == 2) && (z == -2 || z == 2))
+                        continue;
+                    if(x == -2 || x == 2 || z == -2 || z == 2) {
+                        if(!this.checkFrame(this.getLevel().getBlock(centerSpot.add(x, 0, z)), x, z)) {
+                            return;
+                        }
+                    }
+                }
+            }
+
+            for(int x = -1; x <= 1; x++) {
+                for(int z = -1; z <= 1; z++) {
+                    Vector3 vector3 = centerSpot.add(x, 0, z);
+                    if(this.getLevel().getBlock(vector3).getId() != Block.AIR) {
+                        this.getLevel().useBreakOn(vector3);
+                    }
+                    this.getLevel().setBlock(vector3, Block.get(Block.END_PORTAL));
+                }
+            }
+        }
+    }
+
+    private Vector3 searchCenter() {
+        for(int x = -2; x <= 2; x++) {
+            if(x == 0)
+                continue;
+            Block block = this.getLevel().getBlock(this.add(x, 0, 0));
+            Block iBlock = this.getLevel().getBlock(this.add(x * 2, 0, 0));
+            if(this.checkFrame(block)) {
+                if((x == -1 || x == 1) && this.checkFrame(iBlock))
+                    return ((BlockEndPortalFrame) block).searchCenter();
+                for(int z = -4; z <= 4; z++) {
+                    if(z == 0)
+                        continue;
+                    block = this.getLevel().getBlock(this.add(x, 0, z));
+                    if(this.checkFrame(block)) {
+                        return this.add(x / 2, 0, z / 2);
+                    }
+                }
+            }
+        }
+        for(int z = -2; z <= 2; z++) {
+            if(z == 0)
+                continue;
+            Block block = this.getLevel().getBlock(this.add(0, 0, z));
+            Block iBlock = this.getLevel().getBlock(this.add(0, 0, z * 2));
+            if(this.checkFrame(block)) {
+                if((z == -1 || z == 1) && this.checkFrame(iBlock))
+                    return ((BlockEndPortalFrame) block).searchCenter();
+                for(int x = -4; x <= 4; x++) {
+                    if(x == 0)
+                        continue;
+                    block = this.getLevel().getBlock(this.add(x, 0, z));
+                    if(this.checkFrame(block)) {
+                        return this.add(x / 2, 0, z / 2);
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean checkFrame(Block block) {
+        return block.getId() == this.getId() && (block.getDamage() & 4) == 4;
+    }
+
+    private boolean checkFrame(Block block, int x, int z) {
+        return block.getId() == this.getId() && (block.getDamage() - 4) == (x == -2 ? 3 : x == 2 ? 1 : z == -2 ? 0 : z == 2 ? 2 : -1);
     }
 
     @Override

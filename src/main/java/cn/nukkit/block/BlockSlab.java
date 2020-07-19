@@ -1,6 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
@@ -10,6 +14,10 @@ import cn.nukkit.math.BlockFace;
  * Nukkit Project
  */
 public abstract class BlockSlab extends BlockTransparentMeta {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BooleanBlockProperty TOP_SLOT_PROPERTY = new BooleanBlockProperty("top_slot_bit", false);
+    public static final BlockProperties SIMPLE_SLAB_PROPERTIES = new BlockProperties(TOP_SLOT_PROPERTY);
 
     protected final int doubleSlab;
 
@@ -17,15 +25,22 @@ public abstract class BlockSlab extends BlockTransparentMeta {
         super(meta);
         this.doubleSlab = doubleSlab;
     }
+    
+    public abstract String getSlabName();
+
+    @Override
+    public String getName() {
+        return (isOnTop()? "Upper " : "") + getSlabName() + " Slab";
+    }
 
     @Override
     public double getMinY() {
-        return ((this.getDamage() & 0x08) > 0) ? this.y + 0.5 : this.y;
+        return isOnTop() ? this.y + 0.5 : this.y;
     }
 
     @Override
     public double getMaxY() {
-        return ((this.getDamage() & 0x08) > 0) ? this.y + 1 : this.y + 0.5;
+        return isOnTop() ? this.y + 1 : this.y + 0.5;
     }
 
     @Override
@@ -42,37 +57,53 @@ public abstract class BlockSlab extends BlockTransparentMeta {
     public int getWaterloggingLevel() {
         return 1;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isOnTop() {
+        return getBooleanValue(TOP_SLOT_PROPERTY);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setOnTop(boolean top) {
+        setBooleanValue(TOP_SLOT_PROPERTY, top);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract boolean isSameType(BlockSlab slab);
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(this.getDamage() & 0x07);
+        setOnTop(false);
         if (face == BlockFace.DOWN) {
-            if (target instanceof BlockSlab && (target.getDamage() & 0x08) == 0x08 && (target.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(doubleSlab, this.getDamage()), true);
+            if (target instanceof BlockSlab && target.getBooleanValue(TOP_SLOT_PROPERTY) && isSameType((BlockSlab) target)) {
+                this.getLevel().setBlock(target, getCurrentState().withBlockId(doubleSlab).getBlock(), true);
 
                 return true;
-            } else if (block instanceof BlockSlab && (block.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(doubleSlab, this.getDamage()), true);
+            } else if (block instanceof BlockSlab && isSameType((BlockSlab) block)) {
+                this.getLevel().setBlock(block, getCurrentState().withBlockId(doubleSlab).getBlock(), true);
 
                 return true;
             } else {
-                this.setDamage(this.getDamage() | 0x08);
+                setOnTop(true);
             }
         } else if (face == BlockFace.UP) {
-            if (target instanceof BlockSlab && (target.getDamage() & 0x08) == 0 && (target.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(target, Block.get(doubleSlab, this.getDamage()), true);
+            if (target instanceof BlockSlab && !target.getBooleanValue(TOP_SLOT_PROPERTY) && isSameType((BlockSlab) target)) {
+                this.getLevel().setBlock(target, getCurrentState().withBlockId(doubleSlab).getBlock(), true);
 
                 return true;
-            } else if (block instanceof BlockSlab && (block.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                this.getLevel().setBlock(block, Block.get(doubleSlab, this.getDamage()), true);
+            } else if (block instanceof BlockSlab && isSameType((BlockSlab) block)) {
+                this.getLevel().setBlock(block, getCurrentState().withBlockId(doubleSlab).getBlock(), true);
 
                 return true;
             }
             //TODO: check for collision
         } else {
             if (block instanceof BlockSlab) {
-                if ((block.getDamage() & 0x07) == (this.getDamage() & 0x07)) {
-                    this.getLevel().setBlock(block, Block.get(doubleSlab, this.getDamage()), true);
+                if (isSameType((BlockSlab) block)) {
+                    this.getLevel().setBlock(block, getCurrentState().withBlockId(doubleSlab).getBlock(), true);
 
                     return true;
                 }
@@ -80,12 +111,12 @@ public abstract class BlockSlab extends BlockTransparentMeta {
                 return false;
             } else {
                 if (fy > 0.5) {
-                    this.setDamage(this.getDamage() | 0x08);
+                    setOnTop(true);
                 }
             }
         }
 
-        if (block instanceof BlockSlab && (target.getDamage() & 0x07) != (this.getDamage() & 0x07)) {
+        if (block instanceof BlockSlab && !isSameType((BlockSlab) block)) {
             return false;
         }
         this.getLevel().setBlock(block, this, true, true);

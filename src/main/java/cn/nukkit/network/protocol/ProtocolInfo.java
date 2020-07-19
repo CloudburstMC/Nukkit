@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.Since;
 import com.google.common.primitives.Ints;
 
 import java.util.List;
@@ -14,12 +15,12 @@ public interface ProtocolInfo {
      * Actual Minecraft: PE protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("390"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("407"); // DO NOT REMOVE BOXING
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.14.60";
-    String MINECRAFT_VERSION_NETWORK = "1.14.60";
+    String MINECRAFT_VERSION = "v1.16.0";
+    String MINECRAFT_VERSION_NETWORK = "1.16.0";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
@@ -159,6 +160,18 @@ public interface ProtocolInfo {
     byte COMPLETED_USING_ITEM_PACKET = (byte) 0x8e;
     byte NETWORK_SETTINGS_PACKET = (byte) 0x8f;
     byte PLAYER_AUTH_INPUT_PACKET = (byte) 0x90;
+    @Since("1.3.0.0-PN") byte CREATIVE_CONTENT_PACKET = (byte) 0x91;
+    @Since("1.3.0.0-PN") byte PLAYER_ENCHANT_OPTIONS_PACKET = (byte) 0x92;
+    @Since("1.3.0.0-PN") byte ITEM_STACK_REQUEST_PACKET = (byte) 0x93;
+    @Since("1.3.0.0-PN") byte ITEM_STACK_RESPONSE_PACKET = (byte) 0x94;
+    @Since("1.3.0.0-PN") byte PLAYER_ARMOR_DAMAGE_PACKET = (byte) 0x95;
+    @Since("1.3.0.0-PN") byte CODE_BUILDER_PACKET = (byte) 0x96;
+    @Since("1.3.0.0-PN") byte UPDATE_PLAYER_GAME_TYPE_PACKET = (byte) 0x97;
+    @Since("1.3.0.0-PN") byte EMOTE_LIST_PACKET = (byte) 0x98;
+    @Since("1.3.0.0-PN") byte POS_TRACKING_SERVER_BROADCAST_PACKET = (byte) 0x99;
+    @Since("1.3.0.0-PN") byte POS_TRACKING_CLIENT_REQUEST_PACKET = (byte) 0x9a;
+    @Since("1.3.0.0-PN") byte DEBUG_INFO_PACKET = (byte) 0x9b;
+    @Since("1.3.0.0-PN") byte PACKET_VIOLATION_WARNING_PACKET = (byte) 0x9c;
 
     byte BATCH_PACKET = (byte) 0xff;
 }

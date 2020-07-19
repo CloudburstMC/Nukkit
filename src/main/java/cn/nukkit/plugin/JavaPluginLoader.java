@@ -1,6 +1,7 @@
 package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.plugin.PluginDisableEvent;
 import cn.nukkit.event.plugin.PluginEnableEvent;
 import cn.nukkit.utils.PluginException;
@@ -120,9 +121,14 @@ public class JavaPluginLoader implements PluginLoader {
         }
     }
 
+    @PowerNukkitDifference(info = "Made impossible to disable special the PowerNukkitPlugin", since = "1.3.0.0-PN")
     @Override
     public void disablePlugin(Plugin plugin) {
         if (plugin instanceof PluginBase && plugin.isEnabled()) {
+            if (plugin == PowerNukkitPlugin.getInstance()) {
+                throw new UnsupportedOperationException("The PowerNukkitPlugin cannot be disabled");
+            }
+            
             this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.plugin.disable", plugin.getDescription().getFullName()));
 
             this.server.getServiceManager().cancel(plugin);

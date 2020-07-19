@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.Since;
 import lombok.ToString;
 
 /**
@@ -18,6 +19,7 @@ public class SetEntityLinkPacket extends DataPacket {
     public long riderUniqueId; //to
     public byte type;
     public byte immediate;
+    @Since("1.3.0.0-PN") public boolean riderInitiated = false;
 
     @Override
     public void decode() {
@@ -31,6 +33,7 @@ public class SetEntityLinkPacket extends DataPacket {
         this.putEntityUniqueId(this.riderUniqueId);
         this.putByte(this.type);
         this.putByte(this.immediate);
+        this.putBoolean(this.riderInitiated);
     }
 
     @Override

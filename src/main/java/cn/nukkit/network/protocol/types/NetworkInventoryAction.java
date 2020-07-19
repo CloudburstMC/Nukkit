@@ -1,14 +1,10 @@
 package cn.nukkit.network.protocol.types;
 
 import cn.nukkit.Player;
-import cn.nukkit.inventory.AnvilInventory;
-import cn.nukkit.inventory.BeaconInventory;
-import cn.nukkit.inventory.EnchantInventory;
-import cn.nukkit.inventory.GrindstoneInventory;
-import cn.nukkit.inventory.Inventory;
+import cn.nukkit.api.Since;
+import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
 import lombok.ToString;
 
@@ -69,6 +65,8 @@ public class NetworkInventoryAction {
     public int inventorySlot;
     public Item oldItem;
     public Item newItem;
+    @Since("1.3.0.0-PN")
+    public int stackNetworkId;
 
     public NetworkInventoryAction read(InventoryTransactionPacket packet) {
         this.sourceType = (int) packet.getUnsignedVarInt();
@@ -95,6 +93,11 @@ public class NetworkInventoryAction {
                     case SOURCE_TYPE_ANVIL_RESULT:
                         packet.isCraftingPart = true;
                         break;
+                    case SOURCE_TYPE_ENCHANT_INPUT:
+                    case SOURCE_TYPE_ENCHANT_OUTPUT:
+                    case SOURCE_TYPE_ENCHANT_MATERIAL:
+                        packet.isEnchantingPart = true;
+                        break;
                 }
                 break;
         }
@@ -103,6 +106,9 @@ public class NetworkInventoryAction {
         this.oldItem = packet.getSlot();
         this.newItem = packet.getSlot();
 
+        if (packet.hasNetworkIds) {
+            this.stackNetworkId = packet.getVarInt();
+        }
         return this;
     }
 
@@ -127,6 +133,10 @@ public class NetworkInventoryAction {
         packet.putUnsignedVarInt(this.inventorySlot);
         packet.putSlot(this.oldItem);
         packet.putSlot(this.newItem);
+
+        if (packet.hasNetworkIds) {
+            packet.putVarInt(this.stackNetworkId);
+        }
     }
 
     public InventoryAction createInventoryAction(Player player) {
@@ -136,6 +146,25 @@ public class NetworkInventoryAction {
                     //TODO: HACK!
                     this.inventorySlot += 36;
                     this.windowId = ContainerIds.INVENTORY;
+                }
+                // ID 124 with slot 14/15 is enchant inventory
+                if (this.windowId == ContainerIds.UI) {
+                    if (this.inventorySlot == EnchantInventory.ENCHANT_INPUT_ITEM_UI_SLOT) {
+                        if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
+                            player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
+                            return null;
+                        }
+                        this.windowId = Player.ENCHANT_WINDOW_ID;
+                        this.inventorySlot = 0;
+                        // TODO, check if unenchanted item and send EnchantOptionsPacket
+                    } else if (this.inventorySlot == EnchantInventory.ENCHANT_REAGENT_UI_SLOT) {
+                        if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
+                            player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
+                            return null;
+                        }
+                        this.windowId = Player.ENCHANT_WINDOW_ID;
+                        this.inventorySlot = 1;
+                    }
                 }
 
                 Inventory window = player.getWindowById(this.windowId);
@@ -241,52 +270,13 @@ public class NetworkInventoryAction {
                     }
                     EnchantInventory enchant = (EnchantInventory) inv;
 
-                    // TODO: This is all a temporary hack. Enchanting needs it's own transaction class.
                     switch (this.windowId) {
                         case SOURCE_TYPE_ENCHANT_INPUT:
-                            if (this.inventorySlot != 0) {
-                                // Input should only be in slot 0.
-                                return null;
-                            }
-                            break;
+                            return new EnchantingAction(this.oldItem, this.newItem, SOURCE_TYPE_ENCHANT_INPUT);
                         case SOURCE_TYPE_ENCHANT_MATERIAL:
-                            if (this.inventorySlot != 1) {
-                                // Material should only be in slot 1.
-                                return null;
-                            }
-                            break;
+                            return new EnchantingAction(this.newItem, this.oldItem, SOURCE_TYPE_ENCHANT_MATERIAL); // Mojang ish backwards?
                         case SOURCE_TYPE_ENCHANT_OUTPUT:
-                            if (this.inventorySlot != 0) {
-                                // Outputs should only be in slot 0.
-                                return null;
-                            }
-                            if (Item.get(ItemID.DYE, 4).equals(this.newItem, true, false)) {
-                                this.inventorySlot = 2; // Fake slot to store used material
-                                if (this.newItem.getCount() < 1 || this.newItem.getCount() > 3) {
-                                    // Invalid material
-                                    return null;
-                                }
-                                Item material = enchant.getItem(1);
-                                // Material to take away.
-                                int toRemove = this.newItem.getCount();
-                                if (material.getId() != ItemID.DYE && material.getDamage() != 4 &&
-                                        material.getCount() < toRemove) {
-                                    // Invalid material or not enough
-                                    return null;
-                                }
-                            } else {
-                                Item toEnchant = enchant.getItem(0);
-                                Item material = enchant.getItem(1);
-                                if (toEnchant.equals(this.newItem, true, true) &&
-                                        (material.getId() == ItemID.DYE && material.getDamage() == 4 || player.isCreative())) {
-                                    this.inventorySlot = 3; // Fake slot to store the resultant item.
-
-                                    //TODO: Check (old) item has valid enchantments
-                                    enchant.setItem(3, this.oldItem, false);
-                                } else {
-                                    return null;
-                                }
-                            }
+                            return new EnchantingAction(this.oldItem, this.newItem, SOURCE_TYPE_ENCHANT_OUTPUT);
                     }
 
                     return new SlotChangeAction(enchant, this.inventorySlot, this.oldItem, this.newItem);

@@ -27,11 +27,6 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
-    }
-
-    @Override
     public int getId() {
         return BEEHIVE;
     }

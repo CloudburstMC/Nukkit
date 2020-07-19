@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.blockproperty.value.WoodType;
+
 public class BlockWoodStrippedDarkOak extends BlockWoodStripped {
     public BlockWoodStrippedDarkOak() {
         this(0);
@@ -13,9 +15,9 @@ public class BlockWoodStrippedDarkOak extends BlockWoodStripped {
     public int getId() {
         return STRIPPED_DARK_OAK_LOG;
     }
-    
+
     @Override
-    public String getName() {
-        return "Stripped Dark Oak Log";
+    public WoodType getWoodType() {
+        return WoodType.DARK_OAK;
     }
 }

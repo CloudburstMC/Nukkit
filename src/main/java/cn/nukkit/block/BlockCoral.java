@@ -26,11 +26,6 @@ public class BlockCoral extends BlockFlowable {
     }
     
     @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
-    }
-    
-    @Override
     public int getId() {
         return CORAL;
     }

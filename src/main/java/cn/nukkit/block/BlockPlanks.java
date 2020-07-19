@@ -1,7 +1,13 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nonnull;
 
 /**
  * author: MagicDroidX
@@ -14,6 +20,8 @@ public class BlockPlanks extends BlockSolidMeta {
     public static final int JUNGLE = 3;
     public static final int ACACIA = 4;
     public static final int DARK_OAK = 5;
+    
+    public static final BlockProperties PROPERTIES = new BlockProperties(WoodType.PROPERTY);
 
 
     public BlockPlanks() {
@@ -21,12 +29,18 @@ public class BlockPlanks extends BlockSolidMeta {
     }
 
     public BlockPlanks(int meta) {
-        super(meta % 6);
+        super(meta);
     }
 
     @Override
     public int getId() {
         return WOODEN_PLANKS;
+    }
+
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -51,16 +65,19 @@ public class BlockPlanks extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Oak Wood Planks",
-                "Spruce Wood Planks",
-                "Birch Wood Planks",
-                "Jungle Wood Planks",
-                "Acacia Wood Planks",
-                "Dark Oak Wood Planks",
-        };
+        return getWoodType().getEnglishName()+" Wood Planks";
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public WoodType getWoodType() {
+        return getPropertyValue(WoodType.PROPERTY);
+    }
 
-        return this.getDamage() < 0 ? "Unknown" : names[this.getDamage() % 6];
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setWoodType(WoodType type) {
+        setPropertyValue(WoodType.PROPERTY, type);
     }
 
     @Override
@@ -70,20 +87,6 @@ public class BlockPlanks extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        switch (getDamage() & 0x07) {
-            default:
-            case OAK:
-                return BlockColor.WOOD_BLOCK_COLOR;
-            case SPRUCE:
-                return BlockColor.SPRUCE_BLOCK_COLOR;
-            case BIRCH:
-                return BlockColor.SAND_BLOCK_COLOR;
-            case JUNGLE:
-                return BlockColor.DIRT_BLOCK_COLOR;
-            case ACACIA:
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            case DARK_OAK:
-                return BlockColor.BROWN_BLOCK_COLOR;
-        }
+        return getWoodType().getColor();
     }
 }

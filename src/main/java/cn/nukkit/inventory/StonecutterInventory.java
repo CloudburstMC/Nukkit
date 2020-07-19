@@ -10,12 +10,6 @@ public class StonecutterInventory extends FakeBlockUIComponent {
     }
     
     @Override
-    public void onOpen(Player who) {
-        who.craftingType = Player.CRAFTING_STONECUTTER;
-        sendContents(who);
-    }
-
-    @Override
     public void onClose(Player who) {
         super.onClose(who);
         who.craftingType = Player.CRAFTING_SMALL;

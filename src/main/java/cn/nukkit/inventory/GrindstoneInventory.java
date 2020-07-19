@@ -3,6 +3,7 @@ package cn.nukkit.inventory;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
+import cn.nukkit.nbt.tag.CompoundTag;
 
 public class GrindstoneInventory extends FakeBlockUIComponent {
     public static final int OFFSET = 16;
@@ -105,7 +106,11 @@ public class GrindstoneInventory extends FakeBlockUIComponent {
             }
             
             Item result = firstItem.clone();
-            result.clearNamedTag();
+            CompoundTag tag = result.getNamedTag();
+            if (tag == null) tag = new CompoundTag(); 
+            tag.remove("ench");
+            tag.putInt("RepairCost", 0);
+            result.setCompoundTag(tag);
             if (!secondItem.isNull()) {
                 int first = firstItem.getMaxDurability() - firstItem.getDamage();
                 int second = secondItem.getMaxDurability() - secondItem.getDamage();

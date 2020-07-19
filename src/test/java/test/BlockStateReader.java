@@ -28,7 +28,7 @@ public class BlockStateReader {
             }
         
             for (CompoundTag override : states.getAll()) {
-                if (override.contains("block") && override.contains("meta")) {
+                if (override.contains("block") && override.contains("LegacyStates")) {
                     metaOverrides.put(override.getCompound("block").remove("version"), override.getList("LegacyStates", CompoundTag.class).getAll());
                 }
             }
