@@ -348,6 +348,8 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[WARPED_SIGN] = ItemWarpedSign.class; //754
             list[CRIMSON_DOOR] = ItemDoorCrimson.class; //755
             list[WARPED_DOOR] = ItemDoorWarped.class; //756
+            list[WARPED_FUNGUS_ON_A_STICK] = ItemWarpedFungusOnAStick.class; //757
+          
             list[RECORD_PIGSTEP] = ItemRecordPigstep.class; //759
             list[NETHER_SPROUTS] = ItemNetherSprouts.class; //760
 
