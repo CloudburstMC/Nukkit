@@ -80,13 +80,19 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
 
         this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
         Block layer1 = block.getLevelBlockAtLayer(1);
-        if (block instanceof BlockWater || block instanceof BlockIceFrosted || layer1 instanceof BlockWater || layer1 instanceof BlockIceFrosted) {
+        boolean defaultLayerCheck = (block instanceof BlockWater && block.getDamage() == 0 || block.getDamage() >= 8) || block instanceof BlockIceFrosted;
+        boolean layer1Check = (layer1 instanceof BlockWater && layer1.getDamage() == 0 || layer1.getDamage() >= 8) || layer1 instanceof BlockIceFrosted;
+        if (defaultLayerCheck || layer1Check) {
             setExtinguished(true);
             this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
+            this.level.setBlock(this, 1, defaultLayerCheck ? block : layer1, false, false);
+        } else {
+            this.level.setBlock(this, 1, Block.get(Block.AIR), false, false);
         }
 
         this.level.setBlock(block, this, true, true);
         createBlockEntity(item);
+        this.level.updateAround(this);
         return true;
     }
 
@@ -190,7 +196,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int getWaterloggingLevel() {
-        return 2;
+        return 1;
     }
 
     @Override

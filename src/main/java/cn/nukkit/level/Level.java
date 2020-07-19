@@ -2306,6 +2306,10 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
+        if(hand.getWaterloggingLevel() == 0 && hand.canBeFlowedInto() && (block instanceof BlockLiquid || block.getLevelBlockAtLayer(1) instanceof BlockLiquid)) {
+            return null;
+        }
+
         boolean liquidMoved = false;
         if ((block instanceof BlockLiquid) && ((BlockLiquid) block).usesWaterLogging()) {
             liquidMoved = true;
