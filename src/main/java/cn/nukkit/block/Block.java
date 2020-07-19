@@ -324,7 +324,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[ICE_FROSTED] = BlockIceFrosted.class; //207
             list[END_ROD] = BlockEndRod.class; //208
             list[END_GATEWAY] = BlockEndGateway.class; //209
-
+            list[ALLOW] = BlockAllow.class; //210
+            list[DENY] = BlockDeny.class; //211
+            list[BORDER_BLOCK] = BlockBorder.class; //212
             list[MAGMA] = BlockMagma.class; //213
             list[BLOCK_NETHER_WART_BLOCK] = BlockNetherWartBlock.class; //214
             list[RED_NETHER_BRICK] = BlockBricksRedNether.class; //215
@@ -1638,5 +1640,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Override
     public final int getExactIntStorage() {
         return mutableState.getExactIntStorage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isBreakable(Vector3 vector, int layer, BlockFace face, Item item, Player player, boolean setBlockDestroy) {
+        return true;
     }
 }

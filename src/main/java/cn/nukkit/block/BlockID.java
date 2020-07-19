@@ -268,9 +268,9 @@ public interface BlockID {
     int ICE_FROSTED = 207;
     int END_ROD = 208;
     int END_GATEWAY = 209;
-    //int ALLOW = 210;
-    //int DENY = 211;
-    //int BORDER = 212;
+    int ALLOW = 210;
+    int DENY = 211;
+    int BORDER_BLOCK = 212;
     int MAGMA = 213;
     int BLOCK_NETHER_WART_BLOCK = 214;
     int RED_NETHER_BRICK = 215;

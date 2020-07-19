@@ -1985,6 +1985,10 @@ public class Level implements ChunkManager, Metadatable {
             item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
         }
         
+        if (!target.isBreakable(vector, layer, face, item, player, setBlockDestroy)) {
+            return null;
+        }
+        
         boolean mustDrop = target.mustDrop(vector, layer, face, item, player);
         boolean mustSilkTouch = target.mustSilkTouch(vector, layer, face, item, player);
         boolean isSilkTouch = mustSilkTouch || item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null;
@@ -2316,6 +2320,19 @@ public class Level implements ChunkManager, Metadatable {
             this.setBlock(block, 1, block, false, false);
             this.setBlock(block, 0, Block.get(BlockID.AIR), false, false);
             this.scheduleUpdate(block, 1);
+        }
+        
+        if (player != null && !player.isOp()) {
+            Block down = block;
+            while ((down = down.down()).getY() >= 0) {
+                int id = down.getId();
+                if (id == BlockID.ALLOW) {
+                    break;
+                }
+                if (id == BlockID.DENY) {
+                    return null;
+                }
+            }
         }
 
         if (!hand.place(item, block, target, face, fx, fy, fz, player)) {
