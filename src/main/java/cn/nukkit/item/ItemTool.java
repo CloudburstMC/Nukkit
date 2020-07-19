@@ -66,7 +66,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean useOn(Block block) {
-        if (this.isUnbreakable() || isDurable()) {
+        if (this.isUnbreakable() || isDurable() || !damageWhenBreaking()) {
             return true;
         }
 
@@ -91,7 +91,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean useOn(Entity entity) {
-        if (this.isUnbreakable() || isDurable()) {
+        if (this.isUnbreakable() || isDurable() || !damageWhenBreaking()) {
             return true;
         }
 
