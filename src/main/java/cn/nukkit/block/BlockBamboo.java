@@ -236,7 +236,7 @@ public class BlockBamboo extends BlockTransparentMeta {
 
     @Override
     public int getToolType() {
-        return ItemTool.TYPE_SWORD;
+        return ItemTool.TYPE_AXE;
     }
 
     public int getLeafSize() {
