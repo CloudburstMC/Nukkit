@@ -40,7 +40,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     
     public static final BlockProperties PROPERTIES = new BlockProperties(TRAPDOOR_DIRECTION, UPSIDE_DOWN, OPEN);
     
-    private static final AxisAlignedBB[] boundingBoxDamage = new AxisAlignedBB[(0x1 << PROPERTIES.getBitSize()) - 1];
+    private static final AxisAlignedBB[] boundingBoxDamage = new AxisAlignedBB[0x1 << PROPERTIES.getBitSize()];
     
     @Deprecated @DeprecationDetails(reason = "Use the properties or the accessors", since = "1.4.0.0-PN", replaceWith = "CommonBlockProperties.OPEN")
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
