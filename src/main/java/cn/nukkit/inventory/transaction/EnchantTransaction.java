@@ -1,6 +1,7 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.inventory.EnchantItemEvent;
 import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.inventory.Inventory;
@@ -15,11 +16,13 @@ import java.util.List;
 
 @Getter
 @Setter
+@Since("1.3.1.0-PN")
 public class EnchantTransaction extends InventoryTransaction {
     private Item inputItem;
     private Item outputItem;
     private int cost = -1;
 
+    @Since("1.3.1.0-PN")
     public EnchantTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
     }
@@ -97,6 +100,7 @@ public class EnchantTransaction extends InventoryTransaction {
         }
     }
 
+    @Since("1.3.1.0-PN")
     public boolean checkForEnchantPart(List<InventoryAction> actions) {
         for (InventoryAction action : actions) {
             if (action instanceof EnchantingAction) return true;

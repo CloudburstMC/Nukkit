@@ -1,3 +1,5 @@
+# WARNING! Don't edit this file! It's automatically regenerated!
+
 minecraft:acacia_button;button_pressed_bit=0;facing_direction=0
 [395:0, 395:6, 395:7]
 
@@ -594,7 +596,6 @@ minecraft:barrier
 
 minecraft:basalt;pillar_axis=x
 []
-[489:0]
 
 minecraft:basalt;pillar_axis=y
 []
@@ -12868,7 +12869,6 @@ minecraft:crimson_fungus
 
 minecraft:crimson_hyphae;pillar_axis=x
 []
-[554:0]
 
 minecraft:crimson_hyphae;pillar_axis=y
 []
@@ -13020,7 +13020,6 @@ minecraft:crimson_standing_sign;ground_sign_direction=15
 
 minecraft:crimson_stem;pillar_axis=x
 []
-[480:0]
 
 minecraft:crimson_stem;pillar_axis=y
 []
@@ -17002,7 +17001,6 @@ minecraft:polished_andesite_stairs;upside_down_bit=1;weirdo_direction=3
 
 minecraft:polished_basalt;pillar_axis=x
 []
-[490:0]
 
 minecraft:polished_basalt;pillar_axis=y
 []
@@ -20674,7 +20672,6 @@ minecraft:stripped_birch_log;pillar_axis=z
 
 minecraft:stripped_crimson_hyphae;deprecated=0;pillar_axis=x
 []
-[555:0]
 
 minecraft:stripped_crimson_hyphae;deprecated=0;pillar_axis=y
 []
@@ -20711,7 +20708,6 @@ minecraft:stripped_crimson_hyphae;deprecated=3;pillar_axis=z
 
 minecraft:stripped_crimson_stem;deprecated=0;pillar_axis=x
 []
-[495:0]
 
 minecraft:stripped_crimson_stem;deprecated=0;pillar_axis=y
 []
@@ -20784,7 +20780,6 @@ minecraft:stripped_spruce_log;pillar_axis=z
 
 minecraft:stripped_warped_hyphae;deprecated=0;pillar_axis=x
 []
-[556:0]
 
 minecraft:stripped_warped_hyphae;deprecated=0;pillar_axis=y
 []
@@ -20821,7 +20816,6 @@ minecraft:stripped_warped_hyphae;deprecated=3;pillar_axis=z
 
 minecraft:stripped_warped_stem;deprecated=0;pillar_axis=x
 []
-[496:0]
 
 minecraft:stripped_warped_stem;deprecated=0;pillar_axis=y
 []
@@ -21646,7 +21640,6 @@ minecraft:warped_fungus
 
 minecraft:warped_hyphae;pillar_axis=x
 []
-[553:0]
 
 minecraft:warped_hyphae;pillar_axis=y
 []
@@ -21798,7 +21791,6 @@ minecraft:warped_standing_sign;ground_sign_direction=15
 
 minecraft:warped_stem;pillar_axis=x
 []
-[481:0]
 
 minecraft:warped_stem;pillar_axis=y
 []

@@ -121,11 +121,9 @@ public class BlockSeaPickle extends BlockFlowable {
     public boolean onActivate(Item item, Player player) {
 
         //Bone meal
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.getId() == Item.DYE && item.getDamage() == 0x0f && down().getId() == CORAL_BLOCK && !isDead()) {
             BlockSeaPickle block = (BlockSeaPickle) clone();
-            if (!block.isDead()) {
-                block.setDamage(3);
-            }
+            block.setDamage(3);
 
             BlockGrowEvent blockGrowEvent = new BlockGrowEvent(this, block);
             Server.getInstance().getPluginManager().callEvent(blockGrowEvent);

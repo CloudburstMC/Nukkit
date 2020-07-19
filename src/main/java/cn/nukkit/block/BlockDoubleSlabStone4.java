@@ -1,11 +1,15 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.StoneSlab4Type;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockDoubleSlabStone4 extends BlockDoubleSlabStone {
+import javax.annotation.Nonnull;
+
+@PowerNukkitDifference(info = "Extends BlockDoubleSlabBase instead of BlockDoubleSlabStone only in PowerNukkit")
+public class BlockDoubleSlabStone4 extends BlockDoubleSlabBase {
     public static final int MOSSY_STONE_BRICKS = 0;
     public static final int SMOOTH_QUARTZ = 1;
     public static final int STONE = 2;
@@ -25,6 +29,25 @@ public class BlockDoubleSlabStone4 extends BlockDoubleSlabStone {
         return DOUBLE_STONE_SLAB4;
     }
 
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return BlockSlabStone4.PROPERTIES;
+    }
+
+    public StoneSlab4Type getSlabType() {
+        return getPropertyValue(StoneSlab4Type.PROPERTY);
+    }
+
+    public void setSlabType(StoneSlab4Type type) {
+        setPropertyValue(StoneSlab4Type.PROPERTY, type);
+    }
+
+    @Override
+    public String getSlabName() {
+        return getSlabType().getEnglishName();
+    }
+
     @Override
     public double getResistance() {
         return getToolType() > ItemTool.TIER_WOODEN ? 30 : 15;
@@ -41,50 +64,13 @@ public class BlockDoubleSlabStone4 extends BlockDoubleSlabStone {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Mossy Stone Brick",
-                "Smooth Quartz",
-                "Stone",
-                "Cut Sandstone",
-                "Cut Red Sandstone",
-                "",
-                "",
-                ""
-        };
-        return "Double " + names[this.getDamage() & 0x07] + " Slab";
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(new BlockSlabStone4(), this.getDamage() & 0x07);
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            Item drop = Block.get(Block.STONE_SLAB4, this.getDamage() & 0x07).toItem();
-            drop.setCount(2);
-            return new Item[]{ drop };
-        } else {
-            return new Item[0];
-        }
+    public int getSingleSlabId() {
+        return STONE_SLAB4;
     }
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            default:
-            case MOSSY_STONE_BRICKS:
-            case STONE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case SMOOTH_QUARTZ:
-                return BlockColor.QUARTZ_BLOCK_COLOR;
-            case CUT_SANDSTONE:
-                return BlockColor.SAND_BLOCK_COLOR;
-            case CUT_RED_SANDSTONE:
-                return BlockColor.ORANGE_BLOCK_COLOR;
-        }
+        return getSlabType().getColor();
     }
 
     @Override

@@ -48,7 +48,7 @@ public class InventoryTransactionPacket extends DataPacket {
      * determine whether we're doing a crafting or enchanting transaction.
      */
     public boolean isCraftingPart = false;
-    public boolean isEnchantingPart = false;
+    @Since("1.3.1.0-PN") public boolean isEnchantingPart = false;
 
     @Override
     public byte pid() {
