@@ -139,6 +139,12 @@ public class BlockStateRegistry {
                     legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
                 }
             }
+            
+            // Override is forcing to clear the LegacyStates
+            if (legacyStates.isEmpty()) {
+                registerStateId(state, runtimeId);
+                continue;
+            }
 
             // Resolve to first legacy id
             CompoundTag firstState = legacyStates.get(0);

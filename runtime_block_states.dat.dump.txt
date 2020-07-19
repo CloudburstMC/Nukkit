@@ -38,99 +38,131 @@ minecraft:acacia_button;button_pressed_bit=1;facing_direction=5
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 [196:0, 196:16]
+[]
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 [196:2, 196:18]
+[]
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
 [196:1, 196:17]
+[]
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
 [196:3, 196:19]
+[]
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 [196:8, 196:24]
+[]
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 [196:10, 196:26]
+[]
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
 [196:9, 196:25]
+[]
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:acacia_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
 [196:11, 196:27]
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 [196:4, 196:20]
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 [196:6, 196:22]
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
 [196:5, 196:21]
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
 [196:7, 196:23]
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 [196:12, 196:28]
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 [196:14, 196:30]
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
 [196:13, 196:29]
+[]
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:acacia_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 [196:15, 196:31]
+[]
 
 minecraft:acacia_fence_gate;in_wall_bit=0;open_bit=0;direction=0
 [187:0]
@@ -1106,99 +1138,131 @@ minecraft:birch_button;button_pressed_bit=1;facing_direction=5
 
 minecraft:birch_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 [194:0, 194:16]
+[]
 
 minecraft:birch_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:birch_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 [194:2, 194:18]
+[]
 
 minecraft:birch_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:birch_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:birch_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
 [194:1, 194:17]
+[]
 
 minecraft:birch_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:birch_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
 [194:3, 194:19]
+[]
 
 minecraft:birch_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 [194:8, 194:24]
+[]
 
 minecraft:birch_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:birch_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 [194:10, 194:26]
+[]
 
 minecraft:birch_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:birch_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:birch_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
 [194:9, 194:25]
+[]
 
 minecraft:birch_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:birch_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
 [194:11, 194:27]
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 [194:4, 194:20]
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:birch_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 [194:6, 194:22]
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:birch_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
 [194:5, 194:21]
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:birch_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
 [194:7, 194:23]
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 [194:12, 194:28]
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:birch_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 [194:14, 194:30]
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:birch_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
 [194:13, 194:29]
+[]
 
 minecraft:birch_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:birch_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 [194:15, 194:31]
+[]
 
 minecraft:birch_fence_gate;in_wall_bit=0;open_bit=0;direction=0
 [184:0]
@@ -12708,99 +12772,130 @@ minecraft:crimson_button;button_pressed_bit=1;facing_direction=5
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 []
-[499:0]
+[]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 []
+[]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
+[]
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
 []
+[]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
+[]
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 []
+[]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 []
+[]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
+[]
 []
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
 []
+[]
 
 minecraft:crimson_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
+[]
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 []
+[]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 []
+[]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
+[]
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
 []
+[]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
+[]
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 []
+[]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 []
+[]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
+[]
 []
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
 []
+[]
 
 minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
+[]
 []
 
 minecraft:crimson_double_slab;top_slot_bit=0
@@ -13155,99 +13250,131 @@ minecraft:dark_oak_button;button_pressed_bit=1;facing_direction=5
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 [197:0, 197:16]
+[]
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 [197:2, 197:18]
+[]
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
 [197:1, 197:17]
+[]
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
 [197:3, 197:19]
+[]
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 [197:8, 197:24]
+[]
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 [197:10, 197:26]
+[]
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
 [197:9, 197:25]
+[]
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:dark_oak_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
 [197:11, 197:27]
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 [197:4, 197:20]
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 [197:6, 197:22]
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
 [197:5, 197:21]
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
 [197:7, 197:23]
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 [197:12, 197:28]
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 [197:14, 197:30]
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
 [197:13, 197:29]
+[]
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:dark_oak_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 [197:15, 197:31]
+[]
 
 minecraft:dark_oak_fence_gate;in_wall_bit=0;open_bit=0;direction=0
 [186:0]
@@ -15204,99 +15331,131 @@ minecraft:iron_block
 
 minecraft:iron_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 [71:0, 71:16]
+[]
 
 minecraft:iron_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:iron_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 [71:2, 71:18]
+[]
 
 minecraft:iron_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:iron_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:iron_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
 [71:1, 71:17]
+[]
 
 minecraft:iron_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:iron_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
 [71:3, 71:19]
+[]
 
 minecraft:iron_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 [71:8, 71:24]
+[]
 
 minecraft:iron_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:iron_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 [71:10, 71:26]
+[]
 
 minecraft:iron_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:iron_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:iron_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
 [71:9, 71:25]
+[]
 
 minecraft:iron_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:iron_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
 [71:11, 71:27]
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 [71:4, 71:20]
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:iron_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 [71:6, 71:22]
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:iron_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
 [71:5, 71:21]
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:iron_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
 [71:7, 71:23]
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 [71:12, 71:28]
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:iron_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 [71:14, 71:30]
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:iron_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
 [71:13, 71:29]
+[]
 
 minecraft:iron_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:iron_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 [71:15, 71:31]
+[]
 
 minecraft:iron_ore
 [15:0]
@@ -15462,99 +15621,131 @@ minecraft:jungle_button;button_pressed_bit=1;facing_direction=5
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 [195:0, 195:16]
+[]
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 [195:2, 195:18]
+[]
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
 [195:1, 195:17]
+[]
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
 [195:3, 195:19]
+[]
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 [195:8, 195:24]
+[]
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 [195:10, 195:26]
+[]
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
 [195:9, 195:25]
+[]
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:jungle_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
 [195:11, 195:27]
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 [195:4, 195:20]
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 [195:6, 195:22]
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
 [195:5, 195:21]
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
 [195:7, 195:23]
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 [195:12, 195:28]
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 [195:14, 195:30]
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
 [195:13, 195:29]
+[]
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:jungle_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 [195:15, 195:31]
+[]
 
 minecraft:jungle_fence_gate;in_wall_bit=0;open_bit=0;direction=0
 [185:0]
@@ -19679,99 +19870,131 @@ minecraft:spruce_button;button_pressed_bit=1;facing_direction=5
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 [193:0, 193:16]
+[]
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 [193:2, 193:18]
+[]
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
 [193:1, 193:17]
+[]
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
 [193:3, 193:19]
+[]
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 [193:8, 193:24]
+[]
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 [193:10, 193:26]
+[]
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
 [193:9, 193:25]
+[]
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:spruce_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
 [193:11, 193:27]
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 [193:4, 193:20]
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 [193:6, 193:22]
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
 [193:5, 193:21]
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
 [193:7, 193:23]
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 [193:12, 193:28]
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 [193:14, 193:30]
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
 [193:13, 193:29]
+[]
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:spruce_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 [193:15, 193:31]
+[]
 
 minecraft:spruce_fence_gate;in_wall_bit=0;open_bit=0;direction=0
 [183:0]
@@ -21479,99 +21702,130 @@ minecraft:warped_button;button_pressed_bit=1;facing_direction=5
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 []
-[500:0]
+[]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 []
+[]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
+[]
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
 []
+[]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
+[]
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 []
+[]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 []
+[]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
+[]
 []
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
 []
+[]
 
 minecraft:warped_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
+[]
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 []
+[]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 []
+[]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
+[]
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
 []
+[]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
+[]
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 []
+[]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 []
+[]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
+[]
 []
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
 []
+[]
 
 minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
+[]
 []
 
 minecraft:warped_double_slab;top_slot_bit=0
@@ -22225,99 +22479,131 @@ minecraft:wooden_button;button_pressed_bit=1;facing_direction=5
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=0
 [64:0, 64:16]
+[]
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=2
 [64:2, 64:18]
+[]
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=1
 [64:1, 64:17]
+[]
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=0;door_hinge_bit=1;direction=3
 [64:3, 64:19]
+[]
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=0
 [64:8, 64:24]
+[]
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=2
 [64:10, 64:26]
+[]
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=1
 [64:9, 64:25]
+[]
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:wooden_door;open_bit=0;upper_block_bit=1;door_hinge_bit=1;direction=3
 [64:11, 64:27]
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=0
 [64:4, 64:20]
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=2
 [64:6, 64:22]
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=0;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=1
 [64:5, 64:21]
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=0;door_hinge_bit=1;direction=3
 [64:7, 64:23]
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=0
 [64:12, 64:28]
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=1
+[]
 []
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=2
 [64:14, 64:30]
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=1;door_hinge_bit=0;direction=3
+[]
 []
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=0
 []
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=1
 [64:13, 64:29]
+[]
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=2
+[]
 []
 
 minecraft:wooden_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 [64:15, 64:31]
+[]
 
 minecraft:wooden_pressure_plate;redstone_signal=0
 [72:0]
