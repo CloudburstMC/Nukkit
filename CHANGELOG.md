@@ -9,6 +9,13 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+## [1.3.1.1-PN] - 2020-07-19
+Fixes an important stability issue and improves resource pack compatibility
+
+### Fixes
+- [#390] Server stop responding due to a compression issue
+- [#368] Improves resource pack compatibility
+
 ## [1.3.1.0-PN] - 2020-07-09 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/13?closed=1))
 Security, stability and enchanting table fixes alongside with few additions.
 
@@ -361,7 +368,8 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
 [discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.0-PN...bleeding
+[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.1-PN...bleeding
+[1.3.1.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.0-PN...v1.3.1.1-PN
 [1.3.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.0.1-PN...v1.3.1.0-PN
 [1.3.0.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.0.0-PN...v1.3.0.1-PN
 [1.3.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.1-PN
@@ -464,3 +472,5 @@ Fixes several anvil issues.
 [#347]: https://github.com/PowerNukkit/PowerNukkit/issues/347
 [#348]: https://github.com/PowerNukkit/PowerNukkit/issues/348
 [#352]: https://github.com/PowerNukkit/PowerNukkit/issues/352
+[#368]: https://github.com/PowerNukkit/PowerNukkit/issues/368
+[#390]: https://github.com/PowerNukkit/PowerNukkit/issues/390
