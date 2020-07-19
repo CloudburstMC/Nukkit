@@ -33,6 +33,10 @@ public class BlockFlowerPot extends BlockFlowable {
             case BROWN_MUSHROOM:
             case CACTUS:
             case WITHER_ROSE:
+            case WARPED_FUNGUS:
+            case CRIMSON_FUNGUS:
+            case WARPED_ROOTS:
+            case CRIMSON_ROOTS:
             case BAMBOO:
                 // TODO: 2016/2/4 case NETHER_WART:
                 return true;

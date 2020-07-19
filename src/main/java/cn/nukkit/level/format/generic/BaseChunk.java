@@ -5,19 +5,14 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
-import cn.nukkit.block.BlockWall;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.LevelProvider;
-import cn.nukkit.math.BlockFace;
+import cn.nukkit.level.format.updater.ChunkUpdater;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.Faceable;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
@@ -32,7 +27,10 @@ import java.nio.ByteBuffer;
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly("Needed for level backward compatibility")
     @Since("1.3.0.0-PN")
-    public static final int CONTENT_VERSION = 2;
+    @Deprecated
+    @DeprecationDetails(reason = "It's not a constant value and was moved to ChunkUpdater", replaceWith = "ChunkUpdater.getContentVersion()", 
+            toBeRemovedAt = "1.5.0.0-PN", since = "1.4.0.0-PN")
+    public static final int CONTENT_VERSION = ChunkUpdater.getContentVersion();
 
     protected ChunkSection[] sections;
 
@@ -40,40 +38,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @Since("1.3.0.0-PN")
     @Override
     public void backwardCompatibilityUpdate(Level level) {
-        super.backwardCompatibilityUpdate(level);
-        
-        boolean updated = false;
-        for (ChunkSection section : sections) {
-            int contentVersion = section.getContentVersion();
-            if (contentVersion < 2) {
-                WallUpdater wallUpdater = new WallUpdater(level, section);
-                boolean sectionUpdated = walk(section, new GroupedUpdaters(
-                        wallUpdater,
-                        contentVersion < 1? new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK) : null,
-                        contentVersion < 1? new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN) : null
-                ));
-
-                updated = updated || sectionUpdated;
-                
-                int attempts = 0;
-                while (sectionUpdated) {
-                    if (attempts++ >= 5) {
-                        int x = getX() << 4 | 0x6;
-                        int y = section.getY() << 4 | 0x6;
-                        int z = getZ() << 4 | 0x6;
-                        Server.getInstance().getLogger().warning("The chunk section at x:"+x+", y:"+y+", z:"+z+" failed to complete the backward compatibility update 1 after "+attempts+" attempts");
-                        break;
-                    }
-                    sectionUpdated = walk(section, wallUpdater);
-                }
-                
-                section.setContentVersion(2);
-            }
-        }
-        
-        if (updated) {
-            setChanged();
-        }
+        ChunkUpdater.backwardCompatibilityUpdate(level, this);
     }
 
     @Override
@@ -414,22 +379,6 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         return this.provider;
     }
 
-    private boolean walk(ChunkSection section, Updater updater) {
-        int offsetX = getX() << 4;
-        int offsetZ = getZ() << 4;
-        int offsetY = section.getY() << 4;
-        boolean updated = false;
-        for (int x = 0; x <= 0xF; x++) {
-            for (int z = 0; z <= 0xF; z++) {
-                for (int y = 0; y <= 0xF; y++) {
-                    BlockState state = section.getBlockState(x, y, z, 0);
-                    updated |= updater.update(offsetX, offsetY, offsetZ, x, y, z, state);
-                }
-            }
-        }
-        return updated;
-    }
-
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
@@ -442,96 +391,4 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         return getBlockState(x, y, z, layer);
     }
 
-    @FunctionalInterface
-    private interface Updater {
-        boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state);
-    }
-
-    @RequiredArgsConstructor
-    private static class WallUpdater implements Updater {
-        private final Level level;
-        private final ChunkSection section;
-
-        @Override
-        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
-            if (state.getBlockId() != BlockID.COBBLE_WALL) {
-                return false;
-            }
-
-            int levelX = offsetX + x;
-            int levelY = offsetY + y;
-            int levelZ = offsetZ + z;
-            Block block;
-            try {
-                block = state.getBlock(level, levelX, levelY, levelZ, 0);
-            } catch (InvalidBlockPropertyMetaException e) {
-                // Block was on an invalid state, clearing the state but keeping the material type
-                try {
-                    block = state.withData(state.getLegacyDamage() & 0xF).getBlock(level, levelX, levelY, levelZ, 0);
-                } catch (InvalidBlockPropertyMetaException e2) {
-                    e.addSuppressed(e2);
-                    log.warn("Failed to update the block X:"+levelX+", Y:"+levelY+", Z:"+levelZ+" at "+level
-                                    +", could not cast it to BlockWall.", e);
-                    return false;
-                }
-            }
-            
-            BlockWall blockWall = (BlockWall) block;
-            if (blockWall.autoConfigureState()) {
-                section.setBlockStateAtLayer(x, y, z, 0, blockWall.getCurrentState());
-                return true;
-            }
-
-            return false;
-        }
-    }
-
-    @RequiredArgsConstructor
-    private static class StemUpdater implements Updater {
-        private final Level level;
-        private final ChunkSection section;
-        private final int stemId;
-        private final int productId;
-
-        @Override
-        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
-            if (state.getBlockId() != stemId) {
-                return false;
-            }
-
-            for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
-                int sideId = level.getBlockIdAt(
-                        offsetX + x + blockFace.getXOffset(),
-                        offsetY + y,
-                        offsetZ + z + blockFace.getZOffset()
-                );
-                if (sideId == productId) {
-                    Block blockStem = state.getBlock(level, offsetX + x, offsetY + y, offsetZ + z, 0);
-                    ((Faceable) blockStem).setBlockFace(blockFace);
-                    section.setBlockStateAtLayer(x, y, z, 0, blockStem.getCurrentState());
-                    return true;
-                }
-            }
-
-            return false;
-        }
-    }
-
-    private static class GroupedUpdaters implements Updater {
-        private final Updater[] updaters;
-
-        public GroupedUpdaters(Updater... updaters) {
-            this.updaters = updaters;
-        }
-
-        @Override
-        public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
-            for (Updater updater : updaters) {
-                if (updater != null && updater.update(offsetX, offsetY, offsetZ, x, y, z, state)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    }
 }
