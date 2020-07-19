@@ -76,8 +76,7 @@ public class Network {
         while (!inflater.finished()) {
             int i = inflater.inflate(buf);
             if (i == 0) {
-                log.debug("Prevented an infinite loop trying to decompress data. Needs input: "+inflater.needsInput()+", Needs Dictionary: "+inflater.needsDictionary());
-                break;
+                throw new IOException("Could not decompress the data. Needs input: "+inflater.needsInput()+", Needs Dictionary: "+inflater.needsDictionary());
             }
             bos.write(buf, 0, i);
         }
