@@ -1,6 +1,7 @@
 package test;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -14,10 +15,8 @@ import lombok.NonNull;
 
 import java.io.*;
 import java.nio.ByteOrder;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class OverridesUpdater {
     public static void main(String[] args) throws IOException {
@@ -103,6 +102,16 @@ public class OverridesUpdater {
 
         ListTag<CompoundTag> newOverrides = new ListTag<>("Overrides");
 
+        Map<String, Integer> newBlocks = Arrays.stream(BlockID.class.getDeclaredFields())
+                .map(field -> {
+                    try {
+                        return new AbstractMap.SimpleEntry<>("minecraft:"+field.getName().toLowerCase(), field.getInt(null));
+                    } catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .filter(e-> e.getValue() >= 477)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
       
         for (BlockInfo info : infoList.values()) {
             String stateName = info.getStateName();
@@ -112,7 +121,7 @@ public class OverridesUpdater {
             override.putList((ListTag<? extends Tag>) info.getOverride().copy());
             
             
-            if (stateName.contains("_door;")) {
+            if (newBlocks.containsKey(info.getBlockName())) {
                 continue;
             }
             
@@ -139,7 +148,7 @@ public class OverridesUpdater {
         for (CompoundTag tag : sorted.values()) {
             String name = tag.getCompound("block").getString("name");
             
-            if (!name.endsWith("_door")) {
+            if (!name.contains("torch")) {
                 continue;
             }
             
@@ -172,6 +181,10 @@ public class OverridesUpdater {
                 stateName.append(';').append(tag.getName()).append('=').append(tag.parseValue());
             }
             return stateName.toString();
+        }
+        
+        public String getBlockName() {
+            return key.getString("name");
         }
     }
 }

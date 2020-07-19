@@ -1518,18 +1518,15 @@ minecraft:black_glazed_terracotta;facing_direction=5
 
 minecraft:blackstone
 []
-[528:0]
 
 minecraft:blackstone_double_slab;top_slot_bit=0
 []
-[538:0]
 
 minecraft:blackstone_double_slab;top_slot_bit=1
 []
 
 minecraft:blackstone_slab;top_slot_bit=0
 []
-[537:0]
 
 minecraft:blackstone_slab;top_slot_bit=1
 []
@@ -12221,75 +12218,99 @@ minecraft:cocoa;age=2;direction=3
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=east
 [204:2]
+[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=north
 [204:3]
+[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=south
 [204:4]
+[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=top
 [204:5]
+[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=unknown
 [204:0, 204:6, 204:7]
+[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=west
 [204:1]
+[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=east
 [204:10]
+[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=north
 [204:11]
+[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=south
 [204:12]
+[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=top
 [204:13]
+[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=unknown
 [204:8, 204:14, 204:15]
+[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=west
 [204:9]
+[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=east
 [202:2]
+[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=north
 [202:3]
+[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=south
 [202:4]
+[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=top
 [202:5]
+[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=unknown
 [202:0, 202:6, 202:7]
+[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=west
 [202:1]
+[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=east
 [202:10]
+[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=north
 [202:11]
+[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=south
 [202:12]
+[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=top
 [202:13]
+[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=unknown
 [202:8, 202:14, 202:15]
+[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=west
 [202:9]
+[]
 
 minecraft:command_block;conditional_bit=0;facing_direction=0
 [137:0, 137:6, 137:7]
@@ -12735,7 +12756,6 @@ minecraft:crafting_table
 
 minecraft:crimson_button;button_pressed_bit=0;facing_direction=0
 []
-[515:0]
 
 minecraft:crimson_button;button_pressed_bit=0;facing_direction=1
 []
@@ -12900,18 +12920,15 @@ minecraft:crimson_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 
 minecraft:crimson_double_slab;top_slot_bit=0
 []
-[521:0]
 
 minecraft:crimson_double_slab;top_slot_bit=1
 []
 
 minecraft:crimson_fence
 []
-[511:0]
 
 minecraft:crimson_fence_gate;in_wall_bit=0;open_bit=0;direction=0
 []
-[513:0]
 
 minecraft:crimson_fence_gate;in_wall_bit=0;open_bit=0;direction=1
 []
@@ -12960,7 +12977,6 @@ minecraft:crimson_fence_gate;in_wall_bit=1;open_bit=1;direction=3
 
 minecraft:crimson_fungus
 []
-[483:0]
 
 minecraft:crimson_hyphae;pillar_axis=x
 []
@@ -12973,15 +12989,12 @@ minecraft:crimson_hyphae;pillar_axis=z
 
 minecraft:crimson_nylium
 []
-[487:0]
 
 minecraft:crimson_planks
 []
-[497:0]
 
 minecraft:crimson_pressure_plate;redstone_signal=0
 []
-[517:0]
 
 minecraft:crimson_pressure_plate;redstone_signal=1
 []
@@ -13030,18 +13043,15 @@ minecraft:crimson_pressure_plate;redstone_signal=15
 
 minecraft:crimson_roots
 []
-[478:0]
 
 minecraft:crimson_slab;top_slot_bit=0
 []
-[519:0]
 
 minecraft:crimson_slab;top_slot_bit=1
 []
 
 minecraft:crimson_stairs;upside_down_bit=0;weirdo_direction=0
 []
-[509:0]
 
 minecraft:crimson_stairs;upside_down_bit=0;weirdo_direction=1
 []
@@ -13066,7 +13076,6 @@ minecraft:crimson_stairs;upside_down_bit=1;weirdo_direction=3
 
 minecraft:crimson_standing_sign;ground_sign_direction=0
 []
-[505:0]
 
 minecraft:crimson_standing_sign;ground_sign_direction=1
 []
@@ -13124,7 +13133,6 @@ minecraft:crimson_stem;pillar_axis=z
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=0;direction=0
 []
-[501:0]
 
 minecraft:crimson_trapdoor;open_bit=0;upside_down_bit=0;direction=1
 []
@@ -13173,7 +13181,6 @@ minecraft:crimson_trapdoor;open_bit=1;upside_down_bit=1;direction=3
 
 minecraft:crimson_wall_sign;facing_direction=0
 []
-[507:0]
 
 minecraft:crimson_wall_sign;facing_direction=1
 []
@@ -16972,7 +16979,6 @@ minecraft:nether_wart_block
 
 minecraft:netherite_block
 []
-[525:0]
 
 minecraft:netherrack
 [87:0]
@@ -19134,21 +19140,27 @@ minecraft:redstone_ore
 
 minecraft:redstone_torch;torch_facing_direction=east
 [76:2]
+[]
 
 minecraft:redstone_torch;torch_facing_direction=north
 [76:3]
+[]
 
 minecraft:redstone_torch;torch_facing_direction=south
 [76:4]
+[]
 
 minecraft:redstone_torch;torch_facing_direction=top
 [76:5]
+[]
 
 minecraft:redstone_torch;torch_facing_direction=unknown
 [76:0, 76:6, 76:7]
+[]
 
 minecraft:redstone_torch;torch_facing_direction=west
 [76:1]
+[]
 
 minecraft:redstone_wire;redstone_signal=0
 [55:0]
@@ -19465,7 +19477,6 @@ minecraft:seagrass;sea_grass_type=double_top
 
 minecraft:shroomlight
 []
-[485:0]
 
 minecraft:shulker_box;color=black
 [218:15]
@@ -19795,7 +19806,6 @@ minecraft:soul_fire;age=15
 
 minecraft:soul_lantern;hanging=0
 []
-[524:0]
 
 minecraft:soul_lantern;hanging=1
 []
@@ -19805,25 +19815,29 @@ minecraft:soul_sand
 
 minecraft:soul_soil
 []
-[491:0]
 
 minecraft:soul_torch;torch_facing_direction=east
 []
-[523:0]
+[]
 
 minecraft:soul_torch;torch_facing_direction=north
+[]
 []
 
 minecraft:soul_torch;torch_facing_direction=south
 []
+[]
 
 minecraft:soul_torch;torch_facing_direction=top
+[]
 []
 
 minecraft:soul_torch;torch_facing_direction=unknown
 []
+[]
 
 minecraft:soul_torch;torch_facing_direction=west
+[]
 []
 
 minecraft:sponge;sponge_type=dry
@@ -21151,21 +21165,27 @@ minecraft:tnt;explode_bit=1;allow_underwater_bit=1
 
 minecraft:torch;torch_facing_direction=east
 [50:2]
+[]
 
 minecraft:torch;torch_facing_direction=north
 [50:3]
+[]
 
 minecraft:torch;torch_facing_direction=south
 [50:4]
+[]
 
 minecraft:torch;torch_facing_direction=top
 [50:5]
+[]
 
 minecraft:torch;torch_facing_direction=unknown
 [50:0, 50:6, 50:7]
+[]
 
 minecraft:torch;torch_facing_direction=west
 [50:1]
+[]
 
 minecraft:trapdoor;open_bit=0;upside_down_bit=0;direction=0
 [96:0]
@@ -21446,42 +21466,54 @@ minecraft:twisting_vines;twisting_vines_age=25
 
 minecraft:underwater_torch;torch_facing_direction=east
 [239:2]
+[]
 
 minecraft:underwater_torch;torch_facing_direction=north
 [239:3]
+[]
 
 minecraft:underwater_torch;torch_facing_direction=south
 [239:4]
+[]
 
 minecraft:underwater_torch;torch_facing_direction=top
 [239:5]
+[]
 
 minecraft:underwater_torch;torch_facing_direction=unknown
 [239:0, 239:6, 239:7]
+[]
 
 minecraft:underwater_torch;torch_facing_direction=west
 [239:1]
+[]
 
 minecraft:undyed_shulker_box
 [205:0]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=east
 [75:2]
+[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=north
 [75:3]
+[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=south
 [75:4]
+[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=top
 [75:5]
+[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=unknown
 [75:0, 75:6, 75:7]
+[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=west
 [75:1]
+[]
 
 minecraft:unpowered_comparator;output_subtract_bit=0;output_lit_bit=0;direction=0
 [149:0]
@@ -21665,7 +21697,6 @@ minecraft:wall_sign;facing_direction=5
 
 minecraft:warped_button;button_pressed_bit=0;facing_direction=0
 []
-[516:0]
 
 minecraft:warped_button;button_pressed_bit=0;facing_direction=1
 []
@@ -21830,18 +21861,15 @@ minecraft:warped_door;open_bit=1;upper_block_bit=1;door_hinge_bit=1;direction=3
 
 minecraft:warped_double_slab;top_slot_bit=0
 []
-[522:0]
 
 minecraft:warped_double_slab;top_slot_bit=1
 []
 
 minecraft:warped_fence
 []
-[512:0]
 
 minecraft:warped_fence_gate;in_wall_bit=0;open_bit=0;direction=0
 []
-[514:0]
 
 minecraft:warped_fence_gate;in_wall_bit=0;open_bit=0;direction=1
 []
@@ -21890,7 +21918,6 @@ minecraft:warped_fence_gate;in_wall_bit=1;open_bit=1;direction=3
 
 minecraft:warped_fungus
 []
-[484:0]
 
 minecraft:warped_hyphae;pillar_axis=x
 []
@@ -21903,15 +21930,12 @@ minecraft:warped_hyphae;pillar_axis=z
 
 minecraft:warped_nylium
 []
-[488:0]
 
 minecraft:warped_planks
 []
-[498:0]
 
 minecraft:warped_pressure_plate;redstone_signal=0
 []
-[518:0]
 
 minecraft:warped_pressure_plate;redstone_signal=1
 []
@@ -21960,18 +21984,15 @@ minecraft:warped_pressure_plate;redstone_signal=15
 
 minecraft:warped_roots
 []
-[479:0]
 
 minecraft:warped_slab;top_slot_bit=0
 []
-[520:0]
 
 minecraft:warped_slab;top_slot_bit=1
 []
 
 minecraft:warped_stairs;upside_down_bit=0;weirdo_direction=0
 []
-[510:0]
 
 minecraft:warped_stairs;upside_down_bit=0;weirdo_direction=1
 []
@@ -21996,7 +22017,6 @@ minecraft:warped_stairs;upside_down_bit=1;weirdo_direction=3
 
 minecraft:warped_standing_sign;ground_sign_direction=0
 []
-[506:0]
 
 minecraft:warped_standing_sign;ground_sign_direction=1
 []
@@ -22054,7 +22074,6 @@ minecraft:warped_stem;pillar_axis=z
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=0;direction=0
 []
-[502:0]
 
 minecraft:warped_trapdoor;open_bit=0;upside_down_bit=0;direction=1
 []
@@ -22103,7 +22122,6 @@ minecraft:warped_trapdoor;open_bit=1;upside_down_bit=1;direction=3
 
 minecraft:warped_wall_sign;facing_direction=0
 []
-[508:0]
 
 minecraft:warped_wall_sign;facing_direction=1
 []
@@ -22122,7 +22140,6 @@ minecraft:warped_wall_sign;facing_direction=5
 
 minecraft:warped_wart_block
 []
-[482:0]
 
 minecraft:water;liquid_depth=0
 [9:0]

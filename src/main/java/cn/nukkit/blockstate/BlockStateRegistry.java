@@ -236,8 +236,7 @@ public class BlockStateRegistry {
         }
         
         Registration registration;
-        Set<String> names = state.getPropertyNames();
-        if (names.isEmpty() || names.equals(LEGACY_NAME_SET)) {
+        if (state.getPropertyNames().equals(LEGACY_NAME_SET)) {
             registration = logDiscoveryError(state);
         } else {
             registration = findRegistrationByStateId(state);

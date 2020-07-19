@@ -274,6 +274,8 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
             return attachmentFace == BlockFace.UP;
         } else if (support instanceof BlockFence || support instanceof BlockWall) {
             return attachmentFace == BlockFace.UP || attachmentFace == BlockFace.DOWN;
+        } else if (support instanceof BlockChain) {
+            return attachmentFace == BlockFace.DOWN;
         }
 
         return false;
