@@ -187,7 +187,12 @@ public class BlockLava extends BlockLiquid {
     protected void flowIntoBlock(Block block, int newFlowDecay){
         if(block instanceof BlockWater){
             ((BlockLiquid) block).liquidCollide(this, Block.get(BlockID.STONE));
-        }else{
+        } else if(block instanceof BlockSoulSoil) {
+            if (block.getLevel().getBlock(block.getFloorX(), block.getFloorY() + 2, block.getFloorZ()).getId() == BlockID.BLUE_ICE) {
+                liquidCollide(this, Block.get(BlockID.BASALT));
+            }
+        }
+        else {
             super.flowIntoBlock(block, newFlowDecay);
         }
     }
