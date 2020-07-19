@@ -11,12 +11,7 @@ public class BlockJigsaw extends BlockSolidMeta implements Faceable {
     }
     
     public BlockJigsaw(int meta) {
-        super(meta % 6);
-    }
-    
-    @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta % 6);
+        super(meta);
     }
     
     @Override

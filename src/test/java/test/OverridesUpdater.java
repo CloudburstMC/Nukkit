@@ -1,9 +1,6 @@
 package test;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.BlockID;
-import cn.nukkit.block.BlockWall;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -46,7 +43,7 @@ public class OverridesUpdater {
             try (BufferedInputStream buffered = new BufferedInputStream(stream)) {
                 states = NBTIO.read(buffered).getList("Overrides", CompoundTag.class);
             }
-            
+
             for (CompoundTag override : states.getAll()) {
                 if (override.contains("block") && override.contains("LegacyStates")) {
                     CompoundTag key = override.getCompound("block").remove("version");
@@ -63,18 +60,24 @@ public class OverridesUpdater {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        
+
         ListTag<CompoundTag> newOverrides = new ListTag<>("Overrides");
-        
+
+      
         for (BlockInfo info : infoList.values()) {
             String stateName = info.getStateName();
-            
+
             CompoundTag override = new CompoundTag();
             override.putCompound("block", info.getKey().copy());
             override.putList((ListTag<? extends Tag>) info.getOverride().copy());
             
+            
+            if (stateName.contains("pillar_axis") && !stateName.contains("minecraft:wood;")) {
+                continue;
+            }
+            
             /*switch (stateName) {
-                case "minecraft:light_block;block_light_level=14": 
+                case "minecraft:light_block;block_light_level=14":
                     break;
                 case "minecraft:wood;wood_type=acacia;stripped_bit=0;pillar_axis=y":
                 case "minecraft:wood;wood_type=birch;stripped_bit=0;pillar_axis=y":
@@ -84,55 +87,35 @@ public class OverridesUpdater {
                 case "minecraft:wood;wood_type=spruce;stripped_bit=0;pillar_axis=y":
                     continue;
             }*/
-            
+
             newOverrides.add(override);
         }
-
+      
+       /* SortedMap<String, CompoundTag> sorted = new TreeMap<>(new HumanStringComparator());
         for (CompoundTag tag : originalTags.values()) {
-            String name = tag.getCompound("block").getString("name");
-            CompoundTag state = tag.getCompound("block").getCompound("states");
-            
-            if (name.equals("minecraft:cobblestone_wall")) {
-                BlockWall wall = new BlockWall(0);
-                boolean post = state.getBoolean("wall_post_bit");
-                String wallBlockType = state.getString("wall_block_type").toUpperCase();
-                if ("END_BRICK".equals(wallBlockType)) {
-                    wallBlockType = "END_STONE_BRICK";
-                }
-                BlockWall.WallType wallType = BlockWall.WallType.valueOf(wallBlockType);
-                wall.setWallType(wallType);
-                for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
-                    String wallConnectionTypeStr = state.getString("wall_connection_type_"+blockFace.name().toLowerCase());
-                    BlockWall.WallConnectionType wallConnectionType = BlockWall.WallConnectionType.valueOf(wallConnectionTypeStr.toUpperCase());
-                    wall.setConnection(blockFace, wallConnectionType);
-                }
-                wall.setWallPost(post);
-
-                CompoundTag override = new CompoundTag();
-                override.putCompound("block", tag.getCompound("block").remove("version"));
-                override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", wall.getId()).putInt("val", wall.getDamage())));
-                newOverrides.add(override);
-            }
-
-            if (name.equals("minecraft:melon_stem") || name.equals("minecraft:pumpkin_stem")) {
-                int growth = state.getInt("growth");
-                int facingDirection = state.getInt("facing_direction");
-                int meta = (facingDirection << 3) | growth;
-                int id = name.equals("minecraft:melon_stem")? BlockID.MELON_STEM : BlockID.PUMPKIN_STEM;
-                
-                CompoundTag override = new CompoundTag();
-                override.putCompound("block", tag.getCompound("block").remove("version"));
-                override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", id).putShort("val", meta)));
-                newOverrides.add(override);
-            }
+            sorted.put(new BlockInfo(tag.getCompound("block"), tag, new ListTag<>(), new ListTag<>()).getStateName(), tag);
         }
-        
+
+        for (CompoundTag tag : sorted.values()) {
+            String name = tag.getCompound("block").getString("name");
+
+            Integer blockId = newBlocks.remove(name);
+            if (blockId == null) {
+                continue;
+            }
+            
+            CompoundTag override = new CompoundTag();
+            override.putCompound("block", tag.getCompound("block").remove("version"));
+            override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", blockId).putInt("val", 0)));
+            newOverrides.add(override);
+        }*/
+
         byte[] bytes = NBTIO.write(new CompoundTag().putList(newOverrides));
         try(FileOutputStream fos = new FileOutputStream("runtime_block_states_overrides.dat")) {
             fos.write(bytes);
         }
     }
-    
+
     @Data
     static class BlockInfo {
         @NonNull
@@ -143,7 +126,7 @@ public class OverridesUpdater {
         private ListTag<CompoundTag> original;
         @NonNull
         private ListTag<CompoundTag> override;
-        
+
         public String getStateName() {
             StringBuilder stateName = new StringBuilder(key.getString("name"));
             for (Tag tag : key.getCompound("states").getAllTags()) {

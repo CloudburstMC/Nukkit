@@ -37,8 +37,6 @@ import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
-import cn.nukkit.level.format.leveldb.LevelDB;
-import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Flat;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.Nether;
@@ -506,8 +504,6 @@ public class Server {
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
         LevelProviderManager.addProvider(this, Anvil.class);
-        LevelProviderManager.addProvider(this, McRegion.class);
-        LevelProviderManager.addProvider(this, LevelDB.class);
 
         Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
         Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
@@ -1116,14 +1112,14 @@ public class Server {
                         if (r > this.baseTickRate) {
                             level.tickRateCounter = level.getTickRate();
                         }
-                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + level.getTickRate() + " ticks");
+                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + (19 -level.getTickRate()) + " ticks");
                     } else if (tickMs >= 50) {
                         if (level.getTickRate() == this.baseTickRate) {
                             level.setTickRate(Math.max(this.baseTickRate + 1, Math.min(this.autoTickRateLimit, tickMs / 50)));
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + (19 - level.getTickRate()) + " ticks");
                         } else if ((tickMs / level.getTickRate()) >= 50 && level.getTickRate() < this.autoTickRateLimit) {
                             level.setTickRate(level.getTickRate() + 1);
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + (19 - level.getTickRate()) + " ticks");
                         }
                         level.tickRateCounter = level.getTickRate();
                     }
@@ -1954,7 +1950,7 @@ public class Server {
         try {
             level = new Level(this, name, path, provider);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
+            log.error(this.getLanguage().translateString("nukkit.level.loadError", name, e.getMessage()), e);
             return false;
         }
 
@@ -2312,9 +2308,11 @@ public class Server {
         Entity.registerEntity("Evoker", EntityEvoker.class);
         Entity.registerEntity("Ghast", EntityGhast.class);
         Entity.registerEntity("Guardian", EntityGuardian.class);
+        Entity.registerEntity("Hoglin", EntityHoglin.class);
         Entity.registerEntity("Husk", EntityHusk.class);
         Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
         Entity.registerEntity("Phantom", EntityPhantom.class);
+        Entity.registerEntity("Piglin", EntityPiglin.class);
         Entity.registerEntity("Pillager", EntityPillager.class);
         Entity.registerEntity("Ravager", EntityRavager.class);
         Entity.registerEntity("Shulker", EntityShulker.class);
@@ -2329,6 +2327,7 @@ public class Server {
         Entity.registerEntity("Wither", EntityWither.class);
         Entity.registerEntity("WitherSkeleton", EntityWitherSkeleton.class);
         Entity.registerEntity("Zombie", EntityZombie.class);
+        Entity.registerEntity("Zoglin", EntityZoglin.class);
         Entity.registerEntity("ZombiePigman", EntityZombiePigman.class);
         Entity.registerEntity("ZombieVillager", EntityZombieVillager.class);
         Entity.registerEntity("ZombieVillagerV1", EntityZombieVillagerV1.class);
@@ -2356,6 +2355,7 @@ public class Server {
         Entity.registerEntity("Sheep", EntitySheep.class);
         Entity.registerEntity("SkeletonHorse", EntitySkeletonHorse.class);
         Entity.registerEntity("Squid", EntitySquid.class);
+        Entity.registerEntity("Strider", EntityStrider.class);
         Entity.registerEntity("TropicalFish", EntityTropicalFish.class);
         Entity.registerEntity("Turtle", EntityTurtle.class);
         Entity.registerEntity("Villager", EntityVillager.class);

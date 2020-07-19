@@ -80,7 +80,7 @@ public class PluginManager {
         Map<String, Object> info = new HashMap<>();
         info.put("name", "PowerNukkit");
         info.put("version", server.getNukkitVersion());
-        info.put("website", "https://github.com/GameModsBr/PowerNukkit");
+        info.put("website", "https://github.com/PowerNukkit/PowerNukkit");
         info.put("main", PowerNukkitPlugin.class.getName());
         File file;
         try {

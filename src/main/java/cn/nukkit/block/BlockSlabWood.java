@@ -1,15 +1,24 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockSlabWood extends BlockSlab {
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+            WoodType.PROPERTY,
+            TOP_SLOT_PROPERTY
+    );
 
     public BlockSlabWood() {
         this(0);
@@ -21,22 +30,28 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Oak",
-                "Spruce",
-                "Birch",
-                "Jungle",
-                "Acacia",
-                "Dark Oak",
-                "",
-                ""
-        };
-        return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + names[this.getDamage() & 0x07] + " Wooden Slab";
+        return (isOnTop()? "Upper " : "") + getSlabName() + " Wood Slab";
+    }
+
+    @Override
+    public String getSlabName() {
+        return getWoodType().getEnglishName();
     }
 
     @Override
     public int getId() {
         return WOOD_SLAB;
+    }
+
+    @Override
+    public boolean isSameType(BlockSlab slab) {
+        return slab.getId() == getId() && slab.getPropertyValue(WoodType.PROPERTY).equals(getWoodType());
+    }
+
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -53,6 +68,18 @@ public class BlockSlabWood extends BlockSlab {
     public int getToolType() {
         return ItemTool.TYPE_AXE;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public WoodType getWoodType() {
+        return getPropertyValue(WoodType.PROPERTY);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setWoodType(WoodType type) {
+        setPropertyValue(WoodType.PROPERTY, type);
+    }
 
     @Override
     public Item[] getDrops(Item item) {
@@ -62,26 +89,7 @@ public class BlockSlabWood extends BlockSlab {
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
-    }
-
-    @Override
     public BlockColor getColor() {
-        switch (getDamage() & 0x07) {
-            default:
-            case 0: //OAK
-                return BlockColor.WOOD_BLOCK_COLOR;
-            case 1: //SPRUCE
-                return BlockColor.SPRUCE_BLOCK_COLOR;
-            case 2: //BIRCH
-                return BlockColor.SAND_BLOCK_COLOR;
-            case 3: //JUNGLE
-                return BlockColor.DIRT_BLOCK_COLOR;
-            case 4: //ACACIA
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            case 5: //DARK OAK
-                return BlockColor.BROWN_BLOCK_COLOR;
-        }
+        return getWoodType().getColor();
     }
 }

@@ -1,16 +1,22 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
+import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.BlockStateRegistry;
+import cn.nukkit.blockstate.IMutableBlockState;
+import cn.nukkit.blockstate.MutableBlockState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
@@ -22,10 +28,15 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.InvalidBlockDamageException;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -35,35 +46,53 @@ import java.util.function.Predicate;
  * author: MagicDroidX
  * Nukkit Project
  */
-public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
+@PowerNukkitDifference(info = "Implements IMutableBlockState only on PowerNukkit", since = "1.4.0.0-PN")
+@SuppressWarnings({"java:S2160", "java:S3400"})
+@Log4j2
+public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID, IMutableBlockState {
+
+    //<editor-fold desc="static fields" defaultstate="collapsed">
     public static final int MAX_BLOCK_ID = 600;
     public static final int DATA_BITS = 6;
     public static final int DATA_SIZE = 1 << DATA_BITS;
     public static final int DATA_MASK = DATA_SIZE - 1;
 
-    public static Class[] list = null;
+    @SuppressWarnings({"java:S1444", "java:S2386"})
+    public static Class<? extends Block>[] list = null;
     
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     @Deprecated
+    @SuppressWarnings({"java:S1444", "java:S2386", "java:S1123", "java:S1133", "DeprecatedIsStillUsed"})
     public static Block[] fullList = null;
+    
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static int[] light = null;
 
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     @Deprecated
+    @SuppressWarnings({"java:S1444", "java:S2386", "java:S1123", "java:S1133", "DeprecatedIsStillUsed"})
     public static int[] fullLight = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static int[] lightFilter = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static boolean[] solid = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static double[] hardness = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static boolean[] transparent = null;
+
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static boolean[] diffusesSkyLight = null;
+    
     /**
      * if a block has can have variants
      */
+    @SuppressWarnings({"java:S1444", "java:S2386"})
     public static boolean[] hasMeta = null;
-
-    public int layer;
-
-    protected Block() {}
     
     private static boolean initializing;
     
@@ -72,7 +101,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public static boolean isInitializing() {
         return initializing;
     }
+    //</editor-fold>
 
+    //<editor-fold desc="initialization" defaultstate="collapsed">
     @SuppressWarnings("unchecked")
     public static void init() {
         if (list == null) {
@@ -442,29 +473,115 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BEEHIVE] = BlockBeehive.class; //474
             list[HONEY_BLOCK] = BlockHoney.class; //475
             list[HONEYCOMB_BLOCK] = BlockHoneycombBlock.class; //476
+            //list[LODESTONE] = Block<Name>.class; //477
+            list[CRIMSON_ROOTS] = BlockRootsCrimson.class; //478
+            list[WARPED_ROOTS] = BlockRootsWarped.class; //479
+            list[CRIMSON_STEM] = BlockStemCrimson.class; //480
+            list[WARPED_STEM] = BlockStemWarped.class; //481
+            list[WARPED_WART_BLOCK] = BlockWarpedWartBlock.class; //482 
+            list[CRIMSON_FUNGUS] = BlockFungusCrimson.class; //483
+            list[WARPED_FUNGUS] = BlockFungusWarped.class; //484
+            list[SHROOMLIGHT] = BlockShroomlight.class; //485
+            //list[WEEPING_VINES] = Block<Name>.class; //486
+            list[CRIMSON_NYLIUM] = BlockNyliumCrimson.class; //487
+            list[WARPED_NYLIUM] = BlockNyliumWarped.class; //488
+            //list[BASALT] = Block<Name>.class; //489
+            //list[POLISHED_BASALT] = Block<Name>.class; //490 
+            list[SOUL_SOIL] = BlockSoulSoil.class; //491
+            //list[SOUL_FIRE] = Block<Name>.class; //492
+            list[NETHER_SPROUTS_BLOCK] = BlockNetherSprout.class; //493 
+            //list[TARGET] = Block<Name>.class; //494
+            list[STRIPPED_CRIMSON_STEM] = BlockStemStrippedCrimson.class; //495
+            list[STRIPPED_WARPED_STEM] = BlockStemStrippedWarped.class; //496
+            list[CRIMSON_PLANKS] = BlockPlanksCrimson.class; //497
+            list[WARPED_PLANKS] = BlockPlanksWarped.class; //498
+            list[CRIMSON_DOOR_BLOCK] = BlockDoorCrimson.class; //499
+            list[WARPED_DOOR_BLOCK] = BlockDoorWarped.class; //500
+            list[CRIMSON_TRAPDOOR] = BlockTrapdoorCrimson.class; //501
+            list[WARPED_TRAPDOOR] = BlockTrapdoorWarped.class; //502
+            // 503
+            // 504
+            list[CRIMSON_STANDING_SIGN] = BlockCrimsonSignPost.class; //505
+            list[CRIMSON_WALL_SIGN] = BlockCrimsonWallSign.class; //506
+            list[WARPED_STANDING_SIGN] = BlockWarpedSignPost.class; //507
+            list[WARPED_WALL_SIGN] = BlockWarpedWallSign.class; //508
+            list[CRIMSON_STAIRS] = BlockStairsCrimson.class; //509
+            list[WARPED_STAIRS] = BlockStairsWarped.class; //510
+            list[CRIMSON_FENCE] = BlockFenceCrimson.class; //511
+            list[WARPED_FENCE] = BlockFenceWarped.class; //512
+            list[CRIMSON_FENCE_GATE] = BlockFenceGateCrimson.class; //513
+            list[WARPED_FENCE_GATE] = BlockFenceGateWarped.class; //514
+            list[CRIMSON_BUTTON] = BlockButtonCrimson.class; //515
+            list[WARPED_BUTTON] = BlockButtonWarped.class; //516
+            list[CRIMSON_PRESSURE_PLATE] = BlockPressurePlateCrimson.class; //517
+            list[WARPED_PRESSURE_PLATE] = BlockPressurePlateWarped.class; //518
+            list[CRIMSON_SLAB] = BlockSlabCrimson.class; //519
+            list[WARPED_SLAB] = BlockSlabWarped.class; //520
+            list[CRIMSON_DOUBLE_SLAB] = BlockDoubleSlabCrimson.class; //521
+            list[WARPED_DOUBLE_SLAB] = BlockDoubleSlabWarped.class; //522
+            //list[SOUL_TORCH] = Block<Name>.class //523
+            //list[SOUL_LANTERN] = Block<Name>.class //524
+            list[NETHERITE_BLOCK] = BlockNetherite.class; //525
+            //list[ANCIENT_DERBIS] = Block<Name>.class; //526
+            //list[RESPAWN_ANCHOR] = Block<Name>.class; //527
+            list[BLACKSTONE] = BlockBlackstone.class; //528
+            //list[POLISHED_BLACKSTONE_BRICKS] = Block<Name>.class; //529
+            //list[POLISHED_BLACKSTONE_BRICK_STAIRS] = Block<Name>.class; //530
+            //list[BLACKSTONE_STAIRS] = Block<Name>.class; //531
+            //list[BLACKSTONE_WALL] = Block<Name>.class; //532
+            //list[POLISHED_BLACKSTONE_BRICK_WALL] = Block<Name>.class; //533
+            //list[CHISELED_POLISHED_BLACKSTONE] = Block<Name>.class; //534
+            //list[CRACKED_POLISHED_BLACKSTONE_BRICKS] = Block<Name>.class; //535
+            //list[GILDED_BLACKSTONE] = Block<Name>.class; //536
+            list[BLACKSTONE_SLAB] = BlockSlabBlackstone.class; //537
+            list[BLACKSTONE_DOUBLE_SLAB] = BlockDoubleSlabBlackstone.class; //538
+            //list[POLISHED_BLACKSTONE_BRICK_SLAB] = Block<Name>.class; //539
+            //list[POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB] = Block<Name>.class; //540
+            //list[CHAIN_BLOCK] = Block<Name>.class; //541
+            //list[TWISTING_VINES] = Block<Name>.class; //542
+            //list[NETHER_GOLD_ORE] = Block<Name>.class; //543
+            //list[CRYING_OBSIDIAN] = Block<Name>.class; //544
+            //list[SOUL_CAMPFIRE] = Block<Name>.class; //545
+            //list[POLISHED_BLACKSTONE] = Block<Name>.class; //546
+            //list[POLISHED_BLACKSTONE_STAIRS] = Block<Name>.class; //547
+            //list[POLISHED_BLACKSTONE_SLAB] = Block<Name>.class; //548
+            //list[POLISHED_BLACKSTONE_DOUBLE_SLAB] = Block<Name>.class; //549
+            //list[POLISHED_BLACKSTONE_PRESSURE_PLATE] = Block<Name>.class; //550
+            //list[POLISHED_BLACKSTONE_BUTTON] = Block<Name>.class; //551
+            //list[POLISHED_BLACKSTONE_WALL] = Block<Name>.class; //552
+            list[WARPED_HYPHAE] = BlockHyphaeWarped.class; //553
+            list[CRIMSON_HYPHAE] = BlockHyphaeCrimson.class; //554
+            list[STRIPPED_CRIMSON_HYPHAE] = BlockHyphaeStrippedCrimson.class; //555
+            list[STRIPPED_WARPED_HYPHAE] = BlockHyphaeStrippedWarped.class; //556
+            //list[CHISELED_NETHER_BRICKS] = Block<Name>.class; //557
+            //list[CRACKED_NETHER_BRICKS] = Block<Name>.class; //558
+            //list[QUARTZ_BRICKS] = Block<Name>.class; //559
             
             initializing = true;
+          
             for (int id = 0; id < MAX_BLOCK_ID; id++) {
-                Class c = list[id];
+                Class<? extends Block> c = list[id];
                 if (c != null) {
                     Block block;
                     try {
-                        block = (Block) c.newInstance();
+                        block = c.getDeclaredConstructor().newInstance();
+                        String persistenceName = block.getPersistenceName();
+                        BlockStateRegistry.registerPersistenceName(id, persistenceName);
                         try {
-                            Constructor constructor = c.getDeclaredConstructor(int.class);
+                            Constructor<? extends Block> constructor = c.getDeclaredConstructor(int.class);
                             constructor.setAccessible(true);
                             for (int data = 0; data < (1 << DATA_BITS); ++data) {
                                 int fullId = (id << DATA_BITS) | data;
                                 Block b;
                                 try {
-                                    b = (Block) constructor.newInstance(data);
+                                    b = constructor.newInstance(data);
                                     if (b.getDamage() != data) {
                                         b = new BlockUnknown(id, data);
                                     }
                                 } catch (InvocationTargetException wrapper) {
                                     Throwable uncaught = wrapper.getTargetException();
-                                    if (!(uncaught instanceof InvalidBlockDamageException)) {
-                                        Server.getInstance().getLogger().error("Error while registering " + c.getName()+" with meta "+data, uncaught);
+                                    if (!(uncaught instanceof InvalidBlockPropertyException)) {
+                                        log.error("Error while registering " + c.getName()+" with meta "+data, uncaught);
                                     }
                                     b = new BlockUnknown(id, data);
                                 }
@@ -480,11 +597,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             }
                         }
                     } catch (Exception e) {
-                        Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
+                        log.error("Error while registering " + c.getName(), e);
                         for (int data = 0; data < DATA_SIZE; ++data) {
                             fullList[(id << DATA_BITS) | data] = new BlockUnknown(id, data);
                         }
-                        return;
+                        block = fullList[id << DATA_BITS];
                     }
 
                     solid[id] = block.isSolid();
@@ -520,14 +637,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             initializing = false;
         }
     }
+    //</editor-fold>
 
+    //<editor-fold desc="static getters" defaultstate="collapsed">
     public static Block get(int id) {
         if (id < 0) {
             id = 255 - id;
         }
         return fullList[id << DATA_BITS].clone();
     }
-
+    
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     public static Block get(int id, Integer meta) {
         if (id < 0) {
             id = 255 - id;
@@ -546,10 +667,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     public static Block get(int id, Integer meta, Position pos) {
         return get(id, meta, pos, 0);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     @SuppressWarnings("unchecked")
     public static Block get(int id, Integer meta, Position pos, int layer) {
         if (id < 0) {
@@ -574,6 +699,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return block;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     public static Block get(int id, int data) {
         if (id < 0) {
             id = 255 - id;
@@ -588,13 +715,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public static Block get(int fullId, Level level, int x, int y, int z) {
         return get(fullId, level, x, y, z, 0);
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public static Block get(int fullId, Level level, int x, int y, int z, int layer) {
         Block block = fullList[fullId].clone();
         block.x = x;
@@ -605,12 +732,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return block;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public static Block get(int id, int meta, Level level, int x, int y, int z) {
         return get(id, meta, level, x, y, z, 0);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "BlockState.getBlock()", since = "1.4.0.0-PN")
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public static Block get(int id, int meta, Level level, int x, int y, int z, int layer) {
@@ -628,6 +759,17 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         block.layer = layer;
         return block;
     }
+    //</editor-fold>
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Getter(AccessLevel.PROTECTED)
+    private MutableBlockState mutableState = getProperties().createMutableState(getId());
+    
+    @PowerNukkitOnly
+    public int layer;
+    
+    protected Block() {}
 
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         return this.getLevel().setBlock(this, this, true, true);
@@ -780,7 +922,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public abstract String getName();
-
+    
     public abstract int getId();
 
     public int getItemId() {
@@ -795,32 +937,52 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     /**
      * The full id is a combination of the id and data.
      * @return full id
-     * @deprecated PowerNukkit: Does not support hyper ids
+     * @deprecated PowerNukkit: The meta is limited to 32 bits
      */
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public int getFullId() {
-        return (getId() << DATA_BITS);
+        return mutableState.getFullId();
+    }
+
+    @Nonnull
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.EMPTY_PROPERTIES;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public final BlockState getCurrentState() {
+        return mutableState.getCurrentState();
     }
     
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
-    public int getRuntimeId() {
-        return GlobalBlockPalette.getOrCreateRuntimeId(getId(), getDamage());
+    public final int getRuntimeId() {
+        return mutableState.getRuntimeId();
     }
-
+    
     public void addVelocityToEntity(Entity entity, Vector3 vector) {
 
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public int getDamage() {
-        return 0;
+        return mutableState.getBigDamage();
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public void setDamage(int meta) {
-        // Do nothing
+        mutableState.setDataStorageFromInt(meta);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public final void setDamage(Integer meta) {
         setDamage((meta == null ? 0 : meta & 0x0f));
     }
@@ -856,6 +1018,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 return 6.0;
             case ItemTool.TIER_DIAMOND:
                 return 8.0;
+            case ItemTool.TIER_NETHERITE:
+                return 9.0;
             case ItemTool.TIER_GOLD:
                 return 12.0;
             default:
@@ -872,7 +1036,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 1.0 + (0.2 * hasteLoreLevel);
     }
 
-    private static int toolType0(Item item) {
+    @PowerNukkitDifference(info = "Special condition for the leaves", since = "1.4.0.0-PN")
+    private static int toolType0(Item item, int blockId) {
+        if((blockId == LEAVES && item.isHoe()) || (blockId == LEAVES2 && item.isHoe())) return ItemTool.TYPE_SHEARS;
         if (item.isSword()) return ItemTool.TYPE_SWORD;
         if (item.isShovel()) return ItemTool.TYPE_SHOVEL;
         if (item.isPickaxe()) return ItemTool.TYPE_PICKAXE;
@@ -881,8 +1047,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return ItemTool.TYPE_NONE;
     }
 
-    private static boolean correctTool0(int blockToolType, Item item) {
-        return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
+    @PowerNukkitDifference(info = "Special condition for the leaves", since = "1.4.0.0-PN")
+    private static boolean correctTool0(int blockToolType, Item item, int blockId) {
+        if((blockId == LEAVES && item.isHoe()) ||
+           (blockId == LEAVES2 && item.isHoe())){
+            return (blockToolType == ItemTool.TYPE_SHEARS && item.isHoe());
+        } else return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
                 (blockToolType == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
                 (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
                 (blockToolType == ItemTool.TYPE_AXE && item.isAxe()) ||
@@ -905,6 +1075,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 1.0 / speed;
     }
 
+    @PowerNukkitDifference(info = "Special condition for the leaves", since = "1.4.0.0-PN")
     public double getBreakTime(Item item, Player player) {
         Objects.requireNonNull(item, "getBreakTime: Item can not be null");
         Objects.requireNonNull(player, "getBreakTime: Player can not be null");
@@ -914,10 +1085,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             return 0;
         }
 
-        boolean correctTool = correctTool0(getToolType(), item);
-        boolean canHarvestWithHand = canHarvestWithHand();
         int blockId = getId();
-        int itemToolType = toolType0(item);
+        boolean correctTool = correctTool0(getToolType(), item, blockId);
+        boolean canHarvestWithHand = canHarvestWithHand();
+        int itemToolType = toolType0(item, blockId);
         int itemTier = item.getTier();
         int efficiencyLoreLevel = Optional.ofNullable(item.getEnchantment(Enchantment.ID_EFFICIENCY))
                 .map(Enchantment::getLevel).orElse(0);
@@ -941,11 +1112,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
      * @param item item used
      * @return break time
      */
+    @PowerNukkitDifference(info = "Special condition for the hoe and netherie support", since = "1.4.0.0-PN")
     @Deprecated
     public double getBreakTime(Item item) {
         double base = this.getHardness() * 1.5;
         if (this.canBeBrokenWith(item)) {
-            if (this.getToolType() == ItemTool.TYPE_SHEARS && item.isShears()) {
+            if (
+            (this.getToolType() == ItemTool.TYPE_SHEARS && item.isShears()) ||
+            (this.getToolType() == ItemTool.TYPE_SHEARS && item.isHoe())) {
                 base /= 15;
             } else if (
                     (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
@@ -965,6 +1139,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                         break;
                     case ItemTool.TIER_DIAMOND:
                         base /= 8;
+                        break;
+                    case ItemTool.TIER_NETHERITE:
+                        base /= 9;
                         break;
                     case ItemTool.TIER_GOLD:
                         base /= 12;
@@ -1269,7 +1446,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public Block clone() {
-        return (Block) super.clone();
+        Block clone = (Block) super.clone();
+        clone.mutableState = this.mutableState.copy();
+        return clone;
     }
 
     public int getWeakPower(BlockFace face) {
@@ -1304,8 +1483,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getDamage() == b2.getDamage());
     }
 
+    @PowerNukkitDifference(
+            info = "Prevents players from getting invalid items by limiting the return to the maximum damage defined in getMaxItemDamage()", 
+            since = "1.4.0.0-PN")
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage(), 1);
+        return asItemBlock(1);
+    }
+
+    @Override
+    public final ItemBlock asItemBlock() {
+        return asItemBlock(1);
     }
 
     public boolean canSilkTouch() {
@@ -1338,5 +1525,118 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
         
         return Optional.empty();
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setDataStorage(@Nonnull Number storage) {
+        mutableState.setDataStorage(storage);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setDataStorageFromInt(int storage) {
+        mutableState.setDataStorageFromInt(storage);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setPropertyValue(@Nonnull String propertyName, @Nullable Object value) {
+        mutableState.setPropertyValue(propertyName, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setBooleanValue(@Nonnull String propertyName, boolean value) {
+        mutableState.setBooleanValue(propertyName, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setIntValue(@Nonnull String propertyName, int value) {
+        mutableState.setIntValue(propertyName, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    @Deprecated
+    @DeprecationDetails(reason = "Does the same as getId() but the other is compatible with NukkitX and this is not", since = "1.4.0.0-PN")
+    public final int getBlockId() {
+        return getId();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public final Number getDataStorage() {
+        return mutableState.getDataStorage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getLegacyDamage() {
+        return mutableState.getLegacyDamage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getBigDamage() {
+        return mutableState.getBigDamage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public BigInteger getHugeDamage() {
+        return mutableState.getHugeDamage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public Object getPropertyValue(@Nonnull String propertyName) {
+        return mutableState.getPropertyValue(propertyName);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public int getIntValue(@Nonnull String propertyName) {
+        return mutableState.getIntValue(propertyName);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public boolean getBooleanValue(@Nonnull String propertyName) {
+        return mutableState.getBooleanValue(propertyName);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getPersistenceValue(@Nonnull String propertyName) {
+        return mutableState.getPersistenceValue(propertyName);
+    }
+
+    @Override
+    public final int getExactIntStorage() {
+        return mutableState.getExactIntStorage();
     }
 }
