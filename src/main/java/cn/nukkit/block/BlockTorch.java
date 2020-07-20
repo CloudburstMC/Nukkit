@@ -76,7 +76,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
         Block below = this.down();
 
         if (face != BlockFace.UP && !target.isTransparent()) {
-            this.setBlockFace(face.getOpposite());
+            this.setBlockFace(face);
             this.getLevel().setBlock(block, this, true, true);
 
             return true;
@@ -106,7 +106,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
     @Since("1.4.0.0-PN")
     @Override
     public void setBlockFace(BlockFace face) {
-        TorchAttachment torchAttachment = TorchAttachment.getByAttachedFace(face);
+        TorchAttachment torchAttachment = TorchAttachment.getByTorchDirection(face);
         if (torchAttachment == null) {
             throw new InvalidBlockPropertyValueException(TORCH_FACING_DIRECTION, getTorchAttachment(), face, "The give BlockFace can't be mapped to TorchFace");
         }
@@ -117,7 +117,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
     @Deprecated
     @DeprecationDetails(reason = "Using magic value", replaceWith = "getBlockFace()", since = "1.4.0.0-PN")
     public BlockFace getBlockFace(int meta) {
-        return TORCH_FACING_DIRECTION.getValueForMeta(meta).getAttachedFace();
+        return TORCH_FACING_DIRECTION.getValueForMeta(meta).getTorchDirection();
     }
 
     @PowerNukkitOnly
@@ -148,13 +148,13 @@ public class BlockTorch extends BlockFlowable implements Faceable {
                 case TOP:
                     return BlockFace.UP;
                 case EAST:
-                    return BlockFace.EAST;
-                case WEST:
                     return BlockFace.WEST;
+                case WEST:
+                    return BlockFace.EAST;
                 case SOUTH:
-                    return BlockFace.SOUTH;
-                case NORTH:
                     return BlockFace.NORTH;
+                case NORTH:
+                    return BlockFace.SOUTH;
             }
         }
         
@@ -167,13 +167,13 @@ public class BlockTorch extends BlockFlowable implements Faceable {
                 case UP:
                     return TOP;
                 case EAST:
-                    return EAST;
-                case WEST:
                     return WEST;
+                case WEST:
+                    return EAST;
                 case SOUTH:
-                    return SOUTH;
-                case NORTH:
                     return NORTH;
+                case NORTH:
+                    return SOUTH;
             }
         }
 
@@ -188,13 +188,13 @@ public class BlockTorch extends BlockFlowable implements Faceable {
                 case TOP:
                     return BlockFace.DOWN;
                 case EAST:
-                    return BlockFace.WEST;
-                case WEST:
                     return BlockFace.EAST;
+                case WEST:
+                    return BlockFace.WEST;
                 case SOUTH:
-                    return BlockFace.NORTH;
-                case NORTH:
                     return BlockFace.SOUTH;
+                case NORTH:
+                    return BlockFace.NORTH;
             }
         }
         
@@ -207,13 +207,13 @@ public class BlockTorch extends BlockFlowable implements Faceable {
                 case DOWN:
                     return TorchAttachment.TOP;
                 case SOUTH:
-                    return TorchAttachment.NORTH;
-                case NORTH:
                     return TorchAttachment.SOUTH;
+                case NORTH:
+                    return TorchAttachment.NORTH;
                 case EAST:
-                    return TorchAttachment.WEST;
-                case WEST:
                     return TorchAttachment.EAST;
+                case WEST:
+                    return TorchAttachment.WEST;
             }
         }
     }
