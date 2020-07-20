@@ -773,7 +773,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     
     protected Block() {}
 
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         return this.getLevel().setBlock(this, this, true, true);
     }
 
@@ -1644,7 +1644,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public boolean isBreakable(Vector3 vector, int layer, BlockFace face, Item item, Player player, boolean setBlockDestroy) {
+    public boolean isBreakable(@Nonnull Vector3 vector, int layer, @Nonnull BlockFace face, @Nonnull Item item, @Nullable Player player, boolean setBlockDestroy) {
         return true;
     }
 }

@@ -2322,14 +2322,14 @@ public class Level implements ChunkManager, Metadatable {
             this.scheduleUpdate(block, 1);
         }
         
-        if (player != null && !player.isOp()) {
+        if (player != null && (!player.isCreative() && !player.isOp())) {
             Block down = block;
             while ((down = down.down()).getY() >= 0) {
                 int id = down.getId();
                 if (id == BlockID.ALLOW) {
                     break;
                 }
-                if (id == BlockID.DENY) {
+                if (id == BlockID.DENY || id == BlockID.BORDER_BLOCK) {
                     return null;
                 }
             }

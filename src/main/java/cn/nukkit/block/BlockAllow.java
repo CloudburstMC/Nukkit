@@ -5,6 +5,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
 public class BlockAllow extends BlockSolid {
     @Override
     public int getId() {
@@ -47,16 +51,16 @@ public class BlockAllow extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!player.isOp()) {
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        if (player != null && (!player.isCreative() || !player.isOp())) {
             return false;
         }
         return super.place(item, block, target, face, fx, fy, fz, player);
     }
 
     @Override
-    public boolean isBreakable(Vector3 vector, int layer, BlockFace face, Item item, Player player, boolean setBlockDestroy) {
-        if (player != null && !player.isOp()) {
+    public boolean isBreakable(Vector3 vector, int layer, BlockFace face, Item item, @Nullable Player player, boolean setBlockDestroy) {
+        if (player != null && (!player.isCreative() || !player.isOp())) {
             return false;
         }
         return super.isBreakable(vector, layer, face, item, player, setBlockDestroy);
