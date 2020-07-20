@@ -96,7 +96,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return getTorchAttachment().getAttachedFace();
+        return getTorchAttachment().getTorchDirection();
     }
 
     /**
