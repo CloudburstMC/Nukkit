@@ -391,4 +391,15 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
         return getBlockState(x, y, z, layer);
     }
 
+    @Override
+    public boolean isBlockChangeAllowed(int x, int y, int z) {
+        y = y & 0xF;
+        for (int sectionY = y >> 4; sectionY >= 0; sectionY--) {
+            if (!sections[sectionY].isBlockChangeAllowed(x, y, z)) {
+                return false;
+            }
+            y = 0xF;
+        }
+        return true;
+    }
 }

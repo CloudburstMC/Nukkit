@@ -4,6 +4,7 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.utils.BinaryStream;
@@ -12,6 +13,7 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
+import java.util.BitSet;
 
 @ParametersAreNonnullByDefault
 public class BlockStorage {
@@ -43,16 +45,19 @@ public class BlockStorage {
     private final PalettedBlockStorage palette;
     private final BlockState[] states;
     private byte flags = FLAG_PALETTE_UPDATED;
+    private final BitSet denyStates;
 
     public BlockStorage() {
         states = EMPTY.clone();
         palette = new PalettedBlockStorage();
+        denyStates = new BitSet();
     }
 
-    private BlockStorage(BlockState[] states, byte flags, PalettedBlockStorage palette) {
+    private BlockStorage(BlockState[] states, byte flags, PalettedBlockStorage palette, BitSet denyStates) {
         this.states = states;
         this.flags = flags;
         this.palette = palette;
+        this.denyStates = denyStates;
     }
 
     private static int getIndex(int x, int y, int z) {
@@ -172,7 +177,7 @@ public class BlockStorage {
         }
         
         states[index] = state;
-        updateFlags(state);
+        updateFlags(index, state);
         try {
             palette.setBlock(index, state.getRuntimeId());
         } catch (Exception ignored) {
@@ -192,10 +197,53 @@ public class BlockStorage {
         flags = computeFlags((byte)(flags & FLAG_PALETTE_UPDATED), states);
     }
     
-    private void updateFlags(BlockState state) {
+    private void updateFlags(int index, BlockState state) {
         if (flags != FLAG_EVERYTHING_ENABLED) {
             flags = computeFlags(flags, state);
         }
+        
+        switch (state.getBlockId()) {
+            case BlockID.DENY:
+                deny(index);
+                break;
+            case BlockID.BORDER_BLOCK:
+                denyBorder(index);
+                break;
+            default:
+                allow(index);
+        }
+    }
+
+    private void denyBorder(int index) {
+        int y = index & 0xF;
+        index <<= 1;
+        for (; y <= 0xF; y++, index += 2) {
+            denyStates.set(index);      // Deny
+            denyStates.set(index + 1);  // Allow
+                                        // Both deny and allow means border
+        }
+    }
+    
+    private void deny(int blockIndex) {
+        int y = blockIndex & 0xF;
+        int flagIndex = blockIndex << 1;
+        boolean first = true;
+        for (; y <= 0xF; y++, flagIndex += 2, blockIndex++, first = false) {
+            if (denyStates.get(blockIndex + 1)) { //Allow
+                if (first && !denyStates.get(blockIndex)) { // Replacing an allow block with a deny block
+                    denyStates.clear(blockIndex + 1);
+                } else { // If has a border, the border must take care of the deny other deny bits
+                    break;
+                }
+            }
+            
+            denyStates.set(blockIndex);
+            denyStates.set(blockIndex + 1);
+        }
+    }
+    
+    private void allow(int index) {
+        
     }
     
     private byte computeFlags(byte newFlags, BlockState... states) {
@@ -227,7 +275,7 @@ public class BlockStorage {
     }
 
     public BlockStorage copy() {
-        return new BlockStorage(states.clone(), flags, palette.copy());
+        return new BlockStorage(states.clone(), flags, palette.copy(), (BitSet) denyStates.clone());
     }
     
     private boolean getFlag(byte flag) {
@@ -289,5 +337,9 @@ public class BlockStorage {
             int y = i & 0xF;
             consumer.accept(x, y, z, states[i]);
         }
+    }
+
+    public boolean isBlockChangeAllowed(int x, int y, int z) {
+        return false;
     }
 }

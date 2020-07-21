@@ -246,4 +246,6 @@ public interface FullChunk extends Cloneable {
     void setChanged();
 
     void setChanged(boolean changed);
+
+    boolean isBlockChangeAllowed(int chunkX, int y, int chunkZ);
 }

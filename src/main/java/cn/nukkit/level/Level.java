@@ -2281,6 +2281,21 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
+            if (!player.isCreative() && !player.isOp() 
+                    && !block.getChunk().isBlockChangeAllowed(block.getChunkX(), block.getFloorY(), block.getChunkZ())) {
+                return null;
+                Block down = block;
+                while ((down = down.down()).getY() >= 0) {
+                    int id = down.getId();
+                    if (id == BlockID.ALLOW) {
+                        break;
+                    }
+                    if (id == BlockID.DENY || id == BlockID.BORDER_BLOCK) {
+                        return null;
+                    }
+                }
+            }
+            
             BlockPlaceEvent event = new BlockPlaceEvent(player, hand, block, target, item);
             if (player.getGamemode() == 2) {
                 Tag tag = item.getNamedTagEntry("CanPlaceOn");
@@ -2320,19 +2335,6 @@ public class Level implements ChunkManager, Metadatable {
             this.setBlock(block, 1, block, false, false);
             this.setBlock(block, 0, Block.get(BlockID.AIR), false, false);
             this.scheduleUpdate(block, 1);
-        }
-        
-        if (player != null && (!player.isCreative() && !player.isOp())) {
-            Block down = block;
-            while ((down = down.down()).getY() >= 0) {
-                int id = down.getId();
-                if (id == BlockID.ALLOW) {
-                    break;
-                }
-                if (id == BlockID.DENY || id == BlockID.BORDER_BLOCK) {
-                    return null;
-                }
-            }
         }
 
         if (!hand.place(item, block, target, face, fx, fy, fz, player)) {

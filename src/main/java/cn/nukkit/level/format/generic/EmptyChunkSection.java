@@ -269,4 +269,9 @@ public class EmptyChunkSection implements ChunkSection {
             throw new ChunkException("Tried to modify an empty Chunk");
         }
     }
+
+    @Override
+    public boolean isBlockChangeAllowed(int x, int y, int z) {
+        return true;
+    }
 }

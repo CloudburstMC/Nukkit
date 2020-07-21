@@ -373,6 +373,17 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     @Override
+    public boolean isBlockChangeAllowed(int x, int y, int z) {
+        synchronized (storageList) {
+            BlockStorage storage = getStorageIfExists(0);
+            if (storage == null) {
+                return true;
+            }
+            return storage.isBlockChangeAllowed(x, y, z);
+        }
+    }
+
+    @Override
     public int getBlockSkyLight(int x, int y, int z) {
         if (this.skyLight == null) {
             if (!hasSkyLight) {

@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 
@@ -77,5 +78,13 @@ public class BlockBorder extends BlockWallBase {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[0];
+    }
+
+    @Override
+    protected AxisAlignedBB recalculateBoundingBox() {
+        AxisAlignedBB aabb = super.recalculateBoundingBox();
+        aabb.setMinY(Double.MIN_VALUE);
+        aabb.setMaxY(Double.MAX_VALUE);
+        return aabb;
     }
 }
