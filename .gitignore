@@ -234,4 +234,4 @@ data/
 data/*
 
 # a file that can be used for your helm chart values
-helm-values.local.yaml
+/helm-values.local.yaml
