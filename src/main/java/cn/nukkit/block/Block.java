@@ -1647,4 +1647,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public boolean isBreakable(@Nonnull Vector3 vector, int layer, @Nonnull BlockFace face, @Nonnull Item item, @Nullable Player player, boolean setBlockDestroy) {
         return true;
     }
+
+    public final boolean isBlockChangeAllowed() {
+        return getChunk().isBlockChangeAllowed(getFloorX() & 0xF, getFloorY(), getFloorZ() & 0xF);
+    }
+    
+    public final boolean isBlockChangeAllowed(@Nullable Player player) {
+        if (isBlockChangeAllowed()) {
+            return true;
+        }
+        return player != null && player.isCreative() && player.isOp();
+    }
 }

@@ -7,8 +7,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.anvil.util.BlockStorage;
 import cn.nukkit.level.format.anvil.util.NibbleArray;
-import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
+import cn.nukkit.level.format.updater.ChunkUpdater;
 import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.nbt.tag.ByteArrayTag;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -67,7 +67,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     public ChunkSection(int y) {
         this.y = y;
-        this.contentVersion = BaseChunk.CONTENT_VERSION;
+        this.contentVersion = ChunkUpdater.getContentVersion();
 
         hasBlockLight = false;
         hasSkyLight = false;
@@ -373,13 +373,13 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     @Override
-    public boolean isBlockChangeAllowed(int x, int y, int z) {
+    public int getBlockChangeStateAbove(int x, int y, int z) {
         synchronized (storageList) {
             BlockStorage storage = getStorageIfExists(0);
             if (storage == null) {
-                return true;
+                return 0;
             }
-            return storage.isBlockChangeAllowed(x, y, z);
+            return storage.getBlockChangeStateAbove(x, y, z);
         }
     }
 

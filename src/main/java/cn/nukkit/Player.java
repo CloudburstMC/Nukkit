@@ -2546,7 +2546,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
                                 break;
                             }
+                            
+                            if (!block.isBlockChangeAllowed(this)) {
+                                break;
+                            }
+                            
                             if (!this.isCreative()) {
+                                
                                 //improved this to take stuff like swimming, ladders, enchanted tools into account, fix wrong tool break time calculations for bad tools (pmmp/PocketMine-MP#211)
                                 //Done by lmlstarqaq
                                 double breakTime = Math.ceil(target.getBreakTime(this.inventory.getItemInHand(), this) * 20);

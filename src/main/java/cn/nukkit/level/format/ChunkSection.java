@@ -157,5 +157,5 @@ public interface ChunkSection {
         return setBlockStateAtLayer(x, y, z, 0, state);
     }
 
-    boolean isBlockChangeAllowed(int x, int y, int z);
+    int getBlockChangeStateAbove(int x, int y, int z);
 }
