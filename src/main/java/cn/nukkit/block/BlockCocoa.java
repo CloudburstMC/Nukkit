@@ -189,11 +189,11 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
         return false;
     }
 
-    public int getGrowthStage() {
+    private int getGrowthStage() {
         return this.getDamage() / 4;
     }
 
-    public boolean grow() {
+    private boolean grow() {
         Block block = this.clone();
         block.setDamage(block.getDamage() + 4);
         BlockGrowEvent ev = new BlockGrowEvent(this, block);
