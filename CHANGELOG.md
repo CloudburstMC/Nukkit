@@ -9,6 +9,9 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+## [Unreleased 1.3.1.2-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/18?closed=1))
+Click the link above to see the future.
+
 ## [1.3.1.1-PN] - 2020-07-19
 Fixes an important stability issue and improves resource pack compatibility
 
@@ -369,6 +372,7 @@ Fixes several anvil issues.
 [discord guild]: https://powernukkit.org/discord
 
 [Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.1-PN...bleeding
+[Unreleased 1.3.1.2-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.1-PN...bleeding-1.3.1.2-pn
 [1.3.1.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.0-PN...v1.3.1.1-PN
 [1.3.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.0.1-PN...v1.3.1.0-PN
 [1.3.0.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.0.0-PN...v1.3.0.1-PN
