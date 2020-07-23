@@ -4761,7 +4761,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return addWindow(inventory, forceId, isPermanent, false);
     }
 
-    public int addWindow(Inventory inventory, Integer forceId, boolean isPermanent, boolean alwaysOpen) {
+    private int addWindow(Inventory inventory, Integer forceId, boolean isPermanent, boolean alwaysOpen) {
         if (this.windows.containsKey(inventory)) {
             return this.windows.get(inventory);
         }
