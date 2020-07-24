@@ -13,3 +13,6 @@ spec:
       name: udp
   selector:
     {{- include "nukkit.selectorLabels" . | nindent 4 }}
+{{- if .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }} 
+{{- end }}
