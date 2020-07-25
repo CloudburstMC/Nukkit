@@ -11,9 +11,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
@@ -71,20 +68,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     public boolean onActivate(Item item, Player player) {
 
         if (this.level.getDimension() == Level.DIMENSION_NETHER || this.level.getDimension() == Level.DIMENSION_THE_END) {
-            CompoundTag tag = new CompoundTag();
-                tag.putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", x))
-                        .add(new DoubleTag("", y))
-                        .add(new DoubleTag("", z)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", 0))
-                        .add(new FloatTag("", 0)))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0)))
-                .putShort("Fuse", 0);
-            this.level.useBreakOn(this);
+            CompoundTag tag = EntityPrimedTNT.getDefaultNBT(this).putShort("Fuse", 0);
             new EntityPrimedTNT(this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), tag);
             return true;
         }

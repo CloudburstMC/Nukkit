@@ -2,6 +2,7 @@ package cn.nukkit.item.randomitem;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.utils.DyeColor;
 
@@ -65,7 +66,6 @@ public final class Fishing {
     }
 
     private static float limitRange(float min, float max, float value) {
-        if (value >= max) return max;
-        return Math.max(value, min);
+        return NukkitMath.clamp(value, min, max);
     }
 }

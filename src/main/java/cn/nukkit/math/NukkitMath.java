@@ -54,6 +54,10 @@ public class NukkitMath {
         return value < min ? min : (Math.min(value, max));
     }
 
+    public static float clamp(float value, float min, float max) {
+        return value < min ? min : (Math.min(value, max));
+    }
+
     public static double getDirection(double diffX, double diffZ) {
         diffX = Math.abs(diffX);
         diffZ = Math.abs(diffZ);
