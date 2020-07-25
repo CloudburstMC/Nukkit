@@ -89,7 +89,7 @@ public class MathHelper {
     }
 
     public static int clamp(int check, int min, int max) {
-        return check > max ? max : (Math.max(check, min));
+        return check > max ? max : (check < min ? min : check);
     }
 
     public static double denormalizeClamp(double lowerBnd, double upperBnd, double slide) {
