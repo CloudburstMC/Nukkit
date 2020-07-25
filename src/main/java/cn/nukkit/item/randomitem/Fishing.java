@@ -66,7 +66,6 @@ public final class Fishing {
 
     private static float limitRange(float min, float max, float value) {
         if (value >= max) return max;
-        if (value <= min) return min;
-        return value;
+        return Math.max(value, min);
     }
 }

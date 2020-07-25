@@ -235,7 +235,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
     }
 
-    public class BlocksCalculator {
+    public static class BlocksCalculator {
 
         private final Level level;
         private final Vector3 pistonPos;

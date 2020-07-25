@@ -92,11 +92,6 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
         AxisAlignedBB[] bbs;
 
         switch (getDamage()) {
-            case 0:
-            case 4:
-            case 8:
-                bbs = NORTH;
-                break;
             case 1:
             case 5:
             case 9:
@@ -112,6 +107,9 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
             case 11:
                 bbs = WEST;
                 break;
+            case 0:
+            case 4:
+            case 8:
             default:
                 bbs = NORTH;
                 break;

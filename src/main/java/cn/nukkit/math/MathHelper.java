@@ -80,10 +80,7 @@ public class MathHelper {
         if (second > third && second > fourth) {
             return second;
         }
-        if (third > fourth) {
-            return third;
-        }
-        return fourth;
+        return Math.max(third, fourth);
     }
 
     public static int ceil(float floatNumber) {
@@ -92,7 +89,7 @@ public class MathHelper {
     }
 
     public static int clamp(int check, int min, int max) {
-        return check > max ? max : (check < min ? min : check);
+        return check > max ? max : (Math.max(check, min));
     }
 
     public static double denormalizeClamp(double lowerBnd, double upperBnd, double slide) {
