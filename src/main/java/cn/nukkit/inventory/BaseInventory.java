@@ -420,6 +420,7 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public boolean open(Player who) {
+        //if (this.viewers.contains(who)) return false;
         InventoryOpenEvent ev = new InventoryOpenEvent(this, who);
         who.getServer().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {

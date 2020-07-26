@@ -30,8 +30,9 @@ public class InventorySlotPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt((byte) this.inventoryId);
+        this.putUnsignedVarInt(this.inventoryId);
         this.putUnsignedVarInt(this.slot);
+        this.putVarInt(this.item.getId());
         this.putSlot(this.item);
     }
 }

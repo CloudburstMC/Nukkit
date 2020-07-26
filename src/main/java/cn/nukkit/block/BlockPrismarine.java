@@ -8,13 +8,13 @@ import cn.nukkit.utils.BlockColor;
 public class BlockPrismarine extends BlockSolidMeta {
 
     public static final int NORMAL = 0;
-    public static final int BRICKS = 1;
-    public static final int DARK = 2;
+    public static final int DARK = 1;
+    public static final int BRICKS = 2;
 
     private static final String[] NAMES = new String[]{
             "Prismarine",
-            "Prismarine bricks",
-            "Dark prismarine"
+            "Dark prismarine",
+            "Prismarine bricks"
     };
 
     public BlockPrismarine() {
@@ -71,8 +71,8 @@ public class BlockPrismarine extends BlockSolidMeta {
         switch(getDamage() & 0x07){
             case NORMAL:
                 return BlockColor.CYAN_BLOCK_COLOR;
-            case BRICKS:
             case DARK:
+            case BRICKS:
                 return BlockColor.DIAMOND_BLOCK_COLOR;
             default:
                 return BlockColor.STONE_BLOCK_COLOR;

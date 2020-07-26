@@ -14,12 +14,12 @@ public interface ProtocolInfo {
      * Actual Minecraft: PE protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("390"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("407"); // DO NOT REMOVE BOXING
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.14.60";
-    String MINECRAFT_VERSION_NETWORK = "1.14.60";
+    String MINECRAFT_VERSION = "v1.16.0";
+    String MINECRAFT_VERSION_NETWORK = "1.16.0";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
@@ -159,6 +159,18 @@ public interface ProtocolInfo {
     byte COMPLETED_USING_ITEM_PACKET = (byte) 0x8e;
     byte NETWORK_SETTINGS_PACKET = (byte) 0x8f;
     byte PLAYER_AUTH_INPUT_PACKET = (byte) 0x90;
+    byte CREATIVE_CONTENT_PACKET = (byte) 0x91;
+    byte PLAYER_ENCHANT_OPTIONS_PACKET = (byte) 0x92;
+    byte ITEM_STACK_REQUEST_PACKET = (byte) 0x93;
+    byte ITEM_STACK_RESPONSE_PACKET = (byte) 0x94;
+    byte PLAYER_ARMOR_DAMAGE_PACKET = (byte) 0x95;
+    byte CODE_BUILDER_PACKET = (byte) 0x96;
+    byte UPDATE_PLAYER_GAME_TYPE_PACKET = (byte) 0x97;
+    byte EMOTE_LIST_PACKET = (byte) 0x98;
+    byte POS_TRACKING_SERVER_BROADCAST_PACKET = (byte) 0x99;
+    byte POS_TRACKING_CLIENT_REQUEST_PACKET = (byte) 0x9a;
+    byte DEBUG_INFO_PACKET = (byte) 0x9b;
+    byte PACKET_VIOLATION_WARNING_PACKET = (byte) 0x9c;
 
     byte BATCH_PACKET = (byte) 0xff;
 }

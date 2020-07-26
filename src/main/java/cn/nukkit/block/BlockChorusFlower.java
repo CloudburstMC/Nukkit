@@ -35,6 +35,6 @@ public class BlockChorusFlower extends BlockTransparent {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[0];
+        return new Item[]{this.toItem()};
     }
 }

@@ -703,6 +703,7 @@ public class BinaryStream {
         putEntityUniqueId(link.toEntityUniquieId);
         putByte(link.type);
         putBoolean(link.immediate);
+        putBoolean(link.riderInitiated);
     }
 
     public EntityLink getEntityLink() {
@@ -710,6 +711,7 @@ public class BinaryStream {
                 getEntityUniqueId(),
                 getEntityUniqueId(),
                 (byte) getByte(),
+                getBoolean(),
                 getBoolean()
         );
     }

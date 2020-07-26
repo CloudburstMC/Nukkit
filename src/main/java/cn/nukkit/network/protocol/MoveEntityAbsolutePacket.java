@@ -46,10 +46,10 @@ public class MoveEntityAbsolutePacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.eid);
         byte flags = 0;
-        if (teleport) {
+        if (onGround) {
             flags |= 0x01;
         }
-        if (onGround) {
+        if (teleport) {
             flags |= 0x02;
         }
         this.putByte(flags);
