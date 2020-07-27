@@ -881,7 +881,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.server.getPluginManager().callEvent(playerJoinEvent);
 
-        if (playerJoinEvent.getJoinMessage().toString().trim().length() > 0) {
+        if (playerJoinEvent.getJoinMessage().toString() == nill) {
             this.server.broadcastMessage(playerJoinEvent.getJoinMessage());
         }
 
@@ -3710,7 +3710,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.loggedIn = false;
 
-            if (ev != null && !Objects.equals(this.username, "") && this.spawned && !Objects.equals(ev.getQuitMessage().toString(), "")) {
+            if (ev != null && this.username != null && this.spawned && ev.getQuitMessage().toString() != null) {
                 this.server.broadcastMessage(ev.getQuitMessage());
             }
 
