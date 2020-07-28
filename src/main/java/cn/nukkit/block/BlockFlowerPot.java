@@ -33,6 +33,10 @@ public class BlockFlowerPot extends BlockFlowable {
             case BROWN_MUSHROOM:
             case CACTUS:
             case WITHER_ROSE:
+            case WARPED_FUNGUS:
+            case CRIMSON_FUNGUS:
+            case WARPED_ROOTS:
+            case CRIMSON_ROOTS:
             case BAMBOO:
                 // TODO: 2016/2/4 case NETHER_WART:
                 return true;
@@ -106,10 +110,10 @@ public class BlockFlowerPot extends BlockFlowable {
         int blockId;
         int itemMeta;
         if (!canPlaceIntoFlowerPot(item.getId())) {
-            if (!canPlaceIntoFlowerPot(item.getBlock().getId())) {
+            if (!canPlaceIntoFlowerPot(item.getBlockId())) {
                 return true;
             }
-            blockId = item.getBlock().getId();
+            blockId = item.getBlockId();
             itemMeta = item.getDamage();
         } else {
             blockId = item.getId();

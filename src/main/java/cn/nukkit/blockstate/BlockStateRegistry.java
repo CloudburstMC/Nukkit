@@ -25,9 +25,7 @@ import lombok.extern.log4j.Log4j2;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -75,6 +73,36 @@ public class BlockStateRegistry {
         }
         //</editor-fold>
 
+        //<editor-fold desc="Loading block_ids.csv" defaultstate="collapsed">
+        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("block_ids.csv")) { 
+            if (stream == null) {
+                throw new AssertionError("Unable to locate block_ids.csv");
+            }
+
+            int count = 0;
+            try(BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    count++;
+                    line = line.trim();
+                    if (line.isEmpty()) {
+                        continue;
+                    }
+                    String[] parts = line.split(",");
+                    Preconditions.checkArgument(parts.length == 2 || parts[0].matches("^[0-9]+$"));
+                    if (parts.length > 1 && parts[1].startsWith("minecraft:")) {
+                        blockIdToPersistenceName.put(Integer.parseInt(parts[0]), parts[1]);
+                    }
+                }
+            } catch (Exception e) {
+                throw new IOException("Error reading the line "+count+" of the block_ids.csv", e);
+            }
+            
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        //</editor-fold>
+
         ListTag<CompoundTag> tag;
         //<editor-fold desc="Loading runtime_block_states.dat" defaultstate="collapsed">
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat")) {
@@ -110,6 +138,12 @@ public class BlockStateRegistry {
                 } else {
                     legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
                 }
+            }
+            
+            // Override is forcing to clear the LegacyStates
+            if (legacyStates.isEmpty()) {
+                registerStateId(state, runtimeId);
+                continue;
             }
 
             // Resolve to first legacy id
@@ -202,8 +236,7 @@ public class BlockStateRegistry {
         }
         
         Registration registration;
-        Set<String> names = state.getPropertyNames();
-        if (names.isEmpty() || names.equals(LEGACY_NAME_SET)) {
+        if (state.getPropertyNames().equals(LEGACY_NAME_SET)) {
             registration = logDiscoveryError(state);
         } else {
             registration = findRegistrationByStateId(state);
@@ -235,7 +268,11 @@ public class BlockStateRegistry {
     }
 
     private Registration logDiscoveryError(BlockState state) {
-        log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()+", replacing with an \"UPDATE!\" block.");
+        log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()
+                + " - " + state.getStateId()
+                + " - " + state.getProperties()
+                + " - " + blockIdToPersistenceName.get(state.getBlockId())
+                + ", replacing with an \"UPDATE!\" block.");
         return updateBlockRegistration;
     }
 

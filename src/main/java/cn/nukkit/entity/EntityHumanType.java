@@ -13,12 +13,14 @@ import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemSkull;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -181,31 +183,8 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             }
 
             for (int slot = 0; slot < 4; slot++) {
-                Item armor = this.inventory.getArmorItem(slot);
-
-                if (armor.hasEnchantments()) {
-                    if (damager != null) {
-                        for (Enchantment enchantment : armor.getEnchantments()) {
-                            enchantment.doPostAttack(damager, this);
-                        }
-                    }
-
-                    Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
-                    if (durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= ThreadLocalRandom.current().nextInt(100))
-                        continue;
-                }
-
-                if (armor.isUnbreakable()) {
-                    continue;
-                }
-
-                armor.setDamage(armor.getDamage() + 1);
-
-                if (armor.getDamage() >= armor.getMaxDurability()) {
-                    inventory.setArmorItem(slot, new ItemBlock(Block.get(BlockID.AIR)));
-                } else {
-                    inventory.setArmorItem(slot, armor, true);
-                }
+                Item armor = damageArmor(this.inventory.getArmorItem(slot), damager);
+                inventory.setArmorItem(slot, armor, armor.getId() != BlockID.AIR);
             }
 
             return true;
@@ -243,5 +222,34 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         seconds = (int) (seconds * (1 - level * 0.15));
 
         super.setOnFire(seconds);
+    }
+
+    protected Item damageArmor(Item armor, Entity damager) {
+        if (armor.hasEnchantments()) {
+            if (damager != null) {
+                for (Enchantment enchantment : armor.getEnchantments()) {
+                    enchantment.doPostAttack(damager, this);
+                }
+            }
+
+            Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
+            if (durability != null
+                    && durability.getLevel() > 0
+                    && (100 / (durability.getLevel() + 1)) <= Utils.random.nextInt(100)) {
+                return armor;
+            }
+        }
+
+        if (armor.isUnbreakable() || armor instanceof ItemSkull) {
+            return armor;
+        }
+
+        armor.setDamage(armor.getDamage() + 1);
+
+        if (armor.getDamage() >= armor.getMaxDurability()) {
+            return Item.get(BlockID.AIR, 0, 0);
+        }
+
+        return armor;
     }
 }

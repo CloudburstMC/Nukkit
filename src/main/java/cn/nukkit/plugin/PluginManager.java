@@ -91,6 +91,7 @@ public class PluginManager {
         PluginDescription description = new PluginDescription(info);
         plugin.init(pluginLoader, server, description, new File("PowerNukkit"), file);
         plugins.put(description.getName(), plugin);
+        enablePlugin(plugin);
     }
 
     public Map<String, Plugin> getPlugins() {
@@ -536,6 +537,10 @@ public class PluginManager {
     }
 
     public void disablePlugin(Plugin plugin) {
+        if (PowerNukkitPlugin.getInstance() == plugin) {
+            throw new UnsupportedOperationException("The PowerNukkit plugin can't be disabled.");
+        }
+        
         if (plugin.isEnabled()) {
             try {
                 plugin.getPluginLoader().disablePlugin(plugin);

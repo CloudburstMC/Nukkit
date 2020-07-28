@@ -39,7 +39,7 @@ public class BlockConduit extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (item.getBlock() != null && item.getBlock().getId() == CONDUIT && target.getId() == CONDUIT) {
+        if (item.getBlock() != null && item.getBlockId() == CONDUIT && target.getId() == CONDUIT) {
             return false;
         }
 

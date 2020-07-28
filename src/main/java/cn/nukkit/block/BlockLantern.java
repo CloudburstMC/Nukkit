@@ -1,15 +1,22 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 public class BlockLantern extends BlockFlowable {
+    public static final BooleanBlockProperty HANGING = new BooleanBlockProperty("hanging", false);
+    public static final BlockProperties PROPERTIES = new BlockProperties(HANGING);
 
     public BlockLantern() {
         this(0);
@@ -24,6 +31,12 @@ public class BlockLantern extends BlockFlowable {
         return LANTERN;
     }
 
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
     @Override
     public String getName() {
         return "Lantern";
@@ -33,12 +46,12 @@ public class BlockLantern extends BlockFlowable {
         Block up = up();
         if (up instanceof BlockLeaves) {
             return false;
-        } else if (up instanceof BlockFence || up instanceof BlockWall) {
+        } else if (up instanceof BlockFence || up instanceof BlockWall || up instanceof BlockChain) {
             return true;
         } else if (up instanceof BlockSlab) {
-            return (up.getDamage() & 0x08) == 0x00;
+            return !((BlockSlab) up).isOnTop();
         } else if (up instanceof BlockStairs) {
-            return (up.getDamage() & 0x04) == 0x00;
+            return !((BlockStairs) up).isUpsideDown();
         } else if (up.isSolid()) {
             return true;
         } else {
@@ -48,14 +61,14 @@ public class BlockLantern extends BlockFlowable {
 
     private boolean isBlockUnderValid() {
         Block down = down();
-        if (down instanceof BlockLeaves) {
+        if (down instanceof BlockLeaves || down instanceof BlockChain) {
             return false;
         } else if (down instanceof BlockFence || down instanceof BlockWall) {
             return true;
         } else if (down instanceof BlockSlab) {
-            return (down.getDamage() & 0x08) == 0x08;
+            return ((BlockSlab) down).isOnTop();
         } else if (down instanceof BlockStairs) {
-            return (down.getDamage() & 0x04) == 0x04;
+            return ((BlockStairs) down).isUpsideDown();
         } else if (down.isSolid()) {
             return true;
         } else {
@@ -69,26 +82,12 @@ public class BlockLantern extends BlockFlowable {
             return false;
         }
 
-        boolean hanging = false;
-        if (face == BlockFace.DOWN) {
-            if (isBlockAboveValid()) {
-                hanging = true;
-            } else if (!isBlockUnderValid()) {
-                return false;
-            }
-        } else if (face == BlockFace.UP && isBlockUnderValid()) {
-            hanging = false;
-        } else if (isBlockAboveValid()) {
-            hanging = true;
-        } else {
+        boolean hanging = face != BlockFace.UP && isBlockAboveValid() && (!isBlockUnderValid() || face == BlockFace.DOWN);
+        if (!isBlockUnderValid() && !hanging) {
             return false;
         }
-
-        if (hanging) {
-            setDamage(1);
-        } else {
-            setDamage(0);
-        }
+        
+        setHanging(hanging);
 
         this.getLevel().setBlock(this, this, true, true);
         return true;
@@ -97,7 +96,7 @@ public class BlockLantern extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (getDamage() == 0) {
+            if (!isHanging()) {
                 if (!isBlockUnderValid()) {
                     level.useBreakOn(this);
                 }
@@ -141,7 +140,7 @@ public class BlockLantern extends BlockFlowable {
 
     @Override
     public double getMinY() {
-        return y + (getDamage()==0?0: 1./16);
+        return y + (!isHanging()?0: 1./16);
     }
 
     @Override
@@ -156,17 +155,12 @@ public class BlockLantern extends BlockFlowable {
 
     @Override
     public double getMaxY() {
-        return y + (getDamage()==0? 7.0/16 : 8.0/16);
+        return y + (!isHanging()? 7.0/16 : 8.0/16);
     }
 
     @Override
     public double getMaxZ() {
         return z + (11.0/16);
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(new BlockLantern());
     }
 
     @Override
@@ -183,5 +177,16 @@ public class BlockLantern extends BlockFlowable {
     public BlockColor getColor() {
         return BlockColor.IRON_BLOCK_COLOR;
     }
-
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isHanging() {
+        return getBooleanValue(HANGING);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setHanging(boolean hanging) {
+        setBooleanValue(HANGING, hanging);
+    }
 }
