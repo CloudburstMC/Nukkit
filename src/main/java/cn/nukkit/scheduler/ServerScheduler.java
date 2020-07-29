@@ -89,11 +89,27 @@ public class ServerScheduler {
         throw new UnsupportedOperationException("Cannot increase a working pool size."); //wtf?
     }
 
+    /**
+     * @deprecated Use {@link #scheduleDelayedTask(PluginTask, int)}
+     */
+    @Deprecated
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
         return this.addTask(task, delay, 0, false);
     }
 
+    public TaskHandler scheduleDelayedTask(PluginTask task, int delay) {
+        return this.addTask(task, delay, 0, false);
+    }
+
+    /**
+     * @deprecated Use {@link #scheduleDelayedTask(PluginTask, int, boolean)}
+     */
+    @Deprecated
     public TaskHandler scheduleDelayedTask(Task task, int delay, boolean asynchronous) {
+        return this.addTask(task, delay, 0, asynchronous);
+    }
+
+    public TaskHandler scheduleDelayedTask(PluginTask task, int delay, boolean asynchronous) {
         return this.addTask(task, delay, 0, asynchronous);
     }
 
@@ -145,19 +161,51 @@ public class ServerScheduler {
         return addTask(plugin, task, 0, period, asynchronous);
     }
 
+    /**
+     * @deprecated Use {@link #scheduleRepeatingTask(PluginTask, int)}
+     */
+    @Deprecated
     public TaskHandler scheduleRepeatingTask(Task task, int period) {
         return addTask(task, 0, period, false);
     }
 
+    public TaskHandler scheduleRepeatingTask(PluginTask task, int period) {
+        return addTask(task, 0, period, false);
+    }
+
+    /**
+     * @deprecated Use {@link #scheduleRepeatingTask(PluginTask, int, boolean)}
+     */
+    @Deprecated
     public TaskHandler scheduleRepeatingTask(Task task, int period, boolean asynchronous) {
         return addTask(task, 0, period, asynchronous);
     }
 
+    public TaskHandler scheduleRepeatingTask(PluginTask task, int period, boolean asynchronous) {
+        return addTask(task, 0, period, asynchronous);
+    }
+
+    /**
+     * @deprecated Use {@link #scheduleDelayedRepeatingTask(PluginTask, int, int)}
+     */
+    @Deprecated
     public TaskHandler scheduleDelayedRepeatingTask(Task task, int delay, int period) {
         return addTask(task, delay, period, false);
     }
 
+    public TaskHandler scheduleDelayedRepeatingTask(PluginTask task, int delay, int period) {
+        return addTask(task, delay, period, false);
+    }
+
+    /**
+     * @deprecated Use {@link #scheduleDelayedRepeatingTask(PluginTask, int, int, boolean)}
+     */
+    @Deprecated
     public TaskHandler scheduleDelayedRepeatingTask(Task task, int delay, int period, boolean asynchronous) {
+        return addTask(task, delay, period, asynchronous);
+    }
+
+    public TaskHandler scheduleDelayedRepeatingTask(PluginTask task, int delay, int period, boolean asynchronous) {
         return addTask(task, delay, period, asynchronous);
     }
 
@@ -201,8 +249,6 @@ public class ServerScheduler {
         }
         for (Map.Entry<Integer, TaskHandler> entry : taskMap.entrySet()) {
             TaskHandler taskHandler = entry.getValue();
-            // TODO: Remove the "taskHandler.getPlugin() == null" check
-            // It is only there for backwards compatibility!
             if (taskHandler.getPlugin() == null || plugin.equals(taskHandler.getPlugin())) {
                 try {
                     taskHandler.cancel(); /* It will remove from task map automatic in next main heartbeat. */
