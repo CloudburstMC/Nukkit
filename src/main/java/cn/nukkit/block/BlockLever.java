@@ -10,6 +10,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.TransparentBlocksWhitelist;
 
 /**
  * @author Nukkit Project Team
@@ -93,7 +94,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
             int face = this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage();
             BlockFace blockFace = LeverOrientation.byMetadata(face).getFacing().getOpposite();
             Block side = this.getSide(blockFace);
-            if (!side.isSolid()) {
+            if (side.isTransparent() && !side.isSolid()) {
                 this.level.useBreakOn(this);
             }
         }
@@ -103,7 +104,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
     @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isNormalBlock() || target.getId() == SNOW_LAYER || target.isSolid()) {
+        if (target.isNormalBlock() || target.getId() == SNOW_LAYER || (!target.isTransparent() || TransparentBlocksWhitelist.isException(target.getId(), block, face, target))) {
             this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
             this.getLevel().setBlock(block, this, true, true);
             return true;

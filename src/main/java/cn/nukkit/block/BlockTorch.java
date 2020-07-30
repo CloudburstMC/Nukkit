@@ -13,6 +13,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.TransparentBlocksWhitelist;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -75,7 +76,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block below = this.down();
 
-        if (face != BlockFace.UP && !target.isTransparent()) {
+        if (face != BlockFace.UP && (!target.isTransparent() || TransparentBlocksWhitelist.isException(target.getId(), block, face, target))) {
             this.setBlockFace(face);
             this.getLevel().setBlock(block, this, true, true);
 
