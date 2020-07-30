@@ -18,6 +18,7 @@ import cn.nukkit.item.enchantment.trident.EnchantmentTridentChanneling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentImpaling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentLoyalty;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentRiptide;
+import cn.nukkit.math.NukkitMath;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -163,13 +164,7 @@ public abstract class Enchantment implements Cloneable {
             return this;
         }
 
-        if (level > this.getMaxLevel()) {
-            this.level = this.getMaxLevel();
-        } else if (level < this.getMinLevel()) {
-            this.level = this.getMinLevel();
-        } else {
-            this.level = level;
-        }
+        this.level = NukkitMath.clamp(level, this.getMinLevel(), this.getMaxLevel());
 
         return this;
     }

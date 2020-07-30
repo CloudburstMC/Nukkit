@@ -13,7 +13,6 @@ import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.scheduler.Task;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**

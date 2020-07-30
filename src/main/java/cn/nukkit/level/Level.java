@@ -1079,7 +1079,7 @@ public class Level implements ChunkManager, Metadatable {
 
         int chunksPerLoader = Math.min(200, Math.max(1, (int) (((double) (this.chunksPerTicks - this.loaders.size()) / this.loaders.size() + 0.5))));
         int randRange = 3 + chunksPerLoader / 30;
-        randRange = randRange > this.chunkTickRadius ? this.chunkTickRadius : randRange;
+        randRange = Math.min(randRange, this.chunkTickRadius);
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
         if (!this.loaders.isEmpty()) {
@@ -3175,7 +3175,7 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             if (toUnload != null) {
-                long[] arr = (long[]) toUnload.toLongArray();
+                long[] arr = toUnload.toLongArray();
                 for (long index : arr) {
                     int X = getHashX(index);
                     int Z = getHashZ(index);
