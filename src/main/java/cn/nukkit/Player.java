@@ -2289,7 +2289,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.dataPacket(dataPacket);
                     break;
                 case ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET:
-                    if(this.locallyInitialized){
+                    if (this.locallyInitialized) {
                         break;
                     }
                     this.locallyInitialized = true;
