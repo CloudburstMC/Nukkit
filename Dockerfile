@@ -2,33 +2,32 @@
 # See https://docs.docker.com/engine/userguide/eng-image/multistage-build/
 # Requires Docker v17.05
 
-# Use OpenJDK JDK image for intermiediate build
-FROM openjdk:8-jdk-slim AS build
+# Prepare the source
+FROM alpine/git:v2.26.2 AS prepare
 
-# Install packages required for build
-RUN apt-get -y update 
-RUN apt-get install -y build-essential
-RUN apt-get install -y git
-RUN mkdir -p /usr/share/man/man1
-RUN apt-get install -y maven
-
-# Build from source and create artifact
+# Copy the source
 WORKDIR /src
+COPY ./ /src
 
-COPY mvn* pom.xml /src/
-COPY src /src/src
-COPY .git /src/.git
-COPY .mvn /src/.mvn
-
+# Update the language submodule
 RUN git submodule update --init
+
+# Prepare to build the source
+FROM maven:3.6-jdk-8-alpine as build
+
+# Copy the source
+WORKDIR /src
+COPY --from=prepare /src /src
+
+# Build the source
 RUN mvn clean package
 
-# Use OpenJDK JRE image for runtime
+# Use OpenJDK JRE image to runtime
 FROM openjdk:8-jre-slim AS run
-LABEL maintainer="Micheal Waltz <dockerfiles@ecliptik.com>"
+LABEL maintainer="José Roberto de Araújo Júnior <joserobjr@powernukkit.org>"
 
 # Copy artifact from build image
-COPY --from=build /src/target/powernukkit-*.jar /app/nukkit.jar
+COPY --from=build /src/target/powernukkit-*-shaded.jar /app/powernukkit.jar
 
 # Create minecraft user
 RUN useradd --user-group \
@@ -37,21 +36,20 @@ RUN useradd --user-group \
             --shell /usr/sbin/nologin \
             minecraft
 
-# Ports
-EXPOSE 19132
+# Volumes
+VOLUME /data /home/minecraft
 
-RUN mkdir /data && mkdir /home/minecraft
-RUN chown -R minecraft:minecraft /app /data /home/minecraft
+# Ports
+EXPOSE 19132/udp
+
+# Make app owned by minecraft user
+RUN chown -R minecraft:minecraft /app
 
 # User and group to run as
 USER minecraft:minecraft
-
-# Volumes
-VOLUME /data /home/minecraft
 
 # Set runtime workdir
 WORKDIR /data
 
 # Run app
-ENTRYPOINT ["java"]
-CMD [ "-jar", "/app/powernukkit.jar" ]
+CMD [ "java", "-jar", "/app/powernukkit.jar" ]
