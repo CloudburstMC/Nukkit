@@ -10,7 +10,7 @@ WORKDIR /src
 COPY ./ /src
 
 # Update the language submodule
-RUN git submodule update --init
+RUN if [ -z "$(ls -A /src/src/main/resources/lang)" ]; then git submodule update --init; fi
 
 # Prepare to build the source
 FROM maven:3.6-jdk-8-alpine as build
