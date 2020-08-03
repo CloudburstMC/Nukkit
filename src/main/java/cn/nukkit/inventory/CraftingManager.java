@@ -226,7 +226,7 @@ public class CraftingManager {
         CraftingDataPacket pk = new CraftingDataPacket();
         pk.cleanRecipes = true;
 
-        /*for (Recipe recipe : this.getRecipes()) {
+        for (Recipe recipe : this.getRecipes()) {
             if (recipe instanceof ShapedRecipe) {
                 pk.addShapedRecipe((ShapedRecipe) recipe);
             } else if (recipe instanceof ShapelessRecipe) {
@@ -254,19 +254,19 @@ public class CraftingManager {
 
         for (CampfireRecipe recipe : campfireRecipes.values()) {
             pk.addCampfireRecipeRecipe(recipe);
-        }*/
+        }
 
         for (BrewingRecipe recipe : brewingRecipes.values()) {
             pk.addBrewingRecipe(recipe);
         }
 
-        /*for (ContainerRecipe recipe : containerRecipes.values()) {
+        for (ContainerRecipe recipe : containerRecipes.values()) {
             pk.addContainerRecipe(recipe);
         }
 
         for (StonecutterRecipe recipe : stonecutterRecipes.values()) {
             pk.addStonecutterRecipe(recipe);
-        }*/
+        }
 
         pk.encode();
 
