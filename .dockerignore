@@ -7,3 +7,5 @@ run
 logs
 .idea
 .github
+Dockerfile
+docker-compose.yml

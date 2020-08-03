@@ -36,14 +36,14 @@ RUN useradd --user-group \
             --shell /usr/sbin/nologin \
             minecraft
 
-# Volumes
-VOLUME /data /home/minecraft
-
 # Ports
 EXPOSE 19132/udp
 
 # Make app owned by minecraft user
-RUN chown -R minecraft:minecraft /app
+RUN mkdir /data && chown -R minecraft:minecraft /app /data
+
+# Volumes
+VOLUME /data /home/minecraft
 
 # User and group to run as
 USER minecraft:minecraft
