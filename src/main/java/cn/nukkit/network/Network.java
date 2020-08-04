@@ -3,7 +3,6 @@ package cn.nukkit.network;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.network.protocol.*;
@@ -66,7 +65,7 @@ public class Network {
         this.server = server;
     }
 
-    @PowerNukkitOnly @Since("1.3.0.0-PN")
+    @Since("1.3.0.0-PN")
     public static byte[] inflateRaw(byte[] data) throws IOException, DataFormatException {
         Inflater inflater = INFLATER_RAW.get();
         inflater.reset();
@@ -79,15 +78,14 @@ public class Network {
         while (!inflater.finished()) {
             int i = inflater.inflate(buf);
             if (i == 0) {
-                log.warn("Prevented an infinite loop trying to decompress data. Needs input: "+inflater.needsInput()+", Needs Dictionary: "+inflater.needsDictionary());
-                break;
+                throw new IOException("Could not decompress the data. Needs input: "+inflater.needsInput()+", Needs Dictionary: "+inflater.needsDictionary());
             }
             bos.write(buf, 0, i);
         }
         return bos.toByteArray();
     }
 
-    @PowerNukkitOnly @Since("1.3.0.0-PN")
+    @Since("1.3.0.0-PN")
     public static byte[] deflateRaw(byte[] data, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
         deflater.reset();

@@ -27,7 +27,7 @@ FROM openjdk:8-jre-slim AS run
 LABEL maintainer="José Roberto de Araújo Júnior <joserobjr@powernukkit.org>"
 
 # Copy artifact from build image
-COPY --from=build /src/target/powernukkit-*.jar /app/powernukkit.jar
+COPY --from=build /src/target/powernukkit-*-shaded.jar /app/powernukkit.jar
 
 # Create minecraft user
 RUN useradd --user-group \
