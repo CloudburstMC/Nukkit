@@ -86,8 +86,8 @@ import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -1786,7 +1786,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         this.checkTeleportPosition();
-        this.checkInteractNearby();
+        
+        if (currentTick % 10 == 0) {
+            this.checkInteractNearby();
+        }
 
         if (this.spawned && this.dummyBossBars.size() > 0 && currentTick % 100 == 0) {
             this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
@@ -2152,11 +2155,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (loginPacket.getProtocol() < ProtocolInfo.CURRENT_PROTOCOL) {
                             message = "disconnectionScreen.outdatedClient";
 
-                            this.sendPlayStatus(PlayStatusPacket.LOGIN_FAILED_CLIENT);
+                            this.sendPlayStatus(PlayStatusPacket.LOGIN_FAILED_CLIENT, true);
                         } else {
                             message = "disconnectionScreen.outdatedServer";
 
-                            this.sendPlayStatus(PlayStatusPacket.LOGIN_FAILED_SERVER);
+                            this.sendPlayStatus(PlayStatusPacket.LOGIN_FAILED_SERVER, true);
                         }
                         if (((LoginPacket) packet).protocol < 137) {
                             DisconnectPacket disconnectPacket = new DisconnectPacket();
@@ -2823,7 +2826,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             Server.broadcastPacket(this.getViewers().values(), entityEventPacket);
                             break;
                         case EntityEventPacket.ENCHANT:
-                            if (entityEventPacket.eid != this.id) {
+                            // TODO IMHO This packet should be ignored and make the server calculate the cost by itself
+                            // TODO Keeping the enchanting table work but this should be revisited later. PowerNukkit#232
+                            if (entityEventPacket.eid != this.id || craftingType == CRAFTING_ANVIL) {
                                 break;
                             }
 
@@ -3731,12 +3736,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             PlayerQuitEvent ev = null;
             if (this.getName() != null && this.getName().length() > 0) {
                 this.server.getPluginManager().callEvent(ev = new PlayerQuitEvent(this, message, true, reason));
-                if (this.loggedIn && ev.getAutoSave()) {
-                    this.save();
-                }
                 if (this.fishing != null) {
                     this.stopFishing(false);
                 }
+            }
+            
+            // Close the temporary windows first, so they have chance to change all inventories before being disposed 
+            this.removeAllWindows(false);
+            resetCraftingGridType();
+
+            if (ev != null && this.loggedIn && ev.getAutoSave()) {
+                this.save();
             }
 
             for (Player player : new ArrayList<>(this.server.getOnlinePlayers().values())) {
@@ -4189,9 +4199,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.sendExperienceLevel(level);
         this.sendExperience(exp);
-        if (playLevelUpSound && levelBefore / 5 != level / 5 && this.lastPlayerdLevelUpSoundTime < this.age - 100) {
+        if (playLevelUpSound && levelBefore < level && levelBefore / 5 != level / 5 && this.lastPlayerdLevelUpSoundTime < this.age - 100) {
             this.lastPlayerdLevelUpSoundTime = this.age;
-            this.level.addSound(this, Sound.RANDOM_LEVELUP, 1F, 1F, this);
+            this.level.addLevelSoundEvent(
+                    this, 
+                    LevelSoundEventPacketV2.SOUND_LEVELUP,
+                    Math.min(7, level / 5) << 28,
+                    "",
+                    false, false
+            );
         }
     }
 

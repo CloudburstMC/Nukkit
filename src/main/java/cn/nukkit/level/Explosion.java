@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.blockentity.BlockEntityShulkerBox;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -14,6 +14,7 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityExplodeEvent;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.particle.HugeExplodeSeedParticle;
@@ -96,10 +97,15 @@ public class Explosion {
                             Block block = this.level.getBlock(vBlock);
 
                             if (block.getId() != 0) {
-                                blastForce -= (block.getResistance() / 5 + 0.3d) * this.stepLen;
+                                Block layer1 = block.getLevelBlockAtLayer(1);
+                                double resistance = Math.max(block.getResistance(), layer1.getResistance());
+                                blastForce -= (resistance / 5 + 0.3d) * this.stepLen;
                                 if (blastForce > 0) {
                                     if (!this.affectedBlocks.contains(block)) {
                                         this.affectedBlocks.add(block);
+                                        if (layer1.getId() != BlockID.AIR) {
+                                            this.affectedBlocks.add(layer1);
+                                        }
                                     }
                                 }
                             }
@@ -169,19 +175,22 @@ public class Explosion {
         }
 
         ItemBlock air = new ItemBlock(Block.get(BlockID.AIR));
+        BlockEntity container;
 
         //Iterator iter = this.affectedBlocks.entrySet().iterator();
         for (Block block : this.affectedBlocks) {
             //Block block = (Block) ((HashMap.Entry) iter.next()).getValue();
             if (block.getId() == Block.TNT) {
                 ((BlockTNT) block).prime(new NukkitRandom().nextRange(10, 30), this.what instanceof Entity ? (Entity) this.what : null);
-            } else if (block.getId() == Block.CHEST || block.getId() == Block.TRAPPED_CHEST) {
-                BlockEntity chest = block.getLevel().getBlockEntity(block);
-                if (chest != null) {
-                    for (Item drop : ((BlockEntityChest) chest).getInventory().getContents().values()) {
+            } else if ((container = block.getLevel().getBlockEntity(block)) instanceof InventoryHolder) {
+                if (container instanceof BlockEntityShulkerBox) {
+                    this.level.dropItem(block.add(0.5, 0.5, 0.5), block.toItem());
+                    ((InventoryHolder) container).getInventory().clearAll();
+                } else {
+                    for (Item drop : ((InventoryHolder) container).getInventory().getContents().values()) {
                         this.level.dropItem(block.add(0.5, 0.5, 0.5), drop);
                     }
-                    ((BlockEntityChest) chest).getInventory().clearAll();
+                    ((InventoryHolder) container).getInventory().clearAll();
                 }
             } else if (Math.random() * 100 < yield) {
                 for (Item drop : block.getDrops(air)) {
@@ -189,7 +198,11 @@ public class Explosion {
                 }
             }
 
-            this.level.setBlockAt((int) block.x, (int) block.y, (int) block.z, BlockID.AIR);
+            this.level.setBlockAtLayer((int) block.x, (int) block.y, (int) block.z, block.layer, BlockID.AIR);
+
+            if (block.layer != 0) {
+                continue;
+            }
 
             Vector3 pos = new Vector3(block.x, block.y, block.z);
 
@@ -202,8 +215,16 @@ public class Explosion {
                     if (!ev.isCancelled()) {
                         ev.getBlock().onUpdate(Level.BLOCK_UPDATE_NORMAL);
                     }
+                    Block layer1 = this.level.getBlock(sideBlock, 1);
+                    if (layer1.getId() != BlockID.AIR) {
+                        ev = new BlockUpdateEvent(layer1);
+                        this.level.getServer().getPluginManager().callEvent(ev);
+                        if (!ev.isCancelled()) {
+                            ev.getBlock().onUpdate(Level.BLOCK_UPDATE_NORMAL);
+                        }
+                    }
                     updateBlocks.add(index);
-                }
+                }   
             }
             send.add(new Vector3(block.x - source.x, block.y - source.y, block.z - source.z));
         }

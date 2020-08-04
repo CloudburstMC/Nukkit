@@ -9,6 +9,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
@@ -213,6 +214,14 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                     this.level.setBlock(this, 0, this, false, false);
                 } else if (layer0.getWaterloggingLevel() <= 0 || layer0.getWaterloggingLevel() == 1 && getDamage() > 0) {
                     this.level.setBlock(this, 1, Block.get(Block.AIR), true, true);
+                    // Special check for sugar canes
+                    Block up = up();
+                    for (BlockFace diagonalFace : BlockFace.Plane.HORIZONTAL) {
+                        Block diagonal = up.getSide(diagonalFace);
+                        if (diagonal.getId() == BlockID.SUGARCANE_BLOCK) {
+                            diagonal.onUpdate(Level.BLOCK_UPDATE_SCHEDULED);
+                        }
+                    }
                 }
             }
             this.level.scheduleUpdate(this, this.tickRate());
@@ -263,6 +272,16 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                         this.level.setBlock(this, layer, event.getTo(), true, true);
                         if (!decayed) {
                             this.level.scheduleUpdate(this, this.tickRate());
+                        }
+                        // Special check for sugar canes
+                        if (this instanceof BlockWater && !(event.getTo() instanceof BlockWater)) {
+                            Block up = up();
+                            for (BlockFace diagonalFace : BlockFace.Plane.HORIZONTAL) {
+                                Block diagonal = up.getSide(diagonalFace);
+                                if (diagonal.getId() == BlockID.SUGARCANE_BLOCK) {
+                                    diagonal.onUpdate(Level.BLOCK_UPDATE_SCHEDULED);
+                                }
+                            }
                         }
                     }
                 }

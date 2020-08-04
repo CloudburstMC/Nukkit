@@ -7,8 +7,11 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Hash;
+import it.unimi.dsi.fastutil.longs.Long2LongMap;
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -17,6 +20,9 @@ import java.util.concurrent.ThreadLocalRandom;
  * Nukkit Project
  */
 public class BlockLeaves extends BlockTransparentMeta {
+    private static final BlockFace[] VISIT_ORDER = new BlockFace[]{
+            BlockFace.NORTH, BlockFace.SOUTH, BlockFace.EAST, BlockFace.WEST, BlockFace.DOWN, BlockFace.UP
+    };
     public static final int OAK = 0;
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
@@ -112,35 +118,63 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM && !isPersistent() && !isCheckDecay()) {
-            setCheckDecay(true);
-            getLevel().setBlock(this, this, false, false);
-        } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
-            setDamage(getDamage() & 0x03);
-
-            LeavesDecayEvent ev = new LeavesDecayEvent(this);
-
-            Server.getInstance().getPluginManager().callEvent(ev);
-            if (ev.isCancelled() || findLog(this, 7)) {
-                getLevel().setBlock(this, this, false, false);
-            } else {
-                getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+        if (type == Level.BLOCK_UPDATE_RANDOM) {
+            if (isCheckDecay()) {
+                if (isPersistent() || findLog(this, 7, null)) {
+                    setCheckDecay(false);
+                    getLevel().setBlock(this, this, false, false);
+                } else {
+                    LeavesDecayEvent ev = new LeavesDecayEvent(this);
+                    Server.getInstance().getPluginManager().callEvent(ev);
+                    if (!ev.isCancelled()) {
+                        getLevel().useBreakOn(this);
+                    }
+                }
+                return type;
             }
+        } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_SCHEDULED) {
+            if (!isCheckDecay()) {
+                setCheckDecay(true);
+                getLevel().setBlock(this, this, false, false);
+            }
+            
+            // Slowly propagates the need to update instead of peaking down the TPS for huge trees
+            for (BlockFace side : BlockFace.values()) {
+                Block other = getSide(side);
+                if (other instanceof BlockLeaves) {
+                    BlockLeaves otherLeave = (BlockLeaves) other;
+                    if (!otherLeave.isCheckDecay()) {
+                        getLevel().scheduleUpdate(otherLeave, 2);
+                    }
+                }
+            }
+            return type;
         }
-        return 0;
+        return type;
     }
 
-    private Boolean findLog(Block pos, Integer distance) {
-        Block[] woodBlocks = this.getLevel().getCollisionBlocks(
-                new SimpleAxisAlignedBB(
-                        pos.getX() - distance, pos.getY() - distance, pos.getZ() - distance,
-                        pos.getX() + distance, pos.getY() + distance, pos.getZ() + distance
-                ), true, true,
-                block -> block.getId() == WOOD || block.getId() == WOOD2
-        );
-        
-        return woodBlocks.length > 0;
+    private Boolean findLog(Block current, int distance, Long2LongMap visited) {
+        if (visited == null) {
+            visited = new Long2LongOpenHashMap();
+            visited.defaultReturnValue(-1);
+        }
+        if (current instanceof BlockWood) {
+            return true;
+        }
+        if (distance == 0 || !(current instanceof BlockLeaves)) {
+            return false;
+        }
+        long hash = hashBlock(current);
+        if (visited.get(hash) >= distance) {
+            return false;
+        }
+        visited.put(hash, distance);
+        for (BlockFace face : VISIT_ORDER) {
+            if(findLog(current.getSide(face), distance - 1, visited)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean isCheckDecay() {
@@ -199,5 +233,13 @@ public class BlockLeaves extends BlockTransparentMeta {
     @Override
     public boolean sticksToPiston() {
         return false;
+    }
+
+    /**
+     * @deprecated Move to {@link Hash} and make it public in 1.2.1.0-PN
+     */
+    @Deprecated
+    private static long hashBlock(Vector3 blockPos) {
+        return Hash.hashBlock(blockPos.getFloorX(), blockPos.getFloorY(), blockPos.getFloorZ());
     }
 }

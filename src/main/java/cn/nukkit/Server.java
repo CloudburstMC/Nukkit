@@ -573,7 +573,7 @@ public class Server {
 
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
-        if (Nukkit.DEBUG < 2) {
+        if (Nukkit.DEBUG < 2 && !Boolean.parseBoolean(System.getProperty("disableWatchdog", "false"))) {
             this.watchdog = new Watchdog(this, 60000);
             this.watchdog.start();
         }
@@ -709,7 +709,7 @@ public class Server {
         } else {
             try {
                 byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets);
+                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets, forceSync);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -718,12 +718,29 @@ public class Server {
     }
 
     public void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets) {
+        broadcastPacketsCallback(data, targets, false);
+    }
+
+    /**
+     * @since 1.2.0.2-PN
+     * @apiNote Only in PowerNukkit
+     */
+    private void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets, boolean immediate) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
 
-        for (InetSocketAddress i : targets) {
-            if (this.players.containsKey(i)) {
-                this.players.get(i).dataPacket(pk);
+        // The duplicated for is a micro-optimization
+        if (immediate) {
+            for (InetSocketAddress i : targets) {
+                if (this.players.containsKey(i)) {
+                    this.players.get(i).directDataPacket(pk);
+                }
+            }
+        } else {
+            for (InetSocketAddress i : targets) {
+                if (this.players.containsKey(i)) {
+                    this.players.get(i).dataPacket(pk);
+                }
             }
         }
     }

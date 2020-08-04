@@ -82,7 +82,7 @@ public class XpCommand extends Command {
             if (newLevel < 0) {
                 player.setExperience(0, 0);
             } else {
-                player.setExperience(player.getExperience(), newLevel);
+                player.setExperience(player.getExperience(), newLevel, true);
             }
             if (amount > 0) {
                 sender.sendMessage(new TranslationContainer("commands.xp.success.levels", String.valueOf(amount), player.getName()));
