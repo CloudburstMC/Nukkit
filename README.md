@@ -46,9 +46,11 @@ Build JAR file
 
 The compiled JAR can be found in the `target/` directory.
 
+Use the JAR that ends with `-shaded` to run your server.
+
 Running
 -------------
-Simply run `java -jar powernukkit-<version>.jar` **in an empty folder**.
+Simply run `java -jar powernukkit-<version>-shaded.jar` **in an empty folder**.
 
 Plugin API
 -------------
