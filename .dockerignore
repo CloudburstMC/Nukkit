@@ -9,3 +9,4 @@ logs
 .github
 Dockerfile
 docker-compose.yml
+target

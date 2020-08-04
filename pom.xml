@@ -308,6 +308,7 @@
                 <version>3.2.0</version>
                 <configuration> <!-- add this to disable checking -->
                     <source>8</source>
+                    <doclint>none</doclint>
                 </configuration>
                 <executions>
                     <execution>
