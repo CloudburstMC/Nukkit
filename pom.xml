@@ -14,7 +14,59 @@
     Upstream is the NukkitX major version
     PN is a indicator that software is running PowerNukkit, it must be present both in releases and snapshot versions
     -->
-    <version>1.3.1.1-PN</version>
+    <version>1.3.1.1-PN-CUSTOM</version>
+
+    <inceptionYear>2020</inceptionYear>
+    <organization>
+        <name>PowerNukkit</name>
+        <url>https://powernukkit.org</url>
+    </organization>
+    
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/PowerNukkit/PowerNukkit-Natives/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/PowerNukkit/PowerNukkit.git</connection>
+        <developerConnection>scm:git:ssh://github.com:PowerNukkit/PowerNukkit.git</developerConnection>
+        <url>https://github.com/PowerNukkit/PowerNukkit</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>PowerNukkit</id>
+            <url>https://powernukkit.org</url>
+            <organization>PowerNukkit</organization>
+            <organizationUrl>https://github.com/PowerNukkit</organizationUrl>
+        </developer>
+        <developer>
+            <id>CloudburstMC</id>
+            <url>https://cloudburstmc.org</url>
+            <organization>CloudburstMC</organization>
+            <organizationUrl>https://github.com/CloudburstMC</organizationUrl>
+        </developer>
+        <developer>
+            <id>Nukkit</id>
+            <organization>Nukkit</organization>
+            <organizationUrl>https://github.com/Nukkit</organizationUrl>
+        </developer>
+    </developers>
+    
+    <contributors>
+        <contributor>
+            <name>PowerNukkit contributors</name>
+            <url>https://github.com/PowerNukkit/PowerNukkit/graphs/contributors</url>
+        </contributor>
+    </contributors>
 
     <inceptionYear>2020</inceptionYear>
     <organization>
