@@ -1,5 +1,7 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.Since;
+
 public enum ParticleEffect {
     ARROWSPELL("minecraft:arrow_spell_emitter"),
     BALLOON_GAS("minecraft:balloon_gas_particle"),
@@ -12,6 +14,7 @@ public enum ParticleEffect {
     BLEACH("minecraft:bleach"),
     BLOCK_DESTRUCT("minecraft:block_destruct"),
     BLOCK_SLIDE("minecraft:block_slide"),
+    @Since("1.3.0.0-PN") BLUE_FLAME("minecraft:blue_flame_particle"),
     BREAKING_ITEM_ICON("minecraft:breaking_item_icon"),
     BREAKING_ITEM_TERRAIN("minecraft:breaking_item_terrain"),
     BUBBLE_COLUMN_BUBBLE("minecraft:bubble_column_bubble"),
@@ -28,6 +31,7 @@ public enum ParticleEffect {
     CONDUIT_ABSORB("minecraft:conduit_absorb_particle"),
     CONDUIT_ATTACK("minecraft:conduit_attack_emitter"),
     CRITICAL_HIT("minecraft:critical_hit_emitter"),
+    @Since("1.3.0.0-PN") CROP_GROWTH("minecraft:crop_growth_emitter"),
     DOLPHIN_MOVE("minecraft:dolphin_move_particle"),
     DRAGON_BREATH_FIRE("minecraft:dragon_breath_fire"),
     DRAGON_BREATH_LINGERING("minecraft:dragon_breath_lingering"),
@@ -85,10 +89,12 @@ public enum ParticleEffect {
     NECTAR_DRIP("minecraft:nectar_drip_particle"),
     NOTE("minecraft:note_particle"),
     OBSIDIAN_GLOW_DUST("minecraft:obsidian_glow_dust_particle"),
+    @Since("1.3.0.0-PN") OBSIDIAN_TEAR("minecraft:obsidian_tear_particle"),
     PHANTOM_TRAIL("minecraft:phantom_trail_particle"),
     PORTAL_DIRECTIONAL("minecraft:portal_directional"),
     PORTAL_EAST_WEST("minecraft:portal_east_west"),
     PORTAL_NORTH_SOUTH("minecraft:portal_north_south"),
+    @Since("1.3.0.0-PN") PORTAL_REVERSE("minecraft:portal_reverse_particle"),
     RAIN_SPLASH("minecraft:rain_splash_particle"),
     REDSTONE_ORE_DUST("minecraft:redstone_ore_dust_particle"),
     REDSTONE_REPEATER_DUST("minecraft:redstone_repeater_dust_particle"),
@@ -97,6 +103,7 @@ public enum ParticleEffect {
     RISING_BORDER_DUST("minecraft:rising_border_dust_particle"),
     SHULKER_BULLET("minecraft:shulker_bullet"),
     SILVERFISH_GRIEF("minecraft:silverfish_grief_emitter"),
+    @Since("1.3.0.0-PN") SOUL("minecraft:soul_particle"),
     SPARKLER("minecraft:sparkler_emitter"),
     SPLASHPOTIONSPELL("minecraft:splash_spell_emitter"),
     SPONGE_ABSORB_BUBBLE("minecraft:sponge_absorb_water_particle"),

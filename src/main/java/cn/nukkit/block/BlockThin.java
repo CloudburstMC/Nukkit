@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.LevelException;
@@ -7,8 +8,10 @@ import cn.nukkit.utils.LevelException;
 /**
  * Created on 2015/12/6 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
+ * @apiNote Implements BlockConnectable only in PowerNukkit
  */
-public abstract class BlockThin extends BlockTransparent {
+@PowerNukkitDifference(info = "Made it implement BlockConnectable")
+public abstract class BlockThin extends BlockTransparent implements BlockConnectable {
 
     protected BlockThin() {
     }
@@ -49,8 +52,17 @@ public abstract class BlockThin extends BlockTransparent {
         );
     }
 
+    @PowerNukkitDifference(info = "Fixed connection logic for BE 1.16.0", since = "1.3.0.0-PN")
+    @Override
     public boolean canConnect(Block block) {
-        return block.isSolid() || block.getId() == this.getId() || block.getId() == GLASS_PANE || block.getId() == GLASS;
+        switch (block.getId()) {
+            case GLASS_PANE:
+            case STAINED_GLASS_PANE:
+            case IRON_BARS:
+            case COBBLE_WALL:
+                return true;
+            default:
+                return block.isSolid();
+        }
     }
-
 }

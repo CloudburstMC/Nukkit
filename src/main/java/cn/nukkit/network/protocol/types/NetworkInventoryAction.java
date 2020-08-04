@@ -1,11 +1,8 @@
 package cn.nukkit.network.protocol.types;
 
 import cn.nukkit.Player;
-import cn.nukkit.inventory.AnvilInventory;
-import cn.nukkit.inventory.BeaconInventory;
-import cn.nukkit.inventory.EnchantInventory;
-import cn.nukkit.inventory.GrindstoneInventory;
-import cn.nukkit.inventory.Inventory;
+import cn.nukkit.api.Since;
+import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
@@ -69,6 +66,8 @@ public class NetworkInventoryAction {
     public int inventorySlot;
     public Item oldItem;
     public Item newItem;
+    @Since("1.3.0.0-PN")
+    public int stackNetworkId;
 
     public NetworkInventoryAction read(InventoryTransactionPacket packet) {
         this.sourceType = (int) packet.getUnsignedVarInt();
@@ -103,6 +102,9 @@ public class NetworkInventoryAction {
         this.oldItem = packet.getSlot();
         this.newItem = packet.getSlot();
 
+        if (packet.hasNetworkIds) {
+            this.stackNetworkId = packet.getVarInt();
+        }
         return this;
     }
 
@@ -127,6 +129,10 @@ public class NetworkInventoryAction {
         packet.putUnsignedVarInt(this.inventorySlot);
         packet.putSlot(this.oldItem);
         packet.putSlot(this.newItem);
+
+        if (packet.hasNetworkIds) {
+            packet.putVarInt(this.stackNetworkId);
+        }
     }
 
     public InventoryAction createInventoryAction(Player player) {

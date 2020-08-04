@@ -1,6 +1,9 @@
 package test;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockWall;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -70,7 +73,7 @@ public class OverridesUpdater {
             override.putCompound("block", info.getKey().copy());
             override.putList((ListTag<? extends Tag>) info.getOverride().copy());
             
-            switch (stateName) {
+            /*switch (stateName) {
                 case "minecraft:light_block;block_light_level=14": 
                     break;
                 case "minecraft:wood;wood_type=acacia;stripped_bit=0;pillar_axis=y":
@@ -80,9 +83,48 @@ public class OverridesUpdater {
                 case "minecraft:wood;wood_type=oak;stripped_bit=0;pillar_axis=y":
                 case "minecraft:wood;wood_type=spruce;stripped_bit=0;pillar_axis=y":
                     continue;
-            }
+            }*/
             
             newOverrides.add(override);
+        }
+
+        for (CompoundTag tag : originalTags.values()) {
+            String name = tag.getCompound("block").getString("name");
+            CompoundTag state = tag.getCompound("block").getCompound("states");
+            
+            if (name.equals("minecraft:cobblestone_wall")) {
+                BlockWall wall = new BlockWall(0);
+                boolean post = state.getBoolean("wall_post_bit");
+                String wallBlockType = state.getString("wall_block_type").toUpperCase();
+                if ("END_BRICK".equals(wallBlockType)) {
+                    wallBlockType = "END_STONE_BRICK";
+                }
+                BlockWall.WallType wallType = BlockWall.WallType.valueOf(wallBlockType);
+                wall.setWallType(wallType);
+                for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
+                    String wallConnectionTypeStr = state.getString("wall_connection_type_"+blockFace.name().toLowerCase());
+                    BlockWall.WallConnectionType wallConnectionType = BlockWall.WallConnectionType.valueOf(wallConnectionTypeStr.toUpperCase());
+                    wall.setConnection(blockFace, wallConnectionType);
+                }
+                wall.setWallPost(post);
+
+                CompoundTag override = new CompoundTag();
+                override.putCompound("block", tag.getCompound("block").remove("version"));
+                override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", wall.getId()).putInt("val", wall.getDamage())));
+                newOverrides.add(override);
+            }
+
+            if (name.equals("minecraft:melon_stem") || name.equals("minecraft:pumpkin_stem")) {
+                int growth = state.getInt("growth");
+                int facingDirection = state.getInt("facing_direction");
+                int meta = (facingDirection << 3) | growth;
+                int id = name.equals("minecraft:melon_stem")? BlockID.MELON_STEM : BlockID.PUMPKIN_STEM;
+                
+                CompoundTag override = new CompoundTag();
+                override.putCompound("block", tag.getCompound("block").remove("version"));
+                override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", id).putShort("val", meta)));
+                newOverrides.add(override);
+            }
         }
         
         byte[] bytes = NBTIO.write(new CompoundTag().putList(newOverrides));

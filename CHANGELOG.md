@@ -6,19 +6,85 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.3.0.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
+## [Unreleased 1.3.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/13?closed=1))
 Click the link above to see the future.
 
-### Breaking change
+## [1.3.0.1-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/14?closed=1))
+Improves plugin compatibility and downgrade the RakNet lib to solve a memory leak
+
+### Fixes
+- [#320] Multiple output crafting, cake for example
+- [#323] Compatibility issue with the regular version of GAC
+
+### Changed
+- [#319] The RakNet library were downgraded to 1.6.15 due to a potential memory leak issue
+
+## [1.3.0.0-PN] - 2020-07-01 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
+Added support for Bedrock Edition 1.16.0 and 1.16.1
+
+### Breaking change!
+***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!*** 
+
 The following breaking change will be pulled in `1.3.0.0-PN`
 - [8a09f93](https://github.com/GameModsBR/PowerNukkit/commit/8a09f933f83c9a52531ff8a184a58c6d733c9174) Quick craft implementation. ([NukkitX#1473](https://github.com/NukkitX/Nukkit/pull/1473)) Jedrzej* 05/06/2020
 
-### Planned:
-- Add support to the new 1.16 blocks, items, biomes and entities (without AI)
-- Inherit protocol support from NukkitX
+### Binary incompatibility!
+- [#293] A few `Entity` data constant values were changed, plugins which uses them might need to be recompiled, no code change required
+
+### Save format changed!
+The save format has been changed to accommodate very high block data values. **Make a world backup before updating!**
+
+### Incomplete changelog warning!
+Due to the high amount of changes, and the urgency of this update, this changelog file will be released with outdated information,
+please check the current changelog file in the [updated changelog] online for further details about this update.
+
+### Disabled features warning!
+* Enchanting table GUI has been temporarily disabled due to an incompatible change to the Bedrock protocol,
+it's planned to be fixed on 1.3.1.0-PN
+* End portal formation has been disabled due to reported crashes, it's planned to be reviewed on 1.3.1.0-PN
+
+### Experimental warning!
+This is the first release of a huge set of changes to accommodate the new Bedrock Edition 1.16.0/1.16.1 release,
+please take extra cautions with this version, make constant backups and report any issues you find. 
+
+### Deprecation warnings!
+- [#293] Many `Entity` constants are deprecated and might be removed on `1.4.0.0-PN`
+- [#293] `Entity.DATA_FLAG_TRANSITION_SITTING` and `DATA_FLAG_TRANSITION_SETTING` only one of them is correct, the incorrect will be removed
+- [#293] `Network.inflate_raw` and `deflate_raw` does not follow the correct naming convention and will be removed. Use `inflateRaw` and `deflateRaw` instead. 
+- [#293] `HurtArmorPacket.health` was renamed to `damage` and will be removed on `1.4.0.0-PN`. A backward compatibility code has been added.
+- [#293] `SetSpawnPositionPacket.spawnForce` is now unused and will be removed on `1.4.0.0-PN`
+- [#293] `TextPacket.TYPE_JSON` was renamed to `TYPE_OBJECT` and will be removed on `1.4.0.0-PN`
+- [#293] `riderInitiated` argument was added to the `EntityLink` constructor. The old constructor will be removed on `1.4.0.0-PN`
+
+### Fixes
+- [#293] Spectator colliding with vehicles
+- [#293] Ice melting into water in the Nether
+- [#293] `Player.removeWindow` was able to remove permanent windows
+
+### Added
+- [#293] End portals can now be formed using Eye of Ender
+- [#293] Setting to make the server ignore specific packets
+- [#293] New compression/decompression methods
+- [#293] Trace logging to outbound packets when trace is enabled
+- [#293] The server now logs a warning when a packet violation warning is correctly received
+- [#293] 12 new packets, please see the pull request file changes for details
+- [#293] Many new entity data constants, please see the `Entity.java` file in the PR for details
+ 
+### Changed
+- [#293] Thorns can now be applied to any armor while enchanting
+- [#293] The server now requires the clients to playing on Bedrock Edition 1.16.0
+- [#293] Updated RakNet to `1.6.18`
+- [#293] RakNet protocol version changed from `9` to `10`
+- [#293] 10 packets, please see the pull request file changes for details
+- [#293] The server have more control over the player UI now
+- [#293] New entity data constants
+- [#293] `FakeBlockUIComponent` now fires `InventoryCloseEvent` when the inventory is closed
+- [#293] The `runtime_block_states.dat`, `recipes.json`, `entity_identifiers.dat` and `biome_definitions.dat` files have been updated
+- [#293] Grindstone now clears only the enchantments and sets the repair cost to `0`, it used to clear all NBT tags
+
 
 ## [1.2.1.0-PN] - 2020-06-07 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
-Click the link above to see the future.
+Adds new methods to be used by plugins and fixes many issues. 
 
 ### Fixes
 - [#224] Enchantment compatibility rules when merging enchanted items in an anvil
@@ -54,9 +120,9 @@ Click the link above to see the future.
 ### Changed
 - [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
 - [#261] Kicked players can now view the kick reason on kick.
-- [#285] Limit the maximum size of BookEditPacket's text to 256, ignoring the packet if it exceeds the limit
+- [#285] Limit the maximum size of `BookEditPacket`'s text to 256, ignoring the packet if it exceeds the limit
 - [#285] Ender pearls will now be unable to teleport players across different dimensions
-- [#285] ShortTag.load(NBTInputStream) now reads a signed short. Used to read an unsigned short.
+- [#285] `ShortTag.load(NBTInputStream)` now reads a signed short. Used to read an unsigned short.
 
 ## [1.2.0.2-PN] - 2020-05-18 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/10?closed=1))
 Contains several fixes, including issues which cause item losses and performance issues
@@ -258,9 +324,12 @@ Fixes several anvil issues.
     - Loom
     - Bamboo
 
-[updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/master/CHANGELOG.md
+[updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/bleeding/CHANGELOG.md
 
-[Unreleased 1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...master
+[Unreleased 1.3.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
+[Unreleased 1.3.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.3.0.0-PN...bleeding
+[1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.1-PN
+[1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...v1.3.0.0-PN
 [1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
 [1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
@@ -342,3 +411,6 @@ Fixes several anvil issues.
 [#279]: https://github.com/GameModsBR/PowerNukkit/pull/279
 [#281]: https://github.com/GameModsBR/PowerNukkit/pull/281
 [#285]: https://github.com/GameModsBR/PowerNukkit/pull/285
+[#293]: https://github.com/GameModsBR/PowerNukkit/pull/293
+[#320]: https://github.com/GameModsBR/PowerNukkit/pull/320
+[#323]: https://github.com/GameModsBR/PowerNukkit/issues/323

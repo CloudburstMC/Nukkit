@@ -11,10 +11,7 @@ import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.network.protocol.InventoryContentPacket;
-import cn.nukkit.network.protocol.InventorySlotPacket;
-import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
-import cn.nukkit.network.protocol.MobEquipmentPacket;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.ContainerIds;
 
 import java.util.Collection;
@@ -485,11 +482,11 @@ public class PlayerInventory extends BaseInventory {
         }
         Player p = (Player) this.getHolder();
 
-        InventoryContentPacket pk = new InventoryContentPacket();
-        pk.inventoryId = ContainerIds.CREATIVE;
+        //InventoryContentPacket pk = new InventoryContentPacket();
+        CreativeContentPacket pk = new CreativeContentPacket();
 
         if (!p.isSpectator()) { //fill it for all gamemodes except spectator
-            pk.slots = Item.getCreativeItems().toArray(new Item[0]);
+            pk.entries = Item.getCreativeItems().toArray(new Item[0]);
         }
 
         p.dataPacket(pk);
@@ -498,5 +495,31 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public EntityHuman getHolder() {
         return (EntityHuman) super.getHolder();
+    }
+
+    @Override
+    public void onOpen(Player who) {
+        super.onOpen(who);
+        if (who.spawned) {
+            ContainerOpenPacket pk = new ContainerOpenPacket();
+            pk.windowId = who.getWindowId(this);
+            pk.type = this.getType().getNetworkType();
+            pk.x = who.getFloorX();
+            pk.y = who.getFloorY();
+            pk.z = who.getFloorZ();
+            pk.entityId = who.getId();
+            who.dataPacket(pk);
+        }
+    }
+
+    @Override
+    public void onClose(Player who) {
+        ContainerClosePacket pk = new ContainerClosePacket();
+        pk.windowId = who.getWindowId(this);
+        who.dataPacket(pk);
+        // player can never stop viewing their own inventory
+        if (who != holder) {
+            super.onClose(who);
+        }
     }
 }

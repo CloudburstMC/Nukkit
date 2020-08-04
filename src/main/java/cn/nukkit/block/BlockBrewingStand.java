@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.inventory.ContainerInventory;
@@ -67,9 +68,11 @@ public class BlockBrewingStand extends BlockSolidMeta {
         return 1;
     }
 
+    @PowerNukkitDifference(info = "Made possible to place on walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!block.down().isTransparent()) {
+        Block down = block.down();
+        if (!down.isTransparent() || down.getId() == COBBLE_WALL) {
             getLevel().setBlock(block, this, true, true);
 
             CompoundTag nbt = new CompoundTag()

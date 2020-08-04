@@ -45,17 +45,20 @@ public class SimpleBlocksReader {
             }
         }
 
-        try(FileWriter fw = new FileWriter("block-states.ini"); BufferedWriter buffered = new BufferedWriter(fw)) {
+        try(FileWriter iniFW = new FileWriter("block-states.ini"); BufferedWriter iniBuff = new BufferedWriter(iniFW);
+            FileWriter txtFW = new FileWriter("simple-blocks-nukkit.txt"); BufferedWriter txtBuff = new BufferedWriter(txtFW)) {
             for (Map.Entry<String, SortedMap<String, SortedSet<String>>> topLevelEntry : states.entrySet()) {
-                buffered.write("["+topLevelEntry.getKey()+"]");
-                buffered.newLine();
+                iniBuff.write("["+topLevelEntry.getKey()+"]");
+                txtBuff.write(topLevelEntry.getKey());
+                txtBuff.newLine();
+                iniBuff.newLine();
                 for (Map.Entry<String, SortedSet<String>> propertyEntry : topLevelEntry.getValue().entrySet()) {
-                    buffered.write(propertyEntry.getKey());
-                    buffered.write('=');
-                    buffered.write(String.join(",", propertyEntry.getValue()));
-                    buffered.newLine();
+                    iniBuff.write(propertyEntry.getKey());
+                    iniBuff.write('=');
+                    iniBuff.write(String.join(",", propertyEntry.getValue()));
+                    iniBuff.newLine();
                 }
-                buffered.newLine();
+                iniBuff.newLine();
             }
         }
     }

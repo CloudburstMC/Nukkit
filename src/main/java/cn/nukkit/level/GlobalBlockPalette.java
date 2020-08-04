@@ -1,11 +1,18 @@
 package cn.nukkit.level;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockHyperMeta;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import it.unimi.dsi.fastutil.ints.*;
+import it.unimi.dsi.fastutil.longs.Long2IntMap;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2LongMap;
+import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -14,9 +21,12 @@ import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Log4j2
 public class GlobalBlockPalette {
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
+    private static final Long2IntMap hyperToRuntimeId = new Long2IntOpenHashMap();
+    private static final Long2LongMap runtimeIdToHyper = new Long2LongOpenHashMap();
     private static final Int2ObjectMap<String> legacyIdToString = new Int2ObjectOpenHashMap<>();
     private static final Map<String, Integer> stringToLegacyId = new HashMap<>();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
@@ -26,6 +36,8 @@ public class GlobalBlockPalette {
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
         runtimeIdToLegacy.defaultReturnValue(-1);
+        hyperToRuntimeId.defaultReturnValue(-1);
+        runtimeIdToHyper.defaultReturnValue(-1);
 
         Map<CompoundTag, List<CompoundTag>> metaOverrides = new LinkedHashMap<>();
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states_overrides.dat")) {
@@ -78,14 +90,15 @@ public class GlobalBlockPalette {
 
             // Resolve to first legacy id
             CompoundTag firstState = legacyStates.get(0);
-            int id = firstState.getInt("id");
-            runtimeIdToLegacy.put(runtimeId, id << 6 | firstState.getShort("val"));
-            stringToLegacyId.put(name, id);
-            legacyIdToString.put(id, name);
+            int firstId = firstState.getInt("id");
+            int firstMeta = firstState.getInt("val");
+            register(firstId, firstMeta, runtimeId);
+            stringToLegacyId.put(name, firstId);
 
             for (CompoundTag legacyState : legacyStates) {
-                int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
-                legacyToRuntimeId.put(legacyId, runtimeId);
+                int newBlockId = legacyState.getInt("id");
+                int meta = legacyState.getInt("val");
+                register(newBlockId, meta, runtimeId);
             }
             // No point in sending this since the client doesn't use it.
             state.remove("meta");
@@ -98,22 +111,41 @@ public class GlobalBlockPalette {
             throw new ExceptionInInitializerError(e);
         }
     }
+    
+    private static void register(int id, int meta, int runtimeId) {
+        if (meta <= Block.DATA_SIZE) {
+            int legacyId = id << Block.DATA_BITS | meta;
+            legacyToRuntimeId.put(legacyId, runtimeId);
+        } else {
+            long hyperId = ((long) id) << BlockHyperMeta.HYPER_DATA_BITS | meta;
+            hyperToRuntimeId.put(hyperId, runtimeId);
+        }
+    }
 
     public static int getOrCreateRuntimeId(int id, int meta) {
         // Special case for PN-96 PowerNukkit#210 where the world contains blocks like 0:13, 0:7, etc
         if (id == 0) meta = 0;
+
+        int runtimeId;
+        if (meta <= Block.DATA_SIZE) {
+            int legacyId = id << Block.DATA_BITS | meta;
+            runtimeId = legacyToRuntimeId.get(legacyId);
+        } else {
+            long hyperId = ((long) id) << BlockHyperMeta.HYPER_DATA_BITS | meta;
+            runtimeId = hyperToRuntimeId.get(hyperId);
+        }
         
-        int legacyId = id << 6 | meta;
-        int runtimeId = legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
-            runtimeId = legacyToRuntimeId.get(248 << 6);
+            runtimeId = legacyToRuntimeId.get(248 << Block.DATA_BITS);
             if (unknownRuntimeIds.computeIfAbsent(id, k -> new IntOpenHashSet(5)).add(meta)) {
-                Server.getInstance().getLogger().error("Found an unknown BlockId:Meta combination: "+id+":"+meta+", replacing with an \"UPDATE!\" block.");
+                log.error("Found an unknown BlockId:Meta combination: "+id+":"+meta+", replacing with an \"UPDATE!\" block.");
             }
         }
         return runtimeId;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "Does not support hyper ids", replaceWith = "getOrCreateRuntimeId(int id, int meta)", since = "1.3.0.0-PN")
     public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
         return getOrCreateRuntimeId(legacyId >> Block.DATA_BITS, legacyId & Block.DATA_MASK);
     }

@@ -1,5 +1,6 @@
 package cn.nukkit;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
@@ -249,6 +250,8 @@ public class Server {
 
     private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
 
+    private final Set<String> ignoredPackets = new HashSet<>();
+
     Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
         currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
@@ -328,6 +331,20 @@ public class Server {
 
         log.info("Loading {} ...", TextFormat.GREEN + "nukkit.yml" + TextFormat.WHITE);
         this.config = new Config(this.dataPath + "nukkit.yml", Config.YAML);
+
+        Nukkit.DEBUG = NukkitMath.clamp(this.getConfig("debug.level", 1), 1, 3);
+
+        int logLevel = (Nukkit.DEBUG + 3) * 100;
+        org.apache.logging.log4j.Level currentLevel = Nukkit.getLogLevel();
+        for (org.apache.logging.log4j.Level level : org.apache.logging.log4j.Level.values()) {
+            if (level.intLevel() == logLevel && level.intLevel() > currentLevel.intLevel()) {
+                Nukkit.setLogLevel(level);
+                break;
+            }
+        }
+
+        ignoredPackets.addAll(getConfig().getStringList("debug.ignored-packets"));
+        ignoredPackets.add("BatchPacket");
 
         log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
@@ -423,17 +440,6 @@ public class Server {
             this.setPropertyInt("difficulty", 3);
         }
 
-        Nukkit.DEBUG = NukkitMath.clamp(this.getConfig("debug.level", 1), 1, 3);
-
-        int logLevel = (Nukkit.DEBUG + 3) * 100;
-        org.apache.logging.log4j.Level currentLevel = Nukkit.getLogLevel();
-        for (org.apache.logging.log4j.Level level : org.apache.logging.log4j.Level.values()) {
-            if (level.intLevel() == logLevel && level.intLevel() > currentLevel.intLevel()) {
-                Nukkit.setLogLevel(level);
-                break;
-            }
-        }
-
         boolean bugReport;
         if (this.getConfig().exists("settings.bug-report")) {
             bugReport = this.getConfig().getBoolean("settings.bug-report");
@@ -494,6 +500,7 @@ public class Server {
 
         this.network.registerInterface(new RakNetInterface(this));
 
+        this.pluginManager.loadPowerNukkitPlugins();
         this.pluginManager.loadPlugins(this.pluginPath);
 
         this.enablePlugins(PluginLoadOrder.STARTUP);
@@ -709,7 +716,7 @@ public class Server {
         } else {
             try {
                 byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Zlib.deflate(data, this.networkCompressionLevel), targets, forceSync);
+                this.broadcastPacketsCallback(Network.deflateRaw(data, this.networkCompressionLevel), targets, forceSync);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -2421,6 +2428,11 @@ public class Server {
 
     public void setPlayerDataSerializer(PlayerDataSerializer playerDataSerializer) {
         this.playerDataSerializer = Preconditions.checkNotNull(playerDataSerializer, "playerDataSerializer");
+    }
+
+    @Since("1.3.0.0-PN")
+    public boolean isIgnoredPacket(Class<? extends DataPacket> clazz) {
+        return this.ignoredPackets.contains(clazz.getSimpleName());
     }
 
     public static Server getInstance() {

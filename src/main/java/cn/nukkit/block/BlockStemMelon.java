@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSeedsMelon;
@@ -8,11 +11,15 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Faceable;
 
 /**
  * Created by Pub4Game on 15.01.2016.
+ * 
+ * @apiNote Implements {@link Faceable} only on PowerNukkit since 1.3.0.0-PN
  */
-public class BlockStemMelon extends BlockCrops {
+@PowerNukkitOnly("Implements Faceable only on PowerNukkit since 1.3.0.0-PN")
+public class BlockStemMelon extends BlockCrops implements Faceable {
 
     public BlockStemMelon() {
         this(0);
@@ -32,6 +39,20 @@ public class BlockStemMelon extends BlockCrops {
         return "Melon Stem";
     }
 
+    @PowerNukkitOnly("Implements Faceable only on PowerNukkit since 1.3.0.0-PN")
+    @Since("1.3.0.0-PN")
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromIndex(getDamage() >> 3 & 0b111);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public void setBlockFace(BlockFace face) {
+        setDamage(getDamage() & ~(0b111 << 3) | (face.getIndex() << 3));
+    }
+
+    @PowerNukkitDifference(info = "Will bind to the melon by the server-side", since = "1.3.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
@@ -58,13 +79,16 @@ public class BlockStemMelon extends BlockCrops {
                             return Level.BLOCK_UPDATE_RANDOM;
                         }
                     }
-                    Block side = this.getSide(Plane.HORIZONTAL.random(random));
+                    BlockFace sideFace = Plane.HORIZONTAL.random(random);
+                    Block side = this.getSide(sideFace);
                     Block d = side.down();
                     if (side.getId() == AIR && (d.getId() == FARMLAND || d.getId() == GRASS || d.getId() == DIRT)) {
                         BlockGrowEvent ev = new BlockGrowEvent(side, Block.get(BlockID.MELON_BLOCK));
                         Server.getInstance().getPluginManager().callEvent(ev);
                         if (!ev.isCancelled()) {
                             this.getLevel().setBlock(side, ev.getNewState(), true);
+                            setBlockFace(sideFace);
+                            this.getLevel().setBlock(this, this, true);
                         }
                     }
                 }

@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -49,9 +50,11 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         return true;
     }
 
+    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (block.getSide(BlockFace.DOWN).isTransparent()) {
+        Block down = block.getSide(BlockFace.DOWN);
+        if (down.isTransparent() && down.getId() != COBBLE_WALL) {
             return false;
         }
 
@@ -66,6 +69,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         return true;
     }
 
+    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
@@ -91,7 +95,8 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
                 }
             }
         } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
-            if (type == Level.BLOCK_UPDATE_NORMAL && this.getSide(BlockFace.DOWN).isTransparent()) {
+            Block down;
+            if (type == Level.BLOCK_UPDATE_NORMAL && (down = this.getSide(BlockFace.DOWN)).isTransparent() && down.getId() != COBBLE_WALL) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             } else if (this.level.getServer().isRedstoneEnabled()) {

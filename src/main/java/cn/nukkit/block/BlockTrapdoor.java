@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
@@ -13,11 +14,14 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
 
 /**
  * Created by Pub4Game on 26.12.2015.
  */
 public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
+    private static final IntList FACES = new IntArrayList(new int[]{2, 1, 3, 0});
 
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
     public static final int TRAPDOOR_TOP_BIT = 0x04;
@@ -91,7 +95,8 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
                 );
             }
             if ((damage & TRAPDOOR_OPEN_BIT) > 0) {
-                if ((damage & 0x03) == 0) {
+                BlockFace face = getFaceForDamage(damage);
+                if (face == BlockFace.NORTH) {
                     bb.setBounds(
                             0,
                             0,
@@ -100,7 +105,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
                             1,
                             1
                     );
-                } else if ((damage & 0x03) == 1) {
+                } else if (face == BlockFace.SOUTH) {
                     bb.setBounds(
                             0,
                             0,
@@ -110,7 +115,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
                             0 + f
                     );
                 }
-                if ((damage & 0x03) == 2) {
+                if (face == BlockFace.WEST) {
                     bb.setBounds(
                             1 - f,
                             0,
@@ -120,7 +125,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
                             1
                     );
                 }
-                if ((damage & 0x03) == 3) {
+                if (face == BlockFace.EAST) {
                     bb.setBounds(
                             0,
                             0,
@@ -135,6 +140,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         }
     }
 
+    @PowerNukkitDifference(info = "The bounding box was fixed", since = "1.3.0.0-PN")
     private AxisAlignedBB getRelativeBoundingBox() {
         return boundingBoxDamage[this.getDamage()];
     }
@@ -198,13 +204,13 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
             top = face != BlockFace.UP;
         }
 
-        int[] faces = {2, 1, 3, 0};
-        int faceBit = faces[facing.getHorizontalIndex()];
+        int faceBit = FACES.getInt(facing.getHorizontalIndex());
         meta |= faceBit;
 
         if (top) {
             meta |= TRAPDOOR_TOP_BIT;
         }
+        
         this.setDamage(meta);
         this.getLevel().setBlock(block, this, true, true);
         return true;
@@ -248,8 +254,15 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         return (this.getDamage() & TRAPDOOR_TOP_BIT) != 0;
     }
 
+    @PowerNukkitDifference(info = "Was returning the wrong face", since = "1.3.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return getFaceForDamage(getDamage());
+    }
+    
+    private static BlockFace getFaceForDamage(int damage) {
+        int stairFace = damage & 0x3;
+        int horizontalIndex = FACES.indexOf(stairFace);
+        return BlockFace.fromHorizontalIndex(horizontalIndex);
     }
 }

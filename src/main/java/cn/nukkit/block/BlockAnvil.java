@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -9,6 +10,8 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+
+import java.util.Collection;
 
 /**
  * Created by Pub4Game on 27.12.2015.
@@ -95,22 +98,28 @@ public class BlockAnvil extends BlockFallable implements Faceable {
         return NAMES[this.getDamage() > 11 ? 0 : this.getDamage()];
     }
 
+    @PowerNukkitDifference(info = "Just like sand, it can now be placed anywhere and removed the sound for the player who placed, was duplicated", since = "1.3.0.0-PN")
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent() || target.getId() == Block.SNOW_LAYER) {
-            int damage = this.getDamage();
-            int[] faces = {1, 2, 3, 0};
-            this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-            if (damage >= 4 && damage <= 7) {
-                this.setDamage(this.getDamage() | 0x04);
-            } else if (damage >= 8 && damage <= 11) {
-                this.setDamage(this.getDamage() | 0x08);
-            }
-            this.getLevel().setBlock(block, this, true);
-            this.getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
-            return true;
+        int damage = this.getDamage();
+        int[] faces = {1, 2, 3, 0};
+        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        if (damage >= 4 && damage <= 7) {
+            this.setDamage(this.getDamage() | 0x04);
+        } else if (damage >= 8 && damage <= 11) {
+            this.setDamage(this.getDamage() | 0x08);
         }
-        return false;
+        this.getLevel().setBlock(block, this, true);
+        if (player == null) {
+            this.getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
+        } else {
+            Collection<Player> players = getLevel().getChunkPlayers(getChunkX(), getChunkZ()).values();
+            players.remove(player);
+            if (!players.isEmpty()) {
+                getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F, players);
+            }
+        }
+        return true;
     }
 
     @Override
