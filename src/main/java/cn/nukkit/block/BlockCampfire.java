@@ -78,7 +78,16 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (down().getId() == CAMPFIRE_BLOCK) {
+            return false;
+        }
+
         this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
+        Block layer1 = block.getLevelBlockAtLayer(1);
+        if (block instanceof BlockWater || block instanceof BlockIceFrosted || layer1 instanceof BlockWater || layer1 instanceof BlockIceFrosted) {
+            setExtinguished(true);
+            this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
+        }
 
         this.level.setBlock(block, this, true, false);
         createBlockEntity(item);
@@ -127,7 +136,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
                 if (layer1 instanceof BlockWater || layer1 instanceof BlockIceFrosted) {
                     setExtinguished(true);
                     this.level.setBlock(this, this, true, true);
-                    this.level.addSound(this, Sound.RANDOM_FIZZ);
+                    this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
                 }
             }
             return type;
@@ -150,7 +159,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
         if (item.isShovel() && !isExtinguished()) {
             setExtinguished(true);
             this.level.setBlock(this, this, true, true);
-            this.level.addSound(this, Sound.RANDOM_FIZZ);
+            this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
             itemUsed = true;
         } else if (item.getId() == ItemID.FLINT_AND_STEEL) {
             item.useOn(this);

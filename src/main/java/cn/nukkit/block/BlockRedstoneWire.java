@@ -172,7 +172,7 @@ public class BlockRedstoneWire extends BlockFlowable {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, new BlockAir(), true, true);
+        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
 
         Vector3 pos = getLocation();
 
@@ -331,7 +331,19 @@ public class BlockRedstoneWire extends BlockFlowable {
         if (block.getId() == Block.REDSTONE_WIRE) {
             return 0;
         }
-        return block.isNormalBlock() ? getStrongPower(pos.getSide(face), face) : block.getWeakPower(face);
+        return block.isNormalBlock() ? getStrongPower(pos) : block.getWeakPower(face);
+    }
+
+    private int getStrongPower(Vector3 pos) {
+        int i = 0;
+        for (BlockFace face : BlockFace.values()) {
+            i = Math.max(i, getStrongPower(pos.getSide(face), face));
+
+            if (i >= 15) {
+                return i;
+            }
+        }
+        return i;
     }
 
     private int getStrongPower(Vector3 pos, BlockFace direction) {

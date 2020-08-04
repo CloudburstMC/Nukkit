@@ -356,7 +356,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BARRIER] = BlockBarrier.class; //416
             list[STONE_SLAB3] = BlockSlabStone3.class ; //417
             list[BAMBOO] = BlockBamboo.class; //418
-            list[BAMBOO_SAPLING] = BlockBambooSampling.class; //419
+            list[BAMBOO_SAPLING] = BlockBambooSapling.class; //419
             list[SCAFFOLDING] = BlockScaffolding.class; //420
             list[STONE_SLAB4] = BlockSlabStone4.class ; //421
             list[DOUBLE_STONE_SLAB3] = BlockDoubleSlabStone3.class; //422
@@ -565,7 +565,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this, layer, new BlockAir(), true, true);
+        return this.getLevel().setBlock(this, layer, Block.get(BlockID.AIR), true, true);
     }
 
     public int onUpdate(int type) {
@@ -806,6 +806,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         Objects.requireNonNull(item, "getBreakTime: Item can not be null");
         Objects.requireNonNull(player, "getBreakTime: Player can not be null");
         double blockHardness = getHardness();
+
+        if (blockHardness == 0) {
+            return 0;
+        }
+
         boolean correctTool = correctTool0(getToolType(), item);
         boolean canHarvestWithHand = canHarvestWithHand();
         int blockId = getId();

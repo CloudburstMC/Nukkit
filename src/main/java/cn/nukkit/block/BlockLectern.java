@@ -12,8 +12,9 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 
-public class BlockLectern extends BlockTransparentMeta {
+public class BlockLectern extends BlockTransparentMeta implements Faceable {
     public BlockLectern() {
         this(0);
     }
@@ -83,11 +84,22 @@ public class BlockLectern extends BlockTransparentMeta {
         }
         return power;
     }
-
+    
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
+    }
+    
+    public void setBlockFace(BlockFace face) {
+        int horizontalIndex = face.getHorizontalIndex();
+        if (horizontalIndex >= 0) {
+            setDamage(getDamage() & (DATA_MASK ^ 0b11) | (horizontalIndex & 0b11));
+        }
+    }
+    
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {0, 1, 2, 3};
-        this.setDamage(faces[player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0]);
+        setBlockFace(player != null ? player.getDirection().getOpposite() : BlockFace.SOUTH);
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.LECTERN)
                 .putInt("x", (int) this.x)

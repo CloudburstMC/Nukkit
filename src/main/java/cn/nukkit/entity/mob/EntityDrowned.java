@@ -46,4 +46,9 @@ public class EntityDrowned extends EntityMob implements EntitySmite {
     public Item[] getDrops() {
         return new Item[]{Item.get(Item.ROTTEN_FLESH)};
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
 }

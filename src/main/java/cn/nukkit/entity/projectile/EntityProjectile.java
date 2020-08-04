@@ -68,7 +68,13 @@ public abstract class EntityProjectile extends Entity {
     }
 
     public void onCollideWithEntity(Entity entity) {
-        this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity)));
+        ProjectileHitEvent projectileHitEvent = new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity));
+        this.server.getPluginManager().callEvent(projectileHitEvent);
+
+        if (projectileHitEvent.isCancelled()) {
+            return;
+        }
+
         float damage = this.getResultDamage();
 
         EntityDamageEvent ev;
@@ -77,15 +83,16 @@ public abstract class EntityProjectile extends Entity {
         } else {
             ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
-        entity.attack(ev);
-        addHitEffect();
-        this.hadCollision = true;
+        if (entity.attack(ev)) {
+            addHitEffect();
+            this.hadCollision = true;
 
-        if (this.fireTicks > 0) {
-            EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this, entity, 5);
-            this.server.getPluginManager().callEvent(ev);
-            if (!event.isCancelled()) {
-                entity.setOnFire(event.getDuration());
+            if (this.fireTicks > 0) {
+                EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this, entity, 5);
+                this.server.getPluginManager().callEvent(ev);
+                if (!event.isCancelled()) {
+                    entity.setOnFire(event.getDuration());
+                }
             }
         }
         if (closeOnCollide) {

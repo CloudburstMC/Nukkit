@@ -322,28 +322,32 @@ public class EntityAreaEffectCloud extends Entity {
             radius += getRadiusPerTick() * tickDiff;
             if ((nextApply -= tickDiff) <= 0) {
                 nextApply = reapplicationDelay + 10;
+
                 Entity[] collidingEntities = level.getCollidingEntities(getBoundingBox());
-                if (collidingEntities.length > 1) {
+                if (collidingEntities.length > 0) {
                     radius += radiusOnUse;
                     radiusOnUse /= 2;
-                    sendRadius = true;
+
                     setDuration(getDuration() + durationOnUse);
+
                     for (Entity collidingEntity : collidingEntities) {
-                        if (collidingEntity != this && collidingEntity instanceof EntityLiving) {
-                            for (Effect effect : cloudEffects) {
-                                if (effect instanceof InstantEffect) {
-                                    switch (effect.getId()) {
-                                        case Effect.HEALING:
-                                            collidingEntity.heal(new EntityRegainHealthEvent(collidingEntity, (float) (0.5 * (double) (4 << (effect.getAmplifier() + 1))), EntityRegainHealthEvent.CAUSE_MAGIC));
-                                            break;
-                                        case Effect.HARMING:
-                                            collidingEntity.attack(new EntityDamageByEntityEvent(this, collidingEntity, EntityDamageEvent.DamageCause.MAGIC, (float) (0.5 * (double) (6 << (effect.getAmplifier() + 1)))));
-                                            break;
-                                    }
-                                } else {
-                                    collidingEntity.addEffect(effect.clone());
-                                }
+                        if (collidingEntity == this || !(collidingEntity instanceof EntityLiving)) continue;
+
+                        for (Effect effect : cloudEffects) {
+                            if (effect instanceof InstantEffect) {
+                                boolean damage = false;
+                                if (effect.getId() == Effect.HARMING) damage = true;
+                                if (collidingEntity.isUndead()) damage = !damage; // invert effect if undead
+
+                                if (damage)
+                                    collidingEntity.attack(new EntityDamageByEntityEvent(this, collidingEntity, EntityDamageEvent.DamageCause.MAGIC, (float) (0.5 * (double) (6 << (effect.getAmplifier() + 1)))));
+                                else
+                                    collidingEntity.heal(new EntityRegainHealthEvent(collidingEntity, (float) (0.5 * (double) (4 << (effect.getAmplifier() + 1))), EntityRegainHealthEvent.CAUSE_MAGIC));
+
+                                continue;
                             }
+
+                            collidingEntity.addEffect(effect);
                         }
                     }
                 }
@@ -368,7 +372,12 @@ public class EntityAreaEffectCloud extends Entity {
         
         return true;
     }
-    
+
+    @Override
+    public boolean canCollideWith(Entity entity) {
+        return entity instanceof EntityLiving;
+    }
+
     @Override
     public float getHeight() {
         return 0.3F + (getRadius() / 2F);

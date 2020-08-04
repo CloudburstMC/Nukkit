@@ -40,4 +40,9 @@ public class EntityZombie extends EntityMob implements EntitySmite {
     public String getName() {
         return "Zombie";
     }
+
+    @Override
+    public boolean isUndead() {
+        return true;
+    }
 }

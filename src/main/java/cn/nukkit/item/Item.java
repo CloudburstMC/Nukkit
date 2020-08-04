@@ -3,7 +3,6 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
@@ -215,7 +214,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[SPAWN_EGG] = ItemSpawnEgg.class; //383
             list[EXPERIENCE_BOTTLE] = ItemExpBottle.class; //384
             list[FIRE_CHARGE] = ItemFireCharge.class; //385
-            //TODO: list[BOOK_AND_QUILL] = ItemBookAndQuill.class; //386
+            list[BOOK_AND_QUILL] = ItemBookAndQuill.class; //386
             list[WRITTEN_BOOK] = ItemBookWritten.class; //387
             list[EMERALD] = ItemEmerald.class; //388
             list[ITEM_FRAME] = ItemItemFrame.class; //389
@@ -273,9 +272,9 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             list[SHULKER_SHELL] = ItemShulkerShell.class; //445
             list[BANNER] = ItemBanner.class; //446
-            
+
             list[TOTEM] = ItemTotem.class; //450
-            
+
             list[TRIDENT] = ItemTrident.class; //455
 
             list[BEETROOT] = ItemBeetroot.class; //457
@@ -316,7 +315,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[CAMPFIRE] = ItemCampfire.class; //720
 
             list[SUSPICIOUS_STEW] = ItemSuspiciousStew.class; //734
-    
+
             list[HONEYCOMB] = ItemHoneycomb.class; //736
             list[HONEY_BOTTLE] = ItemHoneyBottle.class; //737
 
@@ -879,7 +878,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         if (this.block != null) {
             return this.block.clone();
         } else {
-            return new BlockAir();
+            return Block.get(BlockID.AIR);
         }
     }
 

@@ -7,10 +7,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Hash;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongSet;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -119,12 +117,11 @@ public class BlockLeaves extends BlockTransparentMeta {
             getLevel().setBlock(this, this, false, false);
         } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
             setDamage(getDamage() & 0x03);
-            int check = 0;
 
             LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
             Server.getInstance().getPluginManager().callEvent(ev);
-            if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
+            if (ev.isCancelled() || findLog(this, 7)) {
                 getLevel().setBlock(this, this, false, false);
             } else {
                 getLevel().useBreakOn(this);
@@ -134,64 +131,16 @@ public class BlockLeaves extends BlockTransparentMeta {
         return 0;
     }
 
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check) {
-        return findLog(pos, visited, distance, check, null);
-    }
-
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check, BlockFace fromSide) {
-        ++check;
-        long index = Hash.hashBlock((int) pos.x, (int) pos.y, (int) pos.z);
-        if (visited.contains(index)) return false;
-        if (pos.getId() == WOOD || pos.getId() == WOOD2) return true;
-        if ((pos.getId() == LEAVES || pos.getId() == LEAVES2) && distance <= 4) {
-            visited.add(index);
-            int down = pos.down().getId();
-            if (down == WOOD || down == WOOD2) {
-                return true;
-            }
-            if (fromSide == null) {
-                //North, East, South, West
-                for (int side = 2; side <= 5; ++side) {
-                    if (this.findLog(pos.getSide(BlockFace.fromIndex(side)), visited, distance + 1, check, BlockFace.fromIndex(side)))
-                        return true;
-                }
-            } else { //No more loops
-                switch (fromSide) {
-                    case NORTH:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case SOUTH:
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case WEST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                    case EAST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                }
-            }
-        }
-        return false;
+    private Boolean findLog(Block pos, Integer distance) {
+        Block[] woodBlocks = this.getLevel().getCollisionBlocks(
+                new SimpleAxisAlignedBB(
+                        pos.getX() - distance, pos.getY() - distance, pos.getZ() - distance,
+                        pos.getX() + distance, pos.getY() + distance, pos.getZ() + distance
+                ), true, true,
+                block -> block.getId() == WOOD || block.getId() == WOOD2
+        );
+        
+        return woodBlocks.length > 0;
     }
 
     public boolean isCheckDecay() {

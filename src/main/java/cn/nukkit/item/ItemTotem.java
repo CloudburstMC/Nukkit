@@ -11,7 +11,7 @@ public class ItemTotem extends Item {
     }
 
     public ItemTotem(Integer meta, int count) {
-        super(TOTEM, 0, count, "Totem of Undying");
+        super(TOTEM, meta, count, "Totem of Undying");
     }
 
     @Override

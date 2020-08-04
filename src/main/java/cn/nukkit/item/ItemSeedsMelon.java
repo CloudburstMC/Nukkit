@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.BlockStemMelon;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 
 /**
  * author: MagicDroidX
@@ -18,6 +19,6 @@ public class ItemSeedsMelon extends Item {
 
     public ItemSeedsMelon(Integer meta, int count) {
         super(MELON_SEEDS, 0, count, "Melon Seeds");
-        this.block = new BlockStemMelon();
+        this.block = Block.get(BlockID.MELON_STEM);
     }
 }

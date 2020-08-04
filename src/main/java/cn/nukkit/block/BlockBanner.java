@@ -78,7 +78,7 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
                 this.getLevel().setBlock(block, this, true);
             } else {
                 this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, new BlockWallBanner(this.getDamage()), true);
+                this.getLevel().setBlock(block, Block.get(BlockID.WALL_BANNER, this.getDamage()), true);
             }
 
             CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)

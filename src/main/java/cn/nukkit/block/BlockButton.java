@@ -78,7 +78,6 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
             level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
         }
 
-        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
         return true;
     }
 
@@ -93,7 +92,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
             if (this.isActivated()) {
                 this.setDamage(this.getDamage() ^ 0x08);
                 this.level.setBlock(this, this, true, false);
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
+                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK, 1.0F, 0.5F);
 
                 if (this.level.getServer().isRedstoneEnabled()) {
                     this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
@@ -103,7 +102,6 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
                     level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
                 }
             }
-
             return Level.BLOCK_UPDATE_SCHEDULED;
         }
 
