@@ -94,6 +94,7 @@ public class GlobalBlockPalette {
             int firstMeta = firstState.getInt("val");
             register(firstId, firstMeta, runtimeId);
             stringToLegacyId.put(name, firstId);
+            legacyIdToString.put(firstId, name);
 
             for (CompoundTag legacyState : legacyStates) {
                 int newBlockId = legacyState.getInt("id");

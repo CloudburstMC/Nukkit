@@ -758,4 +758,11 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     public int getContentVersion() {
         return contentVersion;
     }
+
+    @PowerNukkitOnly("Needed for level backward compatibility")
+    @Since("1.3.1.0-PN")
+    @Override
+    public void setContentVersion(int contentVersion) {
+        this.contentVersion = contentVersion;
+    }
 }

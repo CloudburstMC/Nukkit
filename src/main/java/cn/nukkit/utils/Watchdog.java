@@ -41,7 +41,7 @@ public class Watchdog extends Thread {
                         MainLogger logger = this.server.getLogger();
                         logger.emergency("--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)");
                         logger.emergency("Please report this to PowerNukkit:");
-                        logger.emergency(" - https://github.com/GameModsBr/PowerNukkit/issues/new");
+                        logger.emergency(" - https://github.com/PowerNukkit/PowerNukkit/issues/new");
                         logger.emergency("---------------- Main thread ----------------");
 
                         dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(this.server.getPrimaryThread().getId(), Integer.MAX_VALUE), logger);

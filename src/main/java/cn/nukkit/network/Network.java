@@ -78,6 +78,10 @@ public class Network {
         byte[] buf = BUFFER.get();
         while (!inflater.finished()) {
             int i = inflater.inflate(buf);
+            if (i == 0) {
+                log.warn("Prevented an infinite loop trying to decompress data. Needs input: "+inflater.needsInput()+", Needs Dictionary: "+inflater.needsDictionary());
+                break;
+            }
             bos.write(buf, 0, i);
         }
         return bos.toByteArray();
