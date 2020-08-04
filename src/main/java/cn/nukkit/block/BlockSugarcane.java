@@ -126,6 +126,13 @@ public class BlockSugarcane extends BlockFlowable {
             if (height >= 3) {
                 return type;
             }
+
+            BlockGrowEvent ev = new BlockGrowEvent(up, Block.get(BlockID.SUGARCANE_BLOCK));
+            Server.getInstance().getPluginManager().callEvent(ev);
+
+            if (ev.isCancelled()) {
+                return type;
+            }
             
             if (!level.setBlock(up, Block.get(BlockID.SUGARCANE_BLOCK), false)) {
                 return type;

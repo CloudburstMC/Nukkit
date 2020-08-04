@@ -17,7 +17,7 @@ public abstract class EnchantmentDamage extends Enchantment {
     }
 
     protected final TYPE damageType;
-
+    
     protected EnchantmentDamage(int id, String name, int weight, TYPE type) {
         super(id, name, weight, EnchantmentType.SWORD);
         this.damageType = type;
@@ -46,5 +46,13 @@ public abstract class EnchantmentDamage extends Enchantment {
     @Override
     public boolean isMajor() {
         return true;
+    }
+
+    @Override
+    public boolean isItemAcceptable(Item item) {
+        if (item.isAxe()) {
+            return true;
+        }
+        return super.isItemAcceptable(item);
     }
 }

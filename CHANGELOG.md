@@ -6,10 +6,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version so we have an better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.2.1.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
-Click the link above to see what is coming in the next release .
+## [Unreleased 1.3.0.0-PN] - Future ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/11?closed=1))
+Click the link above to see the future.
 
-**Note:** some commits may be duplicated and other might be missing, check the [updated changelog] for better details.
+### Breaking change
+The following breaking change will be pulled in `1.3.0.0-PN`
+- [8a09f93](https://github.com/GameModsBR/PowerNukkit/commit/8a09f933f83c9a52531ff8a184a58c6d733c9174) Quick craft implementation. ([NukkitX#1473](https://github.com/NukkitX/Nukkit/pull/1473)) Jedrzej* 05/06/2020
+
+### Planned:
+- Add support to the new 1.16 blocks, items, biomes and entities (without AI)
+- Inherit protocol support from NukkitX
+
+## [1.2.1.0-PN] - 2020-06-07 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/9?closed=1))
+Click the link above to see the future.
+
+### Fixes
+- [#224] Enchantment compatibility rules when merging enchanted items in an anvil
+- [#113] Beehives not dropping in creative when it has bees
+- [#270] Replacing sugarcane's water don't break the sugarcane immediately
+- [#272] `EntityPortalEnterEvent` not being fired when entering end portals
+- [#279] `BlockEndPortal` missing collision bounding box
+- [#279] `Entity.checkBlockCollision()`'s over scaffolding logic outdated
+- [#281] Levers and buttons don't replace the snow layers
+- [#285] Chicken, cow, pig, rabbit and sheep not dropping cooked food when on fire
+- [#285] Chorus plant and flower not dropping
+- [#285] Item string placing tripwire hooks instead of tripwires
+- [#285] Wrong block name and color for dark prismarine block and prismarine bricks
+- [#285] Nether bricks fence were burnable and flammable
+- [#285] Item on hands disappear (looses one from the stack) when interacting with chest minecarts and hopper minecarts
+
+### Added
+- [#227] PlayerJumpEvent called when jump packets are received.
+- [#242] `Item.equalsIgnoringEnchantmentOrder` method for public usage.
+- [#244] `Enchantment.getPowerNukkit().isItemAcceptable(Item)` to check if an enchantment can exist 
+         in a given item stack by any non-hack means.
+- [#256] `CapturingCommandSender` intended to capture output of commands which don't require players.
+- [#259] `Hash.hashBlock(Vector3)` method for public usage.
+- [#261] `Player.isCheckingMovement()` method for public usage.
+- [#261] Protected field `EntityEndCrystal.detonated` to disable the `EndCrystal.explode()` method.
+- [#275] New annotations to document when elements get added and when deprecated elements will be removed
+- [#123] Adds and register the banner pattern items
+- [#276] `Block.afterRemoval()` called automatically when the block is replaced using any `Level.setBlock()`
+- [#277] `Block.mustSilkTouch()` and `Block.mustDrop()` to allow blocks to force the dropping behaviour when being broken
+- [#279] `Entity.isInEndPortal()` for public usage
+- [#285] `LoginChainData.getRawData()` for public usage
+
+### Changed
+- [#227] Sugar canes now fires BlockGrowEvent when growing naturally.
+- [#261] Kicked players can now view the kick reason on kick.
+- [#285] Limit the maximum size of BookEditPacket's text to 256, ignoring the packet if it exceeds the limit
+- [#285] Ender pearls will now be unable to teleport players across different dimensions
+- [#285] ShortTag.load(NBTInputStream) now reads a signed short. Used to read an unsigned short.
 
 ## [1.2.0.2-PN] - 2020-05-18 ([Check the milestone](https://github.com/GameModsBR/PowerNukkit/milestone/10?closed=1))
 Contains several fixes, including issues which cause item losses and performance issues
@@ -213,7 +260,8 @@ Fixes several anvil issues.
 
 [updated changelog]:https://github.com/GameModsBR/PowerNukkit/blob/master/CHANGELOG.md
 
-[Unreleased 1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...HEAD
+[Unreleased 1.3.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.1.0-PN...master
+[1.2.1.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.2-PN...v1.2.1.0-PN
 [1.2.0.2-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.1-PN...v1.2.0.2-PN
 [1.2.0.1-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.2.0.0-PN...v1.2.0.1-PN
 [1.2.0.0-PN]: https://github.com/GameModsBR/PowerNukkit/compare/v1.1.1.0-PN...v1.2.0.0-PN
@@ -244,7 +292,9 @@ Fixes several anvil issues.
 [#102]: https://github.com/GameModsBR/PowerNukkit/pull/102
 [#103]: https://github.com/GameModsBR/PowerNukkit/issues/103
 [#108]: https://github.com/GameModsBR/PowerNukkit/pull/108
+[#113]: https://github.com/GameModsBR/PowerNukkit/issues/113
 [#116]: https://github.com/GameModsBR/PowerNukkit/issues/116
+[#123]: https://github.com/GameModsBR/PowerNukkit/issues/123
 [#129]: https://github.com/GameModsBR/PowerNukkit/pull/129
 [#140]: https://github.com/GameModsBR/PowerNukkit/pull/140
 [#152]: https://github.com/GameModsBR/PowerNukkit/pull/152
@@ -258,23 +308,37 @@ Fixes several anvil issues.
 [#222]: https://github.com/GameModsBR/PowerNukkit/issues/223
 [#224]: https://github.com/GameModsBR/PowerNukkit/pull/224
 [#226]: https://github.com/GameModsBR/PowerNukkit/issues/226
+[#227]: https://github.com/GameModsBR/PowerNukkit/pull/227
 [#228]: https://github.com/GameModsBR/PowerNukkit/issues/228
 [#234]: https://github.com/GameModsBR/PowerNukkit/issues/234
 [#235]: https://github.com/GameModsBR/PowerNukkit/issues/235
 [#239]: https://github.com/GameModsBR/PowerNukkit/issues/239
 [#240]: https://github.com/GameModsBR/PowerNukkit/issues/240
+[#242]: https://github.com/GameModsBR/PowerNukkit/pull/242
 [#243]: https://github.com/GameModsBR/PowerNukkit/issues/243
+[#244]: https://github.com/GameModsBR/PowerNukkit/pull/244
 [#246]: https://github.com/GameModsBR/PowerNukkit/issues/246
 [#247]: https://github.com/GameModsBR/PowerNukkit/pull/247
 [#248]: https://github.com/GameModsBR/PowerNukkit/pull/248
 [#253]: https://github.com/GameModsBR/PowerNukkit/pull/253
 [#254]: https://github.com/GameModsBR/PowerNukkit/issues/254
 [#255]: https://github.com/GameModsBR/PowerNukkit/pull/255
+[#256]: https://github.com/GameModsBR/PowerNukkit/pull/256
+[#259]: https://github.com/GameModsBR/PowerNukkit/pull/259
 [#260]: https://github.com/GameModsBR/PowerNukkit/pull/260
+[#261]: https://github.com/GameModsBR/PowerNukkit/pull/261
 [#262]: https://github.com/GameModsBR/PowerNukkit/pull/262
 [#263]: https://github.com/GameModsBR/PowerNukkit/pull/263
 [#266]: https://github.com/GameModsBR/PowerNukkit/issues/266
 [#267]: https://github.com/GameModsBR/PowerNukkit/issues/267
 [#268]: https://github.com/GameModsBR/PowerNukkit/pull/268
+[#270]: https://github.com/GameModsBR/PowerNukkit/issues/270
+[#272]: https://github.com/GameModsBR/PowerNukkit/issues/272
 [#273]: https://github.com/GameModsBR/PowerNukkit/pull/273
 [#274]: https://github.com/GameModsBR/PowerNukkit/pull/274
+[#275]: https://github.com/GameModsBR/PowerNukkit/pull/275
+[#276]: https://github.com/GameModsBR/PowerNukkit/pull/276
+[#277]: https://github.com/GameModsBR/PowerNukkit/pull/277
+[#279]: https://github.com/GameModsBR/PowerNukkit/pull/279
+[#281]: https://github.com/GameModsBR/PowerNukkit/pull/281
+[#285]: https://github.com/GameModsBR/PowerNukkit/pull/285

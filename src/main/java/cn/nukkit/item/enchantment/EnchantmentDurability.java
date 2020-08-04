@@ -36,4 +36,12 @@ public class EnchantmentDurability extends Enchantment {
     public static boolean negateDamage(Item item, int level, Random random) {
         return !(item.isArmor() && random.nextFloat() < 0.6f) && random.nextInt(level + 1) > 0;
     }
+    
+    @Override
+    public boolean isItemAcceptable(Item item) {
+        if (!item.isNull() && item.getMaxDurability() != -1 && !item.isUnbreakable()) {
+            return true;
+        }
+        return super.isItemAcceptable(item);
+    }
 }

@@ -17,12 +17,10 @@ import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.block.LecternPageChangeEvent;
 import cn.nukkit.event.block.WaterFrostEvent;
-import cn.nukkit.event.entity.EntityDamageByBlockEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
-import cn.nukkit.event.entity.ProjectileLaunchEvent;
+import cn.nukkit.event.entity.EntityPortalEnterEvent.PortalType;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
@@ -1388,11 +1386,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected void checkBlockCollision() {
         boolean portal = false;
         boolean scaffolding = false;
+        boolean endPortal = false;
         for (Block block : this.getCollisionBlocks()) {
-            if (block.getId() == Block.NETHER_PORTAL) {
-                portal = true;
-            } else if (block.getId() == Block.SCAFFOLDING) {
-                scaffolding = true;
+            switch (block.getId()) {
+                case Block.NETHER_PORTAL:
+                    portal = true;
+                    break;
+                case BlockID.SCAFFOLDING:
+                    scaffolding = true;
+                    break;
+                case BlockID.END_PORTAL:
+                    endPortal = true;
+                    break;
             }
 
             block.onEntityCollide(this);
@@ -1409,7 +1414,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 b-> b.getId() == BlockID.SCAFFOLDING
         );
         setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_OVER_SCAFFOLDING, scaffoldingUnder.length > 0);
-
+        
+        if (endPortal) {
+            if (!inEndPortal) {
+                inEndPortal = true;
+                EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, PortalType.END);
+                getServer().getPluginManager().callEvent(ev);
+            }
+        } else {
+            inEndPortal = false;
+        }
+        
         if (portal) {
             if (this.isCreative() && this.inPortalTicks < 80) {
                 this.inPortalTicks = 80;
@@ -2538,6 +2553,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.respawn();
                             break;
                         case PlayerActionPacket.ACTION_JUMP:
+                            PlayerJumpEvent playerJumpEvent = new PlayerJumpEvent(this);
+                            this.server.getPluginManager().callEvent(playerJumpEvent);
                             break packetswitch;
                         case PlayerActionPacket.ACTION_START_SPRINT:
                             PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, true);
@@ -3426,6 +3443,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     BookEditPacket bookEditPacket = (BookEditPacket) packet;
                     Item oldBook = this.inventory.getItem(bookEditPacket.inventorySlot);
                     if (oldBook.getId() != Item.BOOK_AND_QUILL) {
+                        return;
+                    }
+
+                    if (bookEditPacket.text.length() > 256) {
                         return;
                     }
 
@@ -4927,6 +4948,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void setCheckMovement(boolean checkMovement) {
         this.checkMovement = checkMovement;
+    }
+
+    /**
+     * @since 1.2.1.0-PN
+     */
+    public boolean isCheckingMovement() {
+        return this.checkMovement;
     }
 
     public synchronized void setLocale(Locale locale) {

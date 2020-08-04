@@ -120,7 +120,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                     Enchantment sacrificeEnchantment;
                     do {
                         if (!sacrificeEnchIter.hasNext()) {
-                            if (incompatibleFlag && !compatibleFlag) { // TODO These flags would never be positive?
+                            if (incompatibleFlag && !compatibleFlag) {
                                 setResult(Item.get(0));
                                 setLevelCost(0);
                                 return;
@@ -135,7 +135,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                     int targetLevel = resultEnchantment != null? resultEnchantment.getLevel() : 0;
                     int resultLevel = sacrificeEnchantment.getLevel();
                     resultLevel = targetLevel == resultLevel ? resultLevel + 1 : Math.max(resultLevel, targetLevel);
-                    boolean compatible = sacrificeEnchantment.canEnchant(target);
+                    boolean compatible = sacrificeEnchantment.isItemAcceptable(target);
                     if (playerUI.getHolder().isCreative() || target.getId() == Item.ENCHANTED_BOOK) {
                         compatible = true;
                     }

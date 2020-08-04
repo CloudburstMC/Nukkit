@@ -1,7 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 public class BlockEndPortal extends BlockFlowable {
@@ -52,6 +55,13 @@ public class BlockEndPortal extends BlockFlowable {
     @Override
     public boolean hasEntityCollision() {
         return true;
+    }
+
+    @PowerNukkitOnly("NukkitX returns null")
+    @Since("1.2.1.0-PN")
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox() {
+        return this;
     }
 
     @Override

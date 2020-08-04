@@ -94,6 +94,10 @@ public class EntityEnderPearl extends EntityProjectile {
     }
 
     private void teleport() {
+        if (!this.level.equals(this.shootingEntity.getLevel())) {
+            return;
+        }
+
         this.shootingEntity.teleport(new Vector3(NukkitMath.floorDouble(this.x) + 0.5, this.y, NukkitMath.floorDouble(this.z) + 0.5), TeleportCause.ENDER_PEARL);
         if ((((Player) this.shootingEntity).getGamemode() & 0x01) == 0) {
             this.shootingEntity.attack(new EntityDamageByEntityEvent(this, shootingEntity, EntityDamageEvent.DamageCause.PROJECTILE, 5f, 0f));
