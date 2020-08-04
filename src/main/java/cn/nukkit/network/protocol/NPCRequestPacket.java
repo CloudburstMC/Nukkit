@@ -5,6 +5,21 @@ import lombok.ToString;
 @ToString
 public class NPCRequestPacket extends DataPacket {
 
+    public int REQUEST_SET_ACTIONS = 0;
+	public int REQUEST_EXECUTE_ACTION = 1;
+	public int REQUEST_EXECUTE_CLOSING_COMMANDS = 2;
+	public int REQUEST_SET_NAME = 3;
+	public int REQUEST_SET_SKIN = 4;
+	public int REQUEST_SET_INTERACTION_TEXT = 5;
+
+	public int entityRuntimeId;
+
+	public int requestType;
+    
+	public String commandString;
+
+	public int actionType;
+    
     @Override
     public byte pid() {
         return ProtocolInfo.NPC_REQUEST_PACKET;
@@ -12,11 +27,18 @@ public class NPCRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+		entityRuntimeId = this.getEntityRuntimeId();
+		requestType = this.getByte();
+		commandString = this.getString();
+		actionType = this.getByte();
     }
 
     @Override
     public void encode() {
-        //TODO
+        putEntityRuntimeId(entityRuntimeId);
+		putByte(requestType);
+		putString(commandString);
+		putByte(actionType);
     }
+    
 }
