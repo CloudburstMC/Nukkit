@@ -58,26 +58,45 @@ Information on Nukkit's API can be found at the [wiki](https://nukkitx.com/wiki/
 
 Docker
 -------------
+Running PowerNukkit in [Docker](https://www.docker.com/):
 
-Running Nukkit in [Docker](https://www.docker.com/) (17.05+ or higher).
-
-Build image from source,
-
-```
-docker build -t nukkit .
-```
-
-Run once to generate the `/data` volume, default settings, and choose language,
-
-```
-docker run -it --rm -p 19132:19132 nukkit
+Run these commands in terminal or cmd: (copy & paste everything at once may work)
+```sh
+mkdir my-server
+cd my-server
+curl -sSL https://raw.githubusercontent.com/PowerNukkit/PowerNukkit/master/docker-compose.yml > docker-compose.yml
 ```
 
-Use [docker-compose](https://docs.docker.com/compose/overview/) to start server on port `19132` and with `./data` volume,
+If you want to keep your server always updated when it restarts, run with:   
+(edit the docker-compose.yml file to choose the base version you want)
+```sh
+docker-compose run --rm --name powernukkit server
+```
 
+But if you want to keep using the same version and update, use this command to create a fixed container
+
+```sh
+docker-compose run --name powernukkit server
 ```
-docker-compose up -d
+
+<b>To return to the terminal and keep the server running:</b>  
+Keep holding <kbd>CTRL</kbd>, press <kbd>P</kbd>, release <kbd>P</kbd>, press <kbd>Q</kbd>, release <kbd>Q</kbd>, and release <kbd>CTRL</kbd>
+
+
+Managing your server after the docker installation:  
+(these commands only works if you created a fixed container)
+```sh
+# Starts your server, use CTRL+P+Q to detach without stopping
+docker start powernukkit -i
+# Attach a detached server
+docker attach powernukkit
+# Stops your server with system signal
+docker stop powernukkit
+# Uninstall the container (keeps the data), useful to update your server
+docker rm powernukkit
 ```
+
+Check the [docker-compose.yml](docker-compose.yml) file for more details.
 
 Contributing
 ------------
