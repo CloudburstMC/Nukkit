@@ -36,7 +36,7 @@ public class NPCRequestPacket extends DataPacket {
     
 }
 
-enum Request {
+public enum Request {
     
     REQUEST_SET_ACTIONS(0),
     REQUEST_EXECUTE_ACTION(1),
