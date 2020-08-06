@@ -5,13 +5,6 @@ import lombok.ToString;
 @ToString
 public class NPCRequestPacket extends DataPacket {
 
-    public static final int REQUEST_SET_ACTIONS = 0;
-    public static final int REQUEST_EXECUTE_ACTION = 1;
-    public static final int REQUEST_EXECUTE_CLOSING_COMMANDS = 2;
-    public static final int REQUEST_SET_NAME = 3;
-    public static final int REQUEST_SET_SKIN = 4;
-    public static final int REQUEST_SET_INTERACTION_TEXT = 5;
-
     public long entityRuntimeId;
 
     public int requestType;
@@ -39,6 +32,27 @@ public class NPCRequestPacket extends DataPacket {
         this.putByte((byte) this.requestType);
         this.putString(this.commandString);
         this.putByte((byte) this.actionType);
+    }
+    
+}
+
+enum Request {
+    
+    REQUEST_SET_ACTIONS(0),
+    REQUEST_EXECUTE_ACTION(1),
+    REQUEST_EXECUTE_CLOSING_COMMANDS(2),
+    REQUEST_SET_NAME(3),
+    REQUEST_SET_SKIN(4),
+    REQUEST_SET_INTERACTION_TEXT(5);
+    
+    private final int value;
+    
+    Request(final int newValue) {
+        value = newValue;
+    }
+    
+    public int getValue() { 
+        return value; 
     }
     
 }
