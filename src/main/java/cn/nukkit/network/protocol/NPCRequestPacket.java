@@ -28,9 +28,9 @@ public class NPCRequestPacket extends DataPacket {
     @Override
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
-	this.requestType = this.getByte();
-	this.commandString = this.getString();
-	this.actionType = this.getByte();
+        this.requestType = this.getByte();
+        this.commandString = this.getString();
+        this.actionType = this.getByte();
     }
 
     @Override
