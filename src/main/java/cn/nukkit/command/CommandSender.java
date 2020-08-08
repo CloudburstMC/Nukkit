@@ -4,6 +4,8 @@ import cn.nukkit.Server;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.permission.Permissible;
 
+import javax.annotation.Nonnull;
+
 /**
  * 能发送命令的人。<br>
  * Who sends commands.
@@ -64,6 +66,7 @@ public interface CommandSender extends Permissible {
      * @see cn.nukkit.plugin.PluginDescription
      * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
+    @Nonnull
     String getName();
 
     boolean isPlayer();

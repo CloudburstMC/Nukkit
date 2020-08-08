@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.api.API;
 import cn.nukkit.api.API.Definition;
 import cn.nukkit.api.API.Usage;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockRail;
 import cn.nukkit.block.BlockRailActivator;
@@ -97,9 +98,14 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         entityName = name;
     }
 
+    @PowerNukkitDifference(info = "Will never return null, returns the getSaveId() if it has no custom name", since = "1.3.1.2-PN")
     @Override
     public String getName() {
-        return entityName;
+        if (hasCustomName()) {
+            return entityName;
+        } else {
+            return getSaveId();
+        }
     }
 
     @Override

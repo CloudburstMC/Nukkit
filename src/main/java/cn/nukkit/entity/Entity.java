@@ -40,6 +40,7 @@ import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
 import com.google.common.collect.Iterables;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -1060,6 +1061,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    @Nonnull
     public String getName() {
         if (this.hasCustomName()) {
             return this.getNameTag();
