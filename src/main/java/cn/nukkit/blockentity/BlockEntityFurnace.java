@@ -1,10 +1,14 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.event.inventory.FurnaceBurnEvent;
 import cn.nukkit.event.inventory.FurnaceSmeltEvent;
-import cn.nukkit.inventory.*;
+import cn.nukkit.inventory.FurnaceInventory;
+import cn.nukkit.inventory.InventoryHolder;
+import cn.nukkit.inventory.InventoryType;
+import cn.nukkit.inventory.SmeltingRecipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
@@ -317,8 +321,6 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
                 player.batchDataPacket(pk);
             }
         }
-
-        this.lastUpdate = System.currentTimeMillis();
 
         this.timing.stopTiming();
 
