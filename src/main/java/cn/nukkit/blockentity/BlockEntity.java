@@ -1,6 +1,8 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.Position;
@@ -67,6 +69,8 @@ public abstract class BlockEntity extends Position {
 
     public boolean closed = false;
     public CompoundTag namedTag;
+    @Deprecated @DeprecationDetails(since = "1.3.1.2-PN", reason = "Not necessary and causes slowdown")
+    @PowerNukkitDifference(info = "Not updated anymore", since = "1.3.1.2-PN")
     protected long lastUpdate;
     protected Server server;
     protected Timing timing;
@@ -82,7 +86,6 @@ public abstract class BlockEntity extends Position {
         this.setLevel(chunk.getProvider().getLevel());
         this.namedTag = nbt;
         this.name = "";
-        this.lastUpdate = System.currentTimeMillis();
         this.id = BlockEntity.count++;
         this.x = this.namedTag.getInt("x");
         this.y = this.namedTag.getInt("y");
