@@ -897,9 +897,6 @@ public class Server {
 
             this.getLogger().debug("Disabling timings");
             Timings.stopServer();
-            if (this.watchdog != null) {
-                this.watchdog.kill();
-            }
             //todo other things
         } catch (Exception e) {
             log.fatal("Exception happened while shutting down, exiting the process", e);
