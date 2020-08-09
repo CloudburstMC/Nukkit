@@ -131,6 +131,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         prepareDataProperty();
     }
 
+    @PowerNukkitDifference(since = "1.3.1.2-PN", info = "Will despawn instantly after being 'killed'")
     @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
@@ -275,6 +276,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         }
     }
 
+    @PowerNukkitDifference(info = "Will not make a smoke particle and will do a proper dismount on the entities", since = "1.3.1.2-PN")
     @Override
     public void close() {
         super.close();
