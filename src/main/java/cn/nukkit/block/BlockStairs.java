@@ -36,6 +36,11 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
     }
 
     @Override
+    public boolean isSolid(BlockFace side) {
+        return side == BlockFace.UP && (getDamage() & 0x04) == 0x04 || side == BlockFace.DOWN && (getDamage() & 0x04) != 0x04;
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.setDamage(FACES.getInt(player != null ? player.getDirection().getHorizontalIndex() : 0));
         if ((fy > 0.5 && face != BlockFace.UP) || face == BlockFace.DOWN) {
