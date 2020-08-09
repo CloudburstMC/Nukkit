@@ -264,8 +264,12 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         level.dropItem(this, new ItemMinecart());
     }
 
+    @PowerNukkitDifference(info = "Fixes a dupe issue when attacking too quickly", since = "1.3.1.2-PN")
     @Override
     public void kill() {
+        if (!isAlive()) {
+            return;
+        }
         super.kill();
 
         if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
