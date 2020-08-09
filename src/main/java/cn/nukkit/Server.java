@@ -98,6 +98,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -515,9 +516,15 @@ public class Server {
             if (!this.loadLevel(name)) {
                 long seed;
                 try {
-                    seed = ((Integer) this.getConfig("worlds." + name + ".seed")).longValue();
+                    seed = ((Number) this.getConfig("worlds." + name + ".seed", ThreadLocalRandom.current().nextLong())).longValue();
                 } catch (Exception e) {
-                    seed = System.currentTimeMillis();
+                    try {
+                        seed = this.getConfig("worlds." + name + ".seed").toString().hashCode();
+                    } catch (Exception e2) {
+                        seed = System.currentTimeMillis();
+                        e2.addSuppressed(e);
+                        log.warn("Failed to load the world seed for \""+name+"\". Generating a random seed", e2);
+                    }
                 }
 
                 Map<String, Object> options = new HashMap<>();
@@ -893,9 +900,6 @@ public class Server {
 
             this.getLogger().debug("Disabling timings");
             Timings.stopServer();
-            if (this.watchdog != null) {
-                this.watchdog.kill();
-            }
             //todo other things
         } catch (Exception e) {
             log.fatal("Exception happened while shutting down, exiting the process", e);
