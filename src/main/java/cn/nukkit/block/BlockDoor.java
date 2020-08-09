@@ -1,9 +1,12 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
@@ -199,6 +202,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         return bb;
     }
 
+    @PowerNukkitDifference(info = "Will drop the iron door item if the support is broken", since = "1.3.1.2-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
@@ -207,7 +211,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
                 if (up instanceof BlockDoor) {
                     this.getLevel().setBlock(up, Block.get(BlockID.AIR), false);
-                    this.getLevel().useBreakOn(this);
+                    this.getLevel().useBreakOn(this, getToolType() == ItemTool.TYPE_PICKAXE? Item.get(ItemID.DIAMOND_PICKAXE) : null);
                 }
 
                 return Level.BLOCK_UPDATE_NORMAL;
