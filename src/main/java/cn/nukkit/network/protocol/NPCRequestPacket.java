@@ -1,39 +1,30 @@
 package cn.nukkit.network.protocol;
 
 import lombok.ToString;
+import java.util.Arrays;
 
 @ToString
 public class NPCRequestPacket extends DataPacket {
 
     public long entityRuntimeId;
 
-    public int requestType;
-    
+    public RequestType requestType;
+
     public String commandString;
 
     public int actionType;
-    
-    public enum Request {
-    
-        SET_ACTIONS(0),
-        EXECUTE_ACTION(1),
-        EXECUTE_CLOSING_COMMANDS(2),
-        SET_NAME(3),
-        SET_SKIN(4),
-        SET_INTERACTION_TEXT(5);
-    
-        private final int value;
-    
-        Request(final int newValue) {
-            value = newValue;
-        }
-    
-        public int getValue() { 
-            return value; 
-        }
-    
+
+    public enum RequestType {
+
+        SET_ACTIONS,
+        EXECUTE_ACTION,
+        EXECUTE_CLOSING_COMMANDS,
+        SET_NAME,
+        SET_SKIN,
+        SET_INTERACTION_TEXT
+
     }
-    
+
     @Override
     public byte pid() {
         return ProtocolInfo.NPC_REQUEST_PACKET;
@@ -42,7 +33,7 @@ public class NPCRequestPacket extends DataPacket {
     @Override
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
-        this.requestType = this.getByte();
+        this.requestType = RequestType.values()[this.getByte()];
         this.commandString = this.getString();
         this.actionType = this.getByte();
     }
@@ -50,9 +41,9 @@ public class NPCRequestPacket extends DataPacket {
     @Override
     public void encode() {
         this.putEntityRuntimeId(this.entityRuntimeId);
-        this.putByte((byte) this.requestType);
+        this.putByte((byte) Arrays.asList(RequestType.values()).indexOf(requestType));
         this.putString(this.commandString);
         this.putByte((byte) this.actionType);
     }
-    
+
 }
