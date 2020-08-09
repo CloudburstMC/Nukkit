@@ -259,4 +259,19 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
 
         return super.getComparatorInputOverride();
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean canBePulled() {
+        return false;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
 }
