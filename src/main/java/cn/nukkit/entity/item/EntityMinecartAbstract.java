@@ -9,6 +9,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockRail;
 import cn.nukkit.block.BlockRailActivator;
 import cn.nukkit.block.BlockRailPowered;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.ByteEntityData;
@@ -21,7 +22,6 @@ import cn.nukkit.item.ItemMinecart;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
@@ -30,6 +30,7 @@ import cn.nukkit.utils.MinecartType;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -137,12 +138,9 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         }
 
         if (!this.isAlive()) {
-            ++this.deadTicks;
-            if (this.deadTicks >= 10) {
-                this.despawnFromAll();
-                this.close();
-            }
-            return this.deadTicks < 10;
+            this.despawnFromAll();
+            this.close();
+            return false;
         }
 
         int tickDiff = currentTick - this.lastUpdate;
@@ -281,14 +279,9 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     public void close() {
         super.close();
 
-        for (cn.nukkit.entity.Entity entity : passengers) {
-            if (entity instanceof Player) {
-                entity.riding = null;
-            }
+        for (Entity passenger : new ArrayList<>(this.passengers)) {
+            dismountEntity(passenger);
         }
-
-        SmokeParticle particle = new SmokeParticle(this);
-        level.addParticle(particle);
     }
 
     @Override
