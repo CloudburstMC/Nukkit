@@ -106,8 +106,8 @@ public class BlockNoteblock extends BlockSolid {
             case JUNGLE_WOOD_STAIRS:
             case ACACIA_WOOD_STAIRS:
             case DARK_OAK_WOOD_STAIRS:
-            case CRIMSON_STAIRS:
-            case WARPED_STAIRS:
+            //case CRIMSON_STAIRS: TODO Uncomment at 1.4.0.0-PN
+            //case WARPED_STAIRS: TODO Uncomment at 1.4.0.0-PN
             case FENCE:
             case FENCE_GATE:
             case FENCE_GATE_SPRUCE:
@@ -115,16 +115,16 @@ public class BlockNoteblock extends BlockSolid {
             case FENCE_GATE_JUNGLE:
             case FENCE_GATE_DARK_OAK:
             case FENCE_GATE_ACACIA:
-            case CRIMSON_FENCE_GATE:
-            case WARPED_FENCE_GATE:
+            //case CRIMSON_FENCE_GATE: TODO Uncomment at 1.4.0.0-PN
+            //case WARPED_FENCE_GATE: TODO Uncomment at 1.4.0.0-PN
             case DOOR_BLOCK:
             case SPRUCE_DOOR_BLOCK:
             case BIRCH_DOOR_BLOCK:
             case JUNGLE_DOOR_BLOCK:
             case ACACIA_DOOR_BLOCK:
             case DARK_OAK_DOOR_BLOCK:
-            case CRIMSON_DOOR_BLOCK:
-            case WARPED_DOOR_BLOCK:
+            //case CRIMSON_DOOR_BLOCK: TODO Uncomment at 1.4.0.0-PN
+            //case WARPED_DOOR_BLOCK: TODO Uncomment at 1.4.0.0-PN
             case WOODEN_PRESSURE_PLATE:
             case TRAPDOOR:
             case SIGN_POST:
@@ -210,8 +210,8 @@ public class BlockNoteblock extends BlockSolid {
             case CONCRETE:
             case STONECUTTER:
             case OBSERVER:
-            case CRIMSON_NYLIUM:
-            case WARPED_NYLIUM:
+            //case CRIMSON_NYLIUM: TODO Uncomment at 1.4.0.0-PN
+            //case WARPED_NYLIUM: TODO Uncomment at 1.4.0.0-PN
                 return Instrument.BASS_DRUM;
             default:
                 return Instrument.PIANO;
