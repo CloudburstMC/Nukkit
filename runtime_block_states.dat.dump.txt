@@ -16198,75 +16198,99 @@ minecraft:lava_cauldron;fill_level=6;cauldron_liquid=water
 
 minecraft:leaves2;persistent_bit=0;update_bit=0;new_leaf_type=acacia
 [161:0, 161:2, 161:3]
+[]
 
 minecraft:leaves2;persistent_bit=0;update_bit=0;new_leaf_type=dark_oak
 [161:1]
+[]
 
 minecraft:leaves2;persistent_bit=0;update_bit=1;new_leaf_type=acacia
 [161:4, 161:6, 161:7]
+[]
 
 minecraft:leaves2;persistent_bit=0;update_bit=1;new_leaf_type=dark_oak
 [161:5]
+[]
 
 minecraft:leaves2;persistent_bit=1;update_bit=0;new_leaf_type=acacia
 [161:8, 161:10, 161:11]
+[]
 
 minecraft:leaves2;persistent_bit=1;update_bit=0;new_leaf_type=dark_oak
 [161:9]
+[]
 
 minecraft:leaves2;persistent_bit=1;update_bit=1;new_leaf_type=acacia
 [161:12, 161:14, 161:15]
+[]
 
 minecraft:leaves2;persistent_bit=1;update_bit=1;new_leaf_type=dark_oak
 [161:13]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=0;old_leaf_type=birch
 [18:2]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=0;old_leaf_type=jungle
 [18:3]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=0;old_leaf_type=oak
 [18:0]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=0;old_leaf_type=spruce
 [18:1]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=1;old_leaf_type=birch
 [18:6]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=1;old_leaf_type=jungle
 [18:7]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=1;old_leaf_type=oak
 [18:4]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=1;old_leaf_type=spruce
 [18:5]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=0;old_leaf_type=birch
 [18:10]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=0;old_leaf_type=jungle
 [18:11]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=0;old_leaf_type=oak
 [18:8]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=0;old_leaf_type=spruce
 [18:9]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=1;old_leaf_type=birch
 [18:14]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=1;old_leaf_type=jungle
 [18:15]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=1;old_leaf_type=oak
 [18:12]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=1;old_leaf_type=spruce
 [18:13]
+[]
 
 minecraft:lectern;powered_bit=0;direction=0
 [449:0]
