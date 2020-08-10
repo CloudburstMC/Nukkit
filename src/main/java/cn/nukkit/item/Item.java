@@ -255,7 +255,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[COOKED_RABBIT] = ItemRabbitCooked.class; //412
             list[RABBIT_STEW] = ItemRabbitStew.class; //413
             list[RABBIT_FOOT] = ItemRabbitFoot.class; //414
-            //TODO: list[RABBIT_HIDE] = ItemRabbitHide.class; //415
+            list[RABBIT_HIDE] = ItemRabbitHide.class; //415
             list[LEATHER_HORSE_ARMOR] = ItemHorseArmorLeather.class; //416
             list[IRON_HORSE_ARMOR] = ItemHorseArmorIron.class; //417
             list[GOLD_HORSE_ARMOR] = ItemHorseArmorGold.class; //418
