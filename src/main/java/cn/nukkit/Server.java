@@ -78,8 +78,11 @@ import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Resources;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.CompressionType;
@@ -87,10 +90,7 @@ import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -98,8 +98,12 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author MagicDroidX
@@ -279,6 +283,7 @@ public class Server {
 
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
             this.getLogger().info(TextFormat.GREEN + "Welcome! Please choose a language first!");
+            String languagesCommaList;
             try {
                 InputStream languageList = this.getClass().getClassLoader().getResourceAsStream("lang/language.list");
                 if (languageList == null) {
@@ -288,6 +293,10 @@ public class Server {
                 for (String line : lines) {
                     this.getLogger().info(line);
                 }
+                languagesCommaList = Stream.of(lines)
+                        .filter(line-> !line.isEmpty())
+                        .map(line-> line.substring(0, 3))
+                        .collect(Collectors.joining(", "));
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -312,15 +321,110 @@ public class Server {
                 }
             }
 
-            InputStream advacedConf = this.getClass().getClassLoader().getResourceAsStream("lang/" + language + "/nukkit.yml");
-            if (advacedConf == null) {
-                advacedConf = this.getClass().getClassLoader().getResourceAsStream("lang/" + fallback + "/nukkit.yml");
+            Properties nukkitYmlLang = new Properties();
+            InputStream nukkitYmlLangIS = this.getClass().getClassLoader().getResourceAsStream("lang/" + language + "/nukkit.yml.properties");
+            if (nukkitYmlLangIS == null) {
+                nukkitYmlLangIS = this.getClass().getClassLoader().getResourceAsStream("lang/" + fallback + "/nukkit.yml.properties");
             }
 
-            try {
-                Utils.writeFile(this.dataPath + "nukkit.yml", advacedConf);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (nukkitYmlLangIS == null) {
+                try {
+                    Utils.writeFile(this.dataPath + "nukkit.yml", Server.class.getResourceAsStream("/default-nukkit.yml"));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                try {
+                    nukkitYmlLang.load(nukkitYmlLangIS);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    try {
+                        nukkitYmlLangIS.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                StringBuilder result = new StringBuilder();
+
+                if (nukkitYmlLang.containsKey("nukkit.yml.header") && !nukkitYmlLang.getProperty("nukkit.yml.header").trim().isEmpty()) {
+                    for (String header : nukkitYmlLang.getProperty("nukkit.yml.header").trim().split("\n")) {
+                        result.append("# ").append(header).append(System.lineSeparator());
+                    }
+                    result.append(System.lineSeparator());
+                }
+
+                StringBuilder keyBuilder = new StringBuilder();
+                try(BufferedReader in = new BufferedReader(new InputStreamReader(Server.class.getResourceAsStream("/default-nukkit.yml"), StandardCharsets.UTF_8))) {
+                    String line;
+                    LinkedList<String[]> path = new LinkedList<>();
+                    Pattern pattern = Pattern.compile("^( *)([a-z-]+):");
+                    int lastIdent = 0;
+                    String[] last = null;
+                    while ((line = in.readLine()) != null) {
+                        Matcher matcher = pattern.matcher(line);
+                        if (!matcher.find()) {
+                            result.append(line).append(System.lineSeparator());
+                            continue;
+                        }
+
+                        String current = matcher.group(2);
+                        String ident = matcher.group(1);
+                        int newIdent = ident.length();
+
+                        if (newIdent < lastIdent) {
+                            int reduced = lastIdent;
+                            String[] parent;
+                            while ((parent = path.pollLast()) != null) {
+                                reduced -= parent[1].length();
+                                if (reduced <= newIdent) {
+                                    break;
+                                }
+                            }
+                            lastIdent = reduced;
+                        } else if (newIdent > lastIdent) {
+                            path.add(last);
+                            lastIdent = newIdent;
+                        }
+                        last = new String[]{current, ident};
+
+                        keyBuilder.setLength(0);
+                        keyBuilder.append("nukkit.yml");
+                        for (String[] part : path) {
+                            keyBuilder.append('.').append(part[0]);
+                        }
+                        keyBuilder.append('.').append(current);
+                        String key = keyBuilder.toString();
+                        if (!nukkitYmlLang.containsKey(key) || nukkitYmlLang.getProperty(key).trim().isEmpty()) {
+                            result.append(line).append(System.lineSeparator());
+                            continue;
+                        }
+
+                        String[] comments = nukkitYmlLang.getProperty(key).trim().split("\n");
+                        if (key.equals("nukkit.yml.aliases") || key.equals("nukkit.yml.worlds")) {
+                            result.append(line).append(System.lineSeparator());
+                            for (String comment : comments) {
+                                result.append(ident).append(" # ").append(comment).append(System.lineSeparator());
+                            }
+                        } else if (key.equals("nukkit.yml.settings.language")) {
+                            for (String comment : comments) {
+                                comment = comment.replace("%s", languagesCommaList);
+                                result.append(ident).append("# ").append(comment).append(System.lineSeparator());
+                            }
+                            result.append(ident).append("language: ").append(language).append(System.lineSeparator());
+                        } else {
+                            for (String comment : comments) {
+                                result.append(ident).append("# ").append(comment).append(System.lineSeparator());
+                            }
+                            result.append(line).append(System.lineSeparator());
+                        }
+                    }
+
+                    Utils.writeFile(this.dataPath + "nukkit.yml", result.toString());
+                } catch (IOException e) {
+                    throw new AssertionError("Failed to create nukkit.yml", e);
+                }
             }
 
         }
@@ -515,9 +619,15 @@ public class Server {
             if (!this.loadLevel(name)) {
                 long seed;
                 try {
-                    seed = ((Integer) this.getConfig("worlds." + name + ".seed")).longValue();
+                    seed = ((Number) this.getConfig("worlds." + name + ".seed", ThreadLocalRandom.current().nextLong())).longValue();
                 } catch (Exception e) {
-                    seed = System.currentTimeMillis();
+                    try {
+                        seed = this.getConfig("worlds." + name + ".seed").toString().hashCode();
+                    } catch (Exception e2) {
+                        seed = System.currentTimeMillis();
+                        e2.addSuppressed(e);
+                        log.warn("Failed to load the world seed for \""+name+"\". Generating a random seed", e2);
+                    }
                 }
 
                 Map<String, Object> options = new HashMap<>();
@@ -893,9 +1003,6 @@ public class Server {
 
             this.getLogger().debug("Disabling timings");
             Timings.stopServer();
-            if (this.watchdog != null) {
-                this.watchdog.kill();
-            }
             //todo other things
         } catch (Exception e) {
             log.fatal("Exception happened while shutting down, exiting the process", e);
@@ -1301,7 +1408,7 @@ public class Server {
     public String getNukkitVersion() {
         return Nukkit.VERSION;
     }
-    
+
     public String getGitCommit() {
         return Nukkit.GIT_COMMIT;
     }

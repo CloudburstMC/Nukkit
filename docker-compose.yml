@@ -1,11 +1,74 @@
+#
+#  _____      ____     ___       ___    _____   ______        __      _   __    __    __   ___    __   ___    _____   ________
+# (  __ \    / __ \   (  (       )  )  / ___/  (   __ \      /  \    / )  ) )  ( (   () ) / __)  () ) / __)  (_   _) (___  ___)
+#  ) )_) )  / /  \ \   \  \  _  /  /  ( (__     ) (__) )    / /\ \  / /  ( (    ) )  ( (_/ /     ( (_/ /       | |       ) )
+# (  ___/  ( ()  () )   \  \/ \/  /    ) __)   (    __/     ) ) ) ) ) )   ) )  ( (   ()   (      ()   (        | |      ( (
+#  ) )     ( ()  () )    )   _   (    ( (       ) \ \  _   ( ( ( ( ( (   ( (    ) )  () /\ \     () /\ \       | |       ) )
+# ( (       \ \__/ /     \  ( )  /     \ \___  ( ( \ \_))  / /  \ \/ /    ) \__/ (   ( (  \ \    ( (  \ \     _| |__    ( (
+# /__\       \____/       \_/ \_/       \____\  )_) \__/  (_/    \__/     \______/   ()_)  \_\   ()_)  \_\   /_____(    /__\
+#
+#
+# To execute the server using docker:
+#
+# The first time: (it creates a docker container named powernukkit, this command works only once)
+# docker-compose run --name powernukkit server
+#
+# You may change the name if you want to run multiple instances. Keep the server at the end, it's not part of the name.
+# If you change the name, replace powernukkit from the commands below with the name that you have choosen
+#
+# To return to the terminal and keep the server running:
+# Keep holding CTRL, press P, release P, press Q, release Q, and release CTRL
+# This is called escape sequence.
+#
+# After running the command above you can run the other commands from anywhere, you don't need to be inside your server folder.
+#
+# If you need help, send us a message at https://discuss.powernukkit.org or chat with at https://powernukkit.org/discord
+#
+#################################################################################################################################
+#
+# Starting interactively (CTRL+C will stop it, use the escape sequence to detach without stopping it)
+# docker start powernukkit -i
+#
+# Starting seeing the log (CTRL+C will not stop it but you won't be able to run commands)
+# docker start powernukkit -a
+#
+# Starting in the background
+# docker start powernukkit
+#
+# Opening the server console which were running in background: (you won't see previous log messages, just start typing commands)
+# docker attach powernukkit
+#
+# Stopping the server that is running in background:
+# docker stop powernukkit
+#
+# To remove the container that you have created (the data folder will not be deleted, it must be stopped)
+# docker rm powernukkit
+#
+# To update, remove the container, change the image version below and run the first time command again.
+#
+#################################################################################################################################
+
 version: '3'
 services:
-  nukkit:
-    build: ./
+  server:
+    #
+    # You may change the version as you desire
+    # The version list: https://hub.docker.com/r/powernukkit/powernukkit/tags
+    image: powernukkit/powernukkit:1.3
+
+    #
+    # If you want to use an other port, change only the number before ":", keep the :19132 and :19132/udp at the end
     ports:
-      - "19132:19132"
-      - "19132:19132/udp"
+      - '19132:19132'
+      - '19132:19132/udp'
+
+    #
+    # You may change the server location by changing the path before the ":", keep the :/data at the end.
+    # You will have to move the data to the new location yourself
     volumes:
-      - ./data:/data
-    stdin_open: true
+      - ./powernukkit-data:/data
+
+    #
+    # Do not change this
     tty: true
+    stdin_open: true
