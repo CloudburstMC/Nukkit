@@ -161,7 +161,9 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                 this.level.setBlock(this, getPowered(), true, false);
             }
 
-            this.level.updateAroundRedstone(this, null);
+            Block side = this.getSide(getFacing().getOpposite());
+            side.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+            this.level.updateAroundRedstone(side, null);
         }
     }
 

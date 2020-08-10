@@ -96,6 +96,8 @@ public class BlockFire extends BlockFlowable {
                 if (!event.isCancelled()) {
                     level.setBlock(this, event.getNewState(), true);
                 }
+            } else if (this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK) && !level.isUpdateScheduled(this, this)) {
+                level.scheduleUpdate(this, tickRate());
             }
 
             return Level.BLOCK_UPDATE_NORMAL;
