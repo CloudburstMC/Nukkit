@@ -41,7 +41,7 @@ public class NPCRequestPacket extends DataPacket {
     @Override
     public void encode() {
         this.putEntityRuntimeId(this.entityRuntimeId);
-        this.putByte((byte) Arrays.asList(RequestType.values()).indexOf(requestType));
+        this.putByte((byte) requestType.ordinal());
         this.putString(this.commandString);
         this.putByte((byte) this.actionType);
     }
