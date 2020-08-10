@@ -8,10 +8,7 @@ import cn.nukkit.block.BlockBrewingStand;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.event.inventory.BrewEvent;
 import cn.nukkit.event.inventory.StartBrewEvent;
-import cn.nukkit.inventory.BrewingInventory;
-import cn.nukkit.inventory.CraftingManager;
-import cn.nukkit.inventory.InventoryHolder;
-import cn.nukkit.inventory.MixRecipe;
+import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemID;
@@ -241,6 +238,9 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
             if (!previous.isNull()) {
                 Item result = recipe.getResult();
                 result.setCount(previous.getCount());
+                if (recipe instanceof ContainerRecipe) {
+                    result.setDamage(previous.getDamage());
+                }
                 inventory.setItem(i + 1, result);
                 mixed = true;
             }
