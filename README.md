@@ -117,7 +117,7 @@ docker rm powernukkit
 Check the [docker-compose.yml](docker-compose.yml) file for more details.
 
 ### Supported tags
-* _bleeding_ (⚠️ **use with care, may contains unstable code!**)
+* _bleeding_ (⚠️ **use with care, may contains unstable code!** ⚠️)
 * 1.3.1.2, 1.3.1, 1.3, 1, latest
 * 1.3.1.1
 * 1.3.0.1, 1.3.0
