@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.powernukkit', name: 'powernukkit', version: '1.3.1.2-PN-SNAPSHOT'
+    compile group: 'org.powernukkit', name: 'powernukkit', version: '1.3.1.2-PN'
 }
 ```
 
