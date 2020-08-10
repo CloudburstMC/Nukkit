@@ -2585,7 +2585,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.breakingBlock = null;
                             break;
                         case PlayerActionPacket.ACTION_GET_UPDATED_BLOCK:
-                            //TODO
+                            break; //TODO
                         case PlayerActionPacket.ACTION_DROP_ITEM:
                             break; //TODO
                         case PlayerActionPacket.ACTION_STOP_SLEEPING:
