@@ -13,7 +13,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ChunkUpdater {
     public int getContentVersion() {
-        return 3;
+        return 5;
     }
 
     @PowerNukkitOnly("Needed for level backward compatibility")
@@ -21,8 +21,8 @@ public class ChunkUpdater {
     public void backwardCompatibilityUpdate(Level level, BaseChunk chunk) {
         boolean updated = false;
         for (ChunkSection section : chunk.getSections()) {
-            if (section.getContentVersion() < 3) {
-                updated = updateToV3(level, chunk, updated, section, section.getContentVersion());
+            if (section.getContentVersion() < 5) {
+                updated = updateToV5(level, chunk, updated, section, section.getContentVersion());
             }
         }
 
@@ -31,15 +31,16 @@ public class ChunkUpdater {
         }
     }
 
-    private boolean updateToV3(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
+    private boolean updateToV5(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
         WallUpdater wallUpdater = new WallUpdater(level, section);
         boolean sectionUpdated = walk(chunk, section, new GroupedUpdaters(
-                wallUpdater,
+                new MesaBiomeUpdater(section),
+                contentVersion < 4? wallUpdater : null,
                 contentVersion < 1? new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK) : null,
                 contentVersion < 1? new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN) : null,
-                contentVersion < 3? new OldWoodBarkUpdater(section, BlockID.LOG,  0b000) : null,
-                contentVersion < 3? new OldWoodBarkUpdater(section, BlockID.LOG2, 0b100) : null,
-                contentVersion < 3? new DoorUpdater(chunk, section) : null
+                contentVersion < 5? new OldWoodBarkUpdater(section, BlockID.LOG,  0b000) : null,
+                contentVersion < 5? new OldWoodBarkUpdater(section, BlockID.LOG2, 0b100) : null,
+                contentVersion < 5? new DoorUpdater(chunk, section) : null
         ));
 
         updated = updated || sectionUpdated;
@@ -56,7 +57,7 @@ public class ChunkUpdater {
             sectionUpdated = walk(chunk, section, wallUpdater);
         }
 
-        section.setContentVersion(3);
+        section.setContentVersion(5);
         return updated;
     }
 
