@@ -276,7 +276,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[POPPED_CHORUS_FRUIT] = ItemChorusFruitPopped.class; //433
             list[BANNER_PATTERN] = ItemBannerPattern.class; //434
 
-            //TODO: list[DRAGON_BREATH] = ItemDragonBreath.class; //437
+            list[DRAGON_BREATH] = ItemDragonBreath.class; //437
             list[SPLASH_POTION] = ItemPotionSplash.class; //438
 
             list[LINGERING_POTION] = ItemPotionLingering.class; //441
