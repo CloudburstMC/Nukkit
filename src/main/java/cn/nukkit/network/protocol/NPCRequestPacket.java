@@ -1,7 +1,6 @@
 package cn.nukkit.network.protocol;
 
 import lombok.ToString;
-import java.util.Arrays;
 
 @ToString
 public class NPCRequestPacket extends DataPacket {
