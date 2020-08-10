@@ -170,8 +170,10 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                 this.getProvider().getLevel().timings.syncChunkLoadBlockEntitiesTimer.stopTiming();
                 this.NBTtiles = null;
             }
-
-            this.setChanged(changed);
+            
+            if (changed) {
+                this.setChanged();
+            }
 
             this.isInit = true;
         }

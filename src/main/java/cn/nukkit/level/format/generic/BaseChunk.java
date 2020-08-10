@@ -31,7 +31,10 @@ import java.util.Arrays;
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly("Needed for level backward compatibility")
     @Since("1.3.0.0-PN")
-    public static final int CONTENT_VERSION = 3;
+    @Deprecated @DeprecationDetails(
+            toBeRemovedAt = "1.5.0.0-PN", replaceWith = "getCurrentContentVersion()",
+            since = "1.3.1.2-PN", reason = "Constants becomes hardcoded number in compiled files")
+    public static final int CONTENT_VERSION = Integer.valueOf(4);
 
     protected ChunkSection[] sections;
 
@@ -67,10 +70,10 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                     sectionUpdated = walk(section, wallUpdater);
                 }
 
-                contentVersion = 3;
+                contentVersion = 4;
             } else if (contentVersion < 3) {
-                updated = updated || walk(section, new MesaBiomeUpdater(section));
-                contentVersion = 3;
+                updated |= walk(section, new MesaBiomeUpdater(section));
+                contentVersion = 4;
             }
             section.setContentVersion(contentVersion);
         }
