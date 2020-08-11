@@ -48,6 +48,10 @@ public class OverridesUpdater {
             for (CompoundTag override : states.getAll()) {
                 if (override.contains("block") && override.contains("LegacyStates")) {
                     CompoundTag key = override.getCompound("block").remove("version");
+                    String name = key.getString("name");
+                    if (name.equals("minecraft:beehive") || name.equals("minecraft:bee_nest")) {
+                        continue;
+                    }
                     CompoundTag original = originalTags.get(key);
                     BlockInfo data = new BlockInfo(key, original,
                             original.getList("LegacyStates", CompoundTag.class),
@@ -83,25 +87,32 @@ public class OverridesUpdater {
             CompoundTag override = new CompoundTag();
             override.putCompound("block", info.getKey().copy());
             override.putList((ListTag<? extends Tag>) info.getOverride().copy());
-            
-            /*switch (stateName) {
-                case "minecraft:light_block;block_light_level=14": 
-                    break;
-                case "minecraft:wood;wood_type=acacia;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=birch;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=dark_oak;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=jungle;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=oak;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=spruce;stripped_bit=0;pillar_axis=y":
-                    continue;
-            }*/
+
+            String name = info.getKey().getString("name");
+            if (name.equals("minecraft:beehive") || name.equals("minecraft:bee_nest")) {
+                continue;
+            }
             
             newOverrides.add(override);
         }
         
         SortedMap<String, CompoundTag> sorted = new TreeMap<>(new HumanStringComparator());
         for (CompoundTag tag : originalTags.values()) {
-            sorted.put(new BlockInfo(tag.getCompound("block"), tag, new ListTag<>(), new ListTag<>()).getStateName(), tag);
+            CompoundTag block = tag.getCompound("block");
+            sorted.put(new BlockInfo(block, tag, new ListTag<>(), new ListTag<>()).getStateName(), tag);
+            String name = block.getString("name");
+            if (name.equals("minecraft:beehive") || name.equals("minecraft:bee_nest")) {
+                CompoundTag states = block.getCompound("states");
+                int direction = states.getInt("direction");
+                int honeyLevel = states.getInt("honey_level");
+                int id = name.equals("minecraft:beehive")? BlockID.BEEHIVE : BlockID.BEE_NEST;
+                int meta = honeyLevel << 2 | direction;
+                
+                CompoundTag override = new CompoundTag();
+                override.putCompound("block", tag.getCompound("block").remove("version"));
+                override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", id).putInt("val", meta)));
+                newOverrides.add(override);
+            }
         }
 
         for (CompoundTag tag : sorted.values()) {

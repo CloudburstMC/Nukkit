@@ -208,28 +208,32 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromIndex(getDamage() & 0b111);
+        return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
     }
     
+    @Override
     public void setBlockFace(BlockFace face) {
-        setDamage((getDamage() & (DATA_MASK ^ 0b111)) | (face.getIndex() & 0b111));
+        if (face.getHorizontalIndex() == -1) {
+            face = BlockFace.NORTH;
+        }
+        setDamage((getDamage() & (DATA_MASK & ~0b11)) | (face.getHorizontalIndex() & 0b11));
     }
 
     public void setHoneyLevel(int honeyLevel) {
         honeyLevel = NukkitMath.clamp(honeyLevel, 0, 5);
-        setDamage(getDamage() & (DATA_MASK ^ 0b111000) | honeyLevel << 3);
+        setDamage(getDamage() & (DATA_MASK & ~0b11100) | honeyLevel << 2);
     }
 
     public int getHoneyLevel() {
-        return getDamage() >> 3 & 0b111;
+        return getDamage() >> 2 & 0b111;
     }
 
     public boolean isEmpty() {
-        return (getDamage() & 0b111000) == 0;
+        return (getDamage() & 0b11100) == 0;
     }
 
     public boolean isFull() {
-        return (getDamage() & 0b111000) == 0b111000;
+        return (getDamage() & 0b11100) == 0b11100;
     }
     
     @Override
