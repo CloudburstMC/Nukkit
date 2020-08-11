@@ -3,10 +3,6 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * Created on 15-10-13.
  */

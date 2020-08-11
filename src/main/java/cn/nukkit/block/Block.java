@@ -366,7 +366,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
     }
 
-    @SuppressWarnings("unchecked")
     public static Block get(int id, Integer meta, Position pos) {
         Block block = fullList[(id << 4) | (meta == null ? 0 : meta)].clone();
         if (pos != null) {

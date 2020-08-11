@@ -66,9 +66,9 @@ public class BlockEntityPistonArm extends BlockEntity {
 
     private void pushEntities() {
         float lastProgress = this.getExtendedProgress(this.lastProgress);
-        double x = (double) (lastProgress * (float) this.facing.getXOffset());
-        double y = (double) (lastProgress * (float) this.facing.getYOffset());
-        double z = (double) (lastProgress * (float) this.facing.getZOffset());
+        double x = lastProgress * (float) this.facing.getXOffset();
+        double y = lastProgress * (float) this.facing.getYOffset();
+        double z = lastProgress * (float) this.facing.getZOffset();
         AxisAlignedBB bb = new SimpleAxisAlignedBB(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D);
         Entity[] entities = this.level.getCollidingEntities(bb);
         if (entities.length != 0) {

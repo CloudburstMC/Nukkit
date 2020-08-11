@@ -11,7 +11,7 @@ If it's a bug or problem:
   3. Dumps, backtraces or files are provided.
   4. It's you yourself who first found this bug.
   
-If it's advice, or a feature request:
+If it's advice or a feature request:
   1. This feature does not exist in the latest build.
   2. This feature is logical and clear-cut.
   3. It's you yourself who first came up with the idea.

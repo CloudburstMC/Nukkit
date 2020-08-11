@@ -3,7 +3,7 @@ package cn.nukkit.math;
 import java.util.Random;
 
 public class MathHelper {
-    private static float[] a = new float[65536];
+    private static final float[] a = new float[65536];
 
     static {
         for (int i = 0; i < 65536; i++)
@@ -80,10 +80,7 @@ public class MathHelper {
         if (second > third && second > fourth) {
             return second;
         }
-        if (third > fourth) {
-            return third;
-        }
-        return fourth;
+        return Math.max(third, fourth);
     }
 
     public static int ceil(float floatNumber) {
