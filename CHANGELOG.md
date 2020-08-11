@@ -17,6 +17,7 @@ A quick update that adds support to 1.16.20 and updates the translations
 
 ### Changed
 - Changed the protocol version to support Minecraft Bedrock Edition 1.16.20
+- The translations have been updated
 
 ## [1.3.1.2-PN] - 2020-08-10 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/18?closed=1))
 Very important fixes that you must have. Make a backup before upgrading.
