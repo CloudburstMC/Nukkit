@@ -89,10 +89,10 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
                 BlockBell bell = (BlockBell) above;
                 return bell.getAttachmentType() == BlockBell.TYPE_ATTACHMENT_STANDING
                         && bell.getBlockFace().getAxis() != face.getAxis();
-            case COBBLE_WALL:
-                return ((BlockWall) above).getConnectionType(face) != WallConnectionType.NONE;
             default:
-                if (above instanceof BlockConnectable) {
+                if (above instanceof BlockWallBase) {
+                    return ((BlockWallBase) above).getConnectionType(face) != WallConnectionType.NONE;
+                } else if (above instanceof BlockConnectable) {
                     return ((BlockConnectable) above).isConnected(face);
                 } else if (above instanceof BlockPressurePlateBase || above instanceof BlockStairs) {
                     return true;
@@ -262,8 +262,10 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean hasConnections() {
-        return getBooleanValue(WALL_CONNECTION_TYPE_EAST) || getBooleanValue(WALL_CONNECTION_TYPE_WEST)
-                || getBooleanValue(WALL_CONNECTION_TYPE_NORTH) || getBooleanValue(WALL_CONNECTION_TYPE_SOUTH);
+        return getPropertyValue(WALL_CONNECTION_TYPE_EAST) != WallConnectionType.NONE 
+                || getPropertyValue(WALL_CONNECTION_TYPE_WEST) != WallConnectionType.NONE
+                || getPropertyValue(WALL_CONNECTION_TYPE_NORTH) != WallConnectionType.NONE 
+                || getPropertyValue(WALL_CONNECTION_TYPE_SOUTH) != WallConnectionType.NONE;
     }
 
     private boolean recheckPostConditions(Block above) {
@@ -302,13 +304,6 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
                 }
                 break;
 
-            // If the wall above is a post, it should also be a post
-            case COBBLE_WALL:
-                if (((BlockWall) above).isWallPost()) {
-                    return true;
-                }
-                break;
-
             // If the bell is standing and don't follow the path, make it a post
             case BELL:
                 BlockBell bell = (BlockBell) above;
@@ -320,7 +315,14 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
                 break;
 
             default:
-                if (above instanceof BlockLantern) {
+                if (above instanceof BlockWallBase) {
+                    // If the wall above is a post, it should also be a post
+                    
+                    if (((BlockWallBase) above).isWallPost()) {
+                        return true;
+                    }
+                    
+                } else if (above instanceof BlockLantern) {
                     // Lanterns makes this become a post if they are not hanging
 
                     if (!((BlockLantern) above).isHanging()) {
@@ -453,14 +455,14 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     @Override
     public boolean canConnect(Block block) {
         switch (block.getId()) {
-            case COBBLE_WALL:
-            case BORDER_BLOCK:
             case GLASS_PANE:
             case STAINED_GLASS_PANE:
             case IRON_BARS:
                 return true;
             default:
-                if (block instanceof BlockFenceGate) {
+                if (block instanceof BlockWallBase) {
+                    return true;
+                } else if (block instanceof BlockFenceGate) {
                     BlockFenceGate fenceGate = (BlockFenceGate) block;
                     return fenceGate.getBlockFace().getAxis() != calculateAxis(block);
                 } else if (block instanceof BlockStairs) {

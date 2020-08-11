@@ -13,7 +13,7 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ChunkUpdater {
     public int getContentVersion() {
-        return 6;
+        return 7;
     }
 
     @PowerNukkitOnly("Needed for level backward compatibility")
@@ -25,10 +25,8 @@ public class ChunkUpdater {
                 continue;
             }
             
-            if (section.getContentVersion() < 5) {
-                updated = updateToV5(level, chunk, updated, section, section.getContentVersion());
-            } else if (section.getContentVersion() < 6) {
-                updated = updateToV6(chunk, updated, section);
+            if (section.getContentVersion() < 7) {
+                updated = updateToV7(level, chunk, updated, section, section.getContentVersion());
             }
         }
 
@@ -37,19 +35,12 @@ public class ChunkUpdater {
         }
     }
     
-    private boolean updateToV6(BaseChunk chunk, boolean updated, ChunkSection section) {
-        if (walk(chunk, section, new NewLeafUpdater(section))) {
-            return true;
-        }
-        return updated;
-    }
-
-    private boolean updateToV5(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
+    private boolean updateToV7(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
         WallUpdater wallUpdater = new WallUpdater(level, section);
         boolean sectionUpdated = walk(chunk, section, new GroupedUpdaters(
                 new MesaBiomeUpdater(section),
-                new NewLeafUpdater(section),
-                contentVersion < 4? wallUpdater : null,
+                contentVersion < 6? new NewLeafUpdater(section) : null,
+                contentVersion < 7? wallUpdater : null,
                 contentVersion < 1? new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK) : null,
                 contentVersion < 1? new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN) : null,
                 contentVersion < 5? new OldWoodBarkUpdater(section, BlockID.LOG,  0b000) : null,
@@ -71,7 +62,7 @@ public class ChunkUpdater {
             sectionUpdated = walk(chunk, section, wallUpdater);
         }
 
-        section.setContentVersion(6);
+        section.setContentVersion(7);
         return updated;
     }
 

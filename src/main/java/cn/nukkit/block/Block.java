@@ -529,8 +529,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BLACKSTONE] = BlockBlackstone.class; //528
             //list[POLISHED_BLACKSTONE_BRICKS] = Block<Name>.class; //529
             //list[POLISHED_BLACKSTONE_BRICK_STAIRS] = Block<Name>.class; //530
-            //list[BLACKSTONE_STAIRS] = Block<Name>.class; //531
-            //list[BLACKSTONE_WALL] = Block<Name>.class; //532
+            list[BLACKSTONE_STAIRS] = BlockStairsBlackstone.class; //531
+            list[BLACKSTONE_WALL] = BlockWallBlackstone.class; //532
             //list[POLISHED_BLACKSTONE_BRICK_WALL] = Block<Name>.class; //533
             //list[CHISELED_POLISHED_BLACKSTONE] = Block<Name>.class; //534
             //list[CRACKED_POLISHED_BLACKSTONE_BRICKS] = Block<Name>.class; //535
