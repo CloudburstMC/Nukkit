@@ -9,6 +9,12 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+## [1.3.1.4-PN] - Future  ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/20?closed=1))
+Click the link above to see the future.
+
+### Fixes
+- [#462] Beehives and bee_nests are rendered as "UPDATE!" block
+
 ## [1.3.1.3-PN] - 2020-08-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/19?closed=1))
 A quick update that adds support to 1.16.20 and updates the translations
 
@@ -567,3 +573,4 @@ Fixes several anvil issues.
 [#445]: https://github.com/PowerNukkit/PowerNukkit/issues/445
 [#449]: https://github.com/PowerNukkit/PowerNukkit/issues/449
 [#450]: https://github.com/PowerNukkit/PowerNukkit/issues/450
+[#462]: https://github.com/PowerNukkit/PowerNukkit/issues/462
