@@ -9,7 +9,9 @@ import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.biome.Biome;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -246,4 +248,11 @@ public interface FullChunk extends Cloneable {
     void setChanged();
 
     void setChanged(boolean changed);
+
+    boolean isBlockChangeAllowed(int x, int y, int z);
+    
+    @Nonnull
+    List<Block> findBorders(int x, int z);
+    
+    boolean isBlockedByBorder(int x, int z);
 }

@@ -6,6 +6,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.ChunkSection;
+import cn.nukkit.level.format.updater.ChunkUpdater;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
@@ -258,7 +259,7 @@ public class EmptyChunkSection implements ChunkSection {
     @Since("1.3.1.0-PN")
     @Override
     public int getContentVersion() {
-        return BaseChunk.CONTENT_VERSION;
+        return ChunkUpdater.getContentVersion();
     }
 
     @PowerNukkitOnly
@@ -266,7 +267,12 @@ public class EmptyChunkSection implements ChunkSection {
     @Override
     public void setContentVersion(int contentVersion) {
         if (contentVersion != getContentVersion()) {
-            throw new ChunkException("Tried to modify an empty Chunk");
+            throw new ChunkException(MODIFICATION_ERROR_MESSAGE);
         }
+    }
+
+    @Override
+    public int getBlockChangeStateAbove(int x, int y, int z) {
+        return 0;
     }
 }

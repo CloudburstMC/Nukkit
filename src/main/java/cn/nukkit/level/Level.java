@@ -1978,12 +1978,22 @@ public class Level implements ChunkManager, Metadatable {
         if (player != null && player.getGamemode() > 2) {
             return null;
         }
+        
         Block target = this.getBlock(vector, layer);
+
+        if (player != null && !target.isBlockChangeAllowed(player)) {
+            return null;
+        }
+        
         Item[] drops;
         int dropExp = target.getDropExp();
 
         if (item == null) {
             item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
+        }
+        
+        if (!target.isBreakable(vector, layer, face, item, player, setBlockDestroy)) {
+            return null;
         }
         
         boolean mustDrop = target.mustDrop(vector, layer, face, item, player);
@@ -2279,6 +2289,10 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
+            if (!block.isBlockChangeAllowed(player)) {
+                return null;
+            }
+            
             BlockPlaceEvent event = new BlockPlaceEvent(player, hand, block, target, item);
             if (player.getGamemode() == 2) {
                 Tag tag = item.getNamedTagEntry("CanPlaceOn");

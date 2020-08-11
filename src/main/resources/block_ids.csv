@@ -210,7 +210,7 @@
 209,minecraft:end_gateway
 210,minecraft:allow
 211,minecraft:deny
-212,minecraft:border
+212,minecraft:border_block
 213,minecraft:magma
 214,minecraft:nether_wart_block
 215,minecraft:red_nether_brick

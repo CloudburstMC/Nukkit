@@ -16,6 +16,14 @@ class BlockStorageTest {
     private static final BlockState DIRT = BlockState.of(BlockID.DIRT);
     private static final BlockState STONE = BlockState.of(BlockID.STONE);
     private static final BlockState GRANITE = BlockState.of(BlockID.STONE, BlockStone.GRANITE);
+    private static final BlockState DENY = BlockState.of(BlockID.DENY);
+    private static final BlockState ALLOW = BlockState.of(BlockID.ALLOW);
+    private static final BlockState BORDER = BlockState.of(BlockID.BORDER_BLOCK);
+    
+    private static final int STATUS_NEUTRAL = 0;
+    private static final int STATUS_DENY = 1;
+    private static final int STATUS_ALLOW = 2;
+    private static final int STATUS_BORDER = 3;
     
     BlockStorage blockStorage;
     int x;
@@ -304,5 +312,61 @@ class BlockStorageTest {
         
         assertTrue(found.get());
         assertEquals(BlockStorage.SECTION_SIZE, hits.get());
+    }
+    
+    @Test
+    void denyAllowBorder() {
+        blockStorage.setBlockState(x, y, z, DENY);
+        assertEquals(STATUS_NEUTRAL, blockStorage.getBlockChangeStateAbove(x, y-1, z));
+        assertEquals(STATUS_DENY, blockStorage.getBlockChangeStateAbove(x, y, z));
+        assertEquals(STATUS_DENY, blockStorage.getBlockChangeStateAbove(x, y+1, z));
+
+        blockStorage.setBlockState(x, y, z, ALLOW);
+        assertEquals(STATUS_NEUTRAL, blockStorage.getBlockChangeStateAbove(x, y-1, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+1, z));
+        
+        blockStorage.setBlockState(x, y + 2, z, DENY);
+        assertEquals(STATUS_NEUTRAL, blockStorage.getBlockChangeStateAbove(x, y-1, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+1, z));
+        assertEquals(STATUS_DENY, blockStorage.getBlockChangeStateAbove(x, y+2, z));
+        assertEquals(STATUS_DENY, blockStorage.getBlockChangeStateAbove(x, y+3, z));
+
+        blockStorage.setBlockState(x, y + 4, z, ALLOW);
+        assertEquals(STATUS_NEUTRAL, blockStorage.getBlockChangeStateAbove(x, y-1, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+1, z));
+        assertEquals(STATUS_DENY, blockStorage.getBlockChangeStateAbove(x, y+2, z));
+        assertEquals(STATUS_DENY, blockStorage.getBlockChangeStateAbove(x, y+3, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+4, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+5, z));
+        
+        blockStorage.setBlockState(x, y + 6, z, BORDER);
+        for (int y = 0; y <= 15; y++) {
+            int finalY = y;
+            assertEquals(STATUS_BORDER, blockStorage.getBlockChangeStateAbove(x, y, z), ()-> "x:"+x+" y:"+ finalY +" z:"+z+" should be "+STATUS_BORDER);
+        }
+
+        blockStorage.setBlockState(x, y + 8, z, BORDER);
+        for (int y = 0; y <= 15; y++) {
+            int finalY = y;
+            assertEquals(STATUS_BORDER, blockStorage.getBlockChangeStateAbove(x, y, z), ()-> "x:"+x+" y:"+ finalY +" z:"+z+" should be "+STATUS_BORDER);
+        }
+
+        blockStorage.setBlockState(x, y + 6, z, STONE);
+        for (int y = 0; y <= 15; y++) {
+            int finalY = y;
+            assertEquals(STATUS_BORDER, blockStorage.getBlockChangeStateAbove(x, y, z), ()-> "x:"+x+" y:"+ finalY +" z:"+z+" should be "+STATUS_BORDER);
+        }
+        
+        blockStorage.setBlockState(x, y+8, z, DENY);
+        assertEquals(STATUS_NEUTRAL, blockStorage.getBlockChangeStateAbove(x, y-1, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+1, z));
+        assertEquals(STATUS_DENY, blockStorage.getBlockChangeStateAbove(x, y+2, z));
+        assertEquals(STATUS_DENY, blockStorage.getBlockChangeStateAbove(x, y+3, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+4, z));
+        assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+5, z));
     }
 }
