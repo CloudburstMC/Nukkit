@@ -156,4 +156,6 @@ public interface ChunkSection {
     default boolean setBlockState(int x, int y, int z, BlockState state) {
         return setBlockStateAtLayer(x, y, z, 0, state);
     }
+
+    int getBlockChangeStateAbove(int x, int y, int z);
 }

@@ -259,18 +259,18 @@ public interface BlockID {
     int ITEM_FRAME_BLOCK = 199;
     int CHORUS_FLOWER = 200;
     int PURPUR_BLOCK = 201;
-
+    //int COLORED_TORCH_RG = 204;
     int PURPUR_STAIRS = 203;
-    //int DOUBLE_PURPUR_SLAB = 204;
+    //int COLORED_TORCH_BP = 204;
     int UNDYED_SHULKER_BOX = 205;
     int END_BRICKS = 206;
     //Note: frosted ice CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
     int ICE_FROSTED = 207;
     int END_ROD = 208;
     int END_GATEWAY = 209;
-    //int ALLOW = 210;
-    //int DENY = 211;
-    //int BORDER = 212;
+    int ALLOW = 210;
+    int DENY = 211;
+    int BORDER_BLOCK = 212;
     int MAGMA = 213;
     int BLOCK_NETHER_WART_BLOCK = 214;
     int RED_NETHER_BRICK = 215;
