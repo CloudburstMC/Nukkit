@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMovingBlock;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
@@ -190,7 +192,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
     private boolean doMove(boolean extending) {
         BlockFace direction = getBlockFace();
-        BlocksCalculator calculator = new BlocksCalculator(extending);
+        BlocksCalculator calculator = new BlocksCalculator(level, this, getBlockFace(), extending, sticky);
 
         boolean canMove = calculator.canMove();
 
@@ -298,33 +300,46 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         return false;
     }
 
-    public class BlocksCalculator {
+    public static class BlocksCalculator {
 
         private final Vector3 pistonPos;
         private Vector3 armPos;
         private final Block blockToMove;
         private final BlockFace moveDirection;
         private final boolean extending;
+        private final boolean sticky;
 
         private final List<Block> toMove = new ArrayList<>();
         private final List<Block> toDestroy = new ArrayList<>();
 
-        public BlocksCalculator(boolean extending) {
-            this.pistonPos = getLocation();
-            this.extending = extending;
+        /**
+         * @param level Unused, needed for compatibility with Cloudburst Nukkit plugins
+         */
+        public BlocksCalculator(Level level, Block block, BlockFace facing, boolean extending) {
+            this(level, block, facing, extending, false);
+        }
 
-            BlockFace face = getBlockFace();
+        /**
+         * @param level Unused, needed for compatibility with Cloudburst Nukkit plugins
+         */
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        public BlocksCalculator(Level level, Block pos, BlockFace face, boolean extending, boolean sticky) {
+            this.pistonPos = pos.getLocation();
+            this.extending = extending;
+            this.sticky = sticky;
+
             if (!extending) {
                 this.armPos = pistonPos.getSide(face);
             }
 
             if (extending) {
                 this.moveDirection = face;
-                this.blockToMove = getSide(face);
+                this.blockToMove = pos.getSide(face);
             } else {
                 this.moveDirection = face.getOpposite();
                 if (sticky) {
-                    this.blockToMove = getSide(face, 2);
+                    this.blockToMove = pos.getSide(face, 2);
                 } else {
                     this.blockToMove = null;
                 }

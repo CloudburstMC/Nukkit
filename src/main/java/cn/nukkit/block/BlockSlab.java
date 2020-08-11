@@ -75,6 +75,11 @@ public abstract class BlockSlab extends BlockTransparentMeta {
     public abstract boolean isSameType(BlockSlab slab);
 
     @Override
+    public boolean isSolid(BlockFace side) {
+        return side == BlockFace.UP && (getDamage() & 0x08) == 0x08 || side == BlockFace.DOWN && (getDamage() & 0x08) != 0x08;
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         setOnTop(false);
         if (face == BlockFace.DOWN) {

@@ -429,8 +429,8 @@ public interface BlockID {
     //int WEEPING_VINES = 486;
     int CRIMSON_NYLIUM = 487;
     int WARPED_NYLIUM = 488;
-    //int BASALT = 489;
-    //int POLISHED_BASALT = 490; 
+    int BASALT = 489;
+    int POLISHED_BASALT = 490;
     int SOUL_SOIL = 491;
     //int SOUL_FIRE = 492;
     int NETHER_SPROUTS_BLOCK = 493; 

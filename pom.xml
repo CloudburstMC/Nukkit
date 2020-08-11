@@ -3,7 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>PowerNukkit</name>
-    <groupId>br.com.gamemods</groupId>
+    <description>A Minecraft Bedrock Edition server software implementation made in Java from scratch which supports all new features.</description>
+    <url>https://powernukkit.org</url>
+
+    <groupId>org.powernukkit</groupId>
     <artifactId>powernukkit</artifactId>
     <!--
     Version Convention: upstream.major.minor.patch-PN
@@ -12,6 +15,58 @@
     PN is a indicator that software is running PowerNukkit, it must be present both in releases and snapshot versions
     -->
     <version>1.4.0.0-PN-SNAPSHOT</version>
+
+    <inceptionYear>2020</inceptionYear>
+    <organization>
+        <name>PowerNukkit</name>
+        <url>https://powernukkit.org</url>
+    </organization>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/PowerNukkit/PowerNukkit-Natives/issues</url>
+    </issueManagement>
+
+    <scm>
+        <connection>scm:git:https://github.com/PowerNukkit/PowerNukkit.git</connection>
+        <developerConnection>scm:git:ssh://github.com:PowerNukkit/PowerNukkit.git</developerConnection>
+        <url>https://github.com/PowerNukkit/PowerNukkit</url>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>GNU General Public License, Version 3</name>
+            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>PowerNukkit</id>
+            <url>https://powernukkit.org</url>
+            <organization>PowerNukkit</organization>
+            <organizationUrl>https://github.com/PowerNukkit</organizationUrl>
+        </developer>
+        <developer>
+            <id>CloudburstMC</id>
+            <url>https://cloudburstmc.org</url>
+            <organization>CloudburstMC</organization>
+            <organizationUrl>https://github.com/CloudburstMC</organizationUrl>
+        </developer>
+        <developer>
+            <id>Nukkit</id>
+            <organization>Nukkit</organization>
+            <organizationUrl>https://github.com/Nukkit</organizationUrl>
+        </developer>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <name>PowerNukkit contributors</name>
+            <url>https://github.com/PowerNukkit/PowerNukkit/graphs/contributors</url>
+        </contributor>
+    </contributors>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -23,51 +78,28 @@
         <jline.version>3.9.0</jline.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>nukkitx-repo-release</id>
-            <url>https://repo.nukkitx.com/maven-releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>nukkitx-repo-snapshot</id>
-            <url>https://repo.nukkitx.com/maven-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <distributionManagement>
         <repository>
-            <id>releases</id>
-            <name>nukkitx-releases</name>
-            <url>https://repo.nukkitx.com/release</url>
+            <id>powernukkit-releases</id>
+            <name>powernukkit-releases</name>
+            <url>https://api.bintray.com/maven/powernukkit/powernukkit/PowerNukkit</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>nukkitx-snapshots</name>
-            <url>https://repo.nukkitx.com/snapshot</url>
+            <id>powernukkit-snapshots</id>
+            <name>powernukkit-snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
     <dependencies>
         <dependency>
-            <groupId>com.nukkitx.network</groupId>
+            <groupId>org.powernukkit.bedrock.network</groupId>
             <artifactId>raknet</artifactId>
-            <version>1.6.15</version>
+            <version>1.6.15-PN2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.nukkitx</groupId>
+            <groupId>org.powernukkit.fastutil</groupId>
             <artifactId>fastutil-lite</artifactId>
             <version>8.1.1</version>
             <scope>compile</scope>
@@ -97,9 +129,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>org.iq80.leveldb</groupId>
-            <artifactId>leveldb</artifactId>
-            <version>0.11-SNAPSHOT</version>
+            <groupId>org.powernukkit.bedrock.leveldb</groupId>
+            <artifactId>bedrock-leveldb</artifactId>
+            <version>0.11.0-PN</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -276,6 +308,46 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration> <!-- add this to disable checking -->
+                    <source>8</source>
+                    <doclint>none</doclint>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>3.0.0-M1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>3.0.0-M1</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>2.4.1</version>
                 <dependencies>
@@ -307,6 +379,8 @@
                                 implementation="com.github.edwgiz.mavenShadePlugin.log4j2CacheTransformer.PluginsCacheFileTransformer">
                         </transformer>
                     </transformers>
+                    <shadedArtifactAttached>true</shadedArtifactAttached>
+                    <createSourcesJar>true</createSourcesJar>
                 </configuration>
             </plugin>
             <plugin>

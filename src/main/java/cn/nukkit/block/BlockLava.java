@@ -167,11 +167,18 @@ public class BlockLava extends BlockLiquid {
     @Override
     protected void checkForHarden(){ 
         Block colliding = null;
+        Block down = this.getSide(BlockFace.DOWN);
         for(int side = 1; side < 6; ++side){ //don't check downwards side
             Block blockSide = this.getSide(BlockFace.fromIndex(side));
             if(blockSide instanceof BlockWater || blockSide.getLevelBlockAtLayer(1) instanceof BlockWater){
                 colliding = blockSide;
                 break;
+            }
+            if(down instanceof BlockSoulSoil) {
+                if (blockSide instanceof BlockBlueIce) {
+                    liquidCollide(this, Block.get(BlockID.BASALT));
+                    return;
+                }
             }
         }
         if(colliding != null){
@@ -187,7 +194,7 @@ public class BlockLava extends BlockLiquid {
     protected void flowIntoBlock(Block block, int newFlowDecay){
         if(block instanceof BlockWater){
             ((BlockLiquid) block).liquidCollide(this, Block.get(BlockID.STONE));
-        }else{
+        } else {
             super.flowIntoBlock(block, newFlowDecay);
         }
     }

@@ -166,18 +166,20 @@ public class BlockRedstoneWire extends BlockFlowable {
             return maxStrength;
         } else {
             int strength = this.level.getBlockDataAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ());
-            return strength > maxStrength ? strength : maxStrength;
+            return Math.max(strength, maxStrength);
         }
     }
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
+        Block air = Block.get(BlockID.AIR);
+        this.getLevel().setBlock(this, air, true, true);
 
         Vector3 pos = getLocation();
 
         if (this.level.getServer().isRedstoneEnabled()) {
             this.updateSurroundingRedstone(false);
+            this.getLevel().setBlock(this, air, true, true);
 
             for (BlockFace blockFace : BlockFace.values()) {
                 this.level.updateAroundRedstone(pos.getSide(blockFace), null);
