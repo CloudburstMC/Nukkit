@@ -49,19 +49,14 @@ public class AdventureSettings implements Cloneable {
     public void update() {
         AdventureSettingsPacket pk = new AdventureSettingsPacket();
         for (Type t : Type.values()) {
-            if (player.isSpectator() && t != Type.OPERATOR && t != Type.TELEPORT) {
-                pk.setFlag(t.getId(), false);
-            }else {
-                pk.setFlag(t.getId(), get(t));
-            }
+            pk.setFlag(t.getId(), get(t));
+        }
+        if (player.isSpectator()) {
+            pk.setFlag(Type.DOORS_AND_SWITCHED.getId(), false);
         }
 
         pk.commandPermission = (player.isOp() ? AdventureSettingsPacket.PERMISSION_OPERATOR : AdventureSettingsPacket.PERMISSION_NORMAL);
-        if (player.isSpectator()) {
-            pk.playerPermission = Player.PERMISSION_CUSTOM;
-        }else {
-            pk.playerPermission = (player.isOp() ? Player.PERMISSION_OPERATOR : Player.PERMISSION_MEMBER);
-        }
+        pk.playerPermission = (player.isOp() && !player.isSpectator() ? Player.PERMISSION_OPERATOR : Player.PERMISSION_MEMBER);
         pk.entityUniqueId = player.getId();
 
         Server.broadcastPacket(player.getViewers().values(), pk);
