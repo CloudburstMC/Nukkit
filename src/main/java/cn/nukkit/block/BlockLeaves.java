@@ -13,6 +13,7 @@ import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -21,6 +22,8 @@ import it.unimi.dsi.fastutil.longs.Long2LongMap;
 import it.unimi.dsi.fastutil.longs.Long2LongOpenHashMap;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -127,25 +130,49 @@ public class BlockLeaves extends BlockTransparentMeta {
             return new Item[]{
                     toItem()
             };
-        } else {
-            if (this.canDropApple() && ThreadLocalRandom.current().nextInt(200) == 0) {
-                return new Item[]{
-                        Item.get(ItemID.APPLE)
-                };
-            }
-            if (ThreadLocalRandom.current().nextInt(20) == 0) {
-                if (ThreadLocalRandom.current().nextBoolean()) {
-                    return new Item[]{
-                            Item.get(ItemID.STICK, 0, ThreadLocalRandom.current().nextInt(1, 2))
-                    };
-                } else if (getType() != WoodType.JUNGLE || ThreadLocalRandom.current().nextInt(20) == 0) {
-                    return new Item[]{
-                            this.getSapling()
-                    };
-                }
-            }
         }
-        return new Item[0];
+
+        List<Item> drops = new ArrayList<>(1);
+        Enchantment fortuneEnchantment = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
+        
+        int fortune = fortuneEnchantment != null? fortuneEnchantment.getLevel() : 0;
+        int appleOdds;
+        int stickOdds;
+        int saplingOdds;
+        switch (fortune) {
+            case 0:
+                appleOdds = 200;
+                stickOdds = 50;
+                saplingOdds = getType() == WoodType.JUNGLE? 40 : 20;
+                break;
+            case 1:
+                appleOdds = 180;
+                stickOdds = 45;
+                saplingOdds = getType() == WoodType.JUNGLE? 36 : 16;
+                break;
+            case 2:
+                appleOdds = 160;
+                stickOdds = 40;
+                saplingOdds = getType() == WoodType.JUNGLE? 32 : 12;
+                break;
+            default:
+                appleOdds = 120;
+                stickOdds = 30;
+                saplingOdds = getType() == WoodType.JUNGLE? 24 : 10;
+        }
+
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (canDropApple() && random.nextInt(appleOdds) == 0) {
+            drops.add(Item.get(ItemID.APPLE));
+        }
+        if (random.nextInt(stickOdds) == 0) {
+            drops.add(Item.get(ItemID.STICK));
+        }
+        if (random.nextInt(saplingOdds) == 0) {
+            drops.add(getSapling());
+        }
+        
+        return drops.toArray(new Item[0]);
     }
 
     @Override
