@@ -41,4 +41,8 @@ public class ItemBlock extends Item {
         return this.block;
     }
 
+    @Override
+    public boolean isLavaResistant() {
+        return block.isLavaResistant();
+    }
 }

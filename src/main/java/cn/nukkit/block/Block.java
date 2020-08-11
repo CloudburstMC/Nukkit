@@ -521,8 +521,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[WARPED_DOUBLE_SLAB] = BlockDoubleSlabWarped.class; //522
             list[SOUL_TORCH] = BlockSoulTorch.class; //523
             list[SOUL_LANTERN] = BlockSoulLantern.class; //524
-            list[NETHERITE_BLOCK] = BlockNetherite.class; //525
-            //list[ANCIENT_DERBIS] = Block<Name>.class; //526
+            list[NETHERITE_BLOCK] = BlockNetheriteBlock.class; //525
+            list[ANCIENT_DERBRIS] = BlockAncientDebris.class; //526
             //list[RESPAWN_ANCHOR] = Block<Name>.class; //527
             list[BLACKSTONE] = BlockBlackstone.class; //528
             //list[POLISHED_BLACKSTONE_BRICKS] = Block<Name>.class; //529
@@ -1488,6 +1488,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             since = "1.4.0.0-PN")
     public Item toItem() {
         return asItemBlock(1);
+    }
+
+    /**
+     * If the block, when in item form, is resistant to lava and fire and can float on lava like if it was on water.
+     * @since 1.4.0.0-PN
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isLavaResistant() {
+        return true;
     }
 
     @Override

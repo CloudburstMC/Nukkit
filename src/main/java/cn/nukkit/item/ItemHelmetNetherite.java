@@ -37,4 +37,9 @@ public class ItemHelmetNetherite extends ItemArmor {
     public int getToughness() {
         return 3;
     }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
+    }
 }
