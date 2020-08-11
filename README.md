@@ -15,29 +15,49 @@ It has a few key advantages over other server software:
 
 Nukkit is **under improvement** yet, we welcome contributions. 
 
-**PowerNukkit** is a modified version of Nukkit which adds support to a huge amount of features like water-logging, all new blocks, more plugin events, offhand slot, bug fixes and many more.
+**PowerNukkit** is a modified version of Nukkit that adds support to a huge amount of features like water-logging, all new blocks, more plugin events, offhand slot, bug fixes and many more.
 
-Please note that PowerNukkit is not handled by NukkitX's staff and is provided with love but without warranty. If you find any issue while running PowerNukkit you should [create a new issue](https://github.com/PowerNukkit/PowerNukkit/issues) in this repository first.
+Please note that PowerNukkit is not handled by Cloudburst's staff and is provided with love but without warranty. If you find any issue while running PowerNukkit you should [create a new issue](https://github.com/PowerNukkit/PowerNukkit/issues) in this repository first.
 
-It's also advisable to have a backup schedule set up. PowerNukkit is highly experimental and things may break, so make backups and stay safe.
+It's also advisable to have a backup schedule set up, use plugins that are made for PowerNukkit and use only stable PowerNukkit versions.
+
+Most Cloudburst Nukkit plugins are supported but they may not understand the new blocks and items and the new stuff that you can do with PowerNukkit.
 
 Links
 --------------------
 
 * __[PowerNukkit Website](https://powernukkit.org/)__
-* __[PowerNukkit Forum](https://discuss.powernukkit.org/)__
-* __[Download PowerNukkit](https://github.com/PowerNukkit/PowerNukkit/releases)__
+* __[PowerNukkit Forum and Guides](https://discuss.powernukkit.org/)__
+* __[Download PowerNukkit Releases](https://powernukkit.org/releases)__
+* __[Download PowerNukkit Snapshots](https://powernukkit.org/snapshots)__
 * __[PowerNukkit Discord](https://powernukkit.org/discord)__
-* __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
-* __[NukkitX](https://github.com/NukkitX/Nukkit)__
-* __[NukkitX Wiki](https://nukkitx.com/wiki/nukkit)__
-* __[NukkitX News](https://nukkitx.com)__
-* __[NukkitX Forums](https://nukkitx.com/forums)__
-* __[NukkitX Discord](https://discord.gg/5PzMkyK)__
+* __[Cloudburst Nukkit Plugins](https://cloudburstmc.org/resources/categories/nukkit-plugins.1/)__
 
-Message from the official NukkitX's staff:
+Creating Plugins
+----------------
+Add PowerNukkit as dependency, it's hosted by maven central and jcenter, so you don't need to specify a custom repository.
 
-> *Thank you for visiting our official sites. Our official websites are provided free of charge, and we do not like to place ads on the home page affecting your reading. If you like this project, please [donate to us](https://nukkitx.com/donate). All the donations will only be used for Nukkit websites and services.*
+[Click here to see the full gradle example](https://github.com/PowerNukkit/ExamplePlugin-Gradle)
+```groovy
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.powernukkit', name: 'powernukkit', version: '1.3.1.2-PN'
+}
+```
+
+[Click here to see the full maven example](https://github.com/PowerNukkit/ExamplePlugin-Maven)
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.powernukkit</groupId>
+        <artifactId>powernukkit</artifactId>
+        <version>1.3.1.2-PN</version>
+    </dependency>
+</dependencies>
+```
 
 Build JAR file
 -------------
@@ -53,10 +73,6 @@ Use the JAR that ends with `-shaded` to run your server.
 Running
 -------------
 Simply run `java -jar powernukkit-<version>-shaded.jar` **in an empty folder**.
-
-Plugin API
--------------
-Information on Nukkit's API can be found at the [wiki](https://nukkitx.com/wiki/index/).
 
 Docker
 -------------
@@ -101,8 +117,9 @@ docker rm powernukkit
 Check the [docker-compose.yml](docker-compose.yml) file for more details.
 
 ### Supported tags
-* _bleeding_ (⚠️ **use with care, may contains unstable code!**)
-* 1.3.1.1, 1.3.1, 1.3, 1, latest
+* _bleeding_ (⚠️ **use with care, may contains unstable code!** ⚠️)
+* 1.3.1.2, 1.3.1, 1.3, 1, latest
+* 1.3.1.1
 * 1.3.0.1, 1.3.0
 * 1.2.1.0, 1.2.1, 1.2
 * 1.2.0.2, 1.2.0
