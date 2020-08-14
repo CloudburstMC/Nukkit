@@ -28,7 +28,7 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void alert(String message) {
-        log.error(message);
+        log.warn(message);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void alert(String message, Throwable t) {
-        log.error(message, t);
+        log.warn(message, t);
     }
 
     @Override

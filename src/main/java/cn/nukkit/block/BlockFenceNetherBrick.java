@@ -68,4 +68,14 @@ public class BlockFenceNetherBrick extends BlockFence {
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Override
+    public int getBurnChance() {
+        return 0;
+    }
+
+    @Override
+    public int getBurnAbility() {
+        return 0;
+    }
 }

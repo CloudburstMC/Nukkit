@@ -2,7 +2,8 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.BlockAir;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityHumanType;
 import cn.nukkit.event.entity.EntityArmorChangeEvent;
@@ -10,11 +11,7 @@ import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemFishingRod;
-import cn.nukkit.network.protocol.InventoryContentPacket;
-import cn.nukkit.network.protocol.InventorySlotPacket;
-import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
-import cn.nukkit.network.protocol.MobEquipmentPacket;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.ContainerIds;
 
 import java.util.Collection;
@@ -122,7 +119,7 @@ public class PlayerInventory extends BaseInventory {
         if (item != null) {
             return item;
         } else {
-            return new ItemBlock(new BlockAir(), 0, 0);
+            return new ItemBlock(Block.get(BlockID.AIR), 0, 0);
         }
     }
 
@@ -273,7 +270,7 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public boolean clear(int index, boolean send) {
         if (this.slots.containsKey(index)) {
-            Item item = new ItemBlock(new BlockAir(), null, 0);
+            Item item = new ItemBlock(Block.get(BlockID.AIR), null, 0);
             Item old = this.slots.get(index);
             if (index >= this.getSize() && index < this.size) {
                 EntityArmorChangeEvent ev = new EntityArmorChangeEvent(this.getHolder(), old, item, index);
@@ -365,7 +362,7 @@ public class PlayerInventory extends BaseInventory {
 
         for (int i = 0; i < 4; ++i) {
             if (items[i] == null) {
-                items[i] = new ItemBlock(new BlockAir(), null, 0);
+                items[i] = new ItemBlock(Block.get(BlockID.AIR), null, 0);
             }
 
             if (items[i].getId() == Item.AIR) {
@@ -430,9 +427,9 @@ public class PlayerInventory extends BaseInventory {
 
         /*//Because PE is stupid and shows 9 less slots than you send it, give it 9 dummy slots so it shows all the REAL slots.
         for(int i = this.getSize(); i < this.getSize() + this.getHotbarSize(); ++i){
-            pk.slots[i] = new ItemBlock(new BlockAir());
+            pk.slots[i] = new ItemBlock(Block.get(BlockID.AIR));
         }
-            pk.slots[i] = new ItemBlock(new BlockAir());
+            pk.slots[i] = new ItemBlock(Block.get(BlockID.AIR));
         }*/
 
         for (Player player : players) {
@@ -485,11 +482,11 @@ public class PlayerInventory extends BaseInventory {
         }
         Player p = (Player) this.getHolder();
 
-        InventoryContentPacket pk = new InventoryContentPacket();
-        pk.inventoryId = ContainerIds.CREATIVE;
+        //InventoryContentPacket pk = new InventoryContentPacket();
+        CreativeContentPacket pk = new CreativeContentPacket();
 
         if (!p.isSpectator()) { //fill it for all gamemodes except spectator
-            pk.slots = Item.getCreativeItems().toArray(new Item[0]);
+            pk.entries = Item.getCreativeItems().toArray(new Item[0]);
         }
 
         p.dataPacket(pk);
@@ -498,5 +495,29 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public EntityHuman getHolder() {
         return (EntityHuman) super.getHolder();
+    }
+
+    @Override
+    public void onOpen(Player who) {
+        super.onOpen(who);
+        ContainerOpenPacket pk = new ContainerOpenPacket();
+        pk.windowId = who.getWindowId(this);
+        pk.type = this.getType().getNetworkType();
+        pk.x = who.getFloorX();
+        pk.y = who.getFloorY();
+        pk.z = who.getFloorZ();
+        pk.entityId = who.getId();
+        who.dataPacket(pk);
+    }
+
+    @Override
+    public void onClose(Player who) {
+        ContainerClosePacket pk = new ContainerClosePacket();
+        pk.windowId = who.getWindowId(this);
+        who.dataPacket(pk);
+        // player can never stop viewing their own inventory
+        if (who != holder) {
+            super.onClose(who);
+        }
     }
 }

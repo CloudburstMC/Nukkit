@@ -8,10 +8,6 @@ import cn.nukkit.inventory.Recipe;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.item.Item;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -35,14 +31,8 @@ public class CraftItemEvent extends Event implements Cancellable {
     public CraftItemEvent(CraftingTransaction transaction) {
         this.transaction = transaction;
 
-        List<Item> merged = new ArrayList<>();
-        Item[][] input = transaction.getInputMap();
-
-        for (Item[] items : input) {
-            merged.addAll(Arrays.asList(items));
-        }
         this.player = transaction.getSource();
-        this.input = merged.toArray(new Item[0]);
+        this.input = transaction.getInputList().toArray(new Item[0]);
         this.recipe = transaction.getRecipe();
     }
 

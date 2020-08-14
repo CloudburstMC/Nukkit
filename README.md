@@ -26,13 +26,12 @@ Links
 * __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
 * __[Wiki](https://nukkitx.com/wiki/nukkit)__
 
-*Thank you for visiting our official sites. Our official websites are provided free of charge, and we do not like to place ads on the home page affecting your reading. If you like this project, please [donate to us](https://nukkitx.com/donate). All the donations will only be used for Nukkit websites and services.*
-
 Build JAR file
 -------------
-- `git clone https://github.com/NukkitX/Nukkit`
+- `git clone https://github.com/CloudburstMC/Nukkit`
 - `cd Nukkit`
 - `git submodule update --init`
+- `chmod +x mvnw`
 - `./mvnw clean package`
 
 The compiled JAR can be found in the `target/` directory.
@@ -50,7 +49,7 @@ Docker
 
 Running Nukkit in [Docker](https://www.docker.com/) (17.05+ or higher).
 
-Build image from source,
+Build image from the source,
 
 ```
 docker build -t nukkit .

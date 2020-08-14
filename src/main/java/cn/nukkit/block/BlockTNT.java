@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -66,7 +65,7 @@ public class BlockTNT extends BlockSolid {
     }
 
     public void prime(int fuse, Entity source) {
-        this.getLevel().setBlock(this, new BlockAir(), true);
+        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
         double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")

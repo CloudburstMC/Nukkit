@@ -26,15 +26,12 @@ public class BlockFlowerPot extends BlockFlowable {
     protected static boolean canPlaceIntoFlowerPot(int id) {
         switch (id) {
             case SAPLING:
-            case COBWEB:
-            case TALL_GRASS:
             case DEAD_BUSH:
             case DANDELION:
             case ROSE:
             case RED_MUSHROOM:
             case BROWN_MUSHROOM:
             case CACTUS:
-            case SUGARCANE_BLOCK:
                 // TODO: 2016/2/4 case NETHER_WART:
                 return true;
             default:

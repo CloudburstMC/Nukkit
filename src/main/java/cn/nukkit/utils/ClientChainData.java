@@ -137,6 +137,11 @@ public final class ClientChainData implements LoginChainData {
         return UIProfile;
     }
 
+    @Override
+    public JsonObject getRawData() {
+        return rawData;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
     // Override
     ///////////////////////////////////////////////////////////////////////////
@@ -179,6 +184,8 @@ public final class ClientChainData implements LoginChainData {
 
     private String capeData;
 
+    private JsonObject rawData;
+
     private BinaryStream bs = new BinaryStream();
 
     private ClientChainData(byte[] buffer) {
@@ -207,6 +214,8 @@ public final class ClientChainData implements LoginChainData {
         if (skinToken.has("DefaultInputMode")) this.defaultInputMode = skinToken.get("DefaultInputMode").getAsInt();
         if (skinToken.has("UIProfile")) this.UIProfile = skinToken.get("UIProfile").getAsInt();
         if (skinToken.has("CapeData")) this.capeData = skinToken.get("CapeData").getAsString();
+
+        this.rawData = skinToken;
     }
 
     private JsonObject decodeToken(String token) {

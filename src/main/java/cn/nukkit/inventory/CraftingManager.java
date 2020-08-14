@@ -2,7 +2,6 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.utils.BinaryStream;
@@ -165,19 +164,22 @@ public class CraftingManager {
         List<Map> potionMixes = config.getMapList("potionMixes");
 
         for (Map potionMix : potionMixes) {
-            int fromPotionId = ((Number) potionMix.get("fromPotionId")).intValue(); // gson returns doubles...
-            int ingredient = ((Number) potionMix.get("ingredient")).intValue();
-            int toPotionId = ((Number) potionMix.get("toPotionId")).intValue();
+            int fromPotionId = ((Number) potionMix.get("inputId")).intValue(); // gson returns doubles...
+            int fromPotionMeta = ((Number) potionMix.get("inputMeta")).intValue();
+            int ingredient = ((Number) potionMix.get("reagentId")).intValue();
+            int ingredientMeta = ((Number) potionMix.get("reagentMeta")).intValue();
+            int toPotionId = ((Number) potionMix.get("outputId")).intValue();
+            int toPotionMeta = ((Number) potionMix.get("outputMeta")).intValue();
 
-            registerBrewingRecipe(new BrewingRecipe(Item.get(ItemID.POTION, fromPotionId), Item.get(ingredient), Item.get(ItemID.POTION, toPotionId)));
+            registerBrewingRecipe(new BrewingRecipe(Item.get(fromPotionId, fromPotionMeta), Item.get(ingredient, ingredientMeta), Item.get(toPotionId, toPotionMeta)));
         }
 
         List<Map> containerMixes = config.getMapList("containerMixes");
 
         for (Map containerMix : containerMixes) {
-            int fromItemId = ((Number) containerMix.get("fromItemId")).intValue();
-            int ingredient = ((Number) containerMix.get("ingredient")).intValue();
-            int toItemId = ((Number) containerMix.get("toItemId")).intValue();
+            int fromItemId = ((Number) containerMix.get("inputId")).intValue();
+            int ingredient = ((Number) containerMix.get("reagentId")).intValue();
+            int toItemId = ((Number) containerMix.get("outputId")).intValue();
 
             registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
         }
@@ -254,28 +256,10 @@ public class CraftingManager {
     public void registerShapedRecipe(ShapedRecipe recipe) {
         int resultHash = getItemHash(recipe.getResult());
         Map<UUID, ShapedRecipe> map = shapedRecipes.computeIfAbsent(resultHash, k -> new HashMap<>());
-        map.put(getMultiItemHash(recipe.getIngredientList()), recipe);
+        List<Item> inputList = new LinkedList<>(recipe.getIngredientsAggregate());
+        map.put(getMultiItemHash(inputList), recipe);
     }
 
-    private Item[][] cloneItemMap(Item[][] map) {
-        Item[][] newMap = new Item[map.length][];
-        for (int i = 0; i < newMap.length; i++) {
-            Item[] old = map[i];
-            Item[] n = new Item[old.length];
-
-            System.arraycopy(old, 0, n, 0, n.length);
-            newMap[i] = n;
-        }
-
-        for (int y = 0; y < newMap.length; y++) {
-            Item[] row = newMap[y];
-            for (int x = 0; x < row.length; x++) {
-                Item item = newMap[y][x];
-                newMap[y][x] = item.clone();
-            }
-        }
-        return newMap;
-    }
 
     public void registerRecipe(Recipe recipe) {
         if (recipe instanceof CraftingRecipe) {
@@ -289,8 +273,7 @@ public class CraftingManager {
     }
 
     public void registerShapelessRecipe(ShapelessRecipe recipe) {
-        List<Item> list = recipe.getIngredientList();
-        list.sort(recipeComparator);
+        List<Item> list = recipe.getIngredientsAggregate();
 
         UUID hash = getMultiItemHash(list);
 
@@ -335,26 +318,26 @@ public class CraftingManager {
         return this.containerRecipes.get(getContainerHash(input.getId(), potion.getId()));
     }
 
-    public CraftingRecipe matchRecipe(Item[][] inputMap, Item primaryOutput, Item[][] extraOutputMap) {
+    public CraftingRecipe matchRecipe(List<Item> inputList, Item primaryOutput, List<Item> extraOutputList) {
         //TODO: try to match special recipes before anything else (first they need to be implemented!)
 
         int outputHash = getItemHash(primaryOutput);
         if (this.shapedRecipes.containsKey(outputHash)) {
-            List<Item> itemCol = new ArrayList<>();
-            for (Item[] items : inputMap) itemCol.addAll(Arrays.asList(items));
-            UUID inputHash = getMultiItemHash(itemCol);
+            inputList.sort(recipeComparator);
+
+            UUID inputHash = getMultiItemHash(inputList);
 
             Map<UUID, ShapedRecipe> recipeMap = shapedRecipes.get(outputHash);
 
             if (recipeMap != null) {
                 ShapedRecipe recipe = recipeMap.get(inputHash);
 
-                if (recipe != null && recipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) { //matched a recipe by hash
+                if (recipe != null && (recipe.matchItems(inputList, extraOutputList) || matchItemsAccumulation(recipe, inputList, primaryOutput, extraOutputList))) {
                     return recipe;
                 }
 
                 for (ShapedRecipe shapedRecipe : recipeMap.values()) {
-                    if (shapedRecipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) {
+                    if (shapedRecipe.matchItems(inputList, extraOutputList) || matchItemsAccumulation(shapedRecipe, inputList, primaryOutput, extraOutputList)) {
                         return shapedRecipe;
                     }
                 }
@@ -362,13 +345,9 @@ public class CraftingManager {
         }
 
         if (shapelessRecipes.containsKey(outputHash)) {
-            List<Item> list = new ArrayList<>();
-            for (Item[] a : inputMap) {
-                list.addAll(Arrays.asList(a));
-            }
-            list.sort(recipeComparator);
+            inputList.sort(recipeComparator);
 
-            UUID inputHash = getMultiItemHash(list);
+            UUID inputHash = getMultiItemHash(inputList);
 
             Map<UUID, ShapelessRecipe> recipes = shapelessRecipes.get(outputHash);
 
@@ -378,18 +357,27 @@ public class CraftingManager {
 
             ShapelessRecipe recipe = recipes.get(inputHash);
 
-            if (recipe != null && recipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) {
+            if (recipe != null && (recipe.matchItems(inputList, extraOutputList) || matchItemsAccumulation(recipe, inputList, primaryOutput, extraOutputList))) {
                 return recipe;
             }
 
             for (ShapelessRecipe shapelessRecipe : recipes.values()) {
-                if (shapelessRecipe.matchItems(this.cloneItemMap(inputMap), this.cloneItemMap(extraOutputMap))) {
+                if (shapelessRecipe.matchItems(inputList, extraOutputList) || matchItemsAccumulation(shapelessRecipe, inputList, primaryOutput, extraOutputList)) {
                     return shapelessRecipe;
                 }
             }
         }
 
         return null;
+    }
+
+    private boolean matchItemsAccumulation(CraftingRecipe recipe, List<Item> inputList, Item primaryOutput, List<Item> extraOutputList) {
+        Item recipeResult = recipe.getResult();
+        if (primaryOutput.equals(recipeResult, recipeResult.hasMeta(), recipeResult.hasCompoundTag()) && primaryOutput.getCount() % recipeResult.getCount() == 0) {
+            int multiplier = primaryOutput.getCount() / recipeResult.getCount();
+            return recipe.matchItems(inputList, extraOutputList, multiplier);
+        }
+        return false;
     }
 
     public static class Entry {

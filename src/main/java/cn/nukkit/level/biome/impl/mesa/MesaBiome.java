@@ -142,4 +142,9 @@ public class MesaBiome extends CoveredBiome {
     protected float minHill()   {
         return -0.1f;
     }
+
+    @Override
+    public boolean canRain() {
+        return false;
+    }
 }

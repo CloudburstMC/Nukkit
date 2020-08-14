@@ -17,7 +17,6 @@ import cn.nukkit.raknet.server.ServerInstance;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
-import cn.nukkit.utils.Zlib;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -230,7 +229,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
     public void handleOption(String name, String value) {
         if ("bandwidth".equals(name)) {
             String[] v = value.split(";");
-            this.network.addStatistics(Double.valueOf(v[0]), Double.valueOf(v[1]));
+            this.network.addStatistics(Double.parseDouble(v[0]), Double.parseDouble(v[1]));
         }
     }
 
@@ -260,7 +259,7 @@ public class RakNetInterface implements ServerInstance, AdvancedSourceInterface 
                 }
                 buffer = packet.getBuffer();
                 try {
-                    buffer = Zlib.deflate(
+                    buffer = Network.deflateRaw(
                             Binary.appendBytes(Binary.writeUnsignedVarInt(buffer.length), buffer),
                             Server.getInstance().networkCompressionLevel);
                 } catch (Exception e) {

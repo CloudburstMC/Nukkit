@@ -7,6 +7,9 @@ import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.ToString;
 
+import java.util.ArrayDeque;
+import java.util.Collection;
+
 @ToString
 public class InventoryTransactionPacket extends DataPacket {
 
@@ -36,12 +39,15 @@ public class InventoryTransactionPacket extends DataPacket {
     public int transactionType;
     public NetworkInventoryAction[] actions;
     public TransactionData transactionData;
+    public boolean hasNetworkIds;
+    public int legacyRequestId;
 
     /**
-     * NOTE: THIS FIELD DOES NOT EXIST IN THE PROTOCOL, it's merely used for convenience for PocketMine-MP to easily
-     * determine whether we're doing a crafting transaction.
+     * NOTE: THESE FIELDS DO NOT EXIST IN THE PROTOCOL, it's merely used for convenience for us to easily
+     * determine whether we're doing a crafting or enchanting transaction.
      */
     public boolean isCraftingPart = false;
+    public boolean isEnchantingPart = false;
 
     @Override
     public byte pid() {
@@ -51,8 +57,10 @@ public class InventoryTransactionPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
+        this.putVarInt(this.legacyRequestId);
+        //TODO legacySlot array
         this.putUnsignedVarInt(this.transactionType);
-
+        this.putBoolean(this.hasNetworkIds);
         this.putUnsignedVarInt(this.actions.length);
         for (NetworkInventoryAction action : this.actions) {
             action.write(this);
@@ -99,12 +107,27 @@ public class InventoryTransactionPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.legacyRequestId = this.getVarInt();
+        if (legacyRequestId < -1 && (legacyRequestId & 1) == 0) {
+            int length = (int) this.getUnsignedVarInt();
+            for (int i = 0; i < length; i++) {
+                this.getByte();
+                int bufLen = (int) this.getUnsignedVarInt();
+                this.get(bufLen);
+            }
+
+        }
+
         this.transactionType = (int) this.getUnsignedVarInt();
 
-        this.actions = new NetworkInventoryAction[(int) this.getUnsignedVarInt()];
-        for (int i = 0; i < this.actions.length; i++) {
-            this.actions[i] = new NetworkInventoryAction().read(this);
+        this.hasNetworkIds = this.getBoolean();
+
+        int length = (int) this.getUnsignedVarInt();
+        Collection<NetworkInventoryAction> actions = new ArrayDeque<>();
+        for (int i = 0; i < length; i++) {
+            actions.add(new NetworkInventoryAction().read(this));
         }
+        this.actions = actions.toArray(new NetworkInventoryAction[0]);
 
         switch (this.transactionType) {
             case TYPE_NORMAL:

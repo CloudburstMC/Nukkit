@@ -1,6 +1,7 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.BlockDirt;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
@@ -31,7 +32,7 @@ public abstract class TreeGenerator extends cn.nukkit.level.generator.object.Bas
      */
     protected void setDirtAt(ChunkManager level, Vector3 pos) {
         if (level.getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z) != Item.DIRT) {
-            this.setBlockAndNotifyAdequately(level, pos, new BlockDirt());
+            this.setBlockAndNotifyAdequately(level, pos, Block.get(BlockID.DIRT));
         }
     }
 }

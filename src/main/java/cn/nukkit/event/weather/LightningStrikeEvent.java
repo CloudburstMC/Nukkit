@@ -3,6 +3,7 @@ package cn.nukkit.event.weather;
 import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.event.level.WeatherEvent;
 import cn.nukkit.level.Level;
 
 /**

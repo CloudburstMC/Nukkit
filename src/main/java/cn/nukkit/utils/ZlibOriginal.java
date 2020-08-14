@@ -1,19 +1,20 @@
 package cn.nukkit.utils;
 
-import java.io.ByteArrayOutputStream;
+import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
+
 import java.io.IOException;
-import java.io.InputStream;
+import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
-import java.util.zip.InflaterInputStream;
+import java.util.zip.Inflater;
 
 public class ZlibOriginal implements ZlibProvider {
 
     @Override
-    public byte[] deflate(byte[][] datas, int level) throws Exception {
+    public byte[] deflate(byte[][] datas, int level) throws IOException {
         Deflater deflater = new Deflater(level);
-        deflater.reset();
-            byte[] buffer = new byte[1024];
-            ByteArrayOutputStream bos = new ByteArrayOutputStream(datas.length);
+        byte[] buffer = new byte[1024];
+        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+        bos.reset();
         try {
             for (byte[] data : datas) {
                 deflater.setInput(data);
@@ -34,12 +35,12 @@ public class ZlibOriginal implements ZlibProvider {
     }
 
     @Override
-    public byte[] deflate(byte[] data, int level) throws Exception {
+    public byte[] deflate(byte[] data, int level) throws IOException {
         Deflater deflater = new Deflater(level);
-        deflater.reset();
         deflater.setInput(data);
         deflater.finish();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length);
+        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+        bos.reset();
         byte[] buf = new byte[1024];
         try {
             while (!deflater.finished()) {
@@ -53,23 +54,27 @@ public class ZlibOriginal implements ZlibProvider {
     }
 
     @Override
-    public byte[] inflate(InputStream stream) throws IOException {
-        InflaterInputStream inputStream = new InflaterInputStream(stream);
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+    public byte[] inflate(byte[] data, int maxSize) throws IOException {
+        Inflater inflater = new Inflater();
+        inflater.setInput(data);
+        inflater.finished();
+        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+        bos.reset();
+
         byte[] buffer = new byte[1024];
-        int length;
-
         try {
-            while ((length = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, length);
+            int length = 0;
+            while (!inflater.finished()) {
+                int i = inflater.inflate(buffer);
+                length += i;
+                if (maxSize > 0 && length >= maxSize) {
+                    throw new IOException("Inflated data exceeds maximum size");
+                }
+                bos.write(buffer, 0, i);
             }
-        } finally {
-            buffer = outputStream.toByteArray();
-            outputStream.flush();
-            outputStream.close();
-            inputStream.close();
+            return bos.toByteArray();
+        } catch (DataFormatException e) {
+            throw new IOException("Unable to inflate zlib stream", e);
         }
-
-        return buffer;
     }
 }

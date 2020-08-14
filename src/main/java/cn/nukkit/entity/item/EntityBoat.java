@@ -373,7 +373,8 @@ public class EntityBoat extends EntityVehicle {
     @Override
     public void applyEntityCollision(Entity entity) {
         if (this.riding == null && entity.riding != this && !entity.passengers.contains(this)) {
-            if (!entity.boundingBox.intersectsWith(this.boundingBox.grow(0.20000000298023224, -0.1, 0.20000000298023224))) {
+            if (!entity.boundingBox.intersectsWith(this.boundingBox.grow(0.20000000298023224, -0.1, 0.20000000298023224))
+                    || entity instanceof Player && ((Player) entity).getGamemode() == Player.SPECTATOR) {
                 return;
             }
 
