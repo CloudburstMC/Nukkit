@@ -107,7 +107,7 @@ public class Potion implements Cloneable {
         potions[Potion.TURTLE_MASTER_II] = new Potion(Potion.TURTLE_MASTER_II, 2);
         potions[Potion.SLOW_FALLING] = new Potion(Potion.SLOW_FALLING);
         potions[Potion.SLOW_FALLING_LONG] = new Potion(Potion.SLOW_FALLING_LONG);
-        potions[Potion.SLOWNESS_LONG_II] = new Potion(Potion.SLOWNESS_LONG_II);
+        potions[Potion.SLOWNESS_LONG_II] = new Potion(Potion.SLOWNESS_LONG_II, 2);
     }
 
     public static Potion getPotion(int id) {
