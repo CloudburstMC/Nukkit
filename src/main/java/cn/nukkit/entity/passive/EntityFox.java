@@ -1,5 +1,6 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -7,6 +8,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
  * @author Kaooot
  * @version 1.0
  */
+@Since("1.4.0.0-PN")
 public class EntityFox extends EntityAnimal {
 
     public static final int NETWORK_ID = 121;

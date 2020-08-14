@@ -1,18 +1,24 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.Since;
 import lombok.ToString;
 
 @ToString
 public class NPCRequestPacket extends DataPacket {
 
+    @Since("1.4.0.0-PN")
     public long entityRuntimeId;
 
+    @Since("1.4.0.0-PN")
     public RequestType requestType;
 
+    @Since("1.4.0.0-PN")
     public String commandString;
 
+    @Since("1.4.0.0-PN")
     public int actionType;
 
+    @Since("1.4.0.0-PN")
     public enum RequestType {
 
         SET_ACTIONS,
