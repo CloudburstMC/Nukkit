@@ -537,28 +537,33 @@ public class Config {
     }
 
     private void parseContent(String content) {
-        switch (this.type) {
-            case Config.PROPERTIES:
-                this.parseProperties(content);
-                break;
-            case Config.JSON:
-                GsonBuilder builder = new GsonBuilder();
-                Gson gson = builder.create();
-                this.config = new ConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
-                }.getType()));
-                break;
-            case Config.YAML:
-                DumperOptions dumperOptions = new DumperOptions();
-                dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                Yaml yaml = new Yaml(dumperOptions);
-                this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
-                break;
-            // case Config.SERIALIZED
-            case Config.ENUM:
-                this.parseList(content);
-                break;
-            default:
-                this.correct = false;
+        try {
+            switch (this.type) {
+                case Config.PROPERTIES:
+                    this.parseProperties(content);
+                    break;
+                case Config.JSON:
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    this.config = new ConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
+                    }.getType()));
+                    break;
+                case Config.YAML:
+                    DumperOptions dumperOptions = new DumperOptions();
+                    dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                    Yaml yaml = new Yaml(dumperOptions);
+                    this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
+                    break;
+                // case Config.SERIALIZED
+                case Config.ENUM:
+                    this.parseList(content);
+                    break;
+                default:
+                    this.correct = false;
+            }
+        } catch (Exception e) {
+          MainLogger.getLogger().warning("Failed to parse the config file "+file, e);
+          throw e;
         }
     }
 
