@@ -2416,6 +2416,7 @@ public class Server {
         Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
         Entity.registerEntity("Phantom", EntityPhantom.class);
         Entity.registerEntity("Piglin", EntityPiglin.class);
+        Entity.registerEntity("PiglinBrute", EntityPiglinBrute.class);
         Entity.registerEntity("Pillager", EntityPillager.class);
         Entity.registerEntity("Ravager", EntityRavager.class);
         Entity.registerEntity("Shulker", EntityShulker.class);
