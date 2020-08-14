@@ -9,7 +9,7 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
-## [1.3.1.4-PN] - Future  ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/20?closed=1))
+## [1.3.1.4-PN] - 2020-08-14  ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/20?closed=1))
 Fixes beehives, client crashes in Nether and improves some error handling
 
 ### Fixes
@@ -22,7 +22,8 @@ Fixes beehives, client crashes in Nether and improves some error handling
 - [#475] Improved error log whilst loading a config file
 - [#475] Improved error log when a batch packet decoding or processing fails
 - [#462] The beehive and bee_nest block data have been changed from `[3-bits BlockFace index, 3-bits honey level]` to `[2-bits BlockFace horizontal index, 3-bits honey level]`
-- [#462] The chunk's content version was increased to 5
+- [#462] The chunk's content version got increased to 5
+- [#464] The German and the Simplified Chinese translations have been updated
 
 ## [1.3.1.3-PN] - 2020-08-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/19?closed=1))
 A quick update that adds support to 1.16.20 and updates the translations
@@ -449,7 +450,8 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
 [discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.3-PN...bleeding
+[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.4-PN...bleeding
+[1.3.1.4-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.3-PN...v1.3.1.4-PN
 [1.3.1.3-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.2-PN...v1.3.1.3-PN
 [1.3.1.2-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.1-PN...v1.3.1.2-PN
 [1.3.1.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.0-PN...v1.3.1.1-PN
@@ -583,6 +585,7 @@ Fixes several anvil issues.
 [#449]: https://github.com/PowerNukkit/PowerNukkit/issues/449
 [#450]: https://github.com/PowerNukkit/PowerNukkit/issues/450
 [#462]: https://github.com/PowerNukkit/PowerNukkit/issues/462
+[#464]: https://github.com/PowerNukkit/PowerNukkit/issues/464
 [#467]: https://github.com/PowerNukkit/PowerNukkit/issues/467
 [#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
 [#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475
