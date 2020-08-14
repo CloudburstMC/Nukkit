@@ -1174,6 +1174,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.x = (int) this.spawnPosition.x;
         pk.y = (int) this.spawnPosition.y;
         pk.z = (int) this.spawnPosition.z;
+        pk.dimension = this.getLevel().getDimension();
         this.dataPacket(pk);
     }
 
@@ -2123,6 +2124,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.levelId = "";
         startGamePacket.worldName = this.getServer().getNetwork().getName();
         startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
+        startGamePacket.dimension = (byte) getLevel().getDimension();
         //startGamePacket.isInventoryServerAuthoritative = true;
         this.dataPacket(startGamePacket);
 
@@ -4612,6 +4614,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 pk.x = spawn.getFloorX();
                 pk.y = spawn.getFloorY();
                 pk.z = spawn.getFloorZ();
+                pk.dimension = spawn.getLevel().getDimension();
                 dataPacket(pk);
             }
 
@@ -5015,6 +5018,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             spawnPosition.x = spawn.getFloorX();
             spawnPosition.y = spawn.getFloorY();
             spawnPosition.z = spawn.getFloorZ();
+            spawnPosition.dimension = spawn.getLevel().getDimension();
             this.dataPacket(spawnPosition);
 
             // Remove old chunks
