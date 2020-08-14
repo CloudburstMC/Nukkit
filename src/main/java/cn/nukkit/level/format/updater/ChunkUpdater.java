@@ -12,8 +12,9 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ChunkUpdater {
+    @SuppressWarnings("java:S3400")
     public int getContentVersion() {
-        return 6;
+        return 7;
     }
 
     @PowerNukkitOnly("Needed for level backward compatibility")
@@ -27,8 +28,8 @@ public class ChunkUpdater {
             
             if (section.getContentVersion() < 5) {
                 updated = updateToV5(level, chunk, updated, section, section.getContentVersion());
-            } else if (section.getContentVersion() < 6) {
-                updated = updateToV6(chunk, updated, section);
+            } else if (section.getContentVersion() == 6) {
+                updated = updateToV7FromV6(chunk, updated, section);
             }
         }
 
@@ -37,10 +38,11 @@ public class ChunkUpdater {
         }
     }
     
-    private boolean updateToV6(BaseChunk chunk, boolean updated, ChunkSection section) {
-        if (walk(chunk, section, new NewLeafUpdater(section))) {
-            return true;
+    private boolean updateToV7FromV6(BaseChunk chunk, boolean updated, ChunkSection section) {
+        if (walk(chunk, section, new BeehiveUpdater(section))) {
+            updated = true;
         }
+        section.setContentVersion(7);
         return updated;
     }
 
@@ -49,6 +51,7 @@ public class ChunkUpdater {
         boolean sectionUpdated = walk(chunk, section, new GroupedUpdaters(
                 new MesaBiomeUpdater(section),
                 new NewLeafUpdater(section),
+                new BeehiveUpdater(section),
                 contentVersion < 4? wallUpdater : null,
                 contentVersion < 1? new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK) : null,
                 contentVersion < 1? new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN) : null,
@@ -71,7 +74,7 @@ public class ChunkUpdater {
             sectionUpdated = walk(chunk, section, wallUpdater);
         }
 
-        section.setContentVersion(6);
+        section.setContentVersion(7);
         return updated;
     }
 
