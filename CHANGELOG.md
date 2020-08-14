@@ -10,10 +10,17 @@ Nukkit 1.X and 2.X.
 Click the link above to see the future.
 
 ## [1.3.1.4-PN] - Future  ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/20?closed=1))
-Click the link above to see the future.
+Fixes beehives, client crashes in Nether and improves some error handling
 
 ### Fixes
-- [#462] Beehives and bee_nests are rendered as "UPDATE!" block
+- [#467] Players crash when reconnecting in the Nether
+- [#469] Players who don't crash when reconnecting in the Nether, see overworld sky
+- [#462] Beehives and bee nest getting rendered as an "UPDATE!" block
+- [#475] If middle packet inside a batch packet fails processing, the other packets in the batch gets ignored
+
+### Changed
+- [#475] Improved error log whilst loading a config file
+- [#475] Improved error log when a batch packet decoding or processing fails
 
 ## [1.3.1.3-PN] - 2020-08-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/19?closed=1))
 A quick update that adds support to 1.16.20 and updates the translations
@@ -574,3 +581,6 @@ Fixes several anvil issues.
 [#449]: https://github.com/PowerNukkit/PowerNukkit/issues/449
 [#450]: https://github.com/PowerNukkit/PowerNukkit/issues/450
 [#462]: https://github.com/PowerNukkit/PowerNukkit/issues/462
+[#467]: https://github.com/PowerNukkit/PowerNukkit/issues/467
+[#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
+[#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475
