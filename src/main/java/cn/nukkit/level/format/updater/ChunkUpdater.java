@@ -14,7 +14,7 @@ import lombok.experimental.UtilityClass;
 public class ChunkUpdater {
     @SuppressWarnings("java:S3400")
     public int getContentVersion() {
-        return 7;
+        return 8;
     }
 
     @PowerNukkitOnly("Needed for level backward compatibility")
@@ -27,9 +27,11 @@ public class ChunkUpdater {
             }
             
             if (section.getContentVersion() < 5) {
-                updated = updateToV5(level, chunk, updated, section, section.getContentVersion());
+                updated = updateToV8FromV0(level, chunk, updated, section, section.getContentVersion());
+            } else if (section.getContentVersion() == 5 || section.getContentVersion() == 7) {
+                updated = updateBeehiveToV8(chunk, updated, section, false);
             } else if (section.getContentVersion() == 6) {
-                updated = updateToV7FromV6(chunk, updated, section);
+                updated = updateBeehiveToV8(chunk, updated, section, true);
             }
         }
 
@@ -38,20 +40,20 @@ public class ChunkUpdater {
         }
     }
     
-    private boolean updateToV7FromV6(BaseChunk chunk, boolean updated, ChunkSection section) {
-        if (walk(chunk, section, new BeehiveUpdater(section))) {
+    private boolean updateBeehiveToV8(BaseChunk chunk, boolean updated, ChunkSection section, boolean updateDirection) {
+        if (walk(chunk, section, new BeehiveUpdater(section, updateDirection))) {
             updated = true;
         }
-        section.setContentVersion(7);
+        section.setContentVersion(8);
         return updated;
     }
 
-    private boolean updateToV5(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
+    private boolean updateToV8FromV0(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
         WallUpdater wallUpdater = new WallUpdater(level, section);
         boolean sectionUpdated = walk(chunk, section, new GroupedUpdaters(
                 new MesaBiomeUpdater(section),
                 new NewLeafUpdater(section),
-                new BeehiveUpdater(section),
+                new BeehiveUpdater(section, true),
                 contentVersion < 4? wallUpdater : null,
                 contentVersion < 1? new StemUpdater(level, section, BlockID.MELON_STEM, BlockID.MELON_BLOCK) : null,
                 contentVersion < 1? new StemUpdater(level, section, BlockID.PUMPKIN_STEM, BlockID.PUMPKIN) : null,
@@ -74,7 +76,7 @@ public class ChunkUpdater {
             sectionUpdated = walk(chunk, section, wallUpdater);
         }
 
-        section.setContentVersion(7);
+        section.setContentVersion(8);
         return updated;
     }
 
