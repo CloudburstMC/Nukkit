@@ -21,6 +21,8 @@ Fixes beehives, client crashes in Nether and improves some error handling
 ### Changed
 - [#475] Improved error log whilst loading a config file
 - [#475] Improved error log when a batch packet decoding or processing fails
+- [#462] The beehive and bee_nest block data have been changed from `[3-bits BlockFace index, 3-bits honey level]` to `[2-bits BlockFace horizontal index, 3-bits honey level]`
+- [#462] The chunk's content version was increased to 5
 
 ## [1.3.1.3-PN] - 2020-08-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/19?closed=1))
 A quick update that adds support to 1.16.20 and updates the translations
