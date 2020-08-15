@@ -1,5 +1,9 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityNetherReactor;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDiamond;
 import cn.nukkit.item.ItemIngotIron;
@@ -9,18 +13,12 @@ import cn.nukkit.utils.BlockColor;
 /**
  * Created by good777LUCKY
  */
-public class BlockNetherReactor extends BlockSolidMeta {
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
+public class BlockNetherReactor extends BlockSolid {
 
-    public static final int NORMAL = 0;
-    public static final int INITIALIZED = 1;
-    public static final int FINISHED = 2;
-    
     public BlockNetherReactor() {
-        this(0);
-    }
-    
-    public BlockNetherReactor(int meta) {
-        super(meta);
+        // Does nothing
     }
     
     @Override
@@ -30,13 +28,7 @@ public class BlockNetherReactor extends BlockSolidMeta {
     
     @Override
     public String getName() {
-        String[] names = new String[]{
-            "Nether Reactor Core",
-            "Initialized Nether Reactor Core",
-            "Finished Nether Reactor Core",
-            "Nether Reactor Core"
-        };
-        return names[this.getDamage() & 0x03];
+        return "Nether Reactor Core";
     }
     
     @Override
@@ -74,5 +66,58 @@ public class BlockNetherReactor extends BlockSolidMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.IRON_BLOCK_COLOR;
+    }
+    
+    private BlockEntityNetherReactor getOrInitBlockEntity() {
+        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        if (blockEntity instanceof BlockEntityNetherReactor) {
+            return (BlockEntityNetherReactor) blockEntity;
+        }
+        if (blockEntity != null) {
+            throw new IllegalStateException("The block entity space at "+getLocation()+" is already occupied with "+blockEntity);
+        }
+        blockEntity = BlockEntity.createBlockEntity(BlockEntity.NETHER_REACTOR, this);
+        if (blockEntity instanceof BlockEntityNetherReactor) {
+            return (BlockEntityNetherReactor) blockEntity;
+        }
+        String message = "Failed to create the NetherReactor block entity at " + getLocation() + ", received:" + blockEntity;
+        blockEntity.close();
+        throw new IllegalStateException(message);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public NetherReactorProgress getProgress() {
+        return getOrInitBlockEntity().getProgress();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setProgress(NetherReactorProgress progress) {
+        getOrInitBlockEntity().setProgress(progress);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public enum NetherReactorProgress {
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        READY,
+
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        INITIALIZED,
+
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        FINISHED;
+        
+        private static final NetherReactorProgress[] values = values();
+        
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        public static NetherReactorProgress getFromData(int data) {
+            return values[data];
+        }
     }
 }

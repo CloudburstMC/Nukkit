@@ -3,6 +3,8 @@ package cn.nukkit.blockentity;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.Position;
@@ -55,6 +57,9 @@ public abstract class BlockEntity extends Position {
     public static final String BELL = "Bell";
     public static final String DISPENSER = "Dispenser";
     public static final String DROPPER = "Dropper";
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final String NETHER_REACTOR = "NetherReactor"; 
 
 
     public static long count = 1;
