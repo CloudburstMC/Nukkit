@@ -458,6 +458,8 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
             case GLASS_PANE:
             case STAINED_GLASS_PANE:
             case IRON_BARS:
+            case GLASS:
+            case STAINED_GLASS:
                 return true;
             default:
                 if (block instanceof BlockWallBase) {
