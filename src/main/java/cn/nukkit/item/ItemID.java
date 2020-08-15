@@ -246,4 +246,7 @@ public interface ItemID {
     int RECORD_WAIT = 511;
 
     int SHIELD = 513;
+
+    int HONEYCOMB = 736;
+    int HONEY_BOTTLE = 737;
 }
