@@ -363,7 +363,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
             list[MOVING_BLOCK] = BlockMoving.class; //250
             list[OBSERVER] = BlockObserver.class; //251
-
+            list[STRUCTURE_BLOCK] = BlockStructure.class; //252
+            
             list[PRISMARINE_STAIRS] = BlockStairsPrismarine.class; //257
             list[DARK_PRISMARINE_STAIRS] = BlockStairsDarkPrismarine.class; //258
             list[PRISMARINE_BRICKS_STAIRS] = BlockStairsPrismarineBrick.class; //259

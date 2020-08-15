@@ -309,7 +309,8 @@ public interface BlockID {
     int MOVING_BLOCK = 250;
 
     int OBSERVER = 251;
-
+    int STRUCTURE_BLOCK = 252;
+    
     int PRISMARINE_STAIRS = 257;
     int DARK_PRISMARINE_STAIRS = 258;
     int PRISMARINE_BRICKS_STAIRS = 259;
