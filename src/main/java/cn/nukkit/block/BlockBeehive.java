@@ -3,21 +3,27 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBeehive;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+
 public class BlockBeehive extends BlockSolidMeta implements Faceable {
+    public static final IntBlockProperty HONEY_LEVEL = new IntBlockProperty("honey_level", false, 5);
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, HONEY_LEVEL);
     public BlockBeehive() {
         this(0);
     }
@@ -29,6 +35,12 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     @Override
     public int getId() {
         return BEEHIVE;
+    }
+
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -69,9 +81,9 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (player == null) {
-            setDamage(0);
+            setBlockFace(BlockFace.SOUTH);
         } else {
-            setDamage(player.getDirection().getOpposite().getHorizontalIndex());
+            setBlockFace(player.getDirection().getOpposite());
         }
     
         int honeyLevel = item.hasCustomBlockData() ? item.getCustomBlockData().getByte("HoneyLevel") : 0;
@@ -203,28 +215,28 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromIndex(getDamage() & 0b111);
+        return getPropertyValue(DIRECTION);
     }
     
+    @Override
     public void setBlockFace(BlockFace face) {
-        setDamage((getDamage() & (DATA_MASK ^ 0b111)) | (face.getIndex() & 0b111));
+        setPropertyValue(DIRECTION, face);
     }
 
     public void setHoneyLevel(int honeyLevel) {
-        honeyLevel = NukkitMath.clamp(honeyLevel, 0, 5);
-        setDamage(getDamage() & (DATA_MASK ^ 0b111000) | honeyLevel << 3);
+        setPropertyValue(HONEY_LEVEL, honeyLevel);
     }
 
     public int getHoneyLevel() {
-        return getDamage() >> 3 & 0b111;
+        return getPropertyValue(HONEY_LEVEL);
     }
 
     public boolean isEmpty() {
-        return (getDamage() & 0b111000) == 0;
+        return getHoneyLevel() == HONEY_LEVEL.getMinValue();
     }
 
     public boolean isFull() {
-        return (getDamage() & 0b111000) == 0b111000;
+        return getPropertyValue(HONEY_LEVEL) == HONEY_LEVEL.getMaxValue();
     }
     
     @Override

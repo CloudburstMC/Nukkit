@@ -9,8 +9,87 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
-## [Unreleased 1.3.1.2-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/18?closed=1))
-Click the link above to see the future.
+## [1.3.1.4-PN] - 2020-08-14  ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/20?closed=1))
+Fixes beehives, client crashes in Nether and improves some error handling
+
+### Fixes
+- [#467] Players crash when reconnecting in the Nether
+- [#469] Players who don't crash when reconnecting in the Nether, see overworld sky
+- [#462] Beehives and bee nest getting rendered as an "UPDATE!" block
+- [#475] If middle packet inside a batch packet fails processing, the other packets in the batch gets ignored
+
+### Changed
+- [#475] Improved error log whilst loading a config file
+- [#475] Improved error log when a batch packet decoding or processing fails
+- [#462] The beehive and bee_nest block data have been changed from `[3-bits BlockFace index, 3-bits honey level]` to `[2-bits BlockFace horizontal index, 3-bits honey level]`
+- [#462] The chunk's content version got increased to 5
+- [#464] The German and the Simplified Chinese translations have been updated
+
+## [1.3.1.3-PN] - 2020-08-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/19?closed=1))
+A quick update that adds support to 1.16.20 and updates the translations
+
+### Fixes
+- [#298] Having the gamemode changed by another player shows a `%s` in the chat
+
+### Changed
+- Changed the protocol version to support Minecraft Bedrock Edition 1.16.20
+- The translations have been updated
+
+## [1.3.1.2-PN] - 2020-08-10 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/18?closed=1))
+Very important fixes that you must have. Make a backup before upgrading.
+
+### Fixes
+- [#404] Issues with inventories, click events, and cursor
+- [#365] Client crashing when FakeInventories
+- [#339] Client crashes when closing some inventories
+- [#287] Campfire does not extinguish when it touches flowing water
+- [#287] Grindstone placement rule on vines, bubble, liquid, and replaceable blocks
+- [#287] `BlockGrowEvent` being fired when using bone meal on dead sea pickle
+- [#287] Mesa biome generating a wrong block instead of red sandstone
+- [#366] Block disappears when making bridges
+- [#261] Bamboo and bamboo sampling bone meal, placement, and breaking behaviours
+- [#359] Piston causing tile entities to invalidate
+- [#340] Brewing stand placement rules, recipes, and processing
+- [#397] Firework effects getting overridden by a black creeper face
+- [#400] OP players in spectator gamemode could break blocks in client-side
+- [#403] Right-clicking some blocks while sneaking were not opening the block
+- [#407] Server could be stuck and not shutdown even after Watchdog detects the an issue
+- [#412] Daylight detector's tile entity wasn't being removed
+- [#440] Predefined long world seeds wasn't loading correctly
+- [#414] Minecart names could return null can cause unexpected NullPointerExceptions
+- [#436] Chorus plant and flowers could be placed anywhere and could keep floating
+- [#436] Chorus plant and flowers had wrong blast resistance values
+- [#437] Nether dimension having overworld sky
+- [#427] Campfire was moving with pistons
+- [#422] Can't ignite leaves with flint and steel directly
+- [#450] Can't ignite leaves with fireball directly
+- [#450] Flowerpot placement and support rules
+- [#430] Redstone repearter not causing redstone update to the block right in front of it
+- [#445] Some languages had different default nukkit.yml settings values
+- [#443] Boats and minecarts were not checking if they were already 'killed' and could drop itself more than once
+- [#404] Minecarts trying to make death animations when it don't have
+- [#404] Comparator not causing redstone updates correcty
+- [#404] Fixed three duplication glitches
+- [#430] Fire not fading sometimes
+- [#430] Iron door not dropping when you break the block under it
+- [#449] Honey block couldn't be used to make a note on noteblock
+
+### Added
+- [#287] You can now set yaw and pitch when using the teleport command: `/tp <x> <y> <z> <yaw> <pitch>`
+- [#445] New translation site. Help us to translate PowerNukkit at https://translate.powernukkit.org
+
+### Changes
+- [#390] If a compression issue happens, an IOException will be thrown now
+- [#287] Removed the teleport limitation in y-axis with the `/tp` command
+- [#287] Campfire does not allow flowing allow passing through it anymore
+- [#287] Improved the lantern placement rules code
+- [#287] Improved the liquid flow logic
+- [#287] Prevents placing blocks in water if the block would break itself in the next tick
+- [#287] Narrow down the logic to prevent the right-click spam bug
+- [#404] Grindstone will not be forced to face up when replacing vines anymore
+- [#445] The translation system have been improved
+- [#433] Improved snowball particle performance
+- [#404] Chunk content version bumped to 4
 
 ## [1.3.1.1-PN] - 2020-07-19
 Fixes an important stability issue and improves resource pack compatibility
@@ -371,8 +450,10 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
 [discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.1-PN...bleeding
-[Unreleased 1.3.1.2-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.1-PN...bleeding-1.3.1.2-pn
+[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.4-PN...bleeding
+[1.3.1.4-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.3-PN...v1.3.1.4-PN
+[1.3.1.3-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.2-PN...v1.3.1.3-PN
+[1.3.1.2-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.1-PN...v1.3.1.2-PN
 [1.3.1.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.0-PN...v1.3.1.1-PN
 [1.3.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.0.1-PN...v1.3.1.0-PN
 [1.3.0.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.0.0-PN...v1.3.0.1-PN
@@ -460,8 +541,10 @@ Fixes several anvil issues.
 [#279]: https://github.com/PowerNukkit/PowerNukkit/pull/279
 [#281]: https://github.com/PowerNukkit/PowerNukkit/pull/281
 [#285]: https://github.com/PowerNukkit/PowerNukkit/pull/285
+[#287]: https://github.com/PowerNukkit/PowerNukkit/issues/287
 [#293]: https://github.com/PowerNukkit/PowerNukkit/pull/293
 [#297]: https://github.com/PowerNukkit/PowerNukkit/pull/297
+[#298]: https://github.com/PowerNukkit/PowerNukkit/issues/298
 [#315]: https://github.com/PowerNukkit/PowerNukkit/pull/315
 [#319]: https://github.com/PowerNukkit/PowerNukkit/pull/319
 [#320]: https://github.com/PowerNukkit/PowerNukkit/pull/320
@@ -471,10 +554,38 @@ Fixes several anvil issues.
 [#330]: https://github.com/PowerNukkit/PowerNukkit/issues/330
 [#335]: https://github.com/PowerNukkit/PowerNukkit/issues/335
 [#338]: https://github.com/PowerNukkit/PowerNukkit/issues/338
+[#339]: https://github.com/PowerNukkit/PowerNukkit/issues/339
+[#340]: https://github.com/PowerNukkit/PowerNukkit/issues/340
 [#344]: https://github.com/PowerNukkit/PowerNukkit/issues/344
 [#346]: https://github.com/PowerNukkit/PowerNukkit/issues/346
 [#347]: https://github.com/PowerNukkit/PowerNukkit/issues/347
 [#348]: https://github.com/PowerNukkit/PowerNukkit/issues/348
 [#352]: https://github.com/PowerNukkit/PowerNukkit/issues/352
+[#359]: https://github.com/PowerNukkit/PowerNukkit/issues/359
+[#365]: https://github.com/PowerNukkit/PowerNukkit/issues/365
+[#366]: https://github.com/PowerNukkit/PowerNukkit/issues/366
 [#368]: https://github.com/PowerNukkit/PowerNukkit/issues/368
 [#390]: https://github.com/PowerNukkit/PowerNukkit/issues/390
+[#397]: https://github.com/PowerNukkit/PowerNukkit/issues/397
+[#400]: https://github.com/PowerNukkit/PowerNukkit/issues/400
+[#403]: https://github.com/PowerNukkit/PowerNukkit/issues/403
+[#404]: https://github.com/PowerNukkit/PowerNukkit/issues/404
+[#407]: https://github.com/PowerNukkit/PowerNukkit/issues/407
+[#412]: https://github.com/PowerNukkit/PowerNukkit/issues/412
+[#414]: https://github.com/PowerNukkit/PowerNukkit/issues/414
+[#422]: https://github.com/PowerNukkit/PowerNukkit/issues/422
+[#427]: https://github.com/PowerNukkit/PowerNukkit/issues/427
+[#430]: https://github.com/PowerNukkit/PowerNukkit/issues/430
+[#433]: https://github.com/PowerNukkit/PowerNukkit/issues/433
+[#436]: https://github.com/PowerNukkit/PowerNukkit/issues/436
+[#437]: https://github.com/PowerNukkit/PowerNukkit/issues/437
+[#440]: https://github.com/PowerNukkit/PowerNukkit/issues/440
+[#443]: https://github.com/PowerNukkit/PowerNukkit/issues/443
+[#445]: https://github.com/PowerNukkit/PowerNukkit/issues/445
+[#449]: https://github.com/PowerNukkit/PowerNukkit/issues/449
+[#450]: https://github.com/PowerNukkit/PowerNukkit/issues/450
+[#462]: https://github.com/PowerNukkit/PowerNukkit/issues/462
+[#464]: https://github.com/PowerNukkit/PowerNukkit/issues/464
+[#467]: https://github.com/PowerNukkit/PowerNukkit/issues/467
+[#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
+[#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475

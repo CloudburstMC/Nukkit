@@ -144,11 +144,11 @@ public class BlockEntityBeehive extends BlockEntity {
     }
 
     public boolean isHoneyEmpty() {
-        return getHoneyLevel() == 0;
+        return getHoneyLevel() == BlockBeehive.HONEY_LEVEL.getMinValue();
     }
 
     public boolean isHoneyFull() {
-        return getHoneyLevel() == 5;
+        return getHoneyLevel() == BlockBeehive.HONEY_LEVEL.getMaxValue();
     }
 
     public boolean isEmpty() {

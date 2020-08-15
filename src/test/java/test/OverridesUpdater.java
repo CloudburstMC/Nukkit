@@ -87,6 +87,9 @@ public class OverridesUpdater {
                 if (override.contains("block") && override.contains("LegacyStates")) {
                     CompoundTag key = override.getCompound("block").remove("version");
                     CompoundTag original = originalTags.get(key);
+                    if (original == null) {
+                        continue;
+                    }
                     BlockInfo data = new BlockInfo(key, original,
                             original.getList("LegacyStates", CompoundTag.class),
                             override.getList("LegacyStates", CompoundTag.class));
@@ -134,7 +137,7 @@ public class OverridesUpdater {
         for (CompoundTag tag : sorted.values()) {
             String name = tag.getCompound("block").getString("name");
             
-            if (!name.startsWith("minecraft:leaves")) {
+            if (!name.startsWith("minecraft:beehive") || !name.startsWith("minecraft:bee_nest")) {
                 continue;
             }
             

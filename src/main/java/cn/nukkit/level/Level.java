@@ -2841,6 +2841,7 @@ public class Level implements ChunkManager, Metadatable {
         pk.x = pos.getFloorX();
         pk.y = pos.getFloorY();
         pk.z = pos.getFloorZ();
+        pk.dimension = getDimension();
         for (Player p : getPlayers().values()) {
             p.dataPacket(pk);
         }
