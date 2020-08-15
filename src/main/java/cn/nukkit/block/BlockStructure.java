@@ -1,26 +1,44 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import lombok.RequiredArgsConstructor;
+
+import javax.annotation.Nonnull;
+
+import static cn.nukkit.block.BlockStructure.StructureBlockType.SAVE;
 
 /**
  * Created by good777LUCKY
  */
+@Since("1.4.0.0-PN")
+@PowerNukkitOnly
 public class BlockStructure extends BlockSolidMeta {
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    public static final BlockProperty<StructureBlockType> STRUCTURE_BLOCK_TYPE = new ArrayBlockProperty<>(
+            "structure_block_type", true, StructureBlockType.class
+    );
 
-    public static final int INVENTORY_MODEL = 0;
-    public static final int DATA = 1;
-    public static final int SAVE = 2;
-    public static final int LOAD = 3;
-    public static final int CORNER = 4;
-    public static final int EXPORT = 5;
-    
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    public static final BlockProperties PROPERTIES = new BlockProperties(STRUCTURE_BLOCK_TYPE);
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockStructure() {
         this(0);
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockStructure(int meta) {
         super(meta);
     }
@@ -29,7 +47,25 @@ public class BlockStructure extends BlockSolidMeta {
     public int getId() {
         return STRUCTURE_BLOCK;
     }
+
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public StructureBlockType getStructureBlockType() {
+        return getPropertyValue(STRUCTURE_BLOCK_TYPE);
+    }
     
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setStructureBlockType(StructureBlockType type) {
+        setPropertyValue(STRUCTURE_BLOCK_TYPE, type);
+    }
+
     @Override
     public boolean canBeActivated() {
         return true;
@@ -50,7 +86,7 @@ public class BlockStructure extends BlockSolidMeta {
         if (player != null && (!player.isCreative() || !player.isOp())) {
             return false;
         }
-        this.setDamage(SAVE);
+        setStructureBlockType(SAVE);
         this.getLevel().setBlock(block, this, true);
         // TODO: Add Block Entity
         return true;
@@ -58,16 +94,7 @@ public class BlockStructure extends BlockSolidMeta {
     
     @Override
     public String getName() {
-        String[] names = new String[]{
-            "Structure Block",
-            "Data Structure Block",
-            "Save Structure Block",
-            "Load Structure Block",
-            "Corner Structure Block",
-            "Export Structure Block",
-            ""
-        };
-        return names[this.getDamage() & 0x05];
+        return getStructureBlockType().getEnglishName();
     }
     
     @Override
@@ -103,5 +130,43 @@ public class BlockStructure extends BlockSolidMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.LIGHT_GRAY_BLOCK_COLOR;
+    }
+
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @RequiredArgsConstructor
+    public enum StructureBlockType {
+        @Since("1.4.0.0-PN")
+        @PowerNukkitOnly
+        INVALID("Structure Block"),
+
+        @Since("1.4.0.0-PN")
+        @PowerNukkitOnly
+        DATA("Data Structure Block"),
+
+        @Since("1.4.0.0-PN")
+        @PowerNukkitOnly
+        SAVE("Save Structure Block"),
+
+        @Since("1.4.0.0-PN")
+        @PowerNukkitOnly
+        LOAD("Load Structure Block"),
+
+        @Since("1.4.0.0-PN")
+        @PowerNukkitOnly
+        CORNER("Corner Structure Block"),
+
+        @Since("1.4.0.0-PN")
+        @PowerNukkitOnly
+        EXPORT("Export Structure Block");
+        
+        private final String englishName;
+
+        @Since("1.4.0.0-PN")
+        @PowerNukkitOnly
+        public String getEnglishName() {
+            return englishName;
+        }
     }
 }
