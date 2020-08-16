@@ -5,8 +5,6 @@ import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Potion;
 
-import static cn.nukkit.Player.SURVIVAL;
-
 public class ItemPotion extends Item {
 
     public static final int NO_EFFECTS = 0;
@@ -78,11 +76,12 @@ public class ItemPotion extends Item {
         }
         Potion potion = Potion.getPotion(this.getDamage()).setSplash(false);
 
-        if (player.getGamemode() == SURVIVAL) {
+        if (!player.isCreative()) {
             --this.count;
-            player.getInventory().setItemInHand(this);
-            player.getInventory().addItem(new ItemGlassBottle());
         }
+
+        player.getInventory().setItemInHand(this);
+        player.getInventory().addItem(new ItemGlassBottle());
 
         if (potion != null) {
             potion.applyPotion(player);

@@ -181,12 +181,6 @@ public class Potion implements Cloneable {
             return;
         }
 
-        if (entity instanceof Player) {
-            if (!((Player) entity).isSurvival() && !((Player) entity).isAdventure() && applyEffect.isBad()) {
-                return;
-            }
-        }
-
         PotionApplyEvent event = new PotionApplyEvent(this, applyEffect, entity);
 
         entity.getServer().getPluginManager().callEvent(event);
