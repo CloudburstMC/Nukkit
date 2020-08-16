@@ -18,6 +18,7 @@ import co.aikar.timings.Timings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 
 /**
@@ -256,5 +257,11 @@ public abstract class BlockEntity extends Position {
                 .putInt("x", pos.getFloorX())
                 .putInt("y", pos.getFloorY())
                 .putInt("z", pos.getFloorZ());
+    }
+
+    @Nullable
+    @Override
+    public final BlockEntity getBlockEntity() {
+        return super.getBlockEntity();
     }
 }

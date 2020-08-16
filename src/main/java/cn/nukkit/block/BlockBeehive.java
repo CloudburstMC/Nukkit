@@ -17,6 +17,7 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.List;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
@@ -190,6 +191,12 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{ new ItemBlock(new BlockBeehive()) };
+    }
+    
+    @Override
+    @Nullable
+    public BlockEntityBeehive getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityBeehive.class);
     }
     
     public BlockEntityBeehive getOrCreateEntity() {

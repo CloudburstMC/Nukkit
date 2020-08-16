@@ -13,6 +13,7 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nullable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -206,5 +207,11 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityEnderChest getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityEnderChest.class);
     }
 }

@@ -2,11 +2,14 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityConduit;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nullable;
 
 public class BlockConduit extends BlockTransparent {
     public BlockConduit() {
@@ -102,5 +105,11 @@ public class BlockConduit extends BlockTransparent {
     @Override
     public double getMaxZ() {
         return z + (11.0/16);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityConduit getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityConduit.class);
     }
 }

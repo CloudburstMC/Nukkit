@@ -16,6 +16,7 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class BlockBrewingStand extends BlockSolidMeta {
@@ -166,5 +167,11 @@ public class BlockBrewingStand extends BlockSolidMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityBrewingStand getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityBrewingStand.class);
     }
 }

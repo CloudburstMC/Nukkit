@@ -6,14 +6,12 @@ import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.value.StructureBlockType;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
-
-import static cn.nukkit.block.BlockStructure.StructureBlockType.SAVE;
 
 /**
  * Created by good777LUCKY
@@ -86,7 +84,6 @@ public class BlockStructure extends BlockSolidMeta {
         if (player != null && (!player.isCreative() || !player.isOp())) {
             return false;
         }
-        setStructureBlockType(SAVE);
         this.getLevel().setBlock(block, this, true);
         // TODO: Add Block Entity
         return true;
@@ -133,40 +130,4 @@ public class BlockStructure extends BlockSolidMeta {
     }
 
 
-    @Since("1.4.0.0-PN")
-    @PowerNukkitOnly
-    @RequiredArgsConstructor
-    public enum StructureBlockType {
-        @Since("1.4.0.0-PN")
-        @PowerNukkitOnly
-        INVALID("Structure Block"),
-
-        @Since("1.4.0.0-PN")
-        @PowerNukkitOnly
-        DATA("Data Structure Block"),
-
-        @Since("1.4.0.0-PN")
-        @PowerNukkitOnly
-        SAVE("Save Structure Block"),
-
-        @Since("1.4.0.0-PN")
-        @PowerNukkitOnly
-        LOAD("Load Structure Block"),
-
-        @Since("1.4.0.0-PN")
-        @PowerNukkitOnly
-        CORNER("Corner Structure Block"),
-
-        @Since("1.4.0.0-PN")
-        @PowerNukkitOnly
-        EXPORT("Export Structure Block");
-        
-        private final String englishName;
-
-        @Since("1.4.0.0-PN")
-        @PowerNukkitOnly
-        public String getEnglishName() {
-            return englishName;
-        }
-    }
 }

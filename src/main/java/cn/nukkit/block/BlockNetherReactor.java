@@ -1,14 +1,19 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityNetherReactor;
+import cn.nukkit.blockproperty.value.NetherReactorState;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDiamond;
-import cn.nukkit.item.ItemIngotIron;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by good777LUCKY
@@ -16,6 +21,7 @@ import cn.nukkit.utils.BlockColor;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockNetherReactor extends BlockSolid {
+    private static final boolean DEBUG = false;
 
     public BlockNetherReactor() {
         // Does nothing
@@ -38,7 +44,7 @@ public class BlockNetherReactor extends BlockSolid {
     
     @Override
     public double getResistance() {
-        return 30;
+        return 6;
     }
     
     @Override
@@ -55,69 +61,67 @@ public class BlockNetherReactor extends BlockSolid {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe()) {
             return new Item[]{
-                new ItemDiamond(0, 3),
-                new ItemIngotIron(0, 6)
+                    Item.get(ItemID.DIAMOND, 0, 3),
+                    Item.get(ItemID.IRON_INGOT, 0, 6)
             };
         } else {
             return new Item[0];
         }
     }
-    
+
+    @Override
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        if (super.place(item, block, target, face, fx, fy, fz, player)) {
+            createBlockEntity();
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public BlockColor getColor() {
         return BlockColor.IRON_BLOCK_COLOR;
     }
     
-    private BlockEntityNetherReactor getOrInitBlockEntity() {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityNetherReactor) {
-            return (BlockEntityNetherReactor) blockEntity;
-        }
-        if (blockEntity != null) {
-            throw new IllegalStateException("The block entity space at "+getLocation()+" is already occupied with "+blockEntity);
-        }
-        blockEntity = BlockEntity.createBlockEntity(BlockEntity.NETHER_REACTOR, this);
-        if (blockEntity instanceof BlockEntityNetherReactor) {
-            return (BlockEntityNetherReactor) blockEntity;
-        }
-        String message = "Failed to create the NetherReactor block entity at " + getLocation() + ", received:" + blockEntity;
-        blockEntity.close();
-        throw new IllegalStateException(message);
+    @Nullable
+    @Override
+    public BlockEntityNetherReactor getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityNetherReactor.class);
     }
 
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public NetherReactorProgress getProgress() {
-        return getOrInitBlockEntity().getProgress();
+    @Nonnull
+    @Override
+    protected BlockEntityNetherReactor createBlockEntity() {
+        BlockEntityNetherReactor blockEntity = createBlockEntity(BlockEntityNetherReactor.class, BlockEntity.NETHER_REACTOR);
+        blockEntity.setProgress(900);
+        return blockEntity;
     }
 
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public void setProgress(NetherReactorProgress progress) {
-        getOrInitBlockEntity().setProgress(progress);
+    @Nonnull
+    @Override
+    public BlockEntityNetherReactor getOrCreateBlockEntity() {
+        return (BlockEntityNetherReactor) super.getOrCreateBlockEntity();
     }
 
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public enum NetherReactorProgress {
-        @PowerNukkitOnly
-        @Since("1.4.0.0-PN")
-        READY,
+    @Override
+    public boolean canBeActivated() {
+        return DEBUG;
+    }
 
-        @PowerNukkitOnly
-        @Since("1.4.0.0-PN")
-        INITIALIZED,
-
-        @PowerNukkitOnly
-        @Since("1.4.0.0-PN")
-        FINISHED;
-        
-        private static final NetherReactorProgress[] values = values();
-        
-        @PowerNukkitOnly
-        @Since("1.4.0.0-PN")
-        public static NetherReactorProgress getFromData(int data) {
-            return values[data];
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (!DEBUG) {
+            return false;
         }
+        BlockEntityNetherReactor blockEntity = getOrCreateBlockEntity();
+        NetherReactorState progress = blockEntity.getReactorState();
+        try {
+            progress = NetherReactorState.getFromData(progress.ordinal() + 1);
+        } catch (IndexOutOfBoundsException ignored) {
+            progress = NetherReactorState.READY;
+        }
+        blockEntity.setReactorState(progress);
+        blockEntity.spawnToAll();
+        return true;
     }
 }

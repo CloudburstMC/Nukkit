@@ -15,6 +15,7 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -176,5 +177,11 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityFurnace getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityFurnace.class);
     }
 }

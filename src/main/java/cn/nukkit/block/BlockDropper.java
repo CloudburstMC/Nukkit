@@ -4,8 +4,9 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDropper;
 import cn.nukkit.dispenser.DefaultDispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehavior;
-import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
+
+import javax.annotation.Nonnull;
 
 public class BlockDropper extends BlockDispenser {
 
@@ -32,20 +33,21 @@ public class BlockDropper extends BlockDispenser {
         super.dispense();
     }
 
+    @Nonnull
     @Override
-    protected void createBlockEntity() {
-        BlockEntity.createBlockEntity(BlockEntity.DROPPER, this);
+    protected BlockEntityDropper createBlockEntity() {
+        return createBlockEntity(BlockEntityDropper.class, BlockEntity.DROPPER);
     }
 
     @Override
-    protected InventoryHolder getBlockEntity() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+    public BlockEntityDropper getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityDropper.class);
+    }
 
-        if (!(blockEntity instanceof BlockEntityDropper)) {
-            return null;
-        }
-
-        return (InventoryHolder) blockEntity;
+    @Nonnull
+    @Override
+    public BlockEntityDropper getOrCreateBlockEntity() {
+        return (BlockEntityDropper) super.getOrCreateBlockEntity();
     }
 
     @Override

@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDispenser;
+import cn.nukkit.blockentity.BlockEntityEjectable;
 import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.inventory.ContainerInventory;
@@ -16,6 +17,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -124,18 +126,21 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         return true;
     }
 
-    protected void createBlockEntity() {
-        BlockEntity.createBlockEntity(BlockEntity.DISPENSER, this);
+    @Nonnull
+    @Override
+    protected BlockEntityEjectable createBlockEntity() {
+        return createBlockEntity(BlockEntityDispenser.class, BlockEntity.DISPENSER);
     }
 
-    protected InventoryHolder getBlockEntity() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+    @Nonnull
+    @Override
+    public BlockEntityEjectable getOrCreateBlockEntity() {
+        return (BlockEntityDispenser) super.getOrCreateBlockEntity();
+    }
 
-        if (!(blockEntity instanceof BlockEntityDispenser)) {
-            return null;
-        }
-
-        return (InventoryHolder) blockEntity;
+    @Override
+    public BlockEntityEjectable getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityDispenser.class);
     }
 
     @Override

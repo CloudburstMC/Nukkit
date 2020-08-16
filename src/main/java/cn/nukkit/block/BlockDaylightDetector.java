@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityDaylightDetector;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -10,6 +11,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nullable;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
@@ -128,4 +131,9 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
         }
     }
 
+    @Nullable
+    @Override
+    public BlockEntityDaylightDetector getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityDaylightDetector.class);
+    }
 }

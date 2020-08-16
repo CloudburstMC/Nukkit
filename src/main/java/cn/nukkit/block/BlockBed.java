@@ -15,6 +15,8 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nullable;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -222,5 +224,11 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean sticksToPiston() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityBed getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityBed.class);
     }
 }

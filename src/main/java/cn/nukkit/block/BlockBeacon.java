@@ -10,6 +10,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nullable;
+
 /**
  * author: Angelic47 Nukkit Project
  */
@@ -114,5 +116,11 @@ public class BlockBeacon extends BlockTransparent {
     @Override
     public boolean canBePulled() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityBeacon getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityBeacon.class);
     }
 }

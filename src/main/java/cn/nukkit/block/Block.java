@@ -5,6 +5,7 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
@@ -25,6 +26,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
@@ -1668,5 +1670,67 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             return true;
         }
         return player != null && player.isCreative() && player.isOp();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public BlockEntity getOrCreateBlockEntity() {
+        BlockEntity blockEntity = getBlockEntity();
+        return blockEntity == null? createBlockEntity() : blockEntity;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    protected final  <E extends BlockEntity> E getOrCreateBlockEntity(@Nonnull Class<E> type, @Nonnull String typeName, @Nullable CompoundTag initialData, @Nullable Object... args) {
+        BlockEntity blockEntity = getBlockEntity();
+        if (type.isInstance(blockEntity)) {
+            return type.cast(blockEntity);
+        }
+        BlockEntity created = createBlockEntity();
+        try {
+            return type.cast(created);
+        } catch (ClassCastException e) {
+            created.close();
+            throw e;
+        }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    protected BlockEntity createBlockEntity() {
+        throw new UnsupportedOperationException("The block "+getId()+":"+getName()+" ("+getClass().getSimpleName()+") don't implement createBlockEntity()");
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    protected final <E extends BlockEntity> E createBlockEntity(@Nonnull Class<E> type, @Nonnull String typeName) {
+        return createBlockEntity(type, typeName, null);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    protected final  <E extends BlockEntity> E createBlockEntity(@Nonnull Class<E> type, @Nonnull String typeName, @Nullable CompoundTag initialData, @Nullable Object... args) {
+        if (initialData == null) {
+            initialData = new CompoundTag();
+        }
+        initialData.putString("id", typeName)
+                .putInt("x", getFloorX())
+                .putInt("y", getFloorY())
+                .putInt("z", getFloorZ());
+        BlockEntity blockEntity = BlockEntity.createBlockEntity(typeName, getChunk(), initialData, args);
+        if (!type.isInstance(blockEntity)) {
+            String error = "Failed to create the block entity " + typeName + " of class " + typeName + " at " + getLocation() + ", " +
+                    "the created type is not an instance of the requested class. Created: " + blockEntity;
+            if (blockEntity != null) {
+                blockEntity.close();
+            }
+            throw new IllegalStateException(error);
+        }
+        return type.cast(blockEntity);
     }
 }

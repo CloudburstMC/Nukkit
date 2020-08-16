@@ -11,6 +11,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
+import javax.annotation.Nullable;
+
 /**
  * @author Nukkit Project Team
  */
@@ -214,5 +216,11 @@ public class BlockFlowerPot extends BlockFlowable {
     @Override
     public Item toItem() {
         return new ItemFlowerPot();
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityFlowerPot getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityFlowerPot.class);
     }
 }

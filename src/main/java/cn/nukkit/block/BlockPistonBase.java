@@ -20,6 +20,7 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
 import com.google.common.collect.Lists;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -523,5 +524,11 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         BlockFace face = BlockFace.fromIndex(this.getDamage());
 
         return face.getHorizontalIndex() >= 0 ? face.getOpposite() : face;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityPistonArm getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityPistonArm.class);
     }
 }

@@ -13,6 +13,7 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -139,5 +140,11 @@ public class BlockEnchantingTable extends BlockTransparent {
     @Override
     public BlockColor getColor() {
         return BlockColor.RED_BLOCK_COLOR;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityEnchantTable getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityEnchantTable.class);
     }
 }

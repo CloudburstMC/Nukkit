@@ -15,6 +15,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nullable;
+
 
 public class BlockSkull extends BlockTransparentMeta {
 
@@ -142,5 +144,11 @@ public class BlockSkull extends BlockTransparentMeta {
     @Override
     public boolean sticksToPiston() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntitySkull getBlockEntity() {
+        return getTypedBlockEntity(BlockEntitySkull.class);
     }
 }

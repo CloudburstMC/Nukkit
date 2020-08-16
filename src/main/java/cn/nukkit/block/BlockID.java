@@ -304,7 +304,8 @@ public interface BlockID {
     int BEETROOT_BLOCK = 244;
     int STONECUTTER = 245;
     int GLOWING_OBSIDIAN = 246;
-    int NETHER_REACTOR = 247; //Should not be removed
+    int NETHERREACTOR = 247;
+    int NETHER_REACTOR = 247;
 
     int MOVING_BLOCK = 250;
 

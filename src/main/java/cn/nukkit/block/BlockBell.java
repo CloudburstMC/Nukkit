@@ -15,9 +15,11 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class BlockBell extends BlockTransparentMeta implements Faceable {
     public static final int TYPE_ATTACHMENT_STANDING = 0;
@@ -335,17 +337,16 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
         return true;
     }
 
-    private BlockEntityBell createBlockEntity() {
-        CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BELL);
-        return (BlockEntityBell) BlockEntity.createBlockEntity(BlockEntity.BELL, this, nbt);
+    @Nonnull
+    @Override
+    protected BlockEntityBell createBlockEntity() {
+        return createBlockEntity(BlockEntityBell.class, BlockEntity.BELL);
     }
 
-    private BlockEntityBell getOrCreateBlockEntity() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (!(blockEntity instanceof BlockEntityBell)) {
-            blockEntity = createBlockEntity();
-        }
-        return (BlockEntityBell) blockEntity;
+    @Nonnull
+    @Override
+    public BlockEntityBell getOrCreateBlockEntity() {
+        return (BlockEntityBell) super.getOrCreateBlockEntity();
     }
 
     @Override
@@ -410,5 +411,11 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     @Override
     public BlockColor getColor() {
         return BlockColor.GOLD_BLOCK_COLOR;
+    }
+    
+    @Nullable
+    @Override
+    public BlockEntityBell getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityBell.class);
     }
 }

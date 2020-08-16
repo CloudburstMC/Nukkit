@@ -16,6 +16,7 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 
 import static cn.nukkit.math.BlockFace.AxisDirection.POSITIVE;
@@ -228,5 +229,11 @@ public class BlockItemFrame extends BlockTransparentMeta {
                 aabb[0][0] + x, aabb[1][0] + y, aabb[2][0] + z, 
                 aabb[0][1] + x, aabb[1][1] + y, aabb[2][1] + z
         );
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityItemFrame getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityItemFrame.class);
     }
 }

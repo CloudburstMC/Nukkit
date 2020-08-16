@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMusic;
 import cn.nukkit.item.Item;
@@ -11,6 +13,9 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Created by Snake1999 on 2016/1/17.
@@ -259,15 +264,16 @@ public class BlockNoteblock extends BlockSolid {
         return super.onUpdate(type);
     }
 
-    private BlockEntityMusic getBlockEntity() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityMusic) {
-            return (BlockEntityMusic) blockEntity;
-        }
-        return null;
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public BlockEntityMusic getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityMusic.class);
     }
 
-    private BlockEntityMusic createBlockEntity() {
+    @Nonnull
+    @Override
+    protected BlockEntityMusic createBlockEntity() {
         return (BlockEntityMusic) BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
                                         BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }

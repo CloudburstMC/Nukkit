@@ -14,6 +14,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nullable;
+
 public class BlockLectern extends BlockTransparentMeta implements Faceable {
     public BlockLectern() {
         this(0);
@@ -233,5 +235,11 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable {
                 }
             }
         }
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityLectern getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityLectern.class);
     }
 }

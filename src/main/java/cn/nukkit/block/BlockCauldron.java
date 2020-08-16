@@ -14,6 +14,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
@@ -367,5 +368,11 @@ public class BlockCauldron extends BlockSolidMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityCauldron getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityCauldron.class);
     }
 }

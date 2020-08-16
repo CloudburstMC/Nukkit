@@ -7,6 +7,8 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import javax.annotation.Nullable;
+
 public class BlockBlastFurnaceBurning extends BlockFurnaceBurning {
     public BlockBlastFurnaceBurning() {
         this(0);
@@ -39,5 +41,12 @@ public class BlockBlastFurnaceBurning extends BlockFurnaceBurning {
     @Override
     public Item toItem() {
         return new ItemBlock(new BlockBlastFurnace());
+    }
+
+
+    @Nullable
+    @Override
+    public BlockEntityBlastFurnace getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityBlastFurnace.class);
     }
 }

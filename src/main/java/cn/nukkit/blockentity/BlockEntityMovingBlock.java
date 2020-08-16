@@ -1,5 +1,7 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
@@ -8,6 +10,8 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+
+import javax.annotation.Nullable;
 
 /**
  * Created by CreeperFace on 11.4.2017.
@@ -43,7 +47,10 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
         super.initBlockEntity();
     }
 
-    public CompoundTag getBlockEntity() {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public CompoundTag getMovingBlockEntityCompound() {
         if (this.namedTag.contains("movingEntity")) {
             return this.namedTag.getCompound("movingEntity");
         }

@@ -20,6 +20,7 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -273,5 +274,11 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean canBePushed() {
         return false;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityCampfire getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityCampfire.class);
     }
 }

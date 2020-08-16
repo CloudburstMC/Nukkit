@@ -13,6 +13,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nullable;
+
 /**
  * @author CreeperFace
  */
@@ -182,5 +184,11 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityHopper getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityHopper.class);
     }
 }

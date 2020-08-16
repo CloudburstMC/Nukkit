@@ -11,6 +11,9 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * Created by CreeperFace on 7.8.2017.
  */
@@ -82,7 +85,9 @@ public class BlockJukebox extends BlockSolid {
         return false;
     }
 
-    private BlockEntity createBlockEntity() {
+    @Nonnull
+    @Override
+    protected BlockEntity createBlockEntity() {
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
                 .putString("id", BlockEntity.JUKEBOX)
@@ -96,5 +101,11 @@ public class BlockJukebox extends BlockSolid {
     @Override
     public BlockColor getColor() {
         return BlockColor.DIRT_BLOCK_COLOR;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityJukebox getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityJukebox.class);
     }
 }

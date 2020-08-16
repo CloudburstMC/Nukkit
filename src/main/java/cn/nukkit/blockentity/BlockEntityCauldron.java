@@ -5,7 +5,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-
 import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.utils.BlockColor;
 

@@ -180,7 +180,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
                     movingBlock.close();
                     Block moved = ((BlockEntityMovingBlock) movingBlock).getMovingBlock();
 
-                    CompoundTag blockEntity = ((BlockEntityMovingBlock) movingBlock).getBlockEntity();
+                    CompoundTag blockEntity = ((BlockEntityMovingBlock) movingBlock).getMovingBlockEntityCompound();
 
                     if (blockEntity != null) {
                         blockEntity.putInt("x", movingBlock.getFloorX());
@@ -215,7 +215,8 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
     }
 
     public boolean isBlockEntityValid() {
-        return true;
+        int id = getLevelBlock().getId();
+        return id == BlockID.PISTON || id == BlockID.STICKY_PISTON; 
     }
 
     public void saveNBT() {

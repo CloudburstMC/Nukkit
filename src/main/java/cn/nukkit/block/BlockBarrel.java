@@ -15,6 +15,7 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 
 public class BlockBarrel extends BlockSolidMeta implements Faceable {
@@ -177,5 +178,11 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable {
         }
 
         return super.getComparatorInputOverride();
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityBarrel getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityBarrel.class);
     }
 }

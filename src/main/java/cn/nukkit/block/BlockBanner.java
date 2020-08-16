@@ -17,6 +17,8 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nullable;
+
 /**
  * Created by PetteriM1
  */
@@ -160,5 +162,11 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
         }
 
         return DyeColor.WHITE;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityBanner getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityBanner.class);
     }
 }

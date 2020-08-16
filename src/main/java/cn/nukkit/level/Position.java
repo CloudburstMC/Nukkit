@@ -1,10 +1,16 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.LevelException;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * author: MagicDroidX
@@ -88,6 +94,26 @@ public class Position extends Vector3 {
         this.z = z;
         return this;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public BlockEntity getBlockEntity() {
+        if (this.isValid()) return this.level.getBlockEntity(this);
+        else throw new LevelException("Undefined Level reference");
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public final <T extends BlockEntity> T getTypedBlockEntity(@Nonnull Class<T> type) {
+        if (!this.isValid()) {
+            throw new LevelException("Undefined Level reference");
+        }
+
+        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        return type.isInstance(blockEntity) ? type.cast(blockEntity) : null;
+    } 
 
     public Block getLevelBlock() {
         if (this.isValid()) return this.level.getBlock(this);

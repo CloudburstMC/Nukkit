@@ -12,6 +12,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nullable;
+
 /**
  * @author CreeperFace
  */
@@ -54,6 +56,12 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
         BlockEntity blockEntity = this.level.getBlockEntity(this);
 
         return blockEntity instanceof BlockEntityComparator ? ((BlockEntityComparator) blockEntity).getOutputSignal() : 0;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntityComparator getBlockEntity() {
+        return getTypedBlockEntity(BlockEntityComparator.class);
     }
 
     @Override
