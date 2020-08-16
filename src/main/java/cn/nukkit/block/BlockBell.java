@@ -19,9 +19,8 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public class BlockBell extends BlockTransparentMeta implements Faceable {
+public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBell> {
     public static final int TYPE_ATTACHMENT_STANDING = 0;
     public static final int TYPE_ATTACHMENT_HANGING = 1;
     public static final int TYPE_ATTACHMENT_SIDE = 2;
@@ -43,6 +42,18 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return BELL;
+    }
+
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityBell> getBlockEntityClass() {
+        return BlockEntityBell.class;
+    }
+
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.BELL;
     }
 
     private boolean isConnectedTo(BlockFace connectedFace, int attachmentType, BlockFace blockFace) {
@@ -142,7 +153,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         return ring(player, player != null? BellRingEvent.RingCause.HUMAN_INTERACTION : BellRingEvent.RingCause.UNKNOWN);
     }
 
@@ -152,9 +163,6 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
 
     public boolean ring(Entity causeEntity, BellRingEvent.RingCause cause, BlockFace hitFace) {
         BlockEntityBell bell = getOrCreateBlockEntity();
-        if (bell == null) {
-            return true;
-        }
         boolean addException = true;
         BlockFace blockFace = getBlockFace();
         if (hitFace == null) {
@@ -307,10 +315,9 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (block.canBeReplaced() && block.getId() != AIR && block.getId() != BUBBLE_COLUMN && !(block instanceof BlockLiquid)) {
             face = BlockFace.UP;
-            //target = block.down();
         }
         switch (face) {
             case UP:
@@ -332,21 +339,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
         if (!checkSupport()) {
             return false;
         }
-        this.level.setBlock(this, this, true, true);
-        createBlockEntity();
-        return true;
-    }
-
-    @Nonnull
-    @Override
-    protected BlockEntityBell createBlockEntity() {
-        return createBlockEntity(BlockEntityBell.class, BlockEntity.BELL);
-    }
-
-    @Nonnull
-    @Override
-    public BlockEntityBell getOrCreateBlockEntity() {
-        return (BlockEntityBell) super.getOrCreateBlockEntity();
+        return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
     }
 
     @Override
@@ -411,11 +404,5 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     @Override
     public BlockColor getColor() {
         return BlockColor.GOLD_BLOCK_COLOR;
-    }
-    
-    @Nullable
-    @Override
-    public BlockEntityBell getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityBell.class);
     }
 }

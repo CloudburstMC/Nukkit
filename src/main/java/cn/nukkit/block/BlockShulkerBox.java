@@ -1,13 +1,11 @@
 package cn.nukkit.block;
 
-import cn.nukkit.blockentity.BlockEntityShulkerBox;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Created by PetteriM1
@@ -45,11 +43,5 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
 
     public DyeColor getDyeColor() {
         return DyeColor.getByWoolData(this.getDamage());
-    }
-
-    @Nullable
-    @Override
-    public BlockEntityShulkerBox getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityShulkerBox.class);
     }
 }

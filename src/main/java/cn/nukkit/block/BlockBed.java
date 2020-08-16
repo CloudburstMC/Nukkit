@@ -9,19 +9,19 @@ import cn.nukkit.item.ItemBed;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.MainLogger;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 /**
  * author: MagicDroidX
  * Nukkit Project
  */
-public class BlockBed extends BlockTransparentMeta implements Faceable {
+public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBed> {
 
     public BlockBed() {
         this(0);
@@ -34,6 +34,18 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return BED_BLOCK;
+    }
+
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityBed> getBlockEntityClass() {
+        return BlockEntityBed.class;
+    }
+
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.BED;
     }
 
     @Override
@@ -67,12 +79,12 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item) {
+    public boolean onActivate(@Nonnull Item item) {
         return this.onActivate(item, null);
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
 
         if (this.level.getDimension() == Level.DIMENSION_NETHER || this.level.getDimension() == Level.DIMENSION_THE_END) {
             CompoundTag tag = EntityPrimedTNT.getDefaultNBT(this).putShort("Fuse", 0);
@@ -124,28 +136,49 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (!down.isTransparent()) {
-            Block next = this.getSide(player.getDirection());
-            Block downNext = next.down();
-
-            if (next.canBeReplaced() && !downNext.isTransparent()) {
-                int meta = player.getDirection().getHorizontalIndex();
-
-                this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
-                if (next instanceof BlockLiquid && ((BlockLiquid) next).usesWaterLogging()) {
-                    this.getLevel().setBlock(next, 1, next, true, false);
-                }
-                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
-
-                createBlockEntity(this, item.getDamage());
-                createBlockEntity(next, item.getDamage());
-                return true;
-            }
+        if (down.isTransparent()) {
+            return false;
         }
+        
+        Block next = this.getSide(player.getDirection());
+        Block downNext = next.down();
 
-        return false;
+        if (!next.canBeReplaced() || downNext.isTransparent()) {
+            return false;
+        }
+        
+        Block thisLayer0 = level.getBlock(this, 0);
+        Block thisLayer1 = level.getBlock(this, 1);
+        Block nextLayer0 = level.getBlock(next, 0);
+        Block nextLayer1 = level.getBlock(next, 1);
+        
+        int meta = player.getDirection().getHorizontalIndex();
+
+        this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
+        if (next instanceof BlockLiquid && ((BlockLiquid) next).usesWaterLogging()) {
+            this.getLevel().setBlock(next, 1, next, true, false);
+        }
+        this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
+        
+        BlockEntityBed thisBed = null;
+        try {
+            thisBed = createBlockEntity(new CompoundTag().putByte("color", item.getDamage()));
+            BlockEntityHolder<?> nextBlock = (BlockEntityHolder<?>) next.getLevelBlock();
+            nextBlock.createBlockEntity(new CompoundTag().putByte("color", item.getDamage()));
+        } catch (Exception e) {
+            MainLogger.getLogger().warning("Failed to create the block entity "+getBlockEntityType()+" at "+getLocation()+" and "+next.getLocation(), e);
+            if (thisBed != null) {
+                thisBed.close();
+            }
+            level.setBlock(thisLayer0, 0, thisLayer0, true);
+            level.setBlock(thisLayer1, 1, thisLayer1, true);
+            level.setBlock(nextLayer0, 0, nextLayer0, true);
+            level.setBlock(nextLayer1, 1, nextLayer1, true);
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -182,13 +215,6 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
         return true;
     }
 
-    private void createBlockEntity(Vector3 pos, int color) {
-        CompoundTag nbt = BlockEntity.getDefaultCompound(pos, BlockEntity.BED);
-        nbt.putByte("color", color);
-
-        BlockEntity.createBlockEntity(BlockEntity.BED, this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
-    }
-
     @Override
     public Item toItem() {
         return new ItemBed(this.getDyeColor().getWoolData());
@@ -201,10 +227,10 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
 
     public DyeColor getDyeColor() {
         if (this.level != null) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
+            BlockEntityBed blockEntity = getBlockEntity();
 
-            if (blockEntity instanceof BlockEntityBed) {
-                return ((BlockEntityBed) blockEntity).getDyeColor();
+            if (blockEntity != null) {
+                return blockEntity.getDyeColor();
             }
         }
 
@@ -224,11 +250,5 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean sticksToPiston() {
         return false;
-    }
-
-    @Nullable
-    @Override
-    public BlockEntityBed getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityBed.class);
     }
 }

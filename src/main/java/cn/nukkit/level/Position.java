@@ -98,7 +98,7 @@ public class Position extends Vector3 {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nullable
-    public BlockEntity getBlockEntity() {
+    public BlockEntity getLevelBlockEntity() {
         if (this.isValid()) return this.level.getBlockEntity(this);
         else throw new LevelException("Undefined Level reference");
     }
@@ -125,6 +125,7 @@ public class Position extends Vector3 {
         else throw new LevelException("Undefined Level reference");
     }
 
+    @Nonnull
     public Location getLocation() {
         if (this.isValid()) return new Location(this.x, this.y, this.z, 0, 0, this.level);
         else throw new LevelException("Undefined Level reference");
@@ -210,6 +211,7 @@ public class Position extends Vector3 {
         return (Position) super.clone();
     }
 
+    @Nullable
     public FullChunk getChunk() {
         return isValid() ? level.getChunk(getChunkX(), getChunkZ()) : null;
     }

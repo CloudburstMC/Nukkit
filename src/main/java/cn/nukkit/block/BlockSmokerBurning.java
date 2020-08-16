@@ -4,10 +4,8 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySmoker;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.Position;
-import cn.nukkit.nbt.tag.CompoundTag;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public class BlockSmokerBurning extends BlockFurnaceBurning {
     public BlockSmokerBurning() {
@@ -28,24 +26,20 @@ public class BlockSmokerBurning extends BlockFurnaceBurning {
         return "Burning Smoker";
     }
 
+    @Nonnull
     @Override
-    protected String getEntityName() {
+    public String getBlockEntityType() {
         return BlockEntity.SMOKER;
     }
 
+    @Nonnull
     @Override
-    protected BlockEntitySmoker createEntity(Position position, CompoundTag nbt) {
-        return (BlockEntitySmoker) BlockEntity.createBlockEntity(BlockEntity.SMOKER, position, nbt);
+    public Class<? extends BlockEntitySmoker> getBlockEntityClass() {
+        return BlockEntitySmoker.class;
     }
 
     @Override
     public Item toItem() {
         return new ItemBlock(new BlockSmoker());
-    }
-
-    @Nullable
-    @Override
-    public BlockEntitySmoker getBlockEntity() {
-        return getTypedBlockEntity(BlockEntitySmoker.class);
     }
 }

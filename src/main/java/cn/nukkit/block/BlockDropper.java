@@ -28,26 +28,21 @@ public class BlockDropper extends BlockDispenser {
         return DROPPER;
     }
 
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityDropper> getBlockEntityClass() {
+        return BlockEntityDropper.class;
+    }
+
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.DROPPER;
+    }
+
     @Override
     public void dispense() {
         super.dispense();
-    }
-
-    @Nonnull
-    @Override
-    protected BlockEntityDropper createBlockEntity() {
-        return createBlockEntity(BlockEntityDropper.class, BlockEntity.DROPPER);
-    }
-
-    @Override
-    public BlockEntityDropper getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityDropper.class);
-    }
-
-    @Nonnull
-    @Override
-    public BlockEntityDropper getOrCreateBlockEntity() {
-        return (BlockEntityDropper) super.getOrCreateBlockEntity();
     }
 
     @Override

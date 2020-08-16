@@ -6,6 +6,8 @@ import cn.nukkit.item.ItemDoorIron;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -72,7 +74,7 @@ public class BlockDoorIron extends BlockDoor {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         return false;
     }
 

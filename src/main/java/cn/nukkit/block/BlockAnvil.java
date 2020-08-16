@@ -11,6 +11,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 /**
@@ -84,7 +85,7 @@ public class BlockAnvil extends BlockFallableMeta implements Faceable {
 
     @PowerNukkitDifference(info = "Just like sand, it can now be placed anywhere and removed the sound for the player who placed, was duplicated", since = "1.3.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         int damage = this.getDamage();
         int[] faces = {1, 2, 3, 0};
         this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
@@ -107,7 +108,7 @@ public class BlockAnvil extends BlockFallableMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player != null) {
             player.addWindow(new AnvilInventory(player.getUIInventory(), this), Player.ANVIL_WINDOW_ID);
         }

@@ -7,6 +7,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * author: MagicDroidX
  * AMAZING COARSE DIRT added by kvetinac97
@@ -54,7 +56,7 @@ public class BlockDirt extends BlockSolidMeta {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
             this.getLevel().setBlock(this, this.getDamage() == 0 ? get(FARMLAND) : get(DIRT), true);

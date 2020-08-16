@@ -67,7 +67,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
 
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (target.isTransparent() && target.getId() != SNOW_LAYER && (target.getId() != COBBLE_WALL || face != BlockFace.UP)) {
             return false;
         }
@@ -83,7 +83,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (this.isActivated()) {
             return false;
         }

@@ -70,7 +70,7 @@ public class BlockStructure extends BlockSolidMeta {
     }
     
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player != null) {
             if (player.isCreative() && player.isOp()) {
                 // TODO: Add UI
@@ -80,7 +80,7 @@ public class BlockStructure extends BlockSolidMeta {
     }
     
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (player != null && (!player.isCreative() || !player.isOp())) {
             return false;
         }

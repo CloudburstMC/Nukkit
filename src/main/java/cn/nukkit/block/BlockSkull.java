@@ -15,10 +15,10 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 
-public class BlockSkull extends BlockTransparentMeta {
+public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolder<BlockEntitySkull> {
 
     public BlockSkull() {
         this(0);
@@ -31,6 +31,18 @@ public class BlockSkull extends BlockTransparentMeta {
     @Override
     public int getId() {
         return SKULL_BLOCK;
+    }
+
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.SKULL;
+    }
+
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntitySkull> getBlockEntityClass() {
+        return BlockEntitySkull.class;
     }
 
     @Override
@@ -61,17 +73,19 @@ public class BlockSkull extends BlockTransparentMeta {
     @Override
     public String getName() {
         int itemMeta = 0;
-
+        
         if (this.level != null) {
-            BlockEntity blockEntity = getLevel().getBlockEntity(this);
-            if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
+            BlockEntitySkull blockEntity = getBlockEntity();
+            if (blockEntity != null) {
+                itemMeta = blockEntity.namedTag.getByte("SkullType");
+            }
         }
 
         return ItemSkull.getItemSkullName(itemMeta);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         switch (face) {
             case NORTH:
             case SOUTH:
@@ -84,35 +98,25 @@ public class BlockSkull extends BlockTransparentMeta {
             default:
                 return false;
         }
-        this.getLevel().setBlock(block, this, true, true);
-
         CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.SKULL)
                 .putByte("SkullType", item.getDamage())
-                .putInt("x", block.getFloorX())
-                .putInt("y", block.getFloorY())
-                .putInt("z", block.getFloorZ())
                 .putByte("Rot", (int) Math.floor((player.yaw * 16 / 360) + 0.5) & 0x0f);
         if (item.hasCustomBlockData()) {
             for (Tag aTag : item.getCustomBlockData().getAllTags()) {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        BlockEntitySkull skull = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
-        if (skull == null) {
-            return false;
-        }
-
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
         // TODO: 2016/2/3 SPAWN WITHER
-
-        return true;
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        BlockEntitySkull entitySkull = getBlockEntity();
         int dropMeta = 0;
-        if (blockEntity != null) dropMeta = blockEntity.namedTag.getByte("SkullType");
+        if (entitySkull != null) {
+            dropMeta = entitySkull.namedTag.getByte("SkullType");
+        }
         return new Item[]{
                 new ItemSkull(dropMeta)
         };
@@ -120,9 +124,11 @@ public class BlockSkull extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        BlockEntitySkull blockEntity = getBlockEntity();
         int itemMeta = 0;
-        if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
+        if (blockEntity != null) {
+            itemMeta = blockEntity.namedTag.getByte("SkullType");
+        }
         return new ItemSkull(itemMeta);
     }
 
@@ -144,11 +150,5 @@ public class BlockSkull extends BlockTransparentMeta {
     @Override
     public boolean sticksToPiston() {
         return false;
-    }
-
-    @Nullable
-    @Override
-    public BlockEntitySkull getBlockEntity() {
-        return getTypedBlockEntity(BlockEntitySkull.class);
     }
 }

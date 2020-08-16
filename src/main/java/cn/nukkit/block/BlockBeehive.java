@@ -17,12 +17,11 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.List;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 
-public class BlockBeehive extends BlockSolidMeta implements Faceable {
+public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityBeehive> {
     public static final IntBlockProperty HONEY_LEVEL = new IntBlockProperty("honey_level", false, 5);
     public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, HONEY_LEVEL);
     public BlockBeehive() {
@@ -47,6 +46,18 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     @Override
     public String getName() {
         return "Beehive";
+    }
+
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.BEEHIVE;
+    }
+
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityBeehive> getBlockEntityClass() {
+        return BlockEntityBeehive.class;
     }
 
     @Override
@@ -80,7 +91,7 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     }
     
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (player == null) {
             setBlockFace(BlockFace.SOUTH);
         } else {
@@ -89,12 +100,11 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     
         int honeyLevel = item.hasCustomBlockData() ? item.getCustomBlockData().getByte("HoneyLevel") : 0;
         setHoneyLevel(honeyLevel);
-        this.level.setBlock(this, this, true, true);
-        
-        BlockEntityBeehive beehive = createEntity(item.getCustomBlockData());
-        if (beehive == null) {
+        BlockEntityBeehive beehive = BlockEntityHolder.setBlockAndCreateEntity(this, true, true, item.getCustomBlockData());
+        if(beehive == null) {
             return false;
         }
+        
         if (beehive.namedTag.getByte("ShouldSpawnBees") > 0) {
             List<BlockFace> validSpawnFaces = beehive.scanValidSpawnFaces(true);
             for (BlockEntityBeehive.Occupant occupant : beehive.getOccupants()) {
@@ -107,7 +117,7 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     }
     
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.getId() == ItemID.SHEARS && isFull()) {
             honeyCollected(player);
             level.addSound(add(0.5, 0.5, 0.5), Sound.BLOCK_BEEHIVE_SHEAR);
@@ -137,9 +147,8 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     }
     
     public void angerBees(Player player) {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityBeehive) {
-            BlockEntityBeehive beehive = (BlockEntityBeehive) blockEntity;
+        BlockEntityBeehive beehive = getBlockEntity();
+        if (beehive != null) {
             beehive.angerBees(player);
         }
     }
@@ -148,12 +157,11 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     public Item toItem() {
         Item item = Item.get(getItemId(), 0, 1);
         if (level != null) {
-            BlockEntity entity = level.getBlockEntity(this);
-            if (entity instanceof BlockEntityBeehive) {
-                BlockEntityBeehive beehive = (BlockEntityBeehive) entity;
-                entity.saveNBT();
+            BlockEntityBeehive beehive = getBlockEntity();
+            if (beehive != null) {
+                beehive.saveNBT();
                 if (!beehive.isHoneyEmpty() || !beehive.isEmpty()) {
-                    CompoundTag copy = entity.namedTag.copy();
+                    CompoundTag copy = beehive.namedTag.copy();
                     copy.putByte("HoneyLevel", getHoneyLevel());
                     item.setCustomBlockData(copy);
                 }
@@ -170,8 +178,8 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     @Override
     public boolean mustSilkTouch(Vector3 vector, int layer, BlockFace face, Item item, Player player) {
         if (player != null) {
-            BlockEntity blockEntity = getLevel().getBlockEntity(this);
-            if (blockEntity instanceof BlockEntityBeehive && !((BlockEntityBeehive) blockEntity).isEmpty()) {
+            BlockEntityBeehive beehive = getBlockEntity();
+            if (beehive != null && !beehive.isEmpty()) {
                 return true;
             }
         }
@@ -191,33 +199,6 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{ new ItemBlock(new BlockBeehive()) };
-    }
-    
-    @Override
-    @Nullable
-    public BlockEntityBeehive getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityBeehive.class);
-    }
-    
-    public BlockEntityBeehive getOrCreateEntity() {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityBeehive) {
-            return (BlockEntityBeehive) blockEntity;
-        } else {
-            return createEntity(null);
-        }
-    }
-    
-    private BlockEntityBeehive createEntity(CompoundTag customNbt) {
-        CompoundTag nbt = customNbt != null? customNbt.copy() : new CompoundTag();
-        nbt.setName("");
-        
-        nbt.putString("id", BlockEntity.BEEHIVE)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
-        
-        return (BlockEntityBeehive) BlockEntity.createBlockEntity(BlockEntity.BEEHIVE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
     }
     
     @Override

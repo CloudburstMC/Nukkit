@@ -7,6 +7,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -33,7 +35,7 @@ public class BlockWater extends BlockLiquid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         boolean ret = this.getLevel().setBlock(this, this, true, false);
         this.getLevel().scheduleUpdate(this, this.tickRate());
 

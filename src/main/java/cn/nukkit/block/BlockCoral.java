@@ -8,6 +8,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockCoral extends BlockFlowable {
@@ -71,7 +72,7 @@ public class BlockCoral extends BlockFlowable {
     }
     
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = down();
         Block layer1 = block.getLevelBlockAtLayer(1);
         boolean hasWater = layer1 instanceof BlockWater;

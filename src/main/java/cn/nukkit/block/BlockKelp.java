@@ -10,6 +10,7 @@ import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockKelp extends BlockFlowable {
@@ -32,7 +33,7 @@ public class BlockKelp extends BlockFlowable {
     }
     
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = down();
         Block layer1Block = block.getLevelBlockAtLayer(1);
         int waterDamage;
@@ -118,7 +119,7 @@ public class BlockKelp extends BlockFlowable {
     }
     
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         //Bone meal
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
             int x = (int) this.x;

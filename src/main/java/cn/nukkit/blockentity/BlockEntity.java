@@ -261,7 +261,7 @@ public abstract class BlockEntity extends Position {
 
     @Nullable
     @Override
-    public final BlockEntity getBlockEntity() {
-        return super.getBlockEntity();
+    public final BlockEntity getLevelBlockEntity() {
+        return super.getLevelBlockEntity();
     }
 }

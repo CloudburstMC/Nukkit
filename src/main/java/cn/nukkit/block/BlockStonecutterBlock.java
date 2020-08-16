@@ -10,6 +10,9 @@ import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class BlockStonecutterBlock extends BlockTransparentMeta implements Faceable {
 
     public BlockStonecutterBlock() {
@@ -43,7 +46,7 @@ public class BlockStonecutterBlock extends BlockTransparentMeta implements Facea
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {2, 5, 3, 4};
         this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         this.getLevel().setBlock(block, this, true, true);
@@ -56,7 +59,7 @@ public class BlockStonecutterBlock extends BlockTransparentMeta implements Facea
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         if (player != null) {
             player.addWindow(new StonecutterInventory(player.getUIInventory(), this), ContainerIds.NONE);
             player.craftingType = Player.CRAFTING_STONECUTTER;

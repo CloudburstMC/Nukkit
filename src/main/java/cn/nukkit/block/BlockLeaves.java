@@ -118,7 +118,7 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         this.setPersistent(true);
         this.getLevel().setBlock(this, this, true);
         return true;

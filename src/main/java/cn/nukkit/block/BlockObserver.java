@@ -6,6 +6,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by Leonidius20 on 18.08.18.
  */
@@ -30,7 +32,7 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (player != null) {
             if (Math.abs(player.getFloorX() - this.x) <= 1 && Math.abs(player.getFloorZ() - this.z) <= 1) {
                 double y = player.y + player.getEyeHeight();

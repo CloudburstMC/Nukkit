@@ -10,6 +10,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class BlockTrappedChest extends BlockChest {
@@ -33,7 +34,7 @@ public class BlockTrappedChest extends BlockChest {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {2, 5, 3, 4};
 
         BlockEntityChest chest = null;

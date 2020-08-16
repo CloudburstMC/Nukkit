@@ -17,6 +17,8 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
 
+import javax.annotation.Nonnull;
+
 public class BlockCauldronLava extends BlockCauldron {
     public BlockCauldronLava() {
         this(0x8);
@@ -80,7 +82,7 @@ public class BlockCauldronLava extends BlockCauldron {
     }
     
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         BlockEntity be = this.level.getBlockEntity(this);
     
         if (!(be instanceof BlockEntityCauldron)) {

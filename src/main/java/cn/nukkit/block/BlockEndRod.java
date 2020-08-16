@@ -8,6 +8,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
 /**
  * http://minecraft.gamepedia.com/End_Rod
  *
@@ -84,7 +86,7 @@ public class BlockEndRod extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {0, 1, 3, 2, 5, 4};
         this.setDamage(faces[player != null ? face.getIndex() : 0]);
         this.getLevel().setBlock(block, this, true, true);

@@ -50,7 +50,7 @@ public class BlockPodzol extends BlockDirt {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         return false;
     }
 

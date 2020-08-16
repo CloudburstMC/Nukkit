@@ -8,6 +8,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Nukkit Project Team
  */
@@ -82,7 +84,7 @@ public class BlockCake extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (down().getId() != Block.AIR) {
             getLevel().setBlock(block, this, true, true);
 
@@ -115,7 +117,7 @@ public class BlockCake extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player != null && player.getFoodData().getLevel() < player.getFoodData().getMaxLevel()) {
             if (getDamage() <= 0x06) setDamage(getDamage() + 1);
             if (getDamage() >= 0x06) {

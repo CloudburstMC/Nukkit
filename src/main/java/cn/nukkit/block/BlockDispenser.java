@@ -25,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by CreeperFace on 15.4.2017.
  */
-public class BlockDispenser extends BlockSolidMeta implements Faceable {
+public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityEjectable> {
 
     public BlockDispenser() {
         this(0);
@@ -50,6 +50,18 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         return DISPENSER;
     }
 
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.DISPENSER;
+    }
+
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityEjectable> getBlockEntityClass() {
+        return BlockEntityDispenser.class;
+    }
+
     @Override
     public Item toItem() {
         return new ItemBlock(this, 0);
@@ -57,7 +69,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
     @Override
     public int getComparatorInputOverride() {
-        InventoryHolder blockEntity = this.getBlockEntity();
+        InventoryHolder blockEntity = getBlockEntity();
 
         if (blockEntity != null) {
             return ContainerInventory.calculateRedstone(blockEntity.getInventory());
@@ -87,7 +99,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player == null) {
             return false;
         }
@@ -103,7 +115,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (player != null) {
             if (Math.abs(player.x - this.x) < 2 && Math.abs(player.z - this.z) < 2) {
                 double y = player.y + player.getEyeHeight();
@@ -119,28 +131,8 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
                 this.setDamage(player.getHorizontalFacing().getOpposite().getIndex());
             }
         }
-
-        this.getLevel().setBlock(block, this, true);
-
-        createBlockEntity();
-        return true;
-    }
-
-    @Nonnull
-    @Override
-    protected BlockEntityEjectable createBlockEntity() {
-        return createBlockEntity(BlockEntityDispenser.class, BlockEntity.DISPENSER);
-    }
-
-    @Nonnull
-    @Override
-    public BlockEntityEjectable getOrCreateBlockEntity() {
-        return (BlockEntityDispenser) super.getOrCreateBlockEntity();
-    }
-
-    @Override
-    public BlockEntityEjectable getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityDispenser.class);
+        
+        return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
     }
 
     @Override

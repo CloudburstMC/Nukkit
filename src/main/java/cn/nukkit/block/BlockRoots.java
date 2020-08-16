@@ -5,6 +5,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 
+import javax.annotation.Nonnull;
+
 public abstract class BlockRoots extends BlockFlowable {
     protected BlockRoots() {
         super(0);
@@ -20,7 +22,7 @@ public abstract class BlockRoots extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         return isSupportValid() && super.place(item, block, target, face, fx, fy, fz, player);
     }
 

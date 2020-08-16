@@ -776,6 +776,19 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     
     protected Block() {}
 
+    /**
+     * Place and initialize a this block correctly in the world.
+     * <p>The current instance must have level, x, y, z, and layer properties already set before calling this method.</p>
+     * @param item The item being used to place the block. Should be used as an optional reference, may mismatch the block that is being placed depending on plugin implementations.
+     * @param block The current block that is in the world and is getting replaced by this instance. It has the same x, y, z, layer, and level as this block.
+     * @param target The block that was clicked to create the place action in this block position.
+     * @param face The face that was clicked in the target block
+     * @param fx The detailed X coordinate of the clicked target block face
+     * @param fy The detailed Y coordinate of the clicked target block face
+     * @param fz The detailed Z coordinate of the clicked target block face
+     * @param player The player that is placing the block. May be null.
+     * @return {@code true} if the block was properly place. The implementation is responsible for reverting any partial change.
+     */
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         return this.getLevel().setBlock(this, this, true, true);
     }
@@ -801,11 +814,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 0;
     }
 
-    public boolean onActivate(Item item) {
+    public boolean onActivate(@Nonnull Item item) {
         return this.onActivate(item, null);
     }
 
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         return false;
     }
     
@@ -1672,38 +1685,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return player != null && player.isCreative() && player.isOp();
     }
 
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    @Nonnull
-    public BlockEntity getOrCreateBlockEntity() {
-        BlockEntity blockEntity = getBlockEntity();
-        return blockEntity == null? createBlockEntity() : blockEntity;
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    @Nonnull
-    protected final  <E extends BlockEntity> E getOrCreateBlockEntity(@Nonnull Class<E> type, @Nonnull String typeName, @Nullable CompoundTag initialData, @Nullable Object... args) {
-        BlockEntity blockEntity = getBlockEntity();
-        if (type.isInstance(blockEntity)) {
-            return type.cast(blockEntity);
-        }
-        BlockEntity created = createBlockEntity();
-        try {
-            return type.cast(created);
-        } catch (ClassCastException e) {
-            created.close();
-            throw e;
-        }
-    }
-    
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    @Nonnull
-    protected BlockEntity createBlockEntity() {
-        throw new UnsupportedOperationException("The block "+getId()+":"+getName()+" ("+getClass().getSimpleName()+") don't implement createBlockEntity()");
-    }
-
+    /**
+     * Helper function to create a block entity in the same position as this block.
+     * @param type The expected block entity class (a subclass may also be created)
+     * @param typeName The registered BlockEntity
+     * @param <E> The expected block entity class (a subclass may also be created)
+     * @return A brand new block entity
+     * @throws IllegalStateException If the block entity is not registered or the class is not the same or a subclass of the given type.
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
@@ -1711,12 +1700,24 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return createBlockEntity(type, typeName, null);
     }
 
+    /**
+     * Helper function to create a block entity in the same position as this block.
+     * @param type The expected block entity class (a subclass may also be created)
+     * @param typeName The registered BlockEntity
+     * @param initialData Additional data that will be present in the namedTag id, x, y and z will be overriden. A copy will be generated. May be null.
+     * @param args Extra arguments to be passed to the block entity constructor. May be null and empty.
+     * @param <E> The expected block entity class (a subclass may also be created)
+     * @return A brand new block entity
+     * @throws IllegalStateException If the block entity is not registered or the class is not the same or a subclass of the given type.
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    protected final  <E extends BlockEntity> E createBlockEntity(@Nonnull Class<E> type, @Nonnull String typeName, @Nullable CompoundTag initialData, @Nullable Object... args) {
+    protected final <E extends BlockEntity> E createBlockEntity(@Nonnull Class<E> type, @Nonnull String typeName, @Nullable CompoundTag initialData, @Nullable Object... args) {
         if (initialData == null) {
             initialData = new CompoundTag();
+        } else {
+            initialData = initialData.copy();
         }
         initialData.putString("id", typeName)
                 .putInt("x", getFloorX())
@@ -1732,5 +1733,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             throw new IllegalStateException(error);
         }
         return type.cast(blockEntity);
+    }
+
+    @Nonnull
+    @Override
+    public final Block getBlock() {
+        return clone();
     }
 }

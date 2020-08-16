@@ -7,6 +7,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.math.BlockFace;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class BlockChorusFlower extends BlockTransparent {
@@ -82,7 +83,7 @@ public class BlockChorusFlower extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (!isPositionValid()) {
             return false;
         }

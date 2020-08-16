@@ -73,7 +73,7 @@ public class BlockBasalt extends BlockSolidMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         setPillarAxis(face.getAxis());
         getLevel().setBlock(block, this, true, true);
         return true;

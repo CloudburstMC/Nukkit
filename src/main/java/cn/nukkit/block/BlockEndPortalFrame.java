@@ -10,6 +10,8 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by Pub4Game on 26.12.2015.
  */
@@ -89,7 +91,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if ((this.getDamage() & 0x04) == 0 && player != null && item.getId() == Item.ENDER_EYE) {
             this.setDamage(this.getDamage() + 4);
             this.getLevel().setBlock(this, this, true, true);
@@ -192,7 +194,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         this.setDamage(FACES[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         this.getLevel().setBlock(block, this, true);
         return true;

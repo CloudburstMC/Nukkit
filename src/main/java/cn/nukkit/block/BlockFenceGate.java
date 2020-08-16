@@ -126,7 +126,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
     @PowerNukkitDifference(info = "InWall property is now properly set, returns false if setBlock fails", since = "1.4.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         BlockFace direction = player.getDirection();
         setBlockFace(direction);
         
@@ -139,7 +139,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player == null) {
             return false;
         }

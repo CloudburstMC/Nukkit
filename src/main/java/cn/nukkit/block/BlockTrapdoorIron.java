@@ -5,6 +5,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * Created by Pub4Game on 26.12.2015.
  */
@@ -49,7 +51,7 @@ public class BlockTrapdoorIron extends BlockTrapdoor {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         return false;
     }
 

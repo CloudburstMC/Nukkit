@@ -16,7 +16,7 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class BlockBrewingStand extends BlockSolidMeta {
@@ -71,7 +71,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
 
     @PowerNukkitDifference(info = "Remove placement restrictions, they don't exists in vanilla", since = "1.3.1.2-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         getLevel().setBlock(block, this, true, true);
 
         CompoundTag nbt = new CompoundTag()
@@ -97,7 +97,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
     }
     
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player != null) {
             BlockEntity t = getLevel().getBlockEntity(this);
             BlockEntityBrewingStand brewing;
@@ -167,11 +167,5 @@ public class BlockBrewingStand extends BlockSolidMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
-    }
-
-    @Nullable
-    @Override
-    public BlockEntityBrewingStand getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityBrewingStand.class);
     }
 }

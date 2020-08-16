@@ -202,4 +202,10 @@ public class BlockEntityChest extends BlockEntitySpawnableContainer implements B
 
         this.namedTag.putString("CustomName", name);
     }
+
+    @Override
+    public void onBreak() {
+        unpair();
+        super.onBreak();
+    }
 }

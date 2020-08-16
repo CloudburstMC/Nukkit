@@ -9,10 +9,11 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
-public class BlockConduit extends BlockTransparent {
+public class BlockConduit extends BlockTransparent implements BlockEntityHolder<BlockEntityConduit> {
     public BlockConduit() {
+        // Does nothing
     }
 
     @Override
@@ -23,6 +24,18 @@ public class BlockConduit extends BlockTransparent {
     @Override
     public String getName() {
         return "Conduit";
+    }
+
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityConduit> getBlockEntityClass() {
+        return BlockEntityConduit.class;
+    }
+
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.CONDUIT;
     }
 
     @Override
@@ -41,25 +54,19 @@ public class BlockConduit extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (item.getBlock() != null && item.getBlockId() == CONDUIT && target.getId() == CONDUIT) {
             return false;
         }
 
-        this.getLevel().setBlock(this, this, true, true);
-        CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.CONDUIT)
-                .putInt("x", (int) block.x)
-                .putInt("y", (int) block.y)
-                .putInt("z", (int) block.z)
-                .putBoolean("IsMovable", true);
-
-        BlockEntity entity = BlockEntity.createBlockEntity(BlockEntity.CONDUIT, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
-        if (entity != null) {
-            entity.scheduleUpdate();
+        BlockEntityConduit conduit = BlockEntityHolder.setBlockAndCreateEntity(this, true, true,
+                new CompoundTag().putBoolean("IsMovable", true));
+        if (conduit != null) {
+            conduit.scheduleUpdate();
+            return true;
         }
 
-        return true;
+        return false;
     }
 
     @Override
@@ -105,11 +112,5 @@ public class BlockConduit extends BlockTransparent {
     @Override
     public double getMaxZ() {
         return z + (11.0/16);
-    }
-
-    @Nullable
-    @Override
-    public BlockEntityConduit getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityConduit.class);
     }
 }

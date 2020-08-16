@@ -172,7 +172,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
 
     @PowerNukkitDifference(info = "Will be placed on the right state", since = "1.3.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         autoConfigureState();
         return super.place(item, block, target, face, fx, fy, fz, player);
     }

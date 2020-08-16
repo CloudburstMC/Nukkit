@@ -12,15 +12,17 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockDaylightDetector extends BlockTransparentMeta {
+public class BlockDaylightDetector extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityDaylightDetector> {
 
-    public BlockDaylightDetector() {}
+    public BlockDaylightDetector() {
+        // Does nothing
+    }
 
     @Override
     public int getId() {
@@ -30,6 +32,18 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
     @Override
     public String getName() {
         return "Daylight Detector";
+    }
+
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.DAYLIGHT_DETECTOR;
+    }
+
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityDaylightDetector> getBlockEntityClass() {
+        return BlockEntityDaylightDetector.class;
     }
 
     @Override
@@ -63,18 +77,19 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if(super.place(item, block, target, face, fx, fy, fz, player)) {
-            if (getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
-                updatePower();
-                BlockEntity.createBlockEntity(BlockEntity.DAYLIGHT_DETECTOR, this);
-            }
-            return true;
-        } else return false;
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        BlockEntityDaylightDetector detector = BlockEntityHolder.setBlockAndCreateEntity(this);
+        if (detector == null) {
+            return false;
+        }
+        if (getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
+            updatePower();
+        }
+        return true;
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         BlockDaylightDetectorInverted block = new BlockDaylightDetectorInverted();
         getLevel().setBlock(this, block, true, true);
         block.updatePower();
@@ -129,11 +144,5 @@ public class BlockDaylightDetector extends BlockTransparentMeta {
             getLevel().setBlockDataAt(getFloorX(), getFloorY(), getFloorZ(), i);
             getLevel().updateAroundRedstone(this, null);
         }
-    }
-
-    @Nullable
-    @Override
-    public BlockEntityDaylightDetector getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityDaylightDetector.class);
     }
 }

@@ -11,8 +11,8 @@ import cn.nukkit.level.particle.BubbleParticle;
 import cn.nukkit.level.particle.SplashParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockBubbleColumn extends BlockTransparentMeta {
@@ -124,7 +124,7 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (down().getId() == MAGMA) {
             setDamage(1);
         }

@@ -26,6 +26,7 @@ import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockTurtleEgg extends BlockFlowable {
@@ -85,7 +86,7 @@ public class BlockTurtleEgg extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.getBlock() != null && item.getBlockId() == TURTLE_EGG && (player == null || !player.isSneaking())) {
             int eggCount = getEggCount();
             if (eggCount >= 4) {
@@ -287,7 +288,7 @@ public class BlockTurtleEgg extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (!isValidSupport(block.down(1, 0))) {
             return false;
         }

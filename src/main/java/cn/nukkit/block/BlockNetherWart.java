@@ -9,6 +9,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
@@ -25,7 +26,7 @@ public class BlockNetherWart extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (down.getId() == SOUL_SAND) {
             this.getLevel().setBlock(block, this, true, true);

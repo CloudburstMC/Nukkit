@@ -19,6 +19,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.MainLogger;
 
 import javax.annotation.Nonnull;
 
@@ -28,7 +29,7 @@ import static cn.nukkit.math.CompassRoseDirection.*;
 /**
  * @author Nukkit Project Team
  */
-public class BlockSignPost extends BlockTransparentMeta implements Faceable {
+public class BlockSignPost extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntitySign> {
     public static final BlockProperty<CompassRoseDirection> GROUND_SIGN_DIRECTION = new ArrayBlockProperty<>("ground_sign_direction", false, new CompassRoseDirection[] {
             SOUTH, SOUTH_SOUTH_WEST, SOUTH_WEST, WEST_SOUTH_WEST, 
             WEST, WEST_NORTH_WEST, NORTH_WEST, NORTH_NORTH_WEST, 
@@ -49,6 +50,18 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return SIGN_POST;
+    }
+
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntitySign> getBlockEntityClass() {
+        return BlockEntitySign.class;
+    }
+
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.SIGN;
     }
 
     @Nonnull
@@ -96,45 +109,51 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (face != BlockFace.DOWN) {
-            CompoundTag nbt = new CompoundTag()
-                    .putString("id", BlockEntity.SIGN)
-                    .putInt("x", (int) block.x)
-                    .putInt("y", (int) block.y)
-                    .putInt("z", (int) block.z)
-                    .putString("Text1", "")
-                    .putString("Text2", "")
-                    .putString("Text3", "")
-                    .putString("Text4", "");
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (face == BlockFace.DOWN) {
+            return false;
+        }
+        
+        Block layer0 = level.getBlock(this, 0);
+        Block layer1 = level.getBlock(this, 1);
+        
+        CompoundTag nbt = new CompoundTag()
+                .putString("Text1", "")
+                .putString("Text2", "")
+                .putString("Text3", "")
+                .putString("Text4", "");
 
-            if (face == BlockFace.UP) {
-                CompassRoseDirection direction = GROUND_SIGN_DIRECTION.getValueForMeta(
-                        (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f
-                );
+        if (face == BlockFace.UP) {
+            CompassRoseDirection direction = GROUND_SIGN_DIRECTION.getValueForMeta(
+                    (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f
+            );
 
-                BlockState post = BlockState.of(getPostId()).withProperty(GROUND_SIGN_DIRECTION, direction);
-                getLevel().setBlock(block, post.getBlock(), true);
-            } else {
-                BlockState wall = BlockState.of(getWallId()).withProperty(FACING_DIRECTION, face);
-                getLevel().setBlock(block, wall.getBlock(), true);
-            }
-
-            if (player != null) {
-                nbt.putString("Creator", player.getUniqueId().toString());
-            }
-
-            if (item.hasCustomBlockData()) {
-                for (Tag aTag : item.getCustomBlockData().getAllTags()) {
-                    nbt.put(aTag.getName(), aTag);
-                }
-            }
-
-            BlockEntitySign sign = (BlockEntitySign) BlockEntity.createBlockEntity(BlockEntity.SIGN, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
-            return sign != null;
+            BlockState post = BlockState.of(getPostId()).withProperty(GROUND_SIGN_DIRECTION, direction);
+            getLevel().setBlock(block, post.getBlock(), true);
+        } else {
+            BlockState wall = BlockState.of(getWallId()).withProperty(FACING_DIRECTION, face);
+            getLevel().setBlock(block, wall.getBlock(), true);
         }
 
-        return false;
+        if (player != null) {
+            nbt.putString("Creator", player.getUniqueId().toString());
+        }
+
+        if (item.hasCustomBlockData()) {
+            for (Tag aTag : item.getCustomBlockData().getAllTags()) {
+                nbt.put(aTag.getName(), aTag);
+            }
+        }
+        
+        try {
+            createBlockEntity(nbt);
+            return true;
+        } catch (Exception e) {
+            MainLogger.getLogger().warning("Failed to create block entity "+getBlockEntityType()+" at "+getLocation(), e);
+            level.setBlock(layer0, 0, layer0, true);
+            level.setBlock(layer1, 0, layer1, true);
+            return false;
+        }
     }
 
     @Override

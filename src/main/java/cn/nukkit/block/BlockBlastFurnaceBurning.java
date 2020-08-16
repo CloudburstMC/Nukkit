@@ -4,10 +4,8 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBlastFurnace;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.Position;
-import cn.nukkit.nbt.tag.CompoundTag;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nonnull;
 
 public class BlockBlastFurnaceBurning extends BlockFurnaceBurning {
     public BlockBlastFurnaceBurning() {
@@ -28,25 +26,20 @@ public class BlockBlastFurnaceBurning extends BlockFurnaceBurning {
         return "Burning Blast Furnace";
     }
 
+    @Nonnull
     @Override
-    protected String getEntityName() {
+    public String getBlockEntityType() {
         return BlockEntity.BLAST_FURNACE;
     }
 
+    @Nonnull
     @Override
-    protected BlockEntityBlastFurnace createEntity(Position position, CompoundTag nbt) {
-        return (BlockEntityBlastFurnace) BlockEntity.createBlockEntity(BlockEntity.BLAST_FURNACE, position, nbt);
+    public Class<? extends BlockEntityBlastFurnace> getBlockEntityClass() {
+        return BlockEntityBlastFurnace.class;
     }
 
     @Override
     public Item toItem() {
         return new ItemBlock(new BlockBlastFurnace());
-    }
-
-
-    @Nullable
-    @Override
-    public BlockEntityBlastFurnace getBlockEntity() {
-        return getTypedBlockEntity(BlockEntityBlastFurnace.class);
     }
 }

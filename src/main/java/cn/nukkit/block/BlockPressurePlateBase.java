@@ -119,7 +119,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = block.down();
         if (down.isTransparent() && down.getId() != COBBLE_WALL) {
             return false;
