@@ -101,7 +101,7 @@ public class BaseLang {
             String key = t[0];
             String value = t[1];
             if (value.length() > 1 && value.charAt(0) == '"' && value.charAt(value.length()-1) == '"') {
-                value = value.substring(1, value.length() - 1);
+                value = value.substring(1, value.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\");
             }
             if (value.isEmpty()) {
                 continue;
