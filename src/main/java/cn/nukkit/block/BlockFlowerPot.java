@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityFlowerPot;
 import cn.nukkit.blockstate.BlockState;
@@ -18,6 +21,7 @@ import javax.annotation.Nullable;
 /**
  * @author Nukkit Project Team
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<BlockEntityFlowerPot> {
 
     public BlockFlowerPot() {
@@ -50,6 +54,7 @@ public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<B
         }
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -65,12 +70,16 @@ public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<B
         return FLOWER_POT_BLOCK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityFlowerPot> getBlockEntityClass() {
         return BlockEntityFlowerPot.class;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {

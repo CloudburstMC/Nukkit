@@ -31,6 +31,8 @@ public class BlockLantern extends BlockFlowable {
         return LANTERN;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

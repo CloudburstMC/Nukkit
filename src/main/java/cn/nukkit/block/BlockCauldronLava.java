@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCauldron;
 import cn.nukkit.entity.Entity;
@@ -19,6 +20,7 @@ import cn.nukkit.potion.Effect;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public class BlockCauldronLava extends BlockCauldron {
     public BlockCauldronLava() {
         this(0x8);

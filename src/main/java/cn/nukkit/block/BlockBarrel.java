@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBarrel;
 import cn.nukkit.inventory.ContainerInventory;
@@ -18,6 +20,7 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 import java.util.Map;
 
+@PowerNukkitOnly
 public class BlockBarrel extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityBarrel> {
 
     public BlockBarrel() {
@@ -38,12 +41,16 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable, BlockEntity
         return BARREL;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.BARREL;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityBarrel> getBlockEntityClass() {

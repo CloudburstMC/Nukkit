@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Event;
@@ -31,6 +33,8 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     protected float onPitch;
     protected float offPitch;
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -94,6 +98,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
         return getRedstonePower() == 0;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

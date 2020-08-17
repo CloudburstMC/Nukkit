@@ -46,6 +46,8 @@ public class BlockStructure extends BlockSolidMeta {
         return STRUCTURE_BLOCK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

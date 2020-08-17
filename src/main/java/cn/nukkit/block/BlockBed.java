@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBed;
 import cn.nukkit.entity.item.EntityPrimedTNT;
@@ -21,6 +24,7 @@ import javax.annotation.Nonnull;
  * author: MagicDroidX
  * Nukkit Project
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBed> {
 
     public BlockBed() {
@@ -36,12 +40,16 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
         return BED_BLOCK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityBed> getBlockEntityClass() {
         return BlockEntityBed.class;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
@@ -73,6 +81,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
         return this.y + 0.5625;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

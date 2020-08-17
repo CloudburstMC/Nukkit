@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.event.block.BlockFromToEvent;
@@ -35,6 +36,7 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
         return "Bubble Column";
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;

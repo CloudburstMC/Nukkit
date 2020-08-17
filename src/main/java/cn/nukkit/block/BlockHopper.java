@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityHopper;
 import cn.nukkit.inventory.ContainerInventory;
@@ -18,6 +21,7 @@ import javax.annotation.Nonnull;
 /**
  * @author CreeperFace
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockHopper extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityHopper> {
 
     public BlockHopper() {
@@ -33,12 +37,16 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         return HOPPER_BLOCK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityHopper> getBlockEntityClass() {
         return BlockEntityHopper.class;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
@@ -60,6 +68,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         return 24;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

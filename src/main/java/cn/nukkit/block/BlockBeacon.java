@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBeacon;
 import cn.nukkit.inventory.BeaconInventory;
@@ -15,6 +18,7 @@ import javax.annotation.Nullable;
 /**
  * author: Angelic47 Nukkit Project
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockBeacon extends BlockTransparent implements BlockEntityHolder<BlockEntityBeacon> {
 
     public BlockBeacon() {
@@ -26,12 +30,16 @@ public class BlockBeacon extends BlockTransparent implements BlockEntityHolder<B
         return BEACON;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityBeacon> getBlockEntityClass() {
         return BlockEntityBeacon.class;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
@@ -68,6 +76,7 @@ public class BlockBeacon extends BlockTransparent implements BlockEntityHolder<B
         return true;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

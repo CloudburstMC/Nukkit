@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 /**
  * @author CreeperFace
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityPistonArm> {
 
     public boolean sticky = false;
@@ -42,12 +44,16 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         super(meta);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.PISTON_ARM;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityPistonArm> getBlockEntityClass() {
@@ -64,6 +70,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         return 0.5;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

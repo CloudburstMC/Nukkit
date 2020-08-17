@@ -61,6 +61,8 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         return TRAPDOOR;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -92,6 +94,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         return ItemTool.TYPE_AXE;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

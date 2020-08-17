@@ -41,6 +41,8 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         return FENCE_GATE_OAK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -62,6 +64,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         return 15;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

@@ -37,6 +37,8 @@ public class BlockPlanks extends BlockSolidMeta {
         return WOODEN_PLANKS;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

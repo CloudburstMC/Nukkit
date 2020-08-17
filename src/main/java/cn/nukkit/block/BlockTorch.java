@@ -44,6 +44,8 @@ public class BlockTorch extends BlockFlowable implements Faceable {
         return TORCH;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

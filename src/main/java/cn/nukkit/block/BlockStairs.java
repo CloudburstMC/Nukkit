@@ -35,6 +35,8 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -51,6 +53,8 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
         return this.y + (isUpsideDown() ? 1 : 0.5);
     }
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
         return side == BlockFace.UP && (getDamage() & 0x04) == 0x04 || side == BlockFace.DOWN && (getDamage() & 0x04) != 0x04;
@@ -150,6 +154,7 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
         }
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

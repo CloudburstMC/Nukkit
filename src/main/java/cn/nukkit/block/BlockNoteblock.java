@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMusic;
 import cn.nukkit.item.Item;
@@ -19,6 +22,7 @@ import javax.annotation.Nullable;
  * Created by Snake1999 on 2016/1/17.
  * Package cn.nukkit.block in project nukkit.
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<BlockEntityMusic> {
 
     public BlockNoteblock() {
@@ -40,12 +44,16 @@ public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<Bloc
         return ItemTool.TYPE_AXE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityMusic> getBlockEntityClass() {
         return BlockEntityMusic.class;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {

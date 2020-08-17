@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -42,6 +44,8 @@ public class BlockWater extends BlockLiquid {
         return ret;
     }
 
+    @Since("1.2.1.0-PN")
+    @PowerNukkitOnly
     @Override
     public void afterRemoval(Block newBlock, boolean update) {
         if (!update) {

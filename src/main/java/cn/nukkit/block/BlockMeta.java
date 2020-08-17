@@ -18,6 +18,7 @@ public abstract class BlockMeta extends Block {
         getMutableState().setDataStorageFromInt(meta);
     }
 
+    @Since("1.4.0.0-PN")
     @Nonnull
     @PowerNukkitOnly
     @Override

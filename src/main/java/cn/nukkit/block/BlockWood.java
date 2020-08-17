@@ -43,6 +43,8 @@ public class BlockWood extends BlockLog {
         return WOOD;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

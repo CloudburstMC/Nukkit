@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityEnderChest;
 import cn.nukkit.item.Item;
@@ -19,6 +22,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockEnderChest extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityEnderChest> {
 
     private Set<Player> viewers = new HashSet<>();
@@ -41,12 +45,16 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable, B
         return ENDER_CHEST;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.ENDER_CHEST;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityEnderChest> getBlockEntityClass() {
@@ -58,6 +66,7 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable, B
         return 7;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

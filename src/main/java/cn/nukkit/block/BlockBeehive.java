@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBeehive;
 import cn.nukkit.blockproperty.BlockProperties;
@@ -21,6 +23,7 @@ import java.util.List;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 
+@PowerNukkitOnly
 public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityBeehive> {
     public static final IntBlockProperty HONEY_LEVEL = new IntBlockProperty("honey_level", false, 5);
     public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, HONEY_LEVEL);
@@ -37,6 +40,8 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntit
         return BEEHIVE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -48,12 +53,16 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntit
         return "Beehive";
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.BEEHIVE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityBeehive> getBlockEntityClass() {
@@ -175,6 +184,8 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntit
         return true;
     }
 
+    @Since("1.2.1.0-PN")
+    @PowerNukkitOnly
     @Override
     public boolean mustSilkTouch(Vector3 vector, int layer, BlockFace face, Item item, Player player) {
         if (player != null) {
@@ -186,6 +197,8 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntit
         return super.mustSilkTouch(vector, layer, face, item, player);
     }
 
+    @Since("1.2.1.0-PN")
+    @PowerNukkitOnly
     @Override
     public boolean mustDrop(Vector3 vector, int layer, BlockFace face, Item item, Player player) {
         return mustSilkTouch(vector, layer, face, item, player) || super.mustDrop(vector, layer, face, item, player);

@@ -29,6 +29,8 @@ public class BlockDoubleSlabBlackstone extends BlockDoubleSlabBase {
         return BLACKSTONE_DOUBLE_SLAB;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

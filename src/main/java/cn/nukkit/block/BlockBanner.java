@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBanner;
 import cn.nukkit.item.Item;
@@ -24,6 +27,7 @@ import javax.annotation.Nonnull;
 /**
  * Created by PetteriM1
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockBanner extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBanner> {
 
     public BlockBanner() {
@@ -39,12 +43,16 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable, Block
         return STANDING_BANNER;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.BANNER;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityBanner> getBlockEntityClass() {
@@ -81,6 +89,7 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable, Block
         return true;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

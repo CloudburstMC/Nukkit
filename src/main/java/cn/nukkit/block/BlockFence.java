@@ -51,6 +51,8 @@ public class BlockFence extends BlockTransparentMeta implements BlockConnectable
         return FENCE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -62,6 +64,7 @@ public class BlockFence extends BlockTransparentMeta implements BlockConnectable
         return 2;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

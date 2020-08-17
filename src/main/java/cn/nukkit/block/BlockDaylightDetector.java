@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDaylightDetector;
 import cn.nukkit.item.Item;
@@ -18,6 +21,7 @@ import javax.annotation.Nonnull;
  * Created on 2015/11/22 by CreeperFace.
  * Package cn.nukkit.block in project Nukkit .
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockDaylightDetector extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityDaylightDetector> {
 
     public BlockDaylightDetector() {
@@ -34,12 +38,16 @@ public class BlockDaylightDetector extends BlockTransparentMeta implements Block
         return "Daylight Detector";
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.DAYLIGHT_DETECTOR;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityDaylightDetector> getBlockEntityClass() {
@@ -51,6 +59,7 @@ public class BlockDaylightDetector extends BlockTransparentMeta implements Block
         return 0.2;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

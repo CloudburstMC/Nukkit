@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemCake;
 import cn.nukkit.item.food.Food;
@@ -48,6 +49,7 @@ public class BlockCake extends BlockTransparentMeta {
         return 2.5;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

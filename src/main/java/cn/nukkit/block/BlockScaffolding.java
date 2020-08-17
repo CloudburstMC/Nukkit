@@ -170,6 +170,7 @@ public class BlockScaffolding extends BlockFallableMeta {
         return 60;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

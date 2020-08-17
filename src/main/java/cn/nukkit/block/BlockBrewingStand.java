@@ -3,6 +3,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.inventory.ContainerInventory;
@@ -49,6 +50,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
         return 2.5;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

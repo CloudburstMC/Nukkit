@@ -38,6 +38,8 @@ public class BlockLeaves2 extends BlockLeaves {
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

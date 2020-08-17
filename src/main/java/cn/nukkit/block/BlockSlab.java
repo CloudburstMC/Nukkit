@@ -55,6 +55,7 @@ public abstract class BlockSlab extends BlockTransparentMeta {
         return getToolType() < ItemTool.TYPE_AXE ? 30 : 15;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -76,6 +77,8 @@ public abstract class BlockSlab extends BlockTransparentMeta {
     @Since("1.4.0.0-PN")
     public abstract boolean isSameType(BlockSlab slab);
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
         return side == BlockFace.UP && (getDamage() & 0x08) == 0x08 || side == BlockFace.DOWN && (getDamage() & 0x08) != 0x08;

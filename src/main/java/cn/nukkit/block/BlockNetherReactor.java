@@ -29,12 +29,16 @@ public class BlockNetherReactor extends BlockSolid implements BlockEntityHolder<
         return NETHER_REACTOR;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.NETHER_REACTOR;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityNetherReactor> getBlockEntityClass() {

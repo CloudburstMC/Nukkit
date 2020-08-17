@@ -5,7 +5,6 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
@@ -26,7 +25,6 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
@@ -1683,56 +1681,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             return true;
         }
         return player != null && player.isCreative() && player.isOp();
-    }
-
-    /**
-     * Helper function to create a block entity in the same position as this block.
-     * @param type The expected block entity class (a subclass may also be created)
-     * @param typeName The registered BlockEntity
-     * @param <E> The expected block entity class (a subclass may also be created)
-     * @return A brand new block entity
-     * @throws IllegalStateException If the block entity is not registered or the class is not the same or a subclass of the given type.
-     */
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    @Nonnull
-    protected final <E extends BlockEntity> E createBlockEntity(@Nonnull Class<E> type, @Nonnull String typeName) {
-        return createBlockEntity(type, typeName, null);
-    }
-
-    /**
-     * Helper function to create a block entity in the same position as this block.
-     * @param type The expected block entity class (a subclass may also be created)
-     * @param typeName The registered BlockEntity
-     * @param initialData Additional data that will be present in the namedTag id, x, y and z will be overriden. A copy will be generated. May be null.
-     * @param args Extra arguments to be passed to the block entity constructor. May be null and empty.
-     * @param <E> The expected block entity class (a subclass may also be created)
-     * @return A brand new block entity
-     * @throws IllegalStateException If the block entity is not registered or the class is not the same or a subclass of the given type.
-     */
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    @Nonnull
-    protected final <E extends BlockEntity> E createBlockEntity(@Nonnull Class<E> type, @Nonnull String typeName, @Nullable CompoundTag initialData, @Nullable Object... args) {
-        if (initialData == null) {
-            initialData = new CompoundTag();
-        } else {
-            initialData = initialData.copy();
-        }
-        initialData.putString("id", typeName)
-                .putInt("x", getFloorX())
-                .putInt("y", getFloorY())
-                .putInt("z", getFloorZ());
-        BlockEntity blockEntity = BlockEntity.createBlockEntity(typeName, getChunk(), initialData, args);
-        if (!type.isInstance(blockEntity)) {
-            String error = "Failed to create the block entity " + typeName + " of class " + typeName + " at " + getLocation() + ", " +
-                    "the created type is not an instance of the requested class. Created: " + blockEntity;
-            if (blockEntity != null) {
-                blockEntity.close();
-            }
-            throw new IllegalStateException(error);
-        }
-        return type.cast(blockEntity);
     }
 
     @Nonnull

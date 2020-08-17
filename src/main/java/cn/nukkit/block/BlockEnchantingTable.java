@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityEnchantTable;
 import cn.nukkit.inventory.EnchantInventory;
@@ -20,6 +23,7 @@ import java.util.Map;
  * Created on 2015/11/22 by CreeperFace.
  * Package cn.nukkit.block in project Nukkit .
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockEnchantingTable extends BlockTransparent implements BlockEntityHolder<BlockEntityEnchantTable> {
     public BlockEnchantingTable() {
         // Does nothing
@@ -35,12 +39,16 @@ public class BlockEnchantingTable extends BlockTransparent implements BlockEntit
         return "Enchanting Table";
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.ENCHANT_TABLE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityEnchantTable> getBlockEntityClass() {
@@ -62,6 +70,7 @@ public class BlockEnchantingTable extends BlockTransparent implements BlockEntit
         return 6000;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

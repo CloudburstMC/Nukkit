@@ -39,6 +39,8 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -55,6 +57,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return 0.5;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

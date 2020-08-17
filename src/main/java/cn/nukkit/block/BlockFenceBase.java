@@ -23,6 +23,8 @@ public abstract class BlockFenceBase extends BlockFence {
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

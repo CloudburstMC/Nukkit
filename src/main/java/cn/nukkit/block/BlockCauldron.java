@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCauldron;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
@@ -21,6 +24,7 @@ import java.util.Map;
  * author: CreeperFace
  * Nukkit Project
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<BlockEntityCauldron> {
 
     public BlockCauldron() {
@@ -36,12 +40,16 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
         return CAULDRON_BLOCK;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.CAULDRON;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityCauldron> getBlockEntityClass() {

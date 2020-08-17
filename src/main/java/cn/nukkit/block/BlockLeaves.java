@@ -71,6 +71,8 @@ public class BlockLeaves extends BlockTransparentMeta {
         return LEAVES;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -107,6 +109,7 @@ public class BlockLeaves extends BlockTransparentMeta {
         return 30;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

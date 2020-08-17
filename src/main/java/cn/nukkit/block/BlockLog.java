@@ -23,6 +23,8 @@ public abstract class BlockLog extends BlockSolidMeta {
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public abstract BlockProperties getProperties();

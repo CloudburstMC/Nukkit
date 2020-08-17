@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBell;
 import cn.nukkit.entity.Entity;
@@ -20,6 +22,7 @@ import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBell> {
     public static final int TYPE_ATTACHMENT_STANDING = 0;
     public static final int TYPE_ATTACHMENT_HANGING = 1;
@@ -44,12 +47,16 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
         return BELL;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityBell> getBlockEntityClass() {
         return BlockEntityBell.class;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
@@ -376,6 +383,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
         return new ItemBlock(new BlockBell());
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

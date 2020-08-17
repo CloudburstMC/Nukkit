@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMovingBlock;
 import cn.nukkit.item.Item;
@@ -9,6 +12,7 @@ import cn.nukkit.math.BlockFace;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockMoving extends BlockTransparent implements BlockEntityHolder<BlockEntityMovingBlock> {
 
     public BlockMoving() {
@@ -29,12 +33,16 @@ public class BlockMoving extends BlockTransparent implements BlockEntityHolder<B
         return BlockID.MOVING_BLOCK;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.MOVING_BLOCK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityMovingBlock> getBlockEntityClass() {

@@ -1,5 +1,8 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+
+@PowerNukkitOnly
 public class BlockSmoker extends BlockSmokerBurning {
     public BlockSmoker() {
         this(0);

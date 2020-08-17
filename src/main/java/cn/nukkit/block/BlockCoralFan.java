@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -50,6 +51,7 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
         return colors[getType()];
     }
     
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;

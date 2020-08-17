@@ -24,6 +24,7 @@ import static cn.nukkit.math.BlockFace.AxisDirection.POSITIVE;
 /**
  * Created by Pub4Game on 03.07.2016.
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityItemFrame> {
     private final static int[] FACING = new int[]{4, 5, 3, 2, 1, 0}; // TODO when 1.13 support arrives, add UP/DOWN facings
 
@@ -43,12 +44,16 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
         return ITEM_FRAME_BLOCK;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.ITEM_FRAME;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityItemFrame> getBlockEntityClass() {
@@ -79,6 +84,7 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
         return true;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

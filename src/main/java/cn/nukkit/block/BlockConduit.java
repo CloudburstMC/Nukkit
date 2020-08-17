@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityConduit;
 import cn.nukkit.item.Item;
@@ -11,6 +13,7 @@ import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public class BlockConduit extends BlockTransparent implements BlockEntityHolder<BlockEntityConduit> {
     public BlockConduit() {
         // Does nothing
@@ -26,18 +29,23 @@ public class BlockConduit extends BlockTransparent implements BlockEntityHolder<
         return "Conduit";
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityConduit> getBlockEntityClass() {
         return BlockEntityConduit.class;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.CONDUIT;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;

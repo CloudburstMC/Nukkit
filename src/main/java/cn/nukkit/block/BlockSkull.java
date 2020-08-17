@@ -5,6 +5,9 @@ package cn.nukkit.block;
  */
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySkull;
 import cn.nukkit.item.Item;
@@ -17,7 +20,7 @@ import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
-
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolder<BlockEntitySkull> {
 
     public BlockSkull() {
@@ -33,12 +36,16 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
         return SKULL_BLOCK;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.SKULL;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntitySkull> getBlockEntityClass() {
@@ -60,6 +67,7 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
         return false;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

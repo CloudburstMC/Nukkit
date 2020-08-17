@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDispenser;
 import cn.nukkit.blockentity.BlockEntityEjectable;
@@ -25,6 +28,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * Created by CreeperFace on 15.4.2017.
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityEjectable> {
 
     public BlockDispenser() {
@@ -50,12 +54,16 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         return DISPENSER;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.DISPENSER;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityEjectable> getBlockEntityClass() {

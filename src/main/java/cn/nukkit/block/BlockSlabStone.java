@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.value.StoneSlab1Type;
 import cn.nukkit.item.Item;
@@ -39,6 +41,8 @@ public class BlockSlabStone extends BlockSlab {
         return STONE_SLAB;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

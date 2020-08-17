@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.event.block.BlockSpreadEvent;
@@ -159,6 +160,7 @@ public class BlockSeaPickle extends BlockFlowable {
         return super.onActivate(item, player);
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCampfire;
 import cn.nukkit.entity.Entity;
@@ -26,6 +28,7 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockCampfire extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityCampfire> {
     public BlockCampfire() {
         this(0);
@@ -40,12 +43,16 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
         return CAMPFIRE_BLOCK;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.CAMPFIRE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityCampfire> getBlockEntityClass() {
@@ -201,6 +208,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
         return itemUsed;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

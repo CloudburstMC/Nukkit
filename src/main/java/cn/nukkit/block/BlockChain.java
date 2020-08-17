@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemChain;
 import cn.nukkit.item.ItemTool;
@@ -25,6 +26,7 @@ public class BlockChain extends BlockTransparent {
         return 5;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

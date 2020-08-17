@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityLectern;
 import cn.nukkit.event.block.BlockRedstoneEvent;
@@ -17,6 +19,7 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@PowerNukkitOnly
 public class BlockLectern extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityLectern> {
     public BlockLectern() {
         this(0);
@@ -36,18 +39,23 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
         return LECTERN;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public Class<? extends BlockEntityLectern> getBlockEntityClass() {
         return BlockEntityLectern.class;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.LECTERN;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
