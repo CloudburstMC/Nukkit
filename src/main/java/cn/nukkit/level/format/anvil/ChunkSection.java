@@ -27,8 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 @SuppressWarnings("java:S2176")

@@ -12,8 +12,7 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemFlintSteel extends ItemTool {
     

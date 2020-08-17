@@ -71,7 +71,7 @@ import java.util.concurrent.*;
 import java.util.function.Predicate;
 
 /**
- * author: MagicDroidX Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Level implements ChunkManager, Metadatable {
 

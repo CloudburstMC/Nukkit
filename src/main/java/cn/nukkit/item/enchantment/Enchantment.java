@@ -27,8 +27,7 @@ import java.util.HashSet;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class Enchantment implements Cloneable {
 

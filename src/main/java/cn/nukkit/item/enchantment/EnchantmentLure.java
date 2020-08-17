@@ -1,8 +1,7 @@
 package cn.nukkit.item.enchantment;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentLure extends Enchantment {
     protected EnchantmentLure() {

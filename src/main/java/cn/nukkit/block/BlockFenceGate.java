@@ -21,8 +21,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 
 /**
- * Created on 2015/11/23 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/23
  */
 public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     public static final BooleanBlockProperty IN_WALL = new BooleanBlockProperty("in_wall_bit", false);
@@ -41,6 +41,8 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         return FENCE_GATE_OAK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -62,6 +64,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         return 15;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -126,7 +129,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
     @PowerNukkitDifference(info = "InWall property is now properly set, returns false if setBlock fails", since = "1.4.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         BlockFace direction = player.getDirection();
         setBlockFace(direction);
         
@@ -139,7 +142,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player == null) {
             return false;
         }

@@ -5,8 +5,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.event.HandlerList;
 
 /**
- * author: Extollite
- * Nukkit Project
+ * @author Extollite (Nukkit Project)
  */
 @Since("1.4.0.0-PN")
 public class PlayerLocallyInitializedEvent extends PlayerEvent {

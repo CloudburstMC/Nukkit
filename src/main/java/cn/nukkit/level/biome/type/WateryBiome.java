@@ -3,8 +3,7 @@ package cn.nukkit.level.biome.type;
 import cn.nukkit.block.Block;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public abstract class WateryBiome extends CoveredBiome {
     @Override

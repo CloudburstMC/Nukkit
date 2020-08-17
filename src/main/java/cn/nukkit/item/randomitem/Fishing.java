@@ -9,8 +9,8 @@ import cn.nukkit.utils.DyeColor;
 import static cn.nukkit.item.randomitem.RandomItem.*;
 
 /**
- * Created by Snake1999 on 2016/1/15.
- * Package cn.nukkit.item.randomitem in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/15
  */
 public final class Fishing {
 

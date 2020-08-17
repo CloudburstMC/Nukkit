@@ -2,8 +2,11 @@ package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nonnull;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
@@ -26,6 +29,14 @@ public class BlockDoubleSlabBlackstone extends BlockDoubleSlabBase {
         return BLACKSTONE_DOUBLE_SLAB;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return BlockSlab.SIMPLE_SLAB_PROPERTIES;
+    }
+
     @Override
     public double getResistance() {
         return 6;
@@ -43,7 +54,7 @@ public class BlockDoubleSlabBlackstone extends BlockDoubleSlabBase {
 
     @Override
     public int getSingleSlabId() {
-        return RED_SANDSTONE_SLAB;
+        return BLACKSTONE_SLAB;
     }
 
     @Override

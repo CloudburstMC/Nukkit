@@ -9,8 +9,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class EntityMob extends EntityCreature implements EntityNameable {
     public EntityMob(FullChunk chunk, CompoundTag nbt) {

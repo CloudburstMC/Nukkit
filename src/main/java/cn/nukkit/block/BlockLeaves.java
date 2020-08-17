@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockLeaves extends BlockTransparentMeta {
     @PowerNukkitOnly @Since("1.4.0.0-PN")
@@ -71,6 +70,8 @@ public class BlockLeaves extends BlockTransparentMeta {
         return LEAVES;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -107,6 +108,7 @@ public class BlockLeaves extends BlockTransparentMeta {
         return 30;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -118,7 +120,7 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         this.setPersistent(true);
         this.getLevel().setBlock(this, this, true);
         return true;

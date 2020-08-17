@@ -9,8 +9,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Position;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityDespawnEvent extends EntityEvent {
     private static final HandlerList handlers = new HandlerList();

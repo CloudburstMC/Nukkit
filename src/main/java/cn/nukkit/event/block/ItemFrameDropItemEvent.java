@@ -8,7 +8,8 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 
 /**
- * Created by Pub4Game on 03.07.2016.
+ * @author Pub4Game
+ * @since 03.07.2016
  */
 public class ItemFrameDropItemEvent extends BlockEvent implements Cancellable {
 

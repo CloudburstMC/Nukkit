@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -35,7 +34,7 @@ public class BlockObsidianCrying extends BlockSolid {
     
     @Override
     public double getResistance() {
-        return 6000;
+        return 1200;
     }
     
     @Override

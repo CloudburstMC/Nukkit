@@ -12,7 +12,6 @@ import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
@@ -23,6 +22,9 @@ import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import static cn.nukkit.math.VectorMath.calculateAxis;
+import static cn.nukkit.math.VectorMath.calculateFace;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
@@ -51,6 +53,8 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -89,10 +93,10 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
                 BlockBell bell = (BlockBell) above;
                 return bell.getAttachmentType() == BlockBell.TYPE_ATTACHMENT_STANDING
                         && bell.getBlockFace().getAxis() != face.getAxis();
-            case COBBLE_WALL:
-                return ((BlockWall) above).getConnectionType(face) != WallConnectionType.NONE;
             default:
-                if (above instanceof BlockConnectable) {
+                if (above instanceof BlockWallBase) {
+                    return ((BlockWallBase) above).getConnectionType(face) != WallConnectionType.NONE;
+                } else if (above instanceof BlockConnectable) {
                     return ((BlockConnectable) above).isConnected(face);
                 } else if (above instanceof BlockPressurePlateBase || above instanceof BlockStairs) {
                     return true;
@@ -172,7 +176,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
 
     @PowerNukkitDifference(info = "Will be placed on the right state", since = "1.3.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         autoConfigureState();
         return super.place(item, block, target, face, fx, fy, fz, player);
     }
@@ -262,8 +266,10 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean hasConnections() {
-        return getBooleanValue(WALL_CONNECTION_TYPE_EAST) || getBooleanValue(WALL_CONNECTION_TYPE_WEST)
-                || getBooleanValue(WALL_CONNECTION_TYPE_NORTH) || getBooleanValue(WALL_CONNECTION_TYPE_SOUTH);
+        return getPropertyValue(WALL_CONNECTION_TYPE_EAST) != WallConnectionType.NONE 
+                || getPropertyValue(WALL_CONNECTION_TYPE_WEST) != WallConnectionType.NONE
+                || getPropertyValue(WALL_CONNECTION_TYPE_NORTH) != WallConnectionType.NONE 
+                || getPropertyValue(WALL_CONNECTION_TYPE_SOUTH) != WallConnectionType.NONE;
     }
 
     private boolean recheckPostConditions(Block above) {
@@ -302,13 +308,6 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
                 }
                 break;
 
-            // If the wall above is a post, it should also be a post
-            case COBBLE_WALL:
-                if (((BlockWall) above).isWallPost()) {
-                    return true;
-                }
-                break;
-
             // If the bell is standing and don't follow the path, make it a post
             case BELL:
                 BlockBell bell = (BlockBell) above;
@@ -320,7 +319,14 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
                 break;
 
             default:
-                if (above instanceof BlockLantern) {
+                if (above instanceof BlockWallBase) {
+                    // If the wall above is a post, it should also be a post
+                    
+                    if (((BlockWallBase) above).isWallPost()) {
+                        return true;
+                    }
+                    
+                } else if (above instanceof BlockLantern) {
                     // Lanterns makes this become a post if they are not hanging
 
                     if (!((BlockLantern) above).isHanging()) {
@@ -453,33 +459,29 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     @Override
     public boolean canConnect(Block block) {
         switch (block.getId()) {
-            case COBBLE_WALL:
-            case BORDER_BLOCK:
             case GLASS_PANE:
             case STAINED_GLASS_PANE:
             case IRON_BARS:
+            case GLASS:
+            case STAINED_GLASS:
                 return true;
             default:
+                if (block instanceof BlockWallBase) {
+                    return true;
+                } 
                 if (block instanceof BlockFenceGate) {
                     BlockFenceGate fenceGate = (BlockFenceGate) block;
-                    return fenceGate.getBlockFace().getAxis() != calculateAxis(block);
-                } else if (block instanceof BlockStairs) {
-                    return ((BlockStairs) block).getBlockFace().getOpposite() == calculateFace(block);
+                    return fenceGate.getBlockFace().getAxis() != calculateAxis(this, block);
+                } 
+                if (block instanceof BlockStairs) {
+                    return ((BlockStairs) block).getBlockFace().getOpposite() == calculateFace(this, block);
+                }
+                if (block instanceof BlockTrapdoor) {
+                    BlockTrapdoor trapdoor = (BlockTrapdoor) block;
+                    return trapdoor.isOpen() && trapdoor.getBlockFace() == calculateFace(this, trapdoor);
                 }
                 return block.isSolid() && !block.isTransparent();
         }
-    }
-
-    private BlockFace.Axis calculateAxis(Block side) {
-        Position vector = side.subtract(this);
-        return vector.x != 0? BlockFace.Axis.X : vector.z != 0? BlockFace.Axis.Z : BlockFace.Axis.Y;
-    }
-
-    private BlockFace calculateFace(Block side) {
-        Position vector = side.subtract(this);
-        BlockFace.Axis axis = vector.x != 0? BlockFace.Axis.X : vector.z != 0? BlockFace.Axis.Z : BlockFace.Axis.Y;
-        double direction = axis == BlockFace.Axis.X? vector.x : axis == BlockFace.Axis.Y? vector.y : vector.z;
-        return BlockFace.fromAxis(direction < 0? BlockFace.AxisDirection.NEGATIVE : BlockFace.AxisDirection.POSITIVE, axis);
     }
 
     @PowerNukkitOnly

@@ -4,8 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.item.ItemBucket;
 
 /**
- * Created by Snake1999 on 2016/1/21.
- * Package cn.nukkit.item.food in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/21
  */
 public class FoodMilk extends Food {
     @Override

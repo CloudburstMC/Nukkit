@@ -24,8 +24,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {

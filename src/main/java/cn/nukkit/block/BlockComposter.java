@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.ComposterEmptyEvent;
 import cn.nukkit.event.block.ComposterFillEvent;
 import cn.nukkit.item.*;
@@ -8,6 +9,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.utils.DyeColor;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 public class BlockComposter extends BlockSolidMeta implements ItemID {
@@ -54,6 +56,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         return true;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -90,7 +93,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.getCount() <= 0 || item.getId() == Item.AIR) {
             return false;
         }

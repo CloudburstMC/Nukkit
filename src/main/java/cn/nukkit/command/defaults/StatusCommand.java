@@ -11,8 +11,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created on 2015/11/11 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/11
  */
 public class StatusCommand extends VanillaCommand {
     private static final String UPTIME_FORMAT = TextFormat.RED + "%d" + TextFormat.GOLD + " days " +

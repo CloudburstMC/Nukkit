@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCauldron;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
@@ -14,13 +17,14 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- * author: CreeperFace
- * Nukkit Project
+ * @author CreeperFace (Nukkit Project)
  */
-public class BlockCauldron extends BlockSolidMeta {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<BlockEntityCauldron> {
 
     public BlockCauldron() {
         super(0);
@@ -33,6 +37,22 @@ public class BlockCauldron extends BlockSolidMeta {
     @Override
     public int getId() {
         return CAULDRON_BLOCK;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.CAULDRON;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityCauldron> getBlockEntityClass() {
+        return BlockEntityCauldron.class;
     }
 
     public String getName() {
@@ -77,17 +97,15 @@ public class BlockCauldron extends BlockSolidMeta {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        BlockEntity be = this.level.getBlockEntity(this);
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        BlockEntityCauldron cauldron = getBlockEntity();
 
-        if (!(be instanceof BlockEntityCauldron)) {
+        if (cauldron == null) {
             return false;
         }
 
-        BlockEntityCauldron cauldron = (BlockEntityCauldron) be;
-
         switch (item.getId()) {
-            case Item.BUCKET:
+            case ItemID.BUCKET:
                 if (item.getDamage() == 0) {//empty bucket
                     if (!isFull() || cauldron.isCustomColor() || cauldron.hasPotion()) {
                         break;
@@ -143,7 +161,7 @@ public class BlockCauldron extends BlockSolidMeta {
                     }
                 }
                 break;
-            case Item.DYE:
+            case ItemID.DYE:
                 if (isEmpty() || cauldron.hasPotion()) {
                     break;
                 }
@@ -168,11 +186,11 @@ public class BlockCauldron extends BlockSolidMeta {
                 this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_ADDDYE);
                 
                 break;
-            case Item.LEATHER_CAP:
-            case Item.LEATHER_TUNIC:
-            case Item.LEATHER_PANTS:
-            case Item.LEATHER_BOOTS:
-            case Item.LEATHER_HORSE_ARMOR:
+            case ItemID.LEATHER_CAP:
+            case ItemID.LEATHER_TUNIC:
+            case ItemID.LEATHER_PANTS:
+            case ItemID.LEATHER_BOOTS:
+            case ItemID.LEATHER_HORSE_ARMOR:
                 if (isEmpty() || cauldron.hasPotion()) {
                     break;
                 }
@@ -187,9 +205,9 @@ public class BlockCauldron extends BlockSolidMeta {
                 this.level.addSound(add(0.5, 0.5, 0.5), Sound.CAULDRON_DYEARMOR);
                 
                 break;
-            case Item.POTION:
-            case Item.SPLASH_POTION:
-            case Item.LINGERING_POTION:
+            case ItemID.POTION:
+            case ItemID.SPLASH_POTION:
+            case ItemID.LINGERING_POTION:
                 if (!isEmpty() && (cauldron.hasPotion()? cauldron.getPotionId() != item.getDamage() : item.getDamage() != 0)) {
                     clearWithFizz(cauldron);
                     consumePotion(item, player);
@@ -204,8 +222,8 @@ public class BlockCauldron extends BlockSolidMeta {
                 }
                 
                 cauldron.setPotionType(
-                        item.getId() == Item.POTION? BlockEntityCauldron.POTION_TYPE_NORMAL :
-                                item.getId() == Item.SPLASH_POTION? BlockEntityCauldron.POTION_TYPE_SPLASH :
+                        item.getId() == ItemID.POTION? BlockEntityCauldron.POTION_TYPE_NORMAL :
+                                item.getId() == ItemID.SPLASH_POTION? BlockEntityCauldron.POTION_TYPE_SPLASH :
                                         BlockEntityCauldron.POTION_TYPE_LINGERING
                 );
                 cauldron.spawnToAll();
@@ -217,7 +235,7 @@ public class BlockCauldron extends BlockSolidMeta {
     
                 this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_FILLPOTION);
                 break;
-            case Item.GLASS_BOTTLE:
+            case ItemID.GLASS_BOTTLE:
                 if (isEmpty()) {
                     break;
                 }
@@ -321,12 +339,8 @@ public class BlockCauldron extends BlockSolidMeta {
     }
     
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        CompoundTag nbt = new CompoundTag("")
-                .putString("id", BlockEntity.CAULDRON)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        CompoundTag nbt = new CompoundTag()
                 .putShort("PotionId", 0xffff)
                 .putByte("SplashPotion", 0);
 
@@ -337,9 +351,7 @@ public class BlockCauldron extends BlockSolidMeta {
             }
         }
 
-        BlockEntity.createBlockEntity(BlockEntity.CAULDRON, this, nbt);
-        this.getLevel().setBlock(block, this, true, true);
-        return true;
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
     @Override
@@ -356,10 +368,12 @@ public class BlockCauldron extends BlockSolidMeta {
         return new ItemCauldron();
     }
 
+    @Override
     public boolean hasComparatorInputOverride() {
         return true;
     }
-
+    
+    @Override
     public int getComparatorInputOverride() {
         return getFillLevel();
     }

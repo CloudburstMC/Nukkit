@@ -27,7 +27,8 @@ import static cn.nukkit.block.BlockStairs.UPSIDE_DOWN;
 import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 
 /**
- * Created by Pub4Game on 26.12.2015.
+ * @author Pub4Game
+ * @since 26.12.2015
  */
 public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     private static final double THICKNESS = 0.1875;
@@ -61,6 +62,8 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         return TRAPDOOR;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -92,6 +95,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         return ItemTool.TYPE_AXE;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -202,7 +206,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     
     @PowerNukkitDifference(info = "Will return false if setBlock fails and the direction is relative to where the player is facing", since = "1.4.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (face.getAxis().isHorizontal()) {
             setBlockFace(player == null? face : player.getDirection().getOpposite());
             setTop(fy > 0.5);
@@ -215,7 +219,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if(toggle(player)) {
             playOpenCloseSound();
             return true;

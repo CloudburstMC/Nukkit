@@ -27,4 +27,9 @@ public class ItemHoeNetherite extends ItemTool {
     public int getTier() {
         return ItemTool.TIER_NETHERITE;
     }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
+    }
 }

@@ -7,8 +7,8 @@ import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.ThreadCache;
 
 /**
- * Created on 2015/11/11 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/11
  */
 public class GarbageCollectorCommand extends VanillaCommand {
 

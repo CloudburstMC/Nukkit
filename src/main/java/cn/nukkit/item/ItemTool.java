@@ -1,16 +1,19 @@
 package cn.nukkit.item;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.Tag;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TIER_WOODEN = 1;
@@ -42,6 +45,28 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_BOW = 385;
     public static final int DURABILITY_TRIDENT = 251;
     public static final int DURABILITY_FISHING_ROD = 65;
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public static Item getBestTool(int toolType) {
+        switch (toolType) {
+            default:
+            case TYPE_NONE:
+            case TYPE_PICKAXE:
+                return Item.get(ItemID.NETHERITE_PICKAXE);
+            case TYPE_AXE:
+                return Item.get(ItemID.NETHERITE_AXE);
+            case TYPE_SHOVEL:
+                return Item.get(ItemID.NETHERITE_SHOVEL);
+            case TYPE_SHEARS:
+                return Item.get(ItemID.SHEARS);
+            case TYPE_SWORD:
+                return Item.get(ItemID.NETHERITE_SWORD);
+            case TYPE_HANDS_ONLY:
+                return Item.getBlock(BlockID.AIR);
+        }
+    }
 
     public ItemTool(int id) {
         this(id, 0, 1, UNKNOWN_STR);

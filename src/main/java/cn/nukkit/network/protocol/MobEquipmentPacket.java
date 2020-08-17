@@ -4,8 +4,7 @@ import cn.nukkit.item.Item;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString
 public class MobEquipmentPacket extends DataPacket {

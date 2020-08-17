@@ -7,7 +7,8 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created by Pub4Game on 21.06.2016.
+ * @author Pub4Game
+ * @since 21.06.2016
  */
 public class EntityVillagerV1 extends EntityCreature implements EntityNPC, EntityAgeable {
 

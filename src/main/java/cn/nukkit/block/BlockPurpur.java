@@ -7,6 +7,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 public class BlockPurpur extends BlockSolidMeta {
 
     public static final int PURPUR_NORMAL = 0;
@@ -53,7 +55,7 @@ public class BlockPurpur extends BlockSolidMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (this.getDamage() != PURPUR_NORMAL) {
             short[] faces = new short[]{
                     0,

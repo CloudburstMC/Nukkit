@@ -2,6 +2,8 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -14,6 +16,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -108,8 +112,16 @@ public class EntityItem extends Entity {
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Netherite stuff is immune to fire and lava damage")
     @Override
     public boolean attack(EntityDamageEvent source) {
+        if (item != null && item.isLavaResistant() && (
+                source.getCause() == DamageCause.LAVA || 
+                        source.getCause() == DamageCause.FIRE || 
+                        source.getCause() == DamageCause.FIRE_TICK)) {
+            return false;
+        }
+        
         return (source.getCause() == DamageCause.VOID ||
                 source.getCause() == DamageCause.CONTACT ||
                 source.getCause() == DamageCause.FIRE_TICK ||
@@ -167,7 +179,9 @@ public class EntityItem extends Entity {
 
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
-        if (isInsideOfFire()) {
+        boolean lavaResistant = item != null && item.isLavaResistant();
+        
+        if (!lavaResistant && isInsideOfFire()) {
             this.kill();
         }
 
@@ -186,8 +200,15 @@ public class EntityItem extends Entity {
                     }
                 }
             }
-
-            if (this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == 8 || this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == 9) { //item is fully in water or in still water
+            
+            if (lavaResistant && getCollisionBlocks().stream().anyMatch(b-> b.getId() == BlockID.LAVA || b.getId() == BlockID.STILL_LAVA)) {
+                this.motionY = this.getGravity() * 4;
+                ThreadLocalRandom random = ThreadLocalRandom.current();
+                this.motionZ = (random.nextDouble() - 0.5) * getGravity() * 6;
+                this.motionX = (random.nextDouble() - 0.5) * getGravity() * 6;
+            } else if (this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == BlockID.WATER 
+                    || this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == BlockID.STILL_WATER) {
+                //item is fully in water or in still water
                 this.motionY -= this.getGravity() * -0.015;
             } else if (this.isInsideOfWater()) {
                 this.motionY = this.getGravity() - 0.06; //item is going up in water, don't let it go back down too fast
@@ -232,6 +253,14 @@ public class EntityItem extends Entity {
         this.timing.stopTiming();
 
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
+    }
+
+    @Override
+    public void setOnFire(int seconds) {
+        if (item != null && item.isLavaResistant()) {
+            return;
+        }
+        super.setOnFire(seconds);
     }
 
     @Override

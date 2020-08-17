@@ -11,8 +11,7 @@ import cn.nukkit.math.NukkitRandom;
 import static cn.nukkit.block.BlockID.STONE;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 //porktodo: rewrite this, the whole class is terrible and generated ores look stupid
 public class OreType {

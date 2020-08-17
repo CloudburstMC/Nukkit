@@ -35,11 +35,8 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * Created by: larryTheCoder on 2017/6/26.
- * <p>
- * Nukkit Project,
- * Minecart and Riding Project,
- * Package cn.nukkit.entity.item in project Nukkit.
+ * @author larryTheCoder (Nukkit Project, Minecart and Riding Project)
+ * @since 2017/6/26
  */
 public abstract class EntityMinecartAbstract extends EntityVehicle {
 

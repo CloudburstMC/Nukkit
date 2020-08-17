@@ -1,8 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSpruceSign;
 
+@PowerNukkitOnly
 public class BlockSpruceWallSign extends BlockWallSign {
     public BlockSpruceWallSign() {
         this(0);

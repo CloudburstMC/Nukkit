@@ -13,8 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString
 public class AddEntityPacket extends DataPacket {

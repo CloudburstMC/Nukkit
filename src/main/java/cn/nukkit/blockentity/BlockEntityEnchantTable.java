@@ -5,8 +5,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockEntityEnchantTable extends BlockEntitySpawnable implements BlockEntityNameable {
 

@@ -1,7 +1,8 @@
 package cn.nukkit.block;
 
 /**
- * Created by Pub4Game on 03.01.2015.
+ * @author Pub4Game
+ * @since 03.01.2015
  */
 public class BlockMushroomRed extends BlockMushroom {
 

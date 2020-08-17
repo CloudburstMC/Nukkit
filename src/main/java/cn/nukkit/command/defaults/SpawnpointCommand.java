@@ -13,8 +13,8 @@ import cn.nukkit.utils.TextFormat;
 import java.text.DecimalFormat;
 
 /**
- * Created on 2015/12/13 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/13
  */
 public class SpawnpointCommand extends VanillaCommand {
     public SpawnpointCommand(String name) {

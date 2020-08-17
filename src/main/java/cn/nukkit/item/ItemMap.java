@@ -6,7 +6,7 @@ import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
 import cn.nukkit.utils.MainLogger;
 
 import javax.imageio.ImageIO;
-import java.awt.Graphics2D;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,7 +14,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by CreeperFace on 18.3.2017.
+ * @author CreeperFace
+ * @since 18.3.2017
  */
 public class ItemMap extends Item {
 

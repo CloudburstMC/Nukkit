@@ -3,8 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/11/23 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/23
  */
 public class BlockFenceGateJungle extends BlockFenceGate {
     public BlockFenceGateJungle() {

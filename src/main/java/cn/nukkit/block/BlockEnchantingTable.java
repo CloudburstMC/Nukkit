@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityEnchantTable;
 import cn.nukkit.inventory.EnchantInventory;
@@ -8,19 +11,22 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
- * Created on 2015/11/22 by CreeperFace.
- * Package cn.nukkit.block in project Nukkit .
+ * @author CreeperFace
+ * @since 2015/11/22
  */
-public class BlockEnchantingTable extends BlockTransparent {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+public class BlockEnchantingTable extends BlockTransparent implements BlockEntityHolder<BlockEntityEnchantTable> {
     public BlockEnchantingTable() {
+        // Does nothing
     }
 
     @Override
@@ -31,6 +37,22 @@ public class BlockEnchantingTable extends BlockTransparent {
     @Override
     public String getName() {
         return "Enchanting Table";
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.ENCHANT_TABLE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityEnchantTable> getBlockEntityClass() {
+        return BlockEntityEnchantTable.class;
     }
 
     @Override
@@ -48,6 +70,7 @@ public class BlockEnchantingTable extends BlockTransparent {
         return 6000;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -75,14 +98,9 @@ public class BlockEnchantingTable extends BlockTransparent {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(block, this, true, true);
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
 
-        CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.ENCHANT_TABLE)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
+        CompoundTag nbt = new CompoundTag();
 
         if (item.hasCustomName()) {
             nbt.putString("CustomName", item.getCustomName());
@@ -94,39 +112,23 @@ public class BlockEnchantingTable extends BlockTransparent {
                 nbt.put(tag.getKey(), tag.getValue());
             }
         }
-
-        BlockEntityEnchantTable enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-        return enchantTable != null;
+        
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityEnchantTable enchantTable;
-            if (t instanceof BlockEntityEnchantTable) {
-                enchantTable = (BlockEntityEnchantTable) t;
-            } else {
-                CompoundTag nbt = new CompoundTag()
-                        .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.ENCHANT_TABLE)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-                if (enchantTable == null) {
-                    return false;
-                }
-            }
-
-            if (enchantTable.namedTag.contains("Lock") && enchantTable.namedTag.get("Lock") instanceof StringTag) {
-                if (!enchantTable.namedTag.getString("Lock").equals(item.getCustomName())) {
-                    return true;
-                }
-            }
-
-            player.addWindow(new EnchantInventory(player.getUIInventory(), this.getLocation()), Player.ENCHANT_WINDOW_ID);
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
+        if (player == null) {
+            return true;
         }
+        
+        BlockEntityEnchantTable enchantTable = getOrCreateBlockEntity();
+        if (enchantTable.namedTag.contains("Lock") && enchantTable.namedTag.get("Lock") instanceof StringTag 
+                && !enchantTable.namedTag.getString("Lock").equals(item.getCustomName())) {
+            return false;
+        }
+
+        player.addWindow(new EnchantInventory(player.getUIInventory(), this.getLocation()), Player.ENCHANT_WINDOW_ID);
 
         return true;
     }

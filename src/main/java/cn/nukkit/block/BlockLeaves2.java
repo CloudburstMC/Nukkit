@@ -11,8 +11,8 @@ import cn.nukkit.item.Item;
 import javax.annotation.Nonnull;
 
 /**
- * Created on 2015/12/1 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/1
  */
 public class BlockLeaves2 extends BlockLeaves {
     @PowerNukkitOnly
@@ -38,6 +38,8 @@ public class BlockLeaves2 extends BlockLeaves {
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

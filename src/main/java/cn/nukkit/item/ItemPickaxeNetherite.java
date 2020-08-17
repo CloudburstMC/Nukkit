@@ -32,4 +32,9 @@ public class ItemPickaxeNetherite extends ItemTool{
     public int getAttackDamage() {
         return 6;
     }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
+    }
 }

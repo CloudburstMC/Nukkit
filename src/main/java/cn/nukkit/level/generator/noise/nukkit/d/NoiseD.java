@@ -1,8 +1,7 @@
 package cn.nukkit.level.generator.noise.nukkit.d;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class NoiseD {
     protected int[] perm;

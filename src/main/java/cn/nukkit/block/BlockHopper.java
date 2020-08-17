@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityHopper;
 import cn.nukkit.inventory.ContainerInventory;
@@ -13,10 +16,13 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author CreeperFace
  */
-public class BlockHopper extends BlockTransparentMeta implements Faceable {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+public class BlockHopper extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityHopper> {
 
     public BlockHopper() {
         this(0);
@@ -29,6 +35,22 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return HOPPER_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityHopper> getBlockEntityClass() {
+        return BlockEntityHopper.class;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.HOPPER;
     }
 
     @Override
@@ -46,13 +68,14 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
         return 24;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         BlockFace facing = face.getOpposite();
 
         if (facing == BlockFace.UP) {
@@ -69,28 +92,15 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
             }
         }
 
-        this.level.setBlock(this, this);
-
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.HOPPER)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
-
-        BlockEntityHopper hopper = (BlockEntityHopper) BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
-        return hopper != null;
+        CompoundTag nbt = new CompoundTag().putList(new ListTag<>("Items"));
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        BlockEntityHopper blockEntity = getOrCreateBlockEntity();
 
-        if (blockEntity instanceof BlockEntityHopper) {
-            return player.addWindow(((BlockEntityHopper) blockEntity).getInventory()) != -1;
-        }
-
-        return false;
+        return player.addWindow(blockEntity.getInventory()) != -1;
     }
 
     @Override
@@ -98,16 +108,17 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
         return true;
     }
 
+    @Override
     public boolean hasComparatorInputOverride() {
         return true;
     }
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntityHopper blockEntity = getBlockEntity();
 
-        if (blockEntity instanceof BlockEntityHopper) {
-            return ContainerInventory.calculateRedstone(((BlockEntityHopper) blockEntity).getInventory());
+        if (blockEntity != null) {
+            return ContainerInventory.calculateRedstone(blockEntity.getInventory());
         }
 
         return super.getComparatorInputOverride();
@@ -141,7 +152,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
                 this.level.setBlock(this, this, false, false);
 
                 if (!powered) {
-                    BlockEntity be = this.level.getBlockEntity(this);
+                    BlockEntityHopper be = getBlockEntity();
 
                     if (be != null) {
                         be.scheduleUpdate();
