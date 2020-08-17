@@ -11,7 +11,8 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created by CreeperFace on 26. 11. 2016.
+ * @author CreeperFace
+ * @since 26. 11. 2016
  */
 public class BlockSlabStone extends BlockSlab {
     public static final BlockProperties PROPERTIES = new BlockProperties(

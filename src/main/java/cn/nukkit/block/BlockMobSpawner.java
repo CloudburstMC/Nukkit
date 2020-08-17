@@ -5,7 +5,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * Created by Pub4Game on 27.12.2015.
+ * @author Pub4Game
+ * @since 27.12.2015
  */
 public class BlockMobSpawner extends BlockSolid {
 

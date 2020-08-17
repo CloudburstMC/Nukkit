@@ -9,8 +9,7 @@ import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: CreeperFace
- * Nukkit Project
+ * @author CreeperFace (Nukkit Project)
  */
 public class BlockEntityCauldron extends BlockEntitySpawnable {
     

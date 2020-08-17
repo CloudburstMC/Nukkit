@@ -6,8 +6,7 @@ import cn.nukkit.item.food.Food;
 import cn.nukkit.math.Vector3;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class ItemEdible extends Item {
     public ItemEdible(int id, Integer meta, int count, String name) {

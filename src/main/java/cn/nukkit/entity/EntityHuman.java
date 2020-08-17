@@ -20,8 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityHuman extends EntityHumanType {
 

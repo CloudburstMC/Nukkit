@@ -5,7 +5,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * Created by CreeperFace on 27. 11. 2016.
+ * @author CreeperFace
+ * @since 27. 11. 2016
  */
 public class BlockButtonStone extends BlockButton {
 

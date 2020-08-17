@@ -19,7 +19,8 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by CreeperFace on 27. 10. 2016.
+ * @author CreeperFace
+ * @since 27. 10. 2016
  */
 public class BlockCocoa extends BlockTransparentMeta implements Faceable {
 

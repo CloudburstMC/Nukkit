@@ -16,8 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ParametersAreNonnullByDefault
 public class EmptyChunkSection implements ChunkSection {

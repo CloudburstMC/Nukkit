@@ -27,8 +27,7 @@ import javax.annotation.Nonnull;
 import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockDoor extends BlockTransparentMeta implements Faceable {
     private static final double THICKNESS = 3.0 /16;

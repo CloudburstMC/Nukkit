@@ -21,8 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityFurnace> {

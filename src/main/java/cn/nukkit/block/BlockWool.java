@@ -6,7 +6,6 @@ import cn.nukkit.utils.DyeColor;
 
 /**
  * Created on 2015/12/2 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockWool extends BlockSolidMeta {
 

@@ -28,8 +28,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class Network {

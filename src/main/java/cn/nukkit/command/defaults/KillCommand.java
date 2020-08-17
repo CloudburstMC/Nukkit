@@ -17,7 +17,6 @@ import java.util.StringJoiner;
 
 /**
  * Created on 2015/12/08 by Pub4Game.
- * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class KillCommand extends VanillaCommand {
 

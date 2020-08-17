@@ -10,8 +10,7 @@ import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class PardonIpCommand extends VanillaCommand {
 

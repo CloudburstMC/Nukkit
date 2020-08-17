@@ -10,8 +10,7 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockPlanks extends BlockSolidMeta {
     public static final int OAK = 0;

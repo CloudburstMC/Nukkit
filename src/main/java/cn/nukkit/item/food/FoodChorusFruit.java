@@ -11,7 +11,8 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 /**
- * Created by Leonidius20 on 20.08.18.
+ * @author Leonidius20
+ * @since 20.08.18
  */
 public class FoodChorusFruit extends FoodNormal {
 

@@ -7,7 +7,6 @@ import cn.nukkit.utils.BlockColor;
 
 /*
  * Created on 2015/12/11 by Pub4Game.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockRedstone extends BlockSolidMeta {
 

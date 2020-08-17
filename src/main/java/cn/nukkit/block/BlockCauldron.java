@@ -21,8 +21,7 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
- * author: CreeperFace
- * Nukkit Project
+ * @author CreeperFace (Nukkit Project)
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<BlockEntityCauldron> {

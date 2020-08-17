@@ -13,8 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockTallGrass extends BlockFlowable {
 

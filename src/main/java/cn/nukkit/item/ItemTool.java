@@ -13,8 +13,7 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TIER_WOODEN = 1;

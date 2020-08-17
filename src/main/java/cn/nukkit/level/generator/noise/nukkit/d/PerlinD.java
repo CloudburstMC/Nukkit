@@ -3,8 +3,7 @@ package cn.nukkit.level.generator.noise.nukkit.d;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class PerlinD extends NoiseD {
     public PerlinD(NukkitRandom random, double octaves, double persistence) {

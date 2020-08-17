@@ -11,7 +11,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by Pub4Game on 03.01.2016.
+ * @author Pub4Game
+ * @since 03.01.2016
  */
 public class BlockMycelium extends BlockSolid {
 

@@ -11,7 +11,6 @@ import java.util.Objects;
 
 /**
  * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class TellCommand extends VanillaCommand {
 

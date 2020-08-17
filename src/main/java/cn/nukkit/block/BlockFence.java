@@ -19,7 +19,6 @@ import static cn.nukkit.math.VectorMath.calculateFace;
 
 /**
  * Created on 2015/12/7 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 @PowerNukkitDifference(info = "Implements BlockConnectable only on PowerNukkit", since = "1.3.0.0-PN")
 public class BlockFence extends BlockTransparentMeta implements BlockConnectable {

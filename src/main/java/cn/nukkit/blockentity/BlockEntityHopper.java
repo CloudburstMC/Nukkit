@@ -20,7 +20,8 @@ import cn.nukkit.nbt.tag.ListTag;
 import java.util.HashSet;
 
 /**
- * Created by CreeperFace on 8.5.2017.
+ * @author CreeperFace
+ * @since 8.5.2017
  */
 public class BlockEntityHopper extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 

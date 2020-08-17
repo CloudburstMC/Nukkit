@@ -6,8 +6,7 @@ import com.google.common.primitives.Ints;
 import java.util.List;
 
 /**
- * author: MagicDroidX &amp; iNevet
- * Nukkit Project
+ * @author MagicDroidX &amp; iNevet (Nukkit Project)
  */
 public interface ProtocolInfo {
 

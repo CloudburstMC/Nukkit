@@ -23,8 +23,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockFire extends BlockFlowable {
 

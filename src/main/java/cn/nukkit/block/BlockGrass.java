@@ -19,8 +19,7 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 
 public class BlockGrass extends BlockDirt {

@@ -4,8 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockCobblestone extends BlockSolid {
 

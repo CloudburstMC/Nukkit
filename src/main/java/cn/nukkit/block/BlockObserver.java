@@ -9,7 +9,8 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Leonidius20 on 18.08.18.
+ * @author Leonidius20
+ * @since 18.08.18
  */
 public class BlockObserver extends BlockSolidMeta implements Faceable {
 

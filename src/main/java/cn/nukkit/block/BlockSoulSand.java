@@ -7,7 +7,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by Pub4Game on 27.12.2015.
+ * @author Pub4Game
+ * @since 27.12.2015
  */
 public class BlockSoulSand extends BlockSolid {
 

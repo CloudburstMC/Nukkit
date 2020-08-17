@@ -4,7 +4,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
  * Created on 2015/12/27 by xtypr.
- * Package cn.nukkit.item in project Nukkit .
  */
 public class ItemPotionSplash extends ProjectileItem {
 

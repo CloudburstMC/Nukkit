@@ -14,7 +14,8 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Pub4Game on 26.12.2015.
+ * @author Pub4Game
+ * @since 26.12.2015
  */
 public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceable {
 

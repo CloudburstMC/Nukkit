@@ -24,8 +24,8 @@ import javax.annotation.Nonnull;
 import static cn.nukkit.blockproperty.CommonBlockProperties.REDSTONE_SIGNAL;
 
 /**
- * Created by Snake1999 on 2016/1/11.
- * Package cn.nukkit.block in project nukkit
+ * @author Snake1999
+ * @since 2016/1/11
  */
 public abstract class BlockPressurePlateBase extends BlockFlowable {
     public static final BlockProperties PROPERTIES = new BlockProperties(REDSTONE_SIGNAL);

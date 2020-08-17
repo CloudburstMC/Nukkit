@@ -5,8 +5,7 @@ import cn.nukkit.utils.Binary;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString
 public class SetEntityDataPacket extends DataPacket {

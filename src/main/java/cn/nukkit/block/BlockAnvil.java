@@ -16,7 +16,8 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 
 /**
- * Created by Pub4Game on 27.12.2015.
+ * @author Pub4Game
+ * @since 27.12.2015
  */
 @PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable")
 public class BlockAnvil extends BlockFallableMeta implements Faceable {

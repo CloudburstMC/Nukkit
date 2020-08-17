@@ -13,7 +13,8 @@ import javax.annotation.Nonnull;
 import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
 
 /**
- * Created by Pub4Game on 26.12.2015.
+ * @author Pub4Game
+ * @since 26.12.2015
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockWallSign extends BlockSignPost {

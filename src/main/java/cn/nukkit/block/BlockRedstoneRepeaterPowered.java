@@ -8,7 +8,8 @@ import cn.nukkit.math.BlockFace;
 import javax.annotation.Nonnull;
 
 /**
- * Created by CreeperFace on 10.4.2017.
+ * @author CreeperFace
+ * @since 10.4.2017
  */
 public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 

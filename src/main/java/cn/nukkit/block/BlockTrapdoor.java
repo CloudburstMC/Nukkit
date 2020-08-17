@@ -27,7 +27,8 @@ import static cn.nukkit.block.BlockStairs.UPSIDE_DOWN;
 import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 
 /**
- * Created by Pub4Game on 26.12.2015.
+ * @author Pub4Game
+ * @since 26.12.2015
  */
 public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     private static final double THICKNESS = 0.1875;

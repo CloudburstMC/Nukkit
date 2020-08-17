@@ -15,8 +15,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class SimpleCommandMap implements CommandMap {
     protected final Map<String, Command> knownCommands = new HashMap<>();

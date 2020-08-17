@@ -15,7 +15,6 @@ import java.util.Random;
 
 /**
  * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class ParticleCommand extends VanillaCommand {
     private static final String[] ENUM_VALUES = new String[]{"explode", "hugeexplosion", "hugeexplosionseed", "bubble"

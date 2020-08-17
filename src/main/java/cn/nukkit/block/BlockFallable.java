@@ -1,20 +1,14 @@
 package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFallingBlock;
 import cn.nukkit.event.block.BlockFallEvent;
 import cn.nukkit.level.Level;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.nbt.tag.*;
 
 
 /**
- * author: rcsuperman
- * Nukkit Project
+ * @author rcsuperman (Nukkit Project)
  */
 public abstract class BlockFallable extends BlockSolid {
 

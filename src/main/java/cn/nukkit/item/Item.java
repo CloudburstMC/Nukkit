@@ -37,8 +37,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class Item implements Cloneable, BlockID, ItemID {

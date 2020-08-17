@@ -22,7 +22,8 @@ import java.util.Random;
 import static cn.nukkit.math.BlockFace.AxisDirection.POSITIVE;
 
 /**
- * Created by Pub4Game on 03.07.2016.
+ * @author Pub4Game
+ * @since 03.07.2016
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityItemFrame> {

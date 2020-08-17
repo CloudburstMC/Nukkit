@@ -16,8 +16,7 @@ import java.util.stream.Collectors;
 import static cn.nukkit.utils.BlockColor.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  * @apiNote Implements BlockConnectable only on PowerNukkit
  */
 @PowerNukkitDifference(info = "Extends BlockWallBase and implements BlockConnectable only on PowerNukkit", since = "1.4.0.0-PN")

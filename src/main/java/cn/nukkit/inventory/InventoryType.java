@@ -1,8 +1,7 @@
 package cn.nukkit.inventory;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public enum InventoryType {
     CHEST(27, "Chest", 0),

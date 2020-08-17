@@ -18,8 +18,7 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockStairs extends BlockTransparentMeta implements Faceable {
     public static final BooleanBlockProperty UPSIDE_DOWN = new BooleanBlockProperty("upside_down_bit", false);

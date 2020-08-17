@@ -10,7 +10,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/12/1 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockOreEmerald extends BlockSolid {
 

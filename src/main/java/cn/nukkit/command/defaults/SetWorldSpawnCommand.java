@@ -13,7 +13,6 @@ import java.text.DecimalFormat;
 
 /**
  * Created on 2015/12/13 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class SetWorldSpawnCommand extends VanillaCommand {
     public SetWorldSpawnCommand(String name) {

@@ -10,9 +10,7 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * AMAZING COARSE DIRT added by kvetinac97
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project), kvetinac97
  */
 
 public class BlockDirt extends BlockSolidMeta {

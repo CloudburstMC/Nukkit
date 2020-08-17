@@ -6,7 +6,8 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 
 /**
- * Created by CreeperFace on 18.3.2017.
+ * @author CreeperFace
+ * @since 18.3.2017
  */
 public class PlayerMapInfoRequestEvent extends PlayerEvent implements Cancellable {
 

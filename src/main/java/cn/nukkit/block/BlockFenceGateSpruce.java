@@ -4,7 +4,6 @@ import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/23 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockFenceGateSpruce extends BlockFenceGate {
     public BlockFenceGateSpruce() {

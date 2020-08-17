@@ -12,8 +12,7 @@ import cn.nukkit.math.BlockFace;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockSlab extends BlockTransparentMeta {
     @PowerNukkitOnly

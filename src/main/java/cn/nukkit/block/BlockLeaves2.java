@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 
 /**
  * Created on 2015/12/1 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockLeaves2 extends BlockLeaves {
     @PowerNukkitOnly

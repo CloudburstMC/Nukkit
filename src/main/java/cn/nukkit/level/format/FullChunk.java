@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public interface FullChunk extends Cloneable {
 

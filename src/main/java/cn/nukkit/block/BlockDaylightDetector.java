@@ -19,7 +19,6 @@ import javax.annotation.Nonnull;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
- * Package cn.nukkit.block in project Nukkit .
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockDaylightDetector extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityDaylightDetector> {

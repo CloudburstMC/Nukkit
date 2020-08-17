@@ -9,7 +9,6 @@ import java.util.Map;
 
 /**
  * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class PluginsCommand extends VanillaCommand {
 

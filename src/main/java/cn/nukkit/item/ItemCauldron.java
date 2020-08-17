@@ -4,8 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 
 /**
- * author: CreeperFace
- * Nukkit Project
+ * @author CreeperFace (Nukkit Project)
  */
 public class ItemCauldron extends Item {
 

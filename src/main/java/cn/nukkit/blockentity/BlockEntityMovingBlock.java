@@ -14,7 +14,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import javax.annotation.Nullable;
 
 /**
- * Created by CreeperFace on 11.4.2017.
+ * @author CreeperFace
+ * @since 11.4.2017
  */
 public class BlockEntityMovingBlock extends BlockEntitySpawnable {
 

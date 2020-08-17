@@ -5,7 +5,6 @@ import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2016/1/4 by xtypr.
- * Package cn.nukkit.level.particle in project nukkit .
  */
 public class InstantSpellParticle extends SpellParticle {
     protected int data;

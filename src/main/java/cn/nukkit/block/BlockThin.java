@@ -9,7 +9,6 @@ import static cn.nukkit.math.VectorMath.calculateFace;
 
 /**
  * Created on 2015/12/6 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  * @apiNote Implements BlockConnectable only in PowerNukkit
  */
 @PowerNukkitDifference(info = "Made it implement BlockConnectable")

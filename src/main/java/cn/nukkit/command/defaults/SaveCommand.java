@@ -8,7 +8,6 @@ import cn.nukkit.level.Level;
 
 /**
  * Created on 2015/11/13 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class SaveCommand extends VanillaCommand {
 

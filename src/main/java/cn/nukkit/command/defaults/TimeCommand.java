@@ -11,7 +11,6 @@ import cn.nukkit.utils.TextFormat;
 
 /**
  * Created on 2015/11/11 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class TimeCommand extends VanillaCommand {
 

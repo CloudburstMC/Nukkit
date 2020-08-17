@@ -26,7 +26,8 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by CreeperFace on 15.4.2017.
+ * @author CreeperFace
+ * @since 15.4.2017
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityEjectable> {

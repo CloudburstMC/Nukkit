@@ -4,8 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockGlass extends BlockTransparent {
 

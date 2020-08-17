@@ -10,8 +10,7 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class NBTInputStream implements DataInput, AutoCloseable {
     private final DataInputStream stream;

@@ -13,7 +13,6 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
  * <p>
  * Nukkit Project,
  * Minecart and Riding Project,
- * Package cn.nukkit.block in project Nukkit.
  */
 public class BlockRailDetector extends BlockRail {
 

@@ -10,7 +10,8 @@ import cn.nukkit.utils.DyeColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created by CreeperFace on 7.8.2017.
+ * @author CreeperFace
+ * @since 7.8.2017
  */
 public class BlockGlassStained extends BlockGlass {
 

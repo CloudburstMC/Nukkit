@@ -6,8 +6,7 @@ import cn.nukkit.api.Since;
 import java.math.BigInteger;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class NukkitMath {
 

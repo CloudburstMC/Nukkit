@@ -16,7 +16,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/12/26 by Pub4Game.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockNetherrack extends BlockSolid {
 

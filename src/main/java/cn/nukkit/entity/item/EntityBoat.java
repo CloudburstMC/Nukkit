@@ -29,7 +29,8 @@ import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import java.util.ArrayList;
 
 /**
- * Created by yescallop on 2016/2/13.
+ * @author yescallop
+ * @since 2016/2/13
  */
 public class EntityBoat extends EntityVehicle {
 

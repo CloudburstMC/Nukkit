@@ -18,8 +18,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemPainting extends Item {
     private static final int[] DIRECTION = {2, 3, 4, 5};

@@ -7,8 +7,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockIce extends BlockTransparent {
 

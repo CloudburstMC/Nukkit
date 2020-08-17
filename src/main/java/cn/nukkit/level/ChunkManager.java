@@ -7,8 +7,7 @@ import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public interface ChunkManager {
 

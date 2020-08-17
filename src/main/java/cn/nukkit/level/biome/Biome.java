@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class Biome implements BlockID {
     public static final int MAX_BIOMES = 256;

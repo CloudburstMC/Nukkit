@@ -6,8 +6,7 @@ import cn.nukkit.utils.LevelException;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Location extends Position {
 

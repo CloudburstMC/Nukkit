@@ -20,7 +20,6 @@ import javax.annotation.Nullable;
 
 /**
  * Created on 2015/12/2 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockTorch extends BlockFlowable implements Faceable {
     public static final BlockProperty<TorchAttachment> TORCH_FACING_DIRECTION = new ArrayBlockProperty<>("torch_facing_direction", false, TorchAttachment.class);

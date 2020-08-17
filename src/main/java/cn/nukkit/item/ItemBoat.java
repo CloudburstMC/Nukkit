@@ -13,7 +13,8 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 
 /**
- * Created by yescallop on 2016/2/13.
+ * @author yescallop
+ * @since 2016/2/13
  */
 public class ItemBoat extends Item {
 

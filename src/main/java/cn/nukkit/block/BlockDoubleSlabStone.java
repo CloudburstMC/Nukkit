@@ -11,8 +11,7 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @PowerNukkitDifference(info = "Extends BlockDoubleSlabBase only in PowerNukkit")
 public class BlockDoubleSlabStone extends BlockDoubleSlabBase {

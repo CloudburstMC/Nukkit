@@ -10,7 +10,6 @@ import javax.annotation.Nonnull;
 
 /**
  * Created on 2015/11/24 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockHayBale extends BlockSolidMeta implements Faceable {
     public BlockHayBale() {

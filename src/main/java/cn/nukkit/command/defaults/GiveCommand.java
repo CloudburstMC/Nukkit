@@ -11,7 +11,6 @@ import cn.nukkit.utils.TextFormat;
 
 /**
  * Created on 2015/12/9 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class GiveCommand extends VanillaCommand {
     public GiveCommand(String name) {

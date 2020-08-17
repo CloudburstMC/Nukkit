@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 
 /**
  * Created on 2015/12/2 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockSlabWood extends BlockSlab {
     public static final BlockProperties PROPERTIES = new BlockProperties(

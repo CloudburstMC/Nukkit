@@ -9,8 +9,7 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BaseLang {
     public static final String FALLBACK_LANGUAGE = "eng";

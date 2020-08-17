@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     protected Map<Long, Entity> entities;

@@ -8,7 +8,6 @@ import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/6 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockIronBars extends BlockThin {
 

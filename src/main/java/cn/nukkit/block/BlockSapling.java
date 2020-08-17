@@ -15,8 +15,7 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockSapling extends BlockFlowable {
     public static final int OAK = 0;

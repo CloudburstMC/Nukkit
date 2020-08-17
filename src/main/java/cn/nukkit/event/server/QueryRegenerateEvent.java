@@ -10,11 +10,12 @@ import cn.nukkit.utils.Binary;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class QueryRegenerateEvent extends ServerEvent {
     //alot todo

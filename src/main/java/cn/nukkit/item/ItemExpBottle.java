@@ -2,7 +2,6 @@ package cn.nukkit.item;
 
 /**
  * Created on 2015/12/25 by xtypr.
- * Package cn.nukkit.item in project Nukkit .
  */
 public class ItemExpBottle extends ProjectileItem {
 

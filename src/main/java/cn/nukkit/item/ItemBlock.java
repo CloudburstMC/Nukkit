@@ -3,8 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.block.Block;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemBlock extends Item {
     public ItemBlock(Block block) {

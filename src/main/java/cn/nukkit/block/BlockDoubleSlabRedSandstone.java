@@ -11,7 +11,8 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created by CreeperFace on 26. 11. 2016.
+ * @author CreeperFace
+ * @since 26. 11. 2016
  */
 @PowerNukkitDifference(info = "Extends BlockDoubleSlabBase only in PowerNukkit")
 public class BlockDoubleSlabRedSandstone extends BlockDoubleSlabBase {

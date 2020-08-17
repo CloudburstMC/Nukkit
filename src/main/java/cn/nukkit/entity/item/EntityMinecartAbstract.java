@@ -39,7 +39,6 @@ import java.util.Objects;
  * <p>
  * Nukkit Project,
  * Minecart and Riding Project,
- * Package cn.nukkit.entity.item in project Nukkit.
  */
 public abstract class EntityMinecartAbstract extends EntityVehicle {
 

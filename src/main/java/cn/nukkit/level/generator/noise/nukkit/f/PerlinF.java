@@ -3,8 +3,7 @@ package cn.nukkit.level.generator.noise.nukkit.f;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class PerlinF extends NoiseF {
     public PerlinF(NukkitRandom random, float octaves, float persistence) {

@@ -6,7 +6,6 @@ import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/7 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockBricksNether extends BlockSolid {
 

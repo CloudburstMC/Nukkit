@@ -8,8 +8,7 @@ import cn.nukkit.blockproperty.CommonBlockProperties;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockUnknown extends BlockMeta {
     public static final BlockProperties PROPERTIES = CommonBlockProperties.LEGACY_BIG_PROPERTIES; 

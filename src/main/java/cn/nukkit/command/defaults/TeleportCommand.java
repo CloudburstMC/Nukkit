@@ -13,7 +13,6 @@ import cn.nukkit.utils.TextFormat;
 
 /**
  * Created on 2015/11/12 by Pub4Game and milkice.
- * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {

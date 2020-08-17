@@ -7,7 +7,8 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by Pub4Game on 28.01.2016.
+ * @author Pub4Game
+ * @since 28.01.2016
  */
 public class BlockHugeMushroomBrown extends BlockSolidMeta {
 

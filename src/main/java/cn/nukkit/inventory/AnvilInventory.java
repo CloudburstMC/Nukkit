@@ -16,8 +16,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class AnvilInventory extends FakeBlockUIComponent {
     

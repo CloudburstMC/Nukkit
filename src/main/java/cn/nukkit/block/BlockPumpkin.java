@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 
 /**
  * Created on 2015/12/8 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     public BlockPumpkin() {

@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
@@ -8,10 +10,14 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by good777LUCKY
+ * @author good777LUCKY
  */
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockOreGoldNether extends BlockSolid {
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockOreGoldNether() {
         // Does nothing
     }

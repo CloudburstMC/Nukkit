@@ -13,7 +13,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/11/23 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockDoublePlant extends BlockFlowable {
     public static final int SUNFLOWER = 0;

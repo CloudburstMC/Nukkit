@@ -4,8 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockOreGold extends BlockSolid {
 

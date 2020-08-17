@@ -11,7 +11,6 @@ import javax.annotation.Nullable;
 
 /**
  * Created on 2015/12/5 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockCraftingTable extends BlockSolid {
     public BlockCraftingTable() {

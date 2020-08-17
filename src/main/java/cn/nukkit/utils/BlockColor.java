@@ -4,8 +4,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 /**
- * Created by Snake1999 on 2016/1/10.
- * Package cn.nukkit.utils in project nukkit
+ * @author Snake1999
+ * @since 2016/1/10
  */
 public class BlockColor  {
 

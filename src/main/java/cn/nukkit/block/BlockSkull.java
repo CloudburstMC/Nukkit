@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 /**
- * author: Justin
+ * @author Justin
  */
 
 import cn.nukkit.Player;

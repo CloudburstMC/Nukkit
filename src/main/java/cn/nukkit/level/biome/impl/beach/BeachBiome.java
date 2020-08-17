@@ -4,8 +4,7 @@ import cn.nukkit.level.biome.type.SandyBiome;
 import cn.nukkit.level.generator.populator.impl.PopulatorSugarcane;
 
 /**
- * Author: PeratX
- * Nukkit Project
+ * @author PeratX (Nukkit Project)
  */
 public class BeachBiome extends SandyBiome {
     public BeachBiome() {

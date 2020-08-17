@@ -15,8 +15,7 @@ import java.util.ArrayDeque;
 import java.util.Queue;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockSponge extends BlockSolidMeta {
 

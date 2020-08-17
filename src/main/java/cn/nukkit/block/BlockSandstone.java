@@ -6,8 +6,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockSandstone extends BlockSolidMeta {
     public static final int NORMAL = 0;

@@ -7,8 +7,7 @@ import cn.nukkit.item.ItemTool;
 import java.util.Random;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockGravel extends BlockFallable {
 

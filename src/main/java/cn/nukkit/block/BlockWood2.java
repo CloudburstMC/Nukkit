@@ -12,8 +12,7 @@ import javax.annotation.Nonnull;
 import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockWood2 extends BlockWood {
     public static final BlockProperty<WoodType> NEW_LOG_TYPE = new ArrayBlockProperty<>("new_log_type", true, new WoodType[]{

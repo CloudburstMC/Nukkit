@@ -13,7 +13,8 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created by Pub4Game on 09.01.2016.
+ * @author Pub4Game
+ * @since 09.01.2016
  */
 public class BlockSugarcane extends BlockFlowable {
 

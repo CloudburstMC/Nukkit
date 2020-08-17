@@ -21,8 +21,8 @@ import static cn.nukkit.math.BlockFace.*;
 import static cn.nukkit.utils.Rail.Orientation.*;
 
 /**
- * Created by Snake1999 on 2016/1/11.
- * Package cn.nukkit.block in project nukkit
+ * @author Snake1999
+ * @since 2016/1/11
  */
 public class BlockRail extends BlockFlowable implements Faceable {
 

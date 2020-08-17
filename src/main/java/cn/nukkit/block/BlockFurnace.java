@@ -3,8 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.api.PowerNukkitDifference;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockFurnace extends BlockFurnaceBurning {

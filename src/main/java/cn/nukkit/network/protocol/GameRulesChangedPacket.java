@@ -4,8 +4,7 @@ import cn.nukkit.level.GameRules;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString
 public class GameRulesChangedPacket extends DataPacket {

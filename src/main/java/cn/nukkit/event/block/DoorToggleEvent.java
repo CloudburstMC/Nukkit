@@ -6,8 +6,8 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
- * Created by Snake1999 on 2016/1/22.
- * Package cn.nukkit.event.block in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/22
  */
 public class DoorToggleEvent extends BlockUpdateEvent implements Cancellable {
 

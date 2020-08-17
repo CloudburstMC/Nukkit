@@ -6,7 +6,8 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by Pub4Game on 03.01.2016.
+ * @author Pub4Game
+ * @since 03.01.2016
  */
 public class BlockBedrockInvisible extends BlockSolid {
 

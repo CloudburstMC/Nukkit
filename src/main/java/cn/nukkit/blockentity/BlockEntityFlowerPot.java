@@ -6,8 +6,8 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created by Snake1999 on 2016/2/4.
- * Package cn.nukkit.blockentity in project Nukkit.
+ * @author Snake1999
+ * @since 2016/2/4
  */
 public class BlockEntityFlowerPot extends BlockEntitySpawnable {
     public BlockEntityFlowerPot(FullChunk chunk, CompoundTag nbt) {

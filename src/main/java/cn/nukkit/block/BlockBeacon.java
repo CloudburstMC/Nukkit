@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * author: Angelic47 Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockBeacon extends BlockTransparent implements BlockEntityHolder<BlockEntityBeacon> {

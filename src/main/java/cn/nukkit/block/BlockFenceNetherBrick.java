@@ -8,7 +8,6 @@ import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/12/7 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 @PowerNukkitDifference(info = "Extends BlockFenceBase instead of BlockFence only in PowerNukkit", since = "1.4.0.0-PN")
 public class BlockFenceNetherBrick extends BlockFenceBase {

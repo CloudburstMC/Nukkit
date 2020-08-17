@@ -20,7 +20,8 @@ import javax.annotation.Nonnull;
 import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
 
 /**
- * Created by CreeperFace on 27. 11. 2016.
+ * @author CreeperFace
+ * @since 27. 11. 2016
  */
 public abstract class BlockButton extends BlockFlowable implements Faceable {
     protected static final BooleanBlockProperty BUTTON_PRESSED = new BooleanBlockProperty("button_pressed_bit", false);

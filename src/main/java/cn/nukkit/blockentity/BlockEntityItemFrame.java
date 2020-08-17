@@ -9,7 +9,8 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created by Pub4Game on 03.07.2016.
+ * @author Pub4Game
+ * @since 03.07.2016
  */
 public class BlockEntityItemFrame extends BlockEntitySpawnable {
 

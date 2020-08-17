@@ -9,7 +9,8 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 
 /**
- * Created by CreeperFace on 2.6.2017.
+ * @author CreeperFace
+ * @since 2.6.2017
  */
 public abstract class BlockTerracottaGlazed extends BlockSolidMeta implements Faceable {
 

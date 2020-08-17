@@ -4,8 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: Box
- * Nukkit Project
+ * @author Box (Nukkit Project)
  */
 public class EntityCombustByBlockEvent extends EntityCombustEvent {
 

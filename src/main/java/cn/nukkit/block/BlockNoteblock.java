@@ -19,8 +19,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created by Snake1999 on 2016/1/17.
- * Package cn.nukkit.block in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/17
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<BlockEntityMusic> {

@@ -8,7 +8,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 
 /**
- * Created by CreeperFace on 1. 1. 2017.
+ * @author CreeperFace
+ * @since 1. 1. 2017
  */
 public class PlayerInteractEntityEvent extends PlayerEvent implements Cancellable {
 

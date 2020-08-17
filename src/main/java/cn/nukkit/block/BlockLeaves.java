@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockLeaves extends BlockTransparentMeta {
     @PowerNukkitOnly @Since("1.4.0.0-PN")

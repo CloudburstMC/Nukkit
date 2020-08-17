@@ -13,7 +13,8 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
- * Created by Leonidius20 on 22.03.17.
+ * @author Leonidius20
+ * @since 22.03.17
  */
 public class BlockNetherWart extends BlockFlowable {
 

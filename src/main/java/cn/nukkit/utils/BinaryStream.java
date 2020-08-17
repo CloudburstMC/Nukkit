@@ -24,8 +24,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BinaryStream {
 

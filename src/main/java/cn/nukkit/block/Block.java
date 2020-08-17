@@ -43,8 +43,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @PowerNukkitDifference(info = "Implements IMutableBlockState only on PowerNukkit", since = "1.4.0.0-PN")
 @SuppressWarnings({"java:S2160", "java:S3400"})

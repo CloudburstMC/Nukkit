@@ -9,8 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class FormattedCommandAlias extends Command {
 

@@ -13,7 +13,6 @@ import javax.annotation.Nonnull;
 
 /**
  * Created on 2015/12/2 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
  */
 @PowerNukkitDifference(info = "Extends BlockDoubleSlabBase only in PowerNukkit")
 public class BlockDoubleSlabWood extends BlockDoubleSlabBase {

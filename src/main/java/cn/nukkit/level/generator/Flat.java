@@ -1,7 +1,8 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
@@ -18,8 +19,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Flat extends Generator {
 

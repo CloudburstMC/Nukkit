@@ -13,8 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Position extends Vector3 {
     public Level level;

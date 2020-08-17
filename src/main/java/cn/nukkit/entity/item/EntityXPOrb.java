@@ -12,7 +12,6 @@ import java.util.List;
 
 /**
  * Created on 2015/12/26 by xtypr.
- * Package cn.nukkit.entity in project Nukkit .
  */
 public class EntityXPOrb extends Entity {
 

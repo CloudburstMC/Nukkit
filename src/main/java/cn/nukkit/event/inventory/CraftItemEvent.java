@@ -9,8 +9,7 @@ import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class CraftItemEvent extends Event implements Cancellable {
 
