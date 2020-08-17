@@ -17,7 +17,8 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     public static final int TIER_CHAIN = 3;
     public static final int TIER_GOLD = 4;
     public static final int TIER_DIAMOND = 5;
-    public static final int TIER_OTHER = 6;
+    public static final int TIER_NETHERITE = 6;
+    public static final int TIER_OTHER = 7;
 
     public ItemArmor(int id) {
         super(id);
@@ -98,6 +99,7 @@ abstract public class ItemArmor extends Item implements ItemDurable {
             case TIER_CHAIN:
                 return 12;
             case TIER_LEATHER:
+            case TIER_NETHERITE:
                 return 15;
             case TIER_DIAMOND:
                 return 10;
