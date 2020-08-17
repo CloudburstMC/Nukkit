@@ -11,7 +11,8 @@ import cn.nukkit.item.Item;
 import javax.annotation.Nonnull;
 
 /**
- * Created on 2015/12/1 by xtypr.
+ * @author xtypr
+ * @since 2015/12/1
  */
 public class BlockLeaves2 extends BlockLeaves {
     @PowerNukkitOnly

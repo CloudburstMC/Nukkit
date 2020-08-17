@@ -12,7 +12,8 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/11/23 by xtypr.
+ * @author xtypr
+ * @since 2015/11/23
  */
 public class BlockFlower extends BlockFlowable {
     public static final int TYPE_POPPY = 0;

@@ -4,7 +4,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/11/25 by xtypr.
+ * @author xtypr
+ * @since 2015/11/25
  */
 public class BlockStairsNetherBrick extends BlockStairs {
     public BlockStairsNetherBrick() {

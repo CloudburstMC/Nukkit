@@ -8,7 +8,8 @@ import cn.nukkit.utils.LevelException;
 import static cn.nukkit.math.VectorMath.calculateFace;
 
 /**
- * Created on 2015/12/6 by xtypr.
+ * @author xtypr
+ * @since 2015/12/6
  * @apiNote Implements BlockConnectable only in PowerNukkit
  */
 @PowerNukkitDifference(info = "Made it implement BlockConnectable")

@@ -9,7 +9,8 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created on 2015/11/22 by xtypr.
+ * @author xtypr
+ * @since 2015/11/22
  */
 
 public class BlockGrassPath extends BlockGrass {

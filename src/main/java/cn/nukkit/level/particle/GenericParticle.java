@@ -5,7 +5,8 @@ import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
 /**
- * Created on 2015/11/21 by xtypr.
+ * @author xtypr
+ * @since 2015/11/21
  */
 public class GenericParticle extends Particle {
 

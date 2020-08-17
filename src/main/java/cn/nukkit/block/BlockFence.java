@@ -18,7 +18,8 @@ import java.util.Optional;
 import static cn.nukkit.math.VectorMath.calculateFace;
 
 /**
- * Created on 2015/12/7 by xtypr.
+ * @author xtypr
+ * @since 2015/12/7
  */
 @PowerNukkitDifference(info = "Implements BlockConnectable only on PowerNukkit", since = "1.3.0.0-PN")
 public class BlockFence extends BlockTransparentMeta implements BlockConnectable {

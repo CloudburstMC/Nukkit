@@ -7,7 +7,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/12/6 by xtypr.
+ * @author xtypr
+ * @since 2015/12/6
  */
 public class BlockIronBars extends BlockThin {
 

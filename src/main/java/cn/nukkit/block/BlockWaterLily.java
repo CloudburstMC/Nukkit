@@ -15,7 +15,8 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created on 2015/12/1 by xtypr.
+ * @author xtypr
+ * @since 2015/12/1
  */
 public class BlockWaterLily extends BlockFlowable {
 

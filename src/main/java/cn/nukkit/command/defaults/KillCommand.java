@@ -16,7 +16,8 @@ import cn.nukkit.utils.TextFormat;
 import java.util.StringJoiner;
 
 /**
- * Created on 2015/12/08 by Pub4Game.
+ * @author Pub4Game
+ * @since 2015/12/08
  */
 public class KillCommand extends VanillaCommand {
 

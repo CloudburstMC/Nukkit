@@ -16,7 +16,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/11/21 by xtypr.
+ * @author xtypr
+ * @since 2015/11/21
  */
 public class FloatingTextParticle extends Particle {
     private static final Skin EMPTY_SKIN = new Skin();

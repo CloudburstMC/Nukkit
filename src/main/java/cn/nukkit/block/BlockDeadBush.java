@@ -12,7 +12,8 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 /**
- * Created on 2015/12/2 by xtypr.
+ * @author xtypr
+ * @since 2015/12/2
  */
 public class BlockDeadBush extends BlockFlowable {
     public BlockDeadBush() {

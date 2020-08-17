@@ -21,7 +21,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 
 /**
- * Created on 2015/11/23 by xtypr.
+ * @author xtypr
+ * @since 2015/11/23
  */
 public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     public static final BooleanBlockProperty IN_WALL = new BooleanBlockProperty("in_wall_bit", false);

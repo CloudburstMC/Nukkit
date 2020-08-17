@@ -5,7 +5,8 @@ import cn.nukkit.item.ItemSeedsWheat;
 import cn.nukkit.item.ItemWheat;
 
 /**
- * Created on 2015/12/2 by xtypr.
+ * @author xtypr
+ * @since 2015/12/2
  */
 public class BlockWheat extends BlockCrops {
 

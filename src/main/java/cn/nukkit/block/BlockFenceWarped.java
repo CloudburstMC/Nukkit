@@ -8,7 +8,8 @@ import cn.nukkit.utils.BlockColor;
  * BlockFenceWarped.java was made by using BlockFence.java and BlockFenceNetherBrick.java
  */
 /**
- * Created on 2015/12/7 by xtypr.
+ * @author xtypr
+ * @since 2015/12/7
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")

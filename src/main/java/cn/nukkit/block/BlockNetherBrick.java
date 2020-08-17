@@ -5,7 +5,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/12/7 by xtypr.
+ * @author xtypr
+ * @since 2015/12/7
  */
 public class BlockNetherBrick extends BlockSolid {
 

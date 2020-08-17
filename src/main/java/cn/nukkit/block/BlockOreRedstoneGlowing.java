@@ -8,7 +8,8 @@ import cn.nukkit.level.Level;
 //和pm源码有点出入，这里参考了wiki
 
 /**
- * Created on 2015/12/6 by xtypr.
+ * @author xtypr
+ * @since 2015/12/6
  */
 public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 

@@ -9,7 +9,8 @@ import cn.nukkit.utils.BlockColor;
 import java.util.Random;
 
 /**
- * Created on 2015/12/11 by Pub4Game.
+ * @author Pub4Game
+ * @since 2015/12/11
  */
 
 public class BlockMelon extends BlockSolid {

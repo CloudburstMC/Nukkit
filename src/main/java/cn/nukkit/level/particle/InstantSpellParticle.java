@@ -4,7 +4,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2016/1/4 by xtypr.
+ * @author xtypr
+ * @since 2016/1/4
  */
 public class InstantSpellParticle extends SpellParticle {
     protected int data;

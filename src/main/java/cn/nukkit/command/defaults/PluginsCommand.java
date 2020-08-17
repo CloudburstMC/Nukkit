@@ -8,7 +8,8 @@ import cn.nukkit.utils.TextFormat;
 import java.util.Map;
 
 /**
- * Created on 2015/11/12 by xtypr.
+ * @author xtypr
+ * @since 2015/11/12
  */
 public class PluginsCommand extends VanillaCommand {
 

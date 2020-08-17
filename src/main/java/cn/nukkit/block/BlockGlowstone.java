@@ -9,7 +9,8 @@ import cn.nukkit.utils.BlockColor;
 import java.util.Random;
 
 /**
- * Created on 2015/12/6 by xtypr.
+ * @author xtypr
+ * @since 2015/12/6
  */
 public class BlockGlowstone extends BlockTransparent {
     public BlockGlowstone() {

@@ -7,7 +7,8 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 
 /**
- * Created on 2015/11/12 by xtypr.
+ * @author xtypr
+ * @since 2015/11/12
  */
 public class DefaultGamemodeCommand extends VanillaCommand {
 

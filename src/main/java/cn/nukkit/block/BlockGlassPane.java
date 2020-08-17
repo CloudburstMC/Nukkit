@@ -5,7 +5,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/12/6 by xtypr.
+ * @author xtypr
+ * @since 2015/12/6
  */
 public class BlockGlassPane extends BlockThin {
 

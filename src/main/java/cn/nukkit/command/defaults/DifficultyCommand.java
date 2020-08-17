@@ -11,7 +11,8 @@ import cn.nukkit.network.protocol.SetDifficultyPacket;
 import java.util.ArrayList;
 
 /**
- * Created on 2015/11/12 by xtypr.
+ * @author xtypr
+ * @since 2015/11/12
  */
 public class DifficultyCommand extends VanillaCommand {
 

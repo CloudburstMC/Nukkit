@@ -8,7 +8,8 @@ import cn.nukkit.item.ItemBlock;
 import javax.annotation.Nonnull;
 
 /**
- * Created on 2015/11/22 by CreeperFace.
+ * @author CreeperFace
+ * @since 2015/11/22
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockDaylightDetectorInverted extends BlockDaylightDetector {

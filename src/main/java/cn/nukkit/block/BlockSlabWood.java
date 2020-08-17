@@ -11,7 +11,8 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created on 2015/12/2 by xtypr.
+ * @author xtypr
+ * @since 2015/12/2
  */
 public class BlockSlabWood extends BlockSlab {
     public static final BlockProperties PROPERTIES = new BlockProperties(

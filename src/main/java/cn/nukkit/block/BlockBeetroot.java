@@ -4,7 +4,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSeedsBeetroot;
 
 /**
- * Created on 2015/11/22 by xtypr.
+ * @author xtypr
+ * @since 2015/11/22
  */
 public class BlockBeetroot extends BlockCrops {
     public BlockBeetroot() {

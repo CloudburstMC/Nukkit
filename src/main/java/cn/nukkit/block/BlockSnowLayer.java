@@ -14,7 +14,8 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created on 2015/12/6 by xtypr.
+ * @author xtypr
+ * @since 2015/12/6
  */
 @PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable")
 public class BlockSnowLayer extends BlockFallableMeta {

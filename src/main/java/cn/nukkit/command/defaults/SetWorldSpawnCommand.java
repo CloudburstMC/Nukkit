@@ -12,7 +12,8 @@ import cn.nukkit.math.Vector3;
 import java.text.DecimalFormat;
 
 /**
- * Created on 2015/12/13 by xtypr.
+ * @author xtypr
+ * @since 2015/12/13
  */
 public class SetWorldSpawnCommand extends VanillaCommand {
     public SetWorldSpawnCommand(String name) {

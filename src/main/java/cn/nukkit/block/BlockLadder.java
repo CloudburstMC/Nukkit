@@ -13,7 +13,8 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 
 /**
- * Created on 2015/12/8 by xtypr.
+ * @author xtypr
+ * @since 2015/12/8
  */
 public class BlockLadder extends BlockTransparentMeta implements Faceable {
 

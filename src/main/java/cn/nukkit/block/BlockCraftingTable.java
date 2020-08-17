@@ -10,7 +10,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created on 2015/12/5 by xtypr.
+ * @author xtypr
+ * @since 2015/12/5
  */
 public class BlockCraftingTable extends BlockSolid {
     public BlockCraftingTable() {

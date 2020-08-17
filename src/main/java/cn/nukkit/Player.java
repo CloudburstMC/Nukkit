@@ -97,8 +97,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 /**
- * @author MagicDroidX &amp; Box
- * Nukkit Project
+ * @author MagicDroidX &amp; Box (Nukkit Project)
  */
 @Log4j2
 public class Player extends EntityHuman implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {

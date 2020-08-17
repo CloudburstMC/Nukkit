@@ -10,7 +10,8 @@ import cn.nukkit.utils.TextFormat;
 import java.util.List;
 
 /**
- * Created on 2015/11/12 by xtypr.
+ * @author xtypr
+ * @since 2015/11/12
  */
 public class VersionCommand extends VanillaCommand {
 

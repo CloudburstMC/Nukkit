@@ -15,7 +15,8 @@ import javax.annotation.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/12/26 by Pub4Game.
+ * @author Pub4Game
+ * @since 2015/12/26
  */
 public class BlockNetherrack extends BlockSolid {
 

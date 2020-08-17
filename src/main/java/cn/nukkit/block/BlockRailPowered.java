@@ -6,12 +6,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Rail;
 
 /**
- * @author Snake1999
+ * @author Snake1999, larryTheCoder (Nukkit Project, Minecart and Riding Project)
  * @since 2016/1/11
- * Contributed by: larryTheCoder on 2017/7/18.
- * <p>
- * Nukkit Project,
- * Minecart and Riding Project,
  */
 public class BlockRailPowered extends BlockRail {
 

@@ -5,7 +5,8 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.lang.TranslationContainer;
 
 /**
- * Created on 2015/11/11 by xtypr.
+ * @author xtypr
+ * @since 2015/11/11
  */
 public class ListCommand extends VanillaCommand {
 

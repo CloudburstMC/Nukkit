@@ -3,7 +3,8 @@ package cn.nukkit.network.protocol;
 import lombok.ToString;
 
 /**
- * Created on 2016/1/5 by xtypr.
+ * @author xtypr
+ * @since 2016/1/5
  */
 @ToString
 public class ChangeDimensionPacket extends DataPacket {

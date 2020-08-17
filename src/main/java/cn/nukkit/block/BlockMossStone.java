@@ -4,7 +4,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * Created on 2015/12/2 by xtypr.
+ * @author xtypr
+ * @since 2015/12/2
  */
 public class BlockMossStone extends BlockSolid {
 

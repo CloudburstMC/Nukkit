@@ -12,7 +12,8 @@ import cn.nukkit.utils.DyeColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created on 2015/11/24 by xtypr.
+ * @author xtypr
+ * @since 2015/11/24
  */
 public class BlockCarpet extends BlockFlowable {
     public BlockCarpet() {

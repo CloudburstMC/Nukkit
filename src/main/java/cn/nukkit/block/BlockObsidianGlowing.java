@@ -5,7 +5,8 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 
 /**
- * Created on 2015/11/22 by xtypr.
+ * @author xtypr
+ * @since 2015/11/22
  */
 public class BlockObsidianGlowing extends BlockSolid {
 

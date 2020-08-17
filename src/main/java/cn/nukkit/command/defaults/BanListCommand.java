@@ -9,7 +9,8 @@ import cn.nukkit.permission.BanList;
 import java.util.Iterator;
 
 /**
- * Created on 2015/11/11 by xtypr.
+ * @author xtypr
+ * @since 2015/11/11
  */
 public class BanListCommand extends VanillaCommand {
     public BanListCommand(String name) {
