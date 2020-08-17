@@ -4426,6 +4426,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     return false;
                 }
             }
+        } else if (source.getCause() == DamageCause.SUFFOCATION && this.isSwimming()){
+            return false;
         }
 
         if (super.attack(source)) { //!source.isCancelled()
