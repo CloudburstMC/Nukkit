@@ -9,7 +9,11 @@ import cn.nukkit.utils.BlockColor;
 public class BlockFenceCrimson extends BlockFenceBase {
 
     public BlockFenceCrimson() {
-        // Do nothing
+        this(0);
+    }
+
+    public BlockFenceCrimson(int meta) {
+        super(meta);
     }
 
     @Override

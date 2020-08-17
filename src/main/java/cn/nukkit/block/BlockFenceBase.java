@@ -16,6 +16,7 @@ import java.util.Optional;
 @Since("1.4.0.0-PN")
 public abstract class BlockFenceBase extends BlockFence {
     public BlockFenceBase() {
+        this(0);
     }
 
     public BlockFenceBase(int meta) {

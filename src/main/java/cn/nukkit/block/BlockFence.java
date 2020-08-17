@@ -15,6 +15,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
+import static cn.nukkit.math.VectorMath.calculateFace;
+
 /**
  * Created on 2015/12/7 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
@@ -129,6 +131,10 @@ public class BlockFence extends BlockTransparentMeta implements BlockConnectable
                 return block.getId() == this.getId();
             }
             return true;
+        }
+        if (block instanceof BlockTrapdoor) {
+            BlockTrapdoor trapdoor = (BlockTrapdoor) block;
+            return trapdoor.isOpen() && trapdoor.getBlockFace() == calculateFace(this, trapdoor);
         }
         return block instanceof BlockFenceGate || block.isSolid() && !block.isTransparent();
     }

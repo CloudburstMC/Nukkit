@@ -5,6 +5,8 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.LevelException;
 
+import static cn.nukkit.math.VectorMath.calculateFace;
+
 /**
  * Created on 2015/12/6 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
@@ -62,6 +64,10 @@ public abstract class BlockThin extends BlockTransparent implements BlockConnect
             case COBBLE_WALL:
                 return true;
             default:
+                if (block instanceof BlockTrapdoor) {
+                    BlockTrapdoor trapdoor = (BlockTrapdoor) block;
+                    return trapdoor.isOpen() && trapdoor.getBlockFace() == calculateFace(this, trapdoor);
+                }
                 return block.isSolid();
         }
     }

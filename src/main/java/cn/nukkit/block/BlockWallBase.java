@@ -12,7 +12,6 @@ import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
@@ -23,6 +22,9 @@ import javax.annotation.Nonnull;
 import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import static cn.nukkit.math.VectorMath.calculateAxis;
+import static cn.nukkit.math.VectorMath.calculateFace;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
@@ -464,26 +466,20 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
             default:
                 if (block instanceof BlockWallBase) {
                     return true;
-                } else if (block instanceof BlockFenceGate) {
+                } 
+                if (block instanceof BlockFenceGate) {
                     BlockFenceGate fenceGate = (BlockFenceGate) block;
-                    return fenceGate.getBlockFace().getAxis() != calculateAxis(block);
-                } else if (block instanceof BlockStairs) {
-                    return ((BlockStairs) block).getBlockFace().getOpposite() == calculateFace(block);
+                    return fenceGate.getBlockFace().getAxis() != calculateAxis(this, block);
+                } 
+                if (block instanceof BlockStairs) {
+                    return ((BlockStairs) block).getBlockFace().getOpposite() == calculateFace(this, block);
+                }
+                if (block instanceof BlockTrapdoor) {
+                    BlockTrapdoor trapdoor = (BlockTrapdoor) block;
+                    return trapdoor.isOpen() && trapdoor.getBlockFace() == calculateFace(this, trapdoor);
                 }
                 return block.isSolid() && !block.isTransparent();
         }
-    }
-
-    private BlockFace.Axis calculateAxis(Block side) {
-        Position vector = side.subtract(this);
-        return vector.x != 0? BlockFace.Axis.X : vector.z != 0? BlockFace.Axis.Z : BlockFace.Axis.Y;
-    }
-
-    private BlockFace calculateFace(Block side) {
-        Position vector = side.subtract(this);
-        BlockFace.Axis axis = vector.x != 0? BlockFace.Axis.X : vector.z != 0? BlockFace.Axis.Z : BlockFace.Axis.Y;
-        double direction = axis == BlockFace.Axis.X? vector.x : axis == BlockFace.Axis.Y? vector.y : vector.z;
-        return BlockFace.fromAxis(direction < 0? BlockFace.AxisDirection.NEGATIVE : BlockFace.AxisDirection.POSITIVE, axis);
     }
 
     @PowerNukkitOnly

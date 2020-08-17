@@ -2,8 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -36,11 +34,6 @@ public class BlockFenceWarped extends BlockFenceBase {
     }
 
     @Override
-    public boolean canConnect(Block block) {
-        return (block instanceof BlockFence || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
-    }
-    
-    @Override
     public int getBurnChance() {
         return 0;
     }
@@ -53,10 +46,5 @@ public class BlockFenceWarped extends BlockFenceBase {
     @Override
     public BlockColor getColor() {
         return BlockColor.CYAN_BLOCK_COLOR;
-    }
-    
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this);
     }
 }
