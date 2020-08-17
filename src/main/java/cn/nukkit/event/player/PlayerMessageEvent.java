@@ -1,8 +1,8 @@
 package cn.nukkit.event.player;
 
 /**
- * Created on 2015/12/23 by xtypr.
- * Package cn.nukkit.event.player in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/23
  */
 public abstract class PlayerMessageEvent extends PlayerEvent {
 

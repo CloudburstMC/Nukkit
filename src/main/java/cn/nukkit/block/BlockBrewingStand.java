@@ -3,6 +3,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBrewingStand;
 import cn.nukkit.inventory.ContainerInventory;
@@ -16,6 +17,7 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class BlockBrewingStand extends BlockSolidMeta {
@@ -48,6 +50,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
         return 2.5;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -68,39 +71,35 @@ public class BlockBrewingStand extends BlockSolidMeta {
         return 1;
     }
 
-    @PowerNukkitDifference(info = "Made possible to place on walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Remove placement restrictions, they don't exists in vanilla", since = "1.3.1.2-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = block.down();
-        if (!down.isTransparent() || down.getId() == COBBLE_WALL) {
-            getLevel().setBlock(block, this, true, true);
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        getLevel().setBlock(block, this, true, true);
 
-            CompoundTag nbt = new CompoundTag()
-                    .putList(new ListTag<>("Items"))
-                    .putString("id", BlockEntity.BREWING_STAND)
-                    .putInt("x", (int) this.x)
-                    .putInt("y", (int) this.y)
-                    .putInt("z", (int) this.z);
+        CompoundTag nbt = new CompoundTag()
+                .putList(new ListTag<>("Items"))
+                .putString("id", BlockEntity.BREWING_STAND)
+                .putInt("x", (int) this.x)
+                .putInt("y", (int) this.y)
+                .putInt("z", (int) this.z);
 
-            if (item.hasCustomName()) {
-                nbt.putString("CustomName", item.getCustomName());
-            }
-
-            if (item.hasCustomBlockData()) {
-                Map<String, Tag> customData = item.getCustomBlockData().getTags();
-                for (Map.Entry<String, Tag> tag : customData.entrySet()) {
-                    nbt.put(tag.getKey(), tag.getValue());
-                }
-            }
-
-            BlockEntityBrewingStand brewing = (BlockEntityBrewingStand) BlockEntity.createBlockEntity(BlockEntity.BREWING_STAND, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-            return brewing != null;
+        if (item.hasCustomName()) {
+            nbt.putString("CustomName", item.getCustomName());
         }
-        return false;
-    }
 
+        if (item.hasCustomBlockData()) {
+            Map<String, Tag> customData = item.getCustomBlockData().getTags();
+            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
+                nbt.put(tag.getKey(), tag.getValue());
+            }
+        }
+
+        BlockEntityBrewingStand brewing = (BlockEntityBrewingStand) BlockEntity.createBlockEntity(BlockEntity.BREWING_STAND, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        return brewing != null;
+    }
+    
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player != null) {
             BlockEntity t = getLevel().getBlockEntity(this);
             BlockEntityBrewingStand brewing;

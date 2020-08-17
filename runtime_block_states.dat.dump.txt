@@ -692,293 +692,149 @@ minecraft:bedrock;infiniburn_bit=0
 minecraft:bedrock;infiniburn_bit=1
 [7:1]
 
-minecraft:bee_nest;facing_direction=0;honey_level=0
+minecraft:bee_nest;direction=0;honey_level=0
 []
-[473:0]
 
-minecraft:bee_nest;facing_direction=0;honey_level=1
+minecraft:bee_nest;direction=0;honey_level=1
 []
-[473:8]
 
-minecraft:bee_nest;facing_direction=0;honey_level=2
+minecraft:bee_nest;direction=0;honey_level=2
 []
-[473:16]
 
-minecraft:bee_nest;facing_direction=0;honey_level=3
+minecraft:bee_nest;direction=0;honey_level=3
 []
-[473:24]
 
-minecraft:bee_nest;facing_direction=0;honey_level=4
+minecraft:bee_nest;direction=0;honey_level=4
 []
-[473:32]
 
-minecraft:bee_nest;facing_direction=0;honey_level=5
+minecraft:bee_nest;direction=0;honey_level=5
 []
-[473:40]
 
-minecraft:bee_nest;facing_direction=1;honey_level=0
+minecraft:bee_nest;direction=1;honey_level=0
 []
-[473:1]
 
-minecraft:bee_nest;facing_direction=1;honey_level=1
+minecraft:bee_nest;direction=1;honey_level=1
 []
-[473:9]
 
-minecraft:bee_nest;facing_direction=1;honey_level=2
+minecraft:bee_nest;direction=1;honey_level=2
 []
-[473:17]
 
-minecraft:bee_nest;facing_direction=1;honey_level=3
+minecraft:bee_nest;direction=1;honey_level=3
 []
-[473:25]
 
-minecraft:bee_nest;facing_direction=1;honey_level=4
+minecraft:bee_nest;direction=1;honey_level=4
 []
-[473:33]
 
-minecraft:bee_nest;facing_direction=1;honey_level=5
+minecraft:bee_nest;direction=1;honey_level=5
 []
-[473:41]
 
-minecraft:bee_nest;facing_direction=2;honey_level=0
+minecraft:bee_nest;direction=2;honey_level=0
 []
-[473:2]
 
-minecraft:bee_nest;facing_direction=2;honey_level=1
+minecraft:bee_nest;direction=2;honey_level=1
 []
-[473:10]
 
-minecraft:bee_nest;facing_direction=2;honey_level=2
+minecraft:bee_nest;direction=2;honey_level=2
 []
-[473:18]
 
-minecraft:bee_nest;facing_direction=2;honey_level=3
+minecraft:bee_nest;direction=2;honey_level=3
 []
-[473:26]
 
-minecraft:bee_nest;facing_direction=2;honey_level=4
+minecraft:bee_nest;direction=2;honey_level=4
 []
-[473:34]
 
-minecraft:bee_nest;facing_direction=2;honey_level=5
+minecraft:bee_nest;direction=2;honey_level=5
 []
-[473:42]
 
-minecraft:bee_nest;facing_direction=3;honey_level=0
+minecraft:bee_nest;direction=3;honey_level=0
 []
-[473:3]
 
-minecraft:bee_nest;facing_direction=3;honey_level=1
+minecraft:bee_nest;direction=3;honey_level=1
 []
-[473:11]
 
-minecraft:bee_nest;facing_direction=3;honey_level=2
+minecraft:bee_nest;direction=3;honey_level=2
 []
-[473:19]
 
-minecraft:bee_nest;facing_direction=3;honey_level=3
+minecraft:bee_nest;direction=3;honey_level=3
 []
-[473:27]
 
-minecraft:bee_nest;facing_direction=3;honey_level=4
+minecraft:bee_nest;direction=3;honey_level=4
 []
-[473:35]
 
-minecraft:bee_nest;facing_direction=3;honey_level=5
+minecraft:bee_nest;direction=3;honey_level=5
 []
-[473:43]
 
-minecraft:bee_nest;facing_direction=4;honey_level=0
+minecraft:beehive;direction=0;honey_level=0
 []
-[473:4]
 
-minecraft:bee_nest;facing_direction=4;honey_level=1
+minecraft:beehive;direction=0;honey_level=1
 []
-[473:12]
 
-minecraft:bee_nest;facing_direction=4;honey_level=2
+minecraft:beehive;direction=0;honey_level=2
 []
-[473:20]
 
-minecraft:bee_nest;facing_direction=4;honey_level=3
+minecraft:beehive;direction=0;honey_level=3
 []
-[473:28]
 
-minecraft:bee_nest;facing_direction=4;honey_level=4
+minecraft:beehive;direction=0;honey_level=4
 []
-[473:36]
 
-minecraft:bee_nest;facing_direction=4;honey_level=5
+minecraft:beehive;direction=0;honey_level=5
 []
-[473:44]
 
-minecraft:bee_nest;facing_direction=5;honey_level=0
+minecraft:beehive;direction=1;honey_level=0
 []
-[473:5]
 
-minecraft:bee_nest;facing_direction=5;honey_level=1
+minecraft:beehive;direction=1;honey_level=1
 []
-[473:13]
 
-minecraft:bee_nest;facing_direction=5;honey_level=2
+minecraft:beehive;direction=1;honey_level=2
 []
-[473:21]
 
-minecraft:bee_nest;facing_direction=5;honey_level=3
+minecraft:beehive;direction=1;honey_level=3
 []
-[473:29]
 
-minecraft:bee_nest;facing_direction=5;honey_level=4
+minecraft:beehive;direction=1;honey_level=4
 []
-[473:37]
 
-minecraft:bee_nest;facing_direction=5;honey_level=5
+minecraft:beehive;direction=1;honey_level=5
 []
-[473:45]
 
-minecraft:beehive;facing_direction=0;honey_level=0
+minecraft:beehive;direction=2;honey_level=0
 []
-[474:0]
 
-minecraft:beehive;facing_direction=0;honey_level=1
+minecraft:beehive;direction=2;honey_level=1
 []
-[474:8]
 
-minecraft:beehive;facing_direction=0;honey_level=2
+minecraft:beehive;direction=2;honey_level=2
 []
-[474:16]
 
-minecraft:beehive;facing_direction=0;honey_level=3
+minecraft:beehive;direction=2;honey_level=3
 []
-[474:24]
 
-minecraft:beehive;facing_direction=0;honey_level=4
+minecraft:beehive;direction=2;honey_level=4
 []
-[474:32]
 
-minecraft:beehive;facing_direction=0;honey_level=5
+minecraft:beehive;direction=2;honey_level=5
 []
-[474:40]
 
-minecraft:beehive;facing_direction=1;honey_level=0
+minecraft:beehive;direction=3;honey_level=0
 []
-[474:1]
 
-minecraft:beehive;facing_direction=1;honey_level=1
+minecraft:beehive;direction=3;honey_level=1
 []
-[474:9]
 
-minecraft:beehive;facing_direction=1;honey_level=2
+minecraft:beehive;direction=3;honey_level=2
 []
-[474:17]
 
-minecraft:beehive;facing_direction=1;honey_level=3
+minecraft:beehive;direction=3;honey_level=3
 []
-[474:25]
 
-minecraft:beehive;facing_direction=1;honey_level=4
+minecraft:beehive;direction=3;honey_level=4
 []
-[474:33]
 
-minecraft:beehive;facing_direction=1;honey_level=5
+minecraft:beehive;direction=3;honey_level=5
 []
-[474:41]
-
-minecraft:beehive;facing_direction=2;honey_level=0
-[]
-[474:2]
-
-minecraft:beehive;facing_direction=2;honey_level=1
-[]
-[474:10]
-
-minecraft:beehive;facing_direction=2;honey_level=2
-[]
-[474:18]
-
-minecraft:beehive;facing_direction=2;honey_level=3
-[]
-[474:26]
-
-minecraft:beehive;facing_direction=2;honey_level=4
-[]
-[474:34]
-
-minecraft:beehive;facing_direction=2;honey_level=5
-[]
-[474:42]
-
-minecraft:beehive;facing_direction=3;honey_level=0
-[]
-[474:3]
-
-minecraft:beehive;facing_direction=3;honey_level=1
-[]
-[474:11]
-
-minecraft:beehive;facing_direction=3;honey_level=2
-[]
-[474:19]
-
-minecraft:beehive;facing_direction=3;honey_level=3
-[]
-[474:27]
-
-minecraft:beehive;facing_direction=3;honey_level=4
-[]
-[474:35]
-
-minecraft:beehive;facing_direction=3;honey_level=5
-[]
-[474:43]
-
-minecraft:beehive;facing_direction=4;honey_level=0
-[]
-[474:4]
-
-minecraft:beehive;facing_direction=4;honey_level=1
-[]
-[474:12]
-
-minecraft:beehive;facing_direction=4;honey_level=2
-[]
-[474:20]
-
-minecraft:beehive;facing_direction=4;honey_level=3
-[]
-[474:28]
-
-minecraft:beehive;facing_direction=4;honey_level=4
-[]
-[474:36]
-
-minecraft:beehive;facing_direction=4;honey_level=5
-[]
-[474:44]
-
-minecraft:beehive;facing_direction=5;honey_level=0
-[]
-[474:5]
-
-minecraft:beehive;facing_direction=5;honey_level=1
-[]
-[474:13]
-
-minecraft:beehive;facing_direction=5;honey_level=2
-[]
-[474:21]
-
-minecraft:beehive;facing_direction=5;honey_level=3
-[]
-[474:29]
-
-minecraft:beehive;facing_direction=5;honey_level=4
-[]
-[474:37]
-
-minecraft:beehive;facing_direction=5;honey_level=5
-[]
-[474:45]
 
 minecraft:beetroot;growth=0
 [244:0]
@@ -16198,75 +16054,99 @@ minecraft:lava_cauldron;fill_level=6;cauldron_liquid=water
 
 minecraft:leaves2;persistent_bit=0;update_bit=0;new_leaf_type=acacia
 [161:0, 161:2, 161:3]
+[]
 
 minecraft:leaves2;persistent_bit=0;update_bit=0;new_leaf_type=dark_oak
 [161:1]
+[]
 
 minecraft:leaves2;persistent_bit=0;update_bit=1;new_leaf_type=acacia
 [161:4, 161:6, 161:7]
+[]
 
 minecraft:leaves2;persistent_bit=0;update_bit=1;new_leaf_type=dark_oak
 [161:5]
+[]
 
 minecraft:leaves2;persistent_bit=1;update_bit=0;new_leaf_type=acacia
 [161:8, 161:10, 161:11]
+[]
 
 minecraft:leaves2;persistent_bit=1;update_bit=0;new_leaf_type=dark_oak
 [161:9]
+[]
 
 minecraft:leaves2;persistent_bit=1;update_bit=1;new_leaf_type=acacia
 [161:12, 161:14, 161:15]
+[]
 
 minecraft:leaves2;persistent_bit=1;update_bit=1;new_leaf_type=dark_oak
 [161:13]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=0;old_leaf_type=birch
 [18:2]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=0;old_leaf_type=jungle
 [18:3]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=0;old_leaf_type=oak
 [18:0]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=0;old_leaf_type=spruce
 [18:1]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=1;old_leaf_type=birch
 [18:6]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=1;old_leaf_type=jungle
 [18:7]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=1;old_leaf_type=oak
 [18:4]
+[]
 
 minecraft:leaves;persistent_bit=0;update_bit=1;old_leaf_type=spruce
 [18:5]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=0;old_leaf_type=birch
 [18:10]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=0;old_leaf_type=jungle
 [18:11]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=0;old_leaf_type=oak
 [18:8]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=0;old_leaf_type=spruce
 [18:9]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=1;old_leaf_type=birch
 [18:14]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=1;old_leaf_type=jungle
 [18:15]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=1;old_leaf_type=oak
 [18:12]
+[]
 
 minecraft:leaves;persistent_bit=1;update_bit=1;old_leaf_type=spruce
 [18:13]
+[]
 
 minecraft:lectern;powered_bit=0;direction=0
 [449:0]

@@ -11,8 +11,7 @@ import cn.nukkit.item.ItemElytra;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentThorns extends Enchantment {
     protected EnchantmentThorns() {

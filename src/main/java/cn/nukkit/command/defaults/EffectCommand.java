@@ -12,8 +12,8 @@ import cn.nukkit.utils.ServerException;
 import cn.nukkit.utils.TextFormat;
 
 /**
- * Created by Snake1999 and Pub4Game on 2016/1/23.
- * Package cn.nukkit.command.defaults in project nukkit.
+ * @author Snake1999 and Pub4Game
+ * @since 2016/1/23
  */
 public class EffectCommand extends Command {
     public EffectCommand(String name) {
@@ -69,7 +69,7 @@ public class EffectCommand extends Command {
         int amplification = 0;
         if (args.length >= 3) {
             try {
-                duration = Integer.valueOf(args[2]);
+                duration = Integer.parseInt(args[2]);
             } catch (NumberFormatException a) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
@@ -82,7 +82,7 @@ public class EffectCommand extends Command {
         }
         if (args.length >= 4) {
             try {
-                amplification = Integer.valueOf(args[3]);
+                amplification = Integer.parseInt(args[3]);
             } catch (NumberFormatException a) {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;

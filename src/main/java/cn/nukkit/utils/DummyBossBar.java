@@ -12,8 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * DummyBossBar
  * ===============
- * author: boybook
- * Nukkit Project
+ * @author boybook (Nukkit Project)
  * ===============
  */
 public class DummyBossBar {

@@ -10,8 +10,8 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
 /**
- * Created on 2015/11/13 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/13
  */
 public class GamemodeCommand extends VanillaCommand {
 
@@ -76,11 +76,12 @@ public class GamemodeCommand extends VanillaCommand {
         if (!((Player) target).setGamemode(gameMode)) {
             sender.sendMessage("Game mode update for " + target.getName() + " failed");
         } else {
+            String gamemodeString = Server.getGamemodeString(gameMode);
             if (target.equals(sender)) {
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(gameMode)));
+                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", gamemodeString));
             } else {
-                target.sendMessage(new TranslationContainer("gameMode.changed"));
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", target.getName(), Server.getGamemodeString(gameMode)));
+                target.sendMessage(new TranslationContainer("gameMode.changed", gamemodeString));
+                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", gamemodeString, target.getName()));
             }
         }
 

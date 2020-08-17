@@ -2,14 +2,15 @@ package cn.nukkit.item.randomitem;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.utils.DyeColor;
 
 import static cn.nukkit.item.randomitem.RandomItem.*;
 
 /**
- * Created by Snake1999 on 2016/1/15.
- * Package cn.nukkit.item.randomitem in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/15
  */
 public final class Fishing {
 
@@ -53,20 +54,14 @@ public final class Fishing {
     }
 
     public static Item getFishingResult(int fortuneLevel, int lureLevel) {
-        float treasureChance = limitRange(0, 1, 0.05f + 0.01f * fortuneLevel - 0.01f * lureLevel);
-        float junkChance = limitRange(0, 1, 0.05f - 0.025f * fortuneLevel - 0.01f * lureLevel);
-        float fishChance = limitRange(0, 1, 1 - treasureChance - junkChance);
+        float treasureChance = NukkitMath.clamp(0.05f + 0.01f * fortuneLevel - 0.01f * lureLevel, 0, 1);
+        float junkChance = NukkitMath.clamp(0.05f - 0.025f * fortuneLevel - 0.01f * lureLevel, 0, 1);
+        float fishChance = NukkitMath.clamp(1 - treasureChance - junkChance, 0, 1);
         putSelector(FISHES, fishChance);
         putSelector(TREASURES, treasureChance);
         putSelector(JUNKS, junkChance);
         Object result = selectFrom(ROOT_FISHING);
         if (result instanceof Item) return (Item) result;
         return null;
-    }
-
-    private static float limitRange(float min, float max, float value) {
-        if (value >= max) return max;
-        if (value <= min) return min;
-        return value;
     }
 }

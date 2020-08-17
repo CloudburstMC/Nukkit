@@ -7,8 +7,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class CompressBatchedPacket extends AsyncTask {
 

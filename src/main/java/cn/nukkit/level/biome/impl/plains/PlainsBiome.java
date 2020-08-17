@@ -3,8 +3,7 @@ package cn.nukkit.level.biome.impl.plains;
 import cn.nukkit.level.biome.type.GrassyBiome;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class PlainsBiome extends GrassyBiome {
 

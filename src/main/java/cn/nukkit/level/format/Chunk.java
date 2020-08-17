@@ -1,8 +1,7 @@
 package cn.nukkit.level.format;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public interface Chunk extends FullChunk {
     byte SECTION_COUNT = 16;

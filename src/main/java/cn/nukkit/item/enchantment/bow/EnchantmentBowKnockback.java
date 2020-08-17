@@ -3,8 +3,7 @@ package cn.nukkit.item.enchantment.bow;
 import cn.nukkit.item.enchantment.Enchantment;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentBowKnockback extends EnchantmentBow {
     public EnchantmentBowKnockback() {

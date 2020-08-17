@@ -11,7 +11,8 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
 /**
- * Created by Pub4Game on 23.01.2016.
+ * @author Pub4Game
+ * @since 23.01.2016
  */
 public class EnchantCommand extends VanillaCommand {
 

@@ -15,9 +15,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
+import static cn.nukkit.math.VectorMath.calculateFace;
+
 /**
- * Created on 2015/12/7 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/7
  */
 @PowerNukkitDifference(info = "Implements BlockConnectable only on PowerNukkit", since = "1.3.0.0-PN")
 public class BlockFence extends BlockTransparentMeta implements BlockConnectable {
@@ -49,6 +51,8 @@ public class BlockFence extends BlockTransparentMeta implements BlockConnectable
         return FENCE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -60,6 +64,7 @@ public class BlockFence extends BlockTransparentMeta implements BlockConnectable
         return 2;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -129,6 +134,10 @@ public class BlockFence extends BlockTransparentMeta implements BlockConnectable
                 return block.getId() == this.getId();
             }
             return true;
+        }
+        if (block instanceof BlockTrapdoor) {
+            BlockTrapdoor trapdoor = (BlockTrapdoor) block;
+            return trapdoor.isOpen() && trapdoor.getBlockFace() == calculateFace(this, trapdoor);
         }
         return block instanceof BlockFenceGate || block.isSolid() && !block.isTransparent();
     }

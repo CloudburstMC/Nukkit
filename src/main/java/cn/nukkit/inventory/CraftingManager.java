@@ -20,8 +20,7 @@ import java.util.*;
 import java.util.zip.Deflater;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class CraftingManager {
@@ -396,8 +395,10 @@ public class CraftingManager {
         map.put(hash, recipe);
     }
 
-    private static int getPotionHash(int ingredientId, int potionType) {
-        return (ingredientId << 6) | potionType;
+    private static int getPotionHash(Item ingredient, Item potion) {
+        int ingredientHash = ((ingredient.getId() & 0x3FF) << 6) | (ingredient.getDamage() & 0x3F);
+        int potionHash = ((potion.getId() & 0x3FF) << 6) | (potion.getDamage() & 0x3F);
+        return ingredientHash << 16 | potionHash;
     }
 
     private static int getContainerHash(int ingredientId, int containerId) {
@@ -408,7 +409,11 @@ public class CraftingManager {
         Item input = recipe.getIngredient();
         Item potion = recipe.getInput();
 
-        this.brewingRecipes.put(getPotionHash(input.getId(), potion.getDamage()), recipe);
+        int potionHash = getPotionHash(input, potion);
+        if (this.brewingRecipes.containsKey(potionHash)) {
+            log.warn("The brewing recipe "+brewingRecipes.get(potionHash)+" is being replaced by "+recipe);
+        }
+        this.brewingRecipes.put(potionHash, recipe);
     }
 
     public void registerContainerRecipe(ContainerRecipe recipe) {
@@ -419,12 +424,7 @@ public class CraftingManager {
     }
 
     public BrewingRecipe matchBrewingRecipe(Item input, Item potion) {
-        int id = potion.getId();
-        if (id == Item.POTION || id == Item.SPLASH_POTION || id == Item.LINGERING_POTION) {
-            return this.brewingRecipes.get(getPotionHash(input.getId(), potion.getDamage()));
-        }
-
-        return null;
+        return this.brewingRecipes.get(getPotionHash(input, potion));
     }
 
     public ContainerRecipe matchContainerRecipe(Item input, Item potion) {

@@ -4,8 +4,7 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.plugin.Plugin;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class PluginCommand<T extends Plugin> extends Command implements PluginIdentifiableCommand {
 

@@ -10,6 +10,9 @@ import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.DyeColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public abstract class BlockNylium extends BlockSolid {
     @Override
     public int getToolType() {
@@ -31,7 +34,7 @@ public abstract class BlockNylium extends BlockSolid {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         Block up = up();
         if (item.isNull() || item.getId() != ItemID.DYE || item.getDamage() != DyeColor.WHITE.getDyeData() || up.getId() != AIR) {
             return false;

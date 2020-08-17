@@ -10,8 +10,7 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockPlanks extends BlockSolidMeta {
     public static final int OAK = 0;
@@ -37,6 +36,8 @@ public class BlockPlanks extends BlockSolidMeta {
         return WOODEN_PLANKS;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

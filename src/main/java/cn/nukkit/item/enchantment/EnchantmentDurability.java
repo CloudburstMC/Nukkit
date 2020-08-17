@@ -5,8 +5,7 @@ import cn.nukkit.item.Item;
 import java.util.Random;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentDurability extends Enchantment {
     protected EnchantmentDurability() {

@@ -17,8 +17,7 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Binary {
 

@@ -23,6 +23,8 @@ public abstract class BlockLog extends BlockSolidMeta {
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public abstract BlockProperties getProperties();
@@ -38,7 +40,7 @@ public abstract class BlockLog extends BlockSolidMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         setPillarAxis(face.getAxis());
         getLevel().setBlock(block, this, true, true);
         return true;
@@ -50,7 +52,7 @@ public abstract class BlockLog extends BlockSolidMeta {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.isAxe()) {
             Block strippedBlock = getStrippedState().getBlock();
             item.useOn(this);

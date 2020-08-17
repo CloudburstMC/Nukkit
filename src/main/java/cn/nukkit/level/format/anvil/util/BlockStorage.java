@@ -4,14 +4,17 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.functional.BlockPositionDataConsumer;
 import com.google.common.base.Preconditions;
 
+import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
+import java.util.BitSet;
 
 @ParametersAreNonnullByDefault
 public class BlockStorage {
@@ -43,16 +46,19 @@ public class BlockStorage {
     private final PalettedBlockStorage palette;
     private final BlockState[] states;
     private byte flags = FLAG_PALETTE_UPDATED;
+    @Nullable
+    private BitSet denyStates = null;
 
     public BlockStorage() {
         states = EMPTY.clone();
         palette = new PalettedBlockStorage();
     }
 
-    private BlockStorage(BlockState[] states, byte flags, PalettedBlockStorage palette) {
+    private BlockStorage(BlockState[] states, byte flags, PalettedBlockStorage palette, @Nullable BitSet denyStates) {
         this.states = states;
         this.flags = flags;
         this.palette = palette;
+        this.denyStates = denyStates;
     }
 
     private static int getIndex(int x, int y, int z) {
@@ -108,19 +114,13 @@ public class BlockStorage {
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public BlockState getAndSetBlock(int x, int y, int z, int id, int meta) {
-        return getAndSetBlockState(getIndex(x, y, z), BlockState.of(id, meta));
+        return setBlockState(getIndex(x, y, z), BlockState.of(id, meta));
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockState getAndSetBlockState(int x, int y, int z, BlockState state) {
-        return getAndSetBlockState(getIndex(x, y, z), state);
-    }
-    
-    private BlockState getAndSetBlockState(int index, BlockState state) {
-        BlockState old = states[index];
-        setBlockState(index, state);
-        return old;
+        return setBlockState(getIndex(x, y, z), state);
     }
     
     @PowerNukkitOnly
@@ -166,13 +166,14 @@ public class BlockStorage {
         setBlockState(index, state);
     }
 
-    private void setBlockState(int index, BlockState state) {
-        if (states[index].equals(state)) {
-            return;
+    private BlockState setBlockState(int index, BlockState state) {
+        BlockState previous = states[index];
+        if (previous.equals(state)) {
+            return previous;
         }
         
         states[index] = state;
-        updateFlags(state);
+        updateFlags(index, previous, state);
         try {
             palette.setBlock(index, state.getRuntimeId());
         } catch (Exception ignored) {
@@ -180,6 +181,8 @@ public class BlockStorage {
             // states of the server initialization
             setFlag(FLAG_PALETTE_UPDATED, false);
         }
+        
+        return previous;
     }
 
     @PowerNukkitOnly
@@ -192,9 +195,163 @@ public class BlockStorage {
         flags = computeFlags((byte)(flags & FLAG_PALETTE_UPDATED), states);
     }
     
-    private void updateFlags(BlockState state) {
+    private void updateFlags(int index, BlockState previous, BlockState state) {
         if (flags != FLAG_EVERYTHING_ENABLED) {
             flags = computeFlags(flags, state);
+        }
+        
+        if (denyStates != null) {
+            switch (previous.getBlockId()) {
+                case BlockID.DENY:
+                    clearDeny(index);
+                    break;
+                case BlockID.ALLOW:
+                    clearAllow(index);
+                    break;
+                case BlockID.BORDER_BLOCK:
+                    clearBorder(index);
+                    break;
+                default:
+            }
+        }
+        
+        switch (state.getBlockId()) {
+            case BlockID.DENY:
+                deny(index);
+                break;
+            case BlockID.BORDER_BLOCK:
+                border(index);
+                break;
+            case BlockID.ALLOW:
+                allow(index);
+                break;
+            default:
+        }
+    }
+
+    private void border(int index) {
+        if (denyStates == null) {
+            denyStates = new BitSet();
+        }
+        index = (index & ~0xF) << 1;
+        for (int y = 0; y <= 0xF; y++) {
+            denyStates.set(index++);    // Deny
+            denyStates.set(index++);    // Allow
+                                        // Both deny and allow means border
+        }
+    }
+    
+    private void deny(int index) {
+        if (denyStates == null) {
+            denyStates = new BitSet();
+        }
+        int y = index & 0xF;
+        index <<= 1;
+        boolean first = true;
+        for (; y <= 0xF; y++, index += 2, first = false) {
+            if (denyStates.get(index + 1)) { //Allow
+                if (first) { // Replacing an allow block with a deny block
+                    if (denyStates.get(index)) { // If the XZ pos have a border, the border takes priority
+                        return;
+                    }
+                    denyStates.clear(index + 1);
+                } else if (states[index >> 1].getBlockId() == BlockID.ALLOW) {
+                    // Check if the allow state is actually from a allow block or from a previous removal
+                    return;
+                } else {
+                    denyStates.clear(index + 1);
+                }
+            }
+            
+            denyStates.set(index);
+        }
+    }
+    
+    private void allow(int index) {
+        if (denyStates == null) {
+            denyStates = new BitSet();
+        }
+        int y = index & 0xF;
+        index <<= 1;
+        boolean first = true;
+        for (; y <= 0xF; y++, index += 2, first = false) {
+            if (denyStates.get(index)) { //Deny
+                if (first) { // Replacing a deny block with an allow block
+                    if (denyStates.get(index + 1)) { // If the XZ pos have a border, the border takes priority
+                        return;
+                    }
+                    denyStates.clear(index);
+                } else if (states[index >> 1].getBlockId() == BlockID.DENY) {
+                    // Check if the deny state is actually from a deny block or from a previous removal
+                    return;
+                } else {
+                    denyStates.clear(index);
+                }
+            }
+
+            denyStates.set(index + 1);
+        }
+    }
+    
+    private void clearAllow(int index) {
+        assert denyStates != null;
+        int y = index & 0xF;
+        index <<= 1;
+        for (; y <= 0xF; y++, index += 2, index++) {
+            if (denyStates.get(index)) { // Deny or border
+                break;
+            }
+            
+            denyStates.clear(index + 1); // Remove the allow
+        }
+    }
+
+    private void clearDeny(int index) {
+        assert denyStates != null;
+        int y = index & 0xF;
+        index <<= 1;
+        for (; y <= 0xF; y++, index += 2, index++) {
+            if (denyStates.get(index + 1)) { // Allow or border
+                break;
+            }
+
+            denyStates.clear(index); // Remove the deny
+        }
+    }
+    
+    private void clearBorder(final int index) {
+        assert denyStates != null;
+        
+        // Check if there's an other border
+        final int bottomIndex = index & ~0xF;
+        final int topIndex = index | 0xF;
+        for (int blockIndex = bottomIndex; blockIndex < topIndex; blockIndex++) {
+            if (states[blockIndex].getBlockId() == BlockID.BORDER_BLOCK) {
+                return;
+            }
+        }
+        
+        // Clear the border flags
+        boolean removeDeny = true;
+        boolean removeAllow = true;
+        for (int blockIndex = bottomIndex, flagIndex = blockIndex << 1; blockIndex < topIndex; blockIndex++, flagIndex += 2) {
+            switch (states[blockIndex].getBlockId()) {
+                case BlockID.ALLOW:
+                    removeDeny = true;
+                    removeAllow = false;
+                    break;
+                case BlockID.DENY:
+                    removeDeny = false;
+                    removeAllow = true;
+                    break;
+                default:
+            }
+            if (removeDeny) {
+                denyStates.clear(flagIndex);
+            }
+            if (removeAllow) {
+                denyStates.clear(flagIndex + 1);
+            }
         }
     }
     
@@ -227,7 +384,8 @@ public class BlockStorage {
     }
 
     public BlockStorage copy() {
-        return new BlockStorage(states.clone(), flags, palette.copy());
+        BitSet deny = denyStates;
+        return new BlockStorage(states.clone(), flags, palette.copy(), (BitSet) (deny != null? deny.clone() : null));
     }
     
     private boolean getFlag(byte flag) {
@@ -289,5 +447,14 @@ public class BlockStorage {
             int y = i & 0xF;
             consumer.accept(x, y, z, states[i]);
         }
+    }
+
+    public int getBlockChangeStateAbove(int x, int y, int z) {
+        BitSet denyFlags = this.denyStates;
+        if (denyFlags == null) {
+            return 0;
+        }
+        int index = getIndex(x, y, z) << 1;
+        return (denyFlags.get(index)? 0x1 : 0x0) | (denyFlags.get(index + 1)? 0x2 : 0x0);
     }
 }

@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.value.StoneSlab1Type;
 import cn.nukkit.item.ItemTool;
@@ -9,8 +11,7 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @PowerNukkitDifference(info = "Extends BlockDoubleSlabBase only in PowerNukkit")
 public class BlockDoubleSlabStone extends BlockDoubleSlabBase {
@@ -36,6 +37,8 @@ public class BlockDoubleSlabStone extends BlockDoubleSlabBase {
         return DOUBLE_SLAB;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

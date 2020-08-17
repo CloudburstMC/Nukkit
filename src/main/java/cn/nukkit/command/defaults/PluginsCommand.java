@@ -8,8 +8,8 @@ import cn.nukkit.utils.TextFormat;
 import java.util.Map;
 
 /**
- * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/12
  */
 public class PluginsCommand extends VanillaCommand {
 
@@ -34,16 +34,16 @@ public class PluginsCommand extends VanillaCommand {
     }
 
     private void sendPluginList(CommandSender sender) {
-        String list = "";
+        StringBuilder list = new StringBuilder();
         Map<String, Plugin> plugins = sender.getServer().getPluginManager().getPlugins();
         for (Plugin plugin : plugins.values()) {
             if (list.length() > 0) {
-                list += TextFormat.WHITE + ", ";
+                list.append(TextFormat.WHITE + ", ");
             }
-            list += plugin.isEnabled() ? TextFormat.GREEN : TextFormat.RED;
-            list += plugin.getDescription().getFullName();
+            list.append(plugin.isEnabled() ? TextFormat.GREEN : TextFormat.RED);
+            list.append(plugin.getDescription().getFullName());
         }
 
-        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", String.valueOf(plugins.size()), list));
+        sender.sendMessage(new TranslationContainer("nukkit.command.plugins.success", String.valueOf(plugins.size()), list.toString()));
     }
 }

@@ -4,7 +4,7 @@ import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
 /**
- * Created on 15-10-14.
+ * @since 15-10-14
  */
 @ToString
 public class MovePlayerPacket extends DataPacket {

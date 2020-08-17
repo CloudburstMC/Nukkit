@@ -5,7 +5,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
- * Created on 15-10-27.
+ * @since 15-10-27
  */
 public class EntityExplosionPrimeEvent extends EntityEvent implements Cancellable {
 

@@ -4,7 +4,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.event.HandlerList;
 
 /**
- * Created by CreeperFace on 12.5.2017.
+ * @author CreeperFace
+ * @since 12.5.2017
  */
 public class BlockRedstoneEvent extends BlockEvent {
 

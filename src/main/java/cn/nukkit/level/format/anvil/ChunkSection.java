@@ -7,8 +7,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.anvil.util.BlockStorage;
 import cn.nukkit.level.format.anvil.util.NibbleArray;
-import cn.nukkit.level.format.generic.BaseChunk;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
+import cn.nukkit.level.format.updater.ChunkUpdater;
 import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.nbt.tag.ByteArrayTag;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -27,8 +27,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 @SuppressWarnings("java:S2176")
@@ -67,7 +66,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     public ChunkSection(int y) {
         this.y = y;
-        this.contentVersion = BaseChunk.CONTENT_VERSION;
+        this.contentVersion = ChunkUpdater.getContentVersion();
 
         hasBlockLight = false;
         hasSkyLight = false;
@@ -369,6 +368,17 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         synchronized (storageList) {
             BlockState previousState = getOrSetStorage(layer).getAndSetBlockState(x, y, z, state);
             return !state.equals(previousState);
+        }
+    }
+
+    @Override
+    public int getBlockChangeStateAbove(int x, int y, int z) {
+        synchronized (storageList) {
+            BlockStorage storage = getStorageIfExists(0);
+            if (storage == null) {
+                return 0;
+            }
+            return storage.getBlockChangeStateAbove(x, y, z);
         }
     }
 

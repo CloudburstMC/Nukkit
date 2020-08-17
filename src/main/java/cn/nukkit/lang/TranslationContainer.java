@@ -1,8 +1,7 @@
 package cn.nukkit.lang;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class TranslationContainer extends TextContainer implements Cloneable {
 

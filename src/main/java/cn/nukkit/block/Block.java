@@ -43,8 +43,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @PowerNukkitDifference(info = "Implements IMutableBlockState only on PowerNukkit", since = "1.4.0.0-PN")
 @SuppressWarnings({"java:S2160", "java:S3400"})
@@ -324,7 +323,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[ICE_FROSTED] = BlockIceFrosted.class; //207
             list[END_ROD] = BlockEndRod.class; //208
             list[END_GATEWAY] = BlockEndGateway.class; //209
-
+            list[ALLOW] = BlockAllow.class; //210
+            list[DENY] = BlockDeny.class; //211
+            list[BORDER_BLOCK] = BlockBorder.class; //212
             list[MAGMA] = BlockMagma.class; //213
             list[BLOCK_NETHER_WART_BLOCK] = BlockNetherWartBlock.class; //214
             list[RED_NETHER_BRICK] = BlockBricksRedNether.class; //215
@@ -357,11 +358,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BEETROOT_BLOCK] = BlockBeetroot.class; //244
             list[STONECUTTER] = BlockStonecutter.class; //245
             list[GLOWING_OBSIDIAN] = BlockObsidianGlowing.class; //246
-            //list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
+            list[NETHER_REACTOR] = BlockNetherReactor.class; //247 Should not be removed
 
             list[MOVING_BLOCK] = BlockMoving.class; //250
             list[OBSERVER] = BlockObserver.class; //251
-
+            list[STRUCTURE_BLOCK] = BlockStructure.class; //252
+            
             list[PRISMARINE_STAIRS] = BlockStairsPrismarine.class; //257
             list[DARK_PRISMARINE_STAIRS] = BlockStairsDarkPrismarine.class; //258
             list[PRISMARINE_BRICKS_STAIRS] = BlockStairsPrismarineBrick.class; //259
@@ -521,34 +523,34 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[WARPED_DOUBLE_SLAB] = BlockDoubleSlabWarped.class; //522
             list[SOUL_TORCH] = BlockSoulTorch.class; //523
             list[SOUL_LANTERN] = BlockSoulLantern.class; //524
-            list[NETHERITE_BLOCK] = BlockNetherite.class; //525
-            //list[ANCIENT_DERBIS] = Block<Name>.class; //526
+            list[NETHERITE_BLOCK] = BlockNetheriteBlock.class; //525
+            list[ANCIENT_DERBRIS] = BlockAncientDebris.class; //526
             //list[RESPAWN_ANCHOR] = Block<Name>.class; //527
             list[BLACKSTONE] = BlockBlackstone.class; //528
-            //list[POLISHED_BLACKSTONE_BRICKS] = Block<Name>.class; //529
-            //list[POLISHED_BLACKSTONE_BRICK_STAIRS] = Block<Name>.class; //530
-            //list[BLACKSTONE_STAIRS] = Block<Name>.class; //531
-            //list[BLACKSTONE_WALL] = Block<Name>.class; //532
-            //list[POLISHED_BLACKSTONE_BRICK_WALL] = Block<Name>.class; //533
-            //list[CHISELED_POLISHED_BLACKSTONE] = Block<Name>.class; //534
-            //list[CRACKED_POLISHED_BLACKSTONE_BRICKS] = Block<Name>.class; //535
-            //list[GILDED_BLACKSTONE] = Block<Name>.class; //536
+            list[POLISHED_BLACKSTONE_BRICKS] = BlockBricksBlackstonePolished.class; //529
+            list[POLISHED_BLACKSTONE_BRICK_STAIRS] = BlockStairsBrickBlackstonePolished.class; //530
+            list[BLACKSTONE_STAIRS] = BlockStairsBlackstone.class; //531
+            list[BLACKSTONE_WALL] = BlockWallBlackstone.class; //532
+            list[POLISHED_BLACKSTONE_BRICK_WALL] = BlockWallBrickBlackstonePolished.class; //533
+            list[CHISELED_POLISHED_BLACKSTONE] = BlockBlackstonePolishedChiseled.class; //534
+            list[CRACKED_POLISHED_BLACKSTONE_BRICKS] = BlockBricksBlackstonePolishedCracked.class; //535
+            list[GILDED_BLACKSTONE] = BlockBlackstoneGilded.class; //536
             list[BLACKSTONE_SLAB] = BlockSlabBlackstone.class; //537
             list[BLACKSTONE_DOUBLE_SLAB] = BlockDoubleSlabBlackstone.class; //538
-            //list[POLISHED_BLACKSTONE_BRICK_SLAB] = Block<Name>.class; //539
-            //list[POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB] = Block<Name>.class; //540
+            list[POLISHED_BLACKSTONE_BRICK_SLAB] = BlockSlabBrickBlackstonePolished.class; //539
+            list[POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB] = BlockDoubleSlabBrickBlackstonePolished.class; //540
             list[CHAIN_BLOCK] = BlockChain.class; //541
             //list[TWISTING_VINES] = Block<Name>.class; //542
-            //list[NETHER_GOLD_ORE] = Block<Name>.class; //543
-            //list[CRYING_OBSIDIAN] = Block<Name>.class; //544
+            list[NETHER_GOLD_ORE] = BlockOreGoldNether.class; //543
+            list[CRYING_OBSIDIAN] = BlockObsidianCrying.class; //544
             //list[SOUL_CAMPFIRE] = Block<Name>.class; //545
-            //list[POLISHED_BLACKSTONE] = Block<Name>.class; //546
-            //list[POLISHED_BLACKSTONE_STAIRS] = Block<Name>.class; //547
-            //list[POLISHED_BLACKSTONE_SLAB] = Block<Name>.class; //548
-            //list[POLISHED_BLACKSTONE_DOUBLE_SLAB] = Block<Name>.class; //549
-            //list[POLISHED_BLACKSTONE_PRESSURE_PLATE] = Block<Name>.class; //550
-            //list[POLISHED_BLACKSTONE_BUTTON] = Block<Name>.class; //551
-            //list[POLISHED_BLACKSTONE_WALL] = Block<Name>.class; //552
+            list[POLISHED_BLACKSTONE] = BlockBlackstonePolished.class; //546
+            list[POLISHED_BLACKSTONE_STAIRS] = BlockStairsBlackstonePolished.class; //547
+            list[POLISHED_BLACKSTONE_SLAB] = BlockSlabBlackstonePolished.class; //548
+            list[POLISHED_BLACKSTONE_DOUBLE_SLAB] = BlockDoubleSlabBlackstonePolished.class; //549
+            list[POLISHED_BLACKSTONE_PRESSURE_PLATE] = BlockPressurePlateBlackstonePolished.class; //550
+            list[POLISHED_BLACKSTONE_BUTTON] = BlockButtonBlackstonePolished.class; //551
+            list[POLISHED_BLACKSTONE_WALL] = BlockWallBlackstonePolished.class; //552
             list[WARPED_HYPHAE] = BlockHyphaeWarped.class; //553
             list[CRIMSON_HYPHAE] = BlockHyphaeCrimson.class; //554
             list[STRIPPED_CRIMSON_HYPHAE] = BlockHyphaeStrippedCrimson.class; //555
@@ -771,7 +773,20 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     
     protected Block() {}
 
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    /**
+     * Place and initialize a this block correctly in the world.
+     * <p>The current instance must have level, x, y, z, and layer properties already set before calling this method.</p>
+     * @param item The item being used to place the block. Should be used as an optional reference, may mismatch the block that is being placed depending on plugin implementations.
+     * @param block The current block that is in the world and is getting replaced by this instance. It has the same x, y, z, layer, and level as this block.
+     * @param target The block that was clicked to create the place action in this block position.
+     * @param face The face that was clicked in the target block
+     * @param fx The detailed X coordinate of the clicked target block face
+     * @param fy The detailed Y coordinate of the clicked target block face
+     * @param fz The detailed Z coordinate of the clicked target block face
+     * @param player The player that is placing the block. May be null.
+     * @return {@code true} if the block was properly place. The implementation is responsible for reverting any partial change.
+     */
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         return this.getLevel().setBlock(this, this, true, true);
     }
 
@@ -796,11 +811,11 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 0;
     }
 
-    public boolean onActivate(Item item) {
+    public boolean onActivate(@Nonnull Item item) {
         return this.onActivate(item, null);
     }
 
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         return false;
     }
     
@@ -1490,6 +1505,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return asItemBlock(1);
     }
 
+    /**
+     * If the block, when in item form, is resistant to lava and fire and can float on lava like if it was on water.
+     * @since 1.4.0.0-PN
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isLavaResistant() {
+        return true;
+    }
+
     @Override
     public final ItemBlock asItemBlock() {
         return asItemBlock(1);
@@ -1638,5 +1663,28 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Override
     public final int getExactIntStorage() {
         return mutableState.getExactIntStorage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isBreakable(@Nonnull Vector3 vector, int layer, @Nonnull BlockFace face, @Nonnull Item item, @Nullable Player player, boolean setBlockDestroy) {
+        return true;
+    }
+
+    public final boolean isBlockChangeAllowed() {
+        return getChunk().isBlockChangeAllowed(getFloorX() & 0xF, getFloorY(), getFloorZ() & 0xF);
+    }
+    
+    public final boolean isBlockChangeAllowed(@Nullable Player player) {
+        if (isBlockChangeAllowed()) {
+            return true;
+        }
+        return player != null && player.isCreative() && player.isOp();
+    }
+
+    @Nonnull
+    @Override
+    public final Block getBlock() {
+        return clone();
     }
 }

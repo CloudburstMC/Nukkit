@@ -1,11 +1,6 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockBell;
-import cn.nukkit.block.BlockCampfire;
-import cn.nukkit.block.BlockFire;
-import cn.nukkit.block.BlockID;
-import cn.nukkit.block.BlockTNT;
+import cn.nukkit.block.*;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
@@ -14,8 +9,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityArrow extends EntityProjectile {
     public static final int NETWORK_ID = 80;

@@ -1,6 +1,10 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.Position;
@@ -14,6 +18,7 @@ import co.aikar.timings.Timings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 
 /**
@@ -53,6 +58,9 @@ public abstract class BlockEntity extends Position {
     public static final String BELL = "Bell";
     public static final String DISPENSER = "Dispenser";
     public static final String DROPPER = "Dropper";
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final String NETHER_REACTOR = "NetherReactor"; 
 
 
     public static long count = 1;
@@ -67,6 +75,8 @@ public abstract class BlockEntity extends Position {
 
     public boolean closed = false;
     public CompoundTag namedTag;
+    @Deprecated @DeprecationDetails(since = "1.3.1.2-PN", reason = "Not necessary and causes slowdown")
+    @PowerNukkitDifference(info = "Not updated anymore", since = "1.3.1.2-PN")
     protected long lastUpdate;
     protected Server server;
     protected Timing timing;
@@ -82,7 +92,6 @@ public abstract class BlockEntity extends Position {
         this.setLevel(chunk.getProvider().getLevel());
         this.namedTag = nbt;
         this.name = "";
-        this.lastUpdate = System.currentTimeMillis();
         this.id = BlockEntity.count++;
         this.x = this.namedTag.getInt("x");
         this.y = this.namedTag.getInt("y");
@@ -248,5 +257,11 @@ public abstract class BlockEntity extends Position {
                 .putInt("x", pos.getFloorX())
                 .putInt("y", pos.getFloorY())
                 .putInt("z", pos.getFloorZ());
+    }
+
+    @Nullable
+    @Override
+    public final BlockEntity getLevelBlockEntity() {
+        return super.getLevelBlockEntity();
     }
 }

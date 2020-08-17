@@ -6,8 +6,8 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.potion.Potion;
 
 /**
- * Created by Snake1999 on 2016/1/12.
- * Package cn.nukkit.event.potion in project nukkit
+ * @author Snake1999
+ * @since 2016/1/12
  */
 public class PotionCollideEvent extends PotionEvent implements Cancellable {
 

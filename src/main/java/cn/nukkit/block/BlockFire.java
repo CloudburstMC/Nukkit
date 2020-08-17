@@ -23,8 +23,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockFire extends BlockFlowable {
 
@@ -96,6 +95,8 @@ public class BlockFire extends BlockFlowable {
                 if (!event.isCancelled()) {
                     level.setBlock(this, event.getNewState(), true);
                 }
+            } else if (this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK) && !level.isUpdateScheduled(this, this)) {
+                level.scheduleUpdate(this, tickRate());
             }
 
             return Level.BLOCK_UPDATE_NORMAL;

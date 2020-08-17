@@ -12,6 +12,7 @@ import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,8 +21,8 @@ import static cn.nukkit.math.BlockFace.*;
 import static cn.nukkit.utils.Rail.Orientation.*;
 
 /**
- * Created by Snake1999 on 2016/1/11.
- * Package cn.nukkit.block in project nukkit
+ * @author Snake1999
+ * @since 2016/1/11
  */
 public class BlockRail extends BlockFlowable implements Faceable {
 
@@ -72,7 +73,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Optional<BlockFace> ascendingDirection = this.getOrientation().ascendingDirection();
-            if (this.down().isTransparent() || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
+            if (!checkCanBePlace(this.down()) || (ascendingDirection.isPresent() && !checkCanBePlace(this.getSide(ascendingDirection.get())))) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -97,9 +98,9 @@ public class BlockRail extends BlockFlowable implements Faceable {
 
     //Information from http://minecraft.gamepedia.com/Rail
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (down == null || down.isTransparent()) {
+        if (!checkCanBePlace(down)) {
             return false;
         }
         Map<BlockRail, BlockFace> railsAround = this.checkRailsAroundAffected();
@@ -142,7 +143,25 @@ public class BlockRail extends BlockFlowable implements Faceable {
         if (!isAbstract()) {
             level.scheduleUpdate(this, this, 0);
         }
+        
         return true;
+    }
+    
+    private boolean checkCanBePlace(Block check) {
+        if (check == null) {
+            return false;
+        }
+        if (!check.isTransparent()) {
+            return true;
+        }
+        if (check instanceof BlockHopper) {
+            return true;
+        } else if (check instanceof BlockSlab) {
+            return ((BlockSlab)check).isOnTop();
+        } else if (check instanceof BlockStairs) {
+            return ((BlockStairs)check).isUpsideDown();
+        }
+        return false;
     }
 
     private Orientation connect(BlockRail rail1, BlockFace face1, BlockRail rail2, BlockFace face2) {

@@ -14,8 +14,8 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.MinecartType;
 
 /**
- * Created by Snake1999 on 2016/1/30.
- * Package cn.nukkit.entity.item in project Nukkit.
+ * @author Snake1999
+ * @since 2016/1/30
  */
 public class EntityMinecartChest extends EntityMinecartAbstract implements InventoryHolder {
 

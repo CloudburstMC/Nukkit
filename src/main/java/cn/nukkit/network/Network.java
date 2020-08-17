@@ -3,11 +3,13 @@ package cn.nukkit.network;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.network.protocol.*;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.ThreadCache;
+import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.VarInt;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
@@ -26,8 +28,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class Network {
@@ -66,7 +67,7 @@ public class Network {
         this.server = server;
     }
 
-    @PowerNukkitOnly @Since("1.3.0.0-PN")
+    @Since("1.3.0.0-PN")
     public static byte[] inflateRaw(byte[] data) throws IOException, DataFormatException {
         Inflater inflater = INFLATER_RAW.get();
         inflater.reset();
@@ -79,15 +80,14 @@ public class Network {
         while (!inflater.finished()) {
             int i = inflater.inflate(buf);
             if (i == 0) {
-                log.warn("Prevented an infinite loop trying to decompress data. Needs input: "+inflater.needsInput()+", Needs Dictionary: "+inflater.needsDictionary());
-                break;
+                throw new IOException("Could not decompress the data. Needs input: "+inflater.needsInput()+", Needs Dictionary: "+inflater.needsDictionary());
             }
             bos.write(buf, 0, i);
         }
         return bos.toByteArray();
     }
 
-    @PowerNukkitOnly @Since("1.3.0.0-PN")
+    @Since("1.3.0.0-PN")
     public static byte[] deflateRaw(byte[] data, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
         deflater.reset();
@@ -226,8 +226,8 @@ public class Network {
 
         int len = data.length;
         BinaryStream stream = new BinaryStream(data);
+        final List<DataPacket> packets = new ArrayList<>();
         try {
-            List<DataPacket> packets = new ArrayList<>();
             int count = 0;
             while (stream.offset < len) {
                 count++;
@@ -237,7 +237,13 @@ public class Network {
                 }
                 byte[] buf = stream.getByteArray();
 
-                DataPacket pk = this.getPacketFromBuffer(buf);
+                DataPacket pk;
+                try {
+                    pk = this.getPacketFromBuffer(buf);
+                } catch (IOException e) {
+                    log.warn("Error while getting the packet number {} whilst reading batched packet buffer for player {}", count, player.getName());
+                    throw e;
+                }
 
                 if (pk != null) {
                     try {
@@ -255,10 +261,14 @@ public class Network {
                 }
             }
 
-            processPackets(player, packets);
-
         } catch (Exception e) {
-            MainLogger.getLogger().error("Error whilst decoding batch packet", e);
+            log.error("Error whilst decoding batch packet", e);
+        }
+
+        try {
+            processPackets(player, packets);
+        } catch (Exception e) {
+            log.warn("Error whilst processing {} batched packets for {}", packets.size(), player.getName());
         }
     }
 
@@ -270,7 +280,18 @@ public class Network {
      */
     public void processPackets(Player player, List<DataPacket> packets) {
         if (packets.isEmpty()) return;
-        packets.forEach(player::handleDataPacket);
+        packets.forEach(p-> {
+            try {
+                player.handleDataPacket(p);
+            } catch (Exception e) {
+                if (log.isWarnEnabled()) {
+                    log.warn("Error whilst processing the packet {}:{} for {} (full data: {})",
+                            p.pid(), p.getClass().getSimpleName(),
+                            player.getName(), p.toString()
+                    );
+                }
+            }
+        });
     }
 
     private DataPacket getPacketFromBuffer(byte[] buffer) throws IOException {

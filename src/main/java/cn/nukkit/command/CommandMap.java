@@ -3,8 +3,7 @@ package cn.nukkit.command;
 import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public interface CommandMap {
 

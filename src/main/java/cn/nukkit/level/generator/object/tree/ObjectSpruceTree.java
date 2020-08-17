@@ -6,8 +6,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ObjectSpruceTree extends ObjectTree {
     protected int treeHeight;

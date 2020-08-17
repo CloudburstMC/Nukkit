@@ -4,7 +4,8 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.blockstate.BlockState;
 
 /**
- * Created by Leonidius20 on 22.03.17.
+ * @author Leonidius20
+ * @since 22.03.17
  */
 public class ItemNetherWart extends Item {
 

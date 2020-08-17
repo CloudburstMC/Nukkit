@@ -5,8 +5,8 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created by Snake1999 on 2016/2/3.
- * Package cn.nukkit.blockentity in project Nukkit.
+ * @author Snake1999
+ * @since 2016/2/3
  */
 public class BlockEntitySkull extends BlockEntitySpawnable {
     public BlockEntitySkull(FullChunk chunk, CompoundTag nbt) {

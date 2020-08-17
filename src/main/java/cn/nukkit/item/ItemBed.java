@@ -5,8 +5,7 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.utils.DyeColor;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemBed extends Item {
 

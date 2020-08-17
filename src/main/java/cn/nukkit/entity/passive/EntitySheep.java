@@ -13,7 +13,7 @@ import cn.nukkit.utils.DyeColor;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Author: BeYkeRYkt Nukkit Project
+ * @author BeYkeRYkt (Nukkit Project)
  */
 public class EntitySheep extends EntityAnimal {
 

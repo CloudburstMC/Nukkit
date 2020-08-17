@@ -9,6 +9,7 @@ import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.blockproperty.UnknownRuntimeIdException;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.utils.HumanStringComparator;
 
 import javax.annotation.Nonnull;
@@ -125,6 +126,20 @@ public interface IBlockState {
         return block;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    default Block getBlock(Position position) {
+        return getBlock(position, 0);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    default Block getBlock(Position position, int layer) {
+        return getBlock(position.getLevel(), position.getFloorX(), position.getFloorY(), position.getFloorZ(), layer);
+    }
+
     default int getRuntimeId() {
         return BlockStateRegistry.getRuntimeId(getCurrentState());
     }
@@ -177,7 +192,7 @@ public interface IBlockState {
     default ItemBlock asItemBlock() {
         return asItemBlock(1);
     }
-    
+
     default ItemBlock asItemBlock(int count) {
         BlockState currentState = getCurrentState();
         BlockState itemState = currentState.forItem();

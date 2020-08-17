@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -9,6 +10,8 @@ import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+
+import javax.annotation.Nonnull;
 
 public class BlockSeagrass extends BlockFlowable {
     
@@ -31,7 +34,7 @@ public class BlockSeagrass extends BlockFlowable {
     }
     
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = down();
         Block layer1Block = block.getLevelBlockAtLayer(1);
         int waterDamage;
@@ -88,7 +91,7 @@ public class BlockSeagrass extends BlockFlowable {
     }
     
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (getDamage() == 0 && item.getId() == Item.DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) {
             Block up = this.up();
             int damage;
@@ -122,6 +125,7 @@ public class BlockSeagrass extends BlockFlowable {
         return true;
     }
     
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;

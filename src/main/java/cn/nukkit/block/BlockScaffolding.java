@@ -13,6 +13,8 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 @PowerNukkitOnly
 public class BlockScaffolding extends BlockFallableMeta {
 
@@ -60,7 +62,7 @@ public class BlockScaffolding extends BlockFallableMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (block instanceof BlockLava) {
             return false;
         }
@@ -168,6 +170,7 @@ public class BlockScaffolding extends BlockFallableMeta {
         return 60;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

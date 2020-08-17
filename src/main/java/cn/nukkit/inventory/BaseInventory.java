@@ -16,8 +16,7 @@ import cn.nukkit.network.protocol.InventorySlotPacket;
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BaseInventory implements Inventory {
 

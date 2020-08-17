@@ -12,8 +12,8 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
 
 /**
- * Created on 2015/11/12 by Pub4Game and milkice.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author Pub4Game and milkice
+ * @since 2015/11/12
  */
 public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {

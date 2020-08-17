@@ -10,8 +10,7 @@ import cn.nukkit.utils.BlockColor;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockOreCoal extends BlockSolid {
 

@@ -4,7 +4,7 @@ package cn.nukkit.plugin.service;
 import cn.nukkit.plugin.Plugin;
 
 /**
- * Created on 16-11-20.
+ * @since 16-11-20
  */
 public class RegisteredServiceProvider<T> implements Comparable<RegisteredServiceProvider<T>> {
 
