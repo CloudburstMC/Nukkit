@@ -65,4 +65,14 @@ public class BlockMelon extends BlockSolid {
     public boolean canSilkTouch() {
         return true;
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }
