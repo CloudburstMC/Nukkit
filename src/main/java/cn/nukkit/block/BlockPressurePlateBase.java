@@ -10,6 +10,7 @@ import cn.nukkit.event.entity.EntityInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
@@ -104,7 +105,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block down = this.down();
             if (down.isTransparent() && down.getId() != COBBLE_WALL) {
-                this.level.useBreakOn(this);
+                this.level.useBreakOn(this, ItemTool.getBestTool(getToolType()));
             }
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             int power = this.getRedstonePower();
