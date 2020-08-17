@@ -1,9 +1,13 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockWallBlackstonePolished extends BlockWallBase {
     public BlockWallBlackstonePolished() {
         this(0);
@@ -43,7 +47,7 @@ public class BlockWallBlackstonePolished extends BlockWallBase {
 
     @Override
     public double getHardness() {
-        return 2;
+        return 1.5;
     }
 
     @Override

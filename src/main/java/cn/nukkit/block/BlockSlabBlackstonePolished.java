@@ -21,6 +21,10 @@ public class BlockSlabBlackstonePolished extends BlockSlab {
         super(meta, POLISHED_BLACKSTONE_DOUBLE_SLAB);
     }
 
+    protected BlockSlabBlackstonePolished(int meta, int doubleSlab) {
+        super(meta, doubleSlab);
+    }
+
     @Override
     public int getId() {
         return POLISHED_BLACKSTONE_SLAB;
