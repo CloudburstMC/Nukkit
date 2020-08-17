@@ -483,7 +483,7 @@ public interface BlockID {
     //int POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB = 540;
     int CHAIN_BLOCK = 541;
     //int TWISTING_VINES = 542;
-    //int NETHER_GOLD_ORE = 543;
+    int NETHER_GOLD_ORE = 543;
     //int CRYING_OBSIDIAN = 544;
     //int SOUL_CAMPFIRE = 545;
     //int POLISHED_BLACKSTONE = 546;

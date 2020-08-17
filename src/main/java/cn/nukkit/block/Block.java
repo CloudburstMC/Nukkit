@@ -541,7 +541,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             //list[POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB] = Block<Name>.class; //540
             list[CHAIN_BLOCK] = BlockChain.class; //541
             //list[TWISTING_VINES] = Block<Name>.class; //542
-            //list[NETHER_GOLD_ORE] = Block<Name>.class; //543
+            list[NETHER_GOLD_ORE] = BlockNetherOreGold.class; //543
             //list[CRYING_OBSIDIAN] = Block<Name>.class; //544
             //list[SOUL_CAMPFIRE] = Block<Name>.class; //545
             //list[POLISHED_BLACKSTONE] = Block<Name>.class; //546
