@@ -61,9 +61,11 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         return PROPERTIES;
     }
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public boolean isSolid() {
-        return false;
+    public boolean isSolid(BlockFace side) {
+        return side == BlockFace.UP;
     }
 
     @Override
