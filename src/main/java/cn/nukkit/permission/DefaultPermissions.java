@@ -3,8 +3,7 @@ package cn.nukkit.permission;
 import cn.nukkit.Server;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class DefaultPermissions {
     public static final String ROOT = "nukkit";

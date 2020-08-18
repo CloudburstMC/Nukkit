@@ -20,6 +20,7 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockSweetBerryBush extends BlockFlowable {
@@ -68,7 +69,7 @@ public class BlockSweetBerryBush extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
 
         int age = MathHelper.clamp(getDamage(), 0, 3);
 
@@ -147,7 +148,7 @@ public class BlockSweetBerryBush extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (target.getId() == SWEET_BERRY_BUSH || block.getId() != AIR) {
             return false;
         }

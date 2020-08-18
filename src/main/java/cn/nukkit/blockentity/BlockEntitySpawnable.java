@@ -10,8 +10,7 @@ import java.io.IOException;
 import java.nio.ByteOrder;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockEntitySpawnable extends BlockEntity {
 

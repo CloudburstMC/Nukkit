@@ -1,16 +1,14 @@
 package cn.nukkit.nbt.tag;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
 
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.StringJoiner;
 
 public class CompoundTag extends Tag implements Cloneable {
     private final Map<String, Tag> tags;
@@ -132,6 +130,84 @@ public class CompoundTag extends Tag implements Cloneable {
     public boolean contains(String name) {
         return tags.containsKey(name);
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsCompound(String name) {
+        return tags.get(name) instanceof CompoundTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsString(String name) {
+        return tags.get(name) instanceof StringTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsIntArray(String name) {
+        return tags.get(name) instanceof IntArrayTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsByteArray(String name) {
+        return tags.get(name) instanceof ByteArrayTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsNumber(String name) {
+        return tags.get(name) instanceof NumberTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsList(String name) {
+        return tags.get(name) instanceof ListTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsList(String name, byte type) {
+        Tag tag = tags.get(name);
+        if (!(tag instanceof ListTag)) {
+            return false;
+        }
+        ListTag<?> list = (ListTag<?>)tag;
+        byte listType = list.type;
+        return listType == 0 || listType == type;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsByte(String name) {
+        return tags.get(name) instanceof ByteTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsShort(String name) {
+        return tags.get(name) instanceof ShortTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsInt(String name) {
+        return tags.get(name) instanceof IntTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsDouble(String name) {
+        return tags.get(name) instanceof DoubleTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean containsFloat(String name) {
+        return tags.get(name) instanceof FloatTag;
+    }
 
     public CompoundTag remove(String name) {
         tags.remove(name);
@@ -159,7 +235,7 @@ public class CompoundTag extends Tag implements Cloneable {
     }
 
     public long getLong(String name) {
-        if (!tags.containsKey(name)) return (long) 0;
+        if (!tags.containsKey(name)) return 0;
         return ((NumberTag) tags.get(name)).getData().longValue();
     }
 
@@ -169,7 +245,7 @@ public class CompoundTag extends Tag implements Cloneable {
     }
 
     public double getDouble(String name) {
-        if (!tags.containsKey(name)) return (double) 0;
+        if (!tags.containsKey(name)) return 0;
         return ((NumberTag) tags.get(name)).getData().doubleValue();
     }
 
@@ -197,7 +273,6 @@ public class CompoundTag extends Tag implements Cloneable {
         return (CompoundTag) tags.get(name);
     }
 
-    @SuppressWarnings("unchecked")
     public ListTag<? extends Tag> getList(String name) {
         if (!tags.containsKey(name)) return new ListTag<>(name);
         return (ListTag<? extends Tag>) tags.get(name);

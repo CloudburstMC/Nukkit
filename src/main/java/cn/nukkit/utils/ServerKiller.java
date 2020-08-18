@@ -3,8 +3,7 @@ package cn.nukkit.utils;
 import java.util.concurrent.TimeUnit;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ServerKiller extends Thread {
 

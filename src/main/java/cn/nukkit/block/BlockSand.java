@@ -5,8 +5,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable")
 public class BlockSand extends BlockFallableMeta {

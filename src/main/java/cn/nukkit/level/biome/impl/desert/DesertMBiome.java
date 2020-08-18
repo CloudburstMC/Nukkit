@@ -1,8 +1,7 @@
 package cn.nukkit.level.biome.impl.desert;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class DesertMBiome extends DesertBiome {
     public DesertMBiome() {

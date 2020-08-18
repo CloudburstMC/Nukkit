@@ -5,8 +5,7 @@ import cn.nukkit.level.biome.type.SnowyBiome;
 import cn.nukkit.level.generator.populator.impl.PopulatorTree;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class IcePlainsBiome extends SnowyBiome {
 

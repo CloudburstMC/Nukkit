@@ -7,7 +7,7 @@ import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
 /**
- * Created on 15-10-13.
+ * @since 15-10-13
  */
 @ToString
 public class TextPacket extends DataPacket {

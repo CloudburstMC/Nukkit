@@ -6,8 +6,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.Normal;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  * <p>
  * A biome with ground covering
  * </p>

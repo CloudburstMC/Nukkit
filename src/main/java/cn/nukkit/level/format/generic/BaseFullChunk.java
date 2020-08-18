@@ -27,8 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     protected Map<Long, Entity> entities;
@@ -173,8 +172,10 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                 this.getProvider().getLevel().timings.syncChunkLoadBlockEntitiesTimer.stopTiming();
                 this.NBTtiles = null;
             }
-
-            this.setChanged(changed);
+            
+            if (changed) {
+                this.setChanged();
+            }
 
             this.isInit = true;
         }
@@ -229,8 +230,8 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public void setBiomeId(int x, int z, byte biomeId) {
-        this.setChanged();
         this.biomes[(x << 4) | z] = biomeId;
+        this.setChanged();
     }
 
     @Override

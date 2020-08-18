@@ -11,8 +11,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class EntityAnimal extends EntityCreature implements EntityAgeable, EntityNameable {
     public EntityAnimal(FullChunk chunk, CompoundTag nbt) {

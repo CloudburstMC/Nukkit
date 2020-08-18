@@ -10,11 +10,13 @@ import cn.nukkit.utils.DyeColor;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/12/26 by Pub4Game.
- * Package cn.nukkit.block in project Nukkit .
+ * @author Pub4Game
+ * @since 2015/12/26
  */
 public class BlockNetherrack extends BlockSolid {
 
@@ -58,7 +60,7 @@ public class BlockNetherrack extends BlockSolid {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         if (item.isNull() || item.getId() != ItemID.DYE || item.getDamage() != DyeColor.WHITE.getDyeData() || up().getId() != AIR) {
             return false;
         }

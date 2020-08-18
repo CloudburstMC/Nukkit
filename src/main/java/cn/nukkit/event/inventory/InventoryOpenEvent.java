@@ -6,8 +6,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Inventory;
 
 /**
- * author: Box
- * Nukkit Project
+ * @author Box (Nukkit Project)
  */
 public class InventoryOpenEvent extends InventoryEvent implements Cancellable {
 

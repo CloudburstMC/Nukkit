@@ -6,8 +6,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class InventoryTransactionEvent extends Event implements Cancellable {
 

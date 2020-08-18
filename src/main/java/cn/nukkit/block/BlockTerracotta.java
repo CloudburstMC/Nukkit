@@ -6,8 +6,8 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.TerracottaColor;
 
 /**
- * Created on 2015/11/24 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/24
  */
 public class BlockTerracotta extends BlockSolidMeta {
     public BlockTerracotta() {

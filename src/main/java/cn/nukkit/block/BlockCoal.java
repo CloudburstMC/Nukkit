@@ -5,8 +5,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/11/24 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/24
  */
 public class BlockCoal extends BlockSolid {
     public BlockCoal() {

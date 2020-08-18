@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Snake1999 on 2016/1/13.
- * Package cn.nukkit.item.food in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/13
  */
 public class FoodEffective extends Food {
 

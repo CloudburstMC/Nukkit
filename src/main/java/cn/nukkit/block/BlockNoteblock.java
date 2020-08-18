@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMusic;
 import cn.nukkit.item.Item;
@@ -12,14 +15,18 @@ import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
- * Created by Snake1999 on 2016/1/17.
- * Package cn.nukkit.block in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/17
  */
-public class BlockNoteblock extends BlockSolid {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<BlockEntityMusic> {
 
     public BlockNoteblock() {
-
+        // Does nothing
     }
 
     @Override
@@ -35,6 +42,22 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_AXE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityMusic> getBlockEntityClass() {
+        return BlockEntityMusic.class;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.MUSIC;
     }
 
     @Override
@@ -53,9 +76,8 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(block, this, true);
-        return this.createBlockEntity() != null;
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
     }
 
     public int getStrength() {
@@ -64,10 +86,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public void increaseStrength() {
-        BlockEntityMusic blockEntity = this.getBlockEntity();
-        if (blockEntity != null) {
-            blockEntity.changePitch();
-        }
+        getOrCreateBlockEntity().changePitch();
     }
 
     public Instrument getInstrument() {
@@ -75,6 +94,7 @@ public class BlockNoteblock extends BlockSolid {
             case GOLD_BLOCK:
                 return Instrument.GLOCKENSPIEL;
             case CLAY_BLOCK:
+            case HONEYCOMB_BLOCK:
                 return Instrument.FLUTE;
             case PACKED_ICE:
                 return Instrument.CHIME;
@@ -105,6 +125,8 @@ public class BlockNoteblock extends BlockSolid {
             case JUNGLE_WOOD_STAIRS:
             case ACACIA_WOOD_STAIRS:
             case DARK_OAK_WOOD_STAIRS:
+            case CRIMSON_STAIRS:
+            case WARPED_STAIRS:
             case FENCE:
             case FENCE_GATE:
             case FENCE_GATE_SPRUCE:
@@ -112,12 +134,16 @@ public class BlockNoteblock extends BlockSolid {
             case FENCE_GATE_JUNGLE:
             case FENCE_GATE_DARK_OAK:
             case FENCE_GATE_ACACIA:
+            case CRIMSON_FENCE_GATE:
+            case WARPED_FENCE_GATE:
             case DOOR_BLOCK:
             case SPRUCE_DOOR_BLOCK:
             case BIRCH_DOOR_BLOCK:
             case JUNGLE_DOOR_BLOCK:
             case ACACIA_DOOR_BLOCK:
             case DARK_OAK_DOOR_BLOCK:
+            case CRIMSON_DOOR_BLOCK:
+            case WARPED_DOOR_BLOCK:
             case WOODEN_PRESSURE_PLATE:
             case TRAPDOOR:
             case SIGN_POST:
@@ -203,6 +229,8 @@ public class BlockNoteblock extends BlockSolid {
             case CONCRETE:
             case STONECUTTER:
             case OBSERVER:
+            case CRIMSON_NYLIUM:
+            case WARPED_NYLIUM:
                 return Instrument.BASS_DRUM;
             default:
                 return Instrument.PIANO;
@@ -226,7 +254,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         this.increaseStrength();
         this.emitSound();
         return true;
@@ -235,32 +263,17 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            BlockEntityMusic blockEntity = this.getBlockEntity();
-            if (blockEntity != null) {
-                if (this.getLevel().isBlockPowered(this)) {
-                    if (!blockEntity.isPowered()) {
-                        this.emitSound();
-                    }
-                    blockEntity.setPowered(true);
-                } else {
-                    blockEntity.setPowered(false);
+            BlockEntityMusic music = getOrCreateBlockEntity();
+            if (this.getLevel().isBlockPowered(this)) {
+                if (!music.isPowered()) {
+                    this.emitSound();
                 }
+                music.setPowered(true);
+            } else {
+                music.setPowered(false);
             }
         }
         return super.onUpdate(type);
-    }
-
-    private BlockEntityMusic getBlockEntity() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityMusic) {
-            return (BlockEntityMusic) blockEntity;
-        }
-        return null;
-    }
-
-    private BlockEntityMusic createBlockEntity() {
-        return (BlockEntityMusic) BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
-                                        BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }
 
     public enum Instrument {

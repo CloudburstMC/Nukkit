@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.event.block.BlockSpreadEvent;
@@ -17,8 +19,7 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 
 public class BlockGrass extends BlockDirt {
@@ -32,6 +33,8 @@ public class BlockGrass extends BlockDirt {
         super(0);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -59,12 +62,12 @@ public class BlockGrass extends BlockDirt {
     }
 
     @Override
-    public boolean onActivate(Item item) {
+    public boolean onActivate(@Nonnull Item item) {
         return this.onActivate(item, null);
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
             if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;

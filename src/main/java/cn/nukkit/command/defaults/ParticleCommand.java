@@ -14,8 +14,8 @@ import cn.nukkit.math.Vector3;
 import java.util.Random;
 
 /**
- * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/12
  */
 public class ParticleCommand extends VanillaCommand {
     private static final String[] ENUM_VALUES = new String[]{"explode", "hugeexplosion", "hugeexplosionseed", "bubble"
@@ -71,7 +71,7 @@ public class ParticleCommand extends VanillaCommand {
         int count = 1;
         if (args.length > 4) {
             try {
-                double c = Double.valueOf(args[4]);
+                double c = Double.parseDouble(args[4]);
                 count = (int) c;
             } catch (Exception e) {
                 //ignore
@@ -82,7 +82,7 @@ public class ParticleCommand extends VanillaCommand {
         int data = -1;
         if (args.length > 5) {
             try {
-                double d = Double.valueOf(args[5]);
+                double d = Double.parseDouble(args[5]);
                 data = (int) d;
             } catch (Exception e) {
                 //ignore
@@ -183,17 +183,17 @@ public class ParticleCommand extends VanillaCommand {
         if (name.startsWith("iconcrack_")) {
             String[] d = name.split("_");
             if (d.length == 3) {
-                return new ItemBreakParticle(pos, Item.get(Integer.valueOf(d[1]), Integer.valueOf(d[2])));
+                return new ItemBreakParticle(pos, Item.get(Integer.parseInt(d[1]), Integer.valueOf(d[2])));
             }
         } else if (name.startsWith("blockcrack_")) {
             String[] d = name.split("_");
             if (d.length == 2) {
-                return new TerrainParticle(pos, Block.get(Integer.valueOf(d[1]) & 0xff, Integer.valueOf(d[1]) >> 12));
+                return new TerrainParticle(pos, Block.get(Integer.parseInt(d[1]) & 0xff, Integer.parseInt(d[1]) >> 12));
             }
         } else if (name.startsWith("blockdust_")) {
             String[] d = name.split("_");
             if (d.length >= 4) {
-                return new DustParticle(pos, Integer.valueOf(d[1]) & 0xff, Integer.valueOf(d[2]) & 0xff, Integer.valueOf(d[3]) & 0xff, d.length >= 5 ? Integer.valueOf(d[4]) & 0xff : 255);
+                return new DustParticle(pos, Integer.parseInt(d[1]) & 0xff, Integer.parseInt(d[2]) & 0xff, Integer.parseInt(d[3]) & 0xff, d.length >= 5 ? Integer.parseInt(d[4]) & 0xff : 255);
             }
         }
 

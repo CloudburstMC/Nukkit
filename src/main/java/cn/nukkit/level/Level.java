@@ -71,7 +71,7 @@ import java.util.concurrent.*;
 import java.util.function.Predicate;
 
 /**
- * author: MagicDroidX Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Level implements ChunkManager, Metadatable {
 
@@ -1978,12 +1978,22 @@ public class Level implements ChunkManager, Metadatable {
         if (player != null && player.getGamemode() > 2) {
             return null;
         }
+        
         Block target = this.getBlock(vector, layer);
+
+        if (player != null && !target.isBlockChangeAllowed(player)) {
+            return null;
+        }
+        
         Item[] drops;
         int dropExp = target.getDropExp();
 
         if (item == null) {
             item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
+        }
+        
+        if (!target.isBreakable(vector, layer, face, item, player, setBlockDestroy)) {
+            return null;
         }
         
         boolean mustDrop = target.mustDrop(vector, layer, face, item, player);
@@ -2279,6 +2289,10 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
+            if (!block.isBlockChangeAllowed(player)) {
+                return null;
+            }
+            
             BlockPlaceEvent event = new BlockPlaceEvent(player, hand, block, target, item);
             if (player.getGamemode() == 2) {
                 Tag tag = item.getNamedTagEntry("CanPlaceOn");
@@ -2827,6 +2841,7 @@ public class Level implements ChunkManager, Metadatable {
         pk.x = pos.getFloorX();
         pk.y = pos.getFloorY();
         pk.z = pos.getFloorZ();
+        pk.dimension = getDimension();
         for (Player p : getPlayers().values()) {
             p.dataPacket(pk);
         }
@@ -3417,7 +3432,7 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             if (toUnload != null) {
-                long[] arr = (long[]) toUnload.toLongArray();
+                long[] arr = toUnload.toLongArray();
                 for (long index : arr) {
                     int X = getHashX(index);
                     int Z = getHashZ(index);

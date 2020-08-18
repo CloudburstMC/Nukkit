@@ -17,8 +17,7 @@ import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockLiquid extends BlockTransparentMeta {
 

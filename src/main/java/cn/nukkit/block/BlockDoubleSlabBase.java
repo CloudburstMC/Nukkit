@@ -8,7 +8,9 @@ import cn.nukkit.item.ItemTool;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public abstract class BlockDoubleSlabBase extends BlockSolidMeta {
-    protected BlockDoubleSlabBase(int meta) {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockDoubleSlabBase(int meta) {
         super(meta);
     }
 

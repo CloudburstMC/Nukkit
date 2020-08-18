@@ -9,9 +9,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 
+import javax.annotation.Nonnull;
+
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockSlab extends BlockTransparentMeta {
     @PowerNukkitOnly
@@ -53,6 +54,7 @@ public abstract class BlockSlab extends BlockTransparentMeta {
         return getToolType() < ItemTool.TYPE_AXE ? 30 : 15;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -74,13 +76,15 @@ public abstract class BlockSlab extends BlockTransparentMeta {
     @Since("1.4.0.0-PN")
     public abstract boolean isSameType(BlockSlab slab);
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
         return side == BlockFace.UP && (getDamage() & 0x08) == 0x08 || side == BlockFace.DOWN && (getDamage() & 0x08) != 0x08;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         setOnTop(false);
         if (face == BlockFace.DOWN) {
             if (target instanceof BlockSlab && target.getBooleanValue(TOP_SLOT_PROPERTY) && isSameType((BlockSlab) target)) {

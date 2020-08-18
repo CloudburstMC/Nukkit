@@ -1,7 +1,8 @@
 package cn.nukkit.item;
 
 /**
- * Created by lion on 21.03.17.
+ * @author lion
+ * @since 21.03.17
  */
 public class ItemBlazeRod extends Item {
 

@@ -21,7 +21,8 @@ import javax.annotation.Nonnull;
 import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
 
 /**
- * Created by CreeperFace on 27. 11. 2016.
+ * @author CreeperFace
+ * @since 27. 11. 2016
  */
 public abstract class BlockButton extends BlockFlowable implements Faceable {
     protected static final BooleanBlockProperty BUTTON_PRESSED = new BooleanBlockProperty("button_pressed_bit", false);
@@ -40,6 +41,8 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -56,6 +59,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return 0.5;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -66,9 +70,10 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return false;
     }
 
+    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if ((target.isTransparent() || !TransparentBlocksWhitelist.isException(target.getId(), block, face, target)) && target.getId() != SNOW_LAYER) {
             return false;
         }
@@ -84,7 +89,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (this.isActivated()) {
             return false;
         }

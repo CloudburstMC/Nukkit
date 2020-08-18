@@ -1,8 +1,7 @@
 package cn.nukkit.math;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Vector2f {
     public final float x;

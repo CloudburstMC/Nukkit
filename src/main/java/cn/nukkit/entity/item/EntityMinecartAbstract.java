@@ -35,11 +35,8 @@ import java.util.Iterator;
 import java.util.Objects;
 
 /**
- * Created by: larryTheCoder on 2017/6/26.
- * <p>
- * Nukkit Project,
- * Minecart and Riding Project,
- * Package cn.nukkit.entity.item in project Nukkit.
+ * @author larryTheCoder (Nukkit Project, Minecart and Riding Project)
+ * @since 2017/6/26
  */
 public abstract class EntityMinecartAbstract extends EntityVehicle {
 
@@ -340,7 +337,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                     double desinityX = mine.x - x;
                     double desinityZ = mine.z - z;
                     Vector3 vector = new Vector3(desinityX, 0, desinityZ).normalize();
-                    Vector3 vec = new Vector3((double) MathHelper.cos((float) yaw * 0.017453292F), 0, (double) MathHelper.sin((float) yaw * 0.017453292F)).normalize();
+                    Vector3 vec = new Vector3(MathHelper.cos((float) yaw * 0.017453292F), 0, MathHelper.sin((float) yaw * 0.017453292F)).normalize();
                     double desinityXZ = Math.abs(vector.dot(vec));
 
                     if (desinityXZ < 0.800000011920929D) {
@@ -431,7 +428,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         fallDistance = 0.0F;
         Vector3 vector = getNextRail(x, y, z);
 
-        y = (double) dy;
+        y = dy;
         boolean isPowered = false;
         boolean isSlowed = false;
 
@@ -460,8 +457,8 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         }
 
         int[][] facing = matrix[block.getRealMeta()];
-        double facing1 = (double) (facing[1][0] - facing[0][0]);
-        double facing2 = (double) (facing[1][2] - facing[0][2]);
+        double facing1 = facing[1][0] - facing[0][0];
+        double facing2 = facing[1][2] - facing[0][2];
         double speedOnTurns = Math.sqrt(facing1 * facing1 + facing2 * facing2);
         double realFacing = motionX * facing1 + motionZ * facing2;
 

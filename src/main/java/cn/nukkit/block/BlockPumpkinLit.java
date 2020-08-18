@@ -1,8 +1,8 @@
 package cn.nukkit.block;
 
 /**
- * Created on 2015/12/8 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/8
  */
 public class BlockPumpkinLit extends BlockPumpkin {
     public BlockPumpkinLit() {

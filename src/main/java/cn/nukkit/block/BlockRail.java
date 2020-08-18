@@ -12,6 +12,7 @@ import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,8 +21,8 @@ import static cn.nukkit.math.BlockFace.*;
 import static cn.nukkit.utils.Rail.Orientation.*;
 
 /**
- * Created by Snake1999 on 2016/1/11.
- * Package cn.nukkit.block in project nukkit
+ * @author Snake1999
+ * @since 2016/1/11
  */
 public class BlockRail extends BlockFlowable implements Faceable {
 
@@ -97,7 +98,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
 
     //Information from http://minecraft.gamepedia.com/Rail
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (!checkCanBePlace(down)) {
             return false;

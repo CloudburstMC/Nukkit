@@ -1,8 +1,7 @@
 package cn.nukkit.level.biome.impl.extremehills;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class ExtremeHillsEdgeBiome extends ExtremeHillsBiome {
 

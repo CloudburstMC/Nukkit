@@ -10,8 +10,7 @@ import cn.nukkit.level.generator.populator.impl.PopulatorSmallMushroom;
 import cn.nukkit.level.generator.populator.impl.tree.SwampTreePopulator;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class SwampBiome extends GrassyBiome {
 

@@ -1,7 +1,7 @@
 package cn.nukkit.plugin.service;
 
 /**
- * Created on 16-11-20.
+ * @since 16-11-20
  */
 public enum ServicePriority {
 

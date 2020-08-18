@@ -8,8 +8,7 @@ import cn.nukkit.math.Vector3;
 import java.util.Iterator;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockIterator implements Iterator<Block> {
     private final Level level;

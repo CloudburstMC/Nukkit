@@ -8,8 +8,7 @@ import cn.nukkit.utils.EventException;
 import co.aikar.timings.Timing;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class RegisteredListener {
 

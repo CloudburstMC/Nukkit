@@ -20,8 +20,8 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created on 2015/12/2 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/2
  */
 public class BlockTorch extends BlockFlowable implements Faceable {
     public static final BlockProperty<TorchAttachment> TORCH_FACING_DIRECTION = new ArrayBlockProperty<>("torch_facing_direction", false, TorchAttachment.class);
@@ -45,6 +45,8 @@ public class BlockTorch extends BlockFlowable implements Faceable {
         return TORCH;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -73,7 +75,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block below = this.down();
 
         if (face != BlockFace.UP && (!target.isTransparent() || TransparentBlocksWhitelist.isException(target.getId(), block, face, target))) {

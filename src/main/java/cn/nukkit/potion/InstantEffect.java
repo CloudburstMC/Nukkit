@@ -1,8 +1,7 @@
 package cn.nukkit.potion;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class InstantEffect extends Effect {
     public InstantEffect(int id, String name, int r, int g, int b) {

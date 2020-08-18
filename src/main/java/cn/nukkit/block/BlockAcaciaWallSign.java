@@ -1,8 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemAcaciaSign;
 
+@PowerNukkitOnly
 public class BlockAcaciaWallSign extends BlockWallSign {
     public BlockAcaciaWallSign() {
         this(0);

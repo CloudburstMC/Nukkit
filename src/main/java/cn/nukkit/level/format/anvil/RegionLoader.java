@@ -14,8 +14,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class RegionLoader extends BaseRegionLoader {
     public RegionLoader(LevelProvider level, int regionX, int regionZ) throws IOException {

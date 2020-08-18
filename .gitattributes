@@ -1,2 +1,13 @@
 # Auto detect text files and perform LF normalization
-*.java text=auto eol=lf
+* text=auto eol=lf
+*.java text eol=lf
+*.md text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.ini text eol=lf
+*.txt text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.dat binary
+*.jar binary
+*.class binary

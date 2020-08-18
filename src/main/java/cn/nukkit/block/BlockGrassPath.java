@@ -6,9 +6,11 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
- * Created on 2015/11/22 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/22
  */
 
 public class BlockGrassPath extends BlockGrass {
@@ -57,7 +59,7 @@ public class BlockGrassPath extends BlockGrass {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
             this.getLevel().setBlock(this, get(FARMLAND), true);

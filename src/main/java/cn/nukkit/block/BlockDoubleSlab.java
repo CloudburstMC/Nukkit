@@ -4,8 +4,7 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Deprecated
 @DeprecationDetails(reason = "Unused and the same as BlockDoubleSlabStone", since = "1.4.0.0-PN", replaceWith = "BlockDoubleSlabBase")

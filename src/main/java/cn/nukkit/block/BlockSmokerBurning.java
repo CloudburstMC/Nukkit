@@ -1,12 +1,15 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySmoker;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.Position;
-import cn.nukkit.nbt.tag.CompoundTag;
 
+import javax.annotation.Nonnull;
+
+@PowerNukkitOnly
 public class BlockSmokerBurning extends BlockFurnaceBurning {
     public BlockSmokerBurning() {
         this(0);
@@ -26,14 +29,20 @@ public class BlockSmokerBurning extends BlockFurnaceBurning {
         return "Burning Smoker";
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
     @Override
-    protected String getEntityName() {
+    public String getBlockEntityType() {
         return BlockEntity.SMOKER;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
     @Override
-    protected BlockEntitySmoker createEntity(Position position, CompoundTag nbt) {
-        return (BlockEntitySmoker) BlockEntity.createBlockEntity(BlockEntity.SMOKER, position, nbt);
+    public Class<? extends BlockEntitySmoker> getBlockEntityClass() {
+        return BlockEntitySmoker.class;
     }
 
     @Override

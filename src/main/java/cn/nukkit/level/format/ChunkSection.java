@@ -12,8 +12,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ParametersAreNonnullByDefault
 public interface ChunkSection {
@@ -156,4 +155,6 @@ public interface ChunkSection {
     default boolean setBlockState(int x, int y, int z, BlockState state) {
         return setBlockStateAtLayer(x, y, z, 0, state);
     }
+
+    int getBlockChangeStateAbove(int x, int y, int z);
 }
