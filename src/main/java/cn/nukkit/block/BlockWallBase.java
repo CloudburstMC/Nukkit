@@ -61,11 +61,16 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         return PROPERTIES;
     }
 
+    @Override
+    public boolean isSolid() {
+        return false;
+    }
+
     @Since("1.3.0.0-PN")
     @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
-        return side == BlockFace.UP;
+        return false;
     }
 
     @Override
@@ -118,18 +123,18 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         }
         int offset = face.getXOffset();
         if (offset < 0) {
-            return boundingBox.getMinX() < MIN_POST_BB /*&& MIN_POST_BB <= boundingBox.getMaxX()*/
+            return boundingBox.getMinX() < MIN_POST_BB
                     && boundingBox.getMinZ() < MIN_POST_BB && MAX_POST_BB < boundingBox.getMaxZ();
         } else if (offset > 0) {
-            return /*boundingBox.getMinX() <= MAX_POST_BB &&*/ MAX_POST_BB < boundingBox.getMaxX()
+            return MAX_POST_BB < boundingBox.getMaxX()
                     && MAX_POST_BB < boundingBox.getMaxZ() && boundingBox.getMinZ() < MAX_POST_BB;
         } else {
             offset = face.getZOffset();
             if (offset < 0) {
-                return boundingBox.getMinZ() < MIN_POST_BB /*&& MIN_POST_BB <= boundingBox.getMaxZ()*/
+                return boundingBox.getMinZ() < MIN_POST_BB
                         && boundingBox.getMinX() < MIN_POST_BB && MIN_POST_BB < boundingBox.getMaxX();
             } else if (offset > 0) {
-                return /*boundingBox.getMinZ() <= MAX_POST_BB &&*/ MAX_POST_BB < boundingBox.getMaxZ()
+                return MAX_POST_BB < boundingBox.getMaxZ()
                         && MAX_POST_BB < boundingBox.getMaxX() && boundingBox.getMinX() < MAX_POST_BB;
             }
         }

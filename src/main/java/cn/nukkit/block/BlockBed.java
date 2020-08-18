@@ -146,14 +146,14 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (down.isTransparent()) {
+        if (!(BlockLever.isSupportValid(down, BlockFace.UP) || down instanceof BlockCauldron)) {
             return false;
         }
         
         Block next = this.getSide(player.getDirection());
         Block downNext = next.down();
 
-        if (!next.canBeReplaced() || downNext.isTransparent()) {
+        if (!next.canBeReplaced() || !(BlockLever.isSupportValid(downNext, BlockFace.UP) || downNext instanceof BlockCauldron)) {
             return false;
         }
         

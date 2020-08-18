@@ -265,34 +265,17 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
     }
 
     private boolean checkSupport(Block support, BlockFace attachmentFace) {
-        if (!support.isTransparent()) {
+        if (BlockLever.isSupportValid(support, attachmentFace)) {
             return true;
         }
-
-        if (support instanceof BlockGlass || support.getId() == BEACON) {
-            return true;
-        } else if (support instanceof BlockSlab) {
-            if (attachmentFace == BlockFace.UP) {
-                return (support.getDamage() & 0x8) == 0x8;
-            } else if (attachmentFace == BlockFace.DOWN) {
-                return (support.getDamage() & 0x8) == 0x0;
-            } else {
-                return false;
-            }
-        } else if (support instanceof BlockStairs) {
-            if (attachmentFace == BlockFace.UP) {
-                return (support.getDamage() & 0x4) == 0x4;
-            } else if (attachmentFace == BlockFace.DOWN) {
-                return (support.getDamage() & 0x4) == 0x0;
-            } else {
-                return false;
-            }
-        } else if (support.getId() == SCAFFOLDING || support instanceof BlockCauldron || support.getId() == HOPPER_BLOCK) {
+        
+        if (attachmentFace == BlockFace.DOWN) {
+            int id = support.getId();
+            return id == CHAIN_BLOCK || id == HOPPER_BLOCK || support instanceof BlockFence;
+        }
+        
+        if (support instanceof BlockCauldron) {
             return attachmentFace == BlockFace.UP;
-        } else if (support instanceof BlockFence || support instanceof BlockWall) {
-            return attachmentFace == BlockFace.UP || attachmentFace == BlockFace.DOWN;
-        } else if (support instanceof BlockChain) {
-            return attachmentFace == BlockFace.DOWN;
         }
 
         return false;
@@ -323,9 +306,9 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
 
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if (block.canBeReplaced() && block.getId() != AIR && block.getId() != BUBBLE_COLUMN && !(block instanceof BlockLiquid)) {
+        /*if (block.canBeReplaced() && block.getId() != AIR && block.getId() != BUBBLE_COLUMN && !(block instanceof BlockLiquid)) {
             face = BlockFace.UP;
-        }
+        }*/
         switch (face) {
             case UP:
                 setAttachmentType(TYPE_ATTACHMENT_STANDING);

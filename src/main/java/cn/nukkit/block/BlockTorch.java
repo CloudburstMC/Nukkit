@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.ArrayBlockProperty;
@@ -13,7 +14,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.TransparentBlocksWhitelist;
 import lombok.Getter;
 
 import javax.annotation.Nonnull;
@@ -61,10 +61,10 @@ public class BlockTorch extends BlockFlowable implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            Block below = this.down();
-            BlockFace side = getTorchAttachment().getAttachedFace();
+            TorchAttachment torchAttachment = getTorchAttachment();
 
-            if (this.getSide(side).isTransparent() && !(side == BlockFace.DOWN && (below instanceof BlockFence || below.getId() == COBBLE_WALL))) {
+            Block support = this.getSide(torchAttachment.getAttachedFace());
+            if (!BlockLever.isSupportValid(support, torchAttachment.getTorchDirection())) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -73,23 +73,34 @@ public class BlockTorch extends BlockFlowable implements Faceable {
 
         return 0;
     }
+    
+    @Nullable
+    private BlockFace findValidSupport() {
+        for (BlockFace horizontalFace : BlockFace.Plane.HORIZONTAL) {
+            if (BlockLever.isSupportValid(getSide(horizontalFace.getOpposite()), horizontalFace)) {
+                return horizontalFace;
+            }
+        }
+        if (BlockLever.isSupportValid(down(), BlockFace.UP)) {
+            return BlockFace.UP;
+        }
+        return null;
+    }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed the logic to follow the same behaviour has vanilla")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        Block below = this.down();
-
-        if (face != BlockFace.UP && (!target.isTransparent() || TransparentBlocksWhitelist.isException(target.getId(), block, face, target))) {
-            this.setBlockFace(face);
-            this.getLevel().setBlock(block, this, true, true);
-
-            return true;
-        } else if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLE_WALL) {
-            this.setTorchAttachment(TorchAttachment.TOP);
-            this.getLevel().setBlock(block, this, true, true);
-
-            return true;
+        if (face == BlockFace.DOWN || !BlockLever.isSupportValid(target, face)) {
+            BlockFace valid = findValidSupport();
+            if (valid == null) {
+                return false;
+            }
+            face = valid;
         }
-        return false;
+        
+        this.setBlockFace(face);
+        this.getLevel().setBlock(block, this, true, true);
+        return true;
     }
 
     @Override

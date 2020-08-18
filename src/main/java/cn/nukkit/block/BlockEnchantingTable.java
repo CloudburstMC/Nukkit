@@ -86,6 +86,12 @@ public class BlockEnchantingTable extends BlockTransparent implements BlockEntit
         return true;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will return the right BB height")
+    @Override
+    public double getMaxY() {
+        return getY() + 12/16.0;
+    }
+
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
@@ -141,5 +147,12 @@ public class BlockEnchantingTable extends BlockTransparent implements BlockEntit
     @Override
     public BlockColor getColor() {
         return BlockColor.RED_BLOCK_COLOR;
+    }
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return false;
     }
 }

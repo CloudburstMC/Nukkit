@@ -80,7 +80,7 @@ public abstract class BlockSlab extends BlockTransparentMeta {
     @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
-        return side == BlockFace.UP && (getDamage() & 0x08) == 0x08 || side == BlockFace.DOWN && (getDamage() & 0x08) != 0x08;
+        return side == BlockFace.UP && isOnTop() || side == BlockFace.DOWN && !isOnTop();
     }
 
     @Override

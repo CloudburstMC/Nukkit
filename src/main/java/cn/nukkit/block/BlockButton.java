@@ -14,7 +14,6 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.TransparentBlocksWhitelist;
 
 import javax.annotation.Nonnull;
 
@@ -74,7 +73,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if ((target.isTransparent() || !TransparentBlocksWhitelist.isException(target.getId(), block, face, target)) && target.getId() != SNOW_LAYER) {
+        if (!BlockLever.isSupportValid(target, face)) {
             return false;
         }
         
@@ -115,9 +114,10 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            BlockFace face = getFacing().getOpposite();
-            Block side = this.getSide(face);
-            if (side.isTransparent() && !side.isSolid()) {
+            BlockFace thisFace = getFacing();
+            BlockFace touchingFace = thisFace.getOpposite();
+            Block side = this.getSide(touchingFace);
+            if (!BlockLever.isSupportValid(side, thisFace)) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }

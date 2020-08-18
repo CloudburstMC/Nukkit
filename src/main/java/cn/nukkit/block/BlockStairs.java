@@ -56,7 +56,7 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
     @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
-        return side == BlockFace.UP && (getDamage() & 0x04) == 0x04 || side == BlockFace.DOWN && (getDamage() & 0x04) != 0x04;
+        return side == BlockFace.UP && isUpsideDown() || side == BlockFace.DOWN && !isUpsideDown();
     }
 
     @Override

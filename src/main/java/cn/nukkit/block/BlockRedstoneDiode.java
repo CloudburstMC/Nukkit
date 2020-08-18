@@ -57,8 +57,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = block.getSide(BlockFace.DOWN);
-        if (down.isTransparent() && down.getId() != COBBLE_WALL) {
+        if (BlockLever.isSupportValid(down(), BlockFace.UP)) {
             return false;
         }
 
@@ -105,8 +104,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
                 }
             }
         } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
-            Block down;
-            if (type == Level.BLOCK_UPDATE_NORMAL && (down = this.getSide(BlockFace.DOWN)).isTransparent() && down.getId() != COBBLE_WALL) {
+            if (type == Level.BLOCK_UPDATE_NORMAL && !BlockLever.isSupportValid(down(), BlockFace.UP)) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             } else if (this.level.getServer().isRedstoneEnabled()) {
@@ -118,7 +116,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
                 }
 
                 this.updateState();
-                return Level.BLOCK_UPDATE_NORMAL;
+                return type;
             }
         }
         return 0;

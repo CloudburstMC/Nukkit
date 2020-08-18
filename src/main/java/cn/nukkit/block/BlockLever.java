@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -11,7 +12,6 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.TransparentBlocksWhitelist;
 
 import javax.annotation.Nonnull;
 
@@ -97,7 +97,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
             int face = this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage();
             BlockFace blockFace = LeverOrientation.byMetadata(face).getFacing().getOpposite();
             Block side = this.getSide(blockFace);
-            if (side.isTransparent() && !side.isSolid()) {
+            if (!isSupportValid(side, blockFace.getOpposite())) {
                 this.level.useBreakOn(this);
             }
         }
@@ -105,14 +105,38 @@ public class BlockLever extends BlockFlowable implements Faceable {
     }
 
     @PowerNukkitDifference(info = "Allows to be placed on walls", since = "1.3.0.0-PN")
-    @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Now, can be placed on solid blocks and always returns false if the placement fails", since= "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isNormalBlock() || target.getId() == SNOW_LAYER || (!target.isTransparent() || TransparentBlocksWhitelist.isException(target.getId(), block, face, target))) {
-            this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
-            this.getLevel().setBlock(block, this, true, true);
+        if (face == BlockFace.DOWN) {
+            return false;
+        }
+        
+        if (!isSupportValid(target, face)) {
+            return false;
+        }
+        
+        this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
+        return this.getLevel().setBlock(block, this, true, true);
+    }
+
+    /**
+     * Check if the given block and its block face is a valid support for a lever
+     * @param support The block that the lever is being placed against
+     * @param face The face that the torch will be touching the block
+     * @return If the support and face combinations can hold the lever
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static boolean isSupportValid(Block support, BlockFace face) {
+        if (support.isSolid(face)) {
             return true;
         }
+
+        if (support instanceof BlockWallBase || support instanceof BlockFence) {
+            return face == BlockFace.UP;
+        }
+        
         return false;
     }
 

@@ -867,11 +867,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public boolean isSolid() {
         return true;
     }
-    
+
+    /**
+     * Check if blocks can be attached in the given side.
+     */
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public boolean isSolid(BlockFace side) {
-        return isSolid();
+        return isSideFull(side);
     }
 
     // https://minecraft.gamepedia.com/Opacity#Lighting
@@ -1486,8 +1489,83 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 0;
     }
 
+    /**
+     * Check if the block is not transparent, is solid and can't provide redstone power.
+     */
     public boolean isNormalBlock() {
         return !isTransparent() && isSolid() && !isPowerSource();
+    }
+
+    /**
+     * Check if the block is not transparent, is solid and is a full cube like a stone block.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isSimpleBlock() {
+        return !isTransparent() && isSolid() && isFullBlock();
+    }
+
+    /**
+     * Check if the given face is fully occupied by the block bounding box.
+     * @param face The face to be checked
+     * @return If and ony if the bounding box completely cover the face
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isSideFull(BlockFace face) {
+        AxisAlignedBB boundingBox = getBoundingBox();
+        if (boundingBox == null) {
+            return false;
+        }
+        
+        if (face.getAxis().getPlane() == BlockFace.Plane.HORIZONTAL) {
+            if (boundingBox.getMinY() != getY() || boundingBox.getMaxY() != getY() + 1) {
+                return false;
+            }
+            int offset = face.getXOffset();
+            if (offset < 0) {
+                return boundingBox.getMinX() == getX()
+                        && boundingBox.getMinZ() == getZ() && boundingBox.getMaxZ() == getZ() + 1;
+            } else if (offset > 0) {
+                return boundingBox.getMaxX() == getX() + 1
+                        && boundingBox.getMaxZ() == getZ() + 1 && boundingBox.getMinZ() == getZ();
+            }
+
+            offset = face.getZOffset();
+            if (offset < 0) {
+                return boundingBox.getMinZ() == getZ()
+                        && boundingBox.getMinX() == getX() && boundingBox.getMaxX() == getX() + 1;
+            }
+            
+            return boundingBox.getMaxZ() == getZ() + 1
+                    && boundingBox.getMaxX() == getX() + 1 && boundingBox.getMinX() == getX();
+        }
+        
+        if (boundingBox.getMinX() != getX() || boundingBox.getMaxX() != getX() + 1 || 
+                boundingBox.getMinZ() != getZ() || boundingBox.getMaxZ() != getZ() + 1) {
+            return false;
+        }
+        
+        if (face.getYOffset() < 0) {
+            return boundingBox.getMinY() == getY();
+        }
+        
+        return boundingBox.getMaxY() == getY() + 1;
+    }
+
+    /**
+     * Check if the block occupies the entire block space, like a stone and normal glass blocks
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isFullBlock() {
+        AxisAlignedBB boundingBox = getBoundingBox();
+        if (boundingBox == null) {
+            return false;
+        }
+        return boundingBox.getMinX() == getX() && boundingBox.getMaxX() == getX() + 1 
+                && boundingBox.getMinY() == getY() && boundingBox.getMaxY() == getY() + 1
+                && boundingBox.getMinZ() == getZ() && boundingBox.getMaxZ() == getZ() + 1;
     }
 
     public static boolean equals(Block b1, Block b2) {

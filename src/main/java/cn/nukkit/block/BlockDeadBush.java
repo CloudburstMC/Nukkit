@@ -48,19 +48,30 @@ public class BlockDeadBush extends BlockFlowable {
 
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
-        if (down.getId() == SAND || down.getId() == TERRACOTTA || down.getId() == STAINED_TERRACOTTA || down.getId() == DIRT  || down.getId() == PODZOL) {
+        if (isSupportValid()) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
         return false;
     }
-
+    
+    private boolean isSupportValid() {
+        switch (down().getId()) {
+            case SAND:
+            case TERRACOTTA:
+            case STAINED_TERRACOTTA:
+            case DIRT:
+            case PODZOL:
+                return true;
+            default:
+                return false;
+        }
+    }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (!isSupportValid()) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
