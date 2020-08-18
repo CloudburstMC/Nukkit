@@ -6,6 +6,8 @@
 *.yml text eol=lf
 *.ini text eol=lf
 *.txt text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
 *.dat binary
 *.jar binary
 *.class binary
