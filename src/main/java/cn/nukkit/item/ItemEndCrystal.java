@@ -35,7 +35,7 @@ public class ItemEndCrystal extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        if (!(target instanceof BlockBedrock) && !(target instanceof BlockObsidian)) return false;
+        if ((!(target instanceof BlockBedrock) && !(target instanceof BlockObsidian)) || face != BlockFace.UP) return false;
         FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
 
         if (chunk == null) {
