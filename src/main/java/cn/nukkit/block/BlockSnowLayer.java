@@ -156,7 +156,7 @@ public class BlockSnowLayer extends BlockFallableMeta {
             setCovered(true);
         }
         
-        if (block.getId() == TALL_GRASS && up().getId() != TALL_GRASS) {
+        if (block.getId() == TALL_GRASS) {
             if (!level.setBlock(this, 0, this, true)) {
                 return false;
             }
