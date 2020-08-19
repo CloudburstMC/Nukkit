@@ -75,7 +75,7 @@ public class BlockTallGrass extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!BlockSweetBerryBush.isSupportValid(down())) {
+            if (!BlockSweetBerryBush.isSupportValid(down(1, 0))) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }

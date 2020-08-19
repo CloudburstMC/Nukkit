@@ -156,7 +156,24 @@ public class BlockSnowLayer extends BlockFallableMeta {
             setCovered(true);
         }
         
+        if (block.getId() == TALL_GRASS && up().getId() != TALL_GRASS) {
+            if (!level.setBlock(this, 0, this, true)) {
+                return false;
+            }
+            level.setBlock(block, 1, block, true, false);
+            return true;
+        }
+        
         return this.getLevel().setBlock(block, this, true);
+    }
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will move the block in layer 1 to layer 0 when breaking in layer 0")
+    @Override
+    public boolean onBreak(Item item) {
+        if (layer != 0) {
+            return super.onBreak(item);
+        }
+        return this.getLevel().setBlock(this, 0, getLevelBlockAtLayer(1), true, true);
     }
 
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will melt on dry biomes and will melt gradually and will cover grass blocks")
