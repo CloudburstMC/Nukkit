@@ -108,4 +108,9 @@ public class BlockStonecutterBlock extends BlockTransparentMeta implements Facea
     public Item toItem() {
         return new ItemBlock(new BlockStonecutterBlock());
     }
+
+    @Override
+    public double getMaxY() {
+        return y + 9/16.0;
+    }
 }
