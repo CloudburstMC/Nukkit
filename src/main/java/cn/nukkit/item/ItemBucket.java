@@ -193,8 +193,12 @@ public class ItemBucket extends Item {
         return this.getDamage() == 1; // Milk
     }
 
+    @PowerNukkitDifference(info = "You can't use milk in spectator mode and milk is now 'drinked' in adventure mode", since = "1.4.0.0-PN")
     @Override
     public boolean onUse(Player player, int ticksUsed) {
+        if (player.isSpectator()) {
+            return false;
+        }
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
 
         player.getServer().getPluginManager().callEvent(consumeEvent);
@@ -203,7 +207,7 @@ public class ItemBucket extends Item {
             return false;
         }
 
-        if (player.isSurvival()) {
+        if (!player.isCreative()) {
             this.count--;
             player.getInventory().setItemInHand(this);
             player.getInventory().addItem(new ItemBucket());
