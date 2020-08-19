@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -14,11 +16,19 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 
 /**
  * @author Nukkit Project Team
  */
 public class BlockLever extends BlockFlowable implements Faceable {
+    public static final ArrayBlockProperty<LeverOrientation> LEVER_DIRECTION = new ArrayBlockProperty<>("lever_direction", false,
+            LeverOrientation.values(), LeverOrientation.DOWN_X, 3, "lever_direction", false, new String[]{
+                    "down_east_west", "east", "west", "south", "north", "up_north_south", "up_east_west", "down_north_south"
+    });
+    public static final BlockProperties PROPERTIES = new BlockProperties(LEVER_DIRECTION, OPEN);
 
     public BlockLever() {
         this(0);
@@ -36,6 +46,14 @@ public class BlockLever extends BlockFlowable implements Faceable {
     @Override
     public int getId() {
         return LEVER;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -64,20 +82,38 @@ public class BlockLever extends BlockFlowable implements Faceable {
     }
 
     public boolean isPowerOn() {
-        return (this.getDamage() & 0x08) > 0;
+        return getBooleanValue(OPEN);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-P`N")
+    public void setPowerOn(boolean powerOn) {
+        setBooleanValue(OPEN, powerOn);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-P`N")
+    public LeverOrientation getLeverOrientation() {
+        return getPropertyValue(LEVER_DIRECTION);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-P`N")
+    public void setLeverOrientation(@Nullable LeverOrientation value) {
+        setPropertyValue(LEVER_DIRECTION, value);
     }
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isPowerOn() ? 15 : 0, isPowerOn() ? 0 : 15));
-        this.setDamage(this.getDamage() ^ 0x08);
+        toggleBooleanProperty(OPEN);
 
         boolean redstone = this.level.getServer().isRedstoneEnabled();
 
         this.getLevel().setBlock(this, this, false, !redstone);
         this.getLevel().addSound(this, Sound.RANDOM_CLICK, 0.8f, isPowerOn() ? 0.58f : 0.5f );
 
-        LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage());
+        LeverOrientation orientation = getLeverOrientation();
         BlockFace face = orientation.getFacing();
 
         if (redstone) {
@@ -94,8 +130,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            int face = this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage();
-            BlockFace blockFace = LeverOrientation.byMetadata(face).getFacing().getOpposite();
+            BlockFace blockFace = getLeverOrientation().getFacing().getOpposite();
             Block side = this.getSide(blockFace);
             if (!isSupportValid(side, blockFace.getOpposite())) {
                 this.level.useBreakOn(this);
@@ -108,15 +143,15 @@ public class BlockLever extends BlockFlowable implements Faceable {
     @PowerNukkitDifference(info = "Now, can be placed on solid blocks and always returns false if the placement fails", since= "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if (face == BlockFace.DOWN) {
-            return false;
+        if (target.canBeReplaced()) {
+            target = target.down();
+            face = BlockFace.UP;
         }
         
         if (!isSupportValid(target, face)) {
             return false;
         }
-        
-        this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
+        setLeverOrientation(LeverOrientation.forFacings(face, player.getHorizontalFacing()));
         return this.getLevel().setBlock(block, this, true, true);
     }
 
@@ -129,7 +164,11 @@ public class BlockLever extends BlockFlowable implements Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static boolean isSupportValid(Block support, BlockFace face) {
-        if (support.isSolid(face)) {
+        if (face == BlockFace.DOWN) {
+            return support.isSolid(BlockFace.DOWN) && (support.isFullBlock() || !support.isTransparent());
+        }
+        
+        if (support.isSolid(face) || support.getId() == GRASS_PATH) {
             return true;
         }
 
@@ -145,7 +184,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
         this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
 
         if (isPowerOn()) {
-            BlockFace face = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage()).getFacing();
+            BlockFace face = getLeverOrientation().getFacing();
             this.level.updateAround(this.getLocation().getSide(face.getOpposite()));
         }
         return true;
@@ -157,7 +196,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
     }
 
     public int getStrongPower(BlockFace side) {
-        return !isPowerOn() ? 0 : LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage()).getFacing() == side ? 15 : 0;
+        return !isPowerOn() ? 0 : getLeverOrientation().getFacing() == side ? 15 : 0;
     }
 
     @Override
@@ -274,7 +313,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
     @PowerNukkitDifference(info = "Fixed the directions", since = "1.3.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromIndex(this.getDamage() & 0x07).getOpposite();
+        return getLeverOrientation().getFacing();
     }
 
     @Override

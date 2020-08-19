@@ -90,6 +90,11 @@ public class BlockTorch extends BlockFlowable implements Faceable {
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed the logic to follow the same behaviour has vanilla")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (target.canBeReplaced()) {
+            target = target.down();
+            face = BlockFace.UP;
+        }
+        
         if (face == BlockFace.DOWN || !BlockLever.isSupportValid(target, face)) {
             BlockFace valid = findValidSupport();
             if (valid == null) {

@@ -270,8 +270,14 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
         }
         
         if (attachmentFace == BlockFace.DOWN) {
-            int id = support.getId();
-            return id == CHAIN_BLOCK || id == HOPPER_BLOCK || support instanceof BlockFence;
+            switch (support.getId()) {
+                case CHAIN_BLOCK:
+                case HOPPER_BLOCK:
+                case IRON_BARS:
+                    return true;
+                default:
+                    return support instanceof BlockFence || support instanceof BlockWallBase;
+            }
         }
         
         if (support instanceof BlockCauldron) {
