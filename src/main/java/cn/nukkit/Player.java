@@ -4254,10 +4254,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         Vector3 motion = this.getDirectionVector().multiply(0.4);
 
-        EntityItem itemEntity = this.level.dropAndGetItem(this.add(0, 1.3, 0), item, motion, 40);
-
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
-        return itemEntity;
+
+        return this.level.dropAndGetItem(this.add(0, 1.3, 0), item, motion, 40);
     }
 
     public void sendPosition(Vector3 pos) {
