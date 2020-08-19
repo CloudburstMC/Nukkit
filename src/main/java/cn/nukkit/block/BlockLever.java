@@ -168,8 +168,15 @@ public class BlockLever extends BlockFlowable implements Faceable {
             return support.isSolid(BlockFace.DOWN) && (support.isFullBlock() || !support.isTransparent());
         }
         
-        if (support.isSolid(face) || support.getId() == GRASS_PATH) {
+        if (support.isSolid(face)) {
             return true;
+        }
+        
+        switch (support.getId()) {
+            case GRASS_PATH:
+            case FARMLAND:
+                return true;
+            default:
         }
 
         if (support instanceof BlockWallBase || support instanceof BlockFence) {
