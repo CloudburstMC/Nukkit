@@ -1,5 +1,7 @@
 package cn.nukkit.level.biome.impl.plains;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.biome.type.GrassyBiome;
 
 /**
@@ -17,5 +19,12 @@ public class PlainsBiome extends GrassyBiome {
     @Override
     public String getName() {
         return "Plains";
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDry() {
+        return true;
     }
 }
