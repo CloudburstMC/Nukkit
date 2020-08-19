@@ -293,7 +293,7 @@ public class BlockSnowLayer extends BlockFallableMeta {
     @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
-        return false;
+        return side == BlockFace.UP && getSnowHeight() == SNOW_HEIGHT.getMaxValue();
     }
 }
 

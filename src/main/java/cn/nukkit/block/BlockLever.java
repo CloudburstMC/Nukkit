@@ -164,19 +164,19 @@ public class BlockLever extends BlockFlowable implements Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static boolean isSupportValid(Block support, BlockFace face) {
+        switch (support.getId()) {
+            case GRASS_PATH:
+            case FARMLAND:
+                return true;
+            default:
+        }
+        
         if (face == BlockFace.DOWN) {
             return support.isSolid(BlockFace.DOWN) && (support.isFullBlock() || !support.isTransparent());
         }
         
         if (support.isSolid(face)) {
             return true;
-        }
-        
-        switch (support.getId()) {
-            case GRASS_PATH:
-            case FARMLAND:
-                return true;
-            default:
         }
 
         if (support instanceof BlockWallBase || support instanceof BlockFence) {
