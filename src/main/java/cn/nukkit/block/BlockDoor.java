@@ -182,7 +182,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         
         Block blockUp = this.up();
         Block blockDown = this.down();
-        if (!blockUp.canBeReplaced() || blockDown.isSolid(BlockFace.UP)) {
+        if (!blockUp.canBeReplaced() || !blockDown.isSolid(BlockFace.UP) && !(blockDown instanceof BlockCauldron)) {
             return false;
         }
         
