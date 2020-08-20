@@ -343,6 +343,9 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
         return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    @Override
     public void setBlockFace(BlockFace face) {
         if (face.getHorizontalIndex() == -1) {
             return;

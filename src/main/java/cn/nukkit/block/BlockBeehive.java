@@ -219,6 +219,8 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntit
         return getPropertyValue(DIRECTION);
     }
     
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     @Override
     public void setBlockFace(BlockFace face) {
         setPropertyValue(DIRECTION, face);

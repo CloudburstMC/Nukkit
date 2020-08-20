@@ -47,6 +47,7 @@ public class BlockStemPumpkin extends BlockCrops implements Faceable {
         return BlockFace.fromIndex(getDamage() >> 3 & 0b111);
     }
 
+    @Override
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void setBlockFace(BlockFace face) {

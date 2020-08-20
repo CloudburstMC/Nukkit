@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -146,7 +147,8 @@ public class BlockRail extends BlockFlowable implements Faceable {
         
         return true;
     }
-    
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     private boolean checkCanBePlace(Block check) {
         if (check == null) {
             return false;

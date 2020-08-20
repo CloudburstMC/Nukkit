@@ -17,12 +17,15 @@ import cn.nukkit.math.BlockFace;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockBubbleColumn extends BlockTransparentMeta {
 
+    @PowerNukkitOnly
     public BlockBubbleColumn() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockBubbleColumn(int meta) {
         super(meta);
     }

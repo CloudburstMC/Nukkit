@@ -67,6 +67,8 @@ public class BlockWallSign extends BlockSignPost {
         return 0;
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     @Override
     public void setBlockFace(BlockFace face) {
         setPropertyValue(FACING_DIRECTION, face);

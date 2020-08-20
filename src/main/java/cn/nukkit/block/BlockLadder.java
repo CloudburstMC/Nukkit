@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
@@ -149,6 +150,7 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
         return super.recalculateBoundingBox();
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (face.getHorizontalIndex() == -1 || !isSupportValid(target, face)) {
@@ -173,6 +175,7 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
         }
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {

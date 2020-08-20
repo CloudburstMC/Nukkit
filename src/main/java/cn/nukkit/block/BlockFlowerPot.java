@@ -95,7 +95,8 @@ public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<B
     public double getResistance() {
         return 0;
     }
-    
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
@@ -107,6 +108,7 @@ public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<B
         return 0;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (!BlockLever.isSupportValid(down(), BlockFace.UP)) {
