@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
@@ -135,6 +136,12 @@ public class BlockFarmland extends BlockTransparentMeta {
     @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
+        return true;
+    }
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will return true")
+    @Override
+    public boolean isTransparent() {
         return true;
     }
 }

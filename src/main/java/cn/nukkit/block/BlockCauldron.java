@@ -389,4 +389,10 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
     public boolean isSolid(BlockFace side) {
         return false;
     }
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will return true")
+    @Override
+    public boolean isTransparent() {
+        return true;
+    }
 }

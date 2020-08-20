@@ -151,14 +151,26 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent()) {
-            if (face.getIndex() >= 2 && face.getIndex() <= 5) {
-                this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, this, true, true);
-                return true;
-            }
+        if (face.getHorizontalIndex() == -1 || !isSupportValid(target, face)) {
+            return false;
         }
-        return false;
+        
+        this.setDamage(face.getIndex());
+        this.getLevel().setBlock(block, this, true, true);
+        return true;
+    }
+    
+    private boolean isSupportValid(Block support, BlockFace face) {
+        switch (support.getId()) {
+            case GLASS:
+            case GLASS_PANE:
+            case STAINED_GLASS:
+            case STAINED_GLASS_PANE:
+            case BEACON:
+                return false;
+            default:
+                return BlockLever.isSupportValid(support, face);
+        }
     }
 
     @Override
@@ -172,7 +184,8 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
                     5,
                     4
             };
-            if (!this.getSide(BlockFace.fromIndex(faces[this.getDamage()])).isSolid()) {
+            BlockFace face = BlockFace.fromIndex(faces[this.getDamage()]);
+            if (!isSupportValid(this.getSide(face), face.getOpposite())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
