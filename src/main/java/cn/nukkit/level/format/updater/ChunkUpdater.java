@@ -22,7 +22,7 @@ public class ChunkUpdater {
      *     <dt>5, 7</dt><dd>Beehive and bee_nest honey level is now limited to 5, was up to 7 (parallel change)</dd>
      *     <dt>8</dt><dd>Sync beehive and bee_nest parallel changes</dd>
      *     <dt>9</dt><dd>Re-render cobblestone walls to connect to glass, stained glass, and other wall types like border and blackstone wall</dd>
-     *     <dt>10</dt><dd>Re-render snow layers to make them cover grass blocks</dd>
+     *     <dt>10</dt><dd>Re-render snow layers to make them cover grass blocks and fix leaves2 issue: https://github.com/PowerNukkit/PowerNukkit/issues/482</dd>
      * </dl>
      */
     @SuppressWarnings("java:S3400")
@@ -61,7 +61,10 @@ public class ChunkUpdater {
     }
     
     private boolean upgradeSnowLayersToV10(Level level, BaseChunk chunk, boolean updated, ChunkSection section) {
-        updated = walk(chunk, section, new SnowLayerUpdater(level, section)) || updated;
+        updated |= walk(chunk, section, new GroupedUpdaters(
+                new NewLeafUpdater(section),
+                new SnowLayerUpdater(level, section)
+        ));
         section.setContentVersion(10);
         return updated;
     }
