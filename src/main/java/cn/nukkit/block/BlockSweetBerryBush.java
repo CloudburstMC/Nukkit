@@ -157,7 +157,7 @@ public class BlockSweetBerryBush extends BlockFlowable {
         if (target.getId() == SWEET_BERRY_BUSH || block.getId() != AIR) {
             return false;
         }
-        if (isSupportValid(block)) {
+        if (isSupportValid(down())) {
             this.getLevel().setBlock(block, this, true);
             return true;
         }
