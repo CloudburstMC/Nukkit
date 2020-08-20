@@ -8,6 +8,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.blockproperty.IntBlockProperty;
+import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
@@ -24,6 +25,8 @@ import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -140,14 +143,21 @@ public class BlockSnowLayer extends BlockFallableMeta {
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will increase the layers and behave as expected in vanilla and will cover grass blocks")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if (Stream.of(target, block)
-                .filter(b-> b.getId() == SNOW_LAYER).map(BlockSnowLayer.class::cast)
-                .filter(b-> b.getSnowHeight() < SNOW_HEIGHT.getMaxValue())
-                .anyMatch(b-> {
-                    b.setSnowHeight(b.getSnowHeight() + 1);
-                    return level.setBlock(b, b, true);
-                })) {
-            return true;
+        Optional<BlockSnowLayer> increment = Stream.of(target, block)
+                .filter(b -> b.getId() == SNOW_LAYER).map(BlockSnowLayer.class::cast)
+                .filter(b -> b.getSnowHeight() < SNOW_HEIGHT.getMaxValue())
+                .findFirst();
+        
+        if (increment.isPresent()) {
+            BlockSnowLayer other = increment.get();
+            if (Arrays.stream(level.getCollidingEntities(new SimpleAxisAlignedBB(
+                    other.x, other.y, other.z, 
+                    other.x + 1, other.y + 1, other.z + 1
+                    ))).anyMatch(e-> e instanceof EntityLiving)) {
+                return false;
+            }
+            other.setSnowHeight(other.getSnowHeight() + 1);
+            return level.setBlock(other, other, true);
         }
 
         Block down = down();
