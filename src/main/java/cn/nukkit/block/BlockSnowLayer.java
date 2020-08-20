@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -16,6 +17,8 @@ import cn.nukkit.level.biome.Biome;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.UpdateBlockPacket;
 import cn.nukkit.utils.BlockColor;
 import com.google.common.base.Preconditions;
 
@@ -174,6 +177,38 @@ public class BlockSnowLayer extends BlockFallableMeta {
             return super.onBreak(item);
         }
         return this.getLevel().setBlock(this, 0, getLevelBlockAtLayer(1), true, true);
+    }
+
+
+    @Since("1.2.1.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void afterRemoval(Block newBlock, boolean update) {
+        if (layer != 0 || newBlock.getId() == getId()) {
+            return;
+        }
+
+        Block layer1 = getLevelBlockAtLayer(1);
+        if (layer1.getId() != TALL_GRASS) {
+            return;
+        }
+        
+        // Clear the layer1 block and do a small hack as workaround a vanilla client rendering bug
+        Level level = getLevel();
+        level.setBlock(this, 0, layer1, true, false);
+        level.setBlock(this, 1, get(AIR), true, false);
+        level.setBlock(this, 0, newBlock, true, false);
+        Server.getInstance().getScheduler().scheduleDelayedTask(()-> {
+            Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(new Player[0]);
+            Vector3[] blocks = {getLocation()};
+            level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 0, false);
+            level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1, false);
+        }, 10);
+        
+        Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(new Player[0]);
+        Vector3[] blocks = {getLocation()};
+        level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 0, false);
+        level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1, false);
     }
 
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will melt on dry biomes and will melt gradually and will cover grass blocks")

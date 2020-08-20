@@ -1841,6 +1841,11 @@ public class Level implements ChunkManager, Metadatable {
         block.z = z;
         block.level = this;
         block.layer = layer;
+        blockPrevious.x = x;
+        blockPrevious.y = y;
+        blockPrevious.z = z;
+        blockPrevious.layer = layer;
+        blockPrevious.level = this;
         int cx = x >> 4;
         int cz = z >> 4;
         long index = Level.chunkHash(cx, cz);
