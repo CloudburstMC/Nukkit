@@ -76,6 +76,19 @@ class NewLeafUpdaterTest {
         setOriginal(acacia.withData(0b1000));
         check(acacia.withData(0b1000), false);
     }
+    
+    @Test
+    void acaciaOldPersistentOldCheckDecay() {
+        setOriginal(acacia.withData(0b0110));
+        check(acacia.withData(0b1100), true);
+    }
+
+
+    @Test
+    void darkOakOldPersistentOldCheckDecay() {
+        setOriginal(darkOak.withData(0b0111));
+        check(darkOak.withData(0b1101), true);
+    }
 
     @Test
     void darkOakOldPersistent() {

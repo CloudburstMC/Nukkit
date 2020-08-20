@@ -43,11 +43,15 @@ public class NewLeafUpdater implements Updater {
             if (forceOldSystem || oldSystemForSure) {
                 // Using the old incorrect persistent flags, let's fix it and force a check decay
                 int newData = legacyDamage & 0b0001; // Wood type
-                if ((legacyDamage & 0x04) == 0x04) {
+                boolean persistent = (legacyDamage & 0x04) == 0x04;
+                if (persistent) {
                     newData |= 0b0100; // Persistent
-                } else {
-                    newData |= 0b1000; // Force check Decay
+                } 
+                
+                if (oldSystemForSure || !persistent) {
+                    newData |= 0b1000; // Check Decay
                 }
+                
                 BlockState fixed = state.withData(newData);
                 if (newData == legacyDamage) {
                     return false;
