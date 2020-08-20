@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.inventory.GrindstoneInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -89,6 +90,9 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
         return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
     }
 
+    @Override
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     public void setBlockFace(BlockFace face) {
         if (face.getHorizontalIndex() == -1) {
             return;

@@ -10,6 +10,8 @@ import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.generic.BaseChunk;
 import lombok.experimental.UtilityClass;
 
+@PowerNukkitOnly
+@Since("1.3.0.0-PN")
 @UtilityClass
 public class ChunkUpdater {
     /**
@@ -22,15 +24,18 @@ public class ChunkUpdater {
      *     <dt>5, 7</dt><dd>Beehive and bee_nest honey level is now limited to 5, was up to 7 (parallel change)</dd>
      *     <dt>8</dt><dd>Sync beehive and bee_nest parallel changes</dd>
      *     <dt>9</dt><dd>Re-render cobblestone walls to connect to glass, stained glass, and other wall types like border and blackstone wall</dd>
+     *     <dt>10</dt><dd>Re-render snow layers to make them cover grass blocks and fix leaves2 issue: https://github.com/PowerNukkit/PowerNukkit/issues/482</dd>
      * </dl>
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @SuppressWarnings("java:S3400")
     public int getContentVersion() {
-        return 9;
+        return 10;
     }
 
-    @PowerNukkitOnly("Needed for level backward compatibility")
-    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void backwardCompatibilityUpdate(Level level, BaseChunk chunk) {
         boolean updated = false;
         for (ChunkSection section : chunk.getSections()) {
@@ -49,11 +54,23 @@ public class ChunkUpdater {
                 updated = walk(chunk, section, new WallUpdater(level, section)) || updated;
                 section.setContentVersion(9);
             }
+            if (section.getContentVersion() == 9) {
+                updated = upgradeSnowLayersToV10(level, chunk, updated, section);
+            }
         }
 
         if (updated) {
             chunk.setChanged();
         }
+    }
+    
+    private boolean upgradeSnowLayersToV10(Level level, BaseChunk chunk, boolean updated, ChunkSection section) {
+        updated |= walk(chunk, section, new GroupedUpdaters(
+                new NewLeafUpdater(section),
+                new SnowLayerUpdater(level, section)
+        ));
+        section.setContentVersion(10);
+        return updated;
     }
     
     private boolean updateBeehiveToV8(BaseChunk chunk, boolean updated, ChunkSection section, boolean updateDirection) {

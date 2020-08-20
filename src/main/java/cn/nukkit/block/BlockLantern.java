@@ -14,14 +14,21 @@ import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public class BlockLantern extends BlockFlowable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BooleanBlockProperty HANGING = new BooleanBlockProperty("hanging", false);
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(HANGING);
 
+    @PowerNukkitOnly
     public BlockLantern() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockLantern(int meta) {
         super(meta);
     }
@@ -45,37 +52,35 @@ public class BlockLantern extends BlockFlowable {
     }
 
     private boolean isBlockAboveValid() {
-        Block up = up();
-        if (up instanceof BlockLeaves) {
-            return false;
-        } else if (up instanceof BlockFence || up instanceof BlockWall || up instanceof BlockChain) {
-            return true;
-        } else if (up instanceof BlockSlab) {
-            return !((BlockSlab) up).isOnTop();
-        } else if (up instanceof BlockStairs) {
-            return !((BlockStairs) up).isUpsideDown();
-        } else if (up.isSolid()) {
-            return true;
-        } else {
-            return false;
+        Block support = up();
+        switch (support.getId()) {
+            case CHAIN_BLOCK:
+            case IRON_BARS:
+            case HOPPER_BLOCK:
+                return true;
+            default:
+                if (support instanceof BlockWallBase || support instanceof BlockFence) {
+                    return true;
+                }
+                if (support instanceof BlockSlab && !((BlockSlab) support).isOnTop()) {
+                    return true;
+                }
+                if (support instanceof BlockStairs && !((BlockStairs) support).isUpsideDown()) {
+                    return true;
+                }
+                return BlockLever.isSupportValid(support, BlockFace.DOWN);
         }
     }
 
     private boolean isBlockUnderValid() {
-        Block down = down();
-        if (down instanceof BlockLeaves || down instanceof BlockChain) {
-            return false;
-        } else if (down instanceof BlockFence || down instanceof BlockWall) {
+        Block support = down();
+        if (support.getId() == HOPPER_BLOCK) {
             return true;
-        } else if (down instanceof BlockSlab) {
-            return ((BlockSlab) down).isOnTop();
-        } else if (down instanceof BlockStairs) {
-            return ((BlockStairs) down).isUpsideDown();
-        } else if (down.isSolid()) {
-            return true;
-        } else {
-            return false;
         }
+        if (support instanceof BlockWallBase || support instanceof BlockFence) {
+            return true;
+        }
+        return BlockLever.isSupportValid(support, BlockFace.UP);
     }
 
     @Override

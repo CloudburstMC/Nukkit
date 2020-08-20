@@ -1,5 +1,6 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
@@ -46,8 +47,10 @@ public class NukkitMath {
         return round(d, 0);
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Optimized")
     public static double round(double d, int precision) {
-        return ((double) Math.round(d * Math.pow(10, precision))) / Math.pow(10, precision);
+        double pow = Math.pow(10, precision);
+        return ((double) Math.round(d * pow)) / pow;
     }
 
     public static double clamp(double value, double min, double max) {

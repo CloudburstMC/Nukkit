@@ -382,4 +382,17 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return false;
+    }
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will return true")
+    @Override
+    public boolean isTransparent() {
+        return true;
+    }
 }

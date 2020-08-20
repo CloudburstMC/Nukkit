@@ -1,5 +1,7 @@
 package cn.nukkit.level.biome;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
@@ -132,5 +134,11 @@ public abstract class Biome implements BlockID {
 
     public boolean canRain() {
         return true;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isDry() {
+        return false;
     }
 }

@@ -142,6 +142,9 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable, BlockEntity
         return BlockFace.fromIndex(index);
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    @Override
     public void setBlockFace(BlockFace face) {
         setDamage((getDamage() & 0x8) | (face.getIndex() & 0x7));
     }

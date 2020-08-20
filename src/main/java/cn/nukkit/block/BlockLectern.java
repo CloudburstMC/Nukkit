@@ -109,7 +109,10 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
     }
-    
+
+    @Override
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     public void setBlockFace(BlockFace face) {
         int horizontalIndex = face.getHorizontalIndex();
         if (horizontalIndex >= 0) {

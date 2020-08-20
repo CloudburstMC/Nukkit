@@ -94,6 +94,13 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable, Blo
         return false;
     }
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return false;
+    }
+
     @Override
     public String getName() {
         return "Sign Post";
@@ -208,6 +215,8 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable, Blo
         return getSignDirection().getClosestBlockFace();
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     @Override
     public void setBlockFace(BlockFace face) {
         setSignDirection(face.getCompassRoseDirection());
