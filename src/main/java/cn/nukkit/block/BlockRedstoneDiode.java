@@ -57,7 +57,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if (BlockLever.isSupportValid(down(), BlockFace.UP)) {
+        if (!isSupportValid(down())) {
             return false;
         }
 
@@ -72,6 +72,10 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
             }
         }
         return true;
+    }
+    
+    private boolean isSupportValid(Block support) {
+        return BlockLever.isSupportValid(support, BlockFace.UP) || support instanceof BlockCauldron;
     }
 
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
@@ -104,7 +108,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
                 }
             }
         } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
-            if (type == Level.BLOCK_UPDATE_NORMAL && !BlockLever.isSupportValid(down(), BlockFace.UP)) {
+            if (type == Level.BLOCK_UPDATE_NORMAL && !isSupportValid(down())) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             } else if (this.level.getServer().isRedstoneEnabled()) {
