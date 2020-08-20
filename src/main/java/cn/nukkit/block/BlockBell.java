@@ -326,7 +326,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
                 break;
             default:
                 setBlockFace(face);
-                if (block.getSide(face).isSolid()) {
+                if (checkSupport(block.getSide(face), face.getOpposite())) {
                     setAttachmentType(TYPE_ATTACHMENT_MULTIPLE);
                 } else {
                     setAttachmentType(TYPE_ATTACHMENT_SIDE);
