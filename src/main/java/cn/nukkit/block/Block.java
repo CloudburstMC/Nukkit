@@ -330,7 +330,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BLOCK_NETHER_WART_BLOCK] = BlockNetherWartBlock.class; //214
             list[RED_NETHER_BRICK] = BlockBricksRedNether.class; //215
             list[BONE_BLOCK] = BlockBone.class; //216
-
+            list[STRUCTURE_VOID] = BlockStructureVoid.class; //217
             list[SHULKER_BOX] = BlockShulkerBox.class; //218
             list[PURPLE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedPurple.class; //219
             list[WHITE_GLAZED_TERRACOTTA] = BlockTerracottaGlazedWhite.class; //220
