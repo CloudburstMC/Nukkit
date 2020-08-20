@@ -1,9 +1,13 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
@@ -126,5 +130,18 @@ public class BlockFarmland extends BlockTransparentMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.DIRT_BLOCK_COLOR;
+    }
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return true;
+    }
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will return true")
+    @Override
+    public boolean isTransparent() {
+        return true;
     }
 }

@@ -8,7 +8,9 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @PowerNukkitOnly
@@ -17,6 +19,8 @@ import java.util.Set;
 public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     @Nonnull
     private final E[] universe;
+    
+    private final String[] persistenceNames;
     
     private final int defaultMeta;
     
@@ -39,18 +43,39 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public ArrayBlockProperty(String name, boolean exportedToItem, E[] universe, E defaultValue, int bitSize, String persistenceName, boolean ordinal) {
+        this(name, exportedToItem, universe, defaultValue, bitSize, persistenceName,ordinal, ordinal? null : 
+                Arrays.stream(universe).map(Objects::toString).map(String::toLowerCase).toArray(String[]::new));
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public ArrayBlockProperty(String name, boolean exportedToItem, E[] universe, E defaultValue, int bitSize, String persistenceName, boolean ordinal, @Nullable String[] persistenceNames) {
         super(name, exportedToItem, bitSize, persistenceName);
+        Preconditions.checkNotNull(universe, "universe can't be null");
+        if (!ordinal) {
+            Preconditions.checkArgument(persistenceNames != null, "persistenceNames can't be null when ordinal is false");
+            Preconditions.checkArgument(persistenceNames.length == universe.length, "persistenceNames and universe must have the same length when ordinal is false");
+            this.persistenceNames = persistenceNames.clone();
+        } else {
+            this.persistenceNames = null;
+        }
         this.ordinal = ordinal;
         this.universe = universe.clone();
         //noinspection unchecked
         this.eClass = (Class<E>) universe.getClass().getComponentType();
         checkUniverseLength(universe);
         Set<E> elements = new HashSet<>();
+        Set<String> persistenceNamesCheck = new HashSet<>();
         int defaultMetaIndex = -1;
         for (int i = 0; i < this.universe.length; i++) {
             E element = this.universe[i];
             Preconditions.checkNotNull(element, "The universe can not contain null values");
             Preconditions.checkArgument(elements.add(element), "The universe can not have duplicated elements");
+            if (!ordinal) {
+                String elementName = this.persistenceNames[i];
+                Preconditions.checkNotNull(elementName, "The persistenceNames can not contain null values");
+                Preconditions.checkArgument(persistenceNamesCheck.add(elementName), "The persistenceNames can not have duplicated elements");
+            }
             if (element.equals(defaultValue)) {
                 defaultMetaIndex = i;
             }
@@ -121,7 +146,7 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
         if (isOrdinal()) {
             return Integer.toString(meta);
         }
-        return getValueForMeta(meta).toString().toLowerCase();
+        return persistenceNames[meta];
     }
 
     @Override

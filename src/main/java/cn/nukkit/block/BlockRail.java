@@ -151,17 +151,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
         if (check == null) {
             return false;
         }
-        if (!check.isTransparent()) {
-            return true;
-        }
-        if (check instanceof BlockHopper) {
-            return true;
-        } else if (check instanceof BlockSlab) {
-            return ((BlockSlab)check).isOnTop();
-        } else if (check instanceof BlockStairs) {
-            return ((BlockStairs)check).isUpsideDown();
-        }
-        return false;
+        return check.isSolid(UP) || check instanceof BlockCauldron;
     }
 
     private Orientation connect(BlockRail rail1, BlockFace face1, BlockRail rail2, BlockFace face2) {

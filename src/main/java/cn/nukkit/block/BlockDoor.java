@@ -81,6 +81,13 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         return false;
     }
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return false;
+    }
+
     @Deprecated @DeprecationDetails(reason = "Limited amount of state data", since = "1.4.0.0-PN", replaceWith = "getCurrentState()")
     public int getFullDamage() {
         return getBigDamage();
@@ -175,7 +182,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         
         Block blockUp = this.up();
         Block blockDown = this.down();
-        if (!blockUp.canBeReplaced() || blockDown.isTransparent()) {
+        if (!blockUp.canBeReplaced() || !blockDown.isSolid(BlockFace.UP) && !(blockDown instanceof BlockCauldron)) {
             return false;
         }
         

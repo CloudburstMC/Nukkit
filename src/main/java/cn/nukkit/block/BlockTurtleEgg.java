@@ -306,19 +306,7 @@ public class BlockTurtleEgg extends BlockFlowable {
     }
 
     public boolean isValidSupport(Block support) {
-        if (support instanceof BlockStairs) {
-            return (support.getDamage() & 0x4) == 0x4;
-        } else if (support instanceof BlockSlab) {
-            return (support.getDamage() & 0x8) == 0x8;
-        } else if (support instanceof BlockGlass || support instanceof BlockIce || support instanceof BlockWall) {
-            return true;
-        } else if (support.getId() == BEACON || support.getId() == HOPPER_BLOCK) {
-            return true;
-        } else if (support instanceof BlockCauldron) {
-            return false;
-        } else {
-            return !support.isTransparent();
-        }
+        return support.isSolid(BlockFace.UP) || support instanceof BlockWallBase;
     }
 
     @Override

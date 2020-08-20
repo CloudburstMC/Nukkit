@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.event.block.BlockHarvestEvent;
@@ -130,7 +132,7 @@ public class BlockSweetBerryBush extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (!isSupportValid(down())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -152,12 +154,24 @@ public class BlockSweetBerryBush extends BlockFlowable {
         if (target.getId() == SWEET_BERRY_BUSH || block.getId() != AIR) {
             return false;
         }
-        Block down = this.down();
-        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.PODZOL) {
+        if (isSupportValid(block)) {
             this.getLevel().setBlock(block, this, true);
             return true;
         }
         return false;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static boolean isSupportValid(Block block) {
+        switch (block.getId()) {
+            case GRASS:
+            case DIRT:
+            case PODZOL:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override

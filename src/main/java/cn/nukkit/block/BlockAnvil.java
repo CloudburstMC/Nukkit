@@ -8,7 +8,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
@@ -153,5 +155,14 @@ public class BlockAnvil extends BlockFallableMeta implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed the returned bounding box")
+    @Override
+    protected AxisAlignedBB recalculateBoundingBox() {
+        BlockFace face = getBlockFace().rotateY();
+        double xOffset = Math.abs(face.getXOffset()) * (2/16.0);
+        double zOffset = Math.abs(face.getZOffset()) * (2/16.0);
+        return new SimpleAxisAlignedBB(x + xOffset, y, z + zOffset, x + 1 - xOffset, y + 1, z + 1 - zOffset);
     }
 }

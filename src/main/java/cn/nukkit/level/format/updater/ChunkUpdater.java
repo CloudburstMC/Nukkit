@@ -22,11 +22,12 @@ public class ChunkUpdater {
      *     <dt>5, 7</dt><dd>Beehive and bee_nest honey level is now limited to 5, was up to 7 (parallel change)</dd>
      *     <dt>8</dt><dd>Sync beehive and bee_nest parallel changes</dd>
      *     <dt>9</dt><dd>Re-render cobblestone walls to connect to glass, stained glass, and other wall types like border and blackstone wall</dd>
+     *     <dt>10</dt><dd>Re-render snow layers to make them cover grass blocks</dd>
      * </dl>
      */
     @SuppressWarnings("java:S3400")
     public int getContentVersion() {
-        return 9;
+        return 10;
     }
 
     @PowerNukkitOnly("Needed for level backward compatibility")
@@ -49,11 +50,20 @@ public class ChunkUpdater {
                 updated = walk(chunk, section, new WallUpdater(level, section)) || updated;
                 section.setContentVersion(9);
             }
+            if (section.getContentVersion() == 9) {
+                updated = upgradeSnowLayersToV10(level, chunk, updated, section);
+            }
         }
 
         if (updated) {
             chunk.setChanged();
         }
+    }
+    
+    private boolean upgradeSnowLayersToV10(Level level, BaseChunk chunk, boolean updated, ChunkSection section) {
+        updated = walk(chunk, section, new SnowLayerUpdater(level, section)) || updated;
+        section.setContentVersion(10);
+        return updated;
     }
     
     private boolean updateBeehiveToV8(BaseChunk chunk, boolean updated, ChunkSection section, boolean updateDirection) {

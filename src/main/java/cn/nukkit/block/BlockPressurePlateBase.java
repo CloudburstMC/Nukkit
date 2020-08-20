@@ -108,8 +108,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            Block down = this.down();
-            if (down.isTransparent() && down.getId() != COBBLE_WALL) {
+            if (!BlockLever.isSupportValid(down(), BlockFace.UP)) {
                 this.level.useBreakOn(this, ItemTool.getBestTool(getToolType()));
             }
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
@@ -126,8 +125,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = block.down();
-        if (down.isTransparent() && down.getId() != COBBLE_WALL) {
+        if (!BlockLever.isSupportValid(down(), BlockFace.UP)) {
             return false;
         }
 
