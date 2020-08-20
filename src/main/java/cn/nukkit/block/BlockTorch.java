@@ -58,6 +58,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
         return 14;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed the block update logic to follow the same behaviour has vanilla")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {

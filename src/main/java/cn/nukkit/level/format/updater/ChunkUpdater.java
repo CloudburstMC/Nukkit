@@ -10,6 +10,8 @@ import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.generic.BaseChunk;
 import lombok.experimental.UtilityClass;
 
+@PowerNukkitOnly
+@Since("1.3.0.0-PN")
 @UtilityClass
 public class ChunkUpdater {
     /**
@@ -25,13 +27,15 @@ public class ChunkUpdater {
      *     <dt>10</dt><dd>Re-render snow layers to make them cover grass blocks and fix leaves2 issue: https://github.com/PowerNukkit/PowerNukkit/issues/482</dd>
      * </dl>
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @SuppressWarnings("java:S3400")
     public int getContentVersion() {
         return 10;
     }
 
-    @PowerNukkitOnly("Needed for level backward compatibility")
-    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void backwardCompatibilityUpdate(Level level, BaseChunk chunk) {
         boolean updated = false;
         for (ChunkSection section : chunk.getSections()) {

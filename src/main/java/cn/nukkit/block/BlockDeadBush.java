@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemStick;
@@ -46,6 +47,7 @@ public class BlockDeadBush extends BlockFlowable {
         return true;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (isSupportValid()) {
@@ -68,6 +70,7 @@ public class BlockDeadBush extends BlockFlowable {
         }
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {

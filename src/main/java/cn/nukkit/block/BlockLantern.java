@@ -14,14 +14,21 @@ import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public class BlockLantern extends BlockFlowable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BooleanBlockProperty HANGING = new BooleanBlockProperty("hanging", false);
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(HANGING);
 
+    @PowerNukkitOnly
     public BlockLantern() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockLantern(int meta) {
         super(meta);
     }

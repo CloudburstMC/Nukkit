@@ -242,6 +242,9 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
         return BlockFace.fromHorizontalIndex(getDamage() & 0x3);
     }
 
+    @Override
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     public void setBlockFace(BlockFace face) {
         if (face == BlockFace.UP || face == BlockFace.DOWN) {
             return;

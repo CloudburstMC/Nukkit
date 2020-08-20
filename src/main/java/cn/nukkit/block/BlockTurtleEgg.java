@@ -108,22 +108,26 @@ public class BlockTurtleEgg extends BlockFlowable {
         return 2.5;
     }
 
+    @PowerNukkitOnly
     public int getEggCount() {
         return getPropertyValue(EGG_COUNT);
     }
 
+    @PowerNukkitOnly
     public void setEggCount(int eggCount) {
         setPropertyValue(EGG_COUNT, eggCount);
     }
 
     @Deprecated
     @DeprecationDetails(since = "1.4.0.0-PN", reason = "Magic values", replaceWith = "getCracks()")
+    @PowerNukkitOnly
     public int getCrackState() {
         return Math.min(getDamage() >> 2 & 0b11, CRACK_STATE_MAX_CRACKED);
     }
 
     @Deprecated
     @DeprecationDetails(since = "1.4.0.0-PN", reason = "Magic values", replaceWith = "setCracks(CrackState)")
+    @PowerNukkitOnly
     public void setCrackState(int crackState) {
         crackState = MathHelper.clamp(crackState, 0, 2);
         setDamage(getDamage() & (DATA_MASK ^ 0b1100) | (crackState << 2));
@@ -233,14 +237,17 @@ public class BlockTurtleEgg extends BlockFlowable {
         return 0;
     }
 
+    @PowerNukkitOnly
     public void hatch() {
         hatch(getEggCount());
     }
 
+    @PowerNukkitOnly
     public void hatch(int eggs) {
         hatch(eggs, new BlockAir());
     }
 
+    @PowerNukkitOnly
     public void hatch(int eggs, Block newState) {
         TurtleEggHatchEvent turtleEggHatchEvent = new TurtleEggHatchEvent(this, eggs, newState);
         //TODO Cancelled by default because EntityTurtle doesn't have AI yet, remove it when AI is added
@@ -351,6 +358,7 @@ public class BlockTurtleEgg extends BlockFlowable {
         }
     }
 
+    @PowerNukkitOnly
     public boolean isValidSupport(Block support) {
         return support.isSolid(BlockFace.UP) || support instanceof BlockWallBase;
     }

@@ -55,6 +55,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     }
 
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (!isSupportValid(down())) {
@@ -79,6 +80,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     }
 
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {

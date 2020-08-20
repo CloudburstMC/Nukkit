@@ -25,12 +25,15 @@ import cn.nukkit.utils.DyeColor;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockSweetBerryBush extends BlockFlowable {
 
+    @PowerNukkitOnly
     public BlockSweetBerryBush() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockSweetBerryBush(int meta) {
         super(meta);
     }
