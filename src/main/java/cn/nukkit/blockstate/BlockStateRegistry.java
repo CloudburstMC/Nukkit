@@ -246,16 +246,36 @@ public class BlockStateRegistry {
     }
 
     private Registration findRegistrationByStateId(BlockState state) {
-        Registration registration = stateIdRegistration.remove(state.getStateId());
-        if (registration != null) {
-            registration.state = state;
-            return registration;
+        Registration registration;
+        try {
+            registration = stateIdRegistration.remove(state.getStateId());
+            if (registration != null) {
+                registration.state = state;
+                return registration;
+            }
+        } catch (Exception e) {
+            try {
+                log.fatal("An error has occurred while trying to get the stateId of state: " +
+                        state.getBlockId() + ":" + state.getDataStorage()
+                        + " - " + state.getProperties()
+                        + " - " + blockIdToPersistenceName.get(state.getBlockId()),
+                        e);
+            } catch (Exception e2) {
+                e.addSuppressed(e2);
+                log.fatal("An error has occurred while trying to get the stateId of state: " +
+                        state.getBlockId() + ":" + state.getDataStorage(), 
+                        e);
+            }
         }
-
-        registration = stateIdRegistration.remove(state.getLegacyStateId());
-        if (registration != null) {
-            registration.state = state;
-            return registration;
+        
+        try {
+            registration = stateIdRegistration.remove(state.getLegacyStateId());
+            if (registration != null) {
+                registration.state = state;
+                return registration;
+            }
+        } catch (Exception e) {
+            log.fatal("An error has occurred while trying to parse the legacyStateId of "+state.getBlockId()+":"+state.getDataStorage(), e);
         }
 
         return logDiscoveryError(state);
