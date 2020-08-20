@@ -306,6 +306,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
             case SKULL_BLOCK:
             case CONDUIT:
             case STANDING_BANNER:
+            case TURTLE_EGG:
                 return true;
 
             // End rods make it become a post if it's placed on the wall

@@ -306,7 +306,7 @@ public class BlockTurtleEgg extends BlockFlowable {
     }
 
     public boolean isValidSupport(Block support) {
-        return isSolid(BlockFace.UP) || support instanceof BlockWallBase;  
+        return support.isSolid(BlockFace.UP) || support instanceof BlockWallBase;
     }
 
     @Override
