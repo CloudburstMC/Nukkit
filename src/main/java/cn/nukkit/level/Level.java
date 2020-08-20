@@ -1418,6 +1418,7 @@ public class Level implements ChunkManager, Metadatable {
         return collides.toArray(new AxisAlignedBB[0]);
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Rounds the AABB to have precision 4 before checking for collision, fix PowerNukkit#506")
     public boolean hasCollision(Entity entity, AxisAlignedBB bb, boolean entities) {
         int minX = NukkitMath.floorDouble(NukkitMath.round(bb.getMinX(), 4));
         int minY = NukkitMath.floorDouble(NukkitMath.round(bb.getMinY(), 4));
