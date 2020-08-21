@@ -118,6 +118,11 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     }
 
     @Override
+    public String getName() {
+        return getType().getName();
+    }
+
+    @Override
     public MinecartType getType() {
         return MinecartType.valueOf(3);
     }
@@ -133,7 +138,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
         super.namedTag.putInt("TNTFuse", this.fuse);
     }
-    
+
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         boolean interact = super.onInteract(player, item, clickedPos);
