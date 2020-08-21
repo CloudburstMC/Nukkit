@@ -33,7 +33,9 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @Deprecated
     @DeprecationDetails(reason = "It's not a constant value and was moved to ChunkUpdater", replaceWith = "ChunkUpdater.getContentVersion()", 
             toBeRemovedAt = "1.5.0.0-PN", since = "1.4.0.0-PN")
-    public static final int CONTENT_VERSION = ChunkUpdater.getContentVersion();
+    public static final int CONTENT_VERSION = ChunkUpdater.getCurrentContentVersion();
+    
+    private boolean delayPaletteUpdates;
 
     protected ChunkSection[] sections;
 
@@ -300,6 +302,9 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     }
 
     private void setInternalSection(float fY, ChunkSection section) {
+        if (isPaletteUpdatesDelayed()) {
+            section.delayPaletteUpdates();
+        }
         this.sections[(int) fY] = section;
         setChanged();
     }
@@ -419,5 +424,33 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             }
         }
         return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void delayPaletteUpdates() {
+        ChunkSection[] sections = this.sections;
+        if (sections != null) {
+            for (ChunkSection section : sections) {
+                if (section != null) {
+                    section.delayPaletteUpdates();
+                }
+            }
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isPaletteUpdatesDelayed() {
+        return delayPaletteUpdates;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setPaletteUpdatesDelayed(boolean delayPaletteUpdates) {
+        this.delayPaletteUpdates = delayPaletteUpdates;
+        if (delayPaletteUpdates) {
+            delayPaletteUpdates();
+        }
     }
 }

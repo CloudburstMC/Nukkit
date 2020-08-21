@@ -38,6 +38,7 @@ class NewLeafUpdaterTest {
     @BeforeEach
     void configure() {
         updater.setForceOldSystem(false);
+        section.delayPaletteUpdates();
     }
     
     @Test

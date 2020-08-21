@@ -30,7 +30,7 @@ public class ChunkUpdater {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("java:S3400")
-    public int getContentVersion() {
+    public int getCurrentContentVersion() {
         return 10;
     }
 
@@ -39,7 +39,7 @@ public class ChunkUpdater {
     public void backwardCompatibilityUpdate(Level level, BaseChunk chunk) {
         boolean updated = false;
         for (ChunkSection section : chunk.getSections()) {
-            if (section.getContentVersion() >= getContentVersion()) {
+            if (section.getContentVersion() >= getCurrentContentVersion()) {
                 continue;
             }
             
