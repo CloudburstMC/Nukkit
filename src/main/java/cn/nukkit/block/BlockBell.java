@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBell;
 import cn.nukkit.entity.Entity;
@@ -15,11 +17,13 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
-public class BlockBell extends BlockTransparentMeta implements Faceable {
+import javax.annotation.Nonnull;
+
+@PowerNukkitOnly
+public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBell> {
     public static final int TYPE_ATTACHMENT_STANDING = 0;
     public static final int TYPE_ATTACHMENT_HANGING = 1;
     public static final int TYPE_ATTACHMENT_SIDE = 2;
@@ -41,6 +45,22 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return BELL;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityBell> getBlockEntityClass() {
+        return BlockEntityBell.class;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.BELL;
     }
 
     private boolean isConnectedTo(BlockFace connectedFace, int attachmentType, BlockFace blockFace) {
@@ -140,7 +160,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         return ring(player, player != null? BellRingEvent.RingCause.HUMAN_INTERACTION : BellRingEvent.RingCause.UNKNOWN);
     }
 
@@ -150,9 +170,6 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
 
     public boolean ring(Entity causeEntity, BellRingEvent.RingCause cause, BlockFace hitFace) {
         BlockEntityBell bell = getOrCreateBlockEntity();
-        if (bell == null) {
-            return true;
-        }
         boolean addException = true;
         BlockFace blockFace = getBlockFace();
         if (hitFace == null) {
@@ -248,32 +265,23 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     }
 
     private boolean checkSupport(Block support, BlockFace attachmentFace) {
-        if (!support.isTransparent()) {
+        if (BlockLever.isSupportValid(support, attachmentFace)) {
             return true;
         }
-
-        if (support instanceof BlockGlass || support.getId() == BEACON) {
-            return true;
-        } else if (support instanceof BlockSlab) {
-            if (attachmentFace == BlockFace.UP) {
-                return (support.getDamage() & 0x8) == 0x8;
-            } else if (attachmentFace == BlockFace.DOWN) {
-                return (support.getDamage() & 0x8) == 0x0;
-            } else {
-                return false;
+        
+        if (attachmentFace == BlockFace.DOWN) {
+            switch (support.getId()) {
+                case CHAIN_BLOCK:
+                case HOPPER_BLOCK:
+                case IRON_BARS:
+                    return true;
+                default:
+                    return support instanceof BlockFence || support instanceof BlockWallBase;
             }
-        } else if (support instanceof BlockStairs) {
-            if (attachmentFace == BlockFace.UP) {
-                return (support.getDamage() & 0x4) == 0x4;
-            } else if (attachmentFace == BlockFace.DOWN) {
-                return (support.getDamage() & 0x4) == 0x0;
-            } else {
-                return false;
-            }
-        } else if (support.getId() == SCAFFOLDING || support instanceof BlockCauldron || support.getId() == HOPPER_BLOCK) {
+        }
+        
+        if (support instanceof BlockCauldron) {
             return attachmentFace == BlockFace.UP;
-        } else if (support instanceof BlockFence || support instanceof BlockWall) {
-            return attachmentFace == BlockFace.UP || attachmentFace == BlockFace.DOWN;
         }
 
         return false;
@@ -303,10 +311,9 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (block.canBeReplaced() && block.getId() != AIR && block.getId() != BUBBLE_COLUMN && !(block instanceof BlockLiquid)) {
             face = BlockFace.UP;
-            //target = block.down();
         }
         switch (face) {
             case UP:
@@ -319,7 +326,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
                 break;
             default:
                 setBlockFace(face);
-                if (block.getSide(face).isSolid()) {
+                if (checkSupport(block.getSide(face), face.getOpposite())) {
                     setAttachmentType(TYPE_ATTACHMENT_MULTIPLE);
                 } else {
                     setAttachmentType(TYPE_ATTACHMENT_SIDE);
@@ -328,22 +335,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
         if (!checkSupport()) {
             return false;
         }
-        this.level.setBlock(this, this, true, true);
-        createBlockEntity();
-        return true;
-    }
-
-    private BlockEntityBell createBlockEntity() {
-        CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BELL);
-        return (BlockEntityBell) BlockEntity.createBlockEntity(BlockEntity.BELL, this, nbt);
-    }
-
-    private BlockEntityBell getOrCreateBlockEntity() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (!(blockEntity instanceof BlockEntityBell)) {
-            blockEntity = createBlockEntity();
-        }
-        return (BlockEntityBell) blockEntity;
+        return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
     }
 
     @Override
@@ -351,6 +343,9 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
         return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    @Override
     public void setBlockFace(BlockFace face) {
         if (face.getHorizontalIndex() == -1) {
             return;
@@ -380,6 +375,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
         return new ItemBlock(new BlockBell());
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

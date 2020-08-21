@@ -12,9 +12,12 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
- * Created on 2015/12/8 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/8
  */
 public class BlockTNT extends BlockSolid {
 
@@ -105,7 +108,7 @@ public class BlockTNT extends BlockSolid {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         if (item.getId() == Item.FLINT_STEEL) {
             item.useOn(this);
             this.prime(80, player);

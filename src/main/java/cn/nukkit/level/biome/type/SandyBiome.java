@@ -3,8 +3,7 @@ package cn.nukkit.level.biome.type;
 import cn.nukkit.block.Block;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class SandyBiome extends CoveredBiome {
     @Override

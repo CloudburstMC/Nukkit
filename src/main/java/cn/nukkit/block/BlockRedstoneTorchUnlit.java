@@ -8,7 +8,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 
 /**
- * Created by CreeperFace on 10.4.2017.
+ * @author CreeperFace
+ * @since 10.4.2017
  */
 public class BlockRedstoneTorchUnlit extends BlockTorch {
 

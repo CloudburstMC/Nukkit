@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * Created by Snake1999 on 2016/1/15.
- * Package cn.nukkit.item.randomitem in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/15
  */
 public final class RandomItem {
     private static final Map<Selector, Float> selectors = new HashMap<>();

@@ -27,8 +27,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Anvil extends BaseLevelProvider {
     public static final int VERSION = 19133;

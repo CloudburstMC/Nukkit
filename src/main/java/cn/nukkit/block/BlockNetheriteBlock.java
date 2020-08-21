@@ -1,11 +1,13 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockNetherite extends BlockSolid{
-    public BlockNetherite() {
+public class BlockNetheriteBlock extends BlockSolid{
+    public BlockNetheriteBlock() {
     }
 
     @Override
@@ -52,5 +54,12 @@ public class BlockNetherite extends BlockSolid{
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isLavaResistant() {
+        return true;
     }
 }

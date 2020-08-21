@@ -2,11 +2,13 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ShapelessRecipe implements CraftingRecipe {
 

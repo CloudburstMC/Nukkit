@@ -3,8 +3,8 @@ package cn.nukkit.item;
 import cn.nukkit.block.Block;
 
 /**
- * Created by Snake1999 on 2016/2/3.
- * Package cn.nukkit.item in project Nukkit.
+ * @author Snake1999
+ * @since 2016/2/3
  */
 public class ItemSkull extends Item {
     public static final int SKELETON_SKULL = 0;

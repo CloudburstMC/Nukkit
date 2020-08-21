@@ -6,10 +6,7 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * @author Niall Lindsay (Niall7459)
- * <p>
- * Nukkit Project
- * </p>
+ * @author Niall Lindsay (Niall7459, Nukkit Project)
  */
 
 public class PopulatorTallSugarcane extends PopulatorSugarcane {

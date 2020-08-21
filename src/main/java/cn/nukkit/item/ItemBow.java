@@ -20,8 +20,7 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemBow extends ItemTool {
 

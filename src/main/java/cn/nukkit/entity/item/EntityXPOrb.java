@@ -11,8 +11,8 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import java.util.List;
 
 /**
- * Created on 2015/12/26 by xtypr.
- * Package cn.nukkit.entity in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/26
  */
 public class EntityXPOrb extends Entity {
 

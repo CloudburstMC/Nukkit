@@ -6,8 +6,8 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.food.Food;
 
 /**
- * Created by Snake1999 on 2016/1/14.
- * Package cn.nukkit.event.player in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/14
  */
 public class PlayerEatFoodEvent extends PlayerEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

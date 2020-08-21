@@ -5,8 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * author: MagicDroidX
- * Nukkit
+ * @author: MagicDroidX (Nukkit)
  */
 /*
 We need to keep this class for backwards compatibility
@@ -28,7 +27,7 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void alert(String message) {
-        log.error(message);
+        log.warn(message);
     }
 
     @Override
@@ -85,7 +84,7 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void alert(String message, Throwable t) {
-        log.error(message, t);
+        log.warn(message, t);
     }
 
     @Override

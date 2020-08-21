@@ -4,12 +4,15 @@ import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockBambooSapling extends BlockFlowable {
@@ -69,7 +72,7 @@ public class BlockBambooSapling extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (isSupportInvalid()) {
             return false;
         }
@@ -89,8 +92,9 @@ public class BlockBambooSapling extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //Bonemeal
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        boolean isBoneMeal = item.getId() == ItemID.DYE && item.getDamage() == 0x0F; //Bonemeal
+        if (isBoneMeal || item.getBlock() != null && item.getBlockId() == BlockID.BAMBOO) {
 
             boolean success = false;
             Block block = this.up();
@@ -103,7 +107,11 @@ public class BlockBambooSapling extends BlockFlowable {
                     item.count--;
                 }
 
-                this.level.addParticle(new BoneMealParticle(this));
+                if (isBoneMeal) {
+                    level.addParticle(new BoneMealParticle(this));
+                } else {
+                    level.addSound(block, Sound.BLOCK_BAMBOO_PLACE, 0.8F, 1.0F);
+                }
             }
 
             return true;

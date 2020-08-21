@@ -4,14 +4,17 @@ import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -94,7 +97,7 @@ public class BlockBamboo extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = down();
         int downId = down.getId();
         if (downId != BAMBOO && downId != BAMBOO_SAPLING) {
@@ -248,8 +251,14 @@ public class BlockBamboo extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean canHarvestWithHand() {
-        return true;
+    public double getBreakTime(Item item, Player player) {
+        double breakTime = super.getBreakTime(item, player);
+
+        if (item.isSword()) {
+            breakTime /= 30;
+        }
+
+        return breakTime;
     }
 
     @Override
@@ -258,13 +267,14 @@ public class BlockBamboo extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //Bonemeal
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        boolean itemIsBoneMeal = item.getId() == ItemID.DYE && item.getDamage() == 0x0F; //Bonemeal
+        if (itemIsBoneMeal || item.getBlock() != null && item.getBlockId() == BlockID.BAMBOO) {
+            int top = (int) y;
             int count = 1;
 
             for (int i = 1; i <= 16; i++) {
                 int id = this.level.getBlockIdAt(this.getFloorX(), this.getFloorY() - i, this.getFloorZ());
-
                 if (id == BAMBOO) {
                     count++;
                 } else {
@@ -272,32 +282,35 @@ public class BlockBamboo extends BlockTransparentMeta {
                 }
             }
 
-            int top = (int) y;
             for (int i = 1; i <= 16; i++) {
                 int id = this.level.getBlockIdAt(this.getFloorX(), this.getFloorY() + i, this.getFloorZ());
-
                 if (id == BAMBOO) {
-                    count++;
                     top++;
+                    count++;
                 } else {
                     break;
                 }
             }
 
-            if (count <= 15) {
-                boolean success = false;
+            if (itemIsBoneMeal && count >= 15) {
+                return false;
+            }
 
-                Block block = this.up((int)y - top + 1);
-                if (block.getId() == 0) {
-                    success = grow(block);
+            boolean success = false;
+
+            Block block = this.up(top - (int)y + 1);
+            if (block.getId() == BlockID.AIR) {
+                success = grow(block);
+            }
+
+            if (success) {
+                if (player != null && player.isSurvival()) {
+                    item.count--;
                 }
-
-                if (success) {
-                    if (player != null && (player.gamemode & 0x01) == 0) {
-                        item.count--;
-                    }
-
-                    this.level.addParticle(new BoneMealParticle(this));
+                if (itemIsBoneMeal) {
+                    level.addParticle(new BoneMealParticle(this));
+                } else {
+                    level.addSound(block, Sound.BLOCK_BAMBOO_PLACE, 0.8F, 1.0F);
                 }
             }
 

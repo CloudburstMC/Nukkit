@@ -1,11 +1,12 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by Pub4Game on 03.01.2016.
+ * @author Pub4Game
+ * @since 03.01.2016
  */
 public class BlockBarrier extends BlockSolid {
 
@@ -22,6 +23,7 @@ public class BlockBarrier extends BlockSolid {
         return "Barrier";
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

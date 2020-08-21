@@ -1,7 +1,8 @@
 package cn.nukkit.item;
 
 /**
- * Created by Leonidius20 on 18.08.18.
+ * @author Leonidius20
+ * @since 18.08.18
  */
 public class ItemMagmaCream extends Item {
 

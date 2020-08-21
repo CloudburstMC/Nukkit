@@ -3,8 +3,8 @@ package cn.nukkit.item.randomitem;
 import cn.nukkit.item.Item;
 
 /**
- * Created by Snake1999 on 2016/1/15.
- * Package cn.nukkit.item.randomitem in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/15
  */
 public class ConstantItemSelector extends Selector {
 

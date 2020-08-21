@@ -1,23 +1,28 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.utils.BlockColor;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.value.WoodType;
+
+import javax.annotation.Nonnull;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockWood2 extends BlockWood {
+    public static final BlockProperty<WoodType> NEW_LOG_TYPE = new ArrayBlockProperty<>("new_log_type", true, new WoodType[]{
+            WoodType.ACACIA, WoodType.DARK_OAK
+    }, WoodType.ACACIA, 2);
+
+    public static final BlockProperties PROPERTIES = new BlockProperties(NEW_LOG_TYPE, PILLAR_AXIS);
 
     public static final int ACACIA = 0;
     public static final int DARK_OAK = 1;
-
-    private static final String[] NAMES = new String[]{
-            "Acacia Wood",
-            "Dark Oak Wood",
-            ""
-    };
 
     public BlockWood2() {
         this(0);
@@ -32,59 +37,21 @@ public class BlockWood2 extends BlockWood {
         return WOOD2;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
     @Override
-    public String getName() {
-        return NAMES[this.getDamage() > 2 ? 0 : this.getDamage()];
-    }
-    
-    @Override
-    protected int getStrippedId() {
-        int damage = getDamage();
-        if ((damage & 0b1100) == 0b1100) { // Only bark
-            return WOOD_BARK;
-        }
-        
-        int typeId = damage & 0x3;
-        if (typeId == 0) {
-            return STRIPPED_ACACIA_LOG;
-        } else {
-            return STRIPPED_DARK_OAK_LOG;
-        }
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
-    protected int getStrippedDamage() {
-        int damage = getDamage();
-        if ((damage & 0b1100) == 0b1100) { // Only bark
-            int typeId = damage & 0x3;
-            if (typeId == 0) {
-                return 0x4 | 0x8;
-            } else {
-                return 0x5 | 0x8;
-            }
-        }
-        
-        return super.getStrippedDamage();
+    public WoodType getWoodType() {
+        return getPropertyValue(NEW_LOG_TYPE);
     }
 
     @Override
-    public Item toItem() {
-        if ((getDamage() & 0b1100) == 0b1100) {
-            return new ItemBlock(new BlockWoodBark(), (this.getDamage() & 0x3) + 4);
-        } else {
-            return new ItemBlock(this, this.getDamage() & 0x03);
-        }
-    }
-
-    @Override
-    public BlockColor getColor() {
-        switch (getDamage() & 0x07) {
-            case ACACIA:
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            case DARK_OAK:
-                return BlockColor.BROWN_BLOCK_COLOR;
-            default:
-                return BlockColor.WOOD_BLOCK_COLOR;
-        }
+    public void setWoodType(WoodType woodType) {
+        setPropertyValue(NEW_LOG_TYPE, woodType);
     }
 }

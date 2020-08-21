@@ -12,8 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.util.HashSet;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockEntityChest extends BlockEntitySpawnableContainer implements BlockEntityNameable {
 
@@ -201,5 +200,11 @@ public class BlockEntityChest extends BlockEntitySpawnableContainer implements B
         }
 
         this.namedTag.putString("CustomName", name);
+    }
+
+    @Override
+    public void onBreak() {
+        unpair();
+        super.onBreak();
     }
 }

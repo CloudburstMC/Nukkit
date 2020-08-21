@@ -5,6 +5,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public class BlockCartographyTable extends BlockSolid {
 
     public BlockCartographyTable() {
@@ -56,7 +59,7 @@ public class BlockCartographyTable extends BlockSolid {
     }
     
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         if (player != null) {
             player.craftingType = Player.CRAFTING_CARTOGRAPHY;
         }

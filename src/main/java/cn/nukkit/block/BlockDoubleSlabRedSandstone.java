@@ -1,16 +1,18 @@
 package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.value.StoneSlab2Type;
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
 /**
- * Created by CreeperFace on 26. 11. 2016.
+ * @author CreeperFace
+ * @since 26. 11. 2016
  */
 @PowerNukkitDifference(info = "Extends BlockDoubleSlabBase only in PowerNukkit")
 public class BlockDoubleSlabRedSandstone extends BlockDoubleSlabBase {
@@ -28,6 +30,8 @@ public class BlockDoubleSlabRedSandstone extends BlockDoubleSlabBase {
         return DOUBLE_RED_SANDSTONE_SLAB;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -63,26 +67,14 @@ public class BlockDoubleSlabRedSandstone extends BlockDoubleSlabBase {
     }
 
     @Override
-    public Item toItem() {
-        return getCurrentState().forItem().withBlockId(BlockID.RED_SANDSTONE_SLAB).asItemBlock();
-    }
-    
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
-            Item slab = toItem();
-            slab.setCount(2);
-            return new Item[]{ slab };
-        } else {
-            return new Item[0];
-        }
+    public int getSingleSlabId() {
+        return RED_SANDSTONE_SLAB;
     }
 
     @Override
     public int getToolTier() {
         return ItemTool.TIER_WOODEN;
     }
-
     @Override
     public boolean canHarvestWithHand() {
         return false;

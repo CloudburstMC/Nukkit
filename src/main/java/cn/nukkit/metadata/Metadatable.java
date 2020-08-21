@@ -5,8 +5,7 @@ import cn.nukkit.plugin.Plugin;
 import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public interface Metadatable {
 

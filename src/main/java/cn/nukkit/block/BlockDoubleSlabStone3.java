@@ -1,9 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.value.StoneSlab3Type;
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -33,6 +34,8 @@ public class BlockDoubleSlabStone3 extends BlockDoubleSlabBase {
         return DOUBLE_STONE_SLAB3;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -68,24 +71,13 @@ public class BlockDoubleSlabStone3 extends BlockDoubleSlabBase {
     }
 
     @Override
-    public Item toItem() {
-        return getCurrentState().forItem().withBlockId(BlockID.STONE_SLAB3).asItemBlock();
-    }
-    
-    @Override
-    public int getToolTier() {
-        return ItemTool.TIER_WOODEN;
+    public int getSingleSlabId() {
+        return STONE_SLAB3;
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
-            Item slab = toItem();
-            slab.setCount(2);
-            return new Item[]{ slab };
-        } else {
-            return new Item[0];
-        }
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

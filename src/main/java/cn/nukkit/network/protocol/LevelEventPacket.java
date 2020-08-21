@@ -4,8 +4,7 @@ import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString
 public class LevelEventPacket extends DataPacket {

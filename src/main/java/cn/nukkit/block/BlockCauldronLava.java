@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCauldron;
 import cn.nukkit.entity.Entity;
@@ -17,6 +18,9 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
 
+import javax.annotation.Nonnull;
+
+@PowerNukkitOnly
 public class BlockCauldronLava extends BlockCauldron {
     public BlockCauldronLava() {
         this(0x8);
@@ -80,7 +84,7 @@ public class BlockCauldronLava extends BlockCauldron {
     }
     
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         BlockEntity be = this.level.getBlockEntity(this);
     
         if (!(be instanceof BlockEntityCauldron)) {

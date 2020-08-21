@@ -96,7 +96,7 @@ public class MesaBiome extends CoveredBiome {
 
     @Override
     public int getGroundId(int x, int y, int z) {
-        return RED_SANDSTONE << 4;
+        return RED_SANDSTONE << Block.DATA_BITS;
     }
 
     @Override

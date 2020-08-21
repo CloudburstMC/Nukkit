@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
@@ -8,11 +11,12 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/11/23 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/23
  */
 public class BlockFlower extends BlockFlowable {
     public static final int TYPE_POPPY = 0;
@@ -60,13 +64,28 @@ public class BlockFlower extends BlockFlowable {
         };
         return names[this.getDamage() & 0x0f];
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static boolean isSupportValid(Block block) {
+        switch (block.getId()) {
+            case GRASS:
+            case DIRT:
+            case FARMLAND:
+            case PODZOL:
+                return true;
+            default:
+                return false;
+        }
+    }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     public boolean canPlantOn(Block block) {
-        return block.getId() == Block.GRASS || block.getId() == Block.DIRT || block.getId() == Block.FARMLAND || block.getId() == Block.PODZOL;
+        return isSupportValid(block);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (canPlantOn(down)) {
             this.getLevel().setBlock(block, this, true);
@@ -76,10 +95,11 @@ public class BlockFlower extends BlockFlowable {
         return false;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will break on normal update if the supporting block is invalid")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (!canPlantOn(down())) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -100,7 +120,7 @@ public class BlockFlower extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) { //Bone meal
             if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;

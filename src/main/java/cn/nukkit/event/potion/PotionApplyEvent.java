@@ -7,8 +7,8 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 
 /**
- * Created by Snake1999 on 2016/1/12.
- * Package cn.nukkit.event.potion in project nukkit
+ * @author Snake1999
+ * @since 2016/1/12
  */
 public class PotionApplyEvent extends PotionEvent implements Cancellable {
 

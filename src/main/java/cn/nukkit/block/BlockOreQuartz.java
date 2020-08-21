@@ -9,8 +9,8 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/12/26 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/26
  */
 public class BlockOreQuartz extends BlockSolid {
 

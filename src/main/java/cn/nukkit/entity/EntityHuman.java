@@ -3,6 +3,8 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.IntPositionEntityData;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -18,8 +20,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityHuman extends EntityHumanType {
 
@@ -349,4 +350,17 @@ public class EntityHuman extends EntityHumanType {
         }
     }
 
+    @Override
+    protected void onBlock(Entity entity, boolean animate) {
+        super.onBlock(entity, animate);
+        Item shield = getInventory().getItemInHand();
+        Item shieldOffhand = getOffhandInventory().getItem(0);
+        if (shield.getId() == ItemID.SHIELD) {
+            shield = damageArmor(shield, entity);
+            getInventory().setItemInHand(shield);
+        } else if (shieldOffhand.getId() == ItemID.SHIELD) {
+            shieldOffhand = damageArmor(shieldOffhand, entity);
+            getOffhandInventory().setItem(0, shieldOffhand);
+        }
+    }
 }

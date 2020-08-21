@@ -3,8 +3,7 @@ package cn.nukkit.item.enchantment.damage;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentDamageAll extends EnchantmentDamage {
 

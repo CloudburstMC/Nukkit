@@ -5,8 +5,7 @@ import cn.nukkit.level.biome.type.GrassyBiome;
 import cn.nukkit.level.generator.populator.impl.PopulatorTree;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ForestBiome extends GrassyBiome {
     public static final int TYPE_NORMAL = 0;

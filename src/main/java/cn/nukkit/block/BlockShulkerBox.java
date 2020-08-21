@@ -1,5 +1,8 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.utils.BlockColor;
@@ -10,6 +13,7 @@ import javax.annotation.Nonnull;
 /**
  * Created by PetteriM1
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockShulkerBox extends BlockUndyedShulkerBox {
 
     public BlockShulkerBox() {
@@ -20,6 +24,8 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
         getMutableState().setDataStorageFromInt(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {

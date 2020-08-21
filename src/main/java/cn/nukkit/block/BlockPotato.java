@@ -6,7 +6,8 @@ import cn.nukkit.item.ItemPotato;
 import java.util.Random;
 
 /**
- * Created by Pub4Game on 15.01.2016.
+ * @author Pub4Game
+ * @since 15.01.2016
  */
 public class BlockPotato extends BlockCrops {
 

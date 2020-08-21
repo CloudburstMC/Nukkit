@@ -3,8 +3,7 @@ package cn.nukkit.entity.data;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ShortEntityData extends EntityData<Integer> {
     public int data;

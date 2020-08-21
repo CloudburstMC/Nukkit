@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockFormEvent;
 import cn.nukkit.item.ItemTool;
@@ -7,7 +8,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by Pub4Game on 27.12.2015.
+ * @author Pub4Game
+ * @since 27.12.2015
  */
 public class BlockSoulSand extends BlockSolid {
 
@@ -39,9 +41,10 @@ public class BlockSoulSand extends BlockSolid {
         return ItemTool.TYPE_SHOVEL;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed MaxY BB, soul sand is a normal full cube in Bedrock Edition")
     @Override
     public double getMaxY() {
-        return this.y + 1 - 0.125;
+        return this.y + 1;
     }
 
     @Override

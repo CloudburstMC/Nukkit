@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBarrel;
 import cn.nukkit.inventory.ContainerInventory;
@@ -15,9 +17,11 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
-public class BlockBarrel extends BlockSolidMeta implements Faceable {
+@PowerNukkitOnly
+public class BlockBarrel extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityBarrel> {
 
     public BlockBarrel() {
         this(0);
@@ -37,8 +41,24 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable {
         return BARREL;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public String getBlockEntityType() {
+        return BlockEntity.BARREL;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityBarrel> getBlockEntityClass() {
+        return BlockEntityBarrel.class;
+    }
+
+    @Override
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (Math.abs(player.x - this.x) < 2 && Math.abs(player.z - this.z) < 2) {
             double y = player.y + player.getEyeHeight();
 
@@ -53,14 +73,7 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable {
             this.setDamage(player.getHorizontalFacing().getOpposite().getIndex());
         }
 
-        this.level.setBlock(block, this, true, false);
-
-        CompoundTag nbt = new CompoundTag("")
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.BARREL)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
+        CompoundTag nbt = new CompoundTag().putList(new ListTag<>("Items"));
 
         if (item.hasCustomName()) {
             nbt.putString("CustomName", item.getCustomName());
@@ -72,46 +85,24 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable {
                 nbt.put(tag.getKey(), tag.getValue());
             }
         }
-
-        BlockEntity.createBlockEntity(BlockEntity.BARREL, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-        return true;
+        
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player == null) {
             return false;
         }
 
-        BlockEntity blockEntity = level.getBlockEntity(this);
-        if (!(blockEntity instanceof BlockEntityBarrel)) {
-            CompoundTag nbt = new CompoundTag("")
-                    .putList(new ListTag<>("Items"))
-                    .putString("id", BlockEntity.BARREL)
-                    .putInt("x", (int) this.x)
-                    .putInt("y", (int) this.y)
-                    .putInt("z", (int) this.z);
+        BlockEntityBarrel barrel = getOrCreateBlockEntity();
 
-            blockEntity = BlockEntity.createBlockEntity(BlockEntity.BARREL, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-            if (blockEntity instanceof BlockEntityBarrel) {
-                ((BlockEntityBarrel) blockEntity).spawnToAll();
-            }
-        }
-
-        if (!(blockEntity instanceof BlockEntityBarrel)) {
+        if (barrel.namedTag.contains("Lock") && barrel.namedTag.get("Lock") instanceof StringTag 
+                && !barrel.namedTag.getString("Lock").equals(item.getCustomName())) {
             return false;
         }
 
-        BlockEntityBarrel barrel = (BlockEntityBarrel) blockEntity;
-
-        if (barrel.namedTag.contains("Lock") && barrel.namedTag.get("Lock") instanceof StringTag) {
-            if (!barrel.namedTag.getString("Lock").equals(item.getCustomName())) {
-                return true;
-            }
-        }
-
         player.addWindow(barrel.getInventory());
-
         return true;
     }
 
@@ -151,6 +142,9 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable {
         return BlockFace.fromIndex(index);
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    @Override
     public void setBlockFace(BlockFace face) {
         setDamage((getDamage() & 0x8) | (face.getIndex() & 0x7));
     }
@@ -163,17 +157,17 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable {
         setDamage((getDamage() & 0x7) | (open? 0x8 : 0x0));
     }
 
-
+    @Override
     public boolean hasComparatorInputOverride() {
         return true;
     }
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntityBarrel blockEntity = getBlockEntity();
 
-        if (blockEntity instanceof BlockEntityBarrel) {
-            return ContainerInventory.calculateRedstone(((BlockEntityBarrel) blockEntity).getInventory());
+        if (blockEntity != null) {
+            return ContainerInventory.calculateRedstone(blockEntity.getInventory());
         }
 
         return super.getComparatorInputOverride();

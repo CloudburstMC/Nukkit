@@ -1,19 +1,28 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityFlowerPot;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFlowerPot;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
  * @author Nukkit Project Team
  */
-public class BlockFlowerPot extends BlockFlowable {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<BlockEntityFlowerPot> {
 
     public BlockFlowerPot() {
         this(0);
@@ -33,6 +42,10 @@ public class BlockFlowerPot extends BlockFlowable {
             case BROWN_MUSHROOM:
             case CACTUS:
             case WITHER_ROSE:
+            case WARPED_FUNGUS:
+            case CRIMSON_FUNGUS:
+            case WARPED_ROOTS:
+            case CRIMSON_ROOTS:
             case BAMBOO:
                 // TODO: 2016/2/4 case NETHER_WART:
                 return true;
@@ -41,6 +54,7 @@ public class BlockFlowerPot extends BlockFlowable {
         }
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -56,6 +70,22 @@ public class BlockFlowerPot extends BlockFlowable {
         return FLOWER_POT_BLOCK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityFlowerPot> getBlockEntityClass() {
+        return BlockEntityFlowerPot.class;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.FLOWER_POT;
+    }
+
     @Override
     public double getHardness() {
         return 0;
@@ -66,14 +96,26 @@ public class BlockFlowerPot extends BlockFlowable {
         return 0;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (face != BlockFace.UP) return false;
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (!BlockLever.isSupportValid(down(), BlockFace.UP)) {
+                level.useBreakOn(this);
+                return type;
+            }
+        }
+        return 0;
+    }
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
+    @Override
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (!BlockLever.isSupportValid(down(), BlockFace.UP)) {
+            return false;
+        }
+        
         CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.FLOWER_POT)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
                 .putShort("item", 0)
                 .putInt("data", 0);
         if (item.hasCustomBlockData()) {
@@ -81,11 +123,8 @@ public class BlockFlowerPot extends BlockFlowable {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        BlockEntityFlowerPot flowerPot = (BlockEntityFlowerPot) BlockEntity.createBlockEntity(BlockEntity.FLOWER_POT, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
-        if (flowerPot == null) return false;
-
-        this.getLevel().setBlock(block, this, true, true);
-        return true;
+        
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
     @Override
@@ -94,37 +133,39 @@ public class BlockFlowerPot extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item) {
+    public boolean onActivate(@Nonnull Item item) {
         return this.onActivate(item, null);
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        if (!(blockEntity instanceof BlockEntityFlowerPot)) return false;
-        if (blockEntity.namedTag.getShort("item") != 0 || blockEntity.namedTag.getInt("mData") != 0) return false;
-        int blockId;
-        int itemMeta;
-        if (!canPlaceIntoFlowerPot(item.getId())) {
-            if (!canPlaceIntoFlowerPot(item.getBlock().getId())) {
-                return true;
-            }
-            blockId = item.getBlock().getId();
-            itemMeta = item.getDamage();
-        } else {
-            blockId = item.getId();
-            itemMeta = item.getDamage();
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
+        if (item.isNull()) {
+            return false;
         }
-        blockEntity.namedTag.putShort("item", blockId);
+        
+        BlockEntityFlowerPot blockEntity = getOrCreateBlockEntity();
+        if (blockEntity.namedTag.getShort("item") != 0 || blockEntity.namedTag.getInt("mData") != 0) {
+            return false;
+        }
+        
+        int contentId = item.getBlockId();
+        if (contentId == -1 || !canPlaceIntoFlowerPot(contentId)) {
+            contentId = item.getId();
+            if (!canPlaceIntoFlowerPot(contentId)) {
+                return false;
+            }
+        }
+        
+        int itemMeta = item.getDamage();
+        blockEntity.namedTag.putShort("item", contentId);
         blockEntity.namedTag.putInt("data", itemMeta);
 
         this.setDamage(1);
         this.getLevel().setBlock(this, this, true);
-        ((BlockEntityFlowerPot) blockEntity).spawnToAll();
+        blockEntity.spawnToAll();
 
-        if (player.isSurvival()) {
-            item.setCount(item.getCount() - 1);
-            player.getInventory().setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+        if (player == null || !player.isCreative()) {
+            item.count--;
         }
         return true;
     }
@@ -134,8 +175,8 @@ public class BlockFlowerPot extends BlockFlowable {
         boolean dropInside = false;
         int insideID = 0;
         int insideMeta = 0;
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityFlowerPot) {
+        BlockEntityFlowerPot blockEntity = getBlockEntity();
+        if (blockEntity != null) {
             dropInside = true;
             insideID = blockEntity.namedTag.getShort("item");
             insideMeta = blockEntity.namedTag.getInt("data");
@@ -144,7 +185,7 @@ public class BlockFlowerPot extends BlockFlowable {
         if (dropInside) {
             return new Item[]{
                     new ItemFlowerPot(),
-                    Block.get(insideID, insideMeta).toItem()
+                    BlockState.of(insideID, insideMeta).getBlock().toItem()
             };
         } else {
             return new Item[]{

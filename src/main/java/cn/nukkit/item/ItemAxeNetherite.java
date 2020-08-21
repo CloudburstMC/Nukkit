@@ -32,4 +32,9 @@ public class ItemAxeNetherite extends ItemTool {
     public int getAttackDamage() {
         return 9;
     }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
+    }
 }

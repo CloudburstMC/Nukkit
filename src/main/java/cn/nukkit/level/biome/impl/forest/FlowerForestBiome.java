@@ -5,8 +5,7 @@ import cn.nukkit.block.BlockFlower;
 import cn.nukkit.level.generator.populator.impl.PopulatorFlower;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class FlowerForestBiome extends ForestBiome {
     public FlowerForestBiome() {

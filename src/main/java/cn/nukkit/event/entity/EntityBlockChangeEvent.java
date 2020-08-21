@@ -6,7 +6,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
- * Created on 15-10-26.
+ * @since 15-10-26
  */
 public class EntityBlockChangeEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFirework;
@@ -29,30 +30,10 @@ public class ItemFirework extends Item {
     public ItemFirework(Integer meta) {
         this(meta, 1);
     }
-
+    
+    @PowerNukkitDifference(info = "Will not add compound tag automatically")
     public ItemFirework(Integer meta, int count) {
         super(FIREWORKS, meta, count, "Fireworks");
-
-        if (!hasCompoundTag() || !this.getNamedTag().contains("Fireworks")) {
-            CompoundTag tag = getNamedTag();
-            if (tag == null) {
-                tag = new CompoundTag();
-
-                CompoundTag ex = new CompoundTag()
-                        .putByteArray("FireworkColor", new byte[]{(byte) DyeColor.BLACK.getDyeData()})
-                        .putByteArray("FireworkFade", new byte[]{})
-                        .putBoolean("FireworkFlicker", false)
-                        .putBoolean("FireworkTrail", false)
-                        .putByte("FireworkType", FireworkExplosion.ExplosionType.CREEPER_SHAPED.ordinal());
-
-                tag.putCompound("Fireworks", new CompoundTag("Fireworks")
-                        .putList(new ListTag<CompoundTag>("Explosions").add(ex))
-                        .putByte("Flight", 1)
-                );
-
-                this.setNamedTag(tag);
-            }
-        }
     }
 
     @Override

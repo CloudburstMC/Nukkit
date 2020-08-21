@@ -1,8 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDarkOakSign;
 
+@PowerNukkitOnly
 public class BlockDarkOakWallSign extends BlockWallSign {
     public BlockDarkOakWallSign() {
         this(0);

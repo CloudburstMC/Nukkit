@@ -1,9 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBanner;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -16,11 +20,15 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.MainLogger;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by PetteriM1
  */
-public class BlockBanner extends BlockTransparentMeta implements Faceable {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+public class BlockBanner extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBanner> {
 
     public BlockBanner() {
         this(0);
@@ -33,6 +41,22 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return STANDING_BANNER;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.BANNER;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityBanner> getBlockEntityClass() {
+        return BlockEntityBanner.class;
     }
 
     @Override
@@ -65,38 +89,54 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
         return true;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (face != BlockFace.DOWN) {
-            if (face == BlockFace.UP) {
-                this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                this.getLevel().setBlock(block, this, true);
-            } else {
-                this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, Block.get(BlockID.WALL_BANNER, this.getDamage()), true);
-            }
-
-            CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)
-                    .putInt("Base", item.getDamage() & 0xf);
-
-            Tag type = item.getNamedTagEntry("Type");
-            if (type instanceof IntTag) {
-                nbt.put("Type", type);
-            }
-            Tag patterns = item.getNamedTagEntry("Patterns");
-            if (patterns instanceof ListTag) {
-                nbt.put("Patterns", patterns);
-            }
-
-            BlockEntityBanner banner = (BlockEntityBanner) BlockEntity.createBlockEntity(BlockEntity.BANNER, this.getChunk(), nbt);
-            return banner != null;
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (face == BlockFace.DOWN) {
+            return false;
         }
-        return false;
+
+        Block layer0 = level.getBlock(this, 0);
+        Block layer1 = level.getBlock(this, 1);
+
+        if (face == BlockFace.UP) {
+            this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
+            if (!this.getLevel().setBlock(block, this, true)) {
+                return false;
+            }
+        } else {
+            this.setDamage(face.getIndex());
+            if (!this.getLevel().setBlock(block, Block.get(BlockID.WALL_BANNER, this.getDamage()), true)) {
+                return false;
+            }
+        }
+
+        CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)
+                .putInt("Base", item.getDamage() & 0xf);
+
+        Tag type = item.getNamedTagEntry("Type");
+        if (type instanceof IntTag) {
+            nbt.put("Type", type);
+        }
+        Tag patterns = item.getNamedTagEntry("Patterns");
+        if (patterns instanceof ListTag) {
+            nbt.put("Patterns", patterns);
+        }
+
+        try {
+            createBlockEntity(nbt);
+            return true;
+        } catch (Exception e) {
+            MainLogger.getLogger().warning("Failed to create the block entity "+getBlockEntityType()+" at "+getLocation(), e);
+            level.setBlock(layer0, 0, layer0, true);
+            level.setBlock(layer0, 1, layer1, true);
+            return false;
+        }
     }
 
     @Override
@@ -114,10 +154,9 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        Item item = Item.get(Item.BANNER);
-        if (blockEntity instanceof BlockEntityBanner) {
-            BlockEntityBanner banner = (BlockEntityBanner) blockEntity;
+        BlockEntityBanner banner = getBlockEntity();
+        Item item = Item.get(ItemID.BANNER);
+        if (banner != null) {
             item.setDamage(banner.getBaseColor() & 0xf);
             item.setNamedTag((item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag())
                     .putInt("Base", banner.getBaseColor() & 0xf));
@@ -152,10 +191,10 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
 
     public DyeColor getDyeColor() {
         if (this.level != null) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
+            BlockEntityBanner blockEntity = getBlockEntity();
 
-            if (blockEntity instanceof BlockEntityBanner) {
-                return ((BlockEntityBanner) blockEntity).getDyeColor();
+            if (blockEntity != null) {
+                return blockEntity.getDyeColor();
             }
         }
 

@@ -9,8 +9,8 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
 /**
- * Created by Snake1999 on 2016/1/22.
- * Package cn.nukkit.command.defaults in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/22
  */
 public class XpCommand extends Command {
     public XpCommand(String name) {

@@ -3,6 +3,7 @@ package cn.nukkit.level;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
@@ -70,7 +71,7 @@ import java.util.concurrent.*;
 import java.util.function.Predicate;
 
 /**
- * author: MagicDroidX Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Level implements ChunkManager, Metadatable {
 
@@ -138,6 +139,8 @@ public class Level implements ChunkManager, Metadatable {
         randomTickBlocks[BlockID.TURTLE_EGG] = true;
         randomTickBlocks[BlockID.BAMBOO] = true;
         randomTickBlocks[BlockID.BAMBOO_SAPLING] = true;
+        randomTickBlocks[BlockID.CRIMSON_NYLIUM] = true;
+        randomTickBlocks[BlockID.WARPED_NYLIUM] = true;
     }
 
     private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();
@@ -1415,13 +1418,14 @@ public class Level implements ChunkManager, Metadatable {
         return collides.toArray(new AxisAlignedBB[0]);
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Rounds the AABB to have precision 4 before checking for collision, fix PowerNukkit#506")
     public boolean hasCollision(Entity entity, AxisAlignedBB bb, boolean entities) {
-        int minX = NukkitMath.floorDouble(bb.getMinX());
-        int minY = NukkitMath.floorDouble(bb.getMinY());
-        int minZ = NukkitMath.floorDouble(bb.getMinZ());
-        int maxX = NukkitMath.ceilDouble(bb.getMaxX());
-        int maxY = NukkitMath.ceilDouble(bb.getMaxY());
-        int maxZ = NukkitMath.ceilDouble(bb.getMaxZ());
+        int minX = NukkitMath.floorDouble(NukkitMath.round(bb.getMinX(), 4));
+        int minY = NukkitMath.floorDouble(NukkitMath.round(bb.getMinY(), 4));
+        int minZ = NukkitMath.floorDouble(NukkitMath.round(bb.getMinZ(), 4));
+        int maxX = NukkitMath.ceilDouble(NukkitMath.round(bb.getMaxX(), 4) - 0.00001);
+        int maxY = NukkitMath.ceilDouble(NukkitMath.round(bb.getMaxY(), 4) - 0.00001);
+        int maxZ = NukkitMath.ceilDouble(NukkitMath.round(bb.getMaxZ(), 4) - 0.00001);
 
         for (int z = minZ; z <= maxZ; ++z) {
             for (int x = minX; x <= maxX; ++x) {
@@ -1837,6 +1841,11 @@ public class Level implements ChunkManager, Metadatable {
         block.z = z;
         block.level = this;
         block.layer = layer;
+        blockPrevious.x = x;
+        blockPrevious.y = y;
+        blockPrevious.z = z;
+        blockPrevious.layer = layer;
+        blockPrevious.level = this;
         int cx = x >> 4;
         int cz = z >> 4;
         long index = Level.chunkHash(cx, cz);
@@ -1975,12 +1984,22 @@ public class Level implements ChunkManager, Metadatable {
         if (player != null && player.getGamemode() > 2) {
             return null;
         }
+        
         Block target = this.getBlock(vector, layer);
+
+        if (player != null && !target.isBlockChangeAllowed(player)) {
+            return null;
+        }
+        
         Item[] drops;
         int dropExp = target.getDropExp();
 
         if (item == null) {
             item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
+        }
+        
+        if (!target.isBreakable(vector, layer, face, item, player, setBlockDestroy)) {
+            return null;
         }
         
         boolean mustDrop = target.mustDrop(vector, layer, face, item, player);
@@ -2029,7 +2048,7 @@ public class Level implements ChunkManager, Metadatable {
 
             if (!setBlockDestroy) {
                 BlockBreakEvent ev = new BlockBreakEvent(player, target, face, item, eventDrops, player.isCreative(),
-                        (Long.sum((long)player.lastBreak, (long)breakTime * 1000)) > System.currentTimeMillis());
+                        (Long.sum(player.lastBreak, (long)breakTime*1000)) > System.currentTimeMillis());
 
                 if (player.isSurvival() && !target.isBreakable(item)) {
                     ev.setCancelled();
@@ -2152,6 +2171,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
 
+    @PowerNukkitDifference(info = "PowerNukkit#403", since = "1.3.1.2-PN")
     public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz, Player player, boolean playSound) {
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
@@ -2261,6 +2281,10 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
+            if (!block.isBlockChangeAllowed(player)) {
+                return null;
+            }
+            
             BlockPlaceEvent event = new BlockPlaceEvent(player, hand, block, target, item);
             if (player.getGamemode() == 2) {
                 Tag tag = item.getNamedTagEntry("CanPlaceOn");
@@ -2288,6 +2312,10 @@ public class Level implements ChunkManager, Metadatable {
             if (event.isCancelled()) {
                 return null;
             }
+        }
+
+        if(hand.getWaterloggingLevel() == 0 && hand.canBeFlowedInto() && (block instanceof BlockLiquid || block.getLevelBlockAtLayer(1) instanceof BlockLiquid)) {
+            return null;
         }
 
         boolean liquidMoved = false;
@@ -2805,6 +2833,7 @@ public class Level implements ChunkManager, Metadatable {
         pk.x = pos.getFloorX();
         pk.y = pos.getFloorY();
         pk.z = pos.getFloorZ();
+        pk.dimension = getDimension();
         for (Player p : getPlayers().values()) {
             p.dataPacket(pk);
         }
@@ -3395,7 +3424,7 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             if (toUnload != null) {
-                long[] arr = (long[]) toUnload.toLongArray();
+                long[] arr = toUnload.toLongArray();
                 for (long index : arr) {
                     int X = getHashX(index);
                     int Z = getHashZ(index);

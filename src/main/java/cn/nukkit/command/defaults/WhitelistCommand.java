@@ -8,8 +8,8 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
 /**
- * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/12
  */
 public class WhitelistCommand extends VanillaCommand {
 
@@ -66,10 +66,10 @@ public class WhitelistCommand extends VanillaCommand {
 
                     return true;
                 case "list":
-                    String result = "";
+                    StringBuilder result = new StringBuilder();
                     int count = 0;
                     for (String player : sender.getServer().getWhitelist().getAll().keySet()) {
-                        result += player + ", ";
+                        result.append(player).append(", ");
                         ++count;
                     }
                     sender.sendMessage(new TranslationContainer("commands.whitelist.list", String.valueOf(count), String.valueOf(count)));

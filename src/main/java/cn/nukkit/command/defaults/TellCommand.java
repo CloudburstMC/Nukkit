@@ -10,8 +10,8 @@ import cn.nukkit.utils.TextFormat;
 import java.util.Objects;
 
 /**
- * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/12
  */
 public class TellCommand extends VanillaCommand {
 
@@ -50,12 +50,12 @@ public class TellCommand extends VanillaCommand {
             return true;
         }
 
-        String msg = "";
+        StringBuilder msg = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
-            msg += args[i] + " ";
+            msg.append(args[i]).append(" ");
         }
         if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
+            msg = new StringBuilder(msg.substring(0, msg.length() - 1));
         }
 
         String displayName = (sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName());

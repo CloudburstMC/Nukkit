@@ -4,7 +4,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 
 /**
- * Created by Pub4Game on 03.07.2016.
+ * @author Pub4Game
+ * @since 03.07.2016
  */
 public class ItemItemFrame extends Item {
 

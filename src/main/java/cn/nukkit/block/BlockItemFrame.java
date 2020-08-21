@@ -16,14 +16,17 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 
 import static cn.nukkit.math.BlockFace.AxisDirection.POSITIVE;
 
 /**
- * Created by Pub4Game on 03.07.2016.
+ * @author Pub4Game
+ * @since 03.07.2016
  */
-public class BlockItemFrame extends BlockTransparentMeta {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityItemFrame> {
     private final static int[] FACING = new int[]{4, 5, 3, 2, 1, 0}; // TODO when 1.13 support arrives, add UP/DOWN facings
 
     private final static int FACING_BITMASK = 0b0111;
@@ -40,6 +43,22 @@ public class BlockItemFrame extends BlockTransparentMeta {
     @Override
     public int getId() {
         return ITEM_FRAME_BLOCK;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.ITEM_FRAME;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityItemFrame> getBlockEntityClass() {
+        return BlockEntityItemFrame.class;
     }
 
     @Override
@@ -66,25 +85,16 @@ public class BlockItemFrame extends BlockTransparentMeta {
         return true;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
-        if (itemFrame == null) {
-            itemFrame = (BlockEntityItemFrame) BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this,
-                    BlockEntity.getDefaultCompound(this, BlockEntity.ITEM_FRAME)
-                            .putByte("ItemRotation", 0)
-                            .putFloat("ItemDropChance", 1.0f));
-        }
-        if (itemFrame == null) {
-            return false;
-        }
-        if (itemFrame.getItem().getId() == Item.AIR) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        BlockEntityItemFrame itemFrame = getOrCreateBlockEntity();
+        if (itemFrame.getItem().isNull()) {
         	Item itemOnFrame = item.clone();
         	if (player != null && player.isSurvival()) {
         		itemOnFrame.setCount(itemOnFrame.getCount() - 1);
@@ -102,30 +112,28 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @PowerNukkitDifference(info = "Allow to place on walls", since = "1.3.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (face.getIndex() > 1 && (target.getId() == COBBLE_WALL || target.isSolid() && (!block.isSolid() || block.canBeReplaced()))) {
-            this.setDamage(FACING[face.getIndex()]);
-            this.getLevel().setBlock(block, this, true, true);
-            CompoundTag nbt = new CompoundTag()
-                    .putString("id", BlockEntity.ITEM_FRAME)
-                    .putInt("x", (int) block.x)
-                    .putInt("y", (int) block.y)
-                    .putInt("z", (int) block.z)
-                    .putByte("ItemRotation", 0)
-                    .putFloat("ItemDropChance", 1.0f);
-            if (item.hasCustomBlockData()) {
-                for (Tag aTag : item.getCustomBlockData().getAllTags()) {
-                    nbt.put(aTag.getName(), aTag);
-                }
-            }
-            BlockEntityItemFrame frame = (BlockEntityItemFrame) BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-            if (frame == null) {
-                return false;
-            }
-            this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_PLACE);
-            return true;
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (face.getHorizontalIndex() == -1 
+                || (target.getId() != COBBLE_WALL && (!target.isSolid() || (block.isSolid() && !block.canBeReplaced())))) {
+            return false;
         }
-        return false;
+        
+        this.setDamage(FACING[face.getIndex()]);
+        CompoundTag nbt = new CompoundTag()
+                .putByte("ItemRotation", 0)
+                .putFloat("ItemDropChance", 1.0f);
+        if (item.hasCustomBlockData()) {
+            for (Tag aTag : item.getCustomBlockData().getAllTags()) {
+                nbt.put(aTag.getName(), aTag);
+            }
+        }
+        BlockEntityItemFrame frame = BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt);
+        if (frame == null) {
+            return false;
+        }
+        
+        this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_PLACE);
+        return true;
     }
 
     @Override
@@ -137,8 +145,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
+        BlockEntityItemFrame itemFrame = getBlockEntity();
         int chance = new Random().nextInt(100) + 1;
         if (itemFrame != null && chance <= (itemFrame.getItemDropChance() * 100)) {
             return new Item[]{
@@ -168,10 +175,10 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntityItemFrame blockEntity = getBlockEntity();
 
-        if (blockEntity instanceof BlockEntityItemFrame) {
-            return ((BlockEntityItemFrame) blockEntity).getAnalogOutput();
+        if (blockEntity != null) {
+            return blockEntity.getAnalogOutput();
         }
 
         return super.getComparatorInputOverride();

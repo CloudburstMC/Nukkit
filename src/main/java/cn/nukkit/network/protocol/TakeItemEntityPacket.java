@@ -3,7 +3,7 @@ package cn.nukkit.network.protocol;
 import lombok.ToString;
 
 /**
- * Created on 15-10-14.
+ * @since 15-10-14
  */
 @ToString
 public class TakeItemEntityPacket extends DataPacket {

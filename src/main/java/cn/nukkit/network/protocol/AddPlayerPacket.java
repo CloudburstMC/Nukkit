@@ -8,8 +8,7 @@ import lombok.ToString;
 import java.util.UUID;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString
 public class AddPlayerPacket extends DataPacket {

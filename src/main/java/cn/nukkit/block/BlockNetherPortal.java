@@ -10,8 +10,8 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 /**
- * Created on 2016/1/5 by xtypr.
- * Package cn.nukkit.block in project nukkit .
+ * @author xtypr
+ * @since 2016/1/5
  * The name NetherPortalBlock comes from minecraft wiki.
  */
 public class BlockNetherPortal extends BlockFlowable implements Faceable {

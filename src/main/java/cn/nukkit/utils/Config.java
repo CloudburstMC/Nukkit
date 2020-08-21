@@ -16,8 +16,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit
+ * @author MagicDroidX (Nukkit)
  */
 public class Config {
 
@@ -124,7 +123,6 @@ public class Config {
         return this.load(file, type, new ConfigSection());
     }
 
-    @SuppressWarnings("unchecked")
     public boolean load(String file, int type, ConfigSection defaultMap) {
         this.correct = true;
         this.type = type;
@@ -216,33 +214,33 @@ public class Config {
     public boolean save(Boolean async) {
         if (this.file == null) throw new IllegalStateException("Failed to save Config. File object is undefined.");
         if (this.correct) {
-            String content = "";
+            StringBuilder content = new StringBuilder();
             switch (this.type) {
                 case Config.PROPERTIES:
-                    content = this.writeProperties();
+                    content = new StringBuilder(this.writeProperties());
                     break;
                 case Config.JSON:
-                    content = new GsonBuilder().setPrettyPrinting().create().toJson(this.config);
+                    content = new StringBuilder(new GsonBuilder().setPrettyPrinting().create().toJson(this.config));
                     break;
                 case Config.YAML:
                     DumperOptions dumperOptions = new DumperOptions();
                     dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
                     Yaml yaml = new Yaml(dumperOptions);
-                    content = yaml.dump(this.config);
+                    content = new StringBuilder(yaml.dump(this.config));
                     break;
                 case Config.ENUM:
                     for (Object o : this.config.entrySet()) {
                         Map.Entry entry = (Map.Entry) o;
-                        content += entry.getKey() + "\r\n";
+                        content.append(entry.getKey()).append("\r\n");
                     }
                     break;
             }
             if (async) {
-                Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content));
+                Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content.toString()));
 
             } else {
                 try {
-                    Utils.writeFile(this.file, content);
+                    Utils.writeFile(this.file, content.toString());
                 } catch (IOException e) {
                     Server.getInstance().getLogger().logException(e);
                 }
@@ -261,7 +259,6 @@ public class Config {
         return this.get(key, null);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T get(String key, T defaultValue) {
         return this.correct ? this.config.get(key, defaultValue) : defaultValue;
     }
@@ -458,7 +455,7 @@ public class Config {
     }
 
     private String writeProperties() {
-        String content = "#Properties Config file\r\n#" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + "\r\n";
+        StringBuilder content = new StringBuilder("#Properties Config file\r\n#" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + "\r\n");
         for (Object o : this.config.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
             Object v = entry.getValue();
@@ -466,9 +463,9 @@ public class Config {
             if (v instanceof Boolean) {
                 v = (Boolean) v ? "on" : "off";
             }
-            content += k + "=" + v + "\r\n";
+            content.append(k).append("=").append(v).append("\r\n");
         }
-        return content;
+        return content.toString();
     }
 
     private void parseProperties(String content) {
@@ -537,28 +534,33 @@ public class Config {
     }
 
     private void parseContent(String content) {
-        switch (this.type) {
-            case Config.PROPERTIES:
-                this.parseProperties(content);
-                break;
-            case Config.JSON:
-                GsonBuilder builder = new GsonBuilder();
-                Gson gson = builder.create();
-                this.config = new ConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
-                }.getType()));
-                break;
-            case Config.YAML:
-                DumperOptions dumperOptions = new DumperOptions();
-                dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                Yaml yaml = new Yaml(dumperOptions);
-                this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
-                break;
-            // case Config.SERIALIZED
-            case Config.ENUM:
-                this.parseList(content);
-                break;
-            default:
-                this.correct = false;
+        try {
+            switch (this.type) {
+                case Config.PROPERTIES:
+                    this.parseProperties(content);
+                    break;
+                case Config.JSON:
+                    GsonBuilder builder = new GsonBuilder();
+                    Gson gson = builder.create();
+                    this.config = new ConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
+                    }.getType()));
+                    break;
+                case Config.YAML:
+                    DumperOptions dumperOptions = new DumperOptions();
+                    dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+                    Yaml yaml = new Yaml(dumperOptions);
+                    this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
+                    break;
+                // case Config.SERIALIZED
+                case Config.ENUM:
+                    this.parseList(content);
+                    break;
+                default:
+                    this.correct = false;
+            }
+        } catch (Exception e) {
+          MainLogger.getLogger().warning("Failed to parse the config file "+file, e);
+          throw e;
         }
     }
 

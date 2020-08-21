@@ -39,7 +39,7 @@ public class BlockPressurePlateStone extends BlockPressurePlateBase {
 
     @Override
     public double getResistance() {
-        return 2.5D;
+        return 6;
     }
 
     @Override

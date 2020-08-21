@@ -32,4 +32,9 @@ public class ItemShovelNetherite extends ItemTool {
     public int getAttackDamage() {
         return 5;
     }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
+    }
 }

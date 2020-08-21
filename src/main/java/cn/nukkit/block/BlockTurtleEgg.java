@@ -1,6 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.value.CrackState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.mob.EntityGhast;
@@ -18,24 +25,39 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.BoneMealParticle;
-import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.*;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockTurtleEgg extends BlockFlowable {
+    public static final BlockProperty<Integer> EGG_COUNT = new ArrayBlockProperty<>("turtle_egg_count", false,
+            new Integer[]{1,2,3,4}, 1, 2, "turtle_egg_count", false,
+            new String[]{"one_egg", "two_egg", "three_egg", "four_egg"});
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final ArrayBlockProperty<CrackState> CRACK_STATE = new ArrayBlockProperty<>("crack_state", false, CrackState.class);
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(EGG_COUNT, CRACK_STATE);
+    
+    @PowerNukkitOnly @Deprecated 
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "New property system", replaceWith = "CrackState.NO_CRACKS")
     public static final int CRACK_STATE_NO_CRACKS = 0;
+    @PowerNukkitOnly @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "New property system", replaceWith = "CrackState.CRACKED")
     public static final int CRACK_STATE_CRACKED = 1;
+    @PowerNukkitOnly @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "New property system", replaceWith = "CrackState.MAX_CRACKED")
     public static final int CRACK_STATE_MAX_CRACKED = 2;
 
     public BlockTurtleEgg() {
@@ -51,11 +73,31 @@ public class BlockTurtleEgg extends BlockFlowable {
         return TURTLE_EGG;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+    
     @Override
     public String getName() {
         return "Turtle Egg";
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public CrackState getCracks() {
+        return getPropertyValue(CRACK_STATE);
+    }
+    
+    public void setCracks(@Nullable CrackState cracks) {
+        setPropertyValue(CRACK_STATE, cracks);
+    }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Override
     public double getHardness() {
         return 0.5;
@@ -66,18 +108,26 @@ public class BlockTurtleEgg extends BlockFlowable {
         return 2.5;
     }
 
+    @PowerNukkitOnly
     public int getEggCount() {
-        return (getDamage() & 0b11) + 1;
+        return getPropertyValue(EGG_COUNT);
     }
 
+    @PowerNukkitOnly
     public void setEggCount(int eggCount) {
-        setDamage(getDamage() & (DATA_MASK ^ 0b11) | ((eggCount - 1) & 0b11));
+        setPropertyValue(EGG_COUNT, eggCount);
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Magic values", replaceWith = "getCracks()")
+    @PowerNukkitOnly
     public int getCrackState() {
         return Math.min(getDamage() >> 2 & 0b11, CRACK_STATE_MAX_CRACKED);
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Magic values", replaceWith = "setCracks(CrackState)")
+    @PowerNukkitOnly
     public void setCrackState(int crackState) {
         crackState = MathHelper.clamp(crackState, 0, 2);
         setDamage(getDamage() & (DATA_MASK ^ 0b1100) | (crackState << 2));
@@ -89,14 +139,13 @@ public class BlockTurtleEgg extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        if (item.getBlock() != null && item.getBlock().getId() == TURTLE_EGG && (player == null || !player.isSneaking())) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        if (item.getBlock() != null && item.getBlockId() == TURTLE_EGG && (player == null || !player.isSneaking())) {
             int eggCount = getEggCount();
             if (eggCount >= 4) {
                 return false;
             }
-            BlockTurtleEgg newState = new BlockTurtleEgg(getDamage());
-            newState.setEggCount(eggCount + 1);
+            Block newState = getCurrentState().withProperty(EGG_COUNT, eggCount + 1).getBlock();
             BlockPlaceEvent placeEvent = new BlockPlaceEvent(
                     player,
                     newState,
@@ -113,7 +162,7 @@ public class BlockTurtleEgg extends BlockFlowable {
             Block placeBlock = placeEvent.getBlock();
             this.level.addLevelSoundEvent(this,
                     LevelSoundEventPacket.SOUND_PLACE,
-                    GlobalBlockPalette.getOrCreateRuntimeId(placeBlock.getId(), placeBlock.getDamage()));
+                    placeBlock.getRuntimeId());
             item.setCount(item.getCount() - 1);
 
             if (down().getId() == SAND) {
@@ -164,14 +213,14 @@ public class BlockTurtleEgg extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (down().getId() == Block.SAND) {
+            if (down().getId() == BlockID.SAND) {
                 float celestialAngle = level.calculateCelestialAngle(level.getTime(), 1);
                 ThreadLocalRandom random = ThreadLocalRandom.current();
                 if (0.70 > celestialAngle && celestialAngle > 0.65 || random.nextInt(500) == 0) {
-                    int crackState = getCrackState();
-                    if (crackState < CRACK_STATE_MAX_CRACKED) {
+                    CrackState crackState = getCracks();
+                    if (crackState != CrackState.MAX_CRACKED) {
                         BlockTurtleEgg newState = clone();
-                        newState.setCrackState(crackState + 1);
+                        newState.setCracks(crackState.getNext());
                         BlockGrowEvent event = new BlockGrowEvent(this, newState);
                         this.level.getServer().getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
@@ -188,14 +237,17 @@ public class BlockTurtleEgg extends BlockFlowable {
         return 0;
     }
 
+    @PowerNukkitOnly
     public void hatch() {
         hatch(getEggCount());
     }
 
+    @PowerNukkitOnly
     public void hatch(int eggs) {
         hatch(eggs, new BlockAir());
     }
 
+    @PowerNukkitOnly
     public void hatch(int eggs, Block newState) {
         TurtleEggHatchEvent turtleEggHatchEvent = new TurtleEggHatchEvent(this, eggs, newState);
         //TODO Cancelled by default because EntityTurtle doesn't have AI yet, remove it when AI is added
@@ -226,7 +278,7 @@ public class BlockTurtleEgg extends BlockFlowable {
                     if (turtle != null) {
                         turtle.setBreedingAge(-24000);
                         turtle.setHomePos(new Vector3(x, y, z));
-                        turtle.setDataFlag(EntityTurtle.DATA_FLAGS, EntityTurtle.DATA_FLAG_BABY, true);
+                        turtle.setDataFlag(Entity.DATA_FLAGS, Entity.DATA_FLAG_BABY, true);
                         turtle.setScale(0.16f);
                         turtle.spawnToAll();
                         continue;
@@ -291,14 +343,13 @@ public class BlockTurtleEgg extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (!isValidSupport(block.down(1, 0))) {
             return false;
         }
 
-        this.setDamage(0);
         if (this.level.setBlock(this, this, true, true)) {
-            if (down().getId() == Block.SAND) {
+            if (down().getId() == BlockID.SAND) {
                 this.level.addParticle(new BoneMealParticle(this));
             }
             return true;
@@ -307,20 +358,9 @@ public class BlockTurtleEgg extends BlockFlowable {
         }
     }
 
+    @PowerNukkitOnly
     public boolean isValidSupport(Block support) {
-        if (support instanceof BlockStairs) {
-            return (support.getDamage() & 0x4) == 0x4;
-        } else if (support instanceof BlockSlab) {
-            return (support.getDamage() & 0x8) == 0x8;
-        } else if (support instanceof BlockGlass || support instanceof BlockIce || support instanceof BlockWall) {
-            return true;
-        } else if (support.getId() == BEACON || support.getId() == HOPPER_BLOCK) {
-            return true;
-        } else if (support instanceof BlockCauldron) {
-            return false;
-        } else {
-            return !support.isTransparent();
-        }
+        return support.isSolid(BlockFace.UP) || support instanceof BlockWallBase;
     }
 
     @Override
@@ -333,6 +373,7 @@ public class BlockTurtleEgg extends BlockFlowable {
         return true;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

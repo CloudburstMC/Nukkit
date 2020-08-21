@@ -3,8 +3,7 @@ package cn.nukkit.inventory;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class FurnaceRecipe implements SmeltingRecipe {
 

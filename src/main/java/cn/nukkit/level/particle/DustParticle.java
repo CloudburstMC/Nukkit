@@ -4,8 +4,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/11/21 by xtypr.
- * Package cn.nukkit.level.particle in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/21
  */
 public class DustParticle extends GenericParticle {
 

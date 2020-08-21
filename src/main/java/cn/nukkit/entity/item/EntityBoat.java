@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
@@ -28,7 +29,8 @@ import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import java.util.ArrayList;
 
 /**
- * Created by yescallop on 2016/2/13.
+ * @author yescallop
+ * @since 2016/2/13
  */
 public class EntityBoat extends EntityVehicle {
 
@@ -409,8 +411,12 @@ public class EntityBoat extends EntityVehicle {
         return false;
     }
 
+    @PowerNukkitDifference(info = "Fixes a dupe issue when attacking too quickly", since = "1.3.1.2-PN")
     @Override
     public void kill() {
+        if (!isAlive()) {
+            return;
+        }
         super.kill();
 
         if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {

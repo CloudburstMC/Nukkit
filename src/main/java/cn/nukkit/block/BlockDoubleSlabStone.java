@@ -1,17 +1,17 @@
 package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.value.StoneSlab1Type;
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @PowerNukkitDifference(info = "Extends BlockDoubleSlabBase only in PowerNukkit")
 public class BlockDoubleSlabStone extends BlockDoubleSlabBase {
@@ -37,6 +37,8 @@ public class BlockDoubleSlabStone extends BlockDoubleSlabBase {
         return DOUBLE_SLAB;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -63,8 +65,8 @@ public class BlockDoubleSlabStone extends BlockDoubleSlabBase {
     }
 
     @Override
-    public Item toItem() {
-        return getCurrentState().forItem().withBlockId(BlockID.STONE_SLAB).asItemBlock();
+    public int getSingleSlabId() {
+        return STONE_SLAB;
     }
     
     public void setSlabType(StoneSlab1Type type) {
@@ -74,17 +76,6 @@ public class BlockDoubleSlabStone extends BlockDoubleSlabBase {
     @Override
     public String getSlabName() {
         return getSlabType().getEnglishName();
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
-            Item slab = toItem();
-            slab.setCount(2);
-            return new Item[]{ slab };
-        } else {
-            return new Item[0];
-        }
     }
 
     @Override

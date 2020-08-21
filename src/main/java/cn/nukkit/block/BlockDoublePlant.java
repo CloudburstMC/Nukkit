@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSeedsWheat;
 import cn.nukkit.level.Level;
@@ -8,11 +9,12 @@ import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/11/23 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/23
  */
 public class BlockDoublePlant extends BlockFlowable {
     public static final int SUNFLOWER = 0;
@@ -55,18 +57,19 @@ public class BlockDoublePlant extends BlockFlowable {
         return NAMES[this.getDamage() > 5 ? 0 : this.getDamage()];
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Bottom part will break if the supporting block is invalid on normal update")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if ((this.getDamage() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) {
                 // Top
-                if (!(this.down().getId() == DOUBLE_PLANT)) {
+                if (this.down().getId() != DOUBLE_PLANT) {
                     this.getLevel().setBlock(this, Block.get(BlockID.AIR), false, true);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
             } else {
                 // Bottom
-                if (this.down().isTransparent() || !(this.up().getId() == DOUBLE_PLANT)) {
+                if (this.up().getId() != DOUBLE_PLANT || !isSupportValid(down())) {
                     this.getLevel().useBreakOn(this);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
@@ -76,11 +79,10 @@ public class BlockDoublePlant extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = down();
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block up = up();
 
-        if (up.getId() == AIR && (down.getId() == GRASS || down.getId() == DIRT)) {
+        if (up.getId() == AIR && isSupportValid(down())) {
             this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
             this.getLevel().setBlock(up, Block.get(BlockID.DOUBLE_PLANT, getDamage() ^ TOP_HALF_BITMASK), true, true);
             return true;
@@ -88,6 +90,16 @@ public class BlockDoublePlant extends BlockFlowable {
 
         return false;
     }
+    
+    private boolean isSupportValid(Block support) {
+        switch (support.getId()) {
+            case GRASS:
+            case DIRT:
+                return true;
+            default:
+                return false;
+        }
+    } 
 
     @Override
     public boolean onBreak(Item item) {
@@ -149,7 +161,7 @@ public class BlockDoublePlant extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) { //Bone meal
             switch (this.getDamage() & 0x07) {
                 case SUNFLOWER:

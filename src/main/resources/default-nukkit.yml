@@ -1,0 +1,69 @@
+settings:
+ language: "eng"
+ force-language: false
+ shutdown-message: "Server closed"
+ query-plugins: true
+ deprecated-verbose: true
+ async-workers: auto
+
+network:
+ batch-threshold: 256
+ compression-level: 7
+ async-compression: false
+
+debug:
+ level: 1
+ commands: false
+
+timings:
+ enabled: false
+ verbose: false
+ history-interval: 6000
+ history-length: 72000
+ bypass-max: false
+ privacy: false
+ ignore: []
+
+level-settings:
+ default-format: anvil
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ base-tick-rate: 1
+ always-tick-players: false
+ tick-redstone: true
+
+chunk-sending:
+ per-tick: 4
+ max-chunks: 192
+ spawn-threshold: 56
+ cache-chunks: false
+
+chunk-ticking:
+ per-tick: 40
+ tick-radius: 3
+ light-updates: false
+ clear-tick-list: false
+
+chunk-generation:
+ queue-size: 8
+ population-queue-size: 8
+
+ticks-per:
+ animal-spawns: 400
+ monster-spawns: 1
+ autosave: 6000
+ cache-cleanup: 900
+
+spawn-limits:
+ monsters: 70
+ animals: 15
+ water-animals: 5
+ ambient: 15
+
+player:
+ save-player-data: true
+ skin-change-cooldown: 30
+
+aliases:
+
+worlds:

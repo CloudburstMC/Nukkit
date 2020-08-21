@@ -12,8 +12,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BanEntry {
     public static final String format = "yyyy-MM-dd HH:mm:ss Z";
