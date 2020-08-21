@@ -196,7 +196,7 @@ public class BaseLang {
     }
 
     protected String parseTranslation(String text, String onlyPrefix) {
-        String newString = "";
+        StringBuilder newString = new StringBuilder();
         text = String.valueOf(text);
 
         String replaceString = null;
@@ -215,32 +215,32 @@ public class BaseLang {
                 } else {
                     String t = this.internalGet(replaceString.substring(1));
                     if (t != null && (onlyPrefix == null || replaceString.indexOf(onlyPrefix) == 1)) {
-                        newString += t;
+                        newString.append(t);
                     } else {
-                        newString += replaceString;
+                        newString.append(replaceString);
                     }
                     replaceString = null;
                     if (c == '%') {
                         replaceString = String.valueOf(c);
                     } else {
-                        newString += String.valueOf(c);
+                        newString.append(c);
                     }
                 }
             } else if (c == '%') {
                 replaceString = String.valueOf(c);
             } else {
-                newString += String.valueOf(c);
+                newString.append(c);
             }
         }
 
         if (replaceString != null) {
             String t = this.internalGet(replaceString.substring(1));
             if (t != null && (onlyPrefix == null || replaceString.indexOf(onlyPrefix) == 1)) {
-                newString += t;
+                newString.append(t);
             } else {
-                newString += replaceString;
+                newString.append(replaceString);
             }
         }
-        return newString;
+        return newString.toString();
     }
 }

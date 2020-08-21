@@ -76,6 +76,9 @@ public class Network {
         byte[] buf = BUFFER.get();
         while (!inflater.finished()) {
             int i = inflater.inflate(buf);
+            if (i == 0) {
+                throw new IOException("Could not decompress the data. Needs input: "+inflater.needsInput()+", Needs Dictionary: "+inflater.needsDictionary());
+            }
             bos.write(buf, 0, i);
         }
         return bos.toByteArray();
