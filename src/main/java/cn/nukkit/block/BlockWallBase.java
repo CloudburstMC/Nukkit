@@ -66,6 +66,13 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         return false;
     }
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return false;
+    }
+
     @Override
     public double getHardness() {
         return 2;
@@ -116,18 +123,18 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         }
         int offset = face.getXOffset();
         if (offset < 0) {
-            return boundingBox.getMinX() < MIN_POST_BB /*&& MIN_POST_BB <= boundingBox.getMaxX()*/
+            return boundingBox.getMinX() < MIN_POST_BB
                     && boundingBox.getMinZ() < MIN_POST_BB && MAX_POST_BB < boundingBox.getMaxZ();
         } else if (offset > 0) {
-            return /*boundingBox.getMinX() <= MAX_POST_BB &&*/ MAX_POST_BB < boundingBox.getMaxX()
+            return MAX_POST_BB < boundingBox.getMaxX()
                     && MAX_POST_BB < boundingBox.getMaxZ() && boundingBox.getMinZ() < MAX_POST_BB;
         } else {
             offset = face.getZOffset();
             if (offset < 0) {
-                return boundingBox.getMinZ() < MIN_POST_BB /*&& MIN_POST_BB <= boundingBox.getMaxZ()*/
+                return boundingBox.getMinZ() < MIN_POST_BB
                         && boundingBox.getMinX() < MIN_POST_BB && MIN_POST_BB < boundingBox.getMaxX();
             } else if (offset > 0) {
-                return /*boundingBox.getMinZ() <= MAX_POST_BB &&*/ MAX_POST_BB < boundingBox.getMaxZ()
+                return MAX_POST_BB < boundingBox.getMaxZ()
                         && MAX_POST_BB < boundingBox.getMaxX() && boundingBox.getMinX() < MAX_POST_BB;
             }
         }
@@ -299,6 +306,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
             case SKULL_BLOCK:
             case CONDUIT:
             case STANDING_BANNER:
+            case TURTLE_EGG:
                 return true;
 
             // End rods make it become a post if it's placed on the wall

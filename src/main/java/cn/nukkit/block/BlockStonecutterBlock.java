@@ -1,7 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.inventory.StonecutterInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -14,12 +16,15 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@PowerNukkitOnly
 public class BlockStonecutterBlock extends BlockTransparentMeta implements Faceable {
 
+    @PowerNukkitOnly
     public BlockStonecutterBlock() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockStonecutterBlock(int meta) {
         super(meta);
     }
@@ -34,6 +39,9 @@ public class BlockStonecutterBlock extends BlockTransparentMeta implements Facea
         return "Stonecutter";
     }
 
+    @Override
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     public void setBlockFace(BlockFace face) {
         int horizontalIndex = face.getHorizontalIndex();
         if (horizontalIndex > -1) {
@@ -107,5 +115,11 @@ public class BlockStonecutterBlock extends BlockTransparentMeta implements Facea
     @Override
     public Item toItem() {
         return new ItemBlock(new BlockStonecutterBlock());
+    }
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed the returned value")
+    @Override
+    public double getMaxY() {
+        return y + 9/16.0;
     }
 }

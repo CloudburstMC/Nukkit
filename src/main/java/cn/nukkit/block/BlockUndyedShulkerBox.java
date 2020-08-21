@@ -206,4 +206,11 @@ public class BlockUndyedShulkerBox extends BlockTransparent implements BlockEnti
     public boolean sticksToPiston() {
         return false;
     }
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return false;
+    }
 }

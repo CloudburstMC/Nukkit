@@ -1418,13 +1418,14 @@ public class Level implements ChunkManager, Metadatable {
         return collides.toArray(new AxisAlignedBB[0]);
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Rounds the AABB to have precision 4 before checking for collision, fix PowerNukkit#506")
     public boolean hasCollision(Entity entity, AxisAlignedBB bb, boolean entities) {
-        int minX = NukkitMath.floorDouble(bb.getMinX());
-        int minY = NukkitMath.floorDouble(bb.getMinY());
-        int minZ = NukkitMath.floorDouble(bb.getMinZ());
-        int maxX = NukkitMath.ceilDouble(bb.getMaxX());
-        int maxY = NukkitMath.ceilDouble(bb.getMaxY());
-        int maxZ = NukkitMath.ceilDouble(bb.getMaxZ());
+        int minX = NukkitMath.floorDouble(NukkitMath.round(bb.getMinX(), 4));
+        int minY = NukkitMath.floorDouble(NukkitMath.round(bb.getMinY(), 4));
+        int minZ = NukkitMath.floorDouble(NukkitMath.round(bb.getMinZ(), 4));
+        int maxX = NukkitMath.ceilDouble(NukkitMath.round(bb.getMaxX(), 4) - 0.00001);
+        int maxY = NukkitMath.ceilDouble(NukkitMath.round(bb.getMaxY(), 4) - 0.00001);
+        int maxZ = NukkitMath.ceilDouble(NukkitMath.round(bb.getMaxZ(), 4) - 0.00001);
 
         for (int z = minZ; z <= maxZ; ++z) {
             for (int x = minX; x <= maxX; ++x) {
@@ -1840,6 +1841,11 @@ public class Level implements ChunkManager, Metadatable {
         block.z = z;
         block.level = this;
         block.layer = layer;
+        blockPrevious.x = x;
+        blockPrevious.y = y;
+        blockPrevious.z = z;
+        blockPrevious.layer = layer;
+        blockPrevious.level = this;
         int cx = x >> 4;
         int cz = z >> 4;
         long index = Level.chunkHash(cx, cz);
@@ -2217,7 +2223,7 @@ public class Level implements ChunkManager, Metadatable {
             this.server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
                 target.onUpdate(BLOCK_UPDATE_TOUCH);
-                if (((!player.isSneaking() && this.getBlockEntity(target) != null) || this.getBlockEntity(target) == null || player.getInventory().getItemInHand().isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
+                if ((!player.isSneaking() || player.getInventory().getItemInHand().isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
                     if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
                         item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
                     }

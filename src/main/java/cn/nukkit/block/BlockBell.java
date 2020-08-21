@@ -265,34 +265,23 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
     }
 
     private boolean checkSupport(Block support, BlockFace attachmentFace) {
-        if (!support.isTransparent()) {
+        if (BlockLever.isSupportValid(support, attachmentFace)) {
             return true;
         }
-
-        if (support instanceof BlockGlass || support.getId() == BEACON) {
-            return true;
-        } else if (support instanceof BlockSlab) {
-            if (attachmentFace == BlockFace.UP) {
-                return (support.getDamage() & 0x8) == 0x8;
-            } else if (attachmentFace == BlockFace.DOWN) {
-                return (support.getDamage() & 0x8) == 0x0;
-            } else {
-                return false;
+        
+        if (attachmentFace == BlockFace.DOWN) {
+            switch (support.getId()) {
+                case CHAIN_BLOCK:
+                case HOPPER_BLOCK:
+                case IRON_BARS:
+                    return true;
+                default:
+                    return support instanceof BlockFence || support instanceof BlockWallBase;
             }
-        } else if (support instanceof BlockStairs) {
-            if (attachmentFace == BlockFace.UP) {
-                return (support.getDamage() & 0x4) == 0x4;
-            } else if (attachmentFace == BlockFace.DOWN) {
-                return (support.getDamage() & 0x4) == 0x0;
-            } else {
-                return false;
-            }
-        } else if (support.getId() == SCAFFOLDING || support instanceof BlockCauldron || support.getId() == HOPPER_BLOCK) {
+        }
+        
+        if (support instanceof BlockCauldron) {
             return attachmentFace == BlockFace.UP;
-        } else if (support instanceof BlockFence || support instanceof BlockWall) {
-            return attachmentFace == BlockFace.UP || attachmentFace == BlockFace.DOWN;
-        } else if (support instanceof BlockChain) {
-            return attachmentFace == BlockFace.DOWN;
         }
 
         return false;
@@ -337,7 +326,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
                 break;
             default:
                 setBlockFace(face);
-                if (block.getSide(face).isSolid()) {
+                if (checkSupport(block.getSide(face), face.getOpposite())) {
                     setAttachmentType(TYPE_ATTACHMENT_MULTIPLE);
                 } else {
                     setAttachmentType(TYPE_ATTACHMENT_SIDE);
@@ -354,6 +343,9 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
         return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    @Override
     public void setBlockFace(BlockFace face) {
         if (face.getHorizontalIndex() == -1) {
             return;

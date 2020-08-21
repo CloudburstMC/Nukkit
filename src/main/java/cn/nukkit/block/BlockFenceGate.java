@@ -133,8 +133,8 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         BlockFace direction = player.getDirection();
         setBlockFace(direction);
         
-        if (getSide(direction.rotateY()) instanceof BlockWall 
-                || getSide(direction.rotateYCCW()) instanceof BlockWall) {
+        if (getSide(direction.rotateY()) instanceof BlockWallBase
+                || getSide(direction.rotateYCCW()) instanceof BlockWallBase) {
             setInWall(true);
         }
         
@@ -225,7 +225,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             BlockFace face = getBlockFace();
-            boolean touchingWall = getSide(face.rotateY()) instanceof BlockWall || getSide(face.rotateYCCW()) instanceof BlockWall;
+            boolean touchingWall = getSide(face.rotateY()) instanceof BlockWallBase || getSide(face.rotateYCCW()) instanceof BlockWallBase;
             if (touchingWall != isInWall()) {
                 setInWall(touchingWall);
                 level.setBlock(this, this, true);

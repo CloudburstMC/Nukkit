@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -146,22 +147,13 @@ public class BlockRail extends BlockFlowable implements Faceable {
         
         return true;
     }
-    
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     private boolean checkCanBePlace(Block check) {
         if (check == null) {
             return false;
         }
-        if (!check.isTransparent()) {
-            return true;
-        }
-        if (check instanceof BlockHopper) {
-            return true;
-        } else if (check instanceof BlockSlab) {
-            return ((BlockSlab)check).isOnTop();
-        } else if (check instanceof BlockStairs) {
-            return ((BlockStairs)check).isUpsideDown();
-        }
-        return false;
+        return check.isSolid(UP) || check instanceof BlockCauldron;
     }
 
     private Orientation connect(BlockRail rail1, BlockFace face1, BlockRail rail2, BlockFace face2) {

@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.event.block.BlockFromToEvent;
@@ -16,12 +17,15 @@ import cn.nukkit.math.BlockFace;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockBubbleColumn extends BlockTransparentMeta {
 
+    @PowerNukkitOnly
     public BlockBubbleColumn() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockBubbleColumn(int meta) {
         super(meta);
     }
@@ -84,6 +88,13 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
 
     @Override
     public boolean isSolid() {
+        return false;
+    }
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
         return false;
     }
 

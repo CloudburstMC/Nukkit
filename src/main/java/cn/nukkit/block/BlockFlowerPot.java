@@ -95,15 +95,12 @@ public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<B
     public double getResistance() {
         return 0;
     }
-    
-    private boolean isSupportValid(Block block) {
-        return block.isSolid(BlockFace.UP) || block instanceof BlockFence || block instanceof BlockWall || block instanceof BlockHopper;
-    }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!isSupportValid(down())) {
+            if (!BlockLever.isSupportValid(down(), BlockFace.UP)) {
                 level.useBreakOn(this);
                 return type;
             }
@@ -111,9 +108,10 @@ public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<B
         return 0;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!isSupportValid(down())) {
+        if (!BlockLever.isSupportValid(down(), BlockFace.UP)) {
             return false;
         }
         

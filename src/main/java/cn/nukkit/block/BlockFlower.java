@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
@@ -61,9 +64,24 @@ public class BlockFlower extends BlockFlowable {
         };
         return names[this.getDamage() & 0x0f];
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static boolean isSupportValid(Block block) {
+        switch (block.getId()) {
+            case GRASS:
+            case DIRT:
+            case FARMLAND:
+            case PODZOL:
+                return true;
+            default:
+                return false;
+        }
+    }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     public boolean canPlantOn(Block block) {
-        return block.getId() == Block.GRASS || block.getId() == Block.DIRT || block.getId() == Block.FARMLAND || block.getId() == Block.PODZOL;
+        return isSupportValid(block);
     }
 
     @Override
@@ -77,10 +95,11 @@ public class BlockFlower extends BlockFlowable {
         return false;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will break on normal update if the supporting block is invalid")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (!canPlantOn(down())) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;

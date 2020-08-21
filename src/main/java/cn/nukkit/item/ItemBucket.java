@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.*;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
@@ -77,8 +78,12 @@ public class ItemBucket extends Item {
         return true;
     }
 
+    @PowerNukkitDifference(info = "You can't use bucket in adventure mode.", since = "1.4.0.0-PN")
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+        if (player.isAdventure()) {
+            return false;
+        }
         Block targetBlock = Block.get(getDamageByTarget(this.meta));
 
         if (targetBlock instanceof BlockAir) {
@@ -188,8 +193,12 @@ public class ItemBucket extends Item {
         return this.getDamage() == 1; // Milk
     }
 
+    @PowerNukkitDifference(info = "You can't use milk in spectator mode and milk is now 'drinked' in adventure mode", since = "1.4.0.0-PN")
     @Override
     public boolean onUse(Player player, int ticksUsed) {
+        if (player.isSpectator()) {
+            return false;
+        }
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
 
         player.getServer().getPluginManager().callEvent(consumeEvent);
@@ -198,7 +207,7 @@ public class ItemBucket extends Item {
             return false;
         }
 
-        if (player.isSurvival()) {
+        if (!player.isCreative()) {
             this.count--;
             player.getInventory().setItemInHand(this);
             player.getInventory().addItem(new ItemBucket());

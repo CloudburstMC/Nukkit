@@ -1,5 +1,8 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 public interface BlockID {
     int AIR = 0;
     int STONE = 1;
@@ -275,7 +278,9 @@ public interface BlockID {
     int BLOCK_NETHER_WART_BLOCK = 214;
     int RED_NETHER_BRICK = 215;
     int BONE_BLOCK = 216;
-
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    int STRUCTURE_VOID = 217;
     int SHULKER_BOX = 218;
     int PURPLE_GLAZED_TERRACOTTA = 219;
     int WHITE_GLAZED_TERRACOTTA = 220;
@@ -499,7 +504,7 @@ public interface BlockID {
     int CRIMSON_HYPHAE = 554;
     int STRIPPED_CRIMSON_HYPHAE = 555;
     int STRIPPED_WARPED_HYPHAE = 556;
-    //int CHISELED_NETHER_BRICKS = 557;
-    //int CRACKED_NETHER_BRICKS = 558;
-    //int QUARTZ_BRICKS = 559;
+    int CHISELED_NETHER_BRICKS = 557;
+    int CRACKED_NETHER_BRICKS = 558;
+    int QUARTZ_BRICKS = 559;
 }

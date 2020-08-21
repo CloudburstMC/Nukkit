@@ -67,6 +67,13 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
         return false;
     }
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return false;
+    }
+
     @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {

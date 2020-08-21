@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.BasicGenerator;
@@ -59,15 +60,14 @@ public class BlockSapling extends BlockFlowable {
 
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
-        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND || down.getId() == Block.PODZOL) {
+        if (BlockFlower.isSupportValid(down())) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
 
         return false;
     }
-
+    
     @Override
     public boolean canBeActivated() {
         return true;
@@ -91,9 +91,10 @@ public class BlockSapling extends BlockFlowable {
         return false;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will break on block update if the supporting block is invalid")
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (!BlockFlower.isSupportValid(down())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }

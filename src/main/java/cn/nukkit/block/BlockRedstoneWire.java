@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
@@ -42,12 +43,9 @@ public class BlockRedstoneWire extends BlockFlowable {
         return REDSTONE_WIRE;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Removed unneeded replaceable check")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.canBeReplaced()) {
-            block = target;
-        }
-
         if (!canBePlacedOn(block.down())) {
             return false;
         }
@@ -235,8 +233,9 @@ public class BlockRedstoneWire extends BlockFlowable {
         return Level.BLOCK_UPDATE_NORMAL;
     }
 
-    public boolean canBePlacedOn(Block b) {
-        return b.isSolid() && (!b.isTransparent() || b.getId() == Block.GLOWSTONE);
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed placement logic")
+    public boolean canBePlacedOn(Block support) {
+        return support.isSolid(BlockFace.UP);
     }
 
     public int getStrongPower(BlockFace side) {

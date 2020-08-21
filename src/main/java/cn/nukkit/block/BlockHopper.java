@@ -194,4 +194,11 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return side == BlockFace.UP;
+    }
 }
