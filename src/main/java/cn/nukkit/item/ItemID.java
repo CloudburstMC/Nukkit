@@ -288,5 +288,5 @@ public interface ItemID {
     int RECORD_PIGSTEP = 759;
     int NETHER_SPROUTS = 760;
     
-    //int SOUL_CAMPFIRE = 801;
+    int SOUL_CAMPFIRE = 801;
 }

@@ -5,6 +5,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCampfire;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -28,12 +30,24 @@ import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+
 @PowerNukkitOnly
 public class BlockCampfire extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityCampfire> {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BooleanBlockProperty EXTINGUISHED = new BooleanBlockProperty("extinguished", false);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, EXTINGUISHED);
+    
+    @PowerNukkitOnly
     public BlockCampfire() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockCampfire(int meta) {
         super(meta);
     }
@@ -41,6 +55,14 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
     @Override
     public int getId() {
         return CAMPFIRE_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @PowerNukkitOnly
@@ -66,12 +88,12 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
 
     @Override
     public double getResistance() {
-        return 10;
+        return 2;
     }
 
     @Override
     public double getHardness() {
-        return 2.0;
+        return 5;
     }
 
     @Override
@@ -81,7 +103,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
 
     @Override
     public boolean canHarvestWithHand() {
-        return false;
+        return true;
     }
 
     @Override
@@ -102,10 +124,10 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
         
         final Block layer0 = level.getBlock(this, 0);
         final Block layer1 = level.getBlock(this, 1);
-
-        this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
-        boolean defaultLayerCheck = (block instanceof BlockWater && block.getDamage() == 0 || block.getDamage() >= 8) || block instanceof BlockIceFrosted;
-        boolean layer1Check = (layer1 instanceof BlockWater && layer1.getDamage() == 0 || layer1.getDamage() >= 8) || layer1 instanceof BlockIceFrosted;
+        
+        setBlockFace(player != null ? player.getDirection().getOpposite() : null);
+        boolean defaultLayerCheck = (block instanceof BlockWater && ((BlockWater)block).isSourceOrFlowingDown()) || block instanceof BlockIceFrosted;
+        boolean layer1Check = (layer1 instanceof BlockWater && ((BlockWater)layer1).isSourceOrFlowingDown()) || layer1 instanceof BlockIceFrosted;
         if (defaultLayerCheck || layer1Check) {
             setExtinguished(true);
             this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
@@ -230,27 +252,23 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
     }
 
     public boolean isExtinguished() {
-        return (getDamage() & 0x4) == 0x4;
+        return getBooleanValue(EXTINGUISHED);
     }
 
     public void setExtinguished(boolean extinguished) {
-        setDamage((getDamage() & 0x3) | (extinguished? 0x4 : 0x0));
+        setBooleanValue(EXTINGUISHED, extinguished);
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(getDamage() & 0x3);
+        return getPropertyValue(DIRECTION);
     }
 
     @Override
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void setBlockFace(BlockFace face) {
-        if (face == BlockFace.UP || face == BlockFace.DOWN) {
-            return;
-        }
-
-        setDamage((getDamage() & 0x4) | face.getHorizontalIndex());
+        setPropertyValue(DIRECTION, face);
     }
 
     @Override
