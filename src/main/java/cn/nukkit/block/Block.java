@@ -555,9 +555,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[CRIMSON_HYPHAE] = BlockHyphaeCrimson.class; //554
             list[STRIPPED_CRIMSON_HYPHAE] = BlockHyphaeStrippedCrimson.class; //555
             list[STRIPPED_WARPED_HYPHAE] = BlockHyphaeStrippedWarped.class; //556
-            //list[CHISELED_NETHER_BRICKS] = Block<Name>.class; //557
-            //list[CRACKED_NETHER_BRICKS] = Block<Name>.class; //558
-            //list[QUARTZ_BRICKS] = Block<Name>.class; //559
+            list[CHISELED_NETHER_BRICKS] = BlockBricksNetherChiseled.class; //557
+            list[CRACKED_NETHER_BRICKS] = BlockBricksNetherCracked.class; //558
+            list[QUARTZ_BRICKS] = BlockBricksQuartz.class; //559
             
             initializing = true;
             
