@@ -174,15 +174,23 @@ public class BlockStorage {
         
         states[index] = state;
         updateFlags(index, previous, state);
-        try {
-            palette.setBlock(index, state.getRuntimeId());
-        } catch (Exception ignored) {
-            // This allow the API to be used before the Block.init() gets called, useful for testing or usage on early
-            // states of the server initialization
-            setFlag(FLAG_PALETTE_UPDATED, false);
+        if (getFlag(FLAG_PALETTE_UPDATED)) {
+            try {
+                palette.setBlock(index, state.getRuntimeId());
+            } catch (Exception ignored) {
+                // This allow the API to be used before the Block.init() gets called, useful for testing or usage on early
+                // states of the server initialization
+                setFlag(FLAG_PALETTE_UPDATED, false);
+            }
         }
         
         return previous;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void delayPaletteUpdates() {
+        setFlag(FLAG_PALETTE_UPDATED, false);
     }
 
     @PowerNukkitOnly
