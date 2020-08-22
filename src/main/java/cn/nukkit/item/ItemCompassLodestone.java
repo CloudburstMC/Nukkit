@@ -2,6 +2,10 @@ package cn.nukkit.item;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.level.Location;
+import cn.nukkit.nbt.tag.CompoundTag;
+
+import javax.annotation.Nullable;
 
 /**
  * @author joserobjr
@@ -30,5 +34,36 @@ public class ItemCompassLodestone extends Item {
     @Override
     public int getMaxStackSize() {
         return 1;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setTrackingPosition(@Nullable Location location) {
+        // TODO
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public Location getTrackingPosition() {
+        // TODO
+        return null;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getTrackingHandle() {
+        return hasCompoundTag()? getNamedTag().getInt("trackingHandle") : 0;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setTrackingHandle(int trackingHandle) {
+        CompoundTag tag = getNamedTag();
+        if (tag == null) {
+            tag = new CompoundTag();
+        }
+        tag.putInt("trackingHandle", trackingHandle);
+        setNamedTag(tag);
     }
 }

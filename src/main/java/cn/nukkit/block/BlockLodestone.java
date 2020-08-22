@@ -4,8 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemCompassLodestone;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Sound;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
@@ -35,11 +37,20 @@ public class BlockLodestone extends BlockSolid {
 
     @Override
     public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
-        if (item.getId() != ItemID.COMPASS) {
+        if (player == null || item.isNull() || item.getId() != ItemID.COMPASS) {
             return false;
         }
+
+        ItemCompassLodestone compass = (ItemCompassLodestone) Item.get(ItemID.LODESTONE_COMPASS);
+        compass.setTrackingPosition(getLocation());
+        if (!player.isCreative()) {
+            item.count--;
+            for (Item failed : player.getInventory().addItem(compass)) {
+                player.getLevel().dropItem(player.getPosition(), failed);
+            }
+        }
         
-        //TODO Create a service class to interact with the PositionTrackingDBClientRequestPacket and PositionTrackingDBServerBroadcastPacket
+        getLevel().addSound(player.getPosition(), Sound.LODESTONE_COMPASS_LINK_COMPASS_TO_LODESTONE);
         
         return true;
     }
