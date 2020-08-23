@@ -18,6 +18,18 @@ public class PositionTrackingDBClientRequestPacket extends DataPacket {
     private Action action;
     private int trackingId;
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public Action getAction() {
+        return action;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getTrackingId() {
+        return trackingId;
+    }
+
     @Override
     public void encode() {
         putByte((byte) action.ordinal());

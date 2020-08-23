@@ -64,6 +64,7 @@ import cn.nukkit.permission.Permission;
 import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.positiontracking.PositionTracking;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.resourcepacks.ResourcePack;
 import cn.nukkit.scheduler.AsyncTask;
@@ -3564,6 +3565,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.inventory.setItem(bookEditPacket.inventorySlot, editBookEvent.getNewBook());
                         }
                     }
+                    break;
+                case ProtocolInfo.POS_TRACKING_CLIENT_REQUEST_PACKET:
+                    PositionTrackingDBClientRequestPacket posTrackReq = (PositionTrackingDBClientRequestPacket) packet;
+                    try {
+                        PositionTracking positionTracking = this.server.getPositionTrackingService().startTracking(this, posTrackReq.getTrackingId(), true);
+                        if (positionTracking != null) {
+                            break;
+                        }
+                    } catch (IOException e) {
+                        log.warn("Failed to track the trackingHandler "+posTrackReq.getTrackingId(), e);
+                    }
+                    PositionTrackingDBServerBroadcastPacket notFound = new PositionTrackingDBServerBroadcastPacket();
+                    notFound.setAction(PositionTrackingDBServerBroadcastPacket.Action.NOT_FOUND);
+                    notFound.setTrackingId(posTrackReq.getTrackingId());
+                    batchDataPacket(notFound);
                     break;
                 default:
                     break;

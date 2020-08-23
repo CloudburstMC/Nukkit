@@ -25,6 +25,14 @@ public class BlockLodestone extends BlockSolid {
     public BlockLodestone() {
         // Does nothing
     }
+    
+    //[12:23:28 TRACE]: [CLIENT BOUND]  -   /127.0.0.1:19132: BlockEntityDataPacket(blockPosition=(3503, 67, 1), data={
+    //  "id": "Lodestone",
+    //  "isMovable": 1b,
+    //  "x": 3503i,
+    //  "y": 67i,
+    //  "z": 1i
+    //})
 
     @Override
     public int getId() {

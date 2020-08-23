@@ -1,6 +1,7 @@
 package cn.nukkit.positiontracking;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.inventory.Inventory;
@@ -14,6 +15,7 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.ints.IntSet;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +27,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.IntConsumer;
 import java.util.regex.Pattern;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 /**
  * A position tracking db service. It holds file resources that needs to be closed when not needed anymore. 
@@ -34,6 +35,7 @@ import java.util.stream.Stream;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 @ParametersAreNonnullByDefault
+@Log4j2
 public class PositionTrackingService implements Closeable {
     private static final Pattern FILENAME_PATTERN = Pattern.compile("^\\d+\\.pnt$", Pattern.CASE_INSENSITIVE);
     private static final FilenameFilter FILENAME_FILTER = (dir, name) -> FILENAME_PATTERN.matcher(name).matches() && new File(dir, name).isFile();
@@ -58,32 +60,69 @@ public class PositionTrackingService implements Closeable {
                 .forEachOrdered(startIndex-> storage.put(startIndex, emptyRef));
     }
     
-    private boolean hasTrackingDevice(Inventory inventory, int trackingHandler) {
+    private boolean hasTrackingDevice(Player player, Inventory inventory, int trackingHandler) throws IOException {
         int size = inventory.getSize();
         for (int i = 0; i < size; i++) {
-            if (isTrackingDevice(inventory.getItem(i), trackingHandler)) {
+            if (isTrackingDevice(player, inventory.getItem(i), trackingHandler)) {
                 return true;
             }
         }
         return false;
     }
     
-    private boolean isTrackingDevice(@Nullable Item item, int trackingHandler) {
-        return item != null && item.getId() == ItemID.LODESTONE_COMPASS && item instanceof ItemCompassLodestone
-                && ((ItemCompassLodestone) item).getTrackingHandle() == trackingHandler;
+    private boolean isTrackingDevice(Player player, @Nullable Item item, int trackingHandler) throws IOException {
+        if (!(item != null && item.getId() == ItemID.LODESTONE_COMPASS && item instanceof ItemCompassLodestone)) {
+            return false;
+        }
+        ItemCompassLodestone compassLodestone = (ItemCompassLodestone) item;
+        if (compassLodestone.getTrackingHandle() != trackingHandler) {
+            return false;
+        }
+        PositionTracking position = getPosition(trackingHandler);
+        return position != null && position.getLevelName().equals(player.getLevelName());
     }
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public boolean hasTrackingDevice(Player player, int trackingHandler) {
-        return Stream.of(player.getInventory(), player.getCursorInventory(), player.getOffhandInventory())
-                .anyMatch(inv -> hasTrackingDevice(inv, trackingHandler));
+    public boolean hasTrackingDevice(Player player, int trackingHandler) throws IOException {
+        return hasTrackingDevice(player, player.getInventory(), trackingHandler) 
+                || hasTrackingDevice(player, player.getCursorInventory(), trackingHandler)
+                || hasTrackingDevice(player, player.getOffhandInventory(), trackingHandler);
+    }
+    
+    private void sendTrackingUpdate(Player player, int trackingHandler, PositionTracking pos) {
+        if (player.getLevelName().equals(pos.getLevelName())) {
+            PositionTrackingDBServerBroadcastPacket packet = new PositionTrackingDBServerBroadcastPacket();
+            packet.setAction(PositionTrackingDBServerBroadcastPacket.Action.UPDATE);
+            packet.setPosition(pos);
+            packet.setDimension(player.getLevel().getDimension());
+            packet.setTrackingId(trackingHandler);
+            player.batchDataPacket(packet);
+        } else {
+            sendTrackingDestroy(player, trackingHandler);
+        }
+    }
+    
+    private void sendTrackingDestroy(Player player, int trackingHandler) {
+        PositionTrackingDBServerBroadcastPacket packet = destroyPacket(trackingHandler);
+        player.batchDataPacket(packet);
     }
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    @Nullable
     public synchronized PositionTracking startTracking(Player player, int trackingHandler, boolean validate) throws IOException {
         Preconditions.checkArgument(trackingHandler >= 0, "Tracking handler must be positive");
+        if (isTracking(player, trackingHandler, validate)) {
+            PositionTracking position = getPosition(trackingHandler);
+            if (position != null) {
+                sendTrackingUpdate(player, trackingHandler, position);
+                return position;
+            }
+            stopTracking(player, trackingHandler);
+            return null;
+        }
+        
         if (validate && !hasTrackingDevice(player, trackingHandler)) {
             return null;
         }
@@ -92,6 +131,7 @@ public class PositionTrackingService implements Closeable {
         if (storage == null) {
             return null;
         }
+        
         PositionTracking position = storage.getPosition(trackingHandler);
         if (position == null) {
             return null; 
@@ -102,10 +142,13 @@ public class PositionTrackingService implements Closeable {
     }
     
     private PositionTrackingDBServerBroadcastPacket destroyPacket(int trackingHandler) {
-        PositionTrackingDBServerBroadcastPacket destroy = new PositionTrackingDBServerBroadcastPacket();
-        destroy.setAction(PositionTrackingDBServerBroadcastPacket.Action.DESTROY);
-        destroy.setTrackingId(trackingHandler);
-        return destroy;
+        PositionTrackingDBServerBroadcastPacket packet = new PositionTrackingDBServerBroadcastPacket();
+        packet.setAction(PositionTrackingDBServerBroadcastPacket.Action.DESTROY);
+        packet.setTrackingId(trackingHandler);
+        packet.setDimension(0);
+        packet.setPosition(0, 0, 0);
+        packet.setStatus(2);
+        return packet;
     } 
 
     @PowerNukkitOnly
@@ -144,7 +187,7 @@ public class PositionTrackingService implements Closeable {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public synchronized boolean isTracking(Player player, int trackingHandler, boolean validate) {
+    public synchronized boolean isTracking(Player player, int trackingHandler, boolean validate) throws IOException {
         Map<PositionTrackingStorage, IntSet> tracking = this.tracking.get(player);
         if (tracking == null) {
             return false;
@@ -161,16 +204,22 @@ public class PositionTrackingService implements Closeable {
         }
         return false;
     }
-    
-    public synchronized void recheckPlayers() {
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public synchronized void forceRecheckAllPlayers() {
         tracking.keySet().removeIf(p-> !p.isOnline());
         Map<Player, IntList> toRemove = new HashMap<>(2);
         for (Map.Entry<Player, Map<PositionTrackingStorage, IntSet>> entry : tracking.entrySet()) {
             Player player = entry.getKey();
             for (Map.Entry<PositionTrackingStorage, IntSet> entry2 : entry.getValue().entrySet()) {
                 entry2.getValue().forEach((IntConsumer) trackingHandler-> {
-                    if (!hasTrackingDevice(player, trackingHandler)) {
-                        toRemove.computeIfAbsent(player, p-> new IntArrayList(2)).add(trackingHandler);
+                    try {
+                        if (!hasTrackingDevice(player, trackingHandler)) {
+                            toRemove.computeIfAbsent(player, p -> new IntArrayList(2)).add(trackingHandler);
+                        }
+                    } catch (IOException e) {
+                        log.error("Failed to update the tracking handler "+trackingHandler+" for player "+player.getName(), e);
                     }
                 });
             }
@@ -179,6 +228,55 @@ public class PositionTrackingService implements Closeable {
         toRemove.forEach((player, list) -> 
                 list.forEach((IntConsumer) handler -> 
                         stopTracking(player, handler)));
+
+        Server.getInstance().getOnlinePlayers().values().forEach(this::detectNeededUpdates);
+    }
+    
+    private void detectNeededUpdates(Player player) {
+        for (Inventory inventory: new Inventory[]{ player.getInventory(), player.getCursorInventory(), player.getOffhandInventory() }) {
+            int size = inventory.getSize();
+            for (int slot = 0; slot < size; slot++) {
+                Item item = inventory.getItem(slot);
+                if (item.getId() == ItemID.LODESTONE_COMPASS && item instanceof ItemCompassLodestone) {
+                    ItemCompassLodestone compass = (ItemCompassLodestone) item;
+                    int trackingHandle = compass.getTrackingHandle();
+                    if (trackingHandle != 0) {
+                        PositionTracking pos;
+                        try {
+                            pos = getPosition(trackingHandle);
+                            if (pos != null && pos.getLevelName().equals(player.getLevelName())) {
+                                startTracking(player, trackingHandle, false);
+                            }
+                        } catch (IOException e) {
+                            log.error("Failed to get the position of the tracking handler "+trackingHandle, e);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void forceRecheck(Player player) {
+        Map<PositionTrackingStorage, IntSet> tracking = this.tracking.get(player);
+        if (tracking != null) {
+            IntList toRemove = new IntArrayList(2);
+            for (Map.Entry<PositionTrackingStorage, IntSet> entry2 : tracking.entrySet()) {
+                entry2.getValue().forEach((IntConsumer) trackingHandler-> {
+                    try {
+                        if (!hasTrackingDevice(player, trackingHandler)) {
+                            toRemove.add(trackingHandler);
+                        }
+                    } catch (IOException e) {
+                        log.error("Failed to update the tracking handler "+trackingHandler+" for player "+player.getName(), e);
+                    }
+                });
+            }
+            toRemove.forEach((IntConsumer) handler-> stopTracking(player, handler));
+        }
+        
+        detectNeededUpdates(player);
     }
     
     @Nullable
@@ -275,7 +373,9 @@ public class PositionTrackingService implements Closeable {
 
         PositionTrackingStorage trackingStorage = new PositionTrackingStorage(next, new File(folder, next + ".pnt"));
         storage.put(next, new WeakReference<>(trackingStorage));
-        return trackingStorage.addNewPosition(position, enabled).orElseThrow(InternalError::new);
+        int handler = trackingStorage.addNewPosition(position, enabled).orElseThrow(InternalError::new);
+        handlerEnabled(handler);
+        return handler;
     }
 
     @PowerNukkitOnly
@@ -297,13 +397,40 @@ public class PositionTrackingService implements Closeable {
         if (storage == null) {
             return false;
         }
-        
-        if (storage.hasPosition(trackingHandler, false)) {
-            storage.invalidateHandler(trackingHandler);
-            return true;
+
+        if (!storage.hasPosition(trackingHandler, false)) {
+            return false;
         }
+        storage.invalidateHandler(trackingHandler);
         
-        return false;
+        handlerDisabled(trackingHandler);
+        
+        return true;
+    }
+    
+    private void handlerDisabled(int trackingHandler) {
+        List<Player> players = new ArrayList<>();
+        for (Map.Entry<Player, Map<PositionTrackingStorage, IntSet>> playerMapEntry : tracking.entrySet()) {
+            for (IntSet value : playerMapEntry.getValue().values()) {
+                if (value.contains(trackingHandler)) {
+                    players.add(playerMapEntry.getKey());
+                    break;
+                }
+            }
+        }
+
+        if (!players.isEmpty()) {
+            Server.getInstance().batchPackets(players.toArray(new Player[0]), new DataPacket[]{destroyPacket(trackingHandler)});
+        }
+    }
+    
+    private void handlerEnabled(int trackingHandler) throws IOException {
+        Server server = Server.getInstance();
+        for (Player player : server.getOnlinePlayers().values()) {
+            if (hasTrackingDevice(player, trackingHandler) && !isTracking(player, trackingHandler, false)) {
+                startTracking(player, trackingHandler, false);
+            }
+        }
     }
 
     @PowerNukkitOnly
@@ -342,7 +469,16 @@ public class PositionTrackingService implements Closeable {
         if (trackingStorage == null) {
             return false;
         }
-        return trackingStorage.setEnabled(trackingHandler, enabled);
+        if (trackingStorage.setEnabled(trackingHandler, enabled)) {
+            if (enabled) {
+                handlerEnabled(trackingHandler);
+            } else {
+                handlerDisabled(trackingHandler);
+            }
+            return true;
+        }
+        
+        return false;
     }
 
     @PowerNukkitOnly
