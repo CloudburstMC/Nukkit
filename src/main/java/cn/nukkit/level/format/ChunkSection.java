@@ -157,4 +157,10 @@ public interface ChunkSection {
     }
 
     int getBlockChangeStateAbove(int x, int y, int z);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    default void delayPaletteUpdates() {
+        // Does nothing
+    }
 }

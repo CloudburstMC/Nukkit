@@ -1,5 +1,6 @@
 package cn.nukkit.entity;
 
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
@@ -1444,7 +1445,7 @@ public abstract class Entity extends Location implements Metadatable {
             EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, PortalType.NETHER);
             getServer().getPluginManager().callEvent(ev);
 
-            if (!ev.isCancelled()) {
+            if (!ev.isCancelled() && (level == EnumLevel.OVERWORLD.getLevel() || level == EnumLevel.NETHER.getLevel())) {
                 Position newPos = EnumLevel.moveToNether(this);
                 if (newPos != null) {
                     for (int x = -1; x < 2; x++) {
@@ -1972,7 +1973,9 @@ public abstract class Entity extends Location implements Metadatable {
 
         AxisAlignedBB newBB = this.boundingBox.getOffsetBoundingBox(dx, dy, dz);
 
-        if (server.getAllowFlight() || !this.level.hasCollision(this, newBB, false)) {
+        if (server.getAllowFlight() 
+                || isPlayer && ((Player) this).getAdventureSettings().get(AdventureSettings.Type.NO_CLIP) 
+                || !this.level.hasCollision(this, newBB, false)) {
             this.boundingBox = newBB;
         }
 

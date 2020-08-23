@@ -37,6 +37,7 @@ class BaseChunkTest {
     
     @BeforeEach
     void setup() {
+        chunk.setPaletteUpdatesDelayed(true);
         chunk.sections = new ChunkSection[16];
         System.arraycopy(EmptyChunkSection.EMPTY, 0, chunk.sections, 0, 16);
         chunk.setProvider(anvil);
@@ -172,7 +173,7 @@ class BaseChunkTest {
         
         chunk.backwardCompatibilityUpdate(level);
         
-        assertEquals(ChunkUpdater.getContentVersion(), section.getContentVersion());
+        assertEquals(ChunkUpdater.getCurrentContentVersion(), section.getContentVersion());
         assertEquals(BlockID.COBBLE_WALL, chunk.getBlockId(x, y, z));
         assertEquals(BlockID.COBBLE_WALL, chunk.getBlockId(x, y+1, z));
         

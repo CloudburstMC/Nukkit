@@ -258,7 +258,7 @@ public class EmptyChunkSection implements ChunkSection {
     @Since("1.3.1.0-PN")
     @Override
     public int getContentVersion() {
-        return ChunkUpdater.getContentVersion();
+        return ChunkUpdater.getCurrentContentVersion();
     }
 
     @PowerNukkitOnly
