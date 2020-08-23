@@ -1,11 +1,13 @@
 package cn.nukkit.item;
 
+import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.level.Location;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.positiontracking.NamedPosition;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
  * @author joserobjr
@@ -38,16 +40,23 @@ public class ItemCompassLodestone extends Item {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public void setTrackingPosition(@Nullable Location location) {
-        // TODO
+    public void setTrackingPosition(@Nullable NamedPosition position) throws IOException {
+        if (position == null) {
+            setTrackingHandle(0);
+            return;
+        }
+        setTrackingHandle(Server.getInstance().getPositionTrackingService().addOrReusePosition(position));
     }
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nullable
-    public Location getTrackingPosition() {
-        // TODO
-        return null;
+    public NamedPosition getTrackingPosition() throws IOException {
+        int trackingHandle = getTrackingHandle();
+        if (trackingHandle == 0) {
+            return null;
+        }
+        return Server.getInstance().getPositionTrackingService().getPosition(trackingHandle);
     }
 
     @PowerNukkitOnly

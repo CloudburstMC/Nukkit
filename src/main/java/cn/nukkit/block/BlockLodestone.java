@@ -9,6 +9,7 @@ import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.MainLogger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -42,7 +43,13 @@ public class BlockLodestone extends BlockSolid {
         }
 
         ItemCompassLodestone compass = (ItemCompassLodestone) Item.get(ItemID.LODESTONE_COMPASS);
-        compass.setTrackingPosition(getLocation());
+        try {
+            compass.setTrackingPosition(getLocation());
+        } catch (Exception e) {
+            MainLogger.getLogger().warning("Could not create a lodestone compass to "+getLocation()+" for "+player.getName(), e);
+            return false;
+        }
+        
         if (!player.isCreative()) {
             item.count--;
             for (Item failed : player.getInventory().addItem(compass)) {

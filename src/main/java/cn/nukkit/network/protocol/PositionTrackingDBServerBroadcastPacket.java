@@ -13,7 +13,7 @@ import java.io.IOException;
  * @author joserobjr
  */
 @PowerNukkitOnly
-@Since("1.3.0.0-PN")
+@Since("1.4.0.0-PN")
 public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.POS_TRACKING_SERVER_BROADCAST_PACKET;
     private static final Action[] ACTIONS = Action.values();
@@ -21,6 +21,18 @@ public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
     private Action action;
     private int trackingId;
     private CompoundTag tag;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setTrackingId(int trackingId) {
+        this.trackingId = trackingId;
+    }
 
     @Override
     public void encode() {
@@ -49,7 +61,13 @@ public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
         return NETWORK_ID;
     }
 
-    @Since("1.3.0.0-PN")
+    @Override
+    public PositionTrackingDBServerBroadcastPacket clone() {
+        return (PositionTrackingDBServerBroadcastPacket) super.clone();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public enum Action {
         UPDATE,
         DESTROY,
