@@ -1,6 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.block.BlockBurnEvent;
@@ -19,6 +24,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -26,11 +32,22 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author MagicDroidX (Nukkit Project)
  */
 public class BlockFire extends BlockFlowable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final IntBlockProperty FIRE_AGE = new IntBlockProperty("age", false, 15);
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(FIRE_AGE);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockFire() {
         this(0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockFire(int meta) {
         super(meta);
     }
@@ -38,6 +55,14 @@ public class BlockFire extends BlockFlowable {
     @Override
     public int getId() {
         return FIRE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -86,8 +111,12 @@ public class BlockFire extends BlockFlowable {
         return new Item[0];
     }
 
+    @PowerNukkitDifference(info = "Soul Fire Implementation", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
+        if ((this.down().getId() == Block.SOUL_SAND ||  this.down().getId() == Block.SOUL_SOIL) && this.getId() == BlockID.FIRE){
+            this.getLevel().setBlock(this, Block.get(BlockID.SOUL_FIRE));
+        }
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_RANDOM) {
             if (!this.isBlockTopFacingSurfaceSolid(this.down()) && !this.canNeighborBurn()) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
@@ -101,7 +130,7 @@ public class BlockFire extends BlockFlowable {
 
             return Level.BLOCK_UPDATE_NORMAL;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
-            boolean forever = this.down().getId() == Block.NETHERRACK || this.down().getId() == Block.MAGMA;
+            boolean forever = this.down().getId() == Block.NETHERRACK || this.down().getId() == Block.MAGMA ||  this.down().getId() == Block.SOUL_SAND ||  this.down().getId() == Block.SOUL_SOIL;
 
             ThreadLocalRandom random = ThreadLocalRandom.current();
 
@@ -152,7 +181,7 @@ public class BlockFire extends BlockFlowable {
                     if (!event.isCancelled()) {
                         level.setBlock(this, event.getNewState(), true);
                     }
-                } else {
+                } else if (this.down().getId() != Block.SOUL_SAND &&  this.down().getId() != Block.SOUL_SOIL) {
                     int o = 0;
 
                     //TODO: decrease the o if the rainfall values are high
