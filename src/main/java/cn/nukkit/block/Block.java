@@ -1128,14 +1128,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
 
         double speedMultiplier = 1;
-        int conduitPowerLevel = 0;
+        boolean hasConduitPower = false;
         boolean hasAquaAffinity = false;
         int hasteEffectLevel = 0;
         int miningFatigueLevel = 0;
 
         if (player != null) {
-            conduitPowerLevel = Optional.ofNullable(player.getEffect(Effect.CONDUIT_POWER))
-                    .map(Effect::getAmplifier).orElse(0);
+            hasConduitPower = player.hasEffect(Effect.CONDUIT_POWER);
             hasAquaAffinity = Optional.ofNullable(player.getInventory().getHelmet().getEnchantment(Enchantment.ID_WATER_WORKER))
                     .map(Enchantment::getLevel).map(l -> l >= 1).orElse(false);
             hasteEffectLevel = Optional.ofNullable(player.getEffect(Effect.HASTE))
@@ -1154,8 +1153,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 speedMultiplier += efficiencyLevel ^ 2 + 1;
             }
 
-            if (hasteEffectLevel > 0 || conduitPowerLevel > 0) {
-                speedMultiplier *= 1 + (0.2 * Integer.max(hasteEffectLevel, conduitPowerLevel));
+            if (hasConduitPower) hasteEffectLevel = Integer.max(hasteEffectLevel, 2);
+
+            if (hasteEffectLevel > 0) {
+                speedMultiplier *= 1 + (0.2 * hasteEffectLevel);
             }
 
         }
@@ -1167,8 +1168,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         seconds /= speedMultiplier;
 
         if (player != null) {
-            if (player.isInsideOfWater() && !hasAquaAffinity) {
-                seconds *= 5;
+            if (player.isInsideOfWater() && !hasAquaAffinity ) {
+                seconds *= hasConduitPower && blockHardness >= 0.5 ? 2.5 : 5;
             }
 
             if (!player.isOnGround()) {
