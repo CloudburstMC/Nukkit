@@ -33,18 +33,6 @@ public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
     private int trackingId;
     private CompoundTag tag;
     
-    // [11:40:18 TRACE]: [CLIENT BOUND]  -   /127.0.0.1:19132: PositionTrackingDBServerBroadcastPacket(action=UPDATE, trackingId=2, tag={
-    //  "dim": 0i,
-    //  "id": "0x00000002",
-    //  "pos": [
-    //    3508i,
-    //    67i,
-    //    1i
-    //  ],
-    //  "status": 0b,
-    //  "version": 1b
-    //})
-    
     private CompoundTag requireTag() {
         if (tag == null) {
             tag = new CompoundTag()

@@ -1,8 +1,6 @@
 package cn.nukkit.math;
 
 import cn.nukkit.api.DeprecationDetails;
-import cn.nukkit.api.PowerNukkitDifference;
-import lombok.NonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

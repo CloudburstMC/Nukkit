@@ -11,7 +11,6 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 
 import java.util.Arrays;
 

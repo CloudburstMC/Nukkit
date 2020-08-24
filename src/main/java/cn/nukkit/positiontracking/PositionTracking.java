@@ -6,7 +6,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
-import lombok.NonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -17,43 +16,43 @@ import javax.annotation.Nullable;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class PositionTracking extends NamedPosition {
-    @NonNull
+    @Nonnull
     private String levelName;
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public PositionTracking(@NonNull String levelName, double x, double y, double z) {
+    public PositionTracking(@Nonnull String levelName, double x, double y, double z) {
         super(x, y, z);
         this.levelName = levelName;
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public PositionTracking(@NonNull Level level, double x, double y, double z) {
+    public PositionTracking(@Nonnull Level level, double x, double y, double z) {
         this(level.getName(), x, y, z);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public PositionTracking(@NonNull Level level, Vector3 v) {
+    public PositionTracking(@Nonnull Level level, Vector3 v) {
         this(level, v.x, v.y, v.z);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public PositionTracking(@NonNull String levelName, Vector3 v) {
+    public PositionTracking(@Nonnull String levelName, Vector3 v) {
         this(levelName, v.x, v.y, v.z);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public PositionTracking(@NonNull Position pos) {
+    public PositionTracking(@Nonnull Position pos) {
         this(pos.getLevel(), pos.x, pos.y, pos.z);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public PositionTracking(@NonNull NamedPosition pos) {
+    public PositionTracking(@Nonnull NamedPosition pos) {
         this(pos.getLevelName(), pos.x, pos.y, pos.z);
     }
 
@@ -67,11 +66,11 @@ public class PositionTracking extends NamedPosition {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public void setLevelName(@NonNull String levelName) {
+    public void setLevelName(@Nonnull String levelName) {
         this.levelName = levelName;
     }
 
-    @NonNull
+    @Nonnull
     @Override
     public PositionTracking add(double x) {
         return add(x, 0, 0);
