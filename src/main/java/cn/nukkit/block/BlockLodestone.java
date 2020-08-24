@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
@@ -17,6 +16,7 @@ import cn.nukkit.utils.MainLogger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.IOException;
 
 /**
  * @author joserobjr
@@ -76,8 +76,11 @@ public class BlockLodestone extends BlockSolid implements BlockEntityHolder<Bloc
         } else {
             compass = (ItemCompassLodestone) Item.get(ItemID.LODESTONE_COMPASS);
         }
+
+        int trackingHandle;
         try {
-            compass.setTrackingPosition(getLocation());
+            trackingHandle = getOrCreateBlockEntity().requestTrackingHandler();
+            compass.setTrackingHandle(trackingHandle);
         } catch (Exception e) {
             MainLogger.getLogger().warning("Could not create a lodestone compass to "+getLocation()+" for "+player.getName(), e);
             return false;
@@ -86,14 +89,25 @@ public class BlockLodestone extends BlockSolid implements BlockEntityHolder<Bloc
         if (decrement) {
             item.count--;
         }
-        
-        for (Item failed : player.getInventory().addItem(compass)) {
-            player.getLevel().dropItem(player.getPosition(), failed);
+
+        boolean added = true;
+        if (item != compass) {
+            for (Item failed : player.getInventory().addItem(compass)) {
+                added = false;
+                player.getLevel().dropItem(player.getPosition(), failed);
+            }
         }
         
         getLevel().addSound(player.getPosition(), Sound.LODESTONE_COMPASS_LINK_COMPASS_TO_LODESTONE);
-
-        Server.getInstance().getPositionTrackingService().forceRecheck(player);
+        
+        if (added) {
+            try {
+                getLevel().getServer().getPositionTrackingService().startTracking(player, trackingHandle, false);
+            } catch (IOException e) {
+                MainLogger.getLogger().warning("Make the player "+player.getName()+" track "+trackingHandle+" at "+getLocation(), e);
+            }
+            getLevel().getServer().getScheduler().scheduleTask(null, player::updateTrackingPositions);
+        }
         
         return true;
     }

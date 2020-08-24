@@ -98,7 +98,8 @@ public class PositionTrackingService implements Closeable {
             packet.setPosition(pos);
             packet.setDimension(player.getLevel().getDimension());
             packet.setTrackingId(trackingHandler);
-            player.batchDataPacket(packet);
+            packet.setStatus(0);
+            player.dataPacket(packet);
         } else {
             sendTrackingDestroy(player, trackingHandler);
         }
@@ -106,7 +107,7 @@ public class PositionTrackingService implements Closeable {
     
     private void sendTrackingDestroy(Player player, int trackingHandler) {
         PositionTrackingDBServerBroadcastPacket packet = destroyPacket(trackingHandler);
-        player.batchDataPacket(packet);
+        player.dataPacket(packet);
     }
     
     @PowerNukkitOnly
@@ -179,7 +180,7 @@ public class PositionTrackingService implements Closeable {
                 if (entry.getValue().isEmpty()) {
                     tracking.remove(entry.getKey());
                 }
-                player.batchDataPacket(destroyPacket(trackingHandler));
+                player.dataPacket(destroyPacket(trackingHandler));
                 return true;
             }
         }
@@ -374,9 +375,7 @@ public class PositionTrackingService implements Closeable {
 
         PositionTrackingStorage trackingStorage = new PositionTrackingStorage(next, new File(folder, next + ".pnt"));
         storage.put(next, new WeakReference<>(trackingStorage));
-        int handler = trackingStorage.addNewPosition(position, enabled).orElseThrow(InternalError::new);
-        handlerEnabled(handler);
-        return handler;
+        return trackingStorage.addNewPosition(position, enabled).orElseThrow(InternalError::new);
     }
 
     @PowerNukkitOnly
