@@ -543,7 +543,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             //list[TWISTING_VINES] = Block<Name>.class; //542
             list[NETHER_GOLD_ORE] = BlockOreGoldNether.class; //543
             list[CRYING_OBSIDIAN] = BlockObsidianCrying.class; //544
-            //list[SOUL_CAMPFIRE] = Block<Name>.class; //545
+            list[SOUL_CAMPFIRE_BLOCK] = BlockCampfireSoul.class; //545
             list[POLISHED_BLACKSTONE] = BlockBlackstonePolished.class; //546
             list[POLISHED_BLACKSTONE_STAIRS] = BlockStairsBlackstonePolished.class; //547
             list[POLISHED_BLACKSTONE_SLAB] = BlockSlabBlackstonePolished.class; //548
@@ -555,9 +555,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[CRIMSON_HYPHAE] = BlockHyphaeCrimson.class; //554
             list[STRIPPED_CRIMSON_HYPHAE] = BlockHyphaeStrippedCrimson.class; //555
             list[STRIPPED_WARPED_HYPHAE] = BlockHyphaeStrippedWarped.class; //556
-            //list[CHISELED_NETHER_BRICKS] = Block<Name>.class; //557
-            //list[CRACKED_NETHER_BRICKS] = Block<Name>.class; //558
-            //list[QUARTZ_BRICKS] = Block<Name>.class; //559
+            list[CHISELED_NETHER_BRICKS] = BlockBricksNetherChiseled.class; //557
+            list[CRACKED_NETHER_BRICKS] = BlockBricksNetherCracked.class; //558
+            list[QUARTZ_BRICKS] = BlockBricksQuartz.class; //559
             
             initializing = true;
             

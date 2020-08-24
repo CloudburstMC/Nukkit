@@ -66,7 +66,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     public ChunkSection(int y) {
         this.y = y;
-        this.contentVersion = ChunkUpdater.getContentVersion();
+        this.contentVersion = ChunkUpdater.getCurrentContentVersion();
 
         hasBlockLight = false;
         hasSkyLight = false;
@@ -76,11 +76,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     public ChunkSection(CompoundTag nbt) {
         this.y = nbt.getByte("Y");
-
-        storageList.add(new BlockStorage());
         
-        contentVersion = nbt.getByte("ContentVersion");
-        
+        setContentVersion(nbt.getByte("ContentVersion"));
+        storageList.add(createBlockStorage());
         int version = nbt.getByte("Version");
 
         ListTag<CompoundTag> storageTagList = getStorageTagList(nbt, version);
@@ -92,6 +90,14 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
         this.blockLight = nbt.getByteArray("BlockLight");
         this.skyLight = nbt.getByteArray("SkyLight");
+    }
+    
+    private BlockStorage createBlockStorage() {
+        BlockStorage storage = new BlockStorage();
+        if (getContentVersion() < ChunkUpdater.getCurrentContentVersion()) {
+            storage.delayPaletteUpdates();
+        }
+        return storage;
     }
 
     private void loadStorage(int layer, CompoundTag storageTag) {
@@ -129,6 +135,13 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             return;
         }
 
+        if (getContentVersion() > ChunkUpdater.getCurrentContentVersion()) {
+            log.warn(
+                "Loading a chunk section with content version ("+getContentVersion()+") higher than the current version ("+ChunkUpdater.getCurrentContentVersion()+"), " +
+                "Errors may occur and the chunk may get corrupted blocks!"
+            );
+        }
+        
         BlockStorage storage = getOrSetStorage(layer);
         
         // Convert YZX to XZY
@@ -379,6 +392,15 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 return 0;
             }
             return storage.getBlockChangeStateAbove(x, y, z);
+        }
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void delayPaletteUpdates() {
+        synchronized (storageList) {
+            storageList.forEach(BlockStorage::delayPaletteUpdates);
         }
     }
 
@@ -751,7 +773,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         synchronized (storageList) {
             BlockStorage blockStorage = layer < storageList.size()? storageList.get(layer) : null;
             if (blockStorage == null) {
-                blockStorage = new BlockStorage();
+                blockStorage = createBlockStorage();
                 for (int i = storageList.size(); i < layer; i++) {
                     storageList.add(i, null);
                 }
