@@ -11,6 +11,7 @@ import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.PositionTrackingDBServerBroadcastPacket;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.MapMaker;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -42,7 +43,7 @@ public class PositionTrackingService implements Closeable {
     private final TreeMap<Integer, WeakReference<PositionTrackingStorage>> storage = new TreeMap<>(Comparator.reverseOrder());
     private final AtomicBoolean closed = new AtomicBoolean(false);
     private final File folder;
-    private final WeakHashMap<Player, Map<PositionTrackingStorage, IntSet>> tracking = new WeakHashMap<>();
+    private final Map<Player, Map<PositionTrackingStorage, IntSet>> tracking = new MapMaker().weakKeys().makeMap();
 
     /**
      * Creates position tracking db service. The service is ready to be used right after the creation.
@@ -287,8 +288,8 @@ public class PositionTrackingService implements Closeable {
             if (comp == 0) {
                 return startIndex;
             }
-            if (comp < 0 && (best == null || best.compareTo(comp) < 0)) {
-                best = comp;
+            if (comp < 0 && (best == null || best.compareTo(startIndex) < 0)) {
+                best = startIndex;
             }
         }
         return best;

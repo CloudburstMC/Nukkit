@@ -2,12 +2,14 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import lombok.ToString;
 
 /**
  * @author joserobjr
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
+@ToString
 public class PositionTrackingDBClientRequestPacket extends DataPacket {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -32,6 +34,7 @@ public class PositionTrackingDBClientRequestPacket extends DataPacket {
 
     @Override
     public void encode() {
+        reset();
         putByte((byte) action.ordinal());
         putVarInt(trackingId);
     }

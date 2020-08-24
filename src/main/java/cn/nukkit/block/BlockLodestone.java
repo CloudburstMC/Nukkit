@@ -1,13 +1,17 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityLodestone;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemCompassLodestone;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.MainLogger;
 
@@ -19,24 +23,37 @@ import javax.annotation.Nullable;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-public class BlockLodestone extends BlockSolid {
+public class BlockLodestone extends BlockSolid implements BlockEntityHolder<BlockEntityLodestone> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockLodestone() {
         // Does nothing
     }
     
-    //[12:23:28 TRACE]: [CLIENT BOUND]  -   /127.0.0.1:19132: BlockEntityDataPacket(blockPosition=(3503, 67, 1), data={
-    //  "id": "Lodestone",
-    //  "isMovable": 1b,
-    //  "x": 3503i,
-    //  "y": 67i,
-    //  "z": 1i
-    //})
-
     @Override
     public int getId() {
         return LODESTONE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityLodestone> getBlockEntityClass() {
+        return BlockEntityLodestone.class;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.LODESTONE;
+    }
+
+    @Override
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
     }
 
     @Override
@@ -46,11 +63,19 @@ public class BlockLodestone extends BlockSolid {
 
     @Override
     public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
-        if (player == null || item.isNull() || item.getId() != ItemID.COMPASS) {
+        if (player == null || item.isNull() || item.getId() != ItemID.COMPASS && item.getId() != ItemID.LODESTONE_COMPASS) {
             return false;
         }
-
-        ItemCompassLodestone compass = (ItemCompassLodestone) Item.get(ItemID.LODESTONE_COMPASS);
+        
+        boolean decrement = !player.isCreative();
+        
+        ItemCompassLodestone compass;
+        if (item instanceof ItemCompassLodestone) {
+            compass = (ItemCompassLodestone) item;
+            decrement = false;
+        } else {
+            compass = (ItemCompassLodestone) Item.get(ItemID.LODESTONE_COMPASS);
+        }
         try {
             compass.setTrackingPosition(getLocation());
         } catch (Exception e) {
@@ -58,14 +83,17 @@ public class BlockLodestone extends BlockSolid {
             return false;
         }
         
-        if (!player.isCreative()) {
+        if (decrement) {
             item.count--;
-            for (Item failed : player.getInventory().addItem(compass)) {
-                player.getLevel().dropItem(player.getPosition(), failed);
-            }
+        }
+        
+        for (Item failed : player.getInventory().addItem(compass)) {
+            player.getLevel().dropItem(player.getPosition(), failed);
         }
         
         getLevel().addSound(player.getPosition(), Sound.LODESTONE_COMPASS_LINK_COMPASS_TO_LODESTONE);
+
+        Server.getInstance().getPositionTrackingService().forceRecheck(player);
         
         return true;
     }

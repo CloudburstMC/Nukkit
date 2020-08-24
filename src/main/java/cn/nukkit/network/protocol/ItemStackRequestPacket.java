@@ -2,6 +2,7 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
+import lombok.ToString;
 import lombok.Value;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.StringJoiner;
 
 
 @Since("1.4.0.0-PN")
+@ToString
 public class ItemStackRequestPacket extends DataPacket {
     @Since("1.4.0.0-PN")
     public final List<Request> requests = new ArrayList<>();

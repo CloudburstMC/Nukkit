@@ -2,12 +2,14 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import lombok.ToString;
 
 /**
  * @author joserobjr
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
+@ToString
 public class ItemStackResponsePacket extends DataPacket {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")

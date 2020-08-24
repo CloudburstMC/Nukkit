@@ -950,8 +950,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (this.getHealth() < 1) {
             this.respawn();
+        } else {
+            updateTrackingPositions();
         }
-
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void updateTrackingPositions() {
+        getServer().getPositionTrackingService().forceRecheck(this);
     }
 
     protected boolean orderChunks() {
@@ -3579,7 +3586,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     PositionTrackingDBServerBroadcastPacket notFound = new PositionTrackingDBServerBroadcastPacket();
                     notFound.setAction(PositionTrackingDBServerBroadcastPacket.Action.NOT_FOUND);
                     notFound.setTrackingId(posTrackReq.getTrackingId());
-                    batchDataPacket(notFound);
+                    dataPacket(notFound);
                     break;
                 default:
                     break;
@@ -5055,6 +5062,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (oldLevel.getDimension() != level.getDimension()) {
                 this.setDimension(level.getDimension());
             }
+            updateTrackingPositions();
             return true;
         }
 

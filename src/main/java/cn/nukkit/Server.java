@@ -607,7 +607,7 @@ public class Server {
         try {
             getLogger().debug("Loading position tracking service");
             this.positionTrackingService = new PositionTrackingService(new File(Nukkit.DATA_PATH, "services/position_tracking_db"));
-            getScheduler().scheduleRepeatingTask(null, positionTrackingService::forceRecheckAllPlayers, 20 * 5);
+            //getScheduler().scheduleRepeatingTask(null, positionTrackingService::forceRecheckAllPlayers, 20 * 5);
         } catch (IOException e) {
             getLogger().emergency("Failed to start the Position Tracking DB service!", e);
         }
