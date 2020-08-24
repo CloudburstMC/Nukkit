@@ -90,6 +90,14 @@ public class BlockFire extends BlockFlowable {
         return true;
     }
 
+    private Block blockDown() {
+        return this.down();
+    }
+
+    private int blockDownId() {
+        return blockDown().getId();
+    }
+
     @Override
     public void onEntityCollide(Entity entity) {
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
@@ -114,11 +122,8 @@ public class BlockFire extends BlockFlowable {
     @PowerNukkitDifference(info = "Soul Fire Implementation", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
-        if ((this.down().getId() == Block.SOUL_SAND ||  this.down().getId() == Block.SOUL_SOIL) && this.getId() == BlockID.FIRE){
-            this.getLevel().setBlock(this, Block.get(BlockID.SOUL_FIRE));
-        }
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_RANDOM) {
-            if (!this.isBlockTopFacingSurfaceSolid(this.down()) && !this.canNeighborBurn()) {
+            if (!this.isBlockTopFacingSurfaceSolid(blockDown()) && !this.canNeighborBurn()) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
@@ -130,13 +135,17 @@ public class BlockFire extends BlockFlowable {
 
             return Level.BLOCK_UPDATE_NORMAL;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
-            boolean forever = this.down().getId() == Block.NETHERRACK || this.down().getId() == Block.MAGMA ||  this.down().getId() == Block.SOUL_SAND ||  this.down().getId() == Block.SOUL_SOIL;
+            boolean forever = blockDownId() == Block.NETHERRACK || blockDownId() == Block.MAGMA ||  blockDownId() == Block.SOUL_SAND ||  blockDownId() == Block.SOUL_SOIL;
+
+            if ((blockDownId() == Block.SOUL_SAND ||  blockDownId() == Block.SOUL_SOIL) && this.getId() == BlockID.FIRE) {
+                this.getLevel().setBlock(this, getCurrentState().withBlockId(BlockID.SOUL_FIRE).getBlock());
+            }
 
             ThreadLocalRandom random = ThreadLocalRandom.current();
 
             //TODO: END
 
-            if (!this.isBlockTopFacingSurfaceSolid(this.down()) && !this.canNeighborBurn()) {
+            if (!this.isBlockTopFacingSurfaceSolid(blockDown()) && !this.canNeighborBurn()) {
                 BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                 level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
@@ -168,27 +177,27 @@ public class BlockFire extends BlockFlowable {
                 this.getLevel().scheduleUpdate(this, this.tickRate() + random.nextInt(10));
 
                 if (!forever && !this.canNeighborBurn()) {
-                    if (!this.isBlockTopFacingSurfaceSolid(this.down()) || meta > 3) {
+                    if (!this.isBlockTopFacingSurfaceSolid(blockDown()) || meta > 3) {
                         BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                         level.getServer().getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
                             level.setBlock(this, event.getNewState(), true);
                         }
                     }
-                } else if (!forever && !(this.down().getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
+                } else if (!forever && !(blockDown().getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
                     BlockFadeEvent event = new BlockFadeEvent(this, get(AIR));
                     level.getServer().getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         level.setBlock(this, event.getNewState(), true);
                     }
-                } else if (this.down().getId() != Block.SOUL_SAND &&  this.down().getId() != Block.SOUL_SOIL) {
+                } else if (blockDownId() != Block.SOUL_SAND &&  blockDownId() != Block.SOUL_SOIL) {
                     int o = 0;
 
                     //TODO: decrease the o if the rainfall values are high
 
                     this.tryToCatchBlockOnFire(this.east(), 300 + o, meta);
                     this.tryToCatchBlockOnFire(this.west(), 300 + o, meta);
-                    this.tryToCatchBlockOnFire(this.down(), 250 + o, meta);
+                    this.tryToCatchBlockOnFire(blockDown(), 250 + o, meta);
                     this.tryToCatchBlockOnFire(this.up(), 250 + o, meta);
                     this.tryToCatchBlockOnFire(this.south(), 300 + o, meta);
                     this.tryToCatchBlockOnFire(this.north(), 300 + o, meta);

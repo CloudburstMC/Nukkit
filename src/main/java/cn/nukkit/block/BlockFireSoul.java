@@ -29,6 +29,22 @@ public class BlockFireSoul extends BlockFire {
         return "Soul Fire Block";
     }
 
+    private Block blockDown() {
+        return this.down();
+    }
+
+    private int blockDownId() {
+        return blockDown().getId();
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if ((blockDownId() == Block.SOUL_SAND ||  blockDownId() == Block.SOUL_SOIL) && this.getId() == BlockID.FIRE) {
+            this.getLevel().setBlock(this, getCurrentState().withBlockId(BlockID.FIRE).getBlock());
+        }
+        return 0;
+    }
+
     @Override
     public BlockColor getColor() {
         return BlockColor.WATER_BLOCK_COLOR;
