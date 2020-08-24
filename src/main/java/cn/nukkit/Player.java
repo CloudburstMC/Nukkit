@@ -4836,6 +4836,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         if (this.spawned && inventory.open(this)) {
+            if (!isPermanent) {
+                updateTrackingPositions(true);
+            }
             return cnt;
         } else if (!alwaysOpen) {
             this.removeWindow(inventory);
@@ -4843,6 +4846,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return -1;
         } else {
             inventory.getViewers().add(this);
+        }
+        
+        if (!isPermanent) {
+            updateTrackingPositions(true);
         }
 
         return cnt;
@@ -4859,8 +4866,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void removeWindow(Inventory inventory) {
         inventory.close(this);
-        if (!this.permanentWindows.contains(this.getWindowId(inventory)))
+        if (!this.permanentWindows.contains(this.getWindowId(inventory))) {
             this.windows.remove(inventory);
+            updateTrackingPositions(true);
+        }
     }
 
     public void sendAllInventories() {

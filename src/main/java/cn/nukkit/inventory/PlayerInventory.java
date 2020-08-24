@@ -11,7 +11,6 @@ import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.player.PlayerItemHeldEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.ContainerIds;
 
@@ -171,14 +170,8 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public void onSlotChange(int index, Item before, boolean send) {
         EntityHuman holder = this.getHolder();
-        if (holder instanceof Player) {
-            if (!((Player) holder).spawned) {
-                return;
-            }
-            
-            if (before.getId() == ItemID.LODESTONE_COMPASS || getItem(index).getId() == ItemID.LODESTONE_COMPASS) {
-                ((Player) holder).updateTrackingPositions(true);
-            }
+        if (holder instanceof Player && !((Player) holder).spawned) {
+            return;
         }
 
         if (index >= this.getSize()) {

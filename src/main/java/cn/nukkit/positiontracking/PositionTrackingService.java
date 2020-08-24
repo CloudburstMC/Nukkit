@@ -61,7 +61,10 @@ public class PositionTrackingService implements Closeable {
                 .forEachOrdered(startIndex-> storage.put(startIndex, emptyRef));
     }
     
-    private boolean hasTrackingDevice(Player player, Inventory inventory, int trackingHandler) throws IOException {
+    private boolean hasTrackingDevice(Player player, @Nullable Inventory inventory, int trackingHandler) throws IOException {
+        if (inventory == null) {
+            return false;
+        }
         int size = inventory.getSize();
         for (int i = 0; i < size; i++) {
             if (isTrackingDevice(player, inventory.getItem(i), trackingHandler)) {
@@ -86,9 +89,12 @@ public class PositionTrackingService implements Closeable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean hasTrackingDevice(Player player, int trackingHandler) throws IOException {
-        return hasTrackingDevice(player, player.getInventory(), trackingHandler) 
-                || hasTrackingDevice(player, player.getCursorInventory(), trackingHandler)
-                || hasTrackingDevice(player, player.getOffhandInventory(), trackingHandler);
+        for (Inventory inventory: inventories(player)) {
+            if (hasTrackingDevice(player, inventory, trackingHandler)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     private void sendTrackingUpdate(Player player, int trackingHandler, PositionTracking pos) {
@@ -234,8 +240,33 @@ public class PositionTrackingService implements Closeable {
         Server.getInstance().getOnlinePlayers().values().forEach(this::detectNeededUpdates);
     }
     
+    private Iterable<Inventory> inventories(Player player) {
+        return () -> new Iterator<Inventory>() {
+            int next = 0;
+            @Override
+            public boolean hasNext() {
+                return next <= 4;
+            }
+
+            @Override
+            public Inventory next() {
+                switch (next++) {
+                    case 0: return player.getInventory();
+                    case 1: return player.getCursorInventory();
+                    case 2: return player.getOffhandInventory();
+                    case 3: return player.getCraftingGrid();
+                    case 4: return player.getTopWindow().orElse(null);
+                    default: throw new NoSuchElementException(); 
+                }
+            }
+        };
+    }
+    
     private void detectNeededUpdates(Player player) {
-        for (Inventory inventory: new Inventory[]{ player.getInventory(), player.getCursorInventory(), player.getOffhandInventory() }) {
+        for (Inventory inventory: inventories(player)) {
+            if (inventory == null) {
+                continue;
+            }
             int size = inventory.getSize();
             for (int slot = 0; slot < size; slot++) {
                 Item item = inventory.getItem(slot);
