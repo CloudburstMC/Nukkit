@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
 
 @PowerNukkitOnly
@@ -29,18 +30,14 @@ public class BlockFireSoul extends BlockFire {
         return "Soul Fire Block";
     }
 
-    private Block blockDown() {
-        return this.down();
-    }
-
-    private int blockDownId() {
-        return blockDown().getId();
-    }
-
     @Override
     public int onUpdate(int type) {
-        if ((blockDownId() == Block.SOUL_SAND ||  blockDownId() == Block.SOUL_SOIL) && this.getId() == BlockID.FIRE) {
-            this.getLevel().setBlock(this, getCurrentState().withBlockId(BlockID.FIRE).getBlock());
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            int downId = down().getId();
+            if (downId != Block.SOUL_SAND && downId != Block.SOUL_SOIL) {
+                this.getLevel().setBlock(this, getCurrentState().withBlockId(BlockID.FIRE).getBlock());
+            }
+            return type;
         }
         return 0;
     }
