@@ -69,6 +69,7 @@ import cn.nukkit.positiontracking.PositionTrackingService;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.resourcepacks.ResourcePack;
 import cn.nukkit.scheduler.AsyncTask;
+import cn.nukkit.scheduler.TaskHandler;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
@@ -264,6 +265,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Vector3 lastRightClickPos = null;
 
     protected int lastPlayerdLevelUpSoundTime = 0;
+    
+    private TaskHandler delayedPosTrackingUpdate;
 
     public int getStartActionTick() {
         return startAction;
@@ -967,7 +970,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void updateTrackingPositions(boolean delayed) {
         Server server = getServer();
         if (delayed) {
-            server.getScheduler().scheduleDelayedTask(null, this::updateTrackingPositions, 10);
+            if (delayedPosTrackingUpdate != null) {
+                delayedPosTrackingUpdate.cancel();
+            }
+            delayedPosTrackingUpdate = server.getScheduler().scheduleDelayedTask(null, this::updateTrackingPositions, 10);
             return;
         }
         PositionTrackingService positionTrackingService = server.getPositionTrackingService();

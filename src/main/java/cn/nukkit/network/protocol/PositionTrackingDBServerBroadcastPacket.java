@@ -156,7 +156,7 @@ public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
         putByte((byte) action.ordinal());
         putVarInt(trackingId);
         try {
-            put(NBTIO.writeNetwork(tag));
+            put(NBTIO.writeNetwork(tag != null? tag : new CompoundTag()));
         } catch (IOException e) {
             throw new EncoderException(e);
         }

@@ -287,7 +287,8 @@ public class Network {
                 if (log.isWarnEnabled()) {
                     log.warn("Error whilst processing the packet {}:{} for {} (full data: {})",
                             p.pid(), p.getClass().getSimpleName(),
-                            player.getName(), p.toString()
+                            player.getName(), p.toString(),
+                            e
                     );
                 }
             }

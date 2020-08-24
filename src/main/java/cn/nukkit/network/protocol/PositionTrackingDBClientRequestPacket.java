@@ -41,7 +41,8 @@ public class PositionTrackingDBClientRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-        action = ACTIONS[getByte()];
+        int aByte = getByte();
+        action = ACTIONS[aByte];
         trackingId = getVarInt();
     }
 
@@ -51,6 +52,7 @@ public class PositionTrackingDBClientRequestPacket extends DataPacket {
     }
 
     @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public enum Action {
         @PowerNukkitOnly
         @Since("1.4.0.0-PN")

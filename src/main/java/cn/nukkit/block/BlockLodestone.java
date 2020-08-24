@@ -66,17 +66,13 @@ public class BlockLodestone extends BlockSolid implements BlockEntityHolder<Bloc
         if (player == null || item.isNull() || item.getId() != ItemID.COMPASS && item.getId() != ItemID.LODESTONE_COMPASS) {
             return false;
         }
-        
-        boolean decrement = !player.isCreative();
-        
-        ItemCompassLodestone compass;
-        if (item instanceof ItemCompassLodestone) {
-            compass = (ItemCompassLodestone) item;
-            decrement = false;
-        } else {
-            compass = (ItemCompassLodestone) Item.get(ItemID.LODESTONE_COMPASS);
-        }
 
+
+        ItemCompassLodestone compass = (ItemCompassLodestone) Item.get(ItemID.LODESTONE_COMPASS);
+        if (item.hasCompoundTag()) {
+            compass.setCompoundTag(item.getCompoundTag().clone());
+        }
+        
         int trackingHandle;
         try {
             trackingHandle = getOrCreateBlockEntity().requestTrackingHandler();
@@ -85,19 +81,18 @@ public class BlockLodestone extends BlockSolid implements BlockEntityHolder<Bloc
             MainLogger.getLogger().warning("Could not create a lodestone compass to "+getLocation()+" for "+player.getName(), e);
             return false;
         }
-        
-        if (decrement) {
-            item.count--;
-        }
 
         boolean added = true;
-        if (item != compass) {
+        if (item.getCount() == 1) {
+            player.getInventory().setItemInHand(compass);
+        } else {
+            Item clone = item.clone();
+            clone.count--;
+            player.getInventory().setItemInHand(clone);
             for (Item failed : player.getInventory().addItem(compass)) {
                 added = false;
                 player.getLevel().dropItem(player.getPosition(), failed);
             }
-        } else if (player.isCreative()) {
-            player.getInventory().setItemInHand(compass);
         }
         
         getLevel().addSound(player.getPosition(), Sound.LODESTONE_COMPASS_LINK_COMPASS_TO_LODESTONE);
