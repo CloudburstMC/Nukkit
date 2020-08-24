@@ -65,6 +65,7 @@ import cn.nukkit.permission.PermissionAttachment;
 import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.positiontracking.PositionTracking;
+import cn.nukkit.positiontracking.PositionTrackingService;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.resourcepacks.ResourcePack;
 import cn.nukkit.scheduler.AsyncTask;
@@ -951,14 +952,26 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.getHealth() < 1) {
             this.respawn();
         } else {
-            updateTrackingPositions();
+            updateTrackingPositions(false);
         }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void updateTrackingPositions() {
+        updateTrackingPositions(false);
     }
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public void updateTrackingPositions() {
-        getServer().getPositionTrackingService().forceRecheck(this);
+    public void updateTrackingPositions(boolean delayed) {
+        Server server = getServer();
+        if (delayed) {
+            server.getScheduler().scheduleDelayedTask(null, this::updateTrackingPositions, 10);
+            return;
+        }
+        PositionTrackingService positionTrackingService = server.getPositionTrackingService();
+        positionTrackingService.forceRecheck(this);
     }
 
     protected boolean orderChunks() {
@@ -4594,6 +4607,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.getLevel().sendWeather(this);
             //Update time
             this.getLevel().sendTime(this);
+            updateTrackingPositions(true);
             return true;
         }
 
@@ -4652,6 +4666,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.getLevel().sendWeather(this);
             //Update time
             this.getLevel().sendTime(this);
+            updateTrackingPositions(true);
         }
     }
 
@@ -5062,7 +5077,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (oldLevel.getDimension() != level.getDimension()) {
                 this.setDimension(level.getDimension());
             }
-            updateTrackingPositions();
+            updateTrackingPositions(true);
             return true;
         }
 
