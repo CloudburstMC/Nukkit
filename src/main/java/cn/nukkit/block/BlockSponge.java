@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.LevelEventPacket;
@@ -67,7 +66,7 @@ public class BlockSponge extends BlockSolidMeta {
         if (blockSet) {
             if (this.getDamage() == WET && level.getDimension() == Level.DIMENSION_NETHER) {
                 level.setBlock(block, Block.get(BlockID.SPONGE, DRY));
-                this.getLevel().addSound(block.getLocation(), Sound.RANDOM_FIZZ);
+                this.getLevel().addLevelEvent(block.add(0.5, 0.875, 0.5), LevelEventPacket.EVENT_SOUND_EXPLODE);
 
                 for (int i = 0; i < 8; ++i) {
                     this.getLevel().addParticle(
