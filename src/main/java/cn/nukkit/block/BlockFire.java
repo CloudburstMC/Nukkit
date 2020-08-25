@@ -192,7 +192,7 @@ public class BlockFire extends BlockFlowable {
                     if (!event.isCancelled()) {
                         level.setBlock(this, event.getNewState(), true);
                     }
-                } else if (downId != Block.SOUL_SAND &&  downId != Block.SOUL_SOIL) {
+                } else {
                     int o = 0;
 
                     //TODO: decrease the o if the rainfall values are high
