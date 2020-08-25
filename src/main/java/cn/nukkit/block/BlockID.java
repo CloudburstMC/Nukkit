@@ -423,8 +423,7 @@ public interface BlockID {
     int BEEHIVE = 474;
     int HONEY_BLOCK = 475;
     int HONEYCOMB_BLOCK = 476;
-    
-    //int LODESTONE = 477;
+    int LODESTONE = 477;
     int CRIMSON_ROOTS = 478;
     int WARPED_ROOTS = 479;
     int CRIMSON_STEM = 480;
@@ -439,7 +438,7 @@ public interface BlockID {
     int BASALT = 489;
     int POLISHED_BASALT = 490;
     int SOUL_SOIL = 491;
-    //int SOUL_FIRE = 492;
+    int SOUL_FIRE = 492;
     int NETHER_SPROUTS_BLOCK = 493; 
     //int TARGET = 494;
     int STRIPPED_CRIMSON_STEM = 495; 

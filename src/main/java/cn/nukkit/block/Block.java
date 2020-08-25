@@ -475,7 +475,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BEEHIVE] = BlockBeehive.class; //474
             list[HONEY_BLOCK] = BlockHoney.class; //475
             list[HONEYCOMB_BLOCK] = BlockHoneycombBlock.class; //476
-            //list[LODESTONE] = Block<Name>.class; //477
+            list[LODESTONE] = BlockLodestone.class; //477
             list[CRIMSON_ROOTS] = BlockRootsCrimson.class; //478
             list[WARPED_ROOTS] = BlockRootsWarped.class; //479
             list[CRIMSON_STEM] = BlockStemCrimson.class; //480
@@ -490,7 +490,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[BASALT] = BlockBasalt.class; //489
             list[POLISHED_BASALT] = BlockPolishedBasalt.class; //490
             list[SOUL_SOIL] = BlockSoulSoil.class; //491
-            //list[SOUL_FIRE] = Block<Name>.class; //492
+            list[SOUL_FIRE] = BlockFireSoul.class; //492
             list[NETHER_SPROUTS_BLOCK] = BlockNetherSprout.class; //493 
             //list[TARGET] = Block<Name>.class; //494
             list[STRIPPED_CRIMSON_STEM] = BlockStemStrippedCrimson.class; //495
