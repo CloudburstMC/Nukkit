@@ -47,9 +47,6 @@ public class BlockButtonStone extends BlockButton {
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Requires wooden pickaxe to drop item")
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[] { toItem() };
-        }
-        return new Item[0];
+        return super.getDrops(item);
     }
 }
