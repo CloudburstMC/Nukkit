@@ -438,7 +438,7 @@ public interface BlockID {
     int BASALT = 489;
     int POLISHED_BASALT = 490;
     int SOUL_SOIL = 491;
-    //int SOUL_FIRE = 492;
+    int SOUL_FIRE = 492;
     int NETHER_SPROUTS_BLOCK = 493; 
     //int TARGET = 494;
     int STRIPPED_CRIMSON_STEM = 495; 
