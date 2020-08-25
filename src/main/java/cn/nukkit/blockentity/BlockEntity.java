@@ -60,7 +60,10 @@ public abstract class BlockEntity extends Position {
     public static final String DROPPER = "Dropper";
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public static final String NETHER_REACTOR = "NetherReactor"; 
+    public static final String NETHER_REACTOR = "NetherReactor";
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final String LODESTONE = "Lodestone";
 
 
     public static long count = 1;

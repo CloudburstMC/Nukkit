@@ -10,6 +10,7 @@ import cn.nukkit.event.entity.EntityInventoryChangeEvent;
 import cn.nukkit.event.inventory.InventoryOpenEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 
@@ -457,6 +458,15 @@ public abstract class BaseInventory implements Inventory {
         if (holder instanceof BlockEntity) {
             ((BlockEntity) holder).setDirty();
         }
+
+        if (before.getId() == ItemID.LODESTONE_COMPASS || getItem(index).getId() == ItemID.LODESTONE_COMPASS) {
+            if (holder instanceof Player) {
+                ((Player) holder).updateTrackingPositions(true);
+            }
+
+            getViewers().forEach(p-> p.updateTrackingPositions(true));
+        }
+        
 
         if (this.listeners != null) {
             for (InventoryListener listener : listeners) {

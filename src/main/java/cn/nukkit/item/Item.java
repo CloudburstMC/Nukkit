@@ -51,7 +51,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     protected int meta;
     protected boolean hasMeta = true;
     private byte[] tags = new byte[0];
-    private CompoundTag cachedNBT = null;
+    private transient CompoundTag cachedNBT = null;
     public int count;
     protected int durability = 0;
     protected String name;
@@ -331,7 +331,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[HONEYCOMB] = ItemHoneycomb.class; //736
             list[HONEY_BOTTLE] = ItemHoneyBottle.class; //737
                         
-            //list[LODESTONECOMPASS] = ItemCompassLodestone.class; //741;
+            list[LODESTONECOMPASS] = ItemCompassLodestone.class; //741;
             list[NETHERITE_INGOT] = ItemIngotNetherite.class; //742
             list[NETHERITE_SWORD] = ItemSwordNetherite.class; //743
             list[NETHERITE_SHOVEL] = ItemShovelNetherite.class; //744
@@ -1238,6 +1238,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         try {
             Item item = (Item) super.clone();
             item.tags = this.tags.clone();
+            item.cachedNBT = null;
             return item;
         } catch (CloneNotSupportedException e) {
             return null;
