@@ -4236,6 +4236,29 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return true;
     }
 
+    /**
+     * Drops an item on the ground in front of the player. Returns the dropped item.
+     *
+     * @param item to drop
+     * @return EntityItem if the item was dropped or null if the item was null
+     */
+    public EntityItem dropAndGetItem(Item item) {
+        if (!this.spawned || !this.isAlive()) {
+            return null;
+        }
+
+        if (item.isNull()) {
+            this.server.getLogger().debug(this.getName() + " attempted to drop a null item (" + item + ")");
+            return null;
+        }
+
+        Vector3 motion = this.getDirectionVector().multiply(0.4);
+
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, false);
+
+        return this.level.dropAndGetItem(this.add(0, 1.3, 0), item, motion, 40);
+    }
+
     public void sendPosition(Vector3 pos) {
         this.sendPosition(pos, this.yaw);
     }
