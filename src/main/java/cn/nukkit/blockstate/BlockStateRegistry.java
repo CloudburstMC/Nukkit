@@ -45,6 +45,7 @@ public class BlockStateRegistry {
 
     private final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     private final Int2ObjectMap<String> blockIdToPersistenceName = new Int2ObjectOpenHashMap<>();
+    private final Map<String, Integer> persistenceNameToBlockId = new LinkedHashMap<>();
     
     private final byte[] blockPaletteBytes;
 
@@ -91,7 +92,9 @@ public class BlockStateRegistry {
                     String[] parts = line.split(",");
                     Preconditions.checkArgument(parts.length == 2 || parts[0].matches("^[0-9]+$"));
                     if (parts.length > 1 && parts[1].startsWith("minecraft:")) {
-                        blockIdToPersistenceName.put(Integer.parseInt(parts[0]), parts[1]);
+                        int id = Integer.parseInt(parts[0]);
+                        blockIdToPersistenceName.put(id, parts[1]);
+                        persistenceNameToBlockId.put(parts[1], id);
                     }
                 }
             } catch (Exception e) {
@@ -303,9 +306,15 @@ public class BlockStateRegistry {
 
     public void registerPersistenceName(int blockId, String persistenceName) {
         synchronized (blockIdToPersistenceName) {
-            String oldName = blockIdToPersistenceName.putIfAbsent(blockId, persistenceName.toLowerCase());
+            String newName = persistenceName.toLowerCase();
+            String oldName = blockIdToPersistenceName.putIfAbsent(blockId, newName);
             if (oldName != null && !persistenceName.equalsIgnoreCase(oldName)) {
                 throw new UnsupportedOperationException("The persistence name registration tried to replaced a name. Name:" + persistenceName + ", Old:" + oldName + ", Id:" + blockId);
+            }
+            Integer oldId = persistenceNameToBlockId.putIfAbsent(newName, blockId);
+            if (oldId != null && blockId != oldId) {
+                blockIdToPersistenceName.remove(blockId);
+                throw new UnsupportedOperationException("The persistence name registration tried to replaced an id. Name:" + persistenceName + ", OldId:" + oldId + ", Id:" + blockId);
             }
         }
     }
@@ -390,7 +399,12 @@ public class BlockStateRegistry {
     public int getUpdateBlockRegistration() {
         return updateBlockRegistration.runtimeId;
     }
-
+    
+    @Nullable
+    public Integer getBlockId(String persistenceName) {
+        return persistenceNameToBlockId.get(persistenceName);
+    }
+    
     @AllArgsConstructor
     @ToString
     @EqualsAndHashCode
