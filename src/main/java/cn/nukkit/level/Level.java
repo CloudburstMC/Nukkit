@@ -1798,23 +1798,10 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        CompoundTag itemTag = NBTIO.putItemHelper(item);
-        itemTag.setName("Item");
-
         if (item.getId() > 0 && item.getCount() > 0) {
             EntityItem itemEntity = (EntityItem) Entity.createEntity("Item",
                     this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true),
-                    new CompoundTag().putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", source.getX()))
-                            .add(new DoubleTag("", source.getY())).add(new DoubleTag("", source.getZ())))
-
-                            .putList(new ListTag<DoubleTag>("Motion").add(new DoubleTag("", motion.x))
-                                    .add(new DoubleTag("", motion.y)).add(new DoubleTag("", motion.z)))
-
-                            .putList(new ListTag<FloatTag>("Rotation")
-                                    .add(new FloatTag("", new Random().nextFloat() * 360))
-                                    .add(new FloatTag("", 0)))
-
-                            .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", delay));
+                    Entity.getDefaultNBT(source, motion, new Random().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(item)).putShort("PickupDelay", delay));
 
             if (itemEntity != null) {
                 itemEntity.spawnToAll();
@@ -1910,7 +1897,7 @@ public class Level implements ChunkManager, Metadatable {
                 Tag tag = item.getNamedTagEntry("CanDestroy");
                 boolean canBreak = false;
                 if (tag instanceof ListTag) {
-                    for (Tag v : ((ListTag<Tag>) tag).getAll()) {
+                    for (Tag v : ((ListTag<? extends Tag>) tag).getAll()) {
                         if (v instanceof StringTag) {
                             Item entry = Item.fromString(((StringTag) v).data);
                             if (entry.getId() > 0 && entry.getBlock() != null && entry.getBlock().getId() == target.getId()) {
