@@ -11,6 +11,7 @@ import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.UnknownRuntimeIdException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.BlockStateRegistry;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -526,33 +528,59 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
+    private static final Pattern NAMESPACED = Pattern.compile("^(?:([a-zA-Z][a-zA-Z0-9_-]*):)?([a-zA-Z][a-zA-Z0-9_-]*)(?::(\\d+))?$");
+    private static final Pattern ITEM_ID = Pattern.compile("^(-?[1-9]\\d*)(?::(\\d+))?$");
+    
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Improve namespaced name handling and allows to get custom blocks by name")
     public static Item fromString(String str) {
-        String[] b = str.trim().replace(' ', '_').replace("minecraft:", "").split(":");
-
+        Matcher matcher = NAMESPACED.matcher(str);
         int id = 0;
         int meta = 0;
-
-        Pattern integerPattern = Pattern.compile("^-?[1-9]\\d*$");
-        if (integerPattern.matcher(b[0]).matches()) {
-            id = Integer.parseInt(b[0]);
-        } else {
-            try {
-                id = BlockID.class.getField(b[0].toUpperCase()).getInt(null);
+        String metaNumber;
+        if (matcher.matches()) {
+            String namespace = matcher.group(1);
+            String itemName = matcher.group(2);
+            metaNumber = matcher.group(3);
+            if (namespace == null || namespace.isEmpty()) {
+                namespace = "minecraft";
+            } else {
+                namespace = namespace.toLowerCase();
+            }
+            Integer blockId = BlockStateRegistry.getBlockId(namespace + ":" + itemName.toLowerCase());
+            if (blockId != null) {
+                id = blockId;
                 if (id > 255) {
                     id = 255 - id;
                 }
-            } catch (Exception ignore1) {
+            } else if (namespace.equals("minecraft")) {
                 try {
-                    id = ItemID.class.getField(b[0].toUpperCase()).getInt(null);
-                } catch (Exception ignore2) {
-
+                    id = BlockID.class.getField(itemName.toUpperCase()).getInt(null);
+                    if (id > 255) {
+                        id = 255 - id;
+                    }
+                } catch (Exception ignore1) {
+                    try {
+                        id = ItemID.class.getField(itemName.toUpperCase()).getInt(null);
+                    } catch (Exception ignore2) {
+                        return get(0, 0);
+                    }
                 }
             }
+        } else {
+            matcher = ITEM_ID.matcher(str);
+            if (matcher.matches()) {
+                String itemId = matcher.group(1);
+                metaNumber = matcher.group(2);
+                id = Integer.parseInt(itemId);
+            } else {
+                return get(0, 0);
+            }
         }
-
-        //id = id & 0xFFFF;
-        if (b.length != 1) meta = Integer.parseInt(b[1]) & 0xFFFF;
-
+        
+        if (metaNumber != null && !metaNumber.isEmpty()) {
+            meta = Integer.parseInt(metaNumber) & 0xFFFF;
+        }
+        
         return get(id, meta);
     }
 
