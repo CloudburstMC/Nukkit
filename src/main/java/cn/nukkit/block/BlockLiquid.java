@@ -573,4 +573,11 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         int liquidDepth = getLiquidDepth();
         return liquidDepth == 0 || liquidDepth == 8;
     }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getLightFilter() {
+        return 2;
+    }
 }

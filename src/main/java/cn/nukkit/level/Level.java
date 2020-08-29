@@ -142,6 +142,18 @@ public class Level implements ChunkManager, Metadatable {
         randomTickBlocks[BlockID.CRIMSON_NYLIUM] = true;
         randomTickBlocks[BlockID.WARPED_NYLIUM] = true;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static boolean canRandomTick(int blockId) {
+        return blockId < randomTickBlocks.length && randomTickBlocks[blockId];
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static void setCanRandomTick(int blockId, boolean newValue) {
+        randomTickBlocks[blockId] = newValue;
+    }
 
     private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();
 

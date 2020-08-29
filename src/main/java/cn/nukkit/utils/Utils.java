@@ -1,5 +1,8 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -311,5 +314,19 @@ public class Utils {
 
     public static boolean rand() {
         return random.nextBoolean();
+    }
+
+    /**
+     * A way to tell the java compiler to do not replace the users of a {@code public static final int} constant
+     * with the value defined in it, forcing the JVM to get the value directly from the class, preventing
+     * binary incompatible changes.
+     * @see <a href="https://stackoverflow.com/a/12065326/804976>https://stackoverflow.com/a/12065326/804976</a>
+     * @param value The value to be assigned to the field.
+     * @return The same value that was passed as parameter
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static int dynamic(int value) {
+        return value;
     }
 }

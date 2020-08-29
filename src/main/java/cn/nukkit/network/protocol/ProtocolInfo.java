@@ -5,6 +5,8 @@ import com.google.common.primitives.Ints;
 
 import java.util.List;
 
+import static cn.nukkit.utils.Utils.dynamic;
+
 /**
  * @author MagicDroidX &amp; iNevet (Nukkit Project)
  */
@@ -13,8 +15,7 @@ public interface ProtocolInfo {
     /**
      * Actual Minecraft: PE protocol version
      */
-    @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("408"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = dynamic(408);
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
