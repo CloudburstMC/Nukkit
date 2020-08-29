@@ -395,4 +395,11 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
     public boolean isTransparent() {
         return true;
     }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getLightFilter() {
+        return 3;
+    }
 }
