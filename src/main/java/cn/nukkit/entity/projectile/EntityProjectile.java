@@ -1,12 +1,11 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockBell;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.item.EntityEndCrystal;
-import cn.nukkit.event.block.BellRingEvent;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.MovingObjectPosition;
@@ -224,20 +223,19 @@ public abstract class EntityProjectile extends Entity {
         this.motionZ += rand.nextGaussian() * 0.007499999832361937 * modifier;
     }
 
+    @PowerNukkitOnly
     protected void onCollideWithBlock() {
         for (Block collisionBlock : level.getCollisionBlocks(getBoundingBox().grow(0.1, 0.1, 0.1))) {
             onCollideWithBlock(collisionBlock);
         }
     }
 
+    @PowerNukkitOnly
     protected boolean onCollideWithBlock(Block collisionBlock) {
-        if (collisionBlock instanceof BlockBell) {
-            ((BlockBell) collisionBlock).ring(this, BellRingEvent.RingCause.PROJECTILE);
-            return true;
-        }
-        return false;
+        return collisionBlock.onProjectileHit(this);
     }
 
+    @PowerNukkitOnly
     protected void addHitEffect() {
 
     }

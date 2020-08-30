@@ -1,6 +1,5 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.block.*;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
@@ -128,32 +127,6 @@ public class EntityArrow extends EntityProjectile {
     @Override
     protected void addHitEffect() {
         this.level.addSound(this, Sound.RANDOM_BOWHIT);
-    }
-
-    @Override
-    protected boolean onCollideWithBlock(Block collisionBlock) {
-        if (super.onCollideWithBlock(collisionBlock)) {
-            if (collisionBlock instanceof BlockBell && isOnFire() && level.getBlock(this).getId() == BlockID.AIR) {
-                level.setBlock(this, new BlockFire(), true, true);
-            }
-            return true;
-        }
-
-        if (isOnFire()) {
-            if (collisionBlock instanceof BlockCampfire) {
-                BlockCampfire campfire = (BlockCampfire) collisionBlock;
-                if (campfire.isExtinguished()) {
-                    campfire.setExtinguished(false);
-                    level.setBlock(collisionBlock, collisionBlock, true, true);
-                }
-                return true;
-            } else if (collisionBlock instanceof BlockTNT) {
-                ((BlockTNT) collisionBlock).prime(80, this);
-                return true;
-            }
-        }
-
-        return false;
     }
 
     @Override

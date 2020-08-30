@@ -8,6 +8,7 @@ import cn.nukkit.blockentity.BlockEntityCampfire;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.CampfireInventory;
@@ -228,6 +229,18 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
         }
 
         return itemUsed;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean onProjectileHit(@Nonnull Entity projectile) {
+        if (projectile.isOnFire() && projectile instanceof EntityArrow && isExtinguished()) {
+            setExtinguished(false);
+            level.setBlock(this, this, true);
+            return true;
+        }
+        return false;
     }
 
     @PowerNukkitOnly

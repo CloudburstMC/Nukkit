@@ -542,7 +542,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[SOUL_SOIL] = BlockSoulSoil.class; //491
             list[SOUL_FIRE] = BlockFireSoul.class; //492
             list[NETHER_SPROUTS_BLOCK] = BlockNetherSprout.class; //493 
-            //list[TARGET] = Block<Name>.class; //494
+            list[TARGET] = BlockTarget.class; //494
             list[STRIPPED_CRIMSON_STEM] = BlockStemStrippedCrimson.class; //495
             list[STRIPPED_WARPED_STEM] = BlockStemStrippedWarped.class; //496
             list[CRIMSON_PLANKS] = BlockPlanksCrimson.class; //497
@@ -1180,11 +1180,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 return 6.0;
             case ItemTool.TIER_DIAMOND:
                 return 8.0;
-            case ItemTool.TIER_NETHERITE:
-                return 9.0;
             case ItemTool.TIER_GOLD:
                 return 12.0;
             default:
+                if (toolType == ItemTool.TIER_NETHERITE) {
+                    return 9.0;
+                }
                 return 1.0;
         }
     }
@@ -1302,12 +1303,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     case ItemTool.TIER_DIAMOND:
                         base /= 8;
                         break;
-                    case ItemTool.TIER_NETHERITE:
-                        base /= 9;
-                        break;
                     case ItemTool.TIER_GOLD:
                         base /= 12;
                         break;
+                    default:
+                        if (tier == ItemTool.TIER_NETHERITE) {
+                            base /= 9;
+                        }
                 }
             }
         } else {
@@ -1914,6 +1916,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     public final boolean canRandomTick() {
         return Level.canRandomTick(getId());
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean onProjectileHit(@Nonnull Entity projectile) {
+        return false;
     }
 
     @Nonnull
