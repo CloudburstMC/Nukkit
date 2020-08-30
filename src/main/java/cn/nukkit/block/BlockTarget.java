@@ -77,15 +77,10 @@ public class BlockTarget extends BlockTransparent implements BlockEntityHolder<B
     public boolean activatePower(int power, int ticks) {
         Level level = getLevel();
         if (power <= 0 || ticks <= 0) {
-            BlockEntityTarget target = getBlockEntity();
-            if (target != null) {
-                int currentPower = target.getActivePower();
-                target.close();
-                if (currentPower != 0 && level.getServer().isRedstoneEnabled()) {
-                    level.updateAroundRedstone(this, null);
-                }
-                return true;
-            }
+            return deactivatePower();
+        }
+        
+        if (!level.getServer().isRedstoneEnabled()) {
             return false;
         }
 
@@ -103,7 +98,17 @@ public class BlockTarget extends BlockTransparent implements BlockEntityHolder<B
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean deactivatePower() {
-        return activatePower(0, 0);
+        BlockEntityTarget target = getBlockEntity();
+        if (target != null) {
+            int currentPower = target.getActivePower();
+            target.setActivePower(0);
+            target.close();
+            if (currentPower != 0 && level.getServer().isRedstoneEnabled()) {
+                level.updateAroundRedstone(this, null);
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override

@@ -4,6 +4,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
@@ -32,6 +33,6 @@ public class BlockEntityTarget extends BlockEntity {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getActivePower() {
-        return namedTag.getInt("activePower");
+        return NukkitMath.clamp(namedTag.getInt("activePower"), 0, 15);
     }
 }
