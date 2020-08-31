@@ -3,14 +3,17 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsWheat;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -123,28 +126,21 @@ public class BlockTallGrass extends BlockFlowable {
 
     @Override
     public Item[] getDrops(Item item) {
-        boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
+        // https://minecraft.gamepedia.com/Fortune#Grass_and_ferns
+        List<Item> drops = new ArrayList<>(2);
         if (item.isShears()) {
-            //todo enchantment
-            if (dropSeeds) {
-                return new Item[]{
-                        new ItemSeedsWheat(),
-                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
-                };
-            } else {
-                return new Item[]{
-                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
-                };
-            }
+            drops.add(getCurrentState().asItemBlock());
         }
 
-        if (dropSeeds) {
-            return new Item[]{
-                    new ItemSeedsWheat()
-            };
-        } else {
-            return new Item[0];
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (random.nextInt(8) == 0) {
+            Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
+            int fortuneLevel = fortune != null? fortune.getLevel() : 0;
+            int amount = fortuneLevel == 0? 1 : 1 + random.nextInt(fortuneLevel * 2);
+            drops.add(Item.get(ItemID.WHEAT_SEEDS, 0, amount));
         }
+        
+        return drops.toArray(new Item[0]);
     }
 
     @Override

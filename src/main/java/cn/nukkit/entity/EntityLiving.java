@@ -2,6 +2,7 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockMagma;
 import cn.nukkit.entity.data.ShortEntityData;
@@ -19,7 +20,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockIterator;
 import co.aikar.timings.Timings;
@@ -101,6 +101,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         ent.applyEntityCollision(this);
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean attack(EntityDamageEvent source) {
         if (this.noDamageTicks > 0) {
@@ -130,7 +131,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                     animate.eid = getId();
 
                     this.getLevel().addChunkPacket(damager.getChunkX(), damager.getChunkZ(), animate);
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ATTACK_STRONG);
+                    this.getLevel().addSound(this, Sound.GAME_PLAYER_ATTACK_STRONG);
 
                     source.setDamage(source.getDamage() * 1.5f);
                 }

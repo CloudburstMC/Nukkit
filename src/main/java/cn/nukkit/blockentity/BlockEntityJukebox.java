@@ -1,8 +1,10 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemRecord;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -46,52 +48,54 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
         return recordItem;
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     public void play() {
         if (this.recordItem instanceof ItemRecord) {
             switch (this.recordItem.getId()) {
                 case Item.RECORD_13:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_13);
+                    this.getLevel().addSound(this, Sound.RECORD_13);
                     break;
                 case Item.RECORD_CAT:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_CAT);
+                    this.getLevel().addSound(this, Sound.RECORD_CAT);
                     break;
                 case Item.RECORD_BLOCKS:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_BLOCKS);
+                    this.getLevel().addSound(this, Sound.RECORD_BLOCKS);
                     break;
                 case Item.RECORD_CHIRP:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_CHIRP);
+                    this.getLevel().addSound(this, Sound.RECORD_CHIRP);
                     break;
                 case Item.RECORD_FAR:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_FAR);
+                    this.getLevel().addSound(this, Sound.RECORD_FAR);
                     break;
                 case Item.RECORD_MALL:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_MALL);
+                    this.getLevel().addSound(this, Sound.RECORD_MALL);
                     break;
                 case Item.RECORD_MELLOHI:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_MELLOHI);
+                    this.getLevel().addSound(this, Sound.RECORD_MELLOHI);
                     break;
                 case Item.RECORD_STAL:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_STAL);
+                    this.getLevel().addSound(this, Sound.RECORD_STAL);
                     break;
                 case Item.RECORD_STRAD:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_STRAD);
+                    this.getLevel().addSound(this, Sound.RECORD_STRAD);
                     break;
                 case Item.RECORD_WARD:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_WARD);
+                    this.getLevel().addSound(this, Sound.RECORD_WARD);
                     break;
                 case Item.RECORD_11:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_11);
+                    this.getLevel().addSound(this, Sound.RECORD_11);
                     break;
                 case Item.RECORD_WAIT:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_WAIT);
+                    this.getLevel().addSound(this, Sound.RECORD_WAIT);
                     break;
                 case Item.RECORD_PIGSTEP:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_PIGSTEP);
+                    this.getLevel().addSound(this, Sound.RECORD_PIGSTEP);
                     break;
             }
         }
     }
 
+    //TODO: Transfer the stop sound to the new sound method
     public void stop() {
         this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_STOP_RECORD);
     }

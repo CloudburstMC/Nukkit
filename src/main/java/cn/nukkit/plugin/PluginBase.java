@@ -2,8 +2,11 @@ package cn.nukkit.plugin;
 
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.PluginCommand;
 import cn.nukkit.command.PluginIdentifiableCommand;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
@@ -11,6 +14,8 @@ import com.google.common.base.Preconditions;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -160,6 +165,7 @@ abstract public class PluginBase implements Plugin {
     /**
      * TODO: FINISH JAVADOC
      */
+    @Nullable
     public PluginIdentifiableCommand getCommand(String name) {
         PluginIdentifiableCommand command = this.getServer().getPluginCommand(name);
         if (command == null || !command.getPlugin().equals(this)) {
@@ -171,6 +177,17 @@ abstract public class PluginBase implements Plugin {
         } else {
             return null;
         }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public PluginCommand<?> getPluginCommand(@Nonnull String name) {
+        PluginIdentifiableCommand command = getCommand(name);
+        if (command instanceof PluginCommand<?>) {
+            return (PluginCommand<?>) command;
+        }
+        return null;
     }
 
     @Override

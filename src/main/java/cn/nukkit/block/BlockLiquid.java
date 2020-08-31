@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
@@ -15,7 +16,6 @@ import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
 import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
 
@@ -496,6 +496,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         entity.resetFallDistance();
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     protected boolean liquidCollide(Block cause, Block result) {
         BlockFromToEvent event = new BlockFromToEvent(this, result);
         this.level.getServer().getPluginManager().callEvent(event);
@@ -504,7 +505,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
         }
         this.level.setBlock(this, event.getTo(), true, true);
         this.level.setBlock(this, 1, Block.get(BlockID.AIR), true, true);
-        this.getLevel().addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_FIZZ);
+        this.getLevel().addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_FIZZ);
         return true;
     }
 
@@ -572,5 +573,12 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
     public boolean isSourceOrFlowingDown() {
         int liquidDepth = getLiquidDepth();
         return liquidDepth == 0 || liquidDepth == 8;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getLightFilter() {
+        return 2;
     }
 }

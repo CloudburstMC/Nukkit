@@ -1,6 +1,7 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -10,6 +11,7 @@ import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -131,6 +133,7 @@ public class EntityThrownTrident extends EntityProjectile {
         return 8;
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
@@ -140,7 +143,7 @@ public class EntityThrownTrident extends EntityProjectile {
         this.timing.startTiming();
 
         if (this.isCollided && !this.hadCollision) {
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_HIT_GROUND);
+            this.getLevel().addSound(this, Sound.ITEM_TRIDENT_HIT_GROUND);
         }
 
         boolean hasUpdate = super.onUpdate(currentTick);
@@ -179,6 +182,7 @@ public class EntityThrownTrident extends EntityProjectile {
         super.spawnTo(player);
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public void onCollideWithEntity(Entity entity) {
         this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity)));
@@ -191,7 +195,7 @@ public class EntityThrownTrident extends EntityProjectile {
             ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
         entity.attack(ev);
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_HIT);
+        this.getLevel().addSound(this, Sound.ITEM_TRIDENT_HIT);
         this.hadCollision = true;
         this.close();
         Entity newTrident = create("ThrownTrident", this);

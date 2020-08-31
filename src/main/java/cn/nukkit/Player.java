@@ -119,9 +119,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int CRAFTING_ANVIL = 2;
     public static final int CRAFTING_ENCHANT = 3;
     public static final int CRAFTING_BEACON = 4;
-    public static final int CRAFTING_GRINDSTONE = 5;
-    public static final int CRAFTING_STONECUTTER = 6;
-    public static final int CRAFTING_CARTOGRAPHY = 7;
+    public static final @PowerNukkitOnly int CRAFTING_GRINDSTONE = 1000;
+    public static final @PowerNukkitOnly int CRAFTING_STONECUTTER = 1001;
+    public static final @PowerNukkitOnly int CRAFTING_CARTOGRAPHY = 1002;
 
     public static final float DEFAULT_SPEED = 0.1f;
     public static final float MAXIMUM_SPEED = 0.5f;

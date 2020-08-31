@@ -12,12 +12,12 @@ import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -184,6 +184,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
     }
 
     @PowerNukkitDifference(info = "Fixed a lot of issues involving the brewing processes", since = "1.3.1.2-PN")
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onUpdate() {
         if (closed) {
@@ -253,8 +254,8 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
             this.fuelAmount--;
             this.sendFuel();
-            
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POTION_BREWED);
+
+            this.getLevel().addSound(this, Sound.RANDOM_POTION_BREWED);
         }
         
         stopBrewing();
