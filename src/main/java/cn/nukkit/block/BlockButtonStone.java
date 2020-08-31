@@ -33,6 +33,11 @@ public class BlockButtonStone extends BlockButton {
         return ItemTool.TYPE_PICKAXE;
     }
 
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will return false")
     @Override
     public boolean canHarvestWithHand() {
@@ -42,9 +47,6 @@ public class BlockButtonStone extends BlockButton {
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Requires wooden pickaxe to drop item")
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[] { toItem() };
-        }
-        return new Item[0];
+        return super.getDrops(item);
     }
 }

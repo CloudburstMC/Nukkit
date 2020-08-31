@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -46,6 +48,13 @@ public class BlockObsidianGlowing extends BlockSolid {
     @Override
     public Item toItem() {
         return new ItemBlock(Block.get(BlockID.OBSIDIAN));
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_DIAMOND;
     }
 
     @Override

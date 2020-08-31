@@ -163,8 +163,13 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable, B
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             return new Item[]{
                     Item.get(Item.OBSIDIAN, 0, 8)
             };

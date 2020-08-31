@@ -39,13 +39,18 @@ public class BlockOreLapis extends BlockSolid {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_STONE;
+    }
+
+    @Override
     public String getName() {
         return "Lapis Lazuli Ore";
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
+        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             int count = 4 + ThreadLocalRandom.current().nextInt(5);
             Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
             if (fortune != null && fortune.getLevel() >= 1) {

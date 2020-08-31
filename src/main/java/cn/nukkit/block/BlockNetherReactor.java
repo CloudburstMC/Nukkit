@@ -69,7 +69,14 @@ public class BlockNetherReactor extends BlockSolid implements BlockEntityHolder<
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe()) {

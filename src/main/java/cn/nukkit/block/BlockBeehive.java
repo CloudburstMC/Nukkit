@@ -8,7 +8,6 @@ import cn.nukkit.blockentity.BlockEntityBeehive;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
@@ -211,7 +210,7 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntit
     
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[]{ new ItemBlock(new BlockBeehive()) };
+        return new Item[]{ Item.getBlock(BlockID.BEEHIVE) };
     }
     
     @Override

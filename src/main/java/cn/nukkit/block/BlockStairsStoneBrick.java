@@ -28,6 +28,11 @@ public class BlockStairsStoneBrick extends BlockStairs {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public double getHardness() {
         return 1.5;
     }

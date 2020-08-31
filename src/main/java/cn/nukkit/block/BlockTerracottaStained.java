@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
@@ -48,13 +49,11 @@ public class BlockTerracottaStained extends BlockSolidMeta {
         return ItemTool.TYPE_PICKAXE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{toItem()};
-        } else {
-            return new Item[0];
-        }
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

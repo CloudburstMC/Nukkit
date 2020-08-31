@@ -63,6 +63,11 @@ public class BlockJukebox extends BlockSolid implements BlockEntityHolder<BlockE
     }
 
     @Override
+    public double getHardness() {
+        return 1;
+    }
+
+    @Override
     public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         BlockEntityJukebox jukebox = getOrCreateBlockEntity();
         if (jukebox.getRecordItem().getId() != 0) {

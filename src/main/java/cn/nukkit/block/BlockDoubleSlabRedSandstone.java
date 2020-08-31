@@ -70,7 +70,11 @@ public class BlockDoubleSlabRedSandstone extends BlockDoubleSlabBase {
     public int getSingleSlabId() {
         return RED_SANDSTONE_SLAB;
     }
-    
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
     @Override
     public boolean canHarvestWithHand() {
         return false;
