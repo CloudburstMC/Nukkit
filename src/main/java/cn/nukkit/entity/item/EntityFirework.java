@@ -10,6 +10,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -80,6 +81,7 @@ public class EntityFirework extends Entity {
         return NETWORK_ID;
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
@@ -116,7 +118,7 @@ public class EntityFirework extends Entity {
 
 
             if (this.fireworkAge == 0) {
-                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LAUNCH);
+                this.getLevel().addSound(this, Sound.FIREWORK_LAUNCH);
             }
 
             this.fireworkAge++;
@@ -128,7 +130,7 @@ public class EntityFirework extends Entity {
                 pk.event = EntityEventPacket.FIREWORK_EXPLOSION;
                 pk.eid = this.getId();
 
-                level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LARGE_BLAST, -1, NETWORK_ID);
+                level.addSound(this, Sound.FIREWORK_LARGE_BLAST, 1, NETWORK_ID);
 
                 Server.broadcastPacket(getViewers().values(), pk);
 

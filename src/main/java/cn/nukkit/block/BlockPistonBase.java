@@ -13,11 +13,11 @@ import cn.nukkit.event.block.BlockPistonEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.MainLogger;
 import com.google.common.collect.Lists;
@@ -156,6 +156,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         }
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     private boolean checkState(Boolean isPowered) {
         if (!this.level.getServer().isRedstoneEnabled()) {
             return false;
@@ -170,14 +171,14 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 return false;
             }
 
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_OUT);
+            this.getLevel().addSound(this, Sound.TILE_PISTON_OUT);
             return true;
         } else if (!isPowered && isExtended()) {
             if (!this.doMove(false)) {
                 return false;
             }
 
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_IN);
+            this.getLevel().addSound(this, Sound.TILE_PISTON_IN);
             return true;
         }
 
