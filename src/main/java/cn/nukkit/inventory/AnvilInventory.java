@@ -378,6 +378,10 @@ public class AnvilInventory extends FakeBlockUIComponent {
             case Item.IRON_CHESTPLATE:
             case Item.IRON_LEGGINGS:
             case Item.IRON_BOOTS:
+            case Item.CHAIN_HELMET:
+            case Item.CHAIN_CHESTPLATE:
+            case Item.CHAIN_LEGGINGS:
+            case Item.CHAIN_BOOTS:
                 return Item.IRON_INGOT;
         
             case Item.GOLD_SWORD:
