@@ -1957,11 +1957,53 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
+        if (item.getId() != 0 && item.getCount() > 0) {
+            EntityItem itemEntity = (EntityItem) Entity.createEntity("Item",
+                    this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true),
+                    Entity.getDefaultNBT(source, motion, new Random().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(item)).putShort("PickupDelay", delay));
+
+            if (itemEntity != null) {
+                itemEntity.spawnToAll();
+            }
+        }
+    }
+
+    @Since("1.4.0.0-PN")
+    public EntityItem dropAndGetItem(Vector3 source, Item item) {
+        return this.dropAndGetItem(source, item, null);
+    }
+
+    @Since("1.4.0.0-PN")
+    public EntityItem dropAndGetItem(Vector3 source, Item item, Vector3 motion) {
+        return this.dropAndGetItem(source, item, motion, 10);
+    }
+
+    @Since("1.4.0.0-PN")
+    public EntityItem dropAndGetItem(Vector3 source, Item item, Vector3 motion, int delay) {
+        return this.dropAndGetItem(source, item, motion, false, delay);
+    }
+
+    @Since("1.4.0.0-PN")
+    public EntityItem dropAndGetItem(Vector3 source, Item item, Vector3 motion, boolean dropAround, int delay) {
+        EntityItem itemEntity = null;
+
+        if (motion == null) {
+            if (dropAround) {
+                float f = ThreadLocalRandom.current().nextFloat() * 0.5f;
+                float f1 = ThreadLocalRandom.current().nextFloat() * ((float) Math.PI * 2);
+
+                motion = new Vector3(-MathHelper.sin(f1) * f, 0.20000000298023224, MathHelper.cos(f1) * f);
+            } else {
+                motion = new Vector3(new java.util.Random().nextDouble() * 0.2 - 0.1, 0.2,
+                        new java.util.Random().nextDouble() * 0.2 - 0.1);
+            }
+        }
+
         CompoundTag itemTag = NBTIO.putItemHelper(item);
         itemTag.setName("Item");
 
         if (item.getId() != 0 && item.getCount() > 0) {
-            EntityItem itemEntity = new EntityItem(
+             itemEntity = (EntityItem) Entity.createEntity("Item",
                     this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true),
                     new CompoundTag().putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", source.getX()))
                             .add(new DoubleTag("", source.getY())).add(new DoubleTag("", source.getZ())))
@@ -1975,8 +2017,12 @@ public class Level implements ChunkManager, Metadatable {
 
                             .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", delay));
 
-            itemEntity.spawnToAll();
+            if (itemEntity != null) {
+                itemEntity.spawnToAll();
+            }
         }
+
+        return itemEntity;
     }
 
     public Item useBreakOn(Vector3 vector) {
@@ -2038,7 +2084,7 @@ public class Level implements ChunkManager, Metadatable {
                 Tag tag = item.getNamedTagEntry("CanDestroy");
                 boolean canBreak = false;
                 if (tag instanceof ListTag) {
-                    for (Tag v : ((ListTag<Tag>) tag).getAll()) {
+                    for (Tag v : ((ListTag<? extends Tag>) tag).getAll()) {
                         if (v instanceof StringTag) {
                             Item entry = Item.fromString(((StringTag) v).data);
                             if (entry.getId() > 0 && entry.getBlock() != null && entry.getBlock().getId() == target.getId()) {

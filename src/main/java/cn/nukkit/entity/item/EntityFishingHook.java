@@ -244,24 +244,9 @@ public class EntityFishingHook extends EntityProjectile {
                 motion = new Vector3();
             }
 
-            CompoundTag itemTag = NBTIO.putItemHelper(item);
-            itemTag.setName("Item");
-
             EntityItem itemEntity = new EntityItem(
                     this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true),
-                    new CompoundTag()
-                            .putList(new ListTag<DoubleTag>("Pos")
-                                    .add(new DoubleTag("", this.getX()))
-                                    .add(new DoubleTag("", this.getWaterHeight()))
-                                    .add(new DoubleTag("", this.getZ())))
-                            .putList(new ListTag<DoubleTag>("Motion")
-                                    .add(new DoubleTag("", motion.x))
-                                    .add(new DoubleTag("", motion.y))
-                                    .add(new DoubleTag("", motion.z)))
-                            .putList(new ListTag<FloatTag>("Rotation")
-                                    .add(new FloatTag("", new Random().nextFloat() * 360))
-                                    .add(new FloatTag("", 0)))
-                            .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", 1));
+                    Entity.getDefaultNBT(new Vector3(this.x, this.getWaterHeight(), this.z), motion, new Random().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(item)).putShort("PickupDelay", 1));
 
             if (this.shootingEntity != null && this.shootingEntity instanceof Player) {
                 itemEntity.setOwner(this.shootingEntity.getName());

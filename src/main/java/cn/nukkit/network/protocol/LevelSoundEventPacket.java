@@ -266,6 +266,8 @@ public class LevelSoundEventPacket extends DataPacket {
     
     public static final int SOUND_RECORD_PIGSTEP = 314;
 
+    public static final int SOUND_RECORD_PIGSTEP = 314;
+
     public int sound;
     public float x;
     public float y;

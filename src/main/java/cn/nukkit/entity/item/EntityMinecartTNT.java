@@ -118,6 +118,11 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     }
 
     @Override
+    public String getName() {
+        return getType().getName();
+    }
+
+    @Override
     public MinecartType getType() {
         return MinecartType.valueOf(3);
     }

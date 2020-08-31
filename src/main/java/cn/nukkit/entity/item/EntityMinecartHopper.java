@@ -25,6 +25,11 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     }
 
     @Override
+    public String getName() {
+        return getType().getName();
+    }
+
+    @Override
     public MinecartType getType() {
         return MinecartType.valueOf(5);
     }

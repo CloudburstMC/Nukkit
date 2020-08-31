@@ -99,7 +99,7 @@ public abstract class Food {
             .addEffect(Effect.getEffect(Effect.REGENERATION).setAmplifier(1).setDuration(6 * 20)).addRelative(Item.SUSPICIOUS_STEW, 8));
     public static final Food suspicious_stew_wither = registerDefaultFood(new FoodEffectiveInBow(6, 7.2F)
             .addEffect(Effect.getEffect(Effect.WITHER).setAmplifier(1).setDuration(6 * 20)).addRelative(Item.SUSPICIOUS_STEW, 9));
-    public static final Food honey = registerDefaultFood(new FoodHoney(6, 2.4F).addRelative(Item.HONEY_BOTTLE));
+    public static final Food honey = registerDefaultFood(new FoodHoney(6, 1.2F).addRelative(Item.HONEY_BOTTLE));
     
     //Opened API for plugins
     public static Food registerFood(Food food, Plugin plugin) {

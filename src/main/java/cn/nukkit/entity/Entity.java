@@ -17,10 +17,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.EnumLevel;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Location;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.*;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
@@ -1759,7 +1756,9 @@ public abstract class Entity extends Location implements Metadatable {
             if (down.getId() == BlockID.HONEY_BLOCK) {
                 damage *= 0.2F;
             }
-            this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
+            if (!this.isPlayer || level.getGameRules().getBoolean(GameRule.FALL_DAMAGE)) {
+                this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
+            }
         }
 
         if (fallDistance > 0.75) {
