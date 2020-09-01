@@ -77,10 +77,19 @@ public class InventoryTransaction {
                     SlotChangeAction existingSlotChangeAction = (SlotChangeAction) existingAction;
                     if (!existingSlotChangeAction.getInventory().equals(slotChangeAction.getInventory()))
                         continue;
+                    Item existingSource = existingSlotChangeAction.getSourceItem();
                     Item existingTarget = existingSlotChangeAction.getTargetItem();
-                    if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot() && slotChangeAction.getSourceItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
+                    if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot()
+                            && slotChangeAction.getSourceItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
                         iterator.set(new SlotChangeAction(existingSlotChangeAction.getInventory(), existingSlotChangeAction.getSlot(), existingSlotChangeAction.getSourceItem(), slotChangeAction.getTargetItem()));
                         action.onAddToTransaction(this);
+                        return;
+                    } else if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot()
+                            && slotChangeAction.getSourceItem().equals(existingSource, existingSource.hasMeta(), existingSource.hasCompoundTag())
+                            && slotChangeAction.getTargetItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
+                        existingSource.setCount(existingSource.getCount() + slotChangeAction.getSourceItem().getCount());
+                        existingTarget.setCount(existingTarget.getCount() + slotChangeAction.getTargetItem().getCount());
+                        iterator.set(new SlotChangeAction(existingSlotChangeAction.getInventory(), existingSlotChangeAction.getSlot(), existingSource, existingTarget));
                         return;
                     }
                 }
