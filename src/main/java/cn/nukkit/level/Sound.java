@@ -1,5 +1,7 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.Since;
+
 /**
  * @author CreeperFace
  */
@@ -13,14 +15,13 @@ public enum Sound {
     AMBIENT_WEATHER_LIGHTNING_IMPACT("ambient.weather.lightning.impact"),
     AMBIENT_WEATHER_RAIN("ambient.weather.rain"),
     AMBIENT_WEATHER_THUNDER("ambient.weather.thunder"),
-    ARMOR_EQUIP_NETHERITE("armor.equip_netherite"),
+    @Since("1.4.0.0-PN") ARMOR_EQUIP_NETHERITE("armor.equip_netherite"),
     ARMOR_EQUIP_CHAIN("armor.equip_chain"),
     ARMOR_EQUIP_DIAMOND("armor.equip_diamond"),
     ARMOR_EQUIP_GENERIC("armor.equip_generic"),
     ARMOR_EQUIP_GOLD("armor.equip_gold"),
     ARMOR_EQUIP_IRON("armor.equip_iron"),
     ARMOR_EQUIP_LEATHER("armor.equip_leather"),
-    ARMOR_EQUIP_NETHERITE("armor.equip_netherite"),
     BEACON_ACTIVATE("beacon.activate"),
     BEACON_AMBIENT("beacon.ambient"),
     BEACON_DEACTIVATE("beacon.deactivate"),
