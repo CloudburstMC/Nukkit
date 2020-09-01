@@ -1,5 +1,8 @@
 package cn.nukkit.item;
 
+/**
+ * @author joserobjr
+ */
 public class ItemHoneycomb extends Item {
     
     public ItemHoneycomb() {

@@ -1,5 +1,6 @@
 package cn.nukkit.item;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.block.Block;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -75,6 +76,9 @@ public class ItemBanner extends Item {
         return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).getList("Patterns").size();
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", 
+            reason = "Does nothing, used to do a backward compatibility but the content and usage were removed by Cloudburst")
     public void correctNBT() {
 
     }
