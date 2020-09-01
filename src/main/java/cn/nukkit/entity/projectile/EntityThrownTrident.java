@@ -3,23 +3,19 @@ package cn.nukkit.entity.projectile;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ProjectileHitEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -207,18 +203,11 @@ public class EntityThrownTrident extends EntityProjectile {
         FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4);
         if (chunk == null) return null;
 
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", source.x + 0.5))
-                        .add(new DoubleTag("", source.y))
-                        .add(new DoubleTag("", source.z + 0.5)))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", new Random().nextFloat() * 360))
-                        .add(new FloatTag("", 0)));
+        CompoundTag nbt = Entity.getDefaultNBT(
+                source.add(0.5, 0, 0.5), 
+                null, 
+                new Random().nextFloat() * 360, 0
+        );
 
         return Entity.createEntity(type.toString(), chunk, nbt, args);
     }

@@ -40,7 +40,6 @@ import java.util.Objects;
  */
 public abstract class EntityMinecartAbstract extends EntityVehicle {
 
-    private String entityName;
     private static final int[][][] matrix = new int[][][]{
             {{0, 0, -1}, {0, 0, 1}},
             {{-1, 0, 0}, {1, 0, 0}},
@@ -92,28 +91,9 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         return 0.1F;
     }
 
-    public void setName(String name) {
-        entityName = name;
-    }
-
-    @PowerNukkitDifference(info = "Will never return null, returns the getSaveId() if it has no custom name", since = "1.3.1.2-PN")
-    @Override
-    public String getName() {
-        if (hasCustomName()) {
-            return entityName;
-        } else {
-            return getSaveId();
-        }
-    }
-
     @Override
     public float getBaseOffset() {
         return 0.35F;
-    }
-
-    @Override
-    public boolean hasCustomName() {
-        return entityName != null;
     }
 
     @Override

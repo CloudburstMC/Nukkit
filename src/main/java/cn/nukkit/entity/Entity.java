@@ -17,10 +17,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.EnumLevel;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Location;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.*;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
@@ -42,6 +39,7 @@ import co.aikar.timings.TimingsHistory;
 import com.google.common.collect.Iterables;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -902,15 +900,18 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public static Entity createEntity(String name, Position pos, Object... args) {
+    @Nullable
+    public static Entity createEntity(@Nonnull String name, @Nonnull Position pos, @Nullable Object... args) {
         return createEntity(name, pos.getChunk(), getDefaultNBT(pos), args);
     }
 
-    public static Entity createEntity(int type, Position pos, Object... args) {
+    @Nullable
+    public static Entity createEntity(int type, @Nonnull Position pos, @Nullable Object... args) {
         return createEntity(String.valueOf(type), pos.getChunk(), getDefaultNBT(pos), args);
     }
 
-    public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
+    @Nullable
+    public static Entity createEntity(@Nonnull String name, @Nonnull FullChunk chunk, @Nonnull CompoundTag nbt, @Nullable Object... args) {
         Entity entity = null;
 
         if (knownEntities.containsKey(name)) {
@@ -951,7 +952,8 @@ public abstract class Entity extends Location implements Metadatable {
         return entity;
     }
 
-    public static Entity createEntity(int type, FullChunk chunk, CompoundTag nbt, Object... args) {
+    @Nullable
+    public static Entity createEntity(int type, @Nonnull FullChunk chunk, @Nonnull CompoundTag nbt, @Nullable Object... args) {
         return createEntity(String.valueOf(type), chunk, nbt, args);
     }
 
@@ -977,11 +979,13 @@ public abstract class Entity extends Location implements Metadatable {
         return true;
     }
 
-    public static CompoundTag getDefaultNBT(Vector3 pos) {
+    @Nonnull
+    public static CompoundTag getDefaultNBT(@Nonnull Vector3 pos) {
         return getDefaultNBT(pos, null);
     }
 
-    public static CompoundTag getDefaultNBT(Vector3 pos, Vector3 motion) {
+    @Nonnull
+    public static CompoundTag getDefaultNBT(@Nonnull Vector3 pos, @Nullable Vector3 motion) {
         Location loc = pos instanceof Location ? (Location) pos : null;
 
         if (loc != null) {
@@ -991,7 +995,8 @@ public abstract class Entity extends Location implements Metadatable {
         return getDefaultNBT(pos, motion, 0, 0);
     }
 
-    public static CompoundTag getDefaultNBT(Vector3 pos, Vector3 motion, float yaw, float pitch) {
+    @Nonnull
+    public static CompoundTag getDefaultNBT(@Nonnull Vector3 pos, @Nullable Vector3 motion, float yaw, float pitch) {
         return new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", pos.x))
@@ -1759,7 +1764,9 @@ public abstract class Entity extends Location implements Metadatable {
             if (down.getId() == BlockID.HONEY_BLOCK) {
                 damage *= 0.2F;
             }
-            this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
+            if (!this.isPlayer || level.getGameRules().getBoolean(GameRule.FALL_DAMAGE)) {
+                this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
+            }
         }
 
         if (fallDistance > 0.75) {

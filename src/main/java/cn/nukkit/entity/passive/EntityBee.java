@@ -28,12 +28,18 @@ public class EntityBee extends EntityAnimal {
 
     @Override
     public float getWidth() {
-        return 0.7F;
+        if (this.isBaby()) {
+            return 0.35f;
+        }
+        return 0.7f;
     }
 
     @Override
     public float getHeight() {
-        return 0.6F;
+        if (this.isBaby()) {
+            return 0.30f;
+        }
+        return 0.6f;
     }
 
     public boolean getHasNectar() {

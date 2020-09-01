@@ -1,5 +1,7 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.Since;
+
 /**
  * @author CreeperFace
  */
@@ -19,7 +21,7 @@ public enum Sound {
     ARMOR_EQUIP_GOLD("armor.equip_gold"),
     ARMOR_EQUIP_IRON("armor.equip_iron"),
     ARMOR_EQUIP_LEATHER("armor.equip_leather"),
-    ARMOR_EQUIP_NETHERITE("armor.equip_netherite"),
+    @Since("1.4.0.0-PN") ARMOR_EQUIP_NETHERITE("armor.equip_netherite"),
     BEACON_ACTIVATE("beacon.activate"),
     BEACON_AMBIENT("beacon.ambient"),
     BEACON_DEACTIVATE("beacon.deactivate"),
@@ -490,6 +492,12 @@ public enum Sound {
     MOB_PIGLIN_JEALOUS("mob.piglin.jealous"),
     MOB_PIGLIN_RETREAT("mob.piglin.retreat"),
     MOB_PIGLIN_STEP("mob.piglin.step"),
+    MOB_PIGLIN_BRUTE_AMBIENT("mob.piglin_brute.ambient"),
+    MOB_PIGLIN_BRUTE_ANGRY("mob.piglin_brute.angry"),
+    MOB_PIGLIN_BRUTE_CONVERTED_TO_ZOMBIFIED("mob.piglin_brute.converted_to_zombified"),
+    MOB_PIGLIN_BRUTE_HURT("mob.piglin_brute.hurt"),
+    MOB_PIGLIN_BRUTE_DEATH("mob.piglin_brute.death"),
+    MOB_PIGLIN_BRUTE_STEP("mob.piglin_brute.step"),
     MOB_PILLAGER_CELEBRATE("mob.pillager.celebrate"),
     MOB_PILLAGER_DEATH("mob.pillager.death"),
     MOB_PILLAGER_HURT("mob.pillager.hurt"),
@@ -613,10 +621,12 @@ public enum Sound {
     MOB_WOLF_SHAKE("mob.wolf.shake"),
     MOB_WOLF_STEP("mob.wolf.step"),
     MOB_WOLF_WHINE("mob.wolf.whine"),
-    MOB_ZOGLIN_BOOST("mob.zoglin.boost"),
+    MOB_ZOGLIN_ANGRY("mob.zoglin.angry"),
     MOB_ZOGLIN_DEATH("mob.zoglin.death"),
-    MOB_ZOGLIN_SAY("mob.zoglin.say"),
+    MOB_ZOGLIN_IDLE("mob.zoglin.idle"),
+    MOB_ZOGLIN_HURT("mob.zoglin.hurt"),
     MOB_ZOGLIN_STEP("mob.zoglin.step"),
+    MOB_ZOGLIN_ATTACK("mob.zoglin.attack"),
     MOB_ZOMBIE_DEATH("mob.zombie.death"),
     MOB_ZOMBIE_HURT("mob.zombie.hurt"),
     MOB_ZOMBIE_REMEDY("mob.zombie.remedy"),
