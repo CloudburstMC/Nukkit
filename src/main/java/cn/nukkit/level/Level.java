@@ -64,6 +64,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.*;
@@ -1960,7 +1962,10 @@ public class Level implements ChunkManager, Metadatable {
         if (item.getId() != 0 && item.getCount() > 0) {
             EntityItem itemEntity = (EntityItem) Entity.createEntity("Item",
                     this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true),
-                    Entity.getDefaultNBT(source, motion, new Random().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(item)).putShort("PickupDelay", delay));
+                    Entity.getDefaultNBT(source, motion, new Random().nextFloat() * 360, 0)
+                            .putShort("Health", 5)
+                            .putCompound("Item", NBTIO.putItemHelper(item))
+                            .putShort("PickupDelay", delay));
 
             if (itemEntity != null) {
                 itemEntity.spawnToAll();
@@ -1969,22 +1974,26 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Since("1.4.0.0-PN")
-    public EntityItem dropAndGetItem(Vector3 source, Item item) {
+    @Nullable
+    public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item) {
         return this.dropAndGetItem(source, item, null);
     }
 
     @Since("1.4.0.0-PN")
-    public EntityItem dropAndGetItem(Vector3 source, Item item, Vector3 motion) {
+    @Nullable
+    public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item, @Nullable Vector3 motion) {
         return this.dropAndGetItem(source, item, motion, 10);
     }
 
     @Since("1.4.0.0-PN")
-    public EntityItem dropAndGetItem(Vector3 source, Item item, Vector3 motion, int delay) {
+    @Nullable
+    public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item, @Nullable Vector3 motion, int delay) {
         return this.dropAndGetItem(source, item, motion, false, delay);
     }
 
     @Since("1.4.0.0-PN")
-    public EntityItem dropAndGetItem(Vector3 source, Item item, Vector3 motion, boolean dropAround, int delay) {
+    @Nullable
+    public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item, @Nullable Vector3 motion, boolean dropAround, int delay) {
         EntityItem itemEntity = null;
 
         if (motion == null) {

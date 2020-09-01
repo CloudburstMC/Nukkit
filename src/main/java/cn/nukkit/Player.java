@@ -85,6 +85,8 @@ import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -4475,7 +4477,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param item to drop
      * @return EntityItem if the item was dropped or null if the item was null
      */
-    public EntityItem dropAndGetItem(Item item) {
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public EntityItem dropAndGetItem(@Nonnull Item item) {
         if (!this.spawned || !this.isAlive()) {
             return null;
         }

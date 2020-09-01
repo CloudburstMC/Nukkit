@@ -1,6 +1,7 @@
 package cn.nukkit.potion;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -57,7 +58,7 @@ public class Potion implements Cloneable {
     public static final int TURTLE_MASTER_II = 39;
     public static final int SLOW_FALLING = 40;
     public static final int SLOW_FALLING_LONG = 41;
-    public static final int SLOWNESS_LONG_II = 42;
+    @Since("1.4.0.0-PN") public static final int SLOWNESS_LONG_II = 42;
 
     protected static Potion[] potions;
 

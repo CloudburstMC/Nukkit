@@ -21,9 +21,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 
@@ -246,7 +243,14 @@ public class EntityFishingHook extends EntityProjectile {
 
             EntityItem itemEntity = new EntityItem(
                     this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true),
-                    Entity.getDefaultNBT(new Vector3(this.x, this.getWaterHeight(), this.z), motion, new Random().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(item)).putShort("PickupDelay", 1));
+                    Entity.getDefaultNBT(
+                            new Vector3(this.x, this.getWaterHeight(), this.z), 
+                            motion, 
+                            new Random().nextFloat() * 360, 
+                            0
+                    ).putCompound("Item", NBTIO.putItemHelper(item))
+                            .putShort("Health", 5)
+                            .putShort("PickupDelay", 1));
 
             if (this.shootingEntity != null && this.shootingEntity instanceof Player) {
                 itemEntity.setOwner(this.shootingEntity.getName());
