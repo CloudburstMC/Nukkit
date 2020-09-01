@@ -59,6 +59,7 @@ public class SlotChangeAction extends InventoryAction {
      * @return successfully executed
      */
     public boolean execute(Player source) {
+        this.inventory.remove(sourceItem); //Temporary solution for Horion's .dupe
         return this.inventory.setItem(this.inventorySlot, this.targetItem, false);
     }
 
