@@ -941,7 +941,6 @@ public class Level implements ChunkManager, Metadatable {
         this.timings.doTick.stopTiming();
     }
 
-    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     private void performThunder(long index, FullChunk chunk) {
         if (areNeighboringChunksLoaded(index)) return;
         if (ThreadLocalRandom.current().nextInt(10000) == 0) {
@@ -976,8 +975,8 @@ public class Level implements ChunkManager, Metadatable {
                 bolt.setEffect(false);
             }
 
-            this.addSound(vector, Sound.AMBIENT_WEATHER_THUNDER, -1, EntityLightning.NETWORK_ID);
-            this.addSound(vector, Sound.RANDOM_EXPLODE, -1, EntityLightning.NETWORK_ID);
+            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, -1, EntityLightning.NETWORK_ID);
+            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, -1, EntityLightning.NETWORK_ID);
         }
     }
 
