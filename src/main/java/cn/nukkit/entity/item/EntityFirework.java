@@ -81,7 +81,6 @@ public class EntityFirework extends Entity {
         return NETWORK_ID;
     }
 
-    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
@@ -130,7 +129,7 @@ public class EntityFirework extends Entity {
                 pk.event = EntityEventPacket.FIREWORK_EXPLOSION;
                 pk.eid = this.getId();
 
-                level.addSound(this, Sound.FIREWORK_LARGE_BLAST, 1, NETWORK_ID);
+                level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LARGE_BLAST, -1, NETWORK_ID);
 
                 Server.broadcastPacket(getViewers().values(), pk);
 
