@@ -26,7 +26,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     protected HopperInventory inventory;
 
-    public int transferCooldown = 8;
+    public int transferCooldown;
 
     private AxisAlignedBB pickupArea;
 
@@ -38,6 +38,8 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     protected void initBlockEntity() {
         if (this.namedTag.contains("TransferCooldown")) {
             this.transferCooldown = this.namedTag.getInt("TransferCooldown");
+        } else {
+            this.transferCooldown = 8;
         }
 
         this.inventory = new HopperInventory(this);
