@@ -1,8 +1,12 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.DeprecationDetails;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Vector3 implements Cloneable {
 
@@ -96,6 +100,8 @@ public class Vector3 implements Cloneable {
         return new Vector3(this.x + x.getX(), this.y + x.getY(), this.z + x.getZ());
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Makes no sense", replaceWith = "clone()")
     public Vector3 subtract() {
         return this.subtract(0, 0, 0);
     }
@@ -260,7 +266,8 @@ public class Vector3 implements Cloneable {
      * @param x x value
      * @return intermediate vector
      */
-    public Vector3 getIntermediateWithXValue(Vector3 v, double x) {
+    @Nullable
+    public Vector3 getIntermediateWithXValue(@Nonnull Vector3 v, double x) {
         double xDiff = v.x - this.x;
         double yDiff = v.y - this.y;
         double zDiff = v.z - this.z;
@@ -283,7 +290,8 @@ public class Vector3 implements Cloneable {
      * @param y y value
      * @return intermediate vector
      */
-    public Vector3 getIntermediateWithYValue(Vector3 v, double y) {
+    @Nullable
+    public Vector3 getIntermediateWithYValue(@Nonnull Vector3 v, double y) {
         double xDiff = v.x - this.x;
         double yDiff = v.y - this.y;
         double zDiff = v.z - this.z;
@@ -306,7 +314,8 @@ public class Vector3 implements Cloneable {
      * @param z z value
      * @return intermediate vector
      */
-    public Vector3 getIntermediateWithZValue(Vector3 v, double z) {
+    @Nullable
+    public Vector3 getIntermediateWithZValue(@Nonnull Vector3 v, double z) {
         double xDiff = v.x - this.x;
         double yDiff = v.y - this.y;
         double zDiff = v.z - this.z;

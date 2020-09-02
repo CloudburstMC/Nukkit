@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -11,6 +12,8 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author CreeperFace
@@ -27,6 +30,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         super(meta);
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;
@@ -51,15 +55,17 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     }
 
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = block.getSide(BlockFace.DOWN);
-        if (down.isTransparent() && down.getId() != COBBLE_WALL) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (!isSupportValid(down())) {
             return false;
         }
 
         this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
-        this.level.setBlock(block, this, true, true);
+        if (!this.level.setBlock(block, this, true, true)) {
+            return false;
+        }
 
         if (this.level.getServer().isRedstoneEnabled()) {
             if (shouldBePowered()) {
@@ -68,8 +74,13 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         }
         return true;
     }
+    
+    private boolean isSupportValid(Block support) {
+        return BlockLever.isSupportValid(support, BlockFace.UP) || support instanceof BlockCauldron;
+    }
 
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
@@ -99,8 +110,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
                 }
             }
         } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
-            Block down;
-            if (type == Level.BLOCK_UPDATE_NORMAL && (down = this.getSide(BlockFace.DOWN)).isTransparent() && down.getId() != COBBLE_WALL) {
+            if (type == Level.BLOCK_UPDATE_NORMAL && !isSupportValid(down())) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             } else if (this.level.getServer().isRedstoneEnabled()) {
@@ -112,7 +122,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
                 }
 
                 this.updateState();
-                return Level.BLOCK_UPDATE_NORMAL;
+                return type;
             }
         }
         return 0;

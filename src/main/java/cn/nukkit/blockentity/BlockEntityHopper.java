@@ -20,7 +20,8 @@ import cn.nukkit.nbt.tag.ListTag;
 import java.util.HashSet;
 
 /**
- * Created by CreeperFace on 8.5.2017.
+ * @author CreeperFace
+ * @since 8.5.2017
  */
 public class BlockEntityHopper extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
@@ -156,6 +157,10 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         }
 
         this.transferCooldown--;
+        
+        if (this.level.isBlockPowered(getBlock())) {
+        	return true;
+        }
 
         if (!this.isOnTransferCooldown()) {
             if ((this.level.getBlockDataAt(getFloorX(), getFloorY(), getFloorZ()) & 0x08) == 8) { //is hopper disabled?

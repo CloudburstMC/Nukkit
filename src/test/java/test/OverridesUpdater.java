@@ -1,25 +1,28 @@
 package test;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.HumanStringComparator;
+import com.google.common.base.Preconditions;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
 import lombok.NonNull;
 
-import java.io.BufferedInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteOrder;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class OverridesUpdater {
     public static void main(String[] args) throws IOException {
         Map<CompoundTag, CompoundTag> originalTags = new LinkedHashMap<>();
+        //<editor-fold desc="runtime_block_states.dat" defaultstate="collapsed">
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat")) {
             if (stream == null) {
                 throw new AssertionError("Unable to locate block state nbt");
@@ -33,8 +36,43 @@ public class OverridesUpdater {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
+        //</editor-fold>
 
+        Int2ObjectMap<String> blockIdToPersistenceName = new Int2ObjectOpenHashMap<>();
+        Map<String, Integer> persistenceNameToBlockId = new LinkedHashMap<>();
+        //<editor-fold desc="Loading block_ids.csv" defaultstate="collapsed">
+        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("block_ids.csv")) {
+            if (stream == null) {
+                throw new AssertionError("Unable to locate block_ids.csv");
+            }
+
+            int count = 0;
+            try(BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    count++;
+                    line = line.trim();
+                    if (line.isEmpty()) {
+                        continue;
+                    }
+                    String[] parts = line.split(",");
+                    Preconditions.checkArgument(parts.length == 2 || parts[0].matches("^[0-9]+$"));
+                    if (parts.length > 1 && parts[1].startsWith("minecraft:")) {
+                        blockIdToPersistenceName.put(Integer.parseInt(parts[0]), parts[1]);
+                        persistenceNameToBlockId.put(parts[1], Integer.parseInt(parts[0]));
+                    }
+                }
+            } catch (Exception e) {
+                throw new IOException("Error reading the line "+count+" of the block_ids.csv", e);
+            }
+
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        //</editor-fold>
+        
         Map<CompoundTag, BlockInfo> infoList = new LinkedHashMap<>();
+        //<editor-fold desc="Loading runtime_block_states_overrides.dat" defaultstate="collapsed">
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states_overrides.dat")) {
             if (stream == null) {
                 throw new AssertionError("Unable to locate block state nbt");
@@ -44,15 +82,14 @@ public class OverridesUpdater {
             try (BufferedInputStream buffered = new BufferedInputStream(stream)) {
                 states = NBTIO.read(buffered).getList("Overrides", CompoundTag.class);
             }
-            
+
             for (CompoundTag override : states.getAll()) {
                 if (override.contains("block") && override.contains("LegacyStates")) {
                     CompoundTag key = override.getCompound("block").remove("version");
-                    String name = key.getString("name");
-                    if (name.equals("minecraft:beehive") || name.equals("minecraft:bee_nest")) {
+                    CompoundTag original = originalTags.get(key);
+                    if (original == null) {
                         continue;
                     }
-                    CompoundTag original = originalTags.get(key);
                     BlockInfo data = new BlockInfo(key, original,
                             original.getList("LegacyStates", CompoundTag.class),
                             override.getList("LegacyStates", CompoundTag.class));
@@ -65,76 +102,57 @@ public class OverridesUpdater {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        
+        //</editor-fold>
+
         ListTag<CompoundTag> newOverrides = new ListTag<>("Overrides");
 
-        Map<String, Integer> newBlocks = Arrays.stream(BlockID.class.getDeclaredFields())
-                .map(field -> {
-                    try {
-                        return new AbstractMap.SimpleEntry<>("minecraft:"+field.getName().toLowerCase(), field.getInt(null));
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
-                .filter(e-> e.getValue() >= 477)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-        
-        
-        
         for (BlockInfo info : infoList.values()) {
             String stateName = info.getStateName();
-            
+
             CompoundTag override = new CompoundTag();
             override.putCompound("block", info.getKey().copy());
             override.putList((ListTag<? extends Tag>) info.getOverride().copy());
-
-            String name = info.getKey().getString("name");
-            if (name.equals("minecraft:beehive") || name.equals("minecraft:bee_nest")) {
-                continue;
-            }
             
+            
+            /*switch (stateName) {
+                case "minecraft:light_block;block_light_level=14":
+                    break;
+                case "minecraft:wood;wood_type=acacia;stripped_bit=0;pillar_axis=y":
+                case "minecraft:wood;wood_type=birch;stripped_bit=0;pillar_axis=y":
+                case "minecraft:wood;wood_type=dark_oak;stripped_bit=0;pillar_axis=y":
+                case "minecraft:wood;wood_type=jungle;stripped_bit=0;pillar_axis=y":
+                case "minecraft:wood;wood_type=oak;stripped_bit=0;pillar_axis=y":
+                case "minecraft:wood;wood_type=spruce;stripped_bit=0;pillar_axis=y":
+                    continue;
+            }*/
+
             newOverrides.add(override);
         }
-        
+      
         SortedMap<String, CompoundTag> sorted = new TreeMap<>(new HumanStringComparator());
         for (CompoundTag tag : originalTags.values()) {
-            CompoundTag block = tag.getCompound("block");
-            sorted.put(new BlockInfo(block, tag, new ListTag<>(), new ListTag<>()).getStateName(), tag);
-            String name = block.getString("name");
-            if (name.equals("minecraft:beehive") || name.equals("minecraft:bee_nest")) {
-                CompoundTag states = block.getCompound("states");
-                int direction = states.getInt("direction");
-                int honeyLevel = states.getInt("honey_level");
-                int id = name.equals("minecraft:beehive")? BlockID.BEEHIVE : BlockID.BEE_NEST;
-                int meta = honeyLevel << 2 | direction;
-                
-                CompoundTag override = new CompoundTag();
-                override.putCompound("block", tag.getCompound("block").remove("version"));
-                override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", id).putInt("val", meta)));
-                newOverrides.add(override);
-            }
+            sorted.put(new BlockInfo(tag.getCompound("block"), tag, new ListTag<>(), new ListTag<>()).getStateName(), tag);
         }
 
         for (CompoundTag tag : sorted.values()) {
             String name = tag.getCompound("block").getString("name");
-
-            Integer blockId = newBlocks.remove(name);
-            if (blockId == null) {
+            
+            if (!name.startsWith("minecraft:beehive") || !name.startsWith("minecraft:bee_nest")) {
                 continue;
             }
             
             CompoundTag override = new CompoundTag();
             override.putCompound("block", tag.getCompound("block").remove("version"));
-            override.putList(new ListTag<>("LegacyStates").add(new CompoundTag().putInt("id", blockId).putInt("val", 0)));
+            override.putList(new ListTag<>("LegacyStates")/*.add(new CompoundTag().putInt("id", blockId).putInt("val", 0))*/);
             newOverrides.add(override);
         }
-        
+
         byte[] bytes = NBTIO.write(new CompoundTag().putList(newOverrides));
         try(FileOutputStream fos = new FileOutputStream("runtime_block_states_overrides.dat")) {
             fos.write(bytes);
         }
     }
-    
+
     @Data
     static class BlockInfo {
         @NonNull
@@ -145,13 +163,17 @@ public class OverridesUpdater {
         private ListTag<CompoundTag> original;
         @NonNull
         private ListTag<CompoundTag> override;
-        
+
         public String getStateName() {
             StringBuilder stateName = new StringBuilder(key.getString("name"));
             for (Tag tag : key.getCompound("states").getAllTags()) {
                 stateName.append(';').append(tag.getName()).append('=').append(tag.parseValue());
             }
             return stateName.toString();
+        }
+        
+        public String getBlockName() {
+            return key.getString("name");
         }
     }
 }

@@ -24,8 +24,7 @@ import java.nio.ByteOrder;
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Chunk extends BaseChunk {
 
@@ -58,26 +57,19 @@ public class Chunk extends BaseChunk {
             this.providerClass = level.getClass();
         }
 
+        this.sections = new cn.nukkit.level.format.ChunkSection[16];
+        System.arraycopy(EmptyChunkSection.EMPTY, 0, this.sections, 0, 16);
         if (nbt == null) {
             this.biomes = new byte[16 * 16];
-            this.sections = new cn.nukkit.level.format.ChunkSection[16];
-            if (16 >= 0) System.arraycopy(EmptyChunkSection.EMPTY, 0, this.sections, 0, 16);
             return;
         }
 
-        this.sections = new cn.nukkit.level.format.ChunkSection[16];
         for (Tag section : nbt.getList("Sections").getAll()) {
             if (section instanceof CompoundTag) {
                 int y = ((CompoundTag) section).getByte("Y");
                 if (y < 16) {
                     sections[y] = new ChunkSection((CompoundTag) section);
                 }
-            }
-        }
-
-        for (int y = 0; y < 16; y++) {
-            if (sections[y] == null) {
-                sections[y] = EmptyChunkSection.EMPTY[y];
             }
         }
 

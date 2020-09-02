@@ -1,8 +1,7 @@
 package cn.nukkit.level.biome.impl.taiga;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class MegaTaigaHillsBiome extends MegaTaigaBiome {
     public MegaTaigaHillsBiome() {

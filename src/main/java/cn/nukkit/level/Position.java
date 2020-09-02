@@ -1,16 +1,24 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.positiontracking.NamedPosition;
 import cn.nukkit.utils.LevelException;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
-public class Position extends Vector3 {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Overrides NamedPosition instead of Vector3")
+public class Position extends NamedPosition {
     public Level level;
 
     public Position() {
@@ -88,6 +96,26 @@ public class Position extends Vector3 {
         this.z = z;
         return this;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public BlockEntity getLevelBlockEntity() {
+        if (this.isValid()) return this.level.getBlockEntity(this);
+        else throw new LevelException("Undefined Level reference");
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public final <T extends BlockEntity> T getTypedBlockEntity(@Nonnull Class<T> type) {
+        if (!this.isValid()) {
+            throw new LevelException("Undefined Level reference");
+        }
+
+        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        return type.isInstance(blockEntity) ? type.cast(blockEntity) : null;
+    } 
 
     public Block getLevelBlock() {
         if (this.isValid()) return this.level.getBlock(this);
@@ -99,8 +127,19 @@ public class Position extends Vector3 {
         else throw new LevelException("Undefined Level reference");
     }
 
+    @Nonnull
     public Location getLocation() {
         if (this.isValid()) return new Location(this.x, this.y, this.z, 0, 0, this.level);
+        else throw new LevelException("Undefined Level reference");
+    }
+
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public String getLevelName() {
+        if (this.isValid()) return getLevel().getName();
         else throw new LevelException("Undefined Level reference");
     }
 
@@ -184,6 +223,7 @@ public class Position extends Vector3 {
         return (Position) super.clone();
     }
 
+    @Nullable
     public FullChunk getChunk() {
         return isValid() ? level.getChunk(getChunkX(), getChunkZ()) : null;
     }

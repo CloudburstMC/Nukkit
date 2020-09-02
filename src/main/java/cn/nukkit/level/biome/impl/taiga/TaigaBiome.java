@@ -5,8 +5,7 @@ import cn.nukkit.level.biome.type.GrassyBiome;
 import cn.nukkit.level.generator.populator.impl.PopulatorTree;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class TaigaBiome extends GrassyBiome {
     public TaigaBiome() {

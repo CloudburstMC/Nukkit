@@ -1,8 +1,7 @@
 package cn.nukkit.level.generator.noise.nukkit.f;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public abstract class NoiseF {
     protected int[] perm;

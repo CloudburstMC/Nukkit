@@ -1,12 +1,15 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemString;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author CreeperFace
@@ -36,6 +39,7 @@ public class BlockTripWire extends BlockTransparentMeta {
         return true;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;
@@ -180,7 +184,7 @@ public class BlockTripWire extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         this.getLevel().setBlock(this, this, true, true);
         this.updateHook(false);
 

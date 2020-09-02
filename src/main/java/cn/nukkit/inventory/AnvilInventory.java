@@ -16,8 +16,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class AnvilInventory extends FakeBlockUIComponent {
     
@@ -379,6 +378,10 @@ public class AnvilInventory extends FakeBlockUIComponent {
             case Item.IRON_CHESTPLATE:
             case Item.IRON_LEGGINGS:
             case Item.IRON_BOOTS:
+            case Item.CHAIN_HELMET:
+            case Item.CHAIN_CHESTPLATE:
+            case Item.CHAIN_LEGGINGS:
+            case Item.CHAIN_BOOTS:
                 return Item.IRON_INGOT;
         
             case Item.GOLD_SWORD:
@@ -415,7 +418,18 @@ public class AnvilInventory extends FakeBlockUIComponent {
             case Item.STONE_AXE:
             case Item.STONE_HOE:
                 return Item.COBBLESTONE;
-                
+
+            case Item.NETHERITE_SWORD:
+            case Item.NETHERITE_PICKAXE:
+            case Item.NETHERITE_SHOVEL:
+            case Item.NETHERITE_AXE:
+            case Item.NETHERITE_HOE:
+            case Item.NETHERITE_HELMET:
+            case Item.NETHERITE_CHESTPLATE:
+            case Item.NETHERITE_LEGGINGS:
+            case Item.NETHERITE_BOOTS:
+                return Item.NETHERITE_INGOT;
+
             default:
                 return 0;
         }

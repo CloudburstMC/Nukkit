@@ -13,8 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString
 public class AddEntityPacket extends DataPacket {
@@ -130,6 +129,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityHoglin.NETWORK_ID, "minecraft:hoglin")
             .put(EntityStrider.NETWORK_ID, "minecraft:strider")
             .put(EntityZoglin.NETWORK_ID, "minecraft:zoglin")
+            .put(EntityPiglinBrute.NETWORK_ID, "minecraft:piglin_brute")
             .build();
 
     @Override

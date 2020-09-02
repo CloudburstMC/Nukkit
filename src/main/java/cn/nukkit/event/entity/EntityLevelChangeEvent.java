@@ -6,8 +6,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityLevelChangeEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

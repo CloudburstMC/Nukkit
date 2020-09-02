@@ -27,8 +27,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Anvil extends BaseLevelProvider {
     public static final int VERSION = 19133;
@@ -155,7 +154,7 @@ public class Anvil extends BaseLevelProvider {
         }
 //        stream.putByte((byte) count);  count is now sent in packet
         for (int i = 0; i < count; i++) {
-            stream.put(sections[i].getBytes());
+            sections[i].writeTo(stream);
         }
 //        for (byte height : chunk.getHeightMapArray()) {
 //            stream.putByte(height);

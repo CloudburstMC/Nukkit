@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
@@ -14,10 +15,12 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by CreeperFace on 27. 10. 2016.
+ * @author CreeperFace
+ * @since 27. 10. 2016
  */
 public class BlockCocoa extends BlockTransparentMeta implements Faceable {
 
@@ -44,12 +47,6 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
     public String getName() {
         return "Cocoa";
     }
-
-    @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
-    }
-
 
     @Override
     public double getMinX() {
@@ -116,7 +113,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (target.getId() == Block.WOOD && (target.getDamage() & 0x03) == BlockWood.JUNGLE) {
             if (face != BlockFace.DOWN && face != BlockFace.UP) {
                 int[] faces = new int[]{
@@ -170,7 +167,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
             if (this.getGrowthStage() < 2) {
                 if (!this.grow()) {
@@ -189,11 +186,11 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
         return false;
     }
 
-    private int getGrowthStage() {
+    public int getGrowthStage() {
         return this.getDamage() / 4;
     }
 
-    private boolean grow() {
+    public boolean grow() {
         Block block = this.clone();
         block.setDamage(block.getDamage() + 4);
         BlockGrowEvent ev = new BlockGrowEvent(this, block);
@@ -216,6 +213,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
         return ItemTool.TYPE_AXE;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;

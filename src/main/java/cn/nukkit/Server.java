@@ -1,5 +1,6 @@
 package cn.nukkit;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
@@ -37,8 +38,6 @@ import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
-import cn.nukkit.level.format.leveldb.LevelDB;
-import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Flat;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.Nether;
@@ -72,6 +71,7 @@ import cn.nukkit.plugin.PluginLoadOrder;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.plugin.service.NKServiceManager;
 import cn.nukkit.plugin.service.ServiceManager;
+import cn.nukkit.positiontracking.PositionTrackingService;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
@@ -89,6 +89,7 @@ import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -214,6 +215,8 @@ public class Server {
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
     private final Map<UUID, Player> playerList = new HashMap<>();
+    
+    private PositionTrackingService positionTrackingService;
 
     private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
         public Level put(Integer key, Level value) {
@@ -600,15 +603,21 @@ public class Server {
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
 
         this.network.registerInterface(new RakNetInterface(this));
-
+        
+        try {
+            getLogger().debug("Loading position tracking service");
+            this.positionTrackingService = new PositionTrackingService(new File(Nukkit.DATA_PATH, "services/position_tracking_db"));
+            //getScheduler().scheduleRepeatingTask(null, positionTrackingService::forceRecheckAllPlayers, 20 * 5);
+        } catch (IOException e) {
+            getLogger().emergency("Failed to start the Position Tracking DB service!", e);
+        }
+        
         this.pluginManager.loadPowerNukkitPlugins();
         this.pluginManager.loadPlugins(this.pluginPath);
 
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
         LevelProviderManager.addProvider(this, Anvil.class);
-        LevelProviderManager.addProvider(this, McRegion.class);
-        LevelProviderManager.addProvider(this, LevelDB.class);
 
         Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
         Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
@@ -635,13 +644,13 @@ public class Server {
                 String[] opts = (this.getConfig("worlds." + name + ".generator", Generator.getGenerator("default").getSimpleName())).split(":");
                 Class<? extends Generator> generator = Generator.getGenerator(opts[0]);
                 if (opts.length > 1) {
-                    String preset = "";
+                    StringBuilder preset = new StringBuilder();
                     for (int i = 1; i < opts.length; i++) {
-                        preset += opts[i] + ":";
+                        preset.append(opts[i]).append(":");
                     }
-                    preset = preset.substring(0, preset.length() - 1);
+                    preset = new StringBuilder(preset.substring(0, preset.length() - 1));
 
-                    options.put("preset", preset);
+                    options.put("preset", preset.toString());
                 }
 
                 this.generateLevel(name, seed, generator, options);
@@ -660,7 +669,7 @@ public class Server {
                 long seed;
                 String seedString = String.valueOf(this.getProperty("level-seed", System.currentTimeMillis()));
                 try {
-                    seed = Long.valueOf(seedString);
+                    seed = Long.parseLong(seedString);
                 } catch (NumberFormatException e) {
                     seed = seedString.hashCode();
                 }
@@ -989,6 +998,11 @@ public class Server {
                 this.unloadLevel(level, true);
             }
 
+            if (positionTrackingService != null) {
+                this.getLogger().debug("Closing position tracking service");
+                positionTrackingService.close();
+            }
+
             this.getLogger().debug("Closing console");
             this.consoleThread.interrupt();
 
@@ -1220,14 +1234,14 @@ public class Server {
                         if (r > this.baseTickRate) {
                             level.tickRateCounter = level.getTickRate();
                         }
-                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + level.getTickRate() + " ticks");
+                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + (19 -level.getTickRate()) + " ticks");
                     } else if (tickMs >= 50) {
                         if (level.getTickRate() == this.baseTickRate) {
                             level.setTickRate(Math.max(this.baseTickRate + 1, Math.min(this.autoTickRateLimit, tickMs / 50)));
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + (19 - level.getTickRate()) + " ticks");
                         } else if ((tickMs / level.getTickRate()) >= 50 && level.getTickRate() < this.autoTickRateLimit) {
                             level.setTickRate(level.getTickRate() + 1);
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + (19 - level.getTickRate()) + " ticks");
                         }
                         level.tickRateCounter = level.getTickRate();
                     }
@@ -1728,7 +1742,6 @@ public class Server {
     public IPlayer getOfflinePlayer(UUID uuid) {
         Preconditions.checkNotNull(uuid, "uuid");
         Optional<Player> onlinePlayer = getPlayer(uuid);
-        //noinspection OptionalIsPresent
         if (onlinePlayer.isPresent()) {
             return onlinePlayer.get();
         }
@@ -2058,7 +2071,7 @@ public class Server {
         try {
             level = new Level(this, name, path, provider);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
+            log.error(this.getLanguage().translateString("nukkit.level.loadError", name, e.getMessage()), e);
             return false;
         }
 
@@ -2421,12 +2434,14 @@ public class Server {
         Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
         Entity.registerEntity("Phantom", EntityPhantom.class);
         Entity.registerEntity("Piglin", EntityPiglin.class);
+        Entity.registerEntity("PiglinBrute", EntityPiglinBrute.class);
         Entity.registerEntity("Pillager", EntityPillager.class);
         Entity.registerEntity("Ravager", EntityRavager.class);
         Entity.registerEntity("Shulker", EntityShulker.class);
         Entity.registerEntity("Silverfish", EntitySilverfish.class);
         Entity.registerEntity("Skeleton", EntitySkeleton.class);
         Entity.registerEntity("Slime", EntitySlime.class);
+        Entity.registerEntity("SnowGolem", EntitySnowGolem.class);
         Entity.registerEntity("Spider", EntitySpider.class);
         Entity.registerEntity("Stray", EntityStray.class);
         Entity.registerEntity("Vex", EntityVex.class);
@@ -2448,6 +2463,7 @@ public class Server {
         Entity.registerEntity("Cow", EntityCow.class);
         Entity.registerEntity("Dolphin", EntityDolphin.class);
         Entity.registerEntity("Donkey", EntityDonkey.class);
+        Entity.registerEntity("Fox", EntityFox.class);
         Entity.registerEntity("Horse", EntityHorse.class);
         Entity.registerEntity("Llama", EntityLlama.class);
         Entity.registerEntity("Mooshroom", EntityMooshroom.class);
@@ -2524,6 +2540,8 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.DISPENSER, BlockEntityDispenser.class);
         BlockEntity.registerBlockEntity(BlockEntity.DROPPER, BlockEntityDropper.class);
         BlockEntity.registerBlockEntity(BlockEntity.MOVING_BLOCK, BlockEntityMovingBlock.class);
+        BlockEntity.registerBlockEntity(BlockEntity.NETHER_REACTOR, BlockEntityNetherReactor.class);
+        BlockEntity.registerBlockEntity(BlockEntity.LODESTONE, BlockEntityLodestone.class);
     }
 
     public boolean isNetherAllowed() {
@@ -2545,6 +2563,13 @@ public class Server {
 
     public static Server getInstance() {
         return instance;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public PositionTrackingService getPositionTrackingService() {
+        return positionTrackingService;
     }
 
     private class ConsoleThread extends Thread implements InterruptibleThread {

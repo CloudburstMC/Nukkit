@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.event.block.BlockFromToEvent;
@@ -11,16 +13,19 @@ import cn.nukkit.level.particle.BubbleParticle;
 import cn.nukkit.level.particle.SplashParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockBubbleColumn extends BlockTransparentMeta {
 
+    @PowerNukkitOnly
     public BlockBubbleColumn() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockBubbleColumn(int meta) {
         super(meta);
     }
@@ -35,6 +40,7 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
         return "Bubble Column";
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;
@@ -85,6 +91,13 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
         return false;
     }
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return false;
+    }
+
     @Override
     public AxisAlignedBB getBoundingBox() {
         return null;
@@ -124,7 +137,7 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (down().getId() == MAGMA) {
             setDamage(1);
         }

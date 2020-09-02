@@ -7,8 +7,7 @@ import cn.nukkit.plugin.Plugin;
 import java.util.List;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockMetadataStore extends MetadataStore {
     private final Level owningLevel;

@@ -1,8 +1,7 @@
 package cn.nukkit.item;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemPickaxeStone extends ItemTool {
 

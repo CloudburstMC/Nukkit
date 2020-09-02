@@ -2,19 +2,26 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.generator.object.ObjectTallGrass;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
+
 public class BlockGrass extends BlockDirt {
 
     public BlockGrass() {
@@ -24,6 +31,14 @@ public class BlockGrass extends BlockDirt {
     public BlockGrass(int meta) {
         // Grass can't have meta.
         super(0);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.EMPTY_PROPERTIES;
     }
 
     @Override
@@ -47,12 +62,12 @@ public class BlockGrass extends BlockDirt {
     }
 
     @Override
-    public boolean onActivate(Item item) {
+    public boolean onActivate(@Nonnull Item item) {
         return this.onActivate(item, null);
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
             if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;
@@ -63,10 +78,16 @@ public class BlockGrass extends BlockDirt {
         } else if (item.isHoe()) {
             item.useOn(this);
             this.getLevel().setBlock(this, Block.get(BlockID.FARMLAND));
+            if(player != null){
+                player.getLevel().addSound(player, Sound.USE_GRASS);
+            }
             return true;
         } else if (item.isShovel()) {
             item.useOn(this);
             this.getLevel().setBlock(this, Block.get(BlockID.GRASS_PATH));
+            if(player != null){
+                player.getLevel().addSound(player, Sound.USE_GRASS);
+            }
             return true;
         }
 
@@ -112,15 +133,5 @@ public class BlockGrass extends BlockDirt {
     @Override
     public boolean canSilkTouch() {
         return true;
-    }
-
-    @Override
-    public int getFullId() {
-        return this.getId() << DATA_BITS;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-
     }
 }

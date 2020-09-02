@@ -14,7 +14,8 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Faceable;
 
 /**
- * Created by Pub4Game on 15.01.2016.
+ * @author Pub4Game
+ * @since 15.01.2016
  * 
  * @apiNote Implements {@link Faceable} only on PowerNukkit since 1.3.0.0-PN
  */
@@ -46,6 +47,7 @@ public class BlockStemMelon extends BlockCrops implements Faceable {
         return BlockFace.fromIndex(getDamage() >> 3 & 0b111);
     }
     
+    @Override
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public void setBlockFace(BlockFace face) {

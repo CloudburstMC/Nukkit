@@ -1,5 +1,6 @@
 package cn.nukkit.entity;
 
+import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
@@ -16,10 +17,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.EnumLevel;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Location;
-import cn.nukkit.level.Position;
+import cn.nukkit.level.*;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
@@ -41,6 +39,7 @@ import co.aikar.timings.TimingsHistory;
 import com.google.common.collect.Iterables;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -901,15 +900,18 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    public static Entity createEntity(String name, Position pos, Object... args) {
+    @Nullable
+    public static Entity createEntity(@Nonnull String name, @Nonnull Position pos, @Nullable Object... args) {
         return createEntity(name, pos.getChunk(), getDefaultNBT(pos), args);
     }
 
-    public static Entity createEntity(int type, Position pos, Object... args) {
+    @Nullable
+    public static Entity createEntity(int type, @Nonnull Position pos, @Nullable Object... args) {
         return createEntity(String.valueOf(type), pos.getChunk(), getDefaultNBT(pos), args);
     }
 
-    public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
+    @Nullable
+    public static Entity createEntity(@Nonnull String name, @Nonnull FullChunk chunk, @Nonnull CompoundTag nbt, @Nullable Object... args) {
         Entity entity = null;
 
         if (knownEntities.containsKey(name)) {
@@ -950,7 +952,8 @@ public abstract class Entity extends Location implements Metadatable {
         return entity;
     }
 
-    public static Entity createEntity(int type, FullChunk chunk, CompoundTag nbt, Object... args) {
+    @Nullable
+    public static Entity createEntity(int type, @Nonnull FullChunk chunk, @Nonnull CompoundTag nbt, @Nullable Object... args) {
         return createEntity(String.valueOf(type), chunk, nbt, args);
     }
 
@@ -976,11 +979,13 @@ public abstract class Entity extends Location implements Metadatable {
         return true;
     }
 
-    public static CompoundTag getDefaultNBT(Vector3 pos) {
+    @Nonnull
+    public static CompoundTag getDefaultNBT(@Nonnull Vector3 pos) {
         return getDefaultNBT(pos, null);
     }
 
-    public static CompoundTag getDefaultNBT(Vector3 pos, Vector3 motion) {
+    @Nonnull
+    public static CompoundTag getDefaultNBT(@Nonnull Vector3 pos, @Nullable Vector3 motion) {
         Location loc = pos instanceof Location ? (Location) pos : null;
 
         if (loc != null) {
@@ -990,7 +995,8 @@ public abstract class Entity extends Location implements Metadatable {
         return getDefaultNBT(pos, motion, 0, 0);
     }
 
-    public static CompoundTag getDefaultNBT(Vector3 pos, Vector3 motion, float yaw, float pitch) {
+    @Nonnull
+    public static CompoundTag getDefaultNBT(@Nonnull Vector3 pos, @Nullable Vector3 motion, float yaw, float pitch) {
         return new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", pos.x))
@@ -1444,7 +1450,7 @@ public abstract class Entity extends Location implements Metadatable {
             EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, PortalType.NETHER);
             getServer().getPluginManager().callEvent(ev);
 
-            if (!ev.isCancelled()) {
+            if (!ev.isCancelled() && (level == EnumLevel.OVERWORLD.getLevel() || level == EnumLevel.NETHER.getLevel())) {
                 Position newPos = EnumLevel.moveToNether(this);
                 if (newPos != null) {
                     for (int x = -1; x < 2; x++) {
@@ -1758,7 +1764,9 @@ public abstract class Entity extends Location implements Metadatable {
             if (down.getId() == BlockID.HONEY_BLOCK) {
                 damage *= 0.2F;
             }
-            this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
+            if (!this.isPlayer || level.getGameRules().getBoolean(GameRule.FALL_DAMAGE)) {
+                this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
+            }
         }
 
         if (fallDistance > 0.75) {
@@ -1903,6 +1911,7 @@ public abstract class Entity extends Location implements Metadatable {
         return new Position(this.x, this.y, this.z, this.level);
     }
 
+    @Nonnull
     public Location getLocation() {
         return new Location(this.x, this.y, this.z, this.yaw, this.pitch, this.level);
     }
@@ -1971,7 +1980,9 @@ public abstract class Entity extends Location implements Metadatable {
 
         AxisAlignedBB newBB = this.boundingBox.getOffsetBoundingBox(dx, dy, dz);
 
-        if (server.getAllowFlight() || !this.level.hasCollision(this, newBB, false)) {
+        if (server.getAllowFlight() 
+                || isPlayer && ((Player) this).getAdventureSettings().get(AdventureSettings.Type.NO_CLIP) 
+                || !this.level.hasCollision(this, newBB, false)) {
             this.boundingBox = newBB;
         }
 

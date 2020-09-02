@@ -9,8 +9,7 @@ import cn.nukkit.level.Position;
 import java.util.List;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class EntityExplodeEvent extends EntityEvent implements Cancellable {
 

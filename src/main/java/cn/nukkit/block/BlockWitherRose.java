@@ -7,6 +7,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.potion.Effect;
 
+import javax.annotation.Nonnull;
+
 public class BlockWitherRose extends BlockFlower {
     public BlockWitherRose() {
         this(0);
@@ -32,7 +34,7 @@ public class BlockWitherRose extends BlockFlower {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         return false;
     }
 

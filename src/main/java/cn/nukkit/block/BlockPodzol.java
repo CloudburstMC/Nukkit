@@ -1,12 +1,18 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
- * Created on 2015/11/22 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/22
  */
 public class BlockPodzol extends BlockDirt {
 
@@ -17,6 +23,14 @@ public class BlockPodzol extends BlockDirt {
     public BlockPodzol(int meta) {
         // Podzol can't have meta.
         super(0);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.EMPTY_PROPERTIES;
     }
 
     @Override
@@ -40,18 +54,8 @@ public class BlockPodzol extends BlockDirt {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         return false;
-    }
-
-    @Override
-    public int getFullId() {
-        return this.getId() << DATA_BITS;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-
     }
 
     @Override

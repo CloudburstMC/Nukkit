@@ -1,29 +1,52 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockFace.AxisDirection;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
+
+import javax.annotation.Nonnull;
+
+import static cn.nukkit.block.BlockStairs.UPSIDE_DOWN;
+import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 
 /**
- * Created by Pub4Game on 26.12.2015.
+ * @author Pub4Game
+ * @since 26.12.2015
  */
 public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
-    private static final IntList FACES = new IntArrayList(new int[]{2, 1, 3, 0});
-
+    private static final double THICKNESS = 0.1875;
+    
+    public static final BlockProperty<BlockFace> TRAPDOOR_DIRECTION = new ArrayBlockProperty<>("direction", false, new BlockFace[] {
+            // It's basically weirdo_direction but renamed
+            BlockFace.EAST, BlockFace.WEST,
+            BlockFace.SOUTH, BlockFace.NORTH
+    }).ordinal(true);
+    
+    public static final BlockProperties PROPERTIES = new BlockProperties(TRAPDOOR_DIRECTION, UPSIDE_DOWN, OPEN);
+    
+    private static final AxisAlignedBB[] boundingBoxDamage = new AxisAlignedBB[0x1 << PROPERTIES.getBitSize()];
+    
+    @Deprecated @DeprecationDetails(reason = "Use the properties or the accessors", since = "1.4.0.0-PN", replaceWith = "CommonBlockProperties.OPEN")
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
+
+    @Deprecated @DeprecationDetails(reason = "Use the properties or the accessors", since = "1.4.0.0-PN", replaceWith = "BlockStairs.UPSIDE_DOWN")
     public static final int TRAPDOOR_TOP_BIT = 0x04;
 
     public BlockTrapdoor() {
@@ -37,6 +60,14 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return TRAPDOOR;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -64,21 +95,42 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         return ItemTool.TYPE_AXE;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
     }
 
-    private static final AxisAlignedBB[] boundingBoxDamage = new AxisAlignedBB[16];
-
+    //<editor-fold desc="pre-computing the bounding boxes" defaultstate="collapsed">
     static {
-        for (int damage = 0; damage < 16; damage++) {
+        for (int damage = 0; damage < boundingBoxDamage.length; damage++) {
             AxisAlignedBB bb;
-            double f = 0.1875;
-            if ((damage & TRAPDOOR_TOP_BIT) > 0) {
+            if (PROPERTIES.getBooleanValue(damage, OPEN.getName())) {
+                BlockFace face = (BlockFace) PROPERTIES.getValue(damage, TRAPDOOR_DIRECTION.getName());
+                face = face.getOpposite();
+                if (face.getAxisDirection() == AxisDirection.NEGATIVE) {
+                    bb = new SimpleAxisAlignedBB (
+                            0,
+                            0,
+                            0,
+                            1 + face.getXOffset() - (THICKNESS * face.getXOffset()),
+                            1,
+                            1 + face.getZOffset() - (THICKNESS * face.getZOffset())
+                    );
+                } else {
+                    bb = new SimpleAxisAlignedBB (
+                            face.getXOffset() - (THICKNESS * face.getXOffset()),
+                            0,
+                            face.getZOffset() - (THICKNESS * face.getZOffset()),
+                            1,
+                            1,
+                            1
+                    );
+                }
+            } else if (PROPERTIES.getBooleanValue(damage, UPSIDE_DOWN.getName())) {
                 bb = new SimpleAxisAlignedBB(
                         0,
-                        1 - f,
+                        1 - THICKNESS,
                         0,
                         1,
                         1,
@@ -90,59 +142,21 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
                         0,
                         0,
                         1,
-                        0 + f,
+                        0 + THICKNESS,
                         1
                 );
             }
-            if ((damage & TRAPDOOR_OPEN_BIT) > 0) {
-                BlockFace face = getFaceForDamage(damage);
-                if (face == BlockFace.NORTH) {
-                    bb.setBounds(
-                            0,
-                            0,
-                            1 - f,
-                            1,
-                            1,
-                            1
-                    );
-                } else if (face == BlockFace.SOUTH) {
-                    bb.setBounds(
-                            0,
-                            0,
-                            0,
-                            1,
-                            1,
-                            0 + f
-                    );
-                }
-                if (face == BlockFace.WEST) {
-                    bb.setBounds(
-                            1 - f,
-                            0,
-                            0,
-                            1,
-                            1,
-                            1
-                    );
-                }
-                if (face == BlockFace.EAST) {
-                    bb.setBounds(
-                            0,
-                            0,
-                            0,
-                            0 + f,
-                            1,
-                            1
-                    );
-                }
-            }
+            
             boundingBoxDamage[damage] = bb;
         }
     }
+    //</editor-fold>
 
     @PowerNukkitDifference(info = "The bounding box was fixed", since = "1.3.0.0-PN")
     private AxisAlignedBB getRelativeBoundingBox() {
-        return boundingBoxDamage[this.getDamage()];
+        @SuppressWarnings("deprecation") 
+        int bigDamage = getBigDamage();
+        return boundingBoxDamage[bigDamage];
     }
 
     @Override
@@ -178,67 +192,72 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE && this.level.getServer().isRedstoneEnabled()) {
-            if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
-                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
-                this.setDamage(this.getDamage() ^ TRAPDOOR_OPEN_BIT);
-                this.level.setBlock(this, this, true);
-                this.level.addSound(this, isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
+            if (isOpen() != level.isBlockPowered(this.getLocation())) {
+                level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
+                toggleBooleanProperty(OPEN);
+                level.setBlock(this, this, true);
+                playOpenCloseSound();
                 return type;
             }
         }
 
         return 0;
     }
-
+    
+    @PowerNukkitDifference(info = "Will return false if setBlock fails and the direction is relative to where the player is facing", since = "1.4.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        BlockFace facing;
-        boolean top;
-        int meta = 0;
-
-        if (face.getAxis().isHorizontal() || player == null) {
-            facing = face;
-            top = fy > 0.5;
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (face.getAxis().isHorizontal()) {
+            setBlockFace(player == null? face : player.getDirection().getOpposite());
+            setTop(fy > 0.5);
         } else {
-            facing = player.getDirection().getOpposite();
-            top = face != BlockFace.UP;
-        }
-
-        int faceBit = FACES.getInt(facing.getHorizontalIndex());
-        meta |= faceBit;
-
-        if (top) {
-            meta |= TRAPDOOR_TOP_BIT;
+            setBlockFace(player.getDirection().getOpposite());
+            setTop(face != BlockFace.UP);
         }
         
-        this.setDamage(meta);
-        this.getLevel().setBlock(block, this, true, true);
-        return true;
+        return level.setBlock(block, this, true, true);
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(this, 0);
-    }
-
-    @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if(toggle(player)) {
-            this.level.addSound(this, isOpen() ? Sound.RANDOM_DOOR_OPEN : Sound.RANDOM_DOOR_CLOSE);
+            playOpenCloseSound();
             return true;
         }
         return false;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void playOpenCloseSound() {
+        if (isOpen()) {
+            playOpenSound();
+        } else {
+            playCloseSound();
+        }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void playOpenSound() {
+        this.level.addSound(this, Sound.RANDOM_DOOR_OPEN);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void playCloseSound() {
+        this.level.addSound(this, Sound.RANDOM_DOOR_CLOSE);
+    }
+
+    @PowerNukkitDifference(info = "Returns false if setBlock fails", since = "1.4.0.0-PN")
     public boolean toggle(Player player) {
         DoorToggleEvent ev = new DoorToggleEvent(this, player);
         getLevel().getServer().getPluginManager().callEvent(ev);
         if(ev.isCancelled()) {
             return false;
         }
-        this.setDamage(this.getDamage() ^ TRAPDOOR_OPEN_BIT);
-        getLevel().setBlock(this, this, true);
-        return true;
+        toggleBooleanProperty(OPEN);
+        return getLevel().setBlock(this, this, true);
     }
 
     @Override
@@ -247,22 +266,35 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     }
 
     public boolean isOpen() {
-        return (this.getDamage() & TRAPDOOR_OPEN_BIT) != 0;
+        return getBooleanValue(OPEN);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setOpen(boolean open) {
+        setBooleanValue(OPEN, open);
+    }
+    
     public boolean isTop() {
-        return (this.getDamage() & TRAPDOOR_TOP_BIT) != 0;
+        return getBooleanValue(UPSIDE_DOWN);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setTop(boolean top) {
+        setBooleanValue(UPSIDE_DOWN, top);
     }
 
     @PowerNukkitDifference(info = "Was returning the wrong face", since = "1.3.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
-        return getFaceForDamage(getDamage());
+        return getPropertyValue(TRAPDOOR_DIRECTION);
     }
-    
-    private static BlockFace getFaceForDamage(int damage) {
-        int stairFace = damage & 0x3;
-        int horizontalIndex = FACES.indexOf(stairFace);
-        return BlockFace.fromHorizontalIndex(horizontalIndex);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(TRAPDOOR_DIRECTION, face);
     }
 }

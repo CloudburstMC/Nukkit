@@ -3,8 +3,7 @@ package cn.nukkit.lang;
 import cn.nukkit.Server;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class TextContainer implements Cloneable {
     protected String text;

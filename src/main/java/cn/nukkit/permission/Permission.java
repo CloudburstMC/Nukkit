@@ -5,8 +5,7 @@ import cn.nukkit.Server;
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Permission {
 

@@ -1,26 +1,34 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
+import javax.annotation.Nonnull;
+
 /**
- * Created by CreeperFace on 7.8.2017.
+ * @author CreeperFace
+ * @since 7.8.2017
  */
 public class BlockGlassPaneStained extends BlockGlassPane {
 
-    private int meta;
-
     public BlockGlassPaneStained() {
-        this(0);
+        // Does nothing
     }
 
     public BlockGlassPaneStained(int meta) {
-        this.meta = meta;
+        getMutableState().setDataStorageFromInt(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
     @Override
-    public int getFullId() {
-        return (getId() << DATA_BITS) + getDamage();
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.LEGACY_PROPERTIES;
     }
 
     @Override
@@ -40,16 +48,6 @@ public class BlockGlassPaneStained extends BlockGlassPane {
 
     public DyeColor getDyeColor() {
         return DyeColor.getByWoolData(getDamage());
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
     }
 
     @Override

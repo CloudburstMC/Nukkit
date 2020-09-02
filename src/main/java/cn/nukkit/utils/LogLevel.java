@@ -5,8 +5,7 @@ import org.apache.logging.log4j.util.TriConsumer;
 import java.util.function.BiConsumer;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public enum LogLevel implements Comparable<LogLevel> {
     NONE((logger, message) -> {}, (mainLogger, s, throwable) -> {}),

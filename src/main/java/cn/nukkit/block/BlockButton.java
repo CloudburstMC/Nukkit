@@ -2,6 +2,11 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.api.UsedByReflection;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -10,17 +15,37 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
+
 /**
- * Created by CreeperFace on 27. 11. 2016.
+ * @author CreeperFace
+ * @since 27. 11. 2016
  */
 public abstract class BlockButton extends BlockFlowable implements Faceable {
+    protected static final BooleanBlockProperty BUTTON_PRESSED = new BooleanBlockProperty("button_pressed_bit", false);
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+            FACING_DIRECTION,
+            BUTTON_PRESSED
+    );
 
+    @UsedByReflection
     public BlockButton() {
         this(0);
     }
-
+    
+    @UsedByReflection
     public BlockButton(int meta) {
         super(meta);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -33,6 +58,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return 0.5;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -44,13 +70,14 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     }
 
     @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isTransparent() && target.getId() != SNOW_LAYER && (target.getId() != COBBLE_WALL || face != BlockFace.UP)) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (!BlockLever.isSupportValid(target, face)) {
             return false;
         }
-
-        this.setDamage(face.getIndex());
+        
+        setBlockFace(face);
         this.level.setBlock(block, this, true, true);
         return true;
     }
@@ -61,14 +88,14 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (this.isActivated()) {
             return false;
         }
 
         this.level.scheduleUpdate(this, 30);
 
-        this.setDamage(this.getDamage() ^ 0x08);
+        setActivated(true);
         this.level.setBlock(this, this, true, false);
 
         if (this.level.getServer().isRedstoneEnabled()) {
@@ -83,19 +110,20 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return true;
     }
 
-    @PowerNukkitDifference(info = "Allow to be placed on top of the walls", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Now, can be placed on solid blocks", since= "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            BlockFace face = getFacing().getOpposite();
-            Block side = this.getSide(face);
-            if (side.isTransparent() && (side.getId() != COBBLE_WALL || face != BlockFace.DOWN)) {
+            BlockFace thisFace = getFacing();
+            BlockFace touchingFace = thisFace.getOpposite();
+            Block side = this.getSide(touchingFace);
+            if (!BlockLever.isSupportValid(side, thisFace)) {
                 this.level.useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (this.isActivated()) {
-                this.setDamage(this.getDamage() ^ 0x08);
+                setActivated(false);
                 this.level.setBlock(this, this, true, false);
                 this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK, 1.0F, 0.5F);
 
@@ -114,7 +142,13 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     }
 
     public boolean isActivated() {
-        return ((this.getDamage() & 0x08) == 0x08);
+        return getBooleanValue(BUTTON_PRESSED);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setActivated(boolean activated) {
+        setBooleanValue(BUTTON_PRESSED, activated);
     }
 
     @Override
@@ -122,17 +156,25 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         return true;
     }
 
+    @Override
     public int getWeakPower(BlockFace side) {
         return isActivated() ? 15 : 0;
     }
 
+    @Override
     public int getStrongPower(BlockFace side) {
         return !isActivated() ? 0 : (getFacing() == side ? 15 : 0);
     }
 
     public BlockFace getFacing() {
-        int side = isActivated() ? getDamage() ^ 0x08 : getDamage();
-        return BlockFace.fromIndex(side);
+        return getPropertyValue(FACING_DIRECTION);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(FACING_DIRECTION, face);
     }
 
     @Override

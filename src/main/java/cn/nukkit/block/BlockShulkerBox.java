@@ -1,22 +1,35 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+
+import javax.annotation.Nonnull;
 
 /**
  * Created by PetteriM1
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockShulkerBox extends BlockUndyedShulkerBox {
 
-    private int meta;
-
     public BlockShulkerBox() {
-        this(0);
+        // Does nothing
     }
 
     public BlockShulkerBox(int meta) {
-        super();
-        this.meta = meta;
+        getMutableState().setDataStorageFromInt(meta);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.LEGACY_PROPERTIES;
     }
 
     @Override
@@ -36,20 +49,5 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
 
     public DyeColor getDyeColor() {
         return DyeColor.getByWoolData(this.getDamage());
-    }
-
-    @Override
-    public int getFullId() {
-        return (this.getId() << DATA_BITS) + this.getDamage();
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-        this.meta = meta;
     }
 }

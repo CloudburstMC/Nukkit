@@ -9,7 +9,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.*;
 
 /**
- * Created on 16-11-20.
+ * @since 16-11-20
  */
 public class NKServiceManager implements ServiceManager {
 

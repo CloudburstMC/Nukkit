@@ -8,8 +8,7 @@ import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class PopulatorDoublePlant extends PopulatorSurfaceBlock {
     private int type;

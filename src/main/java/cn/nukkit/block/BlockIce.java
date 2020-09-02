@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
@@ -11,8 +13,7 @@ import cn.nukkit.utils.BlockColor;
 import java.util.Arrays;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockIce extends BlockTransparent {
 
@@ -99,5 +100,12 @@ public class BlockIce extends BlockTransparent {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getLightFilter() {
+        return 2;
     }
 }

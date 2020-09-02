@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -38,14 +37,8 @@ public class BlockDiamond extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
+    public int getToolTier() {
+        return ItemTool.TIER_IRON;
     }
 
     @Override

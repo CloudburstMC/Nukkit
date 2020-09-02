@@ -6,8 +6,7 @@ import cn.nukkit.level.generator.populator.impl.PopulatorDoublePlant;
 import cn.nukkit.level.generator.populator.impl.PopulatorGrass;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class GrassyBiome extends CoveredBiome {
     public GrassyBiome() {

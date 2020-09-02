@@ -88,13 +88,13 @@ curl -sSL https://raw.githubusercontent.com/PowerNukkit/PowerNukkit/master/docke
 If you want to keep your server always updated when it restarts, run with:   
 (edit the docker-compose.yml file to choose the base version you want)
 ```sh
-docker-compose run --rm --name powernukkit server
+docker-compose run --rm --service-ports --name powernukkit server
 ```
 
 But if you want to keep using the same version and update, use this command to create a fixed container
 
 ```sh
-docker-compose run --name powernukkit server
+docker-compose run --service-ports --name powernukkit server
 ```
 
 <b>To return to the terminal and keep the server running:</b>  

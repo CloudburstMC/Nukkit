@@ -6,8 +6,7 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 /**
- * author: ItsLucas
- * Nukkit Project
+ * @author ItsLucas (Nukkit Project)
  */
 public class ObjectTallGrass {
     public static void growGrass(ChunkManager level, Vector3 pos, NukkitRandom random) {

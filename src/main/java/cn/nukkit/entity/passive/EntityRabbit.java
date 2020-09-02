@@ -5,7 +5,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Author: BeYkeRYkt Nukkit Project
+ * @author BeYkeRYkt (Nukkit Project)
  */
 public class EntityRabbit extends EntityAnimal {
 

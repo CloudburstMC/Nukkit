@@ -14,6 +14,7 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -96,7 +97,7 @@ public class BlockBamboo extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = down();
         int downId = down.getId();
         if (downId != BAMBOO && downId != BAMBOO_SAPLING) {
@@ -266,9 +267,9 @@ public class BlockBamboo extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         boolean itemIsBoneMeal = item.getId() == ItemID.DYE && item.getDamage() == 0x0F; //Bonemeal
-        if (itemIsBoneMeal || item.getBlock() != null && item.getBlock().getId() == BlockID.BAMBOO) {
+        if (itemIsBoneMeal || item.getBlock() != null && item.getBlockId() == BlockID.BAMBOO) {
             int top = (int) y;
             int count = 1;
 

@@ -33,6 +33,11 @@ public class BlockStairsSmoothSandstone extends BlockStairs {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public String getName() {
         return "Smooth Sandstone Stairs";
     }

@@ -4,8 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockBricksStone extends BlockSolidMeta {
     public static final int NORMAL = 0;
@@ -62,6 +61,11 @@ public class BlockBricksStone extends BlockSolidMeta {
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

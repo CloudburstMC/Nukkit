@@ -10,6 +10,7 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -112,11 +113,11 @@ public class EntityFirework extends Entity {
             float f = (float) Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
             this.yaw = (float) (Math.atan2(this.motionX, this.motionZ) * (180D / Math.PI));
 
-            this.pitch = (float) (Math.atan2(this.motionY, (double) f) * (180D / Math.PI));
+            this.pitch = (float) (Math.atan2(this.motionY, f) * (180D / Math.PI));
 
 
             if (this.fireworkAge == 0) {
-                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LAUNCH);
+                this.getLevel().addSound(this, Sound.FIREWORK_LAUNCH);
             }
 
             this.fireworkAge++;

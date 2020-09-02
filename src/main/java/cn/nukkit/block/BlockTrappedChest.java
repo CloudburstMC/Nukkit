@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.item.Item;
@@ -10,8 +11,10 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
 
+import javax.annotation.Nonnull;
 import java.util.Map;
 
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockTrappedChest extends BlockChest {
 
     public BlockTrappedChest() {
@@ -33,7 +36,7 @@ public class BlockTrappedChest extends BlockChest {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = {2, 5, 3, 4};
 
         BlockEntityChest chest = null;
@@ -98,7 +101,7 @@ public class BlockTrappedChest extends BlockChest {
             playerCount = ((BlockEntityChest) blockEntity).getInventory().getViewers().size();
         }
 
-        return playerCount < 0 ? 0 : playerCount > 15 ? 15 : playerCount;
+        return Math.min(playerCount, 15);
     }
 
     @Override

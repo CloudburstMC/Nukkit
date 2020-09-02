@@ -5,8 +5,7 @@ import java.nio.ByteOrder;
 import java.util.zip.CRC32;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class NukkitRandom {
     protected long seed;

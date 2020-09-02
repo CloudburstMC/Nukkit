@@ -4,11 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
-import java.util.function.Function;
 
 /**
  * @author Nukkit Project Team

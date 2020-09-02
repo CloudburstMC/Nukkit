@@ -6,9 +6,11 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
 /**
- * Created on 2015/11/24 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/24
  */
 public class BlockHayBale extends BlockSolidMeta implements Faceable {
     public BlockHayBale() {
@@ -50,7 +52,7 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         int[] faces = new int[]{
                 0,
                 0,

@@ -1,15 +1,17 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/12/7 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/7
  */
-public class BlockFenceNetherBrick extends BlockFence {
+@PowerNukkitDifference(info = "Extends BlockFenceBase instead of BlockFence only in PowerNukkit", since = "1.4.0.0-PN")
+public class BlockFenceNetherBrick extends BlockFenceBase {
 
     public BlockFenceNetherBrick() {
         this(0);
@@ -41,23 +43,12 @@ public class BlockFenceNetherBrick extends BlockFence {
 
     @Override
     public double getResistance() {
-        return 10;
+        return 6;
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
-    }
-
-    @Override
-    public boolean canConnect(Block block) {
-        return (block instanceof BlockFenceNetherBrick || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

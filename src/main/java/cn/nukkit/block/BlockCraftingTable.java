@@ -6,9 +6,12 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
- * Created on 2015/12/5 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/5
  */
 public class BlockCraftingTable extends BlockSolid {
     public BlockCraftingTable() {
@@ -45,7 +48,7 @@ public class BlockCraftingTable extends BlockSolid {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         if (player != null) {
             player.craftingType = Player.CRAFTING_BIG;
             player.setCraftingGrid(player.getUIInventory().getBigCraftingGrid());

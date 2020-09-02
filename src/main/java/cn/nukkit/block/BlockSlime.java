@@ -1,9 +1,12 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by Pub4Game on 21.02.2016.
+ * @author Pub4Game
+ * @since 21.02.2016
  */
 public class BlockSlime extends BlockSolid {
 
@@ -33,5 +36,12 @@ public class BlockSlime extends BlockSolid {
     @Override
     public BlockColor getColor() {
         return BlockColor.GRASS_BLOCK_COLOR;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getLightFilter() {
+        return 1;
     }
 }

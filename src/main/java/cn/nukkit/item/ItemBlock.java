@@ -3,8 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.block.Block;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemBlock extends Item {
     public ItemBlock(Block block) {
@@ -22,11 +21,12 @@ public class ItemBlock extends Item {
 
     public void setDamage(Integer meta) {
         if (meta != null) {
-            this.meta = meta & 0xffff;
+            this.meta = meta;
+            this.block.setDataStorageFromInt(meta);
         } else {
             this.hasMeta = false;
+            this.block.setDataStorageFromInt(0);
         }
-        this.block.setDamage(meta);
     }
 
     @Override
@@ -41,13 +41,7 @@ public class ItemBlock extends Item {
     }
 
     @Override
-    public int getMaxStackSize() {
-        //Shulker boxes don't stack!
-        if (this.getBlock().getId() == Block.SHULKER_BOX || this.getBlock().getId() == Block.UNDYED_SHULKER_BOX) {
-            return 1;
-        }
-        
-        return super.getMaxStackSize();
+    public boolean isLavaResistant() {
+        return block.isLavaResistant();
     }
-
 }

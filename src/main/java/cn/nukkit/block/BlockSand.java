@@ -1,40 +1,24 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
-public class BlockSand extends BlockFallable {
+@PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable")
+public class BlockSand extends BlockFallableMeta {
 
     public static final int DEFAULT = 0;
     public static final int RED = 1;
 
-    private int meta;
-
     public BlockSand() {
-        this(0);
+        // Does nothing
     }
 
     public BlockSand(int meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public int getFullId() {
-        return (getId() << DATA_BITS) + getDamage();
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
+        super(meta);
     }
 
     @Override

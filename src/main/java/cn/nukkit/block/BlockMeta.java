@@ -1,25 +1,28 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
+
+import javax.annotation.Nonnull;
+
 public abstract class BlockMeta extends Block {
-    private int meta;
-
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected BlockMeta(){
+        // Does nothing
+    }
+    
     protected BlockMeta(int meta) {
-        this.meta = meta;
+        getMutableState().setDataStorageFromInt(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @PowerNukkitOnly
     @Override
-    public int getFullId() {
-        return (getId() << DATA_BITS) + getDamage();
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.LEGACY_PROPERTIES;
     }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-        this.meta = meta;
-    }
-
 }

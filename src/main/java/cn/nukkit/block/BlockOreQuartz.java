@@ -9,8 +9,8 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/12/26 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/26
  */
 public class BlockOreQuartz extends BlockSolid {
 
@@ -43,8 +43,13 @@ public class BlockOreQuartz extends BlockSolid {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             int count = 1;
             Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
             if (fortune != null && fortune.getLevel() >= 1) {

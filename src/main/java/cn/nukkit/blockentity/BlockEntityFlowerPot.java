@@ -1,12 +1,13 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created by Snake1999 on 2016/2/4.
- * Package cn.nukkit.blockentity in project Nukkit.
+ * @author Snake1999
+ * @since 2016/2/4
  */
 public class BlockEntityFlowerPot extends BlockEntitySpawnable {
     public BlockEntityFlowerPot(FullChunk chunk, CompoundTag nbt) {
@@ -46,7 +47,7 @@ public class BlockEntityFlowerPot extends BlockEntitySpawnable {
                 .putInt("z", (int) this.z);
 
         int item = namedTag.getShort("item");
-        if (item != Block.AIR) {
+        if (item != BlockID.AIR) {
             tag.putShort("item", this.namedTag.getShort("item"))
                     .putInt("mData", this.namedTag.getInt("data"));
         }

@@ -14,7 +14,19 @@ import java.lang.annotation.*;
 @Since("1.3.0.0-PN")
 @Inherited
 @Documented
+@Repeatable(PowerNukkitDifference.List.class)
 public @interface PowerNukkitDifference {
-    String info() default "";
+    String info();
     String since() default "";
+
+    @Retention(RetentionPolicy.CLASS)
+    @Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.TYPE,
+            ElementType.FIELD, ElementType.PACKAGE})
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Inherited
+    @Documented
+    @interface List {
+        PowerNukkitDifference[] value();
+    }
 }

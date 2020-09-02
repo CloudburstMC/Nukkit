@@ -10,8 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityMetadata {
 

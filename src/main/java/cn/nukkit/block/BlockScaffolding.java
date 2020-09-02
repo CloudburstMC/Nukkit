@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFallingBlock;
 import cn.nukkit.item.Item;
@@ -12,16 +14,17 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockScaffolding extends BlockFallable {
+import javax.annotation.Nonnull;
 
-    private int meta = 0;
+@PowerNukkitOnly
+public class BlockScaffolding extends BlockFallableMeta {
 
     public BlockScaffolding() {
-        this(0);
+        // Does nothing
     }
 
     public BlockScaffolding(int meta) {
-        this.meta = meta;
+        super(meta);
     }
 
     @Override
@@ -30,23 +33,8 @@ public class BlockScaffolding extends BlockFallable {
     }
 
     @Override
-    public int getFullId() {
-        return (getId() << DATA_BITS) + getDamage();
-    }
-
-    @Override
     public String getName() {
         return "Scaffolding";
-    }
-
-    @Override
-    public int getDamage() {
-        return meta;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-        this.meta = meta;
     }
 
     public int getStability() {
@@ -75,7 +63,7 @@ public class BlockScaffolding extends BlockFallable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (block instanceof BlockLava) {
             return false;
         }
@@ -183,6 +171,7 @@ public class BlockScaffolding extends BlockFallable {
         return 60;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -256,5 +245,12 @@ public class BlockScaffolding extends BlockFallable {
     @Override
     public boolean isSolid() {
         return false;
+    }
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return side == BlockFace.UP;
     }
 }

@@ -5,8 +5,7 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockSignPost;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemSign extends Item {
 

@@ -3,8 +3,7 @@ package cn.nukkit.level.generator.noise.nukkit.f;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class SimplexF extends PerlinF {
     protected static float SQRT_3;

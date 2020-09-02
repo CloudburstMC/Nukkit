@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -8,6 +9,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockCoral extends BlockFlowable {
@@ -23,11 +25,6 @@ public class BlockCoral extends BlockFlowable {
     
     public BlockCoral(int meta) {
         super(meta);
-    }
-    
-    @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
     }
     
     @Override
@@ -47,6 +44,7 @@ public class BlockCoral extends BlockFlowable {
         }
     }
     
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;
@@ -76,7 +74,7 @@ public class BlockCoral extends BlockFlowable {
     }
     
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = down();
         Block layer1 = block.getLevelBlockAtLayer(1);
         boolean hasWater = layer1 instanceof BlockWater;

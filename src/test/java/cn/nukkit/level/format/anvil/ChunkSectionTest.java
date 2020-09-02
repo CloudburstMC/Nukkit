@@ -12,8 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ChunkSectionTest {
     @Test
-    void hyperIdPersistence() {
+    void hugeIdPersistence() {
         ChunkSection section = new ChunkSection(4);
+        section.delayPaletteUpdates();
         BlockWall wall = new BlockWall();
         wall.setWallType(BlockWall.WallType.BRICK);
         wall.setConnection(BlockFace.NORTH, BlockWall.WallConnectionType.SHORT);
@@ -30,6 +31,7 @@ class ChunkSectionTest {
         assertEquals(1, compoundTag.getList("DataHyper", ByteArrayTag.class).size());
         assertEquals((byte) 0b0001_1001, compoundTag.getList("DataHyper", ByteArrayTag.class).get(0).data[anvilIndex]);
         section = new ChunkSection(compoundTag);
+        section.delayPaletteUpdates();
         assertEquals(BlockID.COBBLE_WALL, section.getBlockId(x, y, z));
         assertEquals(expected, section.getBlockData(x, y, z));
 
@@ -45,7 +47,9 @@ class ChunkSectionTest {
         assertEquals((byte) 0b0001_1001, compoundTag.getList("DataHyper", ByteArrayTag.class).get(0).data[anvilIndex]);
         assertEquals((byte) 0b0011_0100, compoundTag.getList("DataHyper", ByteArrayTag.class).get(1).data[anvilIndex]);
         assertEquals((byte) 0b1000_0001, compoundTag.getList("DataHyper", ByteArrayTag.class).get(2).data[anvilIndex]);
+        compoundTag.remove("ContentVersion");
         section = new ChunkSection(compoundTag);
+        section.delayPaletteUpdates();
         assertEquals(BlockID.COBBLE_WALL, section.getBlockId(x, y, z));
         assertEquals(expected, section.getBlockData(x, y, z));
     }

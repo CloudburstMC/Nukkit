@@ -1,8 +1,12 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCampfire;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -19,15 +23,31 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.MainLogger;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class BlockCampfire extends BlockTransparentMeta implements Faceable {
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+
+@PowerNukkitOnly
+public class BlockCampfire extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityCampfire> {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BooleanBlockProperty EXTINGUISHED = new BooleanBlockProperty("extinguished", false);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, EXTINGUISHED);
+    
+    @PowerNukkitOnly
     public BlockCampfire() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockCampfire(int meta) {
         super(meta);
     }
@@ -37,6 +57,30 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
         return CAMPFIRE_BLOCK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.CAMPFIRE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityCampfire> getBlockEntityClass() {
+        return BlockEntityCampfire.class;
+    }
+
     @Override
     public int getLightLevel() {
         return isExtinguished()? 0 : 15;
@@ -44,12 +88,12 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
 
     @Override
     public double getResistance() {
-        return 10;
+        return 2;
     }
 
     @Override
     public double getHardness() {
-        return 2.0;
+        return 5;
     }
 
     @Override
@@ -59,7 +103,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean canHarvestWithHand() {
-        return false;
+        return true;
     }
 
     @Override
@@ -73,44 +117,46 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (down().getId() == CAMPFIRE_BLOCK) {
             return false;
         }
-
-        this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
-        Block layer1 = block.getLevelBlockAtLayer(1);
-        boolean defaultLayerCheck = (block instanceof BlockWater && block.getDamage() == 0 || block.getDamage() >= 8) || block instanceof BlockIceFrosted;
-        boolean layer1Check = (layer1 instanceof BlockWater && layer1.getDamage() == 0 || layer1.getDamage() >= 8) || layer1 instanceof BlockIceFrosted;
+        
+        final Block layer0 = level.getBlock(this, 0);
+        final Block layer1 = level.getBlock(this, 1);
+        
+        setBlockFace(player != null ? player.getDirection().getOpposite() : null);
+        boolean defaultLayerCheck = (block instanceof BlockWater && ((BlockWater)block).isSourceOrFlowingDown()) || block instanceof BlockIceFrosted;
+        boolean layer1Check = (layer1 instanceof BlockWater && ((BlockWater)layer1).isSourceOrFlowingDown()) || layer1 instanceof BlockIceFrosted;
         if (defaultLayerCheck || layer1Check) {
             setExtinguished(true);
             this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
             this.level.setBlock(this, 1, defaultLayerCheck ? block : layer1, false, false);
         } else {
-            this.level.setBlock(this, 1, Block.get(Block.AIR), false, false);
+            this.level.setBlock(this, 1, Block.get(BlockID.AIR), false, false);
         }
 
         this.level.setBlock(block, this, true, true);
-        createBlockEntity(item);
+        try {
+            CompoundTag nbt = new CompoundTag();
+            
+            if (item.hasCustomBlockData()) {
+                Map<String, Tag> customData = item.getCustomBlockData().getTags();
+                for (Map.Entry<String, Tag> tag : customData.entrySet()) {
+                    nbt.put(tag.getKey(), tag.getValue());
+                }
+            }
+            
+            createBlockEntity(nbt);
+        } catch (Exception e) {
+            MainLogger.getLogger().warning("Failed to create the block entity "+getBlockEntityType()+" at "+getLocation(), e);
+            level.setBlock(layer0, 0, layer0, true);
+            level.setBlock(layer1, 0, layer1, true);
+            return false;
+        }
+        
         this.level.updateAround(this);
         return true;
-    }
-
-    private BlockEntityCampfire createBlockEntity(Item item) {
-        CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.CAMPFIRE)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
-
-        if (item.hasCustomBlockData()) {
-            Map<String, Tag> customData = item.getCustomBlockData().getTags();
-            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
-                nbt.put(tag.getKey(), tag.getValue());
-            }
-        }
-
-        return (BlockEntityCampfire) BlockEntity.createBlockEntity(BlockEntity.CAMPFIRE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
     }
 
     @Override
@@ -147,15 +193,12 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         if (item.getId() == BlockID.AIR || item.getCount() <= 0) {
             return false;
         }
 
-        BlockEntity entity = level.getBlockEntity(this);
-        if (!(entity instanceof BlockEntityCampfire)) {
-            entity = createBlockEntity(Item.get(0));
-        }
+        BlockEntityCampfire campfire = getOrCreateBlockEntity();
 
         boolean itemUsed = false;
         if (item.isShovel() && !isExtinguished()) {
@@ -167,18 +210,11 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
             item.useOn(this);
             setExtinguished(false);
             this.level.setBlock(this, this, true, true);
-            if (entity != null) {
-                entity.scheduleUpdate();
-            }
+            campfire.scheduleUpdate();
             this.level.addSound(this, Sound.FIRE_IGNITE);
             itemUsed = true;
         }
 
-        if (entity == null) {
-            return itemUsed;
-        }
-
-        BlockEntityCampfire campfire = (BlockEntityCampfire) entity;
         Item cloned = item.clone();
         cloned.setCount(1);
         CampfireInventory inventory = campfire.getInventory();
@@ -194,6 +230,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
         return itemUsed;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -215,24 +252,23 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
     }
 
     public boolean isExtinguished() {
-        return (getDamage() & 0x4) == 0x4;
+        return getBooleanValue(EXTINGUISHED);
     }
 
     public void setExtinguished(boolean extinguished) {
-        setDamage((getDamage() & 0x3) | (extinguished? 0x4 : 0x0));
+        setBooleanValue(EXTINGUISHED, extinguished);
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(getDamage() & 0x3);
+        return getPropertyValue(DIRECTION);
     }
 
+    @Override
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     public void setBlockFace(BlockFace face) {
-        if (face == BlockFace.UP || face == BlockFace.DOWN) {
-            return;
-        }
-
-        setDamage((getDamage() & 0x4) | face.getHorizontalIndex());
+        setPropertyValue(DIRECTION, face);
     }
 
     @Override
@@ -245,16 +281,17 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
         return new ItemCampfire();
     }
 
+    @Override
     public boolean hasComparatorInputOverride() {
         return true;
     }
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntityCampfire blockEntity = getBlockEntity();
 
-        if (blockEntity instanceof BlockEntityCampfire) {
-            return ContainerInventory.calculateRedstone(((BlockEntityCampfire) blockEntity).getInventory());
+        if (blockEntity != null) {
+            return ContainerInventory.calculateRedstone(blockEntity.getInventory());
         }
 
         return super.getComparatorInputOverride();

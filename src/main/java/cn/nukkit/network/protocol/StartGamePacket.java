@@ -2,8 +2,8 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.Server;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockstate.BlockStateRegistry;
 import cn.nukkit.level.GameRules;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.utils.BinaryStream;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -18,7 +18,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 /**
- * Created on 15-10-13.
+ * @since 15-10-13
  */
 @Log4j2
 @ToString(exclude = {"blockPalette"})
@@ -179,7 +179,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isMovementServerAuthoritative);
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
-        this.put(GlobalBlockPalette.BLOCK_PALETTE);
+        BlockStateRegistry.putBlockPaletteBytes(this);
         this.put(ITEM_DATA_PALETTE);
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(this.isInventoryServerAuthoritative);

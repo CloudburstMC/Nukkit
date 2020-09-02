@@ -4,8 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class ColdTaigaBiome extends TaigaBiome {
     public ColdTaigaBiome() {

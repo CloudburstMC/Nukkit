@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemString;
@@ -7,8 +8,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/12/2 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/2
  */
 public class BlockCobweb extends BlockFlowable {
     public BlockCobweb() {
@@ -44,6 +45,7 @@ public class BlockCobweb extends BlockFlowable {
         return ItemTool.TYPE_SWORD;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

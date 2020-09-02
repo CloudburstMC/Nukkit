@@ -6,9 +6,10 @@ import cn.nukkit.item.ItemDoorIron;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockDoorIron extends BlockDoor {
 
@@ -51,14 +52,8 @@ public class BlockDoorIron extends BlockDoor {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override
@@ -72,7 +67,7 @@ public class BlockDoorIron extends BlockDoor {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         return false;
     }
 

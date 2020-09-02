@@ -1,5 +1,8 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
@@ -7,14 +10,16 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.SplittableRandom;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class Utils {
+
+    public static final SplittableRandom random = new SplittableRandom();
 
     public static void writeFile(String fileName, String content) throws IOException {
         writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
@@ -291,5 +296,37 @@ public class Utils {
         if('A' <= ch && ch <= 'F')    return ch - 'A' + 10;
         if('a' <= ch && ch <= 'f')    return ch - 'a' + 10;
         return -1;
+    }
+
+    public static int rand(int min, int max) {
+        if (min == max) {
+            return max;
+        }
+        return random.nextInt(max + 1 - min) + min;
+    }
+
+    public static double rand(double min, double max) {
+        if (min == max) {
+            return max;
+        }
+        return min + random.nextDouble() * (max-min);
+    }
+
+    public static boolean rand() {
+        return random.nextBoolean();
+    }
+
+    /**
+     * A way to tell the java compiler to do not replace the users of a {@code public static final int} constant
+     * with the value defined in it, forcing the JVM to get the value directly from the class, preventing
+     * binary incompatible changes.
+     * @see <a href="https://stackoverflow.com/a/12065326/804976>https://stackoverflow.com/a/12065326/804976</a>
+     * @param value The value to be assigned to the field.
+     * @return The same value that was passed as parameter
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static int dynamic(int value) {
+        return value;
     }
 }

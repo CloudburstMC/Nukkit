@@ -5,8 +5,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.inventory.Inventory;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class InventoryEvent extends Event {
 

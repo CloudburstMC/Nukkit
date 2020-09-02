@@ -1,8 +1,13 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
+import java.math.BigInteger;
+
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class NukkitMath {
 
@@ -42,8 +47,10 @@ public class NukkitMath {
         return round(d, 0);
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Optimized")
     public static double round(double d, int precision) {
-        return ((double) Math.round(d * Math.pow(10, precision))) / Math.pow(10, precision);
+        double pow = Math.pow(10, precision);
+        return ((double) Math.round(d * pow)) / pow;
     }
 
     public static double clamp(double value, double min, double max) {
@@ -54,11 +61,66 @@ public class NukkitMath {
         return value < min ? min : (value > max ? max : value);
     }
 
+    @Since("1.4.0.0-PN")
+    public static float clamp(float value, float min, float max) {
+        return value < min ? min : (value > max ? max : value);
+    }
+
     public static double getDirection(double diffX, double diffZ) {
         diffX = Math.abs(diffX);
         diffZ = Math.abs(diffZ);
 
-        return diffX > diffZ ? diffX : diffZ;
+        return Math.max(diffX, diffZ);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static int bitLength(int data) {
+        if (data < 0) {
+            return 32;
+        }
+
+        if (data == 0) {
+            return 1;
+        }
+
+        int bits = 0;
+        while (data != 0) {
+            data >>>= 1;
+            bits++;
+        }
+
+        return bits;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static int bitLength(long data) {
+        if (data < 0) {
+            return 64;
+        }
+
+        if (data == 0) {
+            return 1;
+        }
+
+        int bits = 0;
+        while (data != 0) {
+            data >>>= 1;
+            bits++;
+        }
+
+        return bits;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static int bitLength(BigInteger data) {
+        if (data.compareTo(BigInteger.ZERO) < 0) {
+            throw new UnsupportedOperationException("Negative BigIntegers are not supported (nearly infinite bits)");
+        }
+
+        return data.bitLength();
     }
 
 }

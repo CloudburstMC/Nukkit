@@ -6,10 +6,12 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityShulkerBox;
 import cn.nukkit.inventory.ContainerInventory;
-import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.ShulkerBoxInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -21,13 +23,16 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Map;
 
 /**
  *
  * @author Reece Mackie
  */
-public class BlockUndyedShulkerBox extends BlockTransparent {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+public class BlockUndyedShulkerBox extends BlockTransparent implements BlockEntityHolder<BlockEntityShulkerBox> {
 
     public BlockUndyedShulkerBox() {
         super();
@@ -41,6 +46,22 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     @Override
     public String getName() {
         return "Shulker Box";
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityShulkerBox> getBlockEntityClass() {
+        return BlockEntityShulkerBox.class;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.SHULKER_BOX;
     }
 
     @Override
@@ -63,6 +84,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
         return ItemTool.TYPE_PICKAXE;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -72,43 +94,44 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     public Item toItem() {
         ItemBlock item = new ItemBlock(this, this.getDamage(), 1);
 
-        BlockEntityShulkerBox t = (BlockEntityShulkerBox) this.getLevel().getBlockEntity(this);
+        BlockEntityShulkerBox tile = getBlockEntity();
 
-        if (t != null) {
-            ShulkerBoxInventory i = t.getRealInventory();
+        if (tile == null) {
+            return item;
+        }
+        
+        ShulkerBoxInventory inv = tile.getRealInventory();
 
-            if (!i.isEmpty()) {
-                CompoundTag nbt = item.getNamedTag();
-                if (nbt == null)
-                    nbt = new CompoundTag("");
+        if (!inv.isEmpty()) {
+            CompoundTag nbt = item.getNamedTag();
+            if (nbt == null) {
+                nbt = new CompoundTag("");
+            }
 
-                ListTag<CompoundTag> items = new ListTag<>();
+            ListTag<CompoundTag> items = new ListTag<>();
 
-                for (int it = 0; it < i.getSize(); it++) {
-                    if (i.getItem(it).getId() != Item.AIR) {
-                        CompoundTag d = NBTIO.putItemHelper(i.getItem(it), it);
-                        items.add(d);
-                    }
+            for (int it = 0; it < inv.getSize(); it++) {
+                if (!inv.getItem(it).isNull()) {
+                    CompoundTag d = NBTIO.putItemHelper(inv.getItem(it), it);
+                    items.add(d);
                 }
-
-                nbt.put("Items", items);
-
-                item.setCompoundTag(nbt);
             }
 
-            if (t.hasName()) {
-                item.setCustomName(t.getName());
-            }
+            nbt.put("Items", items);
+
+            item.setCompoundTag(nbt);
+        }
+
+        if (tile.hasName()) {
+            item.setCustomName(tile.getName());
         }
 
         return item;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(block, this, true);
-        CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.SHULKER_BOX)
-                .putByte("facing", face.getIndex());
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        CompoundTag nbt = new CompoundTag().putByte("facing", face.getIndex());
 
         if (item.hasCustomName()) {
             nbt.putString("CustomName", item.getCustomName());
@@ -129,8 +152,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
             }
         }
 
-        BlockEntityShulkerBox box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
-        return box != null;
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
     @Override
@@ -139,28 +161,18 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityShulkerBox box;
-            if (t instanceof BlockEntityShulkerBox) {
-                box = (BlockEntityShulkerBox) t;
-            } else {
-                CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.SHULKER_BOX);
-                box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
-                if (box == null) {
-                    return false;
-                }
-            }
-
-            Block block = this.getSide(BlockFace.fromIndex(box.namedTag.getByte("facing")));
-            if (!(block instanceof BlockAir) && !(block instanceof BlockLiquid) && !(block instanceof BlockFlowable)) {
-                return true;
-            }
-
-            player.addWindow(box.getInventory());
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
+        if (player == null) {
+            return false;
+        }
+        
+        BlockEntityShulkerBox box = getOrCreateBlockEntity();
+        Block block = this.getSide(BlockFace.fromIndex(box.namedTag.getByte("facing")));
+        if (!(block instanceof BlockAir) && !(block instanceof BlockLiquid) && !(block instanceof BlockFlowable)) {
+            return false;
         }
 
+        player.addWindow(box.getInventory());
         return true;
     }
 
@@ -171,13 +183,13 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity be = this.getLevel().getBlockEntity(this);
+        BlockEntityShulkerBox be = getBlockEntity();
 
-        if (!(be instanceof InventoryHolder)) {
+        if (be == null) {
             return 0;
         }
 
-        return ContainerInventory.calculateRedstone(((InventoryHolder) be).getInventory());
+        return ContainerInventory.calculateRedstone(be.getInventory());
     }
 
     @Override
@@ -192,6 +204,13 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
 
     @Override
     public boolean sticksToPiston() {
+        return false;
+    }
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
         return false;
     }
 }

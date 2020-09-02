@@ -1,6 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
@@ -8,9 +12,11 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
- * Created on 2015/12/1 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/1
  */
 public class BlockWaterLily extends BlockFlowable {
 
@@ -21,6 +27,14 @@ public class BlockWaterLily extends BlockFlowable {
     public BlockWaterLily(int meta) {
         // Lily pad can't have meta. Also stops the server from throwing an exception with the block palette.
         super(0);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.EMPTY_PROPERTIES;
     }
 
     @Override
@@ -64,7 +78,7 @@ public class BlockWaterLily extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (target instanceof BlockWater || target.getLevelBlockAtLayer(1) instanceof BlockWater) {
             Block up = target.up();
             if (up.getId() == Block.AIR) {
@@ -101,15 +115,5 @@ public class BlockWaterLily extends BlockFlowable {
     @Override
     public boolean canPassThrough() {
         return false;
-    }
-
-    @Override
-    public int getFullId() {
-        return this.getId() << DATA_BITS;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-
     }
 }

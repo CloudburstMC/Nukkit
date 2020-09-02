@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.BasicGenerator;
@@ -11,11 +12,11 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockSapling extends BlockFlowable {
     public static final int OAK = 0;
@@ -58,22 +59,21 @@ public class BlockSapling extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
-        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND || down.getId() == Block.PODZOL) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (BlockFlower.isSupportValid(down())) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
 
         return false;
     }
-
+    
     @Override
     public boolean canBeActivated() {
         return true;
     }
 
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //BoneMeal
             if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;
@@ -91,9 +91,10 @@ public class BlockSapling extends BlockFlowable {
         return false;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will break on block update if the supporting block is invalid")
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (!BlockFlower.isSupportValid(down())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }

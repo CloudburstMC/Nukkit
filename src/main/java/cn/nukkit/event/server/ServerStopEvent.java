@@ -3,8 +3,7 @@ package cn.nukkit.event.server;
 import cn.nukkit.event.HandlerList;
 
 /**
- * author: NycuRO
- * NukkitX Project
+ * @author NycuRO (NukkitX Project)
  */
 public class ServerStopEvent extends ServerEvent {
 
