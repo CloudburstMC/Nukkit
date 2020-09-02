@@ -1,10 +1,14 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
+
+import java.util.Arrays;
 
 /**
  * author: MagicDroidX
@@ -48,7 +52,18 @@ public class BlockIce extends BlockTransparent {
     @Override
     public boolean onBreak(Item item) {
         if (this.getLevel().getDimension() != Level.DIMENSION_NETHER) {
-            return this.getLevel().setBlock(this, Block.get(BlockID.WATER), true);
+            boolean withSilkTouch = false;
+            for(Enchantment ench : item.getEnchantments()) {
+                if(ench.getId() == 16) { // Id 16 = Silk Touch enchantment ID.
+                    withSilkTouch = true;
+                }
+            }
+            if(withSilkTouch) {
+                return this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
+            }else{
+                return this.getLevel().setBlock(this, Block.get(BlockID.WATER), true);
+            }
+
         } else {
             return super.onBreak(item);
         }
