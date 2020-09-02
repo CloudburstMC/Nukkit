@@ -272,7 +272,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     nbt.putCompound("movingEntity", tags.get(i));
                 }
 
-                BlockEntityHolder.setBlockAndCreateEntity((BlockEntityHolder<?>) BlockState.of(BlockID.MOVING_BLOCK).getBlock(newBlock, newBlock.layer), 
+                BlockEntityHolder.setBlockAndCreateEntity((BlockEntityHolder<?>) BlockState.of(BlockID.MOVING_BLOCK).getBlock(newBlock), 
                         true, true, nbt);
 
                 if (this.level.getBlockIdAt(oldPos.getFloorX(), oldPos.getFloorY(), oldPos.getFloorZ()) != BlockID.MOVING_BLOCK) {

@@ -9,7 +9,9 @@ import javax.annotation.ParametersAreNullableByDefault;
 @ParametersAreNullableByDefault
 @Getter
 public class InvalidBlockPropertyException extends IllegalArgumentException {
-    private final transient BlockProperty<?> property;
+    private static final long serialVersionUID = -6934630506175381230L;
+    
+    private final BlockProperty<?> property;
 
     public InvalidBlockPropertyException(@Nonnull BlockProperty<?> property) {
         super(buildMessage(property));

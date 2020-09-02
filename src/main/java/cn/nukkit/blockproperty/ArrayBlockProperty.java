@@ -2,21 +2,23 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.math.NukkitMath;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.*;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 @ParametersAreNonnullByDefault
-public final class ArrayBlockProperty<E> extends BlockProperty<E> {
+public final class ArrayBlockProperty<E extends Serializable> extends BlockProperty<E> {
+    private static final long serialVersionUID = 507174531989068430L;
+    
     @Nonnull
     private final E[] universe;
     
@@ -126,7 +128,7 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
                 return i;
             }
         }
-        throw new IllegalArgumentException(value+" is not valid for this property");
+        throw new InvalidBlockPropertyValueException(this, null, value, "Element is not part of this property");
     }
 
     @Nonnull
@@ -137,12 +139,22 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
 
     @Override
     public int getIntValueForMeta(int meta) {
+        try {
+            validateMetaDirectly(meta);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidBlockPropertyMetaException(this, meta, meta, e);
+        }
         return meta;
     }
     
     @Nonnull
     @Override
     public String getPersistenceValueForMeta(int meta) {
+        try {
+            validateMetaDirectly(meta);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidBlockPropertyMetaException(this, meta, meta, e);
+        }
         if (isOrdinal()) {
             return Integer.toString(meta);
         }
@@ -150,7 +162,7 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     }
 
     @Override
-    protected void validate(@Nullable E value) {
+    protected void validateDirectly(@Nullable E value) {
         for (E object : universe) {
             if (object == value) {
                 return;
@@ -160,10 +172,11 @@ public final class ArrayBlockProperty<E> extends BlockProperty<E> {
     }
 
     @Override
-    protected void validateMeta(int meta) {
+    protected void validateMetaDirectly(int meta) {
         Preconditions.checkElementIndex(meta, universe.length);
     }
 
+    @Nonnull
     @Override
     public Class<E> getValueClass() {
         return eClass;

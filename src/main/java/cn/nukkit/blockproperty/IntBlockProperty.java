@@ -2,6 +2,8 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.math.NukkitMath;
 import com.google.common.base.Preconditions;
 
@@ -11,6 +13,8 @@ import javax.annotation.Nullable;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class IntBlockProperty extends BlockProperty<Integer> {
+    private static final long serialVersionUID = -2239010977496415152L;
+    
     private final int defaultMeta;
     private final int minValue;
     private final int maxValue;
@@ -60,7 +64,11 @@ public class IntBlockProperty extends BlockProperty<Integer> {
         if (value == null) {
             return defaultMeta;
         }
-        validate(value);
+        try {
+            validateDirectly(value);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidBlockPropertyValueException(this, null, value, e);
+        }
         return value - minValue;
     }
 
@@ -72,6 +80,11 @@ public class IntBlockProperty extends BlockProperty<Integer> {
 
     @Override
     public int getIntValueForMeta(int meta) {
+        try {
+            validateMetaDirectly(meta);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidBlockPropertyMetaException(this, meta, meta, e);
+        }
         return minValue + meta;
     }
 
@@ -81,7 +94,7 @@ public class IntBlockProperty extends BlockProperty<Integer> {
     }
 
     @Override
-    protected void validate(@Nullable Integer value) {
+    protected void validateDirectly(@Nullable Integer value) {
         if (value == null) {
             return;
         }
@@ -91,7 +104,7 @@ public class IntBlockProperty extends BlockProperty<Integer> {
     }
 
     @Override
-    protected void validateMeta(int meta) {
+    protected void validateMetaDirectly(int meta) {
         int max = maxValue - minValue;
         Preconditions.checkArgument(0 <= meta && meta <= max, "The meta %s is outside the range of 0 .. ", meta, max);
     }
@@ -114,6 +127,7 @@ public class IntBlockProperty extends BlockProperty<Integer> {
         return getValueForMeta(defaultMeta);
     }
 
+    @Nonnull
     @Override
     public Class<Integer> getValueClass() {
         return Integer.class;

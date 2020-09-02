@@ -6,13 +6,20 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
+import cn.nukkit.math.NukkitMath;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageType;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
@@ -32,7 +39,17 @@ public class LongMutableBlockState extends MutableBlockState {
 
     @Override
     public void setDataStorage(Number storage) {
-        long state = storage.longValue();
+        Class<? extends Number> c = storage.getClass();
+        long state;
+        if (c == Long.class || c == Integer.class || c == Short.class || c == Byte.class) {
+            state = storage.longValue();
+        } else {
+            try {
+                state = new BigDecimal(storage.toString()).longValueExact();
+            } catch (ArithmeticException | NumberFormatException e) {
+                throw handleUnsupportedStorageType(getBlockId(), storage, e);
+            }
+        }
         validate(state);
         this.storage = state;
     }
@@ -52,10 +69,23 @@ public class LongMutableBlockState extends MutableBlockState {
     
     private void validate(long state) {
         BlockProperties properties = this.properties;
+        if (state != 0) {
+            int bitLength = NukkitMath.bitLength(state);
+            if (bitLength > properties.getBitSize()) {
+                throw new InvalidBlockStateException(
+                        BlockState.of(getBlockId(), state),
+                        "The state have more data bits than specified in the properties. Bits: " + bitLength + ", Max: " + properties.getBitSize()
+                );
+            }
+        }
         
-        for (String name : properties.getNames()) {
-            BlockProperty<?> property = properties.getBlockProperty(name);
-            property.validateMeta(state, properties.getOffset(name));
+        try {
+            for (String name : properties.getNames()) {
+                BlockProperty<?> property = properties.getBlockProperty(name);
+                property.validateMeta(state, properties.getOffset(name));
+            }
+        } catch (InvalidBlockPropertyException e) {
+            throw new InvalidBlockStateException(BlockState.of(getBlockId(), state), e);
         }
     }
 
@@ -88,7 +118,7 @@ public class LongMutableBlockState extends MutableBlockState {
     }
 
     @Override
-    public void setPropertyValue(String propertyName, @Nullable Object value) {
+    public void setPropertyValue(String propertyName, @Nullable Serializable value) {
         storage = properties.setValue(storage, propertyName, value);
     }
 

@@ -12,6 +12,7 @@ import cn.nukkit.blockproperty.UnknownRuntimeIdException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.blockstate.BlockStateRegistry;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -485,7 +486,7 @@ public class Item implements Cloneable, BlockID, ItemID {
                         BlockState state = BlockState.of(blockId, meta);
                         state.validate();
                         item = state.asItemBlock(count);
-                    } catch (InvalidBlockPropertyMetaException e) {
+                    } catch (InvalidBlockPropertyMetaException | InvalidBlockStateException e) {
                         BlockState state = BlockState.of(blockId);
                         BlockProperties properties = state.getProperties();
                         BigInteger newStorage = properties.reduce(BigInteger.valueOf(meta), (property, offset, current) -> {

@@ -9,28 +9,33 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @Getter
 public class InvalidBlockPropertyMetaException extends InvalidBlockPropertyException {
-    private final transient Number currentMeta;
-    private final transient Number invalidMeta;
+    private static final long serialVersionUID = -8493494844859767053L;
+    
+    @Nonnull
+    private final Number currentMeta;
+    
+    @Nonnull
+    private final Number invalidMeta;
 
-    public InvalidBlockPropertyMetaException(@Nonnull BlockProperty<?> property, Number currentMeta, Number invalidMeta) {
+    public InvalidBlockPropertyMetaException(BlockProperty<?> property, Number currentMeta, Number invalidMeta) {
         super(property, buildMessage(currentMeta, invalidMeta));
         this.currentMeta = currentMeta;
         this.invalidMeta = invalidMeta;
     }
 
-    public InvalidBlockPropertyMetaException(@Nonnull BlockProperty<?> property, Number currentMeta, Number invalidMeta, String message) {
+    public InvalidBlockPropertyMetaException(BlockProperty<?> property, Number currentMeta, Number invalidMeta, String message) {
         super(property, buildMessage(currentMeta, invalidMeta)+". "+message);
         this.currentMeta = currentMeta;
         this.invalidMeta = invalidMeta;
     }
 
-    public InvalidBlockPropertyMetaException(@Nonnull BlockProperty<?> property, Number currentMeta, Number invalidMeta, String message, Throwable cause) {
+    public InvalidBlockPropertyMetaException(BlockProperty<?> property, Number currentMeta, Number invalidMeta, String message, Throwable cause) {
         super(property, buildMessage(currentMeta, invalidMeta)+". "+message, cause);
         this.currentMeta = currentMeta;
         this.invalidMeta = invalidMeta;
     }
 
-    public InvalidBlockPropertyMetaException(@Nonnull BlockProperty<?> property, Number currentMeta, Number invalidMeta, Throwable cause) {
+    public InvalidBlockPropertyMetaException(BlockProperty<?> property, Number currentMeta, Number invalidMeta, Throwable cause) {
         super(property, buildMessage(currentMeta, invalidMeta), cause);
         this.currentMeta = currentMeta;
         this.invalidMeta = invalidMeta;

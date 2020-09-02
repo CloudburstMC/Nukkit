@@ -18,8 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BaseChunkTest {
@@ -169,6 +168,7 @@ class BaseChunkTest {
         assertEquals(1, section.getContentVersion());
         
         Level level = mock(Level.class, Answers.CALLS_REAL_METHODS);
+        doReturn("FakeLevel").when(level).getName();
         doReturn(chunk).when(level).getChunk(x >> 4, z >> 4);
         
         chunk.backwardCompatibilityUpdate(level);

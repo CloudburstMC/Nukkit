@@ -50,6 +50,9 @@ public abstract class MutableBlockState implements IMutableBlockState {
         return getProperties().getBitSize();
     }
 
+    /**
+     * @throws cn.nukkit.blockstate.exception.InvalidBlockStateException if the state is invalid
+     */
     public abstract void validate();
 
     @Nonnull

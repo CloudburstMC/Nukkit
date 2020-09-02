@@ -146,7 +146,7 @@ public class BlockTurtleEgg extends BlockFlowable {
             if (eggCount >= 4) {
                 return false;
             }
-            Block newState = getCurrentState().withProperty(EGG_COUNT, eggCount + 1).getBlock();
+            Block newState = getCurrentState().withProperty(EGG_COUNT, eggCount + 1).getBlock(this);
             BlockPlaceEvent placeEvent = new BlockPlaceEvent(
                     player,
                     newState,
