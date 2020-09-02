@@ -55,7 +55,7 @@ public class BlockIce extends BlockTransparent {
         if (this.getLevel().getDimension() != Level.DIMENSION_NETHER) {
             boolean withSilkTouch = false;
             for(Enchantment ench : item.getEnchantments()) {
-                if(ench.getId() == 16) { // Id 16 = Silk Touch enchantment ID.
+                if(ench.getId() == Enchantment.ID_SILK_TOUCH) {
                     withSilkTouch = true;
                 }
             }
