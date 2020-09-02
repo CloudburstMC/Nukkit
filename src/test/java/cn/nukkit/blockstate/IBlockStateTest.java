@@ -3,20 +3,34 @@ package cn.nukkit.blockstate;
 import cn.nukkit.block.*;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.test.LogLevelAdjuster;
+import cn.nukkit.utils.MainLogger;
+import org.apache.logging.log4j.Level;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static cn.nukkit.block.BlockID.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IBlockStateTest {
-    
+    static LogLevelAdjuster logLevelAdjuster = new LogLevelAdjuster();
+
     Block pos = BlockState.AIR.getBlock(null, 1, 2, 3);
+    
     
     @BeforeAll
     static void beforeAll() {
+        logLevelAdjuster.setLevel(MainLogger.class, Level.ERROR);
+        logLevelAdjuster.setLevel(BlockStateRegistry.class, Level.ERROR);
         Block.init();
+    }
+
+    @AfterAll
+    static void afterAll() {
+        logLevelAdjuster.restoreLevels();
     }
 
     @Test

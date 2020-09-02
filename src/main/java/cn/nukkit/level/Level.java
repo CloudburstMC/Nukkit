@@ -68,10 +68,13 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.io.File;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
+import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
 /**
@@ -285,15 +288,38 @@ public class Level implements ChunkManager, Metadatable {
     public GameRules gameRules;
 
     public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
+        this(server, name, path,
+                ()-> {
+                    try {
+                        return (boolean) provider.getMethod("usesChunkSection").invoke(null);
+                    } catch (ReflectiveOperationException e) {
+                        throw new LevelException("usesChunkSection of "+provider+" failed", e);
+                    }
+                },
+                (level, levelPath) -> {
+                    try {
+                        return provider.getConstructor(Level.class, String.class).newInstance(level, levelPath);
+                    } catch (ReflectiveOperationException e) {
+                        throw new LevelException("Constructor of "+provider+" failed", e);
+                    }
+                }
+        );
+    }
+
+    @PowerNukkitOnly("Makes easier to create tests")
+    @Since("1.4.0.0-PN")
+    Level(Server server, String name, File path, boolean usesChunkSection, LevelProvider provider) {
+        this(server, name, path.getAbsolutePath()+"/", ()-> usesChunkSection, (lvl, p)-> provider);
+    }
+
+    @PowerNukkitOnly("Makes easier to create tests")
+    @Since("1.4.0.0-PN")        
+    Level(Server server, String name, String path, BooleanSupplier usesChunkSection, BiFunction<Level, String, LevelProvider> provider) {
         this.levelId = levelIdCounter++;
         this.blockMetadata = new BlockMetadataStore(this);
         this.server = server;
         this.autoSave = server.getAutoSave();
-        try {
-            this.provider = provider.getConstructor(Level.class, String.class).newInstance(this, path);
-        } catch (Exception e) {
-            throw new LevelException("Caused by " + Utils.getExceptionMessage(e), e);
-        }
+        this.provider = provider.apply(this, path);
         this.timings = new LevelTimings(this);
         this.provider.updateLevelName(name);
 
@@ -302,11 +328,7 @@ public class Level implements ChunkManager, Metadatable {
 
         this.generatorClass = Generator.getGenerator(this.provider.getGenerator());
 
-        try {
-            this.useSections = (boolean) provider.getMethod("usesChunkSection").invoke(null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        this.useSections = usesChunkSection.getAsBoolean();
 
         this.folderName = name;
         this.time = this.provider.getTime();

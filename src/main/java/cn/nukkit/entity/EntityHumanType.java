@@ -1,6 +1,7 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -11,7 +12,6 @@ import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSkull;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitMath;
@@ -222,6 +222,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         super.setOnFire(seconds);
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Won't damage items that has negative max durability (not damageable)")
     protected Item damageArmor(Item armor, Entity damager) {
         if (armor.hasEnchantments()) {
             if (damager != null) {
@@ -238,7 +239,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             }
         }
 
-        if (armor.isUnbreakable() || armor instanceof ItemSkull) {
+        if (armor.isUnbreakable() || armor.getMaxDurability() < 0) {
             return armor;
         }
 

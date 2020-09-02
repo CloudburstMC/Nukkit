@@ -271,7 +271,9 @@ public interface IBlockState {
         }
         
         if (!repairs.isEmpty()) {
-            MainLogger.getLogger().warning("The block that at "+new Position(x, y, z, level)+" was repaired. Result: "+block+", Repairs: "+repairs);
+            MainLogger.getLogger().warning("The block that at "+new Position(x, y, z, level)+" was repaired. Result: "+block+", Repairs: "+repairs, 
+                    new Exception("Stacktrace") // TODO This exception was added only to get the stacktrace
+            );
         }
         return block;
     }
