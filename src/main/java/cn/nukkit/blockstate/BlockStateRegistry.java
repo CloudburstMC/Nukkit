@@ -2,6 +2,8 @@ package cn.nukkit.blockstate;
 
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockUnknown;
@@ -429,6 +431,18 @@ public class BlockStateRegistry {
             }
         }
         return null;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getFallbackRuntimeId() {
+        return updateBlockRegistration.runtimeId;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockState getFallbackBlockState() {
+        return updateBlockRegistration.state;
     }
     
     @AllArgsConstructor

@@ -6,6 +6,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.BlockStateRegistry;
 import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.functional.BlockPositionDataConsumer;
@@ -175,12 +176,11 @@ public class BlockStorage {
         states[index] = state;
         updateFlags(index, previous, state);
         if (getFlag(FLAG_PALETTE_UPDATED)) {
-            try {
-                palette.setBlock(index, state.getRuntimeId());
-            } catch (Exception ignored) {
-                // This allow the API to be used before the Block.init() gets called, useful for testing or usage on early
-                // states of the server initialization
-                setFlag(FLAG_PALETTE_UPDATED, false);
+            int runtimeId = state.getRuntimeId();
+            if (runtimeId == BlockStateRegistry.getFallbackRuntimeId() && !state.equals(BlockStateRegistry.getFallbackBlockState())) {
+                delayPaletteUpdates();
+            } else {
+                palette.setBlock(index, runtimeId);
             }
         }
         
@@ -191,6 +191,12 @@ public class BlockStorage {
     @Since("1.4.0.0-PN")
     public void delayPaletteUpdates() {
         setFlag(FLAG_PALETTE_UPDATED, false);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isPaletteUpdateDelayed() {
+        return !getFlag(FLAG_PALETTE_UPDATED);
     }
 
     @PowerNukkitOnly
