@@ -6,7 +6,7 @@
         </TerminalConsole>
     </Appenders>
     <Loggers>
-        <Logger name="cn.nukkit" level="WARN">
+        <Logger name="cn.nukkit" level="WARN" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
         <Root level="INFO">

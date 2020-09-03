@@ -18,7 +18,8 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.utils.HumanStringComparator;
-import cn.nukkit.utils.MainLogger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -271,9 +272,12 @@ public interface IBlockState {
         }
         
         if (!repairs.isEmpty()) {
-            MainLogger.getLogger().warning("The block that at "+new Position(x, y, z, level)+" was repaired. Result: "+block+", Repairs: "+repairs, 
-                    new Exception("Stacktrace") // TODO This exception was added only to get the stacktrace
-            );
+            Logger log = LogManager.getLogger(IBlockState.class);
+            if (log.isDebugEnabled()) {
+                log.debug("The block that at " + new Position(x, y, z, level) + " was repaired. Result: " + block + ", Repairs: " + repairs,
+                        new Exception("Stacktrace")
+                );
+            }
         }
         return block;
     }
