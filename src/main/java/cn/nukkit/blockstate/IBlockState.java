@@ -8,6 +8,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.blockproperty.UnknownRuntimeIdException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.event.blockstate.BlockStateRepairEvent;
 import cn.nukkit.event.blockstate.BlockStateRepairFinishEvent;
@@ -18,8 +21,6 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.utils.HumanStringComparator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,6 +28,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
+
+import static cn.nukkit.blockstate.Loggers.logIBlockState;
 
 @ParametersAreNonnullByDefault
 public interface IBlockState {
@@ -52,36 +55,72 @@ public interface IBlockState {
     BigInteger getHugeDamage();
 
     /**
-     * @throws InvalidBlockStateException
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
      */
     @Nonnull
     Object getPropertyValue(String propertyName);
-    
+
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     * @throws ClassCastException If the actual property value don't match the type of the given property 
+     */
     @Nonnull
     default <V extends Serializable> V getPropertyValue(BlockProperty<V> property) {
         return getCheckedPropertyValue(property.getName(), property.getValueClass());
     }
-    
+
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
     @Nonnull
     default <V extends Serializable> V getUncheckedPropertyValue(BlockProperty<V> property) {
         return getUncheckedPropertyValue(property.getName());
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     int getIntValue(String propertyName);
-    
+
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     default int getIntValue(BlockProperty<?> property) {
         return getIntValue(property.getName());
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     * @throws ClassCastException If the property don't hold boolean values
+     */
     boolean getBooleanValue(String propertyName);
-    
+
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     * @throws ClassCastException If the property don't hold boolean values
+     */
     default boolean getBooleanValue(BlockProperty<?> property) {
         return getBooleanValue(property.getName());
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @Nonnull
     String getPersistenceValue(String propertyName);
-    
+
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @Nonnull
     default String getPersistenceValue(BlockProperty<?> property) {
         return getPersistenceValue(property.getName());
@@ -93,14 +132,23 @@ public interface IBlockState {
     default String getPersistenceName() {
         return BlockStateRegistry.getPersistenceName(getBlockId());
     }
-    
+
+    /**
+     * Gets a unique persistence identification for this state based on the block properties.
+     * <p>If the state holds an invalid meta, the result of {@link #getLegacyStateId()} is returned.</p>
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     default String getStateId() {
         BlockProperties properties = getProperties();
         Map<String, String> propertyMap = new TreeMap<>(HumanStringComparator.getInstance());
-        properties.getNames().forEach(name-> propertyMap.put(properties.getBlockProperty(name).getPersistenceName(), getPersistenceValue(name)));
+        try {
+            properties.getNames().forEach(name -> propertyMap.put(properties.getBlockProperty(name).getPersistenceName(), getPersistenceValue(name)));
+        } catch (InvalidBlockPropertyException e) {
+            logIBlockState.debug("Attempted to get the stateId of an invalid state {}:{}\nProperties: {}", getBlockId(), getDataStorage(), properties, e);
+            return getLegacyStateId();
+        }
 
         StringBuilder stateId = new StringBuilder(getPersistenceName());
         propertyMap.forEach((name, value) -> stateId.append(';').append(name).append('=').append(value));
@@ -272,9 +320,8 @@ public interface IBlockState {
         }
         
         if (!repairs.isEmpty()) {
-            Logger log = LogManager.getLogger(IBlockState.class);
-            if (log.isDebugEnabled()) {
-                log.debug("The block that at " + new Position(x, y, z, level) + " was repaired. Result: " + block + ", Repairs: " + repairs,
+            if (logIBlockState.isDebugEnabled()) {
+                logIBlockState.debug("The block that at " + new Position(x, y, z, level) + " was repaired. Result: " + block + ", Repairs: " + repairs,
                         new Exception("Stacktrace")
                 );
             }

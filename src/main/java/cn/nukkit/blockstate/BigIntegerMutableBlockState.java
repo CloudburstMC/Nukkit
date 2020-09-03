@@ -7,6 +7,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.math.NukkitMath;
 import lombok.EqualsAndHashCode;
@@ -18,6 +19,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.NoSuchElementException;
 
 import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageType;
 
@@ -148,6 +150,10 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         return properties.getBooleanValue(storage, propertyName);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @Nonnull
     @Override
     public String getPersistenceValue(String propertyName) {

@@ -254,10 +254,6 @@ public final class BlockState implements Serializable, IBlockState {
         return storage.getHugeDamage();
     }
 
-    /**
-     * @throws NoSuchElementException If the property is not registered
-     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
-     */
     @Nonnull
     @Override
     public Object getPropertyValue(String propertyName) {
