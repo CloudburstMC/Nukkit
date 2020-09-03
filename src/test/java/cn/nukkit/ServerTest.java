@@ -8,7 +8,7 @@ import java.lang.reflect.Field;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
-class ServerTest {
+public class ServerTest {
     public static void setInstance(Server server) {
         assertDoesNotThrow(()-> {
                     Field instance = Server.class.getDeclaredField("instance");
