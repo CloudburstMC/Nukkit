@@ -218,7 +218,7 @@ public interface BlockID {
     int WOOD_SLABS = 158;
     int WOODEN_SLABS = 158;
     int STAINED_TERRACOTTA = 159;
-    int STAINED_HARDENED_CLAY = 159;
+    int STAINED_HARDENED_CLAY = STAINED_TERRACOTTA;
     int STAINED_GLASS_PANE = 160;
     int LEAVES2 = 161;
     int LEAVE2 = 161;
@@ -237,6 +237,7 @@ public interface BlockID {
     int HAY_BALE = 170;
     int CARPET = 171;
     int TERRACOTTA = 172;
+    @Since("1.4.0.0-PN") @PowerNukkitOnly int HARDENED_CLAY = TERRACOTTA;
     int COAL_BLOCK = 173;
     int PACKED_ICE = 174;
     int DOUBLE_PLANT = 175;

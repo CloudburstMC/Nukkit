@@ -1,6 +1,7 @@
 package cn.nukkit.level.biome.type;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.api.RemovedFromNewRakNet;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
 
 /**
@@ -14,9 +15,14 @@ public abstract class SnowyBiome extends GrassyBiome {
         this.addPopulator(waterIce);
     }
 
+    @Since("1.4.0.0-PN")
     @Override
-    public int getCoverId(int x, int z) {
-        return SNOW_LAYER << Block.DATA_BITS;
+    @RemovedFromNewRakNet
+    public int getCoverBlock() {
+        if (useNewRakNetCover()) {
+            return getCoverId(0,0);
+        }
+        return SNOW_LAYER;
     }
 
     @Override
