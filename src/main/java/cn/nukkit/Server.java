@@ -267,6 +267,9 @@ public class Server {
         if (tempDir.isFile() && !tempDir.delete()) {
             throw new IOException("Failed to delete " + tempDir);
         }
+        instance = this;
+        CraftingManager.packet = new BatchPacket();
+        CraftingManager.packet.payload = new byte[0];
         
         currentThread = Thread.currentThread();
         File abs = tempDir.getAbsoluteFile();
@@ -290,10 +293,12 @@ public class Server {
         banByIP = new BanList(dataPath + "banned-ips.json");
         operators = new Config();
         whitelist = new Config();
+        commandMap = new SimpleCommandMap(this);
         
         setMaxPlayers(10);
-        
-        instance = this;
+
+        this.registerEntities();
+        this.registerBlockEntities();
     }
 
     Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {

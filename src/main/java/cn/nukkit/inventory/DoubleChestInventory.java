@@ -68,8 +68,8 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     }
 
     @Override
-    public boolean clear(int index) {
-        return index < this.left.getSize() ? this.left.clear(index) : this.right.clear(index - this.right.getSize());
+    public boolean clear(int index, boolean send) {
+        return index < this.left.getSize() ? this.left.clear(index, send) : this.right.clear(index - this.right.getSize(), send);
     }
 
     @Override
