@@ -6,10 +6,7 @@ import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.inventory.EnchantInventory;
-import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.inventory.transaction.data.UseItemData;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -19,7 +16,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.format.anvil.Chunk;
-import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.SourceInterface;
@@ -54,7 +50,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
@@ -111,35 +106,6 @@ class PlayerTest {
     Skin skin;
     
     Player player;
-    
-    @Test
-    void enchantingTableDupe() {
-        level.setBlock(player, Block.get(BlockID.ENCHANTING_TABLE));
-        doReturn(-1).when(server).getSpawnRadius();
-
-        UseItemData useItemData = new UseItemData();
-        useItemData.itemInHand = player.getInventory().getItemInHand().clone();
-        useItemData.clickPos = player.asVector3f();
-        useItemData.blockPos = player.asBlockVector3();
-        useItemData.face = BlockFace.UP;
-        useItemData.actionType = InventoryTransactionPacket.USE_ITEM_ACTION_CLICK_BLOCK;
-        
-        InventoryTransactionPacket packet = new InventoryTransactionPacket();
-        packet.transactionType = InventoryTransactionPacket.TYPE_USE_ITEM;
-        packet.transactionData = useItemData;
-        packet.actions = new NetworkInventoryAction[0];
-        player.handleDataPacket(packet);
-
-        Inventory inventory = player.getTopWindow().orElse(null);
-        assertThat(inventory).isInstanceOf(EnchantInventory.class);
-        EnchantInventory enchantInventory = (EnchantInventory) inventory;
-        assert enchantInventory != null;
-        
-        inventory = player.getInventory();
-        
-        enchantInventory.setItem(0, Item.get(ItemID.IRON_SWORD), false);
-        
-    }
     
     @Test
     void armorDamage() {
