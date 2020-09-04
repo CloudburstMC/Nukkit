@@ -6,7 +6,6 @@ import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateDataTypeException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.math.NukkitMath;
-import cn.nukkit.utils.MainLogger;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -14,6 +13,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.function.Consumer;
+
+import static cn.nukkit.blockstate.Loggers.logIMutableBlockState;
 
 @ParametersAreNonnullByDefault
 public interface IMutableBlockState extends IBlockState {
@@ -48,7 +50,7 @@ public interface IMutableBlockState extends IBlockState {
      * @throws InvalidBlockStateException If repair is false and the storage has an invalid property state
      * @throws InvalidBlockStateDataTypeException If the storage has an unsupported number type
      */
-    default boolean setDataStorage(Number storage, boolean repair, @Nullable BlockStateRepairCallback callback) {
+    default boolean setDataStorage(Number storage, boolean repair, @Nullable Consumer<BlockStateRepair> callback) {
         try {
             setDataStorage(storage);
             return false;
@@ -73,7 +75,7 @@ public interface IMutableBlockState extends IBlockState {
     /**
      * @return if the storage was repaired
      */
-    default boolean setDataStorageFromInt(final int storage, boolean repair, @Nullable BlockStateRepairCallback callback) {
+    default boolean setDataStorageFromInt(final int storage, boolean repair, @Nullable Consumer<BlockStateRepair> callback) {
         try {
             setDataStorageFromInt(storage);
             return false;
@@ -118,7 +120,7 @@ public interface IMutableBlockState extends IBlockState {
     @Nonnull
     static BigInteger repairStorage(
             int blockId, @Nonnull final BigInteger storage, @Nonnull final BlockProperties properties, 
-            @Nullable final BlockStateRepairCallback callback) {
+            @Nullable final Consumer<BlockStateRepair> callback) {
         int checkedBits = 0;
         int repairs = 0;
         BigInteger current = storage;
@@ -138,13 +140,13 @@ public interface IMutableBlockState extends IBlockState {
                             property.getMetaFromBigInt(current, offset),
                             fixed, fixed, e
                     );
-                    callback.onRepair(stateRepair);
+                    callback.accept(stateRepair);
                     Serializable proposed = stateRepair.getProposedPropertyValue();
                     if (!fixed.equals(proposed)) {
                         try {
                             next = ((BlockProperty<Serializable>) property).setValue(current, offset, proposed);
                         } catch (InvalidBlockPropertyException proposedFailed) {
-                            MainLogger.getLogger().warning("Could not apply the proposed repair, using the default proposal. "+stateRepair, proposedFailed);
+                            logIMutableBlockState.warn("Could not apply the proposed repair, using the default proposal. "+stateRepair, proposedFailed);
                         }
                     }
                 }
@@ -161,9 +163,9 @@ public interface IMutableBlockState extends IBlockState {
                         storage, current, next, repairs, null,
                         checkedBits, current.shiftRight(checkedBits).intValue(), 0, 0,
                         null);
-                callback.onRepair(stateRepair);
+                callback.accept(stateRepair);
                 if (!Integer.valueOf(0).equals(stateRepair.getProposedPropertyValue())) {
-                    MainLogger.getLogger().warning("Could not apply the proposed repair, using the default proposal. "+stateRepair, 
+                    logIMutableBlockState.warn("Could not apply the proposed repair, using the default proposal. "+stateRepair, 
                             new IllegalStateException("Attempted to propose a value outside the properties boundary"));
                 }
             }
