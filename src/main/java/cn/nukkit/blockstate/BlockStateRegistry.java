@@ -301,7 +301,7 @@ public class BlockStateRegistry {
                 + " - " + state.getStateId()
                 + " - " + state.getProperties()
                 + " - " + blockIdToPersistenceName.get(state.getBlockId())
-                + ", replacing with an \"UPDATE!\" block.");
+                + ", trying to repair or replacing with an \"UPDATE!\" block.");
         return updateBlockRegistration;
     }
 

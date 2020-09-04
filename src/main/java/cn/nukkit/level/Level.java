@@ -9,7 +9,6 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockstate.BlockState;
-import cn.nukkit.blockstate.BlockStateRepair;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -1638,10 +1637,6 @@ public class Level implements ChunkManager, Metadatable {
         return block;
     }
     
-    private void onRepairBlockState(BlockStateRepair repair) {
-        
-    }
-
     public void updateAllLight(Vector3 pos) {
         this.updateBlockSkyLight((int) pos.x, (int) pos.y, (int) pos.z);
         this.addLightUpdate((int) pos.x, (int) pos.y, (int) pos.z);

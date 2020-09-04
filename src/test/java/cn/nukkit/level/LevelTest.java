@@ -22,6 +22,7 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
 import cn.nukkit.scheduler.ServerScheduler;
+import cn.nukkit.test.LogLevelAdjuster;
 import cn.nukkit.utils.PlayerDataSerializer;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.util.FileUtils;
@@ -35,11 +36,14 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class LevelTest {
+    static final LogLevelAdjuster logLevelAdjuster = new LogLevelAdjuster(); 
+    
     /// Server Mocks ///
     @Mock
     PluginManager pluginManager;
@@ -72,12 +76,20 @@ class LevelTest {
     Level level;
 
     @Test
-    void repairing() {
-        level.setBlockStateAt(2, 2, 2, BlockState.of(BlockID.PODZOL, 1));
+    void repairing() throws Exception {
+        logLevelAdjuster.onlyNow(BlockStateRegistry.class, org.apache.logging.log4j.Level.OFF, ()->
+                level.setBlockStateAt(2, 2, 2, BlockState.of(BlockID.PODZOL, 1))
+        );
         Block block = level.getBlock(new Vector3(2, 2, 2));
         assertThat(block).isInstanceOf(BlockPodzol.class);
         assertEquals(BlockID.PODZOL, block.getId());
         assertEquals(0, block.getExactIntStorage());
+        
+        assertEquals(BlockState.of(BlockID.PODZOL), level.getBlockStateAt(2, 2, 2));
+        
+        assertTrue(level.unloadChunk(block.getChunkX(), block.getChunkZ()));
+
+        assertEquals(BlockState.of(BlockID.PODZOL), level.getBlockStateAt(2, 2, 2));
     }
 
     @BeforeEach
@@ -93,6 +105,11 @@ class LevelTest {
     @AfterEach
     void tearDown() {
         FileUtils.deleteRecursively(dataPath);
+    }
+
+    @AfterAll
+    static void afterAll() {
+        logLevelAdjuster.restoreLevels();
     }
 
     @BeforeAll

@@ -6,6 +6,7 @@ import org.apache.logging.log4j.core.config.Configurator;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 /**
  * @author joserobjr
@@ -23,6 +24,16 @@ public class LogLevelAdjuster {
         setLevel(c, level);
         try {
             runnable.run();
+        } finally {
+            setLevel(c, original);
+        }
+    }
+
+    public <V> V onlyNow(Class<?> c, Level level, Callable<V> runnable) throws Exception {
+        Level original = getLevel(c);
+        setLevel(c, level);
+        try {
+            return runnable.call();
         } finally {
             setLevel(c, original);
         }

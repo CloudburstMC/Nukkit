@@ -39,6 +39,7 @@ import java.math.BigInteger;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import static cn.nukkit.utils.Utils.dynamic;
@@ -1877,12 +1878,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     @Override
-    public boolean setDataStorage(@Nonnull Number storage, boolean repair, BlockStateRepairCallback callback) {
+    public boolean setDataStorage(@Nonnull Number storage, boolean repair, Consumer<BlockStateRepair> callback) {
         return mutableState.setDataStorage(storage, repair, callback);
     }
 
     @Override
-    public boolean setDataStorageFromInt(int storage, boolean repair, BlockStateRepairCallback callback) {
+    public boolean setDataStorageFromInt(int storage, boolean repair, Consumer<BlockStateRepair> callback) {
         return mutableState.setDataStorageFromInt(storage, repair, callback);
     }
 

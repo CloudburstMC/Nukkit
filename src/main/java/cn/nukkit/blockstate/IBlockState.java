@@ -28,6 +28,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static cn.nukkit.blockstate.Loggers.logIBlockState;
 
@@ -203,19 +204,18 @@ public interface IBlockState {
      * @throws InvalidBlockStateException if repair is false and the state contains invalid property values
      */
     @Nonnull
-    default Block getBlock(@Nullable Level level, int x, int y, int z, int layer, boolean repair, @Nullable BlockStateRepairCallback callback) {
+    default Block getBlock(@Nullable Level level, int x, int y, int z, int layer, boolean repair, @Nullable Consumer<BlockStateRepair> callback) {
         Block block = Block.get(getBlockId());
         block.level = level;
         block.x = x;
         block.y = y;
         block.z = z;
         block.layer = layer;
-        block.setDataStorage(getDataStorage(), true, repair && callback == null? null : stateRepair -> {
-            if (!repair) {
-                throw new InvalidBlockStateException(getCurrentState(), "Invalid block state in layer "+layer+" at: "+new Position(x, y, z, level));
-            }
-            callback.onRepair(stateRepair);
-        });
+        try {
+            block.setDataStorage(getDataStorage(), repair, callback);
+        } catch (InvalidBlockStateException e) {
+            throw new InvalidBlockStateException(getCurrentState(), "Invalid block state in layer "+layer+" at: "+new Position(x, y, z, level), e);
+        }
         return block;
     }
 
@@ -301,17 +301,21 @@ public interface IBlockState {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    default Block getBlockRepairing(@Nullable Level level, int x, int y, int z, int layer, @Nullable BlockStateRepairCallback callback) {
-        boolean callEvent1 = !BlockStateRepairEvent.getHandlers().isEmpty();
+    default Block getBlockRepairing(@Nullable Level level, int x, int y, int z, int layer, @Nullable Consumer<BlockStateRepair> callback) {
         List<BlockStateRepair> repairs = new ArrayList<>(0);
-        PluginManager manager = callEvent1? Server.getInstance().getPluginManager() : null;
-        Block block = getBlock(level, x, y, z, layer, true, !callEvent1? repairs::add : repair -> {
-            manager.callEvent(new BlockStateRepairEvent(repair));
-            repairs.add(repair);
-            if (callback != null) {
-                callback.onRepair(repair);
-            }
-        });
+        
+        Consumer<BlockStateRepair> callbackChain = repairs::add;
+
+        if (!BlockStateRepairEvent.getHandlers().isEmpty()) {
+            PluginManager manager = Server.getInstance().getPluginManager();
+            callbackChain = callbackChain.andThen(repair -> manager.callEvent(new BlockStateRepairEvent(repair)));
+        }
+        
+        if (callback != null) {
+            callbackChain = callbackChain.andThen(callback);
+        }
+        
+        Block block = getBlock(level, x, y, z, layer, true, callbackChain);
         
         if (!BlockStateRepairFinishEvent.getHandlers().isEmpty()) {
             BlockStateRepairFinishEvent event = new BlockStateRepairFinishEvent(repairs, block);
@@ -326,6 +330,7 @@ public interface IBlockState {
                 );
             }
         }
+        
         return block;
     }
 
