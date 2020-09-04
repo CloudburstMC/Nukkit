@@ -51,6 +51,11 @@ public class PlayerUIComponent extends BaseInventory {
     }
 
     @Override
+    public boolean clear(int index, boolean send) {
+        return this.playerUI.clear(index + this.offset, send);
+    }
+
+    @Override
     public Map<Integer, Item> getContents() {
         Map<Integer, Item> contents = playerUI.getContents();
         contents.keySet().removeIf(slot -> slot < offset || slot > offset + size);

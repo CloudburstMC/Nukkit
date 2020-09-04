@@ -14,7 +14,7 @@ import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.format.anvil.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.Network;
@@ -25,6 +25,7 @@ import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.plugin.PluginManager;
+import cn.nukkit.positiontracking.PositionTrackingService;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
@@ -80,6 +81,9 @@ class PlayerTest {
 
     @Mock
     DB db;
+    
+    @Mock
+    PositionTrackingService positionTrackingService;
 
     File dataPath = FileUtils.createTempDir("powernukkit-player-test-data");
 
@@ -91,7 +95,7 @@ class PlayerTest {
     /// Level Mocks ///
     
     @Mock
-    LevelProvider levelProvider;
+    Anvil levelProvider;
 
     Level level;
     
@@ -262,8 +266,9 @@ class PlayerTest {
         player.handleDataPacket(loginPacket);
         player.completeLoginSequence();
         
-        /// Make sure the player is online ///
         assertTrue(player.isOnline(), "Failed to make the fake player login");
+        
+        player.doFirstSpawn();
     }
 
     @AfterEach
