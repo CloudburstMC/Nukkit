@@ -9,6 +9,15 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+## [1.3.1.5-PN] - 2020-09-01
+Fixes a critical duplication exploit.
+
+### Fixes
+- [#544] Duplication exploit by packet manipulation
+
+### Changed
+- Translations updated
+
 ## [1.3.1.4-PN] - 2020-08-14  ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/20?closed=1))
 Fixes beehives, client crashes in Nether and improves some error handling
 
@@ -450,7 +459,8 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
 [discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.4-PN...bleeding
+[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.5-PN...bleeding
+[1.3.1.5-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.4-PN...v1.3.1.5-PN
 [1.3.1.4-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.3-PN...v1.3.1.4-PN
 [1.3.1.3-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.2-PN...v1.3.1.3-PN
 [1.3.1.2-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.1-PN...v1.3.1.2-PN
@@ -589,3 +599,4 @@ Fixes several anvil issues.
 [#467]: https://github.com/PowerNukkit/PowerNukkit/issues/467
 [#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
 [#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475
+[#544]: https://github.com/PowerNukkit/PowerNukkit/issues/544
