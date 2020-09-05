@@ -2,6 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -105,13 +106,18 @@ public class GrindstoneInventory extends FakeBlockUIComponent {
                 return;
             }
             
+            if (firstItem.getId() == ItemID.ENCHANTED_BOOK) {
+                setResult(Item.get(ItemID.BOOK, 0, firstItem.getCount()));
+                return;
+            } 
+            
             Item result = firstItem.clone();
             CompoundTag tag = result.getNamedTag();
             if (tag == null) tag = new CompoundTag(); 
             tag.remove("ench");
             tag.putInt("RepairCost", 0);
             result.setCompoundTag(tag);
-            if (!secondItem.isNull()) {
+            if (!secondItem.isNull() && firstItem.getMaxDurability() > 0) {
                 int first = firstItem.getMaxDurability() - firstItem.getDamage();
                 int second = secondItem.getMaxDurability() - secondItem.getDamage();
                 int reduction = first + second + firstItem.getMaxDurability() * 5 / 100;
