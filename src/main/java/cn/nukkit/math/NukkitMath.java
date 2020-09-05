@@ -16,9 +16,10 @@ public class NukkitMath {
         return n >= i ? i : i - 1;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed math problem")
     public static int ceilDouble(double n) {
-        int i = (int) (n + 1);
-        return n >= i ? i : i - 1;
+        int i = (int) n;
+        return n > i ? i + 1 : i;
     }
 
     public static int floorFloat(float n) {
@@ -26,9 +27,10 @@ public class NukkitMath {
         return n >= i ? i : i - 1;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed math problem")
     public static int ceilFloat(float n) {
-        int i = (int) (n + 1);
-        return n >= i ? i : i - 1;
+        int i = (int) n;
+        return n > i ? i + 1 : i;
     }
 
     public static int randomRange(NukkitRandom random) {
