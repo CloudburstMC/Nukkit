@@ -5,6 +5,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -182,15 +183,13 @@ public class GrindstoneInventory extends FakeBlockUIComponent {
                     if (item.isNull()) {
                         return Stream.empty();
                     } else if (item.getCount() == 1) {
-                        return Stream.of(item);
+                        return Arrays.stream(item.getEnchantments());
                     } else {
-                        Item[] items = new Item[item.getCount()];
-                        Arrays.fill(items, item);
-                        return Arrays.stream(items);
+                        Enchantment[][] enchantments = new Enchantment[item.getCount()][];
+                        Arrays.fill(enchantments, item.getEnchantments());
+                        return Arrays.stream(enchantments).flatMap(Arrays::stream);
                     }
                 })
-                .map(Item::getEnchantments)
-                .flatMap(Arrays::stream)
                 .mapToInt(enchantment-> enchantment.getMinEnchantAbility(enchantment.getLevel()))
                 .sum();
 
