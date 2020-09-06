@@ -122,7 +122,6 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable, B
         int[] faces = {2, 5, 3, 4};
         this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
-        this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag();
 
         if (item.hasCustomName()) {
