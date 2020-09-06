@@ -709,7 +709,13 @@ public abstract class Entity extends Location implements Metadatable {
         this.setSwimming(true);
     }
 
-    public void setSwimming(boolean value) {
+    public void setSwimming(Player p, boolean value) {
+        if (value) {
+            p.setDataProperty(new FloatEntityData(Entity.DATA_BOUNDING_BOX_HEIGHT, p.getWidth()));
+        } else {
+            p.setDataProperty(new FloatEntityData(Entity.DATA_BOUNDING_BOX_HEIGHT, (float) (1.8 * p.getScale())));
+        }
+        reCalculateBoundingBox(p);
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SWIMMING, value);
     }
 
@@ -2591,5 +2597,17 @@ public abstract class Entity extends Location implements Metadatable {
         int hash = 7;
         hash = (int) (29 * hash + this.getId());
         return hash;
+    }
+
+    public void reCalculateBoundingBox (Player player) {
+        float halfWidth = (player.getWidth() / 2);
+        player.boundingBox.setBounds(
+            player.x - halfWidth,
+             player.y,
+            player.z - halfWidth,
+            player.x + halfWidth,
+            player.y + player.getHeight(),
+            player.z + halfWidth
+        );
     }
 }

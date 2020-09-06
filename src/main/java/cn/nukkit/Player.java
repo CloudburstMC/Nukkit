@@ -2708,7 +2708,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (ptse.isCancelled()) {
                                 this.sendData(this);
                             } else {
-                                this.setSwimming(true);
+                                this.setSwimming(this, true);
                             }
                             break;
                         case PlayerActionPacket.ACTION_STOP_SWIMMING:
@@ -2718,7 +2718,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (ptse.isCancelled()) {
                                 this.sendData(this);
                             } else {
-                                this.setSwimming(false);
+                                this.setSwimming(this, false);
                             }
                             break;
                     }
