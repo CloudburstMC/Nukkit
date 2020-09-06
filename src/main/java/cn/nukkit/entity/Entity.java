@@ -705,10 +705,6 @@ public abstract class Entity extends Location implements Metadatable {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SWIMMING);
     }
 
-    public void setSwimming() {
-        this.setSwimming(true);
-    }
-
     public void setSwimming(Player p, boolean value) {
         if (value) {
             p.setDataProperty(new FloatEntityData(Entity.DATA_BOUNDING_BOX_HEIGHT, p.getWidth()));
