@@ -26,7 +26,7 @@ jobs:
     - name: Get version
       run: |
         cd ..
-        VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+        VERSION="$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )"
         echo "Version: $VERSION"
         echo "::set-env name=VERSION::$VERSION"
     - name: Generate javadoc
@@ -43,7 +43,7 @@ jobs:
         git checkout javadoc
     - name: Update javadoc
       run: |
-        rm -r "javadoc/$VERSION"
+        rm -rf "javadoc/$VERSION"
         mkdir -p "javadoc/$VERSION"
         cp -a target/site/apidocs/* "javadoc/$VERSION/"
     - name: Commit the updated javadoc
