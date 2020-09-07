@@ -28,9 +28,9 @@ jobs:
     - name: Get version
       run: |
         cd ..
-        VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-        echo "Version: $VERSION"
-        echo "::set-env name=VERSION::$VERSION"
+        PN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        echo "Version: $PN_VERSION"
+        echo "::set-env name=PN_VERSION::$PN_VERSION"
     - uses: actions/checkout@v2
       name: Checkout last javadoc
       with:
@@ -43,14 +43,14 @@ jobs:
         git checkout javadoc
     - name: Update javadoc
       run: |
-        rm -rf "javadoc/$VERSION"
-        mkdir -p "javadoc/$VERSION"
-        cp -a target/site/apidocs/* "javadoc/$VERSION/"
+        rm -rf "javadoc/$PN_VERSION"
+        mkdir -p "javadoc/$PN_VERSION"
+        cp -a target/site/apidocs/* "javadoc/$PN_VERSION/"
     - name: Commit the updated javadoc
       run: |
         cd javadoc
         git config --local user.email "github-bot@powernukkit.org"
         git config --local user.name "PowerNukkit Bot"
-        git add -A "$VERSION"
-        git commit -m "Updating javadoc version $VERSION"
+        git add -A "$PN_VERSION"
+        git commit -m "Updating javadoc version $PN_VERSION"
         git push
