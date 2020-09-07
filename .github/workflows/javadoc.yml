@@ -27,7 +27,8 @@ jobs:
       run: |
         cd ..
         VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
-        echo "::set-output name=version::$VERSION"
+        echo "Version: $VERSION"
+        echo "::set-env name=VERSION::$VERSION"
     - name: Generate javadoc
       run: mvn javadoc:javadoc
     - uses: actions/checkout@v2
@@ -38,18 +39,18 @@ jobs:
     - name: Prepare the javadoc branch
       run: |
         cd javadoc
-        git config --local user.email "github-bot@powernukkit.org"
-        git config --local user.name "PowerNukkit Bot"
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
         git checkout javadoc
     - name: Update javadoc
       run: |
         rm -r "javadoc/$VERSION"
         mkdir -p "javadoc/$VERSION"
-        cp -a target/site/apidocs/* "javadoc/$VERSION"
+        cp -a target/site/apidocs/* "javadoc/$VERSION/"
     - name: Commit the updated javadoc
       run: |
         cd javadoc
-        git add -A .
+        git config --local user.email "github-bot@powernukkit.org"
+        git config --local user.name "PowerNukkit Bot"
+        git add -A "$VERSION"
         git commit -m "Updating javadoc version $VERSION"
         git push
