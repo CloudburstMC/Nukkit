@@ -27,7 +27,6 @@ jobs:
       run: mvn package
     - name: Get version
       run: |
-        cd ..
         PN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         echo "Version: $PN_VERSION"
         echo "::set-env name=PN_VERSION::$PN_VERSION"
