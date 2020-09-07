@@ -64,6 +64,6 @@ jobs:
         git config --local user.email "github-bot@powernukkit.org"
         git config --local user.name "PowerNukkit Bot"
         git add sitemap.xml
-        git add -A "$PN_VERSION"
+        git add -A "javadoc/$PN_VERSION"
         git commit -m "Update javadoc version $PN_VERSION"
         git push
