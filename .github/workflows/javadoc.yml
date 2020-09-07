@@ -23,12 +23,13 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Adjust pom.xml
+      run: sed -i 's/-CUSTOM//g' pom.xml
     - name: Generate javadoc
       run: mvn javadoc:javadoc
     - name: Get version
       run: |
         PN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
-        PN_VERSION=${PN_VERSION%-CUSTOM}
         echo "Version: $PN_VERSION"
         echo "::set-env name=PN_VERSION::$PN_VERSION"
     - uses: actions/checkout@v2
