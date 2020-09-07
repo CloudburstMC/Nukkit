@@ -179,7 +179,7 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.2.0.0-PN") public static final int DATA_SITTING_AMOUNT = 88;
     @Since("1.2.0.0-PN") public static final int DATA_SITTING_AMOUNT_PREVIOUS = 89;
     @Since("1.2.0.0-PN") public static final int DATA_EATING_COUNTER = 90;
-    public static final int DATA_FLAGS_EXTENDED = 91;
+    public static final int DATA_FLAGS_EXTENDED = 91, DATA_FLAGS2 = DATA_FLAGS_EXTENDED; //long (extended data flags)
     @Since("1.2.0.0-PN") public static final int DATA_LAYING_AMOUNT = 92;
     @Since("1.2.0.0-PN") public static final int DATA_LAYING_AMOUNT_PREVIOUS = 93;
 
@@ -2538,6 +2538,14 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean getDataFlag(int propertyId, int id) {
         return (((propertyId == EntityHuman.DATA_PLAYER_FLAGS ? this.getDataPropertyByte(propertyId) & 0xff : this.getDataPropertyLong(propertyId))) & (1L << id)) > 0;
+    }
+
+    public void setGenericFlag(int propertyId, boolean value) {
+        this.setDataFlag(propertyId >= 64 ? DATA_FLAGS2 : DATA_FLAGS, propertyId % 64, value);
+    }
+
+    public boolean getGenericFlag(int propertyId) {
+        return this.getDataFlag(propertyId >= 64 ? DATA_FLAGS2 : DATA_FLAGS, propertyId % 64);
     }
 
     @Override

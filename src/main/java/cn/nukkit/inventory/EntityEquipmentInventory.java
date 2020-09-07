@@ -1,7 +1,6 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
 import cn.nukkit.entity.item.EntityArmorStand;
@@ -11,15 +10,15 @@ import java.util.Set;
 
 public class EntityEquipmentInventory extends BaseInventory {
 
-    private EntityLiving entityLiving;
+    private EntityArmorStand entityLiving;
     private final Set<Player> viewers = new HashSet<>();
 
     private int MAINHAND = 0;
     private int  OFFHAND = 1;
 
-    public EntityEquipmentInventory( EntityArmorStand entityArmorStand ) {
-        super( entityArmorStand, InventoryType.PLAYER );
-        this.entityLiving = entityArmorStand;
+    public EntityEquipmentInventory(EntityArmorStand entity) {
+        super(entity, InventoryType.ENTITY_EQUIPMENT);
+        this.entityLiving = entity;
     }
 
 

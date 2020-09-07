@@ -2,13 +2,15 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.entity.item.EntityArmorStand;
 
 public class ItemArmorStand extends Item {
@@ -37,28 +39,45 @@ public class ItemArmorStand extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        if (block.canPassThrough()) {
-            CompoundTag nbt = new CompoundTag()
-                    .putList(new ListTag<DoubleTag>("Pos")
-                            .add(new DoubleTag("", block.x + 0.5))
-                            .add(new DoubleTag("", block.y))
-                            .add(new DoubleTag("", block.z + 0.5)))
-                    .putList(new ListTag<DoubleTag>("Motion")
-                            .add(new DoubleTag("", 0))
-                            .add(new DoubleTag("", 0))
-                            .add(new DoubleTag("", 0)))
-                    .putList(new ListTag<FloatTag>("Rotation")
-                            .add(new FloatTag("", this.getDirection((float) player.getYaw())))
-                            .add(new FloatTag("", 0)));
+        FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
 
-            EntityArmorStand entityArmorStand = new EntityArmorStand(level.getChunk(block.getFloorX() >> 4, block.getFloorZ() >> 4), nbt);
+        if (chunk == null) {
+            return false;
+        }
 
-            if(player.isSurvival()){
+        for (Entity e : chunk.getEntities().values()) {
+            if (e instanceof EntityArmorStand) {
+                if (e.getY() == block.getY() && e.getX() == (block.getX() + 0.5) && e.getZ() == (block.getZ() + 0.5)) {
+                    return false;
+                }
+            }
+        }
+
+        CompoundTag nbt = new CompoundTag()
+                .putList(new ListTag<DoubleTag>("Pos")
+                        .add(new DoubleTag("", block.getX() + 0.5))
+                        .add(new DoubleTag("", block.getY()))
+                        .add(new DoubleTag("", block.getZ() + 0.5)))
+                .putList(new ListTag<DoubleTag>("Motion")
+                        .add(new DoubleTag("", 0))
+                        .add(new DoubleTag("", 0))
+                        .add(new DoubleTag("", 0)))
+                .putList(new ListTag<FloatTag>("Rotation")
+                        .add(new FloatTag("", this.getDirection((float) player.getYaw())))
+                        .add(new FloatTag("", 0)));
+
+        if (this.hasCustomName()) {
+            nbt.putString("CustomName", this.getCustomName());
+        }
+
+        Entity entity = Entity.createEntity("ArmorStand", chunk, nbt);
+
+        if (entity != null) {
+            if (!player.isCreative()) {
                 player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
             }
-
-            entityArmorStand.spawnToAll();
-            player.getLevel().addLevelSoundEvent(entityArmorStand, LevelEventPacket.EVENT_SOUND_ARMOR_STAND_PLACE);
+            entity.spawnToAll();
+            player.getLevel().addSound(entity, Sound.MOB_ARMOR_STAND_PLACE);
             return true;
         }
         return false;

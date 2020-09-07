@@ -37,6 +37,8 @@ public enum InventoryType {
     CARTOGRAPHY(3, "Cartography Table", -1),
     BARREL(27, "Barrel", 0),
     CAMPFIRE(4, "Campfire", -9), // -9 = NONE
+    ENTITY_EQUIPMENT(36, "Entity Equipment", -1), //36 CONTAINER
+    ENTITY_ARMOR(4, "Entity Armor", -1), //4 ARMOR
     MINECART_CHEST(27, "Minecart with Chest", 0),
     MINECART_HOPPER(5, "Minecart with Hopper", 8),
     OFFHAND(1, "Offhand", -1);

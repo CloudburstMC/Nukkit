@@ -1,7 +1,6 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.EntityLiving;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.InventoryContentPacket;
@@ -14,7 +13,7 @@ import java.util.Set;
 
 public class EntityArmorInventory extends BaseInventory {
 
-    private EntityLiving entityLiving;
+    private EntityArmorStand entityLiving;
 
     private final Set<Player> viewers = new HashSet<>();
 
@@ -24,7 +23,7 @@ public class EntityArmorInventory extends BaseInventory {
     public static final int  SLOT_FEET = 3;
 
     public EntityArmorInventory(EntityArmorStand entityArmorStand) {
-        super(entityArmorStand, InventoryType.PLAYER);
+        super(entityArmorStand, InventoryType.ENTITY_ARMOR);
         this.entityLiving = entityArmorStand;
     }
 
@@ -35,7 +34,7 @@ public class EntityArmorInventory extends BaseInventory {
 
     @Override
     public String getName() {
-        return "Armor";
+        return "Entity Armor";
     }
 
     @Override
@@ -88,13 +87,13 @@ public class EntityArmorInventory extends BaseInventory {
         mobArmorEquipmentPacket.eid = this.entityLiving.getId();
         mobArmorEquipmentPacket.slots = new Item[]{this.getHelmet(), this.getChestplate(), this.getLeggings(), this.getBoots()};
 
-        if(player == this.getHolder()){
+        if (player == this.holder) {
             InventorySlotPacket inventorySlotPacket = new InventorySlotPacket();
             inventorySlotPacket.inventoryId = player.getWindowId(this);
             inventorySlotPacket.slot = index;
             inventorySlotPacket.item = this.getItem(index);
             player.dataPacket(inventorySlotPacket);
-        }else{
+        } else {
             player.dataPacket(mobArmorEquipmentPacket);
         }
     }
@@ -112,12 +111,12 @@ public class EntityArmorInventory extends BaseInventory {
         mobArmorEquipmentPacket.eid = this.entityLiving.getId();
         mobArmorEquipmentPacket.slots = new Item[]{this.getHelmet(), this.getChestplate(), this.getLeggings(), this.getBoots()};
 
-        if(player == this.getHolder()){
+        if (player == this.holder) {
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
             inventoryContentPacket.inventoryId = player.getWindowId(this);
             inventoryContentPacket.slots = new Item[]{this.getHelmet(), this.getChestplate(), this.getLeggings(), this.getBoots()};
             player.dataPacket(inventoryContentPacket);
-        }else{
+        } else {
             player.dataPacket(mobArmorEquipmentPacket);
         }
     }
