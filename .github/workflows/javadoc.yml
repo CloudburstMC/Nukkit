@@ -28,6 +28,7 @@ jobs:
     - name: Get version
       run: |
         PN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        PN_VERSION=${PN_VERSION%-CUSTOM}
         echo "Version: $PN_VERSION"
         echo "::set-env name=PN_VERSION::$PN_VERSION"
     - uses: actions/checkout@v2
@@ -51,5 +52,5 @@ jobs:
         git config --local user.email "github-bot@powernukkit.org"
         git config --local user.name "PowerNukkit Bot"
         git add -A "$PN_VERSION"
-        git commit -m "Updating javadoc version $PN_VERSION"
+        git commit -m "Update javadoc version $PN_VERSION"
         git push
