@@ -26,7 +26,7 @@ jobs:
     - name: Get version
       run: |
         cd ..
-        VERSION="$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )"
+        VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec )
         echo "Version: $VERSION"
         echo "::set-env name=VERSION::$VERSION"
     - name: Generate javadoc
