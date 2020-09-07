@@ -82,7 +82,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityMinecartTNT.NETWORK_ID, "minecraft:tnt_minecart")
             .put(EntityMinecartChest.NETWORK_ID, "minecraft:chest_minecart")
             .put(100, "minecraft:command_block_minecart")
-            .put(61, "minecraft:armor_stand")
+            .put(EntityArmorStand.NETWORK_ID, "minecraft:armor_stand")
             .put(EntityItem.NETWORK_ID, "minecraft:item")
             .put(EntityPrimedTNT.NETWORK_ID, "minecraft:tnt")
             .put(EntityFallingBlock.NETWORK_ID, "minecraft:falling_block")
