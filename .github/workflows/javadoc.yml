@@ -23,14 +23,14 @@ jobs:
       uses: actions/setup-java@v1
       with:
         java-version: 1.8
+    - name: Generate javadoc
+      run: mvn javadoc:javadoc
     - name: Get version
       run: |
         cd ..
-        VERSION=$(mvn -q -Dexec.executable=echo -Dexec.args='${project.version}' --non-recursive exec:exec )
+        VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         echo "Version: $VERSION"
         echo "::set-env name=VERSION::$VERSION"
-    - name: Generate javadoc
-      run: mvn javadoc:javadoc
     - uses: actions/checkout@v2
       name: Checkout last javadoc
       with:
