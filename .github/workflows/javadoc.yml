@@ -41,7 +41,7 @@ jobs:
         git config --local user.email "github-bot@powernukkit.org"
         git config --local user.name "PowerNukkit Bot"
         git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
-        git checkout "${GITHUB_REF:11}"
+        git checkout javadoc
     - name: Update javadoc
       run: |
         rm -r "javadoc/$VERSION"
