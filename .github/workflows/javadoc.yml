@@ -57,11 +57,10 @@ jobs:
     - name: Install sitemap-static
       run: npm install -g sitemap-static
     - name: Generate sitemap.xml
-      run: |
-        cd javadoc
-        sitemap-static --prefix=https://devs.powernukkit.org/ . > sitemap.xml
+      run: sitemap-static --pretty --prefix=https://devs.powernukkit.org/ javadoc > javadoc/sitemap.xml
     - name: Commit the updated javadoc
       run: |
+        cd javadoc
         git config --local user.email "github-bot@powernukkit.org"
         git config --local user.name "PowerNukkit Bot"
         git add sitemap.xml
