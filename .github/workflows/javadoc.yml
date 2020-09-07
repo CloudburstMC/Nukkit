@@ -1,0 +1,55 @@
+# This workflow will build a Java project with Maven
+# For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-maven
+
+name: Update javadoc
+
+on:
+  push:
+    branches:
+      - master
+      - bleeding
+
+jobs:
+  update-javadoc:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v1
+      name: Checkout main code
+      with:
+        submodule: true
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Get version
+      run: |
+        cd ..
+        VERSION=$( mvn help:evaluate -Dexpression=project.version -q -DforceStdout )
+        echo "::set-output name=version::$VERSION"
+    - name: Generate javadoc
+      run: mvn javadoc:javadoc
+    - uses: actions/checkout@v2
+      name: Checkout last javadoc
+      with:
+        path: javadoc
+        ref: javadoc
+    - name: Prepare the javadoc branch
+      run: |
+        cd javadoc
+        git config --local user.email "github-bot@powernukkit.org"
+        git config --local user.name "PowerNukkit Bot"
+        git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+        git checkout "${GITHUB_REF:11}"
+    - name: Update javadoc
+      run: |
+        rm -r "javadoc/$VERSION"
+        mkdir -p "javadoc/$VERSION"
+        cp -a target/site/apidocs/* "javadoc/$VERSION"
+    - name: Commit the updated javadoc
+      run: |
+        cd javadoc
+        git add -A .
+        git commit -m "Updating javadoc version $VERSION"
+        git push
