@@ -183,7 +183,6 @@ public class BlockTarget extends BlockTransparent implements BlockEntityHolder<B
 
     @Override
     public BlockColor getColor() {
-        // TODO Was guessed
-        return BlockColor.WHITE_BLOCK_COLOR;
+        return BlockColor.QUARTZ_BLOCK_COLOR;
     }
 }
