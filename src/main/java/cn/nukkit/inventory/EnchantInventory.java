@@ -33,6 +33,8 @@ public class EnchantInventory extends FakeBlockUIComponent {
                 this.clear(i);
             }
         }
+        who.craftingType = Player.CRAFTING_SMALL;
+        who.resetCraftingGridType();
     }
 
     public Item getInputSlot() {
