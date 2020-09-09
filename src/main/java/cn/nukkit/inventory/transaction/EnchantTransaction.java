@@ -30,7 +30,7 @@ public class EnchantTransaction extends InventoryTransaction {
         if (inv == null) return false;
         EnchantInventory eInv = (EnchantInventory) inv;
         if (!getSource().isCreative()) {
-            if (cost == -1 || !eInv.getReagentSlot().equals(Item.get(Item.DYE, 4)) || eInv.getReagentSlot().count < cost)
+            if (cost == -1 || !eInv.getReagentSlot().equals(Item.get(Item.DYE, 4), true, false) || eInv.getReagentSlot().count < cost)
                 return false;
         }
         return (inputItem != null && outputItem != null && inputItem.equals(eInv.getInputSlot(), true, true));
@@ -41,15 +41,16 @@ public class EnchantTransaction extends InventoryTransaction {
         // This will validate the enchant conditions
         if (this.hasExecuted || !this.canExecute()) {
             source.removeAllWindows(false);
-            source.sendAllInventories();
+            this.sendInventories();
             return false;
         }
         EnchantInventory inv = (EnchantInventory) getSource().getWindowById(Player.ENCHANT_WINDOW_ID);
         EnchantItemEvent ev = new EnchantItemEvent(inv, inputItem, outputItem, cost, source);
         source.getServer().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
-            source.removeAllWindows();
-            source.sendAllInventories();
+            source.removeAllWindows(false);
+            this.sendInventories();
+
             // Cancelled by plugin, means handled OK
             return true;
         }
