@@ -533,7 +533,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[CRIMSON_FUNGUS] = BlockFungusCrimson.class; //483
             list[WARPED_FUNGUS] = BlockFungusWarped.class; //484
             list[SHROOMLIGHT] = BlockShroomlight.class; //485
-            //list[WEEPING_VINES] = Block<Name>.class; //486
+            list[WEEPING_VINES] = BlockVinesWeeping.class; //486
             list[CRIMSON_NYLIUM] = BlockNyliumCrimson.class; //487
             list[WARPED_NYLIUM] = BlockNyliumWarped.class; //488
             list[BASALT] = BlockBasalt.class; //489
@@ -589,7 +589,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[POLISHED_BLACKSTONE_BRICK_SLAB] = BlockSlabBrickBlackstonePolished.class; //539
             list[POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB] = BlockDoubleSlabBrickBlackstonePolished.class; //540
             list[CHAIN_BLOCK] = BlockChain.class; //541
-            //list[TWISTING_VINES] = Block<Name>.class; //542
+            list[TWISTING_VINES] = BlockVinesTwisting.class; //542
             list[NETHER_GOLD_ORE] = BlockOreGoldNether.class; //543
             list[CRYING_OBSIDIAN] = BlockObsidianCrying.class; //544
             list[SOUL_CAMPFIRE_BLOCK] = BlockCampfireSoul.class; //545
@@ -1116,11 +1116,19 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return mutableState.getFullId();
     }
 
+    /**
+     * The properties that fully describe all possible and valid states that this block can have. 
+     */
     @Nonnull
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockProperties getProperties() {
-        return CommonBlockProperties.EMPTY_PROPERTIES;
+        int id = getId();
+        if (id >= 0 && id < hasMeta.length && !hasMeta[id]) {
+            return CommonBlockProperties.EMPTY_PROPERTIES;
+        } else {
+            return CommonBlockProperties.LEGACY_PROPERTIES;
+        }
     }
     
     @PowerNukkitOnly

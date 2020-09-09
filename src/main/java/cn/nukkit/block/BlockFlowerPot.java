@@ -46,6 +46,7 @@ public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<B
             case CRIMSON_FUNGUS:
             case WARPED_ROOTS:
             case CRIMSON_ROOTS:
+            case TWISTING_VINES:
             case BAMBOO:
                 // TODO: 2016/2/4 case NETHER_WART:
                 return true;

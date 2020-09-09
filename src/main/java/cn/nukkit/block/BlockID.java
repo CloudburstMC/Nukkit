@@ -432,7 +432,7 @@ public interface BlockID {
     int CRIMSON_FUNGUS = 483;
     int WARPED_FUNGUS = 484;
     int SHROOMLIGHT = 485;
-    //int WEEPING_VINES = 486;
+    int WEEPING_VINES = 486;
     int CRIMSON_NYLIUM = 487;
     int WARPED_NYLIUM = 488;
     int BASALT = 489;
@@ -488,7 +488,7 @@ public interface BlockID {
     int POLISHED_BLACKSTONE_BRICK_SLAB = 539;
     int POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB = 540;
     int CHAIN_BLOCK = 541;
-    //int TWISTING_VINES = 542;
+    int TWISTING_VINES = 542;
     int NETHER_GOLD_ORE = 543;
     int CRYING_OBSIDIAN = 544;
     int SOUL_CAMPFIRE_BLOCK = 545;
