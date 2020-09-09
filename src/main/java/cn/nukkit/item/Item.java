@@ -703,6 +703,27 @@ public class Item implements Cloneable, BlockID, ItemID {
         return false;
     }
 
+    /**
+     * Find the enchantment level by the enchantment id.
+     * @param id The enchantment ID from {@link Enchantment} constants.
+     * @return {@code 0} if the item don't have that enchantment or the current level of the given enchantment.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getEnchantmentLevel(int id) {
+        if (!this.hasEnchantments()) {
+            return 0;
+        }
+
+        for (CompoundTag entry : this.getNamedTag().getList("ench", CompoundTag.class).getAll()) {
+            if (entry.getShort("id") == id) {
+                return entry.getShort("lvl");
+            }
+        }
+        
+        return 0;
+    }
+
     public Enchantment getEnchantment(int id) {
         return getEnchantment((short) (id & 0xffff));
     }

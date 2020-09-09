@@ -9,6 +9,7 @@ import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
@@ -215,7 +216,24 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        return super.getDrops(item);
+        // They have a 33% (3/9) chance to drop a single weeping vine when broken, 
+        // increased to 55% (5/9) with Fortune I, 
+        // 77% (7/9) with Fortune II, 
+        // and 100% with Fortune III. 
+        // 
+        // They always drop a single weeping vine when broken with shears or a tool enchanted with Silk Touch.
+
+        int enchantmentLevel;
+        if (item.isShears() || (enchantmentLevel = item.getEnchantmentLevel(Enchantment.ID_FORTUNE_DIGGING)) >= 3) {
+            return new Item[]{ toItem() };
+        }
+        
+        int chance = 3 + enchantmentLevel * 2;
+        if (ThreadLocalRandom.current().nextInt(9) < chance) {
+            return new Item[]{ toItem() };
+        }
+        
+        return new Item[0];
     }
 
     @PowerNukkitOnly
