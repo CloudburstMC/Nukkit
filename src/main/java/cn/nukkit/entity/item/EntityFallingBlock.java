@@ -138,7 +138,12 @@ public class EntityFallingBlock extends Entity {
                         getLevel().dropItem(this, Item.get(this.getBlock(), this.getDamage(), 1));
                     }
                 } else {
-                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, Block.get(getBlock(), getDamage()));
+                    Block to = Block.get(getBlock(), getDamage());
+                    to.x = pos.x;
+                    to.y = pos.y;
+                    to.z = pos.z;
+                    
+                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, to);
                     server.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         getLevel().setBlock(pos, event.getTo(), true);
