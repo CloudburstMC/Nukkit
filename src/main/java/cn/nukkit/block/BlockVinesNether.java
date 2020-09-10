@@ -11,12 +11,16 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.DyeColor;
+import com.sun.javafx.scene.control.behavior.OptionalBoolean;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -80,10 +84,17 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
 
     /**
      * Changes the current vine age to a random new random age. 
+     * 
+     * @param pseudorandom If the the randomization should be pseudorandom.
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public void randomizeVineAge() {
+    public void randomizeVineAge(boolean pseudorandom) {
+        if (pseudorandom) {
+            setVineAge(ThreadLocalRandom.current().nextInt(getMaxVineAge()));
+            return;
+        }
+        
         double chance = 1.0D;
         int age;
 
@@ -97,10 +108,17 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
 
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
-        if (!isSupportValid()) {
+        Block support = getSide(getGrowthDirection().getOpposite());
+        if (!isSupportValid(support)) {
             return false;
         }
-        randomizeVineAge();
+        
+        if (support.getId() == getId()) {
+            setVineAge(Math.min(getMaxVineAge(), ((BlockVinesNether) support).getVineAge() + 1));
+        } else {
+            randomizeVineAge(true);
+        }
+        
         return super.place(item, block, target, face, fx, fy, fz, player);
     }
 
@@ -108,7 +126,9 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
     public int onUpdate(int type) {
         switch (type) {
             case Level.BLOCK_UPDATE_RANDOM:
-                if (getVineAge() < getMaxVineAge() && ThreadLocalRandom.current().nextInt(10) == 0) {
+                int maxVineAge = getMaxVineAge();
+                if (getVineAge() < maxVineAge && ThreadLocalRandom.current().nextInt(10) == 0 
+                        && getBaseVineAge().orElse(maxVineAge) < maxVineAge) {
                     grow();
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
@@ -150,7 +170,11 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
             return false;
         }
         
-        return level.setBlock(pos, growing);
+        if (level.setBlock(pos, growing)) {
+            increaseRootAge();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -166,7 +190,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
         int age = getVineAge() + 1;
         int maxAge = getMaxVineAge();
         BlockVinesNether growing = clone();
-        growing.randomizeVineAge();
+        growing.randomizeVineAge(false);
         int blocksToGrow = growing.getVineAge();
 
         int grew = 0;
@@ -175,7 +199,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
             if (pos.getId() != AIR || pos.y < 0 || 255 < pos.y) {
                 break;
             }
-            
+
             growing.setVineAge(Math.min(age++, maxAge));
             growing.x = pos.x;
             growing.y = pos.y;
@@ -187,15 +211,88 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
             if (ev.isCancelled()) {
                 break;
             }
-            
+
             if (!level.setBlock(pos, ev.getNewState())) {
                 break;
             }
-            
+
             grew++;
         }
         
+        if (grew > 0) {
+            increaseRootAge();
+        }
+
         return grew;
+    }
+
+    /**
+     * Attempt to get the age of the root of the vine.
+     * @return Empty if the base could not be reached. The age of the base if it was found.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public OptionalInt getBaseVineAge() {
+        return findVineBase()
+                .map(Position::getLevelBlock)
+                .filter(BlockVinesNether.class::isInstance)
+                .map(BlockVinesNether.class::cast)
+                .map(vine-> OptionalInt.of(vine.getVineAge()))
+                .orElse(OptionalInt.empty());
+    }
+
+    /**
+     * Attempt to find the root of the vine transversing the opposite growth direction for up to 256 blocks.
+     * @return Empty if the base could not be reached. The position of the base if it was found.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public Optional<Position> findVineBase() {
+        BlockFace supportFace = getGrowthDirection().getOpposite();
+        Position base = getLocation();
+        int id = getId();
+        int limit = 256;
+        while (--limit > 0){
+            Position next = base.getSide(supportFace);
+            if (next.getLevelBlockState().getBlockId() == id) {
+                base = next;
+            } else {
+                break;
+            }
+        }
+        
+        return limit == -1? Optional.empty() : Optional.of(base);
+    }
+
+    /**
+     * Attempts to increase the age of the base of the nether vine.
+     * @return <ul>
+     *     <li>{@code ANY} if the base could not be reached or have an invalid instance type
+     *     <li>{@code TRUE} if the base was changed successfully
+     *     <li>{@code FALSE} if the base was already in the max age or the block change was refused 
+     *     </ul>
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public OptionalBoolean increaseRootAge() {
+        Block base = findVineBase().map(Position::getLevelBlock).orElse(null);
+        if (!(base instanceof BlockVinesNether)) {
+            return OptionalBoolean.ANY;
+        }
+        
+        BlockVinesNether baseVine = (BlockVinesNether) base;
+        int vineAge = baseVine.getVineAge();
+        if (vineAge < baseVine.getMaxVineAge()) {
+            baseVine.setVineAge(vineAge + 1);
+            if (getLevel().setBlock(baseVine, baseVine)) {
+                return OptionalBoolean.TRUE;
+            }
+        }
+        
+        return OptionalBoolean.FALSE;
     }
 
     @Override
@@ -239,7 +336,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     protected boolean isSupportValid(@Nonnull Block support) {
-        return !support.isTransparent();
+        return support.getId() == getId() || !support.isTransparent();
     }
 
     @PowerNukkitOnly
