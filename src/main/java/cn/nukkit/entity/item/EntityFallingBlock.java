@@ -142,6 +142,7 @@ public class EntityFallingBlock extends Entity {
                     to.x = pos.x;
                     to.y = pos.y;
                     to.z = pos.z;
+                    to.level = pos.level;
                     
                     EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, to);
                     server.getPluginManager().callEvent(event);
