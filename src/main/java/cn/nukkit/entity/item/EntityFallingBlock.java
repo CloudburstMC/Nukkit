@@ -58,6 +58,7 @@ public class EntityFallingBlock extends Entity {
 
     protected int blockId;
     protected int damage;
+    protected Block origin;
 
     public EntityFallingBlock(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -144,7 +145,7 @@ public class EntityFallingBlock extends Entity {
                     to.z = pos.z;
                     to.level = getLevel();
                     
-                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, to);
+                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, this.origin, to);
                     server.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         getLevel().setBlock(pos, event.getTo(), true);
@@ -163,6 +164,14 @@ public class EntityFallingBlock extends Entity {
         this.timing.stopTiming();
 
         return hasUpdate || !onGround || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
+    }
+    
+    public void setOrigin(Block block) {
+        this.origin = block;
+    }
+    
+    public Block getOrigin() {
+        return this.origin;
     }
 
     public int getBlock() {
