@@ -6,6 +6,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
@@ -361,6 +362,16 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
     @Since("1.4.0.0-PN")
     public boolean isSupportValid() {
         return isSupportValid(getSide(getGrowthDirection().getOpposite()));
+    }
+
+    @Override
+    public void onEntityCollide(Entity entity) {
+        entity.resetFallDistance();
+    }
+
+    @Override
+    public boolean hasEntityCollision() {
+        return true;
     }
 
     @Override
