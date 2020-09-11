@@ -304,6 +304,12 @@ public class BlockStateRegistry {
                 + ", trying to repair or replacing with an \"UPDATE!\" block.");
         return updateBlockRegistration;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public List<String> getPersistenceNames() {
+        return new ArrayList<>(persistenceNameToBlockId.keySet());
+    }
 
     @Nonnull
     public String getPersistenceName(int blockId) {

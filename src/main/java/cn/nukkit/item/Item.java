@@ -33,11 +33,15 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.lang.reflect.Modifier;
 import java.math.BigInteger;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -367,6 +371,31 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         initCreativeItems();
+    }
+
+    private static List<String> itemList;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static List<String> rebuildItemList() {
+        return itemList = Collections.unmodifiableList(Stream.of(
+                BlockStateRegistry.getPersistenceNames().stream()
+                        .map(name-> name.substring(name.indexOf(':') + 1)),
+                Arrays.stream(ItemID.class.getDeclaredFields())
+                        .filter(field -> field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL))
+                        .filter(field -> field.getType().equals(int.class))
+                        .map(field -> field.getName().toLowerCase())
+        ).flatMap(Function.identity()).collect(Collectors.toList()));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static List<String> getItemList() {
+        List<String> itemList = Item.itemList;
+        if (itemList == null) {
+            return rebuildItemList();
+        }
+        return itemList;
     }
 
     private static final ArrayList<Item> creative = new ArrayList<>();
