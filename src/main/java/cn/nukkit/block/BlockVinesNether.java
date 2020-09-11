@@ -15,7 +15,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.DyeColor;
-import com.sun.javafx.scene.control.behavior.OptionalBoolean;
+import cn.nukkit.utils.OptionalBoolean;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -287,7 +287,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
     /**
      * Attempts to increase the age of the base of the nether vine.
      * @return <ul>
-     *     <li>{@code ANY} if the base could not be reached or have an invalid instance type
+     *     <li>{@code EMPTY} if the base could not be reached or have an invalid instance type
      *     <li>{@code TRUE} if the base was changed successfully
      *     <li>{@code FALSE} if the base was already in the max age or the block change was refused 
      *     </ul>
@@ -298,7 +298,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
     public OptionalBoolean increaseRootAge() {
         Block base = findVine(true).map(Position::getLevelBlock).orElse(null);
         if (!(base instanceof BlockVinesNether)) {
-            return OptionalBoolean.ANY;
+            return OptionalBoolean.EMPTY;
         }
         
         BlockVinesNether baseVine = (BlockVinesNether) base;
