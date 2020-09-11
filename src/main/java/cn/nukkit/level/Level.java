@@ -2614,7 +2614,7 @@ public class Level implements ChunkManager, Metadatable {
 
     @Override
     public BlockState getBlockStateAt(int x, int y, int z, int layer) {
-        return getChunk(x >> 4, z >> 4, true).getBlockStateAt(x, y, z, layer);
+        return getChunk(x >> 4, z >> 4, true).getBlockStateAt(x & 0x0f, y & 0xff, z & 0x0f, layer);
     }
 
     @Override
