@@ -128,7 +128,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
             case Level.BLOCK_UPDATE_RANDOM:
                 int maxVineAge = getMaxVineAge();
                 if (getVineAge() < maxVineAge && ThreadLocalRandom.current().nextInt(10) == 0 
-                        && getBaseVineAge().orElse(maxVineAge) < maxVineAge) {
+                        && findVineAge(true).orElse(maxVineAge) < maxVineAge) {
                     grow();
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
@@ -227,43 +227,61 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
     }
 
     /**
-     * Attempt to get the age of the root of the vine.
-     * @return Empty if the base could not be reached. The age of the base if it was found.
+     * Attempt to get the age of the root or the head of the vine.
+     * @param base True to get the age of the base (oldest block), false to get the age of the head (newest block)
+     * @return Empty if the target could not be reached. The age of the target if it was found.
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public OptionalInt getBaseVineAge() {
-        return findVineBase()
-                .map(Position::getLevelBlock)
-                .filter(BlockVinesNether.class::isInstance)
-                .map(BlockVinesNether.class::cast)
+    public OptionalInt findVineAge(boolean base) {
+        return findVineBlock(base)
                 .map(vine-> OptionalInt.of(vine.getVineAge()))
                 .orElse(OptionalInt.empty());
     }
 
     /**
-     * Attempt to find the root of the vine transversing the opposite growth direction for up to 256 blocks.
-     * @return Empty if the base could not be reached. The position of the base if it was found.
+     * Attempt to find the root or the head of the vine transversing the growth direction for up to 256 blocks.
+     * @param base True to find the base (oldest block), false to find the head (newest block)
+     * @return Empty if the target could not be reached or the block there isn't an instance of {@link BlockVinesNether}.
+     *          The positioned block of the target if it was found.
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public Optional<Position> findVineBase() {
-        BlockFace supportFace = getGrowthDirection().getOpposite();
-        Position base = getLocation();
+    public Optional<BlockVinesNether> findVineBlock(boolean base) {
+        return findVine(base)
+                .map(Position::getLevelBlock)
+                .filter(BlockVinesNether.class::isInstance)
+                .map(BlockVinesNether.class::cast);
+    }
+
+    /**
+     * Attempt to find the root or the head of the vine transversing the growth direction for up to 256 blocks.
+     * @param base True to find the base (oldest block), false to find the head (newest block)
+     * @return Empty if the target could not be reached. The position of the target if it was found.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public Optional<Position> findVine(boolean base) {
+        BlockFace supportFace = getGrowthDirection();
+        if (base) {
+            supportFace = supportFace.getOpposite();
+        }
+        Position result = getLocation();
         int id = getId();
         int limit = 256;
         while (--limit > 0){
-            Position next = base.getSide(supportFace);
+            Position next = result.getSide(supportFace);
             if (next.getLevelBlockState().getBlockId() == id) {
-                base = next;
+                result = next;
             } else {
                 break;
             }
         }
         
-        return limit == -1? Optional.empty() : Optional.of(base);
+        return limit == -1? Optional.empty() : Optional.of(result);
     }
 
     /**
@@ -278,7 +296,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
     @Since("1.4.0.0-PN")
     @Nonnull
     public OptionalBoolean increaseRootAge() {
-        Block base = findVineBase().map(Position::getLevelBlock).orElse(null);
+        Block base = findVine(true).map(Position::getLevelBlock).orElse(null);
         if (!(base instanceof BlockVinesNether)) {
             return OptionalBoolean.ANY;
         }
@@ -302,7 +320,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
         }
 
         getLevel().addParticle(new BoneMealParticle(this));
-        growMultiple();
+        findVineBlock(false).ifPresent(BlockVinesNether::growMultiple);
         
         if (player != null && !player.isCreative()) {
             item.count--;

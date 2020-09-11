@@ -73,7 +73,7 @@ public class BlockVinesWeeping extends BlockVinesNether {
     @PowerNukkitOnly
     @Override
     public BlockFace getGrowthDirection() {
-        return BlockFace.UP;
+        return BlockFace.DOWN;
     }
 
     @Since("1.4.0.0-PN")
