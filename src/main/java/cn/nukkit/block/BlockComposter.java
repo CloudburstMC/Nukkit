@@ -184,14 +184,15 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
     }
 
     private static void registerDefaults() {
-        registerItems(30, KELP, BEETROOT_SEEDS, DRIED_KELP, MELON_SEEDS, PUMPKIN_SEEDS, WHEAT_SEEDS);
+        registerItems(30, KELP, BEETROOT_SEEDS, DRIED_KELP, MELON_SEEDS, PUMPKIN_SEEDS, SWEET_BERRIES, WHEAT_SEEDS);
         registerItems(50, MELON_SLICE, SUGAR_CANE, NETHER_SPROUTS);
         registerItems(65, APPLE, BEETROOT, CARROT, COCOA, POTATO, WHEAT);
         registerItems(85, BAKED_POTATOES, BREAD, COOKIE);
         registerItems(100, CAKE, PUMPKIN_PIE);
 
         registerBlocks(30, BLOCK_KELP, LEAVES, LEAVES2, SAPLINGS, SEAGRASS, SWEET_BERRY_BUSH);
-        registerBlocks(50, GRASS, CACTUS, DRIED_KELP_BLOCK, VINES, NETHER_SPROUTS_BLOCK);
+        registerBlocks(50, GRASS, CACTUS, DRIED_KELP_BLOCK, VINES, NETHER_SPROUTS_BLOCK, 
+                                  TWISTING_VINES, WEEPING_VINES);
         registerBlocks(65, DANDELION, RED_FLOWER, DOUBLE_PLANT, WITHER_ROSE, LILY_PAD, MELON_BLOCK,
                                   PUMPKIN, CARVED_PUMPKIN, SEA_PICKLE, BROWN_MUSHROOM, RED_MUSHROOM, 
                                   WARPED_ROOTS, CRIMSON_ROOTS);

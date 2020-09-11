@@ -5,6 +5,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
@@ -78,10 +79,7 @@ public class Position extends NamedPosition {
     }
 
     public Position getSide(BlockFace face, int step) {
-        if (!this.isValid()) {
-            throw new LevelException("Undefined Level reference");
-        }
-        return Position.fromObject(super.getSide(face, step), this.level);
+        return Position.fromObject(super.getSide(face, step), getValidLevel());
     }
 
     @Override
@@ -96,41 +94,55 @@ public class Position extends NamedPosition {
         this.z = z;
         return this;
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public Position setComponents(Vector3 pos) {
+        super.setComponents(pos);
+        return this;
+    }
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nullable
     public BlockEntity getLevelBlockEntity() {
-        if (this.isValid()) return this.level.getBlockEntity(this);
-        else throw new LevelException("Undefined Level reference");
+        return getValidLevel().getBlockEntity(this);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nullable
     public final <T extends BlockEntity> T getTypedBlockEntity(@Nonnull Class<T> type) {
-        if (!this.isValid()) {
-            throw new LevelException("Undefined Level reference");
-        }
-
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = getValidLevel().getBlockEntity(this);
         return type.isInstance(blockEntity) ? type.cast(blockEntity) : null;
-    } 
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public BlockState getLevelBlockState() {
+        return getLevelBlockState(0);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public BlockState getLevelBlockState(int layer) {
+        return getValidLevel().getBlockStateAt(getFloorX(), getFloorY(), getFloorZ(), layer);
+    }
 
     public Block getLevelBlock() {
-        if (this.isValid()) return this.level.getBlock(this);
-        else throw new LevelException("Undefined Level reference");
+        return getValidLevel().getBlock(this);
     }
 
     public Block getLevelBlockAtLayer(int layer) {
-        if (this.isValid()) return this.level.getBlock(this, layer);
-        else throw new LevelException("Undefined Level reference");
+        return getValidLevel().getBlock(this, layer);
     }
 
     @Nonnull
     public Location getLocation() {
-        if (this.isValid()) return new Location(this.x, this.y, this.z, 0, 0, this.level);
-        else throw new LevelException("Undefined Level reference");
+        return new Location(this.x, this.y, this.z, 0, 0, getValidLevel());
     }
 
 
@@ -139,8 +151,18 @@ public class Position extends NamedPosition {
     @Nonnull
     @Override
     public String getLevelName() {
-        if (this.isValid()) return getLevel().getName();
-        else throw new LevelException("Undefined Level reference");
+        return getValidLevel().getName();
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    public final Level getValidLevel() {
+        Level level = this.level;
+        if (level == null) {
+            throw new LevelException("Undefined Level reference");
+        }
+        return level;
     }
 
     @Override

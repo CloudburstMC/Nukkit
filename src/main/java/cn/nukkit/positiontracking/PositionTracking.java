@@ -253,6 +253,14 @@ public class PositionTracking extends NamedPosition {
         return this;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public PositionTracking setComponents(Vector3 pos) {
+        super.setComponents(pos);
+        return this;
+    }
+
     @Override
     public PositionTracking clone() {
         return (PositionTracking) super.clone();

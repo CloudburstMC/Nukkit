@@ -138,6 +138,8 @@ public class BlockKelp extends BlockFlowable {
                                 if (player != null && (player.gamemode & 0x01) == 0) {
                                     item.count--;
                                 }
+                                
+                                return true;
                             }
                         }
                     }
