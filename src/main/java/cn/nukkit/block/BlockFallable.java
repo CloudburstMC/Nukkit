@@ -49,6 +49,7 @@ public abstract class BlockFallable extends BlockSolid {
                 EntityFallingBlock fall = (EntityFallingBlock) Entity.createEntity("FallingSand", this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
                 if (fall != null) {
+                    fall.setOrigin(this);
                     fall.spawnToAll();
                 }
             }
