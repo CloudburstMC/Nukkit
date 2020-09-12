@@ -98,8 +98,14 @@ public interface IMutableBlockState extends IBlockState {
                     ex.addSuppressed(e);
                     throw ex;
                 }
-
-                setDataStorage(repairStorage(getBlockId(), bigInteger, getProperties(), callback));
+                
+                try {
+                    setDataStorage(repairStorage(getBlockId(), bigInteger, getProperties(), callback));
+                } catch (InvalidBlockPropertyException | InvalidBlockStateException e2) {
+                    InvalidBlockStateException ex = new InvalidBlockStateException(e.getState(), "The state is invalid and could not be repaired", e);
+                    ex.addSuppressed(e2);
+                    throw ex;
+                }
                 return true;
             }
             throw e;

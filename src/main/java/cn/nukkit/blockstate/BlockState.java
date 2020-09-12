@@ -105,24 +105,34 @@ public final class BlockState implements Serializable, IBlockState {
 
     private BlockState(int blockId, byte blockData) {
         this.blockId = blockId;
-        storage = blockData == 0? new ZeroStorage() : new ByteStorage(blockData);
+        storage = blockData == 0?   new ZeroStorage() : 
+                                    new ByteStorage(blockData);
     }
     
     private BlockState(int blockId, int blockData) {
         this.blockId = blockId;
-        storage = blockData == 0? new ZeroStorage() : blockData <= 0xFF? new ByteStorage((byte)blockData) : new IntStorage(blockData);
+        storage = blockData == 0?   new ZeroStorage() : 
+                blockData < 0?      new IntStorage(blockData) :
+                blockData <= 0xFF?  new ByteStorage((byte)blockData) : 
+                                    new IntStorage(blockData);
     }
     
     private BlockState(int blockId, long blockData) {
         this.blockId = blockId;
-        storage = blockData == 0? new ZeroStorage() : blockData <= 0xFF? new ByteStorage((byte)blockData) : 
-                blockData <= 0xFFFFFFFFL? new IntStorage((int)blockData) : new LongStorage(blockData);
+        storage = blockData == 0?   new ZeroStorage() : 
+                blockData < 0?      new LongStorage(blockData) :
+                blockData <= 0xFF?  new ByteStorage((byte)blockData) :
+                blockData <= 0xFFFFFFFFL? new IntStorage((int)blockData) : 
+                                    new LongStorage(blockData);
     }
     
     private BlockState(int blockId, BigInteger blockData) {
         this.blockId = blockId;
-        if (BigInteger.ZERO.equals(blockData)) {
+        int zeroCmp = BigInteger.ZERO.compareTo(blockData);
+        if (zeroCmp == 0) {
             storage = new ZeroStorage();
+        } else if (zeroCmp < 0) {
+            storage = new BigIntegerStorage(blockData);
         } else if (blockData.compareTo(BYTE_MASK) < 0) {
             storage = new ByteStorage(blockData.byteValue());
         } else if (blockData.compareTo(INT_MASK) < 0) {
@@ -428,8 +438,7 @@ public final class BlockState implements Serializable, IBlockState {
             callback = updater.andThen(callback);
         } else {
             callback = updater.andThen(rep -> {
-                throw Optional.<RuntimeException>ofNullable(rep.getValidationException())
-                        .orElseGet(()-> new InvalidBlockStateException(this, "Attempted to repair when repair was false. "+rep.toString()));
+                throw new InvalidBlockStateException(this, "Attempted to repair when repair was false. "+rep.toString(), rep.getValidationException());
             });
         }
         
