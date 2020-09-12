@@ -37,6 +37,8 @@ public class LongMutableBlockState extends MutableBlockState {
         this(blockId, properties, 0);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setDataStorage(Number storage) {
         Class<? extends Number> c = storage.getClass();
@@ -54,6 +56,8 @@ public class LongMutableBlockState extends MutableBlockState {
         this.storage = state;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setDataStorageFromInt(int storage) {
         //noinspection UnnecessaryLocalVariable
@@ -62,23 +66,32 @@ public class LongMutableBlockState extends MutableBlockState {
         this.storage = state;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    void setDataStorageWithoutValidation(Number storage) {
+        this.storage = storage.longValue();
+    }
+
     @Override
     public void validate() {
         validate(storage);
     }
     
     private void validate(long state) {
-        BlockProperties properties = this.properties;
-        if (state != 0) {
-            int bitLength = NukkitMath.bitLength(state);
-            if (bitLength > properties.getBitSize()) {
-                throw new InvalidBlockStateException(
-                        BlockState.of(getBlockId(), state),
-                        "The state have more data bits than specified in the properties. Bits: " + bitLength + ", Max: " + properties.getBitSize()
-                );
-            }
+        if (state == 0) {
+            return;
         }
         
+        BlockProperties properties = this.properties;
+        int bitLength = NukkitMath.bitLength(state);
+        if (bitLength > properties.getBitSize()) {
+            throw new InvalidBlockStateException(
+                    BlockState.of(getBlockId(), state),
+                    "The state have more data bits than specified in the properties. Bits: " + bitLength + ", Max: " + properties.getBitSize()
+            );
+        }
+
         try {
             for (String name : properties.getNames()) {
                 BlockProperty<?> property = properties.getBlockProperty(name);
@@ -117,16 +130,22 @@ public class LongMutableBlockState extends MutableBlockState {
         return storage;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setPropertyValue(String propertyName, @Nullable Serializable value) {
         storage = properties.setValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setBooleanValue(String propertyName, boolean value) {
         storage = properties.setBooleanValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setIntValue(String propertyName, int value) {
         storage = properties.setIntValue(storage, propertyName, value);
