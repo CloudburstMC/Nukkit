@@ -94,6 +94,7 @@ public final class BlockState implements Serializable, IBlockState {
     private final int blockId;
     @Nonnull
     private final Storage storage;
+    @ToString.Exclude
     @Nonnull
     private OptionalBoolean valid = OptionalBoolean.empty();
 
