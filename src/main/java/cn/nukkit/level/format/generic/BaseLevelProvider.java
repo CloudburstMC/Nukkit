@@ -74,6 +74,15 @@ public abstract class BaseLevelProvider implements LevelProvider {
         this.spawn = new Vector3(this.levelData.getInt("SpawnX"), this.levelData.getInt("SpawnY"), this.levelData.getInt("SpawnZ"));
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BaseLevelProvider(Level level, String path, CompoundTag levelData, Vector3 spawn) {
+        this.level = level;
+        this.path = path;
+        this.levelData = levelData;
+        this.spawn = spawn;
+    }
+
     public abstract BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create);
 
     public int size() {
