@@ -5,7 +5,9 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
@@ -62,12 +64,22 @@ public class EnchantCommand extends VanillaCommand {
         }
         enchantment.setLevel(enchantLevel);
         Item item = player.getInventory().getItemInHand();
-        if (item.getId() <= 0) {
+        if (item.getId() == 0) {
             sender.sendMessage(new TranslationContainer("commands.enchant.noItem"));
             return true;
         }
-        item.addEnchantment(enchantment);
-        player.getInventory().setItemInHand(item);
+        if (item.getId() != ItemID.BOOK) {
+            item.addEnchantment(enchantment);
+            player.getInventory().setItemInHand(item);
+        } else {
+            Item enchanted = Item.get(ItemID.ENCHANTED_BOOK, 0, 1, item.getCompoundTag());
+            enchanted.addEnchantment(enchantment);
+            Item clone = item.clone();
+            clone.count--;
+            PlayerInventory inventory = player.getInventory();
+            inventory.setItemInHand(clone);
+            player.giveItem(enchanted);
+        }
         Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success"));
         return true;
     }
