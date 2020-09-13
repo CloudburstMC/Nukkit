@@ -3,6 +3,8 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockMagma;
 import cn.nukkit.entity.data.ShortEntityData;
@@ -49,6 +51,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     protected int attackTime = 0;
+    private boolean attackTimeByShieldKb;
+    private int attackTimeBefore;
 
     protected boolean invisible = false;
 
@@ -106,7 +110,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     public boolean attack(EntityDamageEvent source) {
         if (this.noDamageTicks > 0) {
             return false;
-        } else if (this.attackTime > 0) {
+        } else if (this.attackTime > 0 && !attackTimeByShieldKb) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
             if (lastCause != null && lastCause.getDamage() >= source.getDamage()) {
                 return false;
@@ -151,6 +155,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             Server.broadcastPacket(this.hasSpawned.values(), pk);
 
             this.attackTime = source.getAttackCooldown();
+            this.attackTimeByShieldKb = false;
             this.scheduleUpdate();
 
             return true;
@@ -281,6 +286,9 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
         if (this.attackTime > 0) {
             this.attackTime -= tickDiff;
+            if (this.attackTime <= 0) {
+                attackTimeByShieldKb = false;
+            }
             hasUpdate = true;
         }
 
@@ -422,9 +430,12 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         }
 
         if (event.getKnockBackAttacker() && damager instanceof EntityLiving) {
-            double deltaX = damager.getX() - this.getX();
-            double deltaZ = damager.getZ() - this.getZ();
-            ((EntityLiving) damager).knockBack(this, 0, deltaX, deltaZ);
+            EntityLiving attacker = (EntityLiving) damager;
+            double deltaX = attacker.getX() - this.getX();
+            double deltaZ = attacker.getZ() - this.getZ();
+            attacker.knockBack(this, 0, deltaX, deltaZ);
+            attacker.attackTime = 10;
+            attacker.attackTimeByShieldKb = true;
         }
 
         onBlock(damager, event.getAnimation());
@@ -444,5 +455,22 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     public void setBlocking(boolean value) {
         this.blocking = value;
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_BLOCKING, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void preAttack(Player player) {
+        if (attackTimeByShieldKb) {
+            attackTimeBefore = attackTime;
+            attackTime = 0;
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void postAttack(Player player) {
+        if (attackTimeByShieldKb && attackTime == 0) {
+            attackTime = attackTimeBefore;
+        }
     }
 }
