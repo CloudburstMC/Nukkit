@@ -26,8 +26,6 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import com.google.common.base.Preconditions;
-import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
@@ -898,13 +896,23 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    @Getter(AccessLevel.PROTECTED)
-    private MutableBlockState mutableState = getProperties().createMutableState(getId());
+    @Nullable
+    private MutableBlockState mutableState;
     
     @PowerNukkitOnly
     public int layer;
     
     protected Block() {}
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    protected final MutableBlockState getMutableState() {
+        if (mutableState == null) {
+            mutableState = getProperties().createMutableState(getId());
+        }
+        return mutableState;
+    }
 
     /**
      * Place and initialize a this block correctly in the world.
@@ -1103,7 +1111,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public int getFullId() {
-        return mutableState.getFullId();
+        return mutableState == null? 0 : mutableState.getFullId();
     }
 
     /**
@@ -1125,13 +1133,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Nonnull
     public final BlockState getCurrentState() {
-        return mutableState.getCurrentState();
+        return mutableState == null? BlockState.of(getId()) : mutableState.getCurrentState();
     }
     
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public final int getRuntimeId() {
-        return mutableState.getRuntimeId();
+        return getCurrentState().getRuntimeId();
     }
     
     public void addVelocityToEntity(Entity entity, Vector3 vector) {
@@ -1141,13 +1149,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Deprecated
     @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public int getDamage() {
-        return mutableState.getBigDamage();
+        return mutableState == null? 0 : mutableState.getBigDamage();
     }
 
     @Deprecated
     @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public void setDamage(int meta) {
-        mutableState.setDataStorageFromInt(meta);
+        getMutableState().setDataStorageFromInt(meta);
     }
 
     @Deprecated
@@ -1516,7 +1524,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @Override
     public String toString() {
-        return "Block[" + this.getName() + "] (" + this.getId() + ":" + this.getDamage() + ")";
+        return "Block[" + this.getName() + "] (" + this.getId() + ":" + (mutableState != null? mutableState.getDataStorage() : "0")  + ")";
     }
 
     public boolean collidesWithBB(AxisAlignedBB bb) {
@@ -1695,7 +1703,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public Block clone() {
         Block clone = (Block) super.clone();
-        clone.mutableState = this.mutableState.copy();
+        clone.mutableState = mutableState != null? mutableState.copy() : null;
         return clone;
     }
 
@@ -1803,7 +1811,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public static boolean equals(Block b1, Block b2, boolean checkDamage) {
-        return b1 != null && b2 != null && b1.getId() == b2.getId() && (!checkDamage || b1.getDamage() == b2.getDamage());
+        if (b1 == null || b2 == null) {
+            return false;
+        }
+        if (checkDamage) {
+            return b1.getMutableState().equals(b2.getMutableState());
+        } else {
+            return b1.getId() == b2.getId();
+        }
     }
 
     @PowerNukkitDifference(
@@ -1865,56 +1880,56 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public void setState(@Nonnull IBlockState state) throws InvalidBlockStateException {
-        mutableState.setState(state);
+        getMutableState().setState(state);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public void setDataStorage(@Nonnull Number storage) {
-        mutableState.setDataStorage(storage);
+        getMutableState().setDataStorage(storage);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public void setDataStorageFromInt(int storage) {
-        mutableState.setDataStorageFromInt(storage);
+        getMutableState().setDataStorageFromInt(storage);
     }
 
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
     public boolean setDataStorage(@Nonnull Number storage, boolean repair, Consumer<BlockStateRepair> callback) {
-        return mutableState.setDataStorage(storage, repair, callback);
+        return getMutableState().setDataStorage(storage, repair, callback);
     }
 
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
     public boolean setDataStorageFromInt(int storage, boolean repair, Consumer<BlockStateRepair> callback) {
-        return mutableState.setDataStorageFromInt(storage, repair, callback);
+        return getMutableState().setDataStorageFromInt(storage, repair, callback);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public void setPropertyValue(@Nonnull String propertyName, @Nullable Serializable value) {
-        mutableState.setPropertyValue(propertyName, value);
+        getMutableState().setPropertyValue(propertyName, value);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public void setBooleanValue(@Nonnull String propertyName, boolean value) {
-        mutableState.setBooleanValue(propertyName, value);
+        getMutableState().setBooleanValue(propertyName, value);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public void setIntValue(@Nonnull String propertyName, int value) {
-        mutableState.setIntValue(propertyName, value);
+        getMutableState().setIntValue(propertyName, value);
     }
 
     @PowerNukkitOnly
@@ -1931,7 +1946,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Nonnull
     @Override
     public final Number getDataStorage() {
-        return mutableState.getDataStorage();
+        return mutableState == null? 0 : mutableState.getDataStorage();
     }
 
     @PowerNukkitOnly
@@ -1940,7 +1955,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
     public int getLegacyDamage() {
-        return mutableState.getLegacyDamage();
+        return mutableState == null? 0 : mutableState.getLegacyDamage();
     }
 
     @PowerNukkitOnly
@@ -1949,7 +1964,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
     public int getBigDamage() {
-        return mutableState.getBigDamage();
+        return mutableState == null? 0 : mutableState.getBigDamage();
     }
 
     @PowerNukkitOnly
@@ -1957,7 +1972,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Nonnull
     @Override
     public BigInteger getHugeDamage() {
-        return mutableState.getHugeDamage();
+        return mutableState == null? BigInteger.ZERO : mutableState.getHugeDamage();
     }
 
     @PowerNukkitOnly
@@ -1965,21 +1980,21 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Nonnull
     @Override
     public Object getPropertyValue(@Nonnull String propertyName) {
-        return mutableState.getPropertyValue(propertyName);
+        return getMutableState().getPropertyValue(propertyName);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public int getIntValue(@Nonnull String propertyName) {
-        return mutableState.getIntValue(propertyName);
+        return getMutableState().getIntValue(propertyName);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
     public boolean getBooleanValue(@Nonnull String propertyName) {
-        return mutableState.getBooleanValue(propertyName);
+        return getMutableState().getBooleanValue(propertyName);
     }
 
     @PowerNukkitOnly
@@ -1987,12 +2002,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Nonnull
     @Override
     public String getPersistenceValue(@Nonnull String propertyName) {
-        return mutableState.getPersistenceValue(propertyName);
+        return getMutableState().getPersistenceValue(propertyName);
     }
 
     @Override
     public final int getExactIntStorage() {
-        return mutableState.getExactIntStorage();
+        return mutableState == null? 0 : mutableState.getExactIntStorage();
     }
 
     @PowerNukkitOnly
@@ -2028,5 +2043,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Override
     public final Block getBlock() {
         return clone();
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDefaultState() {
+        return mutableState == null || mutableState.isDefaultState();
     }
 }

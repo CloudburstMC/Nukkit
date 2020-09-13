@@ -328,6 +328,13 @@ public final class BlockState implements Serializable, IBlockState {
         return getBigDamage();
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDefaultState() {
+        return storage.isDefaultState();
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -491,6 +498,8 @@ public final class BlockState implements Serializable, IBlockState {
         BlockState onlyWithProperty(String name, Serializable value);
 
         void validate(BlockProperties properties);
+
+        boolean isDefaultState();
     }
 
     @ParametersAreNonnullByDefault
@@ -572,6 +581,11 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public void validate(BlockProperties properties) {
             // Meta 0 is always valid
+        }
+
+        @Override
+        public boolean isDefaultState() {
+            return true;
         }
 
         @Nonnull
@@ -675,6 +689,11 @@ public final class BlockState implements Serializable, IBlockState {
             properties.forEach((property, offset) -> property.validateMeta(data, offset));
         }
 
+        @Override
+        public boolean isDefaultState() {
+            return data == 0;
+        }
+
         @Nonnull
         @Override
         public String getPersistenceValue(String propertyName) {
@@ -770,6 +789,11 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public void validate(BlockProperties properties) {
             properties.forEach((property, offset) -> property.validateMeta(data, offset));
+        }
+
+        @Override
+        public boolean isDefaultState() {
+            return data == 0;
         }
 
         @Nonnull
@@ -874,6 +898,11 @@ public final class BlockState implements Serializable, IBlockState {
             properties.forEach((property, offset) -> property.validateMeta(data, offset));
         }
 
+        @Override
+        public boolean isDefaultState() {
+            return data == 0;
+        }
+
         @Nonnull
         @Override
         public String getPersistenceValue(String propertyName) {
@@ -974,6 +1003,11 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public void validate(BlockProperties properties) {
             properties.forEach((property, offset) -> property.validateMeta(data, offset));
+        }
+
+        @Override
+        public boolean isDefaultState() {
+            return data.equals(BigInteger.ZERO);
         }
 
         @Nonnull

@@ -70,6 +70,13 @@ public class IntMutableBlockState extends MutableBlockState {
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
+    public boolean isDefaultState() {
+        return storage == 0;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
     public void setDataStorage(Number storage) {
         Class<? extends Number> c = storage.getClass();
         int state;
