@@ -5414,4 +5414,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 "', location=" + super.toString() +
                 ')';
     }
+
+    /**
+     * Adds the items to the main player inventory and drops on the floor any excess. 
+     * @param items The items to give to the player.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void giveItem(Item... items) {
+        for(Item failed: getInventory().addItem(items)) {
+            getLevel().dropItem(this, failed);
+        }
+    }
 }
