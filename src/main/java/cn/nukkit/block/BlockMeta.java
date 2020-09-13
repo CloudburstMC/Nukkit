@@ -20,13 +20,14 @@ public abstract class BlockMeta extends Block {
 
     /**
      * Create the block from a specific state.
+     * 
+     * If the meta is not acceptable by {@link #getProperties()}, it will be modified to an accepted value.
+     * 
      * @param meta The block state meta
-     * @throws InvalidBlockPropertyMetaException If the meta contains invalid values 
-     * that are not acceptable by {@link #getProperties()}
      */
     protected BlockMeta(int meta) throws InvalidBlockPropertyMetaException {
         if (meta != 0) {
-            getMutableState().setDataStorageFromInt(meta);
+            getMutableState().setDataStorageFromInt(meta, true);
         }
     }
 

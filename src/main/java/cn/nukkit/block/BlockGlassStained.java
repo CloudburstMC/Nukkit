@@ -20,7 +20,9 @@ public class BlockGlassStained extends BlockGlass {
     }
 
     public BlockGlassStained(int meta) {
-        getMutableState().setDataStorageFromInt(meta);
+        if (meta != 0) {
+            getMutableState().setDataStorageFromInt(meta, true);
+        }
     }
 
     @Since("1.4.0.0-PN")

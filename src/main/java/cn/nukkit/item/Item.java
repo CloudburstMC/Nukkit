@@ -7,7 +7,6 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
-import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.UnknownRuntimeIdException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockstate.BlockState;
@@ -35,7 +34,6 @@ import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Modifier;
-import java.math.BigInteger;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.function.Function;
@@ -512,27 +510,15 @@ public class Item implements Cloneable, BlockID, ItemID {
                     // Special case for item instances used in fuzzy recipes
                     item = new ItemBlock(Block.get(blockId), -1);
                 } else {
+                    BlockState state = BlockState.of(blockId, meta);
                     try {
-                        BlockState state = BlockState.of(blockId, meta);
                         state.validate();
                         item = state.asItemBlock(count);
                     } catch (InvalidBlockPropertyMetaException | InvalidBlockStateException e) {
-                        BlockState state = BlockState.of(blockId);
-                        BlockProperties properties = state.getProperties();
-                        BigInteger newStorage = properties.reduce(BigInteger.valueOf(meta), (property, offset, current) -> {
-                            try {
-                                if (property.isExportedToItem()) {
-                                    property.validateMeta(current, offset);
-                                    return current;
-                                }
-                            } catch (Exception invalid) {
-                                e.addSuppressed(invalid);
-                            }
-                            return property.setValue(current, offset, null);
-                        });
-                        newStorage = newStorage.and(BigInteger.ONE.shiftLeft(properties.getBitSize()).subtract(BigInteger.ONE)); 
-                        log.error("Attempted to get an illegal item block " + id + ":" + meta + " ("+blockId+"), the meta was changed to " + newStorage);
-                        item = BlockState.of(id, newStorage).asItemBlock(count);
+                        log.warn("Attempted to get an ItemBlock with invalid block state in memory: "+state+", trying to repair the block state...");
+                        Block repaired = state.getBlockRepairing(null, 0, 0, 0);
+                        item = repaired.asItemBlock(count);
+                        log.error("Attempted to get an illegal item block " + id + ":" + meta + " ("+blockId+"), the meta was changed to " + item.getDamage());
                     } catch (UnknownRuntimeIdException e) {
                         log.warn("Attempted to get an illegal item block "+id+":"+meta+ " ("+blockId+"), the runtime id was unknown and the meta was changed to 0");
                         item = BlockState.of(id).asItemBlock(count);

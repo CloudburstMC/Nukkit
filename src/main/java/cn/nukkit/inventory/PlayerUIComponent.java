@@ -47,12 +47,22 @@ public class PlayerUIComponent extends BaseInventory {
 
     @Override
     public boolean setItem(int index, Item item, boolean send) {
-        return this.playerUI.setItem(index + this.offset, item, send);
+        Item before = playerUI.getItem(index + this.offset);
+        if (this.playerUI.setItem(index + this.offset, item, send)) {
+            onSlotChange(index, before, false);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public boolean clear(int index, boolean send) {
-        return this.playerUI.clear(index + this.offset, send);
+        Item before = playerUI.getItem(index + this.offset);
+        if (this.playerUI.clear(index + this.offset, send)) {
+            onSlotChange(index, before, false);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -105,6 +115,9 @@ public class PlayerUIComponent extends BaseInventory {
 
     @Override
     public void onSlotChange(int index, Item before, boolean send) {
-        this.playerUI.onSlotChangeBase(index + this.offset, before, send);
+        if (send) {
+            this.playerUI.onSlotChangeBase(index + this.offset, before, true);
+        }
+        super.onSlotChange(index, before, false);
     }
 }

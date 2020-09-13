@@ -12074,99 +12074,75 @@ minecraft:cocoa;age=2;direction=3
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=east
 [204:2]
-[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=north
 [204:3]
-[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=south
 [204:4]
-[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=top
 [204:5]
-[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=unknown
 [204:0, 204:6, 204:7]
-[]
 
 minecraft:colored_torch_bp;color_bit=0;torch_facing_direction=west
 [204:1]
-[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=east
 [204:10]
-[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=north
 [204:11]
-[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=south
 [204:12]
-[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=top
 [204:13]
-[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=unknown
 [204:8, 204:14, 204:15]
-[]
 
 minecraft:colored_torch_bp;color_bit=1;torch_facing_direction=west
 [204:9]
-[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=east
 [202:2]
-[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=north
 [202:3]
-[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=south
 [202:4]
-[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=top
 [202:5]
-[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=unknown
 [202:0, 202:6, 202:7]
-[]
 
 minecraft:colored_torch_rg;color_bit=0;torch_facing_direction=west
 [202:1]
-[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=east
 [202:10]
-[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=north
 [202:11]
-[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=south
 [202:12]
-[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=top
 [202:13]
-[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=unknown
 [202:8, 202:14, 202:15]
-[]
 
 minecraft:colored_torch_rg;color_bit=1;torch_facing_direction=west
 [202:9]
-[]
 
 minecraft:command_block;conditional_bit=0;facing_direction=0
 [137:0, 137:6, 137:7]
@@ -19020,27 +18996,21 @@ minecraft:redstone_ore
 
 minecraft:redstone_torch;torch_facing_direction=east
 [76:2]
-[]
 
 minecraft:redstone_torch;torch_facing_direction=north
 [76:3]
-[]
 
 minecraft:redstone_torch;torch_facing_direction=south
 [76:4]
-[]
 
 minecraft:redstone_torch;torch_facing_direction=top
 [76:5]
-[]
 
 minecraft:redstone_torch;torch_facing_direction=unknown
 [76:0, 76:6, 76:7]
-[]
 
 minecraft:redstone_torch;torch_facing_direction=west
 [76:1]
-[]
 
 minecraft:redstone_wire;redstone_signal=0
 [55:0]
@@ -19698,26 +19668,20 @@ minecraft:soul_soil
 
 minecraft:soul_torch;torch_facing_direction=east
 []
-[]
 
 minecraft:soul_torch;torch_facing_direction=north
-[]
 []
 
 minecraft:soul_torch;torch_facing_direction=south
 []
-[]
 
 minecraft:soul_torch;torch_facing_direction=top
-[]
 []
 
 minecraft:soul_torch;torch_facing_direction=unknown
 []
-[]
 
 minecraft:soul_torch;torch_facing_direction=west
-[]
 []
 
 minecraft:sponge;sponge_type=dry
@@ -21045,27 +21009,21 @@ minecraft:tnt;explode_bit=1;allow_underwater_bit=1
 
 minecraft:torch;torch_facing_direction=east
 [50:2]
-[]
 
 minecraft:torch;torch_facing_direction=north
 [50:3]
-[]
 
 minecraft:torch;torch_facing_direction=south
 [50:4]
-[]
 
 minecraft:torch;torch_facing_direction=top
 [50:5]
-[]
 
 minecraft:torch;torch_facing_direction=unknown
 [50:0, 50:6, 50:7]
-[]
 
 minecraft:torch;torch_facing_direction=west
 [50:1]
-[]
 
 minecraft:trapdoor;open_bit=0;upside_down_bit=0;direction=0
 [96:0]
@@ -21346,54 +21304,42 @@ minecraft:twisting_vines;twisting_vines_age=25
 
 minecraft:underwater_torch;torch_facing_direction=east
 [239:2]
-[]
 
 minecraft:underwater_torch;torch_facing_direction=north
 [239:3]
-[]
 
 minecraft:underwater_torch;torch_facing_direction=south
 [239:4]
-[]
 
 minecraft:underwater_torch;torch_facing_direction=top
 [239:5]
-[]
 
 minecraft:underwater_torch;torch_facing_direction=unknown
 [239:0, 239:6, 239:7]
-[]
 
 minecraft:underwater_torch;torch_facing_direction=west
 [239:1]
-[]
 
 minecraft:undyed_shulker_box
 [205:0]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=east
 [75:2]
-[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=north
 [75:3]
-[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=south
 [75:4]
-[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=top
 [75:5]
-[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=unknown
 [75:0, 75:6, 75:7]
-[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=west
 [75:1]
-[]
 
 minecraft:unpowered_comparator;output_subtract_bit=0;output_lit_bit=0;direction=0
 [149:0]
