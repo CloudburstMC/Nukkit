@@ -9,6 +9,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -129,7 +130,7 @@ public class Binary {
                     try {
                         stream.put(NBTIO.write(slot.getData(), ByteOrder.LITTLE_ENDIAN, true));
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new UncheckedIOException(e);
                     }
                     break;
                 case Entity.DATA_TYPE_POS:
@@ -184,7 +185,7 @@ public class Binary {
                         CompoundTag tag = NBTIO.read(fbais, ByteOrder.LITTLE_ENDIAN, true);
                         value = new NBTEntityData(key, tag);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new UncheckedIOException(e);
                     }
                     stream.setOffset(offset + (int) fbais.position());
                     break;

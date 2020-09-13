@@ -133,6 +133,13 @@ public class LongMutableBlockState extends MutableBlockState {
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
+    public boolean isDefaultState() {
+        return storage == 0;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
     public void setPropertyValue(String propertyName, @Nullable Serializable value) {
         storage = properties.setValue(storage, propertyName, value);
     }

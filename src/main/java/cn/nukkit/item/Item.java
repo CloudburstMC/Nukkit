@@ -32,6 +32,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Modifier;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -979,7 +980,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         try {
             return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -988,7 +989,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             tag.setName("");
             return NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

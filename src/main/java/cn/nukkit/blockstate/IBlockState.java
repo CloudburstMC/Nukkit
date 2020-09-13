@@ -45,6 +45,10 @@ public interface IBlockState {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    boolean isDefaultState();
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     BlockProperties getProperties();
 
