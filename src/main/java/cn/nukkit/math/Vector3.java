@@ -1,6 +1,8 @@
 package cn.nukkit.math;
 
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -334,6 +336,15 @@ public class Vector3 implements Cloneable {
         this.x = x;
         this.y = y;
         this.z = z;
+        return this;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public Vector3 setComponents(Vector3 pos) {
+        this.x = pos.x;
+        this.y = pos.y;
+        this.z = pos.z;
         return this;
     }
 
