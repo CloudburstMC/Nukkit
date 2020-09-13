@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.anvil;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
@@ -15,6 +16,7 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.ThreadCache;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,6 +31,7 @@ import java.util.regex.Pattern;
 /**
  * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public class Anvil extends BaseLevelProvider {
     public static final int VERSION = 19133;
     static private final byte[] PAD_256 = new byte[256];
@@ -66,9 +69,11 @@ public class Anvil extends BaseLevelProvider {
         generate(path, name, seed, generator, new HashMap<>());
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed resource leak")
     public static void generate(String path, String name, long seed, Class<? extends Generator> generator, Map<String, String> options) throws IOException {
-        if (!new File(path + "/region").exists()) {
-            new File(path + "/region").mkdirs();
+        File regions = new File(path + "/region");
+        if (!regions.exists() && !regions.mkdirs()) {
+           log.warn("Failed to create the directory: {}", regions);
         }
 
         CompoundTag levelData = new CompoundTag("Data")
@@ -94,8 +99,10 @@ public class Anvil extends BaseLevelProvider {
                 .putInt("version", VERSION)
                 .putLong("Time", 0)
                 .putLong("SizeOnDisk", 0);
-
-        NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
+        
+        try (FileOutputStream stream = new FileOutputStream(path + "level.dat")) {
+            NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), stream, ByteOrder.BIG_ENDIAN);
+        }
     }
 
     @Override

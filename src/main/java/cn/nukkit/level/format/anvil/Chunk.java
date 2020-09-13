@@ -19,6 +19,7 @@ import cn.nukkit.utils.Zlib;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Constructor;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -328,7 +329,7 @@ public class Chunk extends BaseChunk {
         try {
             return NBTIO.write(chunk, ByteOrder.BIG_ENDIAN);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
 
     }
@@ -414,8 +415,8 @@ public class Chunk extends BaseChunk {
 
         try {
             return Zlib.deflate(NBTIO.write(chunk, ByteOrder.BIG_ENDIAN), RegionLoader.COMPRESSION_LEVEL);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
         }
     }
 
