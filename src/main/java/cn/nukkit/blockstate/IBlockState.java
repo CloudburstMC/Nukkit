@@ -32,20 +32,30 @@ import java.util.function.Consumer;
 
 import static cn.nukkit.blockstate.Loggers.logIBlockState;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 @ParametersAreNonnullByDefault
 public interface IBlockState {
     int getBlockId();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     Number getDataStorage();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     BlockProperties getProperties();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     int getLegacyDamage();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     int getBigDamage();
@@ -59,6 +69,8 @@ public interface IBlockState {
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     Object getPropertyValue(String propertyName);
 
@@ -67,6 +79,8 @@ public interface IBlockState {
      * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
      * @throws ClassCastException If the actual property value don't match the type of the given property 
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default <V extends Serializable> V getPropertyValue(BlockProperty<V> property) {
         return getCheckedPropertyValue(property.getName(), property.getValueClass());
@@ -76,6 +90,8 @@ public interface IBlockState {
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default <V extends Serializable> V getUncheckedPropertyValue(BlockProperty<V> property) {
         return getUncheckedPropertyValue(property.getName());
@@ -85,12 +101,16 @@ public interface IBlockState {
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     int getIntValue(String propertyName);
 
     /**
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     default int getIntValue(BlockProperty<?> property) {
         return getIntValue(property.getName());
     }
@@ -100,6 +120,8 @@ public interface IBlockState {
      * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
      * @throws ClassCastException If the property don't hold boolean values
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     boolean getBooleanValue(String propertyName);
 
     /**
@@ -107,6 +129,8 @@ public interface IBlockState {
      * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
      * @throws ClassCastException If the property don't hold boolean values
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     default boolean getBooleanValue(BlockProperty<?> property) {
         return getBooleanValue(property.getName());
     }
@@ -115,6 +139,8 @@ public interface IBlockState {
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     String getPersistenceValue(String propertyName);
 
@@ -122,6 +148,8 @@ public interface IBlockState {
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default String getPersistenceValue(BlockProperty<?> property) {
         return getPersistenceValue(property.getName());
@@ -163,22 +191,28 @@ public interface IBlockState {
         return getPersistenceName()+";nukkit-legacy="+getDataStorage();
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     BlockState getCurrentState();
 
     /**
      * @throws InvalidBlockStateException if the state contains invalid property values
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default Block getBlock() {
         Block block = Block.get(getBlockId());
-        block.setDataStorage(getDataStorage());
+        block.setState(this);
         return block;
     }
 
     /**
      * @throws InvalidBlockStateException if the state contains invalid property values
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default Block getBlock(@Nullable Level level, int x, int y, int z) {
         return getBlock(level, x, y, z, 0, false, null);
@@ -187,6 +221,8 @@ public interface IBlockState {
     /**
      * @throws InvalidBlockStateException if the state contains invalid property values
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default Block getBlock(@Nullable Level level, int x, int y, int z, int layer) {
         return getBlock(level, x, y, z, layer, false, null);
@@ -195,6 +231,8 @@ public interface IBlockState {
     /**
      * @throws InvalidBlockStateException if repair is false and the state contains invalid property values
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default Block getBlock(@Nullable Level level, int x, int y, int z, int layer, boolean repair) {
         return getBlock(level, x, y, z, layer, repair, null);
@@ -203,6 +241,8 @@ public interface IBlockState {
     /**
      * @throws InvalidBlockStateException if repair is false and the state contains invalid property values
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default Block getBlock(@Nullable Level level, int x, int y, int z, int layer, boolean repair, @Nullable Consumer<BlockStateRepair> callback) {
         Block block = Block.get(getBlockId());
@@ -211,8 +251,18 @@ public interface IBlockState {
         block.y = y;
         block.z = z;
         block.layer = layer;
+        BlockState currentState = getCurrentState();
         try {
-            block.setDataStorage(getDataStorage(), repair, callback);
+            if (currentState.isCachedValidationValid()) {
+                block.setState(currentState);
+                return block;
+            }
+        } catch (Exception e) {
+            logIBlockState.error("Unexpected error while trying to set the cached valid state to the block. State: {}, Block: {}", currentState, block, e);
+        }
+        
+        try {
+            block.setDataStorage(currentState.getDataStorage(), repair, callback);
         } catch (InvalidBlockStateException e) {
             throw new InvalidBlockStateException(getCurrentState(), "Invalid block state in layer "+layer+" at: "+new Position(x, y, z, level), e);
         }
@@ -292,6 +342,8 @@ public interface IBlockState {
         return getBlockRepairing(level, x, y, z, 0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default Block getBlockRepairing(@Nullable Level level, int x, int y, int z, int layer) {
         return getBlockRepairing(level, x, y, z, layer, null);
@@ -334,10 +386,14 @@ public interface IBlockState {
         return block;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     default int getRuntimeId() {
         return BlockStateRegistry.getRuntimeId(getCurrentState());
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "the BlockState itself")
     default int getFullId() {
@@ -350,44 +406,62 @@ public interface IBlockState {
         return ((long)getBlockId() << 32) | (getBigDamage() & BlockStateRegistry.BIG_META_MASK);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @SuppressWarnings("rawtypes")
     @Nonnull
     default BlockProperty getProperty(String propertyName) {
         return getProperties().getBlockProperty(propertyName);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default <T extends BlockProperty<?>> T getCheckedProperty(String propertyName, Class<T> tClass) {
         return getProperties().getBlockProperty(propertyName, tClass);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default Set<String> getPropertyNames() {
         return getProperties().getNames();
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default <T> T getCheckedPropertyValue(String propertyName, Class<T> tClass) {
         return tClass.cast(getPropertyValue(propertyName));
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @SuppressWarnings("unchecked")
     default <T> T getUncheckedPropertyValue(String propertyName) {
         return (T) getPropertyValue(propertyName);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     default int getBitSize() {
         return getProperties().getBitSize();
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     int getExactIntStorage();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default ItemBlock asItemBlock() {
         return asItemBlock(1);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     default ItemBlock asItemBlock(int count) {
         BlockState currentState = getCurrentState();

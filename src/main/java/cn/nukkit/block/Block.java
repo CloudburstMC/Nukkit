@@ -63,7 +63,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             " plugins will have to be recompiled in order to update this value in the binary files, " +
             "it's also being replaced by the BlockState system")
     @PowerNukkitOnly
-    public static final int DATA_BITS = dynamic(6);
+    public static final int DATA_BITS = dynamic(4);
 
     @Deprecated
     @DeprecationDetails(since = "1.4.0.0-PN", reason = "It's not a constant value, it may be changed on major updates and" +
@@ -98,12 +98,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @SuppressWarnings({"java:S1444", "java:S2386"})
     public static int[] light = null;
 
-    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN", 
-            replaceWith = "Block.getLightLevel()")
-    @Deprecated
-    @SuppressWarnings({"java:S1444", "java:S2386", "java:S1123", "java:S1133", "DeprecatedIsStillUsed"})
-    public static int[] fullLight = null;
-    
     @Deprecated
     @DeprecationDetails(reason = "Not encapsulated, easy to break", since = "1.4.0.0-PN", 
             replaceWith = "Block.getLightFilter()")
@@ -157,7 +151,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         if (list == null) {
             list = new Class[MAX_BLOCK_ID];
             fullList = new Block[MAX_BLOCK_ID * (1 << DATA_BITS)];
-            fullLight = new int[MAX_BLOCK_ID * (1 << DATA_BITS)];
             light = new int[MAX_BLOCK_ID];
             lightFilter = new int[MAX_BLOCK_ID];
             solid = new boolean[MAX_BLOCK_ID];
@@ -637,14 +630,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                                     b = new BlockUnknown(id, data);
                                 }
                                 fullList[fullId] = b;
-                                fullLight[fullId] = b.getLightLevel();
                             }
                             hasMeta[id] = true;
                         } catch (NoSuchMethodException ignore) {
                             for (int data = 0; data < DATA_SIZE; ++data) {
                                 int fullId = (id << DATA_BITS) | data;
                                 fullList[fullId] = block;
-                                fullLight[fullId] = block.getLightLevel();
                             }
                         }
                     } catch (Exception e) {
@@ -896,7 +887,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 }
                 
                 fullList[fullId] = b;
-                fullLight[fullId] = b.getLightLevel();
             }
             hasMeta[blockId] = metaAdded;
         } else {
@@ -1870,7 +1860,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         
         return Optional.empty();
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setState(@Nonnull IBlockState state) throws InvalidBlockStateException {
+        mutableState.setState(state);
+    }
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
@@ -1885,11 +1882,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         mutableState.setDataStorageFromInt(storage);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public boolean setDataStorage(@Nonnull Number storage, boolean repair, Consumer<BlockStateRepair> callback) {
         return mutableState.setDataStorage(storage, repair, callback);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public boolean setDataStorageFromInt(int storage, boolean repair, Consumer<BlockStateRepair> callback) {
         return mutableState.setDataStorageFromInt(storage, repair, callback);

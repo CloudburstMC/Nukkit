@@ -1,5 +1,7 @@
 package cn.nukkit.level.biome.impl.mushroom;
 
+import cn.nukkit.api.RemovedFromNewRakNet;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.biome.type.GrassyBiome;
 import cn.nukkit.level.generator.populator.impl.MushroomPopulator;
@@ -19,8 +21,13 @@ public class MushroomIslandBiome extends GrassyBiome {
         return "Mushroom Island";
     }
 
+    @RemovedFromNewRakNet
+    @Since("1.4.0.0-PN")
     @Override
-    public int getSurfaceId(int x, int y, int z) {
-        return MYCELIUM << Block.DATA_BITS;
+    public int getSurfaceBlock(int y) {
+        if (useNewRakNetSurface()) {
+            return getSurfaceId(0,y,0) >> 4;
+        }
+        return Block.MYCELIUM;
     }
 }

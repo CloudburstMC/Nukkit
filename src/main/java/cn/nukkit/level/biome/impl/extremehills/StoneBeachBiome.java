@@ -1,5 +1,7 @@
 package cn.nukkit.level.biome.impl.extremehills;
 
+import cn.nukkit.api.RemovedFromNewRakNet;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.biome.type.CoveredBiome;
 
 /**
@@ -15,23 +17,43 @@ public class StoneBeachBiome extends CoveredBiome {
         this.setHeightVariation(0.8f);
     }
 
+    @RemovedFromNewRakNet
+    @Since("1.4.0.0-PN")
     @Override
-    public int getSurfaceDepth(int x, int y, int z) {
+    public int getSurfaceDepth(int y) {
+        if (useNewRakNetSurfaceDepth()) {
+            return getSurfaceDepth(0,y,0);
+        }
         return 0;
     }
 
+    @RemovedFromNewRakNet
+    @Since("1.4.0.0-PN")
     @Override
-    public int getSurfaceId(int x, int y, int z) {
+    public int getSurfaceBlock(int y) {
+        if (useNewRakNetSurface()) {
+            return getSurfaceId(0,y,0) >> 4;
+        }
         return 0;
     }
 
+    @RemovedFromNewRakNet
+    @Since("1.4.0.0-PN")
     @Override
-    public int getGroundDepth(int x, int y, int z) {
+    public int getGroundDepth(int y) {
+        if (useNewRakNetGroundDepth()) {
+            return getGroundDepth(0,y,0);
+        }
         return 0;
     }
 
+    @RemovedFromNewRakNet
+    @Since("1.4.0.0-PN")
     @Override
-    public int getGroundId(int x, int y, int z) {
+    public int getGroundBlock(int y) {
+        if (useNewRakNetGround()) {
+            return getGroundId(0,y,0) >> 4;
+        }
         return 0;
     }
 

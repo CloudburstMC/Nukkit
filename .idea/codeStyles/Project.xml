@@ -2,8 +2,10 @@
   <code_scheme name="Project" version="173">
     <JavaCodeStyleSettings>
       <REPEAT_ANNOTATIONS>
+        <ANNO name="cn.nukkit.api.NewRakNetOnly" />
         <ANNO name="cn.nukkit.api.PowerNukkitDifference" />
         <ANNO name="cn.nukkit.api.PowerNukkitOnly" />
+        <ANNO name="cn.nukkit.api.RemovedFromNewRakNet" />
         <ANNO name="cn.nukkit.api.Since" />
         <ANNO name="javax.annotation.Nonnull" />
         <ANNO name="javax.annotation.Nullable" />

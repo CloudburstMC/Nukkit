@@ -1,5 +1,6 @@
 package cn.nukkit.blockstate;
 
+import cn.nukkit.api.API;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -19,6 +20,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import static cn.nukkit.api.API.Definition.INTERNAL;
+import static cn.nukkit.api.API.Usage.INCUBATING;
 import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageType;
 
 @ToString(callSuper = true)
@@ -64,6 +67,8 @@ public class IntMutableBlockState extends MutableBlockState {
         return getBigDamage();
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setDataStorage(Number storage) {
         Class<? extends Number> c = storage.getClass();
@@ -80,10 +85,20 @@ public class IntMutableBlockState extends MutableBlockState {
         setDataStorageFromInt(state);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setDataStorageFromInt(int storage) {
         validate(storage);
         this.storage = storage;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    @API(definition = INTERNAL, usage = INCUBATING)
+    void setDataStorageWithoutValidation(Number storage) {
+        this.storage = storage.intValue();
     }
 
     @Override
@@ -92,16 +107,18 @@ public class IntMutableBlockState extends MutableBlockState {
     }
     
     private void validate(int state) {
-        if (state != 0) {
-            int bitLength = NukkitMath.bitLength(state);
-            if (bitLength > properties.getBitSize()) {
-                throw new InvalidBlockStateException(
-                        BlockState.of(getBlockId(), state),
-                        "The state have more data bits than specified in the properties. Bits: " + bitLength + ", Max: " + properties.getBitSize()
-                );
-            }
+        if (state == 0) {
+            return;
         }
         
+        int bitLength = NukkitMath.bitLength(state);
+        if (bitLength > properties.getBitSize()) {
+            throw new InvalidBlockStateException(
+                    BlockState.of(getBlockId(), state),
+                    "The state have more data bits than specified in the properties. Bits: " + bitLength + ", Max: " + properties.getBitSize()
+            );
+        }
+
         try {
             BlockProperties properties = this.properties;
             for (String name : properties.getNames()) {
@@ -113,16 +130,22 @@ public class IntMutableBlockState extends MutableBlockState {
         }
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setBooleanValue(String propertyName, boolean value) {
         storage = properties.setBooleanValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setPropertyValue(String propertyName, @Nullable Serializable value) {
         storage = properties.setValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setIntValue(String propertyName, int value) {
         storage = properties.setIntValue(storage, propertyName, value);

@@ -1,6 +1,7 @@
 package cn.nukkit.level.biome.impl.iceplains;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.api.RemovedFromNewRakNet;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
@@ -18,9 +19,14 @@ public class IcePlainsSpikesBiome extends IcePlainsBiome {
         this.addPopulator(iceSpikes);
     }
 
+    @RemovedFromNewRakNet
+    @Since("1.4.0.0-PN")
     @Override
-    public int getSurfaceId(int x, int y, int z) {
-        return SNOW_BLOCK << Block.DATA_BITS;
+    public int getSurfaceBlock(int y) {
+        if (useNewRakNetSurface()) {
+            return getSurfaceId(0,y,0) >> 4;
+        }
+        return SNOW_BLOCK;
     }
 
     public String getName() {
