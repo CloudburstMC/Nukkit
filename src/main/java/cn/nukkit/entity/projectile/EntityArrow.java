@@ -1,5 +1,7 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Sound;
@@ -50,6 +52,34 @@ public class EntityArrow extends EntityProjectile {
     @Override
     public float getDrag() {
         return 0.01f;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    protected void updateMotion() {
+        if (!isInsideOfWater()) {
+            super.updateMotion();
+            return;
+        }
+
+        float drag = 1 - this.getDrag() * 20;
+        
+        motionY -= getGravity() * 2;
+        if (motionY < 0) {
+            motionY *= drag / 1.5;
+        }
+        motionX *= drag;
+        motionZ *= drag;
+        /*float gravity = getGravity();
+        motionY -= gravity;
+        if (motionY > 0) {
+            motionY *= drag;
+        } else if (motionY < -gravity /2) {
+            motionY *= drag;
+        } else {
+            motionY -= gravity / 2;
+        }*/
     }
 
     public EntityArrow(FullChunk chunk, CompoundTag nbt) {
@@ -123,6 +153,11 @@ public class EntityArrow extends EntityProjectile {
         this.timing.stopTiming();
 
         return hasUpdate;
+    }
+
+    @Override
+    public boolean canBeMovedByCurrents() {
+        return !hadCollision;
     }
 
     @Override
