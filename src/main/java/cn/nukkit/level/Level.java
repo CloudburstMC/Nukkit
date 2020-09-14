@@ -2224,6 +2224,9 @@ public class Level implements ChunkManager, Metadatable {
 
         item.useOn(target);
         if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
+            if (player != null) {
+                addSound(player, Sound.RANDOM_BREAK);
+            }
             item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
         }
 
@@ -2343,6 +2346,7 @@ public class Level implements ChunkManager, Metadatable {
                 target.onUpdate(BLOCK_UPDATE_TOUCH);
                 if ((!player.isSneaking() || player.getInventory().getItemInHand().isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
                     if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
+                        addSound(player, Sound.RANDOM_BREAK);
                         item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
                     }
                     return item;

@@ -106,6 +106,7 @@ import java.util.function.Consumer;
  */
 @Log4j2
 public class Player extends EntityHuman implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {
+    private static final int NO_SHIELD_DELAY = 10;
 
     public static final int SURVIVAL = 0;
     public static final int CREATIVE = 1;
@@ -215,6 +216,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected int inAirTicks = 0;
     protected int startAirTicks = 5;
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    private int noShieldTicks;
 
     protected AdventureSettings adventureSettings;
 
@@ -1860,10 +1865,34 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
         }
 
-        this.setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING, this.isSneaking() && (this.getInventory().getItemInHand().getId() == Item.SHIELD || this.getOffhandInventory().getItem(0).getId() == Item.SHIELD));
+        this.setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING,
+                getNoShieldTicks() == 0
+                && (this.isSneaking() || getRiding() != null) 
+                && (this.getInventory().getItemInHand().getId() == ItemID.SHIELD || this.getOffhandInventory().getItem(0).getId() == ItemID.SHIELD));
 
         updateBlockingFlag();
         return true;
+    }
+
+    @Override
+    public boolean entityBaseTick(int tickDiff) {
+        boolean hasUpdated = false;
+        if (isUsingItem()) {
+            if (noShieldTicks < NO_SHIELD_DELAY) {
+                noShieldTicks = NO_SHIELD_DELAY;
+                hasUpdated = true;
+            }
+        } else {
+            if (noShieldTicks > 0) {
+                noShieldTicks -= tickDiff;
+                hasUpdated = true;
+            }
+            if (noShieldTicks < 0) {
+                noShieldTicks = 0;
+                hasUpdated = true;
+            }
+        }
+        return super.entityBaseTick(tickDiff) || hasUpdated;
     }
 
     public void checkInteractNearby() {
@@ -2898,6 +2927,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                             break;
                     }
+                    
+                    if (animationEvent.getAnimationType() == AnimatePacket.Action.SWING_ARM) {
+                        setNoShieldTicks(NO_SHIELD_DELAY);
+                    }
 
                     AnimatePacket animatePacket = new AnimatePacket();
                     animatePacket.eid = this.getId();
@@ -3414,6 +3447,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     if (target.onInteract(this, item, useItemOnEntityData.clickPos) && this.isSurvival()) {
                                         if (item.isTool()) {
                                             if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
+                                                level.addSound(this, Sound.RANDOM_BREAK);
                                                 item = new ItemBlock(Block.get(BlockID.AIR));
                                             }
                                         } else {
@@ -3452,12 +3486,23 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     if ((target instanceof Player) && !this.level.getGameRules().getBoolean(GameRule.PVP)) {
                                         entityDamageByEntityEvent.setCancelled();
                                     }
-
-                                    if (!target.attack(entityDamageByEntityEvent)) {
-                                        if (item.isTool() && this.isSurvival()) {
-                                            this.inventory.sendContents(this);
+                                    
+                                    
+                                    if (target instanceof EntityLiving) {
+                                        ((EntityLiving) target).preAttack(this);
+                                    }
+                                    
+                                    try {
+                                        if (!target.attack(entityDamageByEntityEvent)) {
+                                            if (item.isTool() && this.isSurvival()) {
+                                                this.inventory.sendContents(this);
+                                            }
+                                            break;
                                         }
-                                        break;
+                                    } finally {
+                                        if (target instanceof EntityLiving) {
+                                            ((EntityLiving) target).postAttack(this);
+                                        }
                                     }
 
                                     for (Enchantment enchantment : item.getEnchantments()) {
@@ -3466,6 +3511,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     if (item.isTool() && this.isSurvival()) {
                                         if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
+                                            level.addSound(this, Sound.RANDOM_BREAK);
                                             this.inventory.setItemInHand(new ItemBlock(Block.get(BlockID.AIR)));
                                         } else {
                                             this.inventory.setItemInHand(item);
@@ -5406,6 +5452,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             });
         }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getNoShieldTicks() {
+        return noShieldTicks;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setNoShieldTicks(int noShieldTicks) {
+        this.noShieldTicks = noShieldTicks;
     }
 
     @Override
