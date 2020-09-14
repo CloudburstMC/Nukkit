@@ -7,6 +7,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
@@ -85,6 +86,11 @@ public class BlockWall extends BlockWallBase {
     @Override
     public String getName() {
         return getWallType().getTypeName();
+    }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
     
     @Since("1.3.0.0-PN")

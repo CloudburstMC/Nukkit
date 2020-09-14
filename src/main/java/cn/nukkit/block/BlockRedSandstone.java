@@ -37,17 +37,6 @@ public class BlockRedSandstone extends BlockSandstone {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
-    }
-
-    @Override
     public Item toItem() {
         return new ItemBlock(this, this.getDamage() & 0x03);
     }

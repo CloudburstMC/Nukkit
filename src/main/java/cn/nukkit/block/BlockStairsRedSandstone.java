@@ -39,19 +39,13 @@ public class BlockStairsRedSandstone extends BlockStairs {
     }
 
     @Override
-    public String getName() {
-        return "Red Sandstone Stairs";
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
+    public String getName() {
+        return "Red Sandstone Stairs";
     }
 
     @Override

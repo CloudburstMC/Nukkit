@@ -1,5 +1,7 @@
 package cn.nukkit.event;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.RegisteredListener;
 
@@ -148,6 +150,16 @@ public class HandlerList {
         synchronized (allLists) {
             return new ArrayList<>(allLists);
         }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isEmpty() {
+        RegisteredListener[] handlers = this.handlers;
+        if (handlers != null) {
+            return handlers.length == 0;
+        }
+        return getRegisteredListeners().length == 0;
     }
 
 }

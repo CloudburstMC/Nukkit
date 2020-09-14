@@ -84,13 +84,6 @@ public class BlockSlabWood extends BlockSlab {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                toItem()
-        };
-    }
-
-    @Override
     public BlockColor getColor() {
         return getWoodType().getColor();
     }

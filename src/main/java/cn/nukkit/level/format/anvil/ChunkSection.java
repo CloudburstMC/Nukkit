@@ -4,7 +4,9 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.level.format.anvil.util.BlockStorage;
 import cn.nukkit.level.format.anvil.util.NibbleArray;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
@@ -349,7 +351,12 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public Block getAndSetBlock(int x, int y, int z, int layer, Block block) {
         synchronized (storageList) {
-            return getOrSetStorage(layer).getAndSetBlockState(x, y, z, block.getCurrentState()).getBlock();
+            BlockState state = getOrSetStorage(layer).getAndSetBlockState(x, y, z, block.getCurrentState());
+            try {
+                return state.getBlock();
+            } catch (InvalidBlockStateException ignored) {
+                return new BlockUnknown(state.getBlockId(), state.getExactIntStorage());
+            }
         }
     }
 

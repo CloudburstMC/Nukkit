@@ -54,7 +54,7 @@ public abstract class BlockLog extends BlockSolidMeta {
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.isAxe()) {
-            Block strippedBlock = getStrippedState().getBlock();
+            Block strippedBlock = getStrippedState().getBlock(this);
             item.useOn(this);
             this.level.setBlock(this, strippedBlock, true, true);
             return true;

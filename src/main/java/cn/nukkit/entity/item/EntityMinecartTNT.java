@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
@@ -11,10 +12,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecartTNT;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.GameRule;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.MinecartType;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -79,9 +80,10 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
         return super.onUpdate(currentTick);
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public void activate(int x, int y, int z, boolean flag) {
-        level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_IGNITE);
+        level.addSound(this, Sound.FIRE_IGNITE);
         this.fuse = 79;
     }
 
@@ -116,6 +118,11 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     }
 
     @Override
+    public String getName() {
+        return getType().getName();
+    }
+
+    @Override
     public MinecartType getType() {
         return MinecartType.valueOf(3);
     }
@@ -132,11 +139,12 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
         super.namedTag.putInt("TNTFuse", this.fuse);
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         boolean interact = super.onInteract(player, item, clickedPos);
         if (item.getId() == Item.FLINT_AND_STEEL || item.getId() == Item.FIRE_CHARGE) {
-            level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_IGNITE);
+            level.addSound(this, Sound.FIRE_IGNITE);
             this.fuse = 79;
             return true;
         }

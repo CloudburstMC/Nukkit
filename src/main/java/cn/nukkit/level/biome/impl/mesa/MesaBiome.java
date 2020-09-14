@@ -1,7 +1,10 @@
 package cn.nukkit.level.biome.impl.mesa;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.api.NewRakNetOnly;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockSand;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.biome.type.CoveredBiome;
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
 import cn.nukkit.level.generator.populator.impl.PopulatorCactus;
@@ -17,11 +20,20 @@ import java.util.Random;
  * Handles the placement of stained clay for all mesa variants
  */
 public class MesaBiome extends CoveredBiome {
+    private static final BlockState STATE_TERRACOTTA = BlockState.of(HARDENED_CLAY);
+    private static final BlockState STATE_RED_SAND = BlockState.of(SAND, BlockSand.RED);
+    private static final BlockState STATE_RED_SANDSTONE = BlockState.of(RED_SANDSTONE);
+    private static final BlockState[] STATE_STAINED_TERRACOTTA = new BlockState[16];
+    
     static final int[]    colorLayer   = new int[64];
     static final SimplexF redSandNoise = new SimplexF(new NukkitRandom(937478913), 2f, 1 / 4f, 1 / 4f);
     static final SimplexF colorNoise   = new SimplexF(new NukkitRandom(193759875), 2f, 1 / 4f, 1 / 32f);
 
     static {
+        for (int i = 0; i < STATE_STAINED_TERRACOTTA.length; i++) {
+            STATE_STAINED_TERRACOTTA[i] = BlockState.of(STAINED_HARDENED_CLAY, i);
+        }
+        
         Random random = new Random(29864);
 
         Arrays.fill(colorLayer, -1); // hard clay, other values are stained clay
@@ -74,29 +86,35 @@ public class MesaBiome extends CoveredBiome {
         this.moundHeight = height;
     }
 
+    @NewRakNetOnly
     @Override
     public int getSurfaceDepth(int x, int y, int z) {
         return y < (71 + Math.round((redSandNoise.noise2D(x, z, true) + 1) * 1.5f)) ? 3 : y - 66;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public int getSurfaceId(int x, int y, int z) {
+    public BlockState getSurfaceState(int x, int y, int z) {
         if (y < (71 + Math.round((redSandNoise.noise2D(x, z, true) + 1) * 1.5f))) {
-            return (SAND << Block.DATA_BITS) | BlockSand.RED;
+            return STATE_RED_SAND;
         } else {
             int meta = colorLayer[(y + Math.round((colorNoise.noise2D(x, z, true) + 1) * 1.5f)) & 0x3F];
-            return (meta == -1 ? TERRACOTTA << Block.DATA_BITS : STAINED_TERRACOTTA << Block.DATA_BITS) | Math.max(0, meta);
+            return meta == -1 ? STATE_TERRACOTTA : STATE_STAINED_TERRACOTTA[Math.max(0, meta)];
         }
     }
 
+    @NewRakNetOnly
     @Override
     public int getGroundDepth(int x, int y, int z) {
         return y < (71 + Math.round((redSandNoise.noise2D(x, z, true) + 1) * 1.5f)) ? 2 : 0;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public int getGroundId(int x, int y, int z) {
-        return RED_SANDSTONE << Block.DATA_BITS;
+    public BlockState getGroundState(int x, int y, int z) {
+        return STATE_RED_SANDSTONE;
     }
 
     @Override

@@ -146,10 +146,10 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable, Blo
             );
 
             BlockState post = BlockState.of(getPostId()).withProperty(GROUND_SIGN_DIRECTION, direction);
-            getLevel().setBlock(block, post.getBlock(), true);
+            getLevel().setBlock(block, post.getBlock(block), true);
         } else {
             BlockState wall = BlockState.of(getWallId()).withProperty(FACING_DIRECTION, face);
-            getLevel().setBlock(block, wall.getBlock(), true);
+            getLevel().setBlock(block, wall.getBlock(block), true);
         }
 
         if (player != null) {

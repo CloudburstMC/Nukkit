@@ -1,6 +1,9 @@
 package cn.nukkit.level.format.generic;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
@@ -16,10 +19,7 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteOrder;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +45,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     private final AtomicReference<BaseFullChunk> lastChunk = new AtomicReference<>();
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed resource leak")
     public BaseLevelProvider(Level level, String path) throws IOException {
         this.level = level;
         this.path = path;
@@ -52,7 +53,10 @@ public abstract class BaseLevelProvider implements LevelProvider {
         if (!file_path.exists()) {
             file_path.mkdirs();
         }
-        CompoundTag levelData = NBTIO.readCompressed(new FileInputStream(new File(this.getPath() + "level.dat")), ByteOrder.BIG_ENDIAN);
+        CompoundTag levelData;
+        try (FileInputStream stream = new FileInputStream(new File(this.getPath() + "level.dat"))) {
+            levelData = NBTIO.readCompressed(stream, ByteOrder.BIG_ENDIAN);
+        }
         if (levelData.get("Data") instanceof CompoundTag) {
             this.levelData = levelData.getCompound("Data");
         } else {
@@ -68,6 +72,15 @@ public abstract class BaseLevelProvider implements LevelProvider {
         }
 
         this.spawn = new Vector3(this.levelData.getInt("SpawnX"), this.levelData.getInt("SpawnY"), this.levelData.getInt("SpawnZ"));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BaseLevelProvider(Level level, String path, CompoundTag levelData, Vector3 spawn) {
+        this.level = level;
+        this.path = path;
+        this.levelData = levelData;
+        this.spawn = spawn;
     }
 
     public abstract BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create);
@@ -300,12 +313,13 @@ public abstract class BaseLevelProvider implements LevelProvider {
         return levelData;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed resource leak")
     @Override
     public void saveLevelData() {
-        try {
-            NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", this.levelData), new FileOutputStream(this.getPath() + "level.dat"));
+        try (FileOutputStream outputStream = new FileOutputStream(this.getPath() + "level.dat")) {
+            NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", this.levelData), outputStream);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 

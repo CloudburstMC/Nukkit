@@ -218,7 +218,7 @@ public interface BlockID {
     int WOOD_SLABS = 158;
     int WOODEN_SLABS = 158;
     int STAINED_TERRACOTTA = 159;
-    int STAINED_HARDENED_CLAY = 159;
+    int STAINED_HARDENED_CLAY = STAINED_TERRACOTTA;
     int STAINED_GLASS_PANE = 160;
     int LEAVES2 = 161;
     int LEAVE2 = 161;
@@ -237,6 +237,7 @@ public interface BlockID {
     int HAY_BALE = 170;
     int CARPET = 171;
     int TERRACOTTA = 172;
+    @Since("1.4.0.0-PN") @PowerNukkitOnly int HARDENED_CLAY = TERRACOTTA;
     int COAL_BLOCK = 173;
     int PACKED_ICE = 174;
     int DOUBLE_PLANT = 175;
@@ -432,7 +433,7 @@ public interface BlockID {
     int CRIMSON_FUNGUS = 483;
     int WARPED_FUNGUS = 484;
     int SHROOMLIGHT = 485;
-    //int WEEPING_VINES = 486;
+    int WEEPING_VINES = 486;
     int CRIMSON_NYLIUM = 487;
     int WARPED_NYLIUM = 488;
     int BASALT = 489;
@@ -488,7 +489,7 @@ public interface BlockID {
     int POLISHED_BLACKSTONE_BRICK_SLAB = 539;
     int POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB = 540;
     int CHAIN_BLOCK = 541;
-    //int TWISTING_VINES = 542;
+    int TWISTING_VINES = 542;
     int NETHER_GOLD_ORE = 543;
     int CRYING_OBSIDIAN = 544;
     int SOUL_CAMPFIRE_BLOCK = 545;

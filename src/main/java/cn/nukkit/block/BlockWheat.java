@@ -1,8 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemSeedsWheat;
-import cn.nukkit.item.ItemWheat;
+import cn.nukkit.item.enchantment.Enchantment;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author xtypr
@@ -35,15 +38,27 @@ public class BlockWheat extends BlockCrops {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (this.getDamage() >= 0x07) {
-            return new Item[]{
-                    new ItemWheat(),
-                    new ItemSeedsWheat(0, (int) (4d * Math.random()))
-            };
-        } else {
-            return new Item[]{
-                    new ItemSeedsWheat()
-            };
+        // https://minecraft.gamepedia.com/Fortune#Seeds
+        if (this.getDamage() < 0x07) {
+            return new Item[]{ new ItemSeedsWheat() };
         }
+        
+        Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
+        int fortuneLevel = 0;
+        if (fortune != null && fortune.getLevel() >= 1) {
+            fortuneLevel = fortune.getLevel();
+        }
+
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        int count = 0;
+        // Fortune increases the number of tests for the distribution, and thus the maximum number of drops, by 1 per level
+        for (int i = 0; i < (3 + fortuneLevel); i++) {
+            // The binomial distribution in the default case is created by rolling three times (n=3) with a drop probability of 57%
+            if (random.nextInt(100) < 57) {
+                count++;
+            }
+        }
+
+        return new Item[]{ Item.get(ItemID.WHEAT), Item.get(ItemID.WHEAT_SEEDS, 0, count) };
     }
 }

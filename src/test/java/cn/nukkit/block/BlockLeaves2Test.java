@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -16,6 +16,6 @@ class BlockLeaves2Test {
     @Test
     void issue482() {
         BlockState current = BlockState.of(BlockID.LEAVES2, 11);
-        assertThrows(InvalidBlockPropertyMetaException.class, current::getBlock);
+        assertThrows(InvalidBlockStateException.class, current::getBlock);
     }
 }

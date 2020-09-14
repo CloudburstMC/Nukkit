@@ -2,6 +2,8 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.math.NukkitMath;
 import com.google.common.base.Preconditions;
 
@@ -11,6 +13,8 @@ import javax.annotation.Nullable;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
+    private static final long serialVersionUID = 7896101036099245755L;
+    
     private final int defaultMeta;
     private final long minValue;
     private final long maxValue;
@@ -68,7 +72,11 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
             return defaultMeta;
         }
         long unsigned = removeSign(value);
-        validate(unsigned);
+        try {
+            validateDirectly(unsigned);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidBlockPropertyValueException(this, null, value, e);
+        }
         return (int) (unsigned - minValue);
     }
 
@@ -80,6 +88,11 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
 
     @Override
     public int getIntValueForMeta(int meta) {
+        try {
+            validateMetaDirectly(meta);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidBlockPropertyMetaException(this, meta, meta, e);
+        }
         return (int) (minValue + meta);
     }
 
@@ -89,24 +102,28 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     }
 
     @Override
-    protected void validate(@Nullable Integer value) {
+    protected void validateDirectly(@Nullable Integer value) {
         if (value == null) {
             return;
         }
-        validate(removeSign(value));
+        validateDirectly(removeSign(value));
     }
-    
-    private void validate(long unsigned) {
+
+    /**
+     * @throws RuntimeException Any runtime exception to indicate an invalid value
+     */
+    private void validateDirectly(long unsigned) {
         Preconditions.checkArgument(unsigned >= minValue, "New value (%s) must be higher or equals to %s", unsigned, minValue);
         Preconditions.checkArgument(maxValue >= unsigned, "New value (%s) must be less or equals to %s", unsigned, maxValue);
     }
 
     @Override
-    protected void validateMeta(int meta) {
+    protected void validateMetaDirectly(int meta) {
         long max = maxValue - minValue;
         Preconditions.checkArgument(0 <= meta && meta <= max, "The meta %s is outside the range of 0 .. ", meta, max);
     }
 
+    @Nonnull
     @Override
     public Class<Integer> getValueClass() {
         return Integer.class;

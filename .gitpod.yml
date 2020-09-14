@@ -1,0 +1,8 @@
+# To go to GitPod, go to https://gitpod.io/#https://github.com/PowerNukkit/PowerNukkit/
+
+tasks:
+  - before: git submodule update --init && bash mvnw clean package 
+    init: cd target
+    command: java -jar powernukkit-*-shaded.jar
+ports:
+  - port: 19132

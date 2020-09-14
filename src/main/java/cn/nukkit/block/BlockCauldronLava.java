@@ -15,7 +15,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBucket;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
 
 import javax.annotation.Nonnull;
@@ -133,7 +132,7 @@ public class BlockCauldronLava extends BlockCauldron {
                             this.setFillLevel(5);//fill
                             cauldron.clearCustomColor();
                             this.level.setBlock(this, this, true);
-                            this.getLevel().addLevelSoundEvent(this.add(0.5, 1, 0.5), LevelSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
+                            this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.BUCKET_EMPTY_LAVA);
                         } else {
                             if (isEmpty()) {
                                 this.level.setBlock(this, new BlockCauldron(6), true, true);

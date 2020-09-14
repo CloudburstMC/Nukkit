@@ -184,6 +184,12 @@ public class BlockLantern extends BlockFlowable {
     public BlockColor getColor() {
         return BlockColor.IRON_BLOCK_COLOR;
     }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")

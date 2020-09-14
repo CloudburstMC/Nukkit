@@ -6,13 +6,20 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
+import cn.nukkit.math.NukkitMath;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+
+import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageType;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
@@ -30,13 +37,27 @@ public class LongMutableBlockState extends MutableBlockState {
         this(blockId, properties, 0);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setDataStorage(Number storage) {
-        long state = storage.longValue();
+        Class<? extends Number> c = storage.getClass();
+        long state;
+        if (c == Long.class || c == Integer.class || c == Short.class || c == Byte.class) {
+            state = storage.longValue();
+        } else {
+            try {
+                state = new BigDecimal(storage.toString()).longValueExact();
+            } catch (ArithmeticException | NumberFormatException e) {
+                throw handleUnsupportedStorageType(getBlockId(), storage, e);
+            }
+        }
         validate(state);
         this.storage = state;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setDataStorageFromInt(int storage) {
         //noinspection UnnecessaryLocalVariable
@@ -45,17 +66,39 @@ public class LongMutableBlockState extends MutableBlockState {
         this.storage = state;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    void setDataStorageWithoutValidation(Number storage) {
+        this.storage = storage.longValue();
+    }
+
     @Override
     public void validate() {
         validate(storage);
     }
     
     private void validate(long state) {
-        BlockProperties properties = this.properties;
+        if (state == 0) {
+            return;
+        }
         
-        for (String name : properties.getNames()) {
-            BlockProperty<?> property = properties.getBlockProperty(name);
-            property.validateMeta(state, properties.getOffset(name));
+        BlockProperties properties = this.properties;
+        int bitLength = NukkitMath.bitLength(state);
+        if (bitLength > properties.getBitSize()) {
+            throw new InvalidBlockStateException(
+                    BlockState.of(getBlockId(), state),
+                    "The state have more data bits than specified in the properties. Bits: " + bitLength + ", Max: " + properties.getBitSize()
+            );
+        }
+
+        try {
+            for (String name : properties.getNames()) {
+                BlockProperty<?> property = properties.getBlockProperty(name);
+                property.validateMeta(state, properties.getOffset(name));
+            }
+        } catch (InvalidBlockPropertyException e) {
+            throw new InvalidBlockStateException(BlockState.of(getBlockId(), state), e);
         }
     }
 
@@ -87,16 +130,29 @@ public class LongMutableBlockState extends MutableBlockState {
         return storage;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public void setPropertyValue(String propertyName, @Nullable Object value) {
+    public boolean isDefaultState() {
+        return storage == 0;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setPropertyValue(String propertyName, @Nullable Serializable value) {
         storage = properties.setValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setBooleanValue(String propertyName, boolean value) {
         storage = properties.setBooleanValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setIntValue(String propertyName, int value) {
         storage = properties.setIntValue(storage, propertyName, value);

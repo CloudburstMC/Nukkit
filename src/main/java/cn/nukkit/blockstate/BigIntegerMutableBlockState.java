@@ -1,23 +1,40 @@
 package cn.nukkit.blockstate;
 
+import cn.nukkit.api.API;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
+import cn.nukkit.math.NukkitMath;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
+import static cn.nukkit.api.API.Definition.INTERNAL;
+import static cn.nukkit.api.API.Usage.INCUBATING;
+import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageType;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ParametersAreNonnullByDefault
 public class BigIntegerMutableBlockState extends MutableBlockState {
+    private static final Set<Class<?>> LONG_COMPATIBLE_CLASSES = new HashSet<>(Arrays.asList(
+            Long.class, Integer.class, Short.class, Byte.class));
     private BigInteger storage;
     
     public BigIntegerMutableBlockState(int blockId, BlockProperties properties, BigInteger state) {
@@ -30,25 +47,45 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         this(blockId, properties, BigInteger.ZERO);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setDataStorage(Number storage) {
         BigInteger state;
         if (storage instanceof BigInteger) {
             state = (BigInteger) storage;
-        } else if (storage instanceof Long || storage instanceof Integer) {
+        } else if (LONG_COMPATIBLE_CLASSES.contains(storage.getClass())) {
             state = BigInteger.valueOf(storage.longValue());
         } else {
-            state = new BigInteger(storage.toString());
+            try {
+                state = new BigDecimal(storage.toString()).toBigIntegerExact();
+            } catch (NumberFormatException | ArithmeticException e) {
+                throw handleUnsupportedStorageType(getBlockId(), storage, e);
+            }
         }
         validate(state);
         this.storage = state;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setDataStorageFromInt(int storage) {
         BigInteger state = BigInteger.valueOf(storage);
         validate(state);
         this.storage = state;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    @API(definition = INTERNAL, usage = INCUBATING)
+    void setDataStorageWithoutValidation(Number storage) {
+        if (storage instanceof BigInteger) {
+            this.storage = (BigInteger) storage;
+        } else {
+            this.storage = new BigInteger(storage.toString());
+        }
     }
 
     @Override
@@ -57,11 +94,25 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
     }
     
     private void validate(BigInteger state) {
+        if (BigInteger.ZERO.equals(state)) {
+            return;
+        }
         BlockProperties properties = this.properties;
+        int bitLength = NukkitMath.bitLength(state);
+        if (bitLength > properties.getBitSize()) {
+            throw new InvalidBlockStateException(
+                    BlockState.of(getBlockId(), state),
+                    "The state have more data bits than specified in the properties. Bits: " + bitLength + ", Max: " + properties.getBitSize()
+            );
+        }
         
-        for (String name : properties.getNames()) {
-            BlockProperty<?> property = properties.getBlockProperty(name);
-            property.validateMeta(state, properties.getOffset(name));
+        try {
+            for (String name : properties.getNames()) {
+                BlockProperty<?> property = properties.getBlockProperty(name);
+                property.validateMeta(state, properties.getOffset(name));
+            }
+        } catch (InvalidBlockPropertyException e) {
+            throw new InvalidBlockStateException(BlockState.of(getBlockId(), state), e);
         }
     }
 
@@ -93,16 +144,29 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         return getHugeDamage();
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public void setPropertyValue(String propertyName, @Nullable Object value) {
+    public boolean isDefaultState() {
+        return storage.equals(BigInteger.ONE);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setPropertyValue(String propertyName, @Nullable Serializable value) {
         storage = properties.setValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setBooleanValue(String propertyName, boolean value) {
         storage = properties.setValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setIntValue(String propertyName, int value) {
         storage = properties.setValue(storage, propertyName, value);
@@ -124,6 +188,10 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         return properties.getBooleanValue(storage, propertyName);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @Nonnull
     @Override
     public String getPersistenceValue(String propertyName) {

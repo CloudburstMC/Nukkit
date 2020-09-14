@@ -56,16 +56,9 @@ public class BlockBasalt extends BlockSolidMeta {
         return ItemTool.TYPE_PICKAXE;
     }
 
-    //TODO: Implement getToolTier when it is merged
-
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[] {
-                    toItem()
-            };
-        }
-        return new Item[0];
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     public BlockFace.Axis getPillarAxis() {

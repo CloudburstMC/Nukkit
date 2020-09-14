@@ -79,6 +79,11 @@ public class BlockDoubleSlabStone extends BlockDoubleSlabBase {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public BlockColor getColor() {
         return getSlabType().getColor();
     }

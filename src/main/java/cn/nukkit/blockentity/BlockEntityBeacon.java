@@ -1,13 +1,14 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
 
 import java.util.Map;
@@ -65,6 +66,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
     private long currentTick = 0;
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onUpdate() {
         //Only apply effects every 4 secs
@@ -80,13 +82,13 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         //Skip beacons that do not have a pyramid or sky access
         if (newPowerLevel < 1 || !hasSkyAccess()) {
             if (oldPowerLevel > 0) {
-                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_DEACTIVATE);
+                this.getLevel().addSound(this, Sound.BEACON_DEACTIVATE);
             }
             return true;
         } else if (oldPowerLevel < 1) {
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_ACTIVATE);
+            this.getLevel().addSound(this, Sound.BEACON_ACTIVATE);
         } else {
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_AMBIENT);
+            this.getLevel().addSound(this, Sound.BEACON_AMBIENT);
         }
 
         //Get all players in game
@@ -234,6 +236,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         }
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean updateCompoundTag(CompoundTag nbt, Player player) {
         if (!nbt.getString("id").equals(BlockEntity.BEACON)) {
@@ -243,7 +246,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         this.setPrimaryPower(nbt.getInt("primary"));
         this.setSecondaryPower(nbt.getInt("secondary"));
 
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_POWER);
+        this.getLevel().addSound(this, Sound.BEACON_POWER);
 
         BeaconInventory inv = (BeaconInventory)player.getWindowById(Player.BEACON_WINDOW_ID);
 

@@ -574,6 +574,8 @@ public class PositionTrackingStorage implements Closeable {
 
     @Override
     protected void finalize() throws Throwable {
-        persistence.close();
+        if (persistence != null) {
+            persistence.close();
+        }
     }
 }

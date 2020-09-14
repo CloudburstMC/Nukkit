@@ -17,6 +17,7 @@ import cn.nukkit.network.protocol.types.EntityLink;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -396,11 +397,11 @@ public class BinaryStream {
                     if (tag.contains("__DamageConflict__")) {
                         tag.put("Damage", tag.removeAndGet("__DamageConflict__"));
                     }
-                    if (tag.getAllTags().size() > 0) {
+                    if (!tag.getAllTags().isEmpty()) {
                         nbt = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, false);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
             setOffset(offset + (int) stream.position());
@@ -488,7 +489,7 @@ public class BinaryStream {
                 this.putByte((byte) 1);
                 this.put(NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
         } else {
             this.putLShort(0);

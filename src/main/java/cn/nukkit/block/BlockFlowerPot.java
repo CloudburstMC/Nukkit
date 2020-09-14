@@ -185,7 +185,7 @@ public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<B
         if (dropInside) {
             return new Item[]{
                     new ItemFlowerPot(),
-                    BlockState.of(insideID, insideMeta).getBlock().toItem()
+                    BlockState.of(insideID, insideMeta).getBlock(this).toItem()
             };
         } else {
             return new Item[]{

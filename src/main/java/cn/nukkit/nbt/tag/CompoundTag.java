@@ -5,6 +5,8 @@ import cn.nukkit.api.Since;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
@@ -93,7 +95,7 @@ public class CompoundTag extends Tag implements Cloneable {
         return this;
     }
 
-    public CompoundTag putString(String name, String value) {
+    public CompoundTag putString(@Nullable String name, @Nonnull String value) {
         tags.put(name, new StringTag(name, value));
         return this;
     }

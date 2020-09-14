@@ -165,7 +165,7 @@ public class BlockCactus extends BlockTransparentMeta {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.CACTUS, 0, 1)
+                Item.getBlock(BlockID.CACTUS, 0, 1)
         };
     }
 

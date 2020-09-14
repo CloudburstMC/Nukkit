@@ -38,13 +38,18 @@ public class BlockOreRedstone extends BlockSolid {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_IRON;
+    }
+
+    @Override
     public String getName() {
         return "Redstone Ore";
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
+        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             int count = new Random().nextInt(2) + 4;
 
             Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);

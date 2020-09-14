@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -327,9 +328,8 @@ public class AnvilInventory extends FakeBlockUIComponent {
         return setItem(2, item, send);
     }
 
-    /**
-     * @deprecated the client won't see this change, and the transaction might fail. This method will be removed from public in 1.3.0.0-PN.
-     */
+    @DeprecationDetails(since = "TBD", reason = "the client won't see this change, and the transaction might fail",
+        toBeRemovedAt = "1.4.0.0-PN")
     @Deprecated
     public boolean setResult(Item item) {
         if (item == null || item.isNull()) {
@@ -378,6 +378,10 @@ public class AnvilInventory extends FakeBlockUIComponent {
             case Item.IRON_CHESTPLATE:
             case Item.IRON_LEGGINGS:
             case Item.IRON_BOOTS:
+            case Item.CHAIN_HELMET:
+            case Item.CHAIN_CHESTPLATE:
+            case Item.CHAIN_LEGGINGS:
+            case Item.CHAIN_BOOTS:
                 return Item.IRON_INGOT;
         
             case Item.GOLD_SWORD:

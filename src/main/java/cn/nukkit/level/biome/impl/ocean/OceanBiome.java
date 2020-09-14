@@ -1,6 +1,7 @@
 package cn.nukkit.level.biome.impl.ocean;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.api.RemovedFromNewRakNet;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.biome.type.WateryBiome;
 
 /**
@@ -18,7 +19,13 @@ public class OceanBiome extends WateryBiome {
         return "Ocean";
     }
 
-    public int getGroundId(int y) {
-        return GRAVEL << Block.DATA_BITS;
+    @RemovedFromNewRakNet
+    @Since("1.4.0.0-PN")
+    @Override
+    public int getGroundBlock(int y) {
+        if (useNewRakNetGround()) {
+            return getGroundId(0,y,0) >> 4;
+        }
+        return GRAVEL;
     }
 }

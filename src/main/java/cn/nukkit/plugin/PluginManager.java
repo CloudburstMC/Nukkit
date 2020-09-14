@@ -202,7 +202,7 @@ public class PluginManager {
 
                                 try {
                                     //Check the format: majorVersion.minorVersion.patch
-                                    if (!Pattern.matches("^[0-9]+(\\.[0-9]+){0,2}$", version)) {
+                                    if (!Pattern.matches("^[0-9]+\\.[0-9]+\\.[0-9]+$", version)) {
                                         throw new IllegalArgumentException();
                                     }
                                 } catch (NullPointerException | IllegalArgumentException e) {

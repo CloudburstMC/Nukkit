@@ -2,14 +2,18 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.math.BigInteger;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public final class BooleanBlockProperty extends BlockProperty<Boolean> {
+    private static final long serialVersionUID = 8249827149092664486L;
+    
     private final boolean defaultValue;
 
     @PowerNukkitOnly
@@ -84,14 +88,27 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
         return (currentBigMeta & mask) == mask;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean getBooleanValue(BigInteger currentHugeData, int bitOffset) {
+        BigInteger mask = BigInteger.ONE.shiftLeft(bitOffset);
+        return mask.equals(currentHugeData.and(mask));
+    }
+
     @Override
     public int getIntValue(int currentMeta, int bitOffset) {
         return getBooleanValue(currentMeta, bitOffset)? 1 : 0;
     }
 
+    /**
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @Override
     public int getIntValueForMeta(int meta) {
-        return meta & 1;
+        if (meta == 1 || meta == 0) {
+            return meta;
+        }
+        throw new InvalidBlockPropertyMetaException(this, meta, meta, "Only 1 or 0 was expected");
     }
 
     @Override
@@ -99,16 +116,28 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
         return Boolean.TRUE.equals(value)? 1 : 0;
     }
 
+    /**
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @Nonnull
     @Override
     public Boolean getValueForMeta(int meta) {
         return getBooleanValueForMeta(meta);
     }
 
+    /**
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean getBooleanValueForMeta(int meta) {
-        return (meta & 1) == 1;
+        if (meta == 0) {
+            return false;
+        } else if (meta == 1) {
+            return true;
+        } else {
+            throw new InvalidBlockPropertyMetaException(this, meta, meta, "Only 1 or 0 was expected");
+        }
     }
 
     @PowerNukkitOnly
@@ -118,10 +147,11 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
     }
 
     @Override
-    protected void validateMeta(int meta) {
+    protected void validateMetaDirectly(int meta) {
         Preconditions.checkArgument(meta == 1 || meta == 0, "Must be 1 or 0");
     }
 
+    @Nonnull
     @Override
     public Class<Boolean> getValueClass() {
         return Boolean.class;
@@ -129,6 +159,12 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
 
     @Override
     public String getPersistenceValueForMeta(int meta) {
-        return meta == 1? "1" : "0";
+        if (meta == 1) {
+            return "1";
+        } else if (meta == 0) {
+            return "0";
+        } else {
+            throw new InvalidBlockPropertyMetaException(this, meta, meta, "Only 1 or 0 was expected");
+        }
     }
 }

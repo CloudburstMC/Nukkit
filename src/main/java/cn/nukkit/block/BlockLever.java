@@ -80,11 +80,6 @@ public class BlockLever extends BlockFlowable implements Faceable {
         return new ItemBlock(this, 0);
     }
 
-    @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{toItem()};
-    }
-
     public boolean isPowerOn() {
         return getBooleanValue(OPEN);
     }

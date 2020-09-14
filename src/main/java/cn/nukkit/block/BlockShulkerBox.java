@@ -21,7 +21,9 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
     }
 
     public BlockShulkerBox(int meta) {
-        getMutableState().setDataStorageFromInt(meta);
+        if (meta != 0) {
+            getMutableState().setDataStorageFromInt(meta, true);
+        }
     }
 
     @Since("1.4.0.0-PN")

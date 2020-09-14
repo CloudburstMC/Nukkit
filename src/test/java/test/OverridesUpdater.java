@@ -5,7 +5,6 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.utils.HumanStringComparator;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -16,8 +15,6 @@ import java.io.*;
 import java.nio.ByteOrder;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class OverridesUpdater {
     public static void main(String[] args) throws IOException {
@@ -108,28 +105,19 @@ public class OverridesUpdater {
 
         for (BlockInfo info : infoList.values()) {
             String stateName = info.getStateName();
+            
+            if (stateName.contains("torch")) {
+                continue;
+            }
 
             CompoundTag override = new CompoundTag();
             override.putCompound("block", info.getKey().copy());
             override.putList((ListTag<? extends Tag>) info.getOverride().copy());
             
-            
-            /*switch (stateName) {
-                case "minecraft:light_block;block_light_level=14":
-                    break;
-                case "minecraft:wood;wood_type=acacia;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=birch;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=dark_oak;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=jungle;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=oak;stripped_bit=0;pillar_axis=y":
-                case "minecraft:wood;wood_type=spruce;stripped_bit=0;pillar_axis=y":
-                    continue;
-            }*/
-
             newOverrides.add(override);
         }
       
-        SortedMap<String, CompoundTag> sorted = new TreeMap<>(new HumanStringComparator());
+        /*SortedMap<String, CompoundTag> sorted = new TreeMap<>(new HumanStringComparator());
         for (CompoundTag tag : originalTags.values()) {
             sorted.put(new BlockInfo(tag.getCompound("block"), tag, new ListTag<>(), new ListTag<>()).getStateName(), tag);
         }
@@ -143,9 +131,9 @@ public class OverridesUpdater {
             
             CompoundTag override = new CompoundTag();
             override.putCompound("block", tag.getCompound("block").remove("version"));
-            override.putList(new ListTag<>("LegacyStates")/*.add(new CompoundTag().putInt("id", blockId).putInt("val", 0))*/);
+            override.putList(new ListTag<>("LegacyStates")*//*.add(new CompoundTag().putInt("id", blockId).putInt("val", 0))*//*);
             newOverrides.add(override);
-        }
+        }*/
 
         byte[] bytes = NBTIO.write(new CompoundTag().putList(newOverrides));
         try(FileOutputStream fos = new FileOutputStream("runtime_block_states_overrides.dat")) {

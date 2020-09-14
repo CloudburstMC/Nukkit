@@ -1,8 +1,14 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.Since;
 import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
+@PowerNukkitDifference(info = "Default sound method changed to addSound", since = "1.4.0.0-PN")
+@Deprecated
+@DeprecationDetails(reason = "Old method, use addSound(pos, Sound.<SOUND_VALUE>).", since = "1.4.0.0-PN")
 @ToString
 public class LevelSoundEventPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.LEVEL_SOUND_EVENT_PACKET;
@@ -259,7 +265,7 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_CANT_BREED = 254;
     public static final int SOUND_UNDEFINED = 255;
     
-    public static final int SOUND_RECORD_PIGSTEP = 314;
+    @Since("1.4.0.0-PN") public static final int SOUND_RECORD_PIGSTEP = 314;
 
     public int sound;
     public float x;

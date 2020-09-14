@@ -5,8 +5,10 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
@@ -120,7 +122,12 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly
     @Override
     public Block getAndSetBlock(int x, int y, int z, int layer, Block block) {
-        return getAndSetBlockState(x, y, z, layer, block.getCurrentState()).getBlock();
+        BlockState state = getAndSetBlockState(x, y, z, layer, block.getCurrentState());
+        try {
+            return state.getBlock();
+        } catch (InvalidBlockStateException e) {
+            return new BlockUnknown(state.getBlockId(), state.getExactIntStorage());
+        }
     }
 
     @Deprecated

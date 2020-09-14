@@ -64,6 +64,11 @@ public class BlockBricksStone extends BlockSolidMeta {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public boolean canHarvestWithHand() {
         return false;
     }

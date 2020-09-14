@@ -1,8 +1,11 @@
 package cn.nukkit.level.format.anvil.util;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockStone;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.utils.BinaryStream;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +32,12 @@ class BlockStorageTest {
     int x;
     int y;
     int z;
-    
+
+    @BeforeAll
+    static void beforeAll() {
+        Block.init();
+    }
+
     @BeforeEach
     void setUp() {
         blockStorage = new BlockStorage();
@@ -368,5 +376,14 @@ class BlockStorageTest {
         assertEquals(STATUS_DENY, blockStorage.getBlockChangeStateAbove(x, y+3, z));
         assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+4, z));
         assertEquals(STATUS_ALLOW, blockStorage.getBlockChangeStateAbove(x, y+5, z));
+    }
+
+    @Test
+    void writeToWithInvalidData() {
+        assertFalse(blockStorage.isPaletteUpdateDelayed());
+        blockStorage.setBlockState(x, y, z, BlockState.of(BlockID.POLISHED_BLACKSTONE_BRICK_WALL, 7));
+        assertTrue(blockStorage.isPaletteUpdateDelayed());
+        BinaryStream stream = new BinaryStream();
+        blockStorage.writeTo(stream);
     }
 }

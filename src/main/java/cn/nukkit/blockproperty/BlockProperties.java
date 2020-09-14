@@ -2,6 +2,8 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.blockstate.BigIntegerMutableBlockState;
 import cn.nukkit.blockstate.IntMutableBlockState;
 import cn.nukkit.blockstate.LongMutableBlockState;
@@ -10,11 +12,12 @@ import cn.nukkit.utils.functional.ToIntTriFunctionTwoInts;
 import cn.nukkit.utils.functional.ToLongTriFunctionOneIntOneLong;
 import cn.nukkit.utils.functional.TriFunction;
 import com.google.common.base.Preconditions;
-import lombok.RequiredArgsConstructor;
+import lombok.Value;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.function.Consumer;
@@ -27,6 +30,9 @@ public final class BlockProperties {
     private final Map<String, RegisteredBlockProperty> byName;
     private final int bitSize;
 
+    /**
+     * @throws IllegalArgumentException If there are validation failures
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0")
     public BlockProperties(BlockProperty<?>... properties) {
@@ -54,7 +60,10 @@ public final class BlockProperties {
         this.byName = Collections.unmodifiableMap(registry);
         bitSize = offset;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
     public MutableBlockState createMutableState(int blockId) {
         if (bitSize <= 32) {
             return new IntMutableBlockState(blockId, this);
@@ -65,87 +74,107 @@ public final class BlockProperties {
         }
     }
     
-    public MutableBlockState createMutableState(int blockId, Number storage) {
-        if (bitSize <= 32) {
-            if (storage instanceof Integer) {
-                return new IntMutableBlockState(blockId, this, storage.intValue());
-            } else {
-                throw new IllegalArgumentException("Incompatible storage type "+storage.getClass()+", expected Integer");
-            }
-        } else if (bitSize <= 64) {
-            if (storage instanceof Long || storage instanceof Integer) {
-                return new LongMutableBlockState(blockId, this, storage.longValue());
-            } else {
-                throw new IllegalArgumentException("Incompatible storage type "+storage.getClass()+", expected Long or Integer");
-            }
-        }
-        
-        if (storage instanceof BigInteger) {
-            return new BigIntegerMutableBlockState(blockId, this, (BigInteger) storage);
-        } else if (storage instanceof Long || storage instanceof Integer) {
-            return new BigIntegerMutableBlockState(blockId, this, new BigInteger(storage.toString()));
-        } else {
-            throw new IllegalArgumentException("Incompatible storage type "+storage.getClass()+", expected BigInteger, Long or Integer");
-        }
-    }
-
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean contains(String propertyName) {
-        return getRegisteredProperty(propertyName) != null;
+        return byName.containsKey(propertyName);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    @Nonnull
     @SuppressWarnings("java:S1452")
     public BlockProperty<?> getBlockProperty(String propertyName) {
-        return getRegisteredProperty(propertyName).property;
+        return requireRegisteredProperty(propertyName).property;
+    }
+    /**
+     * 
+     * @throws NoSuchElementException If the property is not registered
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public <T extends BlockProperty<?>> T getBlockProperty(String propertyName, Class<T> tClass) {
+        return tClass.cast(requireRegisteredProperty(propertyName).property);
+    }
+
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getOffset(String propertyName) {
+        return requireRegisteredProperty(propertyName).offset;
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public <T extends BlockProperty<?>> T getBlockProperty(String propertyName, Class<T> tClass) {
-        return tClass.cast(getRegisteredProperty(propertyName).property);
-    }
-    
-    public int getOffset(String propertyName) {
-        return getRegisteredProperty(propertyName).offset;
-    }
-    
+    @Nonnull
     public Set<String> getNames() {
         return byName.keySet();
     }
-    
-    private RegisteredBlockProperty getRegisteredProperty(String propertyName) {
-        RegisteredBlockProperty registry = byName.get(propertyName);
-        return Preconditions.checkNotNull(registry, "The property %s was not found", propertyName);
-    }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    @Nonnull
+    public Collection<RegisteredBlockProperty> getAllProperties() {
+        return byName.values();
+    }
+
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public RegisteredBlockProperty requireRegisteredProperty(String propertyName) {
+        RegisteredBlockProperty registry = byName.get(propertyName);
+        if (registry == null) {
+            throw new NoSuchElementException("The property "+propertyName+" was not found");
+        }
+        return registry;
+    }
+
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
-    public int setValue(int currentMeta, String propertyName, @Nullable Object value) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+    public int setValue(int currentMeta, String propertyName, @Nullable Serializable value) {
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         @SuppressWarnings({"rawtypes", "java:S3740"}) 
         BlockProperty unchecked = registry.property;
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
-    public long setValue(long currentMeta, String propertyName, @Nullable Object value) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+    public long setValue(long currentMeta, String propertyName, @Nullable Serializable value) {
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         @SuppressWarnings({"rawtypes", "java:S3740"})
         BlockProperty unchecked = registry.property;
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
     public int setBooleanValue(int currentMeta, String propertyName, boolean value) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         BlockProperty<?> property = registry.property;
         if (BooleanBlockProperty.class == property.getClass()) {
             return ((BooleanBlockProperty) property).setValue(currentMeta, registry.offset, value);
@@ -156,11 +185,15 @@ public final class BlockProperties {
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
     public long setBooleanValue(long currentMeta, String propertyName, boolean value) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         BlockProperty<?> property = registry.property;
         if (BooleanBlockProperty.class == property.getClass()) {
             return ((BooleanBlockProperty) property).setValue(currentMeta, registry.offset, value);
@@ -171,11 +204,15 @@ public final class BlockProperties {
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
     public BigInteger setBooleanValue(BigInteger currentMeta, String propertyName, boolean value) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         BlockProperty<?> property = registry.property;
         if (BooleanBlockProperty.class == property.getClass()) {
             return ((BooleanBlockProperty) property).setValue(currentMeta, registry.offset, value);
@@ -186,11 +223,15 @@ public final class BlockProperties {
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
     public int setIntValue(int currentMeta, String propertyName, int value) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         BlockProperty<?> property = registry.property;
         if (IntBlockProperty.class == property.getClass()) {
             return ((IntBlockProperty) property).setValue(currentMeta, registry.offset, value);
@@ -203,11 +244,15 @@ public final class BlockProperties {
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
     public long setIntValue(long currentMeta, String propertyName, int value) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         BlockProperty<?> property = registry.property;
         if (IntBlockProperty.class == property.getClass()) {
             return ((IntBlockProperty) property).setValue(currentMeta, registry.offset, value);
@@ -220,11 +265,15 @@ public final class BlockProperties {
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
     public BigInteger setIntValue(BigInteger currentMeta, String propertyName, int value) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         BlockProperty<?> property = registry.property;
         if (IntBlockProperty.class == property.getClass()) {
             return ((IntBlockProperty) property).setValue(currentMeta, registry.offset, value);
@@ -237,145 +286,242 @@ public final class BlockProperties {
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("unchecked")
     @Nonnull
-    public BigInteger setValue(BigInteger currentMeta, String propertyName, @Nullable Object value) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+    public BigInteger setValue(BigInteger currentMeta, String propertyName, @Nullable Serializable value) {
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         @SuppressWarnings({"rawtypes", "java:S3740"})
         BlockProperty unchecked = registry.property;
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     public Object getValue(int currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     public Object getValue(long currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     public Object getValue(BigInteger currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     * @throws ClassCastException If the property value is not assignable to the given class
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     public <T> T getCheckedValue(int currentMeta, String propertyName, Class<T> tClass) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return tClass.cast(registry.property.getValue(currentMeta, registry.offset));
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     * @throws ClassCastException If the property value is not assignable to the given class
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     public <T> T getCheckedValue(long currentMeta, String propertyName, Class<T> tClass) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return tClass.cast(registry.property.getValue(currentMeta, registry.offset));
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     * @throws ClassCastException If the property value is not assignable to the given class
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     public <T> T getCheckedValue(BigInteger currentMeta, String propertyName, Class<T> tClass) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return tClass.cast(registry.property.getValue(currentMeta, registry.offset));
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     @SuppressWarnings("unchecked")
     public <T> T getUncheckedValue(int currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return (T) registry.property.getValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     @SuppressWarnings("unchecked")
     public <T> T getUncheckedValue(long currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return (T) registry.property.getValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     @SuppressWarnings("unchecked")
     public <T> T getUncheckedValue(BigInteger currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return (T) registry.property.getValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getIntValue(int currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getIntValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getIntValue(long currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getIntValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getIntValue(BigInteger currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getIntValue(currentMeta, registry.offset);
     }
-    
+
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     public String getPersistenceValue(int currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getPersistenceValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     public String getPersistenceValue(long currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getPersistenceValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     */
     public String getPersistenceValue(BigInteger currentMeta, String propertyName) {
-        RegisteredBlockProperty registry = getRegisteredProperty(propertyName);
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getPersistenceValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     * @throws ClassCastException If the property don't hold boolean values
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean getBooleanValue(int currentMeta, String propertyName) {
-        return getIntValue(currentMeta, propertyName) == 1;
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
+        if (registry.property instanceof BooleanBlockProperty) {
+            return ((BooleanBlockProperty) registry.property).getBooleanValue(currentMeta, registry.offset);
+        }
+
+        return (Boolean) registry.property.getValue(currentMeta, registry.offset);
     }
 
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     * @throws ClassCastException If the property don't hold boolean values
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean getBooleanValue(long currentMeta, String propertyName) {
-        return getIntValue(currentMeta, propertyName) == 1;
-    }
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
+        if (registry.property instanceof BooleanBlockProperty) {
+            return ((BooleanBlockProperty) registry.property).getBooleanValue(currentMeta, registry.offset);
+        }
 
+        return (Boolean) registry.property.getValue(currentMeta, registry.offset);
+    }
+    
+    /**
+     * @throws NoSuchElementException If the property is not registered
+     * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
+     * @throws ClassCastException If the property don't hold boolean values
+     */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean getBooleanValue(BigInteger currentMeta, String propertyName) {
-        return getIntValue(currentMeta, propertyName) == 1;
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
+        if (registry.property instanceof BooleanBlockProperty) {
+            return ((BooleanBlockProperty) registry.property).getBooleanValue(currentMeta, registry.offset);
+        }
+
+        return (Boolean) registry.property.getValue(currentMeta, registry.offset);
     }
 
     public int getBitSize() {
@@ -439,11 +585,46 @@ public final class BlockProperties {
                 '}';
     }
 
-    @RequiredArgsConstructor
-    private static final class RegisteredBlockProperty {
-        private final BlockProperty<?> property;
-        private final int offset;
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Value
+    public static class RegisteredBlockProperty {
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        @Nonnull
+        BlockProperty<?> property;
 
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        int offset;
+
+        /**
+         * @throws InvalidBlockPropertyMetaException if the value in the meta at the given offset is not valid
+         */
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        public void validateMeta(int meta) {
+            property.validateMeta(meta, offset);
+        }
+
+        /**
+         * @throws InvalidBlockPropertyMetaException if the value in the meta at the given offset is not valid
+         */
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        public void validateMeta(long meta) {
+            property.validateMeta(meta, offset);
+        }
+
+        /**
+         * @throws InvalidBlockPropertyMetaException if the value in the meta at the given offset is not valid
+         */
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        public void validateMeta(BigInteger meta) {
+            property.validateMeta(meta, offset);
+        }
+        
         @Override
         public String toString() {
             return offset+"-"+(offset+property.getBitSize())+":"+property.getName();

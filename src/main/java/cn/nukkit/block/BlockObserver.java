@@ -65,6 +65,11 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public double getHardness() {
         return 3.5;
     }

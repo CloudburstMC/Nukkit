@@ -164,7 +164,7 @@
 163,minecraft:acacia_stairs
 164,minecraft:dark_oak_stairs
 165,minecraft:slime
-166,
+166,minecraft:glow_stick
 167,minecraft:iron_trapdoor
 168,minecraft:prismarine
 169,minecraft:sealantern
@@ -228,7 +228,7 @@
 227,minecraft:gray_glazed_terracotta
 228,minecraft:silver_glazed_terracotta
 229,minecraft:cyan_glazed_terracotta
-230,
+230,minecraft:chalkboard
 231,minecraft:blue_glazed_terracotta
 232,minecraft:brown_glazed_terracotta
 233,minecraft:green_glazed_terracotta
@@ -240,7 +240,7 @@
 239,minecraft:underwater_torch
 240,minecraft:chorus_plant
 241,minecraft:stained_glass
-242,
+242,minecraft:camera
 243,minecraft:podzol
 244,minecraft:beetroot
 245,minecraft:stonecutter

@@ -5,10 +5,14 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
+import cn.nukkit.blockproperty.value.DirtType;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * @author xtypr
@@ -41,6 +45,23 @@ public class BlockPodzol extends BlockDirt {
     @Override
     public String getName() {
         return "Podzol";
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Optional<DirtType> getDirtType() {
+        return Optional.empty();
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setDirtType(@Nullable DirtType dirtType) {
+        if (dirtType != null) {
+            throw new InvalidBlockPropertyValueException(DIRT_TYPE, null, dirtType, getName()+" don't support DirtType");
+        }
     }
 
     @Override

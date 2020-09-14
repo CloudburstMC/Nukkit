@@ -82,6 +82,7 @@ import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.CompressionType;
@@ -255,6 +256,50 @@ public class Server {
     private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
 
     private final Set<String> ignoredPackets = new HashSet<>();
+
+    /**
+     * Minimal initializer for testing
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    Server(File tempDir) throws IOException {
+        if (tempDir.isFile() && !tempDir.delete()) {
+            throw new IOException("Failed to delete " + tempDir);
+        }
+        instance = this;
+        CraftingManager.packet = new BatchPacket();
+        CraftingManager.packet.payload = new byte[0];
+        
+        currentThread = Thread.currentThread();
+        File abs = tempDir.getAbsoluteFile();
+        filePath = abs.getPath();
+        dataPath = filePath;
+        
+        File dir = new File(tempDir, "plugins");
+        pluginPath = dir.getPath();
+        
+        Files.createParentDirs(dir);
+        Files.createParentDirs(new File(tempDir, "worlds"));
+        Files.createParentDirs(new File(tempDir, "players"));
+        
+        baseLang = new BaseLang(BaseLang.FALLBACK_LANGUAGE);
+        
+        console = new NukkitConsole(this);
+        consoleThread = new ConsoleThread();
+        config = new Config();
+        properties = new Config();
+        banByName = new BanList(dataPath + "banned-players.json");
+        banByIP = new BanList(dataPath + "banned-ips.json");
+        operators = new Config();
+        whitelist = new Config();
+        commandMap = new SimpleCommandMap(this);
+        
+        setMaxPlayers(10);
+
+        this.registerEntities();
+        this.registerBlockEntities();
+    }
 
     Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
