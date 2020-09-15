@@ -4,6 +4,8 @@ import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSeedsPumpkin;
@@ -12,6 +14,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Faceable;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Pub4Game
@@ -38,6 +42,14 @@ public class BlockStemPumpkin extends BlockCrops implements Faceable {
     @Override
     public String getName() {
         return "Pumpkin Stem";
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.LEGACY_BIG_PROPERTIES;
     }
 
     @PowerNukkitOnly("Implements Faceable only on PowerNukkit since 1.3.0.0-PN")
