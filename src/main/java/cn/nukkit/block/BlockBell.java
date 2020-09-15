@@ -342,7 +342,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
-    public boolean onProjectileHit(@Nonnull Entity projectile) {
+    public boolean onProjectileHit(@Nonnull Entity projectile, @Nonnull Position position, @Nonnull Vector3 motion) {
         ring(projectile, BellRingEvent.RingCause.PROJECTILE);
         if (projectile.isOnFire() && projectile instanceof EntityArrow && level.getBlock(projectile).getId() == BlockID.AIR) {
             level.setBlock(projectile, Block.get(BlockID.FIRE), true);

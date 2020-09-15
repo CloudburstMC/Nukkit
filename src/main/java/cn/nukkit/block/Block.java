@@ -1651,20 +1651,20 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             return null;
         }
 
-        int f = -1;
+        BlockFace f = null;
 
         if (vector == v1) {
-            f = 4;
+            f = BlockFace.WEST;
         } else if (vector == v2) {
-            f = 5;
+            f = BlockFace.EAST;
         } else if (vector == v3) {
-            f = 0;
+            f = BlockFace.DOWN;
         } else if (vector == v4) {
-            f = 1;
+            f = BlockFace.UP;
         } else if (vector == v5) {
-            f = 2;
+            f = BlockFace.NORTH;
         } else if (vector == v6) {
-            f = 3;
+            f = BlockFace.SOUTH;
         }
 
         return MovingObjectPosition.fromBlock((int) this.x, (int) this.y, (int) this.z, f, vector.add(this.x, this.y, this.z));
@@ -2043,7 +2043,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public boolean onProjectileHit(@Nonnull Entity projectile) {
+    public boolean onProjectileHit(@Nonnull Entity projectile, @Nonnull Position position, @Nonnull Vector3 motion) {
         return false;
     }
 

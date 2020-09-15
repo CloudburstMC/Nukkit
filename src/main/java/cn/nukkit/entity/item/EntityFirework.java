@@ -11,8 +11,10 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -107,13 +109,15 @@ public class EntityFirework extends Entity {
             this.motionX *= 1.15D;
             this.motionZ *= 1.15D;
             this.motionY += 0.04D;
+            Position position = getPosition();
+            Vector3 motion = getMotion();
             this.move(this.motionX, this.motionY, this.motionZ);
 
             if (this.isCollided && !this.hadCollision) { //collide with block
                 this.hadCollision = true;
 
                 for (Block collisionBlock : level.getCollisionBlocks(getBoundingBox().grow(0.1, 0.1, 0.1))) {
-                    collisionBlock.onProjectileHit(this);
+                    collisionBlock.onProjectileHit(this, position, motion);
                 }
                 
             } else if (!this.isCollided && this.hadCollision) {

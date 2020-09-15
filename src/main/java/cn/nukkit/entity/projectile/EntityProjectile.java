@@ -10,6 +10,7 @@ import cn.nukkit.entity.item.EntityEndCrystal;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.MovingObjectPosition;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
@@ -187,6 +188,8 @@ public abstract class EntityProjectile extends Entity {
                 }
             }
 
+            Position position = getPosition();
+            Vector3 motion = getMotion();
             this.move(this.motionX, this.motionY, this.motionZ);
 
             if (this.isCollided && !this.hadCollision) { //collide with block
@@ -197,7 +200,7 @@ public abstract class EntityProjectile extends Entity {
                 this.motionZ = 0;
 
                 this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
-                onCollideWithBlock();
+                onCollideWithBlock(position, motion);
                 addHitEffect();
                 return false;
             } else if (!this.isCollided && this.hadCollision) {
@@ -231,15 +234,17 @@ public abstract class EntityProjectile extends Entity {
     }
 
     @PowerNukkitOnly
-    protected void onCollideWithBlock() {
+    @Since("1.4.0.0-PN")
+    protected void onCollideWithBlock(Position position, Vector3 motion) {
         for (Block collisionBlock : level.getCollisionBlocks(getBoundingBox().grow(0.1, 0.1, 0.1))) {
-            onCollideWithBlock(collisionBlock);
+            onCollideWithBlock(position, motion, collisionBlock);
         }
     }
 
     @PowerNukkitOnly
-    protected boolean onCollideWithBlock(Block collisionBlock) {
-        return collisionBlock.onProjectileHit(this);
+    @Since("1.4.0.0-PN")
+    protected boolean onCollideWithBlock(Position position, Vector3 motion, Block collisionBlock) {
+        return collisionBlock.onProjectileHit(this, position, motion);
     }
 
     @PowerNukkitOnly

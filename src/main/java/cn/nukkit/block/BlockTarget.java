@@ -9,12 +9,18 @@ import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockFace.Axis;
 import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author joserobjr
@@ -123,23 +129,29 @@ public class BlockTarget extends BlockTransparent implements BlockEntityHolder<B
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
-    public boolean onProjectileHit(@Nonnull Entity projectile) {
+    public boolean onProjectileHit(@Nonnull Entity projectile, @Nonnull Position position, @Nonnull Vector3 motion) {
         int ticks = 8;
         if (projectile instanceof EntityArrow || projectile instanceof EntityThrownTrident) {
             ticks = 20;
         }
 
-        Position relative = subtract(projectile);
-        double discard = Math.min(Math.min(relative.x, relative.y), relative.z);
-        double[] coords = new double[2];
-        int i = 0;
-        for (double coord: new double[]{relative.x, relative.y, relative.z}) {
-            if (coord != discard) {
-                coords[i++] = coord;
-            }
+        MovingObjectPosition intercept = calculateIntercept(position, position.add(motion.multiply(2)));
+        if (intercept == null) {
+            return false;
         }
 
-        for (i = 0; i < 2 ; i++) {
+        BlockFace faceHit = intercept.getFaceHit();
+        if (faceHit == null) {
+            return false;
+        }
+
+        Vector3 hitVector = intercept.hitVector.subtract(x*2, y*2, z*2);
+        List<Axis> axes = new ArrayList<>(Arrays.asList(Axis.values()));
+        axes.remove(faceHit.getAxis());
+        
+        double[] coords = new double[] { hitVector.getAxis(axes.get(0)), hitVector.getAxis(axes.get(1)) };
+
+        for (int i = 0; i < 2 ; i++) {
             if (coords[i] == 0.5) {
                 coords[i] = 1;
             } else if (coords[i] <= 0 || coords[i] >= 1) {
@@ -150,9 +162,9 @@ public class BlockTarget extends BlockTransparent implements BlockEntityHolder<B
                 coords[i] = (coords[i] / (-0.5)) + 2;
             }
         }
-        
+
         double scale = (coords[0] + coords[1]) / 2;
-        activatePower(NukkitMath.ceilDouble(15 * scale), ticks);
+        activatePower(NukkitMath.ceilDouble(16 * scale), ticks);
         return true;
     }
 
