@@ -1,11 +1,13 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.EntityEventPacket;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -153,6 +155,11 @@ public class EntityArrow extends EntityProjectile {
     @Override
     protected void addHitEffect() {
         this.level.addSound(this, Sound.RANDOM_BOWHIT);
+        EntityEventPacket packet = new EntityEventPacket();
+        packet.eid = getId();
+        packet.event = EntityEventPacket.ARROW_SHAKE;
+        packet.data = 7; // TODO Magic value. I have no idea why we have to set it to 7 here...
+        Server.broadcastPacket(this.hasSpawned.values(), packet);
     }
 
     @Override
