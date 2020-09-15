@@ -160,6 +160,8 @@ public class EntityArrow extends EntityProjectile {
         packet.event = EntityEventPacket.ARROW_SHAKE;
         packet.data = 7; // TODO Magic value. I have no idea why we have to set it to 7 here...
         Server.broadcastPacket(this.hasSpawned.values(), packet);
+        
+        onGround = true;
     }
 
     @Override
