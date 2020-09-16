@@ -97,6 +97,12 @@ public abstract class BlockCropsStem extends BlockCrops implements Faceable {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
+            BlockFace blockFace = getBlockFace();
+            if (blockFace.getAxis().isHorizontal() && getSide(blockFace).getId() != getFruitId()) {
+                setBlockFace(null);
+                getLevel().setBlock(this, this);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
             return 0;
         }
         
