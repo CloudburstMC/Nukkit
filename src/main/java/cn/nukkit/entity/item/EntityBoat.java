@@ -98,6 +98,11 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
+    public String getInteractButtonText() {
+        return "action.interact.ride.boat";
+    }
+
+    @Override
     public boolean attack(EntityDamageEvent source) {
         if (invulnerable) {
             return false;

@@ -36,6 +36,11 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
     }
 
     @Override
+    public String getInteractButtonText() {
+        return "action.interact.ride.minecart";
+    }
+
+    @Override
     public boolean isRideable() {
         return true;
     }
