@@ -891,7 +891,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         setTimePacket.time = this.level.getTime();
         this.dataPacket(setTimePacket);
 
-        Position pos = this.level.getSafeSpawn(this);
+        Position pos;
+        if(this.server.isSafeSpawn()) {
+            pos = this.level.getSafeSpawn(this);
+        } else {
+            pos = new Position(this.forceMovement.x,this.forceMovement.y,this.forceMovement.z,this.level);
+        }
+
 
         PlayerRespawnEvent respawnEvent = new PlayerRespawnEvent(this, pos, true);
 
