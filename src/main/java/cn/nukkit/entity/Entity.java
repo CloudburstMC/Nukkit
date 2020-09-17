@@ -16,6 +16,8 @@ import cn.nukkit.event.entity.EntityPortalEnterEvent.PortalType;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
+import cn.nukkit.inventory.PlayerInventory;
+import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.*;
 import cn.nukkit.level.format.FullChunk;
@@ -1199,7 +1201,39 @@ public abstract class Entity extends Location implements Metadatable {
             this.setAbsorption(Math.max(0, this.getAbsorption() + source.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION)));
         }
         setLastDamageCause(source);
-        setHealth(getHealth() - source.getFinalDamage());
+        float health = getHealth() - source.getFinalDamage();
+        if (health < 1 && this.isPlayer) {
+            if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.SUICIDE) {
+                Player p = (Player) this;
+                PlayerOffhandInventory offhandInventory = p.getOffhandInventory();
+                PlayerInventory playerInventory = p.getInventory();
+                if (offhandInventory.getItem(0).getId() == Item.TOTEM || playerInventory.getItemInHand().getId() == Item.TOTEM) {
+                    this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
+                    this.extinguish();
+                    this.removeAllEffects();
+                    this.setHealth(1);
+
+                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
+
+                    EntityEventPacket pk = new EntityEventPacket();
+                    pk.eid = this.getId();
+                    pk.event = EntityEventPacket.CONSUME_TOTEM;
+                    p.dataPacket(pk);
+
+                    if (offhandInventory.getItem(0).getId() == Item.TOTEM) {
+                        offhandInventory.clear(0);
+                    } else {
+                        playerInventory.clear(playerInventory.getHeldItemIndex());
+                    }
+
+                    source.setCancelled(true);
+                    return false;
+                }
+            }
+        }
+        setHealth(health);
         return true;
     }
 
