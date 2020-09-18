@@ -11,6 +11,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBed;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
@@ -100,15 +101,6 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
             return true;
         }
 
-        int time = this.getLevel().getTime() % Level.TIME_FULL;
-
-        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
-
-        if (player != null && !isNight) {
-            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
-            return true;
-        }
-
         Block blockNorth = this.north();
         Block blockSouth = this.south();
         Block blockEast = this.east();
@@ -133,6 +125,23 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
 
                 return true;
             }
+        }
+
+        if (player != null) {
+            Location spawn = Location.fromObject(b.add(0.5, 0.5, 0.5), player.getLevel(), player.getYaw(), player.getPitch());
+            if (!player.getSpawn().equals(spawn)) {
+                player.setSpawn(spawn);
+                player.sendMessage(new TranslationContainer("tile.bed.respawnSet"));
+            }
+        }
+
+        int time = this.getLevel().getTime() % Level.TIME_FULL;
+
+        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
+
+        if (player != null && !isNight) {
+            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
+            return true;
         }
 
         if (player != null && !player.sleepOn(b)) {
