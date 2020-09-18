@@ -348,6 +348,19 @@ public class Vector3 implements Cloneable {
         return this;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public double getAxis(BlockFace.Axis axis) {
+        switch (axis) {
+            case X:
+                return x;
+            case Y:
+                return y;
+            default:
+                return z;
+        }
+    }
+
     @Override
     public String toString() {
         return "Vector3(x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";

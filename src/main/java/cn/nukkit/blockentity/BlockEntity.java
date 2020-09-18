@@ -64,6 +64,9 @@ public abstract class BlockEntity extends Position {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final String LODESTONE = "Lodestone";
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final String TARGET = "Target";
 
 
     public static long count = 1;

@@ -8,6 +8,7 @@ import cn.nukkit.blockentity.BlockEntityCampfire;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.CampfireInventory;
@@ -15,10 +16,12 @@ import cn.nukkit.inventory.CampfireRecipe;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.*;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
@@ -228,6 +231,18 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
         }
 
         return itemUsed;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean onProjectileHit(@Nonnull Entity projectile, @Nonnull Position position, @Nonnull Vector3 motion) {
+        if (projectile.isOnFire() && projectile instanceof EntityArrow && isExtinguished()) {
+            setExtinguished(false);
+            level.setBlock(this, this, true);
+            return true;
+        }
+        return false;
     }
 
     @PowerNukkitOnly

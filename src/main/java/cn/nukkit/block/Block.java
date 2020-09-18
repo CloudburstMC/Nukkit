@@ -532,7 +532,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[SOUL_SOIL] = BlockSoulSoil.class; //491
             list[SOUL_FIRE] = BlockFireSoul.class; //492
             list[NETHER_SPROUTS_BLOCK] = BlockNetherSprout.class; //493 
-            //list[TARGET] = Block<Name>.class; //494
+            list[TARGET] = BlockTarget.class; //494
             list[STRIPPED_CRIMSON_STEM] = BlockStemStrippedCrimson.class; //495
             list[STRIPPED_WARPED_STEM] = BlockStemStrippedWarped.class; //496
             list[CRIMSON_PLANKS] = BlockPlanksCrimson.class; //497
@@ -1200,11 +1200,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 return 6.0;
             case ItemTool.TIER_DIAMOND:
                 return 8.0;
-            case ItemTool.TIER_NETHERITE:
-                return 9.0;
             case ItemTool.TIER_GOLD:
                 return 12.0;
             default:
+                if (toolType == ItemTool.TIER_NETHERITE) {
+                    return 9.0;
+                }
                 return 1.0;
         }
     }
@@ -1396,12 +1397,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     case ItemTool.TIER_DIAMOND:
                         base /= 8;
                         break;
-                    case ItemTool.TIER_NETHERITE:
-                        base /= 9;
-                        break;
                     case ItemTool.TIER_GOLD:
                         base /= 12;
                         break;
+                    default:
+                        if (tier == ItemTool.TIER_NETHERITE) {
+                            base /= 9;
+                        }
                 }
             }
         } else {
@@ -1649,20 +1651,20 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             return null;
         }
 
-        int f = -1;
+        BlockFace f = null;
 
         if (vector == v1) {
-            f = 4;
+            f = BlockFace.WEST;
         } else if (vector == v2) {
-            f = 5;
+            f = BlockFace.EAST;
         } else if (vector == v3) {
-            f = 0;
+            f = BlockFace.DOWN;
         } else if (vector == v4) {
-            f = 1;
+            f = BlockFace.UP;
         } else if (vector == v5) {
-            f = 2;
+            f = BlockFace.NORTH;
         } else if (vector == v6) {
-            f = 3;
+            f = BlockFace.SOUTH;
         }
 
         return MovingObjectPosition.fromBlock((int) this.x, (int) this.y, (int) this.z, f, vector.add(this.x, this.y, this.z));
@@ -2037,6 +2039,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     public final boolean canRandomTick() {
         return Level.canRandomTick(getId());
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean onProjectileHit(@Nonnull Entity projectile, @Nonnull Position position, @Nonnull Vector3 motion) {
+        return false;
     }
 
     @Nonnull
