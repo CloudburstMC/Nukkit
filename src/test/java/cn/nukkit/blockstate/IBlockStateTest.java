@@ -78,4 +78,13 @@ class IBlockStateTest {
         assertEquals("blockid:10000", BlockStateRegistry.getPersistenceName(10_000));
         assertEquals(80000, BlockStateRegistry.getBlockId("blockid:80000"));
     }
+    
+    @Test
+    void negativeByte() {
+        BlockState state = BlockState.of(COBBLE_WALL, 173);
+        assertEquals(173, state.getDataStorage());
+        MutableBlockState mutableState = BlockStateRegistry.createMutableState(COBBLE_WALL);
+        mutableState.setDataStorage(state.getDataStorage());
+        assertEquals(173, mutableState.getDataStorage());
+    }
 }

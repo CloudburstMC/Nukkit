@@ -34,10 +34,9 @@ public final class BlockState implements Serializable, IBlockState {
     private static final long serialVersionUID = 623759888114628578L;
     private static final ConcurrentMap<String, BlockState> STATES = new ConcurrentHashMap<>();
     public static final BlockState AIR = BlockState.of(BlockID.AIR, 0);
-    private static final BigInteger BYTE_MASK = BigInteger.valueOf(0xFF);
-    private static final BigInteger INT_MASK = BigInteger.valueOf(0xFFFFFFFFL);
-    private static final BigInteger LONG_MASK = new BigInteger("FFFFFFFFFFFFFFFF", 16);
-
+    private static final BigInteger BYTE_LIMIT = BigInteger.valueOf(Byte.MAX_VALUE);
+    private static final BigInteger INT_LIMIT = BigInteger.valueOf(Integer.MAX_VALUE);
+    private static final BigInteger LONG_LIMIT = BigInteger.valueOf(Long.MAX_VALUE);
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -111,19 +110,19 @@ public final class BlockState implements Serializable, IBlockState {
     
     private BlockState(int blockId, int blockData) {
         this.blockId = blockId;
-        storage = blockData == 0?   new ZeroStorage() : 
-                blockData < 0?      new IntStorage(blockData) :
-                blockData <= 0xFF?  new ByteStorage((byte)blockData) : 
-                                    new IntStorage(blockData);
+        storage = blockData == 0?               new ZeroStorage() : 
+                blockData < 0?                  new IntStorage(blockData) :
+                blockData <= Byte.MAX_VALUE?    new ByteStorage((byte)blockData) : 
+                                                new IntStorage(blockData);
     }
     
     private BlockState(int blockId, long blockData) {
         this.blockId = blockId;
-        storage = blockData == 0?   new ZeroStorage() : 
-                blockData < 0?      new LongStorage(blockData) :
-                blockData <= 0xFF?  new ByteStorage((byte)blockData) :
-                blockData <= 0xFFFFFFFFL? new IntStorage((int)blockData) : 
-                                    new LongStorage(blockData);
+        storage = blockData == 0?               new ZeroStorage() : 
+                blockData < 0?                  new LongStorage(blockData) :
+                blockData <= Byte.MAX_VALUE?    new ByteStorage((byte)blockData) :
+                blockData <= Integer.MAX_VALUE? new IntStorage((int)blockData) : 
+                                                new LongStorage(blockData);
     }
     
     private BlockState(int blockId, BigInteger blockData) {
@@ -133,11 +132,11 @@ public final class BlockState implements Serializable, IBlockState {
             storage = new ZeroStorage();
         } else if (zeroCmp < 0) {
             storage = new BigIntegerStorage(blockData);
-        } else if (blockData.compareTo(BYTE_MASK) < 0) {
+        } else if (blockData.compareTo(BYTE_LIMIT) <= 0) {
             storage = new ByteStorage(blockData.byteValue());
-        } else if (blockData.compareTo(INT_MASK) < 0) {
+        } else if (blockData.compareTo(INT_LIMIT) <= 0) {
             storage = new IntStorage(blockData.intValue());
-        } else if (blockData.compareTo(LONG_MASK) < 0) {
+        } else if (blockData.compareTo(LONG_LIMIT) <= 0) {
             storage = new LongStorage(blockData.longValue());
         } else {
             storage = new BigIntegerStorage(blockData);
