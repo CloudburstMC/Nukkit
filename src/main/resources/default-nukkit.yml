@@ -5,6 +5,7 @@ settings:
  query-plugins: true
  deprecated-verbose: true
  async-workers: auto
+ safe-spawn: true
 
 network:
  batch-threshold: 256
