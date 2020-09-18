@@ -7,6 +7,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBell;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.block.BellRingEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -336,6 +337,17 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
             return false;
         }
         return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean onProjectileHit(@Nonnull Entity projectile, @Nonnull Position position, @Nonnull Vector3 motion) {
+        ring(projectile, BellRingEvent.RingCause.PROJECTILE);
+        if (projectile.isOnFire() && projectile instanceof EntityArrow && level.getBlock(projectile).getId() == BlockID.AIR) {
+            level.setBlock(projectile, Block.get(BlockID.FIRE), true);
+        }
+        return true;
     }
 
     @Override

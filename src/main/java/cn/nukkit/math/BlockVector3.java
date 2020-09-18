@@ -1,5 +1,8 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 public class BlockVector3 implements Cloneable {
     public int x;
     public int y;
@@ -183,6 +186,19 @@ public class BlockVector3 implements Cloneable {
 
     public double distanceSquared(double x, double y, double z) {
         return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2) + Math.pow(this.z - z, 2);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getAxis(BlockFace.Axis axis) {
+        switch (axis) {
+            case X:
+                return x;
+            case Y:
+                return y;
+            default:
+                return z;
+        }
     }
 
     @Override

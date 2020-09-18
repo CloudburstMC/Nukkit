@@ -3,15 +3,14 @@ package cn.nukkit.entity.projectile;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockBell;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.item.EntityEndCrystal;
-import cn.nukkit.event.block.BellRingEvent;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.MovingObjectPosition;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
@@ -189,6 +188,8 @@ public abstract class EntityProjectile extends Entity {
                 }
             }
 
+            Position position = getPosition();
+            Vector3 motion = getMotion();
             this.move(this.motionX, this.motionY, this.motionZ);
 
             if (this.isCollided && !this.hadCollision) { //collide with block
@@ -199,7 +200,7 @@ public abstract class EntityProjectile extends Entity {
                 this.motionZ = 0;
 
                 this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
-                onCollideWithBlock();
+                onCollideWithBlock(position, motion);
                 addHitEffect();
                 return false;
             } else if (!this.isCollided && this.hadCollision) {
@@ -232,20 +233,21 @@ public abstract class EntityProjectile extends Entity {
         this.motionZ += rand.nextGaussian() * 0.007499999832361937 * modifier;
     }
 
-    protected void onCollideWithBlock() {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected void onCollideWithBlock(Position position, Vector3 motion) {
         for (Block collisionBlock : level.getCollisionBlocks(getBoundingBox().grow(0.1, 0.1, 0.1))) {
-            onCollideWithBlock(collisionBlock);
+            onCollideWithBlock(position, motion, collisionBlock);
         }
     }
 
-    protected boolean onCollideWithBlock(Block collisionBlock) {
-        if (collisionBlock instanceof BlockBell) {
-            ((BlockBell) collisionBlock).ring(this, BellRingEvent.RingCause.PROJECTILE);
-            return true;
-        }
-        return false;
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected boolean onCollideWithBlock(Position position, Vector3 motion, Block collisionBlock) {
+        return collisionBlock.onProjectileHit(this, position, motion);
     }
 
+    @PowerNukkitOnly
     protected void addHitEffect() {
 
     }

@@ -2,6 +2,7 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.IntEntityData;
@@ -10,8 +11,10 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -31,6 +34,7 @@ public class EntityFirework extends Entity {
     private int fireworkAge;
     private int lifetime;
     private Item firework;
+    private boolean hadCollision;
 
     @PowerNukkitDifference(info = "Will default to a black-creeper-face if the firework data is missing", since = "1.3.1.2-PN")
     public EntityFirework(FullChunk chunk, CompoundTag nbt) {
@@ -105,7 +109,20 @@ public class EntityFirework extends Entity {
             this.motionX *= 1.15D;
             this.motionZ *= 1.15D;
             this.motionY += 0.04D;
+            Position position = getPosition();
+            Vector3 motion = getMotion();
             this.move(this.motionX, this.motionY, this.motionZ);
+
+            if (this.isCollided && !this.hadCollision) { //collide with block
+                this.hadCollision = true;
+
+                for (Block collisionBlock : level.getCollisionBlocks(getBoundingBox().grow(0.1, 0.1, 0.1))) {
+                    collisionBlock.onProjectileHit(this, position, motion);
+                }
+                
+            } else if (!this.isCollided && this.hadCollision) {
+                this.hadCollision = false;
+            }
 
             this.updateMovement();
 

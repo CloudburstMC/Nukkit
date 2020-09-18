@@ -28,12 +28,20 @@ public class BlockEntityLodestone extends BlockEntitySpawnable {
         super(chunk, nbt);
     }
 
+    @Override
+    protected void initBlockEntity() {
+        if (namedTag.containsInt("trackingHandler")) {
+            namedTag.put("trackingHandle", namedTag.removeAndGet("trackingHandler"));
+        }
+        super.initBlockEntity();
+    }
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     public OptionalInt getTrackingHandler() {
-        if (namedTag.containsInt("trackingHandler")) {
-            return OptionalInt.of(namedTag.getInt("trackingHandler"));
+        if (namedTag.containsInt("trackingHandle")) {
+            return OptionalInt.of(namedTag.getInt("trackingHandle"));
         }
         return OptionalInt.empty();
     }
@@ -53,7 +61,7 @@ public class BlockEntityLodestone extends BlockEntitySpawnable {
         }
 
         int handler = positionTrackingService.addOrReusePosition(floor);
-        namedTag.putInt("trackingHandler", handler);
+        namedTag.putInt("trackingHandle", handler);
         return handler;
     }
 
