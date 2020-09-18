@@ -18,6 +18,7 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.TextFormat;
 
 import javax.annotation.Nonnull;
 
@@ -120,7 +121,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
                 b = blockWest;
             } else {
                 if (player != null) {
-                    player.sendMessage(new TranslationContainer("tile.bed.notValid"));
+                    player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.notValid"));
                 }
 
                 return true;
@@ -131,8 +132,8 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
             Location spawn = Location.fromObject(b.add(0.5, 0.5, 0.5), player.getLevel(), player.getYaw(), player.getPitch());
             if (!player.getSpawn().equals(spawn)) {
                 player.setSpawn(spawn);
-                player.sendMessage(new TranslationContainer("tile.bed.respawnSet"));
             }
+            player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.respawnSet"));
         }
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
@@ -140,12 +141,12 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
         boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
 
         if (player != null && !isNight) {
-            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
+            player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.noSleep"));
             return true;
         }
 
         if (player != null && !player.sleepOn(b)) {
-            player.sendMessage(new TranslationContainer("tile.bed.occupied"));
+            player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.occupied"));
         }
 
 
