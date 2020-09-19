@@ -78,6 +78,8 @@ import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Predicate;
 
+import static cn.nukkit.utils.Utils.dynamic;
+
 /**
  * @author MagicDroidX (Nukkit Project)
  */
@@ -96,6 +98,10 @@ public class Level implements ChunkManager, Metadatable {
     public static final int BLOCK_UPDATE_TOUCH = 5;
     public static final int BLOCK_UPDATE_REDSTONE = 6;
     public static final int BLOCK_UPDATE_TICK = 7;
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final int BLOCK_UPDATE_MOVED = dynamic(1_000_000);
 
     public static final int TIME_DAY = 0;
     public static final int TIME_NOON = 6000;

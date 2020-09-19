@@ -111,6 +111,9 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
             level.setBlock(this, this);
             getSide(getBlockFace().getOpposite()).onUpdate(Level.BLOCK_UPDATE_REDSTONE);
             return Level.BLOCK_UPDATE_SCHEDULED;
+        } else if (type == Level.BLOCK_UPDATE_MOVED) {
+            onNeighborChange(getBlockFace());
+            return type;
         }
         return 0;
     }
