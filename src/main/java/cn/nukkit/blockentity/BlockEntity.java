@@ -249,8 +249,17 @@ public abstract class BlockEntity extends Position {
         chunk.setChanged();
 
         if (this.getLevelBlock().getId() != BlockID.AIR) {
-            this.level.updateComparatorOutputLevel(this);
+            this.level.updateComparatorOutputLevelSelective(this, isObservable());
         }
+    }
+
+    /**
+     * Indicates if an observer blocks that are looking at this block should blink when {@link #setDirty()} is called.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isObservable() {
+        return true;
     }
 
     public String getName() {

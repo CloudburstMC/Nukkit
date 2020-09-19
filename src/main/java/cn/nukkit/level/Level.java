@@ -63,6 +63,8 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
@@ -216,7 +218,7 @@ public class Level implements ChunkManager, Metadatable {
 
 
     private final BlockUpdateScheduler updateQueue;
-    private final Queue<Block> normalUpdateQueue = new ConcurrentLinkedDeque<>();
+    private final Queue<QueuedUpdate> normalUpdateQueue = new ConcurrentLinkedDeque<>();
 //    private final TreeSet<BlockUpdateEntry> updateQueue = new TreeSet<>();
 //    private final List<BlockUpdateEntry> nextTickUpdates = Lists.newArrayList();
     //private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
@@ -868,13 +870,16 @@ public class Level implements ChunkManager, Metadatable {
         this.timings.doTickPending.stopTiming();
 
         while (!this.normalUpdateQueue.isEmpty()) {
-            Block block = this.normalUpdateQueue.poll();
-            block = getBlock(block, block.layer);
+            QueuedUpdate queuedUpdate = this.normalUpdateQueue.poll();
+            Block block = getBlock(queuedUpdate.block, queuedUpdate.block.layer);
             BlockUpdateEvent event = new BlockUpdateEvent(block);
             this.server.getPluginManager().callEvent(event);
 
             if (!event.isCancelled()) {
                 block.onUpdate(BLOCK_UPDATE_NORMAL);
+                if (queuedUpdate.neighbor != null) {
+                    block.onNeighborChange(queuedUpdate.neighbor.getOpposite());
+                }
             }
         }
 
@@ -1287,13 +1292,23 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void updateComparatorOutputLevel(Vector3 v) {
+        updateComparatorOutputLevelSelective(v, true);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void updateComparatorOutputLevelSelective(Vector3 v, boolean observer) {
         for (BlockFace face : Plane.HORIZONTAL) {
             Vector3 pos = v.getSide(face);
 
             if (this.isChunkLoaded((int) pos.x >> 4, (int) pos.z >> 4)) {
                 Block block1 = this.getBlock(pos);
-
-                if (BlockRedstoneDiode.isDiode(block1)) {
+                
+                if (block1.getId() == BlockID.OBSERVER) {
+                    if (observer) {
+                        block1.onNeighborChange(face.getOpposite());
+                    }
+                } else if (BlockRedstoneDiode.isDiode(block1)) {
                     block1.onUpdate(BLOCK_UPDATE_REDSTONE);
                 } else if (block1.isNormalBlock()) {
                     pos = pos.getSide(face);
@@ -1305,14 +1320,27 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
         }
+        
+        if (!observer) {
+            return;
+        }
+        
+        for (BlockFace face : Plane.VERTICAL) {
+            Vector3 pos = v.getSide(face);
+            Block block1 = this.getBlock(pos);
+
+            if (block1.getId() == BlockID.OBSERVER) {
+                block1.onNeighborChange(face.getOpposite());
+            }
+        }
     }
 
     public void updateAround(Vector3 pos) {
         Block block = getBlock(pos);
         for (BlockFace face : BlockFace.values()) {
             final Block side = block.getSideAtLayer(0, face);
-            normalUpdateQueue.add(side);
-            normalUpdateQueue.add(side.getLevelBlockAtLayer(1));
+            normalUpdateQueue.add(new QueuedUpdate(side, face));
+            normalUpdateQueue.add(new QueuedUpdate(side.getLevelBlockAtLayer(1), face));
         }
     }
 
@@ -4092,7 +4120,15 @@ public class Level implements ChunkManager, Metadatable {
 
         return false;
     }
-
+    
+    @AllArgsConstructor
+    @Data
+    private static class QueuedUpdate {
+        @Nonnull
+        private Block block;
+        private BlockFace neighbor;
+    }
+    
 //    private static void orderGetRidings(Entity entity, LongSet set) {
 //        if (entity.riding != null) {
 //            if(!set.add(entity.riding.getId())) {

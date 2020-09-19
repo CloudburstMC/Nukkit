@@ -209,6 +209,8 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         doorTop.y++;
         doorTop.setTop(true);
         level.setBlock(doorTop, doorTop, true, true); //Top
+        
+        level.updateAround(block);
 
         if (level.getServer().isRedstoneEnabled() && !isOpen() && level.isBlockPowered(getLocation())) {
             toggle(null);

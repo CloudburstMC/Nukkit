@@ -951,6 +951,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public int onUpdate(int type) {
         return 0;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void onNeighborChange(@Nonnull BlockFace side) {
+        
+    }
 
     public boolean onActivate(@Nonnull Item item) {
         return this.onActivate(item, null);
