@@ -5,6 +5,7 @@ import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.PlayerUIComponent;
 import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
@@ -95,6 +96,11 @@ public class NetworkInventoryAction {
                     case SOURCE_TYPE_ENCHANT_MATERIAL:
                         packet.isEnchantingPart = true;
                         break;
+                    case SOURCE_TYPE_ANVIL_INPUT:
+                    case SOURCE_TYPE_ANVIL_MATERIAL:
+                    case SOURCE_TYPE_ANVIL_RESULT:
+                        packet.isRepairItemPart = true;
+                        break;
                 }
                 break;
         }
@@ -144,21 +150,46 @@ public class NetworkInventoryAction {
                 }
                 // ID 124 with slot 14/15 is enchant inventory
                 if (this.windowId == ContainerIds.UI) {
-                    if (this.inventorySlot == EnchantInventory.ENCHANT_INPUT_ITEM_UI_SLOT) {
-                        if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
-                            player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
-                            return null;
-                        }
-                        this.windowId = Player.ENCHANT_WINDOW_ID;
-                        this.inventorySlot = 0;
-                        // TODO, check if unenchanted item and send EnchantOptionsPacket
-                    } else if (this.inventorySlot == EnchantInventory.ENCHANT_REAGENT_UI_SLOT) {
-                        if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
-                            player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
-                            return null;
-                        }
-                        this.windowId = Player.ENCHANT_WINDOW_ID;
-                        this.inventorySlot = 1;
+                    switch (this.inventorySlot) {
+                        case PlayerUIComponent.CREATED_ITEM_OUTPUT_UI_SLOT:
+                            if (player.getWindowById(Player.ANVIL_WINDOW_ID) != null) {
+                                this.windowId = Player.ANVIL_WINDOW_ID;
+                                this.inventorySlot = 2;
+                            }
+                            break;
+                        case EnchantInventory.ENCHANT_INPUT_ITEM_UI_SLOT:
+                            if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
+                                player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
+                                return null;
+                            }
+                            this.windowId = Player.ENCHANT_WINDOW_ID;
+                            this.inventorySlot = 0;
+                            // TODO, check if unenchanted item and send EnchantOptionsPacket
+                            break;
+                        case EnchantInventory.ENCHANT_REAGENT_UI_SLOT:
+                            if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
+                                player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
+                                return null;
+                            }
+                            this.windowId = Player.ENCHANT_WINDOW_ID;
+                            this.inventorySlot = 1;
+                            break;
+                        case AnvilInventory.ANVIL_INPUT_UI_SLOT:
+                            if (player.getWindowById(Player.ANVIL_WINDOW_ID) == null) {
+                                player.getServer().getLogger().error("Player " + player.getName() + " does not have anvil window open");
+                                return null;
+                            }
+                            this.windowId = Player.ANVIL_WINDOW_ID;
+                            this.inventorySlot = 0;
+                            break;
+                        case AnvilInventory.ANVIL_MATERIAL_UI_SLOT:
+                            if (player.getWindowById(Player.ANVIL_WINDOW_ID) == null) {
+                                player.getServer().getLogger().error("Player " + player.getName() + " does not have anvil window open");
+                                return null;
+                            }
+                            this.windowId = Player.ANVIL_WINDOW_ID;
+                            this.inventorySlot = 1;
+                            break;
                     }
                 }
 
@@ -223,28 +254,12 @@ public class NetworkInventoryAction {
 
                     switch (this.windowId) {
                         case SOURCE_TYPE_ANVIL_INPUT:
-                            //System.out.println("action input");
-                            this.inventorySlot = 0;
-                            return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
                         case SOURCE_TYPE_ANVIL_MATERIAL:
-                            //System.out.println("material");
-                            this.inventorySlot = 1;
-                            return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
-                        case SOURCE_TYPE_ANVIL_OUTPUT:
-                            //System.out.println("action output");
-                            break;
                         case SOURCE_TYPE_ANVIL_RESULT:
-                            this.inventorySlot = 2;
-                            anvil.clear(0);
-                            Item material = anvil.getItem(1);
-                            if (!material.isNull()) {
-                                material.setCount(material.getCount() - 1);
-                                anvil.setItem(1, material);
-                            }
-                            anvil.setItem(2, this.oldItem);
-                            //System.out.println("action result");
-                            return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
+                            return new RepairItemAction(this.oldItem, this.newItem, this.windowId);
                     }
+
+                    return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
                 }
 
                 if (this.windowId >= SOURCE_TYPE_ENCHANT_OUTPUT && this.windowId <= SOURCE_TYPE_ENCHANT_INPUT) {
