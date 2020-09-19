@@ -92,9 +92,16 @@ public abstract class EntityProjectile extends Entity {
                 }
             }
         }
+        afterCollisionWithEntity(entity);
         if (closeOnCollide) {
             this.close();
         }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected void afterCollisionWithEntity(Entity entity) {
+        
     }
 
     @Override
@@ -186,7 +193,10 @@ public abstract class EntityProjectile extends Entity {
             if (movingObjectPosition != null) {
                 if (movingObjectPosition.entityHit != null) {
                     onCollideWithEntity(movingObjectPosition.entityHit);
-                    return true;
+                    hasUpdate = true;
+                    if (closed) {
+                        return true;
+                    }
                 }
             }
 

@@ -1883,11 +1883,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
         }
 
-        this.setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING,
-                getNoShieldTicks() == 0
-                && (this.isSneaking() || getRiding() != null) 
-                && (this.getInventory().getItemInHand().getId() == ItemID.SHIELD || this.getOffhandInventory().getItem(0).getId() == ItemID.SHIELD));
-
         updateBlockingFlag();
         return true;
     }
@@ -5422,14 +5417,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     private void updateBlockingFlag() {
-        boolean shieldInHand = this.getInventory().getItemInHand().getId() == ItemID.SHIELD;
-        boolean shieldInOffhand = this.getOffhandInventory().getItem(0).getId() == ItemID.SHIELD;
-        if (isBlocking()) {
-            if (!isSneaking() || (!shieldInHand && !shieldInOffhand)) {
-                this.setBlocking(false);
-            }
-        } else if (isSneaking() && (shieldInHand || shieldInOffhand)) {
-            this.setBlocking(true);
+        boolean shouldBlock = getNoShieldTicks() == 0
+                && (this.isSneaking() || getRiding() != null)
+                && (this.getInventory().getItemInHand().getId() == ItemID.SHIELD || this.getOffhandInventory().getItem(0).getId() == ItemID.SHIELD);
+        
+        if (isBlocking() != shouldBlock) {
+            this.setBlocking(shouldBlock);
         }
     }
 
