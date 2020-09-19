@@ -1,5 +1,6 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
@@ -91,9 +92,16 @@ public abstract class EntityProjectile extends Entity {
                 }
             }
         }
+        afterCollisionWithEntity(entity);
         if (closeOnCollide) {
             this.close();
         }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected void afterCollisionWithEntity(Entity entity) {
+        
     }
 
     @Override
@@ -157,7 +165,8 @@ public abstract class EntityProjectile extends Entity {
 
             for (Entity entity : list) {
                 if (/*!entity.canCollideWith(this) or */
-                        (entity == this.shootingEntity && this.ticksLived < 5)
+                        (entity == this.shootingEntity && this.ticksLived < 5) ||
+                                (entity instanceof Player && ((Player) entity).getGamemode() == Player.SPECTATOR)
                 ) {
                     continue;
                 }
@@ -184,7 +193,10 @@ public abstract class EntityProjectile extends Entity {
             if (movingObjectPosition != null) {
                 if (movingObjectPosition.entityHit != null) {
                     onCollideWithEntity(movingObjectPosition.entityHit);
-                    return true;
+                    hasUpdate = true;
+                    if (closed) {
+                        return true;
+                    }
                 }
             }
 

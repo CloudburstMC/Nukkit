@@ -884,6 +884,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendPotionEffects(this);
         this.sendData(this);
         this.inventory.sendContents(this);
+        this.inventory.sendHeldItem(this);
         this.inventory.sendArmorContents(this);
         this.offhandInventory.sendContents(this);
 
@@ -891,11 +892,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         setTimePacket.time = this.level.getTime();
         this.dataPacket(setTimePacket);
 
-        Position pos;
+        Location pos;
         if(this.server.isSafeSpawn()) {
-            pos = this.level.getSafeSpawn(this);
+            pos = this.level.getSafeSpawn(this).getLocation();
+            pos.yaw = this.yaw;
+            pos.pitch = this.pitch;
         } else {
-            pos = new Position(this.forceMovement.x,this.forceMovement.y,this.forceMovement.z,this.level);
+            pos = new Location(this.forceMovement.x,this.forceMovement.y,this.forceMovement.z, this.yaw, this.pitch, this.level);
         }
 
 
@@ -903,7 +906,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.server.getPluginManager().callEvent(respawnEvent);
 
-        pos = respawnEvent.getRespawnPosition();
+        Position fromEvent = respawnEvent.getRespawnPosition();
+        if (fromEvent instanceof Location) {
+            pos = fromEvent.getLocation();
+        } else {
+            pos = fromEvent.getLocation();
+            pos.yaw = this.yaw;
+            pos.pitch = this.pitch;
+        }
+
+        this.teleport(pos, null);
+        lastYaw = yaw;
+        lastPitch = pitch;
 
         this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
 
@@ -944,8 +958,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (level != 0) {
             this.sendExperienceLevel(this.getExperienceLevel());
         }
-
-        this.teleport(pos, null); // Prevent PlayerTeleportEvent during player spawn
 
         if (!this.isSpectator()) {
             this.spawnToAll();
@@ -1870,11 +1882,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.spawned && this.dummyBossBars.size() > 0 && currentTick % 100 == 0) {
             this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
         }
-
-        this.setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING,
-                getNoShieldTicks() == 0
-                && (this.isSneaking() || getRiding() != null) 
-                && (this.getInventory().getItemInHand().getId() == ItemID.SHIELD || this.getOffhandInventory().getItem(0).getId() == ItemID.SHIELD));
 
         updateBlockingFlag();
         return true;
@@ -4650,7 +4657,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.teleportPosition = new Vector3(this.x, this.y, this.z);
             this.forceMovement = this.teleportPosition;
-            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_TELEPORT);
+            this.yaw = to.yaw;
+            this.pitch = to.pitch;
+            this.sendPosition(this, to.yaw, to.pitch, MovePlayerPacket.MODE_TELEPORT);
 
             this.checkTeleportPosition();
 
@@ -5408,14 +5417,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     private void updateBlockingFlag() {
-        boolean shieldInHand = this.getInventory().getItemInHand().getId() == ItemID.SHIELD;
-        boolean shieldInOffhand = this.getOffhandInventory().getItem(0).getId() == ItemID.SHIELD;
-        if (isBlocking()) {
-            if (!isSneaking() || (!shieldInHand && !shieldInOffhand)) {
-                this.setBlocking(false);
-            }
-        } else if (isSneaking() && (shieldInHand || shieldInOffhand)) {
-            this.setBlocking(true);
+        boolean shouldBlock = getNoShieldTicks() == 0
+                && (this.isSneaking() || getRiding() != null)
+                && (this.getInventory().getItemInHand().getId() == ItemID.SHIELD || this.getOffhandInventory().getItem(0).getId() == ItemID.SHIELD);
+        
+        if (isBlocking() != shouldBlock) {
+            this.setBlocking(shouldBlock);
         }
     }
 

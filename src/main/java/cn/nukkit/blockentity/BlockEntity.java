@@ -111,7 +111,11 @@ public abstract class BlockEntity extends Position {
         }
 
         this.initBlockEntity();
-
+        
+        if (closed) {
+            throw new IllegalStateException("Could not create the entity "+getClass().getName()+", the initializer closed it on construction.");
+        }
+        
         this.chunk.addBlockEntity(this);
         this.getLevel().addBlockEntity(this);
     }

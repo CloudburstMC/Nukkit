@@ -61,8 +61,6 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     protected int turtleTicks = 200;
 
-    private boolean blocking = false;
-
     @Override
     protected void initEntity() {
         super.initEntity();
@@ -118,7 +116,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             }
         }
 
-        if (this.blockedByShield(source)) {
+        if (isBlocking() && this.blockedByShield(source)) {
             return false;
         }
 
@@ -410,7 +408,12 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     protected boolean blockedByShield(EntityDamageEvent source) {
-        Entity damager = source instanceof EntityDamageByEntityEvent? ((EntityDamageByEntityEvent) source).getDamager() : null;
+        Entity damager = null;
+        if (source instanceof EntityDamageByChildEntityEvent) {
+            damager = ((EntityDamageByChildEntityEvent) source).getChild();
+        } else if (source instanceof EntityDamageByEntityEvent) {
+            damager = ((EntityDamageByEntityEvent) source).getDamager();
+        }
         if (damager == null || damager instanceof EntityWeather || !this.isBlocking()) {
             return false;
         }
@@ -450,12 +453,11 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public boolean isBlocking() {
-        return this.blocking;
+        return this.getDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING);
     }
 
     public void setBlocking(boolean value) {
-        this.blocking = value;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_BLOCKING, value);
+        this.setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING, value);
     }
 
     @PowerNukkitOnly

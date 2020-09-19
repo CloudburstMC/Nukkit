@@ -213,4 +213,11 @@ public class BlockUndyedShulkerBox extends BlockTransparent implements BlockEnti
     public boolean isSolid(BlockFace side) {
         return false;
     }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getItemMaxStackSize() {
+        return 1;
+    }
 }

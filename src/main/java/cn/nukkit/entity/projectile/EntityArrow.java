@@ -84,6 +84,7 @@ public class EntityArrow extends EntityProjectile {
 
     public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
         super(chunk, nbt, shootingEntity);
+        closeOnCollide = false;
         this.setCritical(critical);
     }
 
@@ -150,6 +151,17 @@ public class EntityArrow extends EntityProjectile {
     @Override
     public boolean canBeMovedByCurrents() {
         return !hadCollision;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    protected void afterCollisionWithEntity(Entity entity) {
+        if (hadCollision) {
+            close();
+        } else {
+            setMotion(getMotion().divide(-4));
+        }
     }
 
     @Override
