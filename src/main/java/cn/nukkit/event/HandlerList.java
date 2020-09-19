@@ -8,7 +8,7 @@ import cn.nukkit.plugin.RegisteredListener;
 import java.util.*;
 
 /**
- * Created by Nukkit Team.
+ * @author Nukkit Team.
  */
 public class HandlerList {
 

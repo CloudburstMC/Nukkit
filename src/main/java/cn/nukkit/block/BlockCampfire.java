@@ -120,7 +120,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (down().getId() == CAMPFIRE_BLOCK) {
             return false;
         }

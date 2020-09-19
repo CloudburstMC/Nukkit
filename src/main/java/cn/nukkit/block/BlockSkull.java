@@ -19,6 +19,7 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolder<BlockEntitySkull> {
@@ -100,7 +101,7 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         switch (face) {
             case NORTH:
             case SOUTH:

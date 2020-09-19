@@ -1,6 +1,8 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
@@ -185,6 +187,13 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
 
         return true;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isObservable() {
+        return false;
     }
 
     public boolean pullItems() {

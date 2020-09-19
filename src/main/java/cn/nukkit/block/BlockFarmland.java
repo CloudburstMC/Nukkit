@@ -101,17 +101,18 @@ public class BlockFarmland extends BlockTransparentMeta {
             }
 
             Block block = this.level.getBlock(v.setComponents(x, y - 1, z));
+            int damage = this.getDamage();
             if (found || block instanceof BlockWater || block instanceof BlockIceFrosted) {
-                if (this.getDamage() < 7) {
+                if (damage < 7) {
                     this.setDamage(7);
-                    this.level.setBlock(this, this, false, false);
+                    this.level.setBlock(this, this, false, damage == 0);
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
             }
 
-            if (this.getDamage() > 0) {
-                this.setDamage(this.getDamage() - 1);
-                this.level.setBlock(this, this, false, false);
+            if (damage > 0) {
+                this.setDamage(damage - 1);
+                this.level.setBlock(this, this, false, damage == 1);
             } else {
                 this.level.setBlock(this, Block.get(Block.DIRT), false, true);
             }

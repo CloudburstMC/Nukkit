@@ -14,7 +14,7 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created by good777LUCKY
+ * @author good777LUCKY
  */
 @Since("1.4.0.0-PN")
 @PowerNukkitOnly

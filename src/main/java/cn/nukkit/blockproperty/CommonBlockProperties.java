@@ -35,4 +35,6 @@ public final class CommonBlockProperties {
     private CommonBlockProperties() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
     }
+    
+    public static final BooleanBlockProperty POWERED = new BooleanBlockProperty("powered_bit", false);
 }

@@ -22,6 +22,7 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static cn.nukkit.block.BlockStairs.UPSIDE_DOWN;
 import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
@@ -206,7 +207,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     
     @PowerNukkitDifference(info = "Will return false if setBlock fails and the direction is relative to where the player is facing", since = "1.4.0.0-PN")
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (face.getAxis().isHorizontal()) {
             setBlockFace(player == null? face : player.getDirection().getOpposite());
             setTop(fy > 0.5);

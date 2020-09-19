@@ -17,7 +17,7 @@ import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
 /**
- * Created by Nukkit Team.
+ * @author Nukkit Team.
  */
 public class JavaPluginLoader implements PluginLoader {
 

@@ -17,6 +17,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author CreeperFace
@@ -75,7 +76,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         BlockFace facing = face.getOpposite();
 
         if (facing == BlockFace.UP) {
@@ -149,7 +150,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);
-                this.level.setBlock(this, this, false, false);
+                this.level.setBlock(this, this, false, true);
 
                 if (!powered) {
                     BlockEntityHopper be = getBlockEntity();

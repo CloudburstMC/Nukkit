@@ -21,6 +21,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.*;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 
@@ -176,7 +177,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
 
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         Block down = this.down();
         if (!(BlockLever.isSupportValid(down, BlockFace.UP) || down instanceof BlockCauldron)) {
             return false;

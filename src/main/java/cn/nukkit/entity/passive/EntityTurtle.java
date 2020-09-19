@@ -5,7 +5,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class EntityTurtle extends EntityAnimal {
 

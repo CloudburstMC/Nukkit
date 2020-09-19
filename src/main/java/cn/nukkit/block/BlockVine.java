@@ -14,6 +14,7 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Pub4Game
@@ -153,7 +154,7 @@ public class BlockVine extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (target.isSolid() && face.getHorizontalIndex() != -1) {
             this.setDamage(getMetaFromFace(face.getOpposite()));
             this.getLevel().setBlock(block, this, true, true);

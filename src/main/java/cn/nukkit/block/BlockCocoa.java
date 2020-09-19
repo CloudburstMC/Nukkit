@@ -16,6 +16,7 @@ import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -113,7 +114,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (target.getId() == Block.WOOD && (target.getDamage() & 0x03) == BlockWood.JUNGLE) {
             if (face != BlockFace.DOWN && face != BlockFace.UP) {
                 int[] faces = new int[]{
