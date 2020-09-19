@@ -105,7 +105,7 @@ public class BlockLantern extends BlockFlowable {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (!isHanging()) {
                 if (!isBlockUnderValid()) {
-                    level.useBreakOn(this);
+                    level.useBreakOn(this, ItemTool.getBestTool(getToolType()));
                 }
             } else if (!isBlockAboveValid()) {
                 level.useBreakOn(this);
