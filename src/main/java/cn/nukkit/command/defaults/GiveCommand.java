@@ -9,6 +9,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author xtypr
  * @since 2015/12/9
@@ -51,7 +54,7 @@ public class GiveCommand extends VanillaCommand {
             return true;
         }
 
-        Player player = sender.getServer().getPlayer(args[0]);
+        Player player = sender instanceof Player && "@p".equals(args[0])? (Player) sender : sender.getServer().getPlayer(args[0]);
         Item item;
 
         try {
@@ -61,23 +64,56 @@ public class GiveCommand extends VanillaCommand {
             return true;
         }
 
+        int count;
         try {
-            item.setCount(Integer.parseInt(args[2]));
-        } catch (Exception e) {
-            item.setCount(item.getMaxStackSize());
-        }
-
-        if (player != null) {
-            if (item.getId() == 0) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", args[1]));
-                return true;
+            if (args.length <= 2) {
+                count = 1;
+            } else {
+                count = Integer.parseInt(args[2]);
             }
-            player.getInventory().addItem(item.clone());
-        } else {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
-
+        } catch (NumberFormatException e) {
+            count = 1;
+        }
+        if (count <= 0) {
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
+        item.setCount(count);
+
+        if (player == null) {
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+            return true;
+        }
+        
+        if (item.isNull()) {
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", args[1]));
+            return true;
+        }
+        
+        Item[] returns = player.getInventory().addItem(item.clone());
+        List<Item> drops = new ArrayList<>();
+        for (Item returned: returns) {
+            int maxStackSize = returned.getMaxStackSize();
+            if (returned.getCount() <= maxStackSize) {
+                drops.add(returned);
+            } else {
+                while (returned.getCount() > maxStackSize) {
+                    Item drop = returned.clone();
+                    int toDrop = Math.min(returned.getCount(), maxStackSize);
+                    drop.setCount(toDrop);
+                    returned.setCount(returned.getCount() - toDrop);
+                    drops.add(drop);
+                }
+                if (!returned.isNull()) {
+                    drops.add(returned);
+                }
+            }
+        }
+        
+        for (Item drop: drops) {
+            player.dropItem(drop);
+        }
+        
         Command.broadcastCommandMessage(sender, new TranslationContainer(
                 "%commands.give.success",
                 item.getName() + " (" + item.getId() + ":" + item.getDamage() + ")",
