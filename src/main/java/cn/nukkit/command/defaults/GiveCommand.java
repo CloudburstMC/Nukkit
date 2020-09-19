@@ -1,11 +1,13 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
@@ -61,6 +63,11 @@ public class GiveCommand extends VanillaCommand {
             item = Item.fromString(args[1]);
         } catch (Exception e) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            return true;
+        }
+        
+        if (item instanceof ItemBlock && item.getBlock() instanceof BlockUnknown) {
+            sender.sendMessage(new TranslationContainer("commands.give.block.notFound", args[1]));
             return true;
         }
 
