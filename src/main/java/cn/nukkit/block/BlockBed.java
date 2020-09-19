@@ -227,34 +227,20 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
 
     @Override
     public boolean onBreak(Item item) {
-        Block blockNorth = this.north(); //Gets the blocks around them
-        Block blockSouth = this.south();
-        Block blockEast = this.east();
-        Block blockWest = this.west();
-
+        BlockFace direction = getBlockFace();
         if (isHeadPiece()) { //This is the Top part of bed
-            if (blockNorth.getId() == BED_BLOCK && !((BlockBed) blockNorth).isHeadPiece()) { //Checks if the block ID&&meta are right
-                this.getLevel().setBlock(blockNorth, Block.get(BlockID.AIR), true, true);
-            } else if (blockSouth.getId() == BED_BLOCK && !((BlockBed) blockSouth).isHeadPiece()) {
-                this.getLevel().setBlock(blockSouth, Block.get(BlockID.AIR), true, true);
-            } else if (blockEast.getId() == BED_BLOCK && !((BlockBed) blockEast).isHeadPiece()) {
-                this.getLevel().setBlock(blockEast, Block.get(BlockID.AIR), true, true);
-            } else if (blockWest.getId() == BED_BLOCK && !((BlockBed) blockWest).isHeadPiece()) {
-                this.getLevel().setBlock(blockWest, Block.get(BlockID.AIR), true, true);
+            Block other = getSide(direction.getOpposite());
+            if (other.getId() == getId() && !((BlockBed) other).isHeadPiece() && direction.equals(((BlockBed) other).getBlockFace())) {
+                getLevel().setBlock(other, Block.get(BlockID.AIR), true, true);
             }
         } else { //Bottom Part of Bed
-            if (blockNorth.getId() == this.getId() && ((BlockBed) blockNorth).isHeadPiece()) {
-                this.getLevel().setBlock(blockNorth, Block.get(BlockID.AIR), true, true);
-            } else if (blockSouth.getId() == this.getId() && ((BlockBed) blockSouth).isHeadPiece()) {
-                this.getLevel().setBlock(blockSouth, Block.get(BlockID.AIR), true, true);
-            } else if (blockEast.getId() == this.getId() && ((BlockBed) blockEast).isHeadPiece()) {
-                this.getLevel().setBlock(blockEast, Block.get(BlockID.AIR), true, true);
-            } else if (blockWest.getId() == this.getId() && ((BlockBed) blockWest).isHeadPiece()) {
-                this.getLevel().setBlock(blockWest, Block.get(BlockID.AIR), true, true);
+            Block other = getSide(direction);
+            if (other.getId() == getId() && ((BlockBed) other).isHeadPiece() && direction.equals(((BlockBed) other).getBlockFace())) {
+                getLevel().setBlock(other, Block.get(BlockID.AIR), true, true);
             }
         }
 
-        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, false); // Do not update both parts to prevent duplication bug if there is two fallable blocks top of the bed
+        getLevel().setBlock(this, Block.get(BlockID.AIR), true, false); // Do not update both parts to prevent duplication bug if there is two fallable blocks top of the bed
 
         return true;
     }
