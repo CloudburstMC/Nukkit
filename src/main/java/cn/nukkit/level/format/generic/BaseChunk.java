@@ -64,7 +64,26 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     private void removeInvalidTile(int x, int y, int z) {
         BlockEntity entity = getTile(x, y, z);
-        if (entity != null && !entity.isBlockEntityValid()) {
+        if (entity != null) {
+            try {
+                if (!entity.closed && entity.isBlockEntityValid()) {
+                    return;
+                }
+            } catch (Exception e) {
+                try {
+                    log.warn("Block entity validation of {} at {}, {} {} {} failed, removing as invalid.",
+                            entity.getClass().getName(),
+                            getProvider().getLevel().getName(),
+                            entity.x,
+                            entity.y,
+                            entity.z,
+                            e
+                    );
+                } catch (Exception e2) {
+                    e.addSuppressed(e2);
+                    log.warn("Block entity validation failed", e);
+                }
+            }
             removeBlockEntity(entity);
         }
     }
