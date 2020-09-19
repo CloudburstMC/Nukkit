@@ -1085,7 +1085,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public int getMaxStackSize() {
-        return 64;
+        return block == null? 64 : block.getItemMaxStackSize();
     }
 
     final public Short getFuelTime() {

@@ -2059,4 +2059,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public boolean isDefaultState() {
         return mutableState == null || mutableState.isDefaultState();
     }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getItemMaxStackSize() {
+        return 64;
+    }
 }
