@@ -51,6 +51,9 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     @Override
     protected void initEntity() {
         this.inventory = new PlayerInventory(this);
+        if (namedTag.containsNumber("SelectedInventorySlot")) {
+            this.inventory.setHeldItemSlot(NukkitMath.clamp(this.namedTag.getInt("SelectedInventorySlot"), 0, 8));
+        }
         this.offhandInventory = new PlayerOffhandInventory(this);
 
         if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
@@ -113,6 +116,8 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                     inventoryTag.add(NBTIO.putItemHelper(item, slot));
                 }
             }
+            
+            this.namedTag.putInt("SelectedInventorySlot", this.inventory.getHeldItemIndex());
         }
 
         if (this.offhandInventory != null) {
