@@ -2,8 +2,9 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.DeprecationDetails;
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -362,73 +363,76 @@ public class AnvilInventory extends FakeBlockUIComponent {
     
     private static int getRepairMaterial(Item target) {
         switch (target.getId()) {
-            case Item.WOODEN_SWORD:
-            case Item.WOODEN_PICKAXE:
-            case Item.WOODEN_SHOVEL:
-            case Item.WOODEN_AXE:
-            case Item.WOODEN_HOE:
-                return Block.PLANKS;
+            case ItemID.WOODEN_SWORD:
+            case ItemID.WOODEN_PICKAXE:
+            case ItemID.WOODEN_SHOVEL:
+            case ItemID.WOODEN_AXE:
+            case ItemID.WOODEN_HOE:
+                return BlockID.PLANKS;
         
-            case Item.IRON_SWORD:
-            case Item.IRON_PICKAXE:
-            case Item.IRON_SHOVEL:
-            case Item.IRON_AXE:
-            case Item.IRON_HOE:
-            case Item.IRON_HELMET:
-            case Item.IRON_CHESTPLATE:
-            case Item.IRON_LEGGINGS:
-            case Item.IRON_BOOTS:
-            case Item.CHAIN_HELMET:
-            case Item.CHAIN_CHESTPLATE:
-            case Item.CHAIN_LEGGINGS:
-            case Item.CHAIN_BOOTS:
-                return Item.IRON_INGOT;
+            case ItemID.IRON_SWORD:
+            case ItemID.IRON_PICKAXE:
+            case ItemID.IRON_SHOVEL:
+            case ItemID.IRON_AXE:
+            case ItemID.IRON_HOE:
+            case ItemID.IRON_HELMET:
+            case ItemID.IRON_CHESTPLATE:
+            case ItemID.IRON_LEGGINGS:
+            case ItemID.IRON_BOOTS:
+            case ItemID.CHAIN_HELMET:
+            case ItemID.CHAIN_CHESTPLATE:
+            case ItemID.CHAIN_LEGGINGS:
+            case ItemID.CHAIN_BOOTS:
+                return ItemID.IRON_INGOT;
         
-            case Item.GOLD_SWORD:
-            case Item.GOLD_PICKAXE:
-            case Item.GOLD_SHOVEL:
-            case Item.GOLD_AXE:
-            case Item.GOLD_HOE:
-            case Item.GOLD_HELMET:
-            case Item.GOLD_CHESTPLATE:
-            case Item.GOLD_LEGGINGS:
-            case Item.GOLD_BOOTS:
-                return Item.GOLD_INGOT;
+            case ItemID.GOLD_SWORD:
+            case ItemID.GOLD_PICKAXE:
+            case ItemID.GOLD_SHOVEL:
+            case ItemID.GOLD_AXE:
+            case ItemID.GOLD_HOE:
+            case ItemID.GOLD_HELMET:
+            case ItemID.GOLD_CHESTPLATE:
+            case ItemID.GOLD_LEGGINGS:
+            case ItemID.GOLD_BOOTS:
+                return ItemID.GOLD_INGOT;
         
-            case Item.DIAMOND_SWORD:
-            case Item.DIAMOND_PICKAXE:
-            case Item.DIAMOND_SHOVEL:
-            case Item.DIAMOND_AXE:
-            case Item.DIAMOND_HOE:
-            case Item.DIAMOND_HELMET:
-            case Item.DIAMOND_CHESTPLATE:
-            case Item.DIAMOND_LEGGINGS:
-            case Item.DIAMOND_BOOTS:
-                return Item.DIAMOND;
+            case ItemID.DIAMOND_SWORD:
+            case ItemID.DIAMOND_PICKAXE:
+            case ItemID.DIAMOND_SHOVEL:
+            case ItemID.DIAMOND_AXE:
+            case ItemID.DIAMOND_HOE:
+            case ItemID.DIAMOND_HELMET:
+            case ItemID.DIAMOND_CHESTPLATE:
+            case ItemID.DIAMOND_LEGGINGS:
+            case ItemID.DIAMOND_BOOTS:
+                return ItemID.DIAMOND;
         
-            case Item.LEATHER_CAP:
-            case Item.LEATHER_TUNIC:
-            case Item.LEATHER_PANTS:
-            case Item.LEATHER_BOOTS:
-                return Item.LEATHER;
+            case ItemID.LEATHER_CAP:
+            case ItemID.LEATHER_TUNIC:
+            case ItemID.LEATHER_PANTS:
+            case ItemID.LEATHER_BOOTS:
+                return ItemID.LEATHER;
                 
-            case Item.STONE_SWORD:
-            case Item.STONE_PICKAXE:
-            case Item.STONE_SHOVEL:
-            case Item.STONE_AXE:
-            case Item.STONE_HOE:
-                return Item.COBBLESTONE;
+            case ItemID.STONE_SWORD:
+            case ItemID.STONE_PICKAXE:
+            case ItemID.STONE_SHOVEL:
+            case ItemID.STONE_AXE:
+            case ItemID.STONE_HOE:
+                return BlockID.COBBLESTONE;
 
-            case Item.NETHERITE_SWORD:
-            case Item.NETHERITE_PICKAXE:
-            case Item.NETHERITE_SHOVEL:
-            case Item.NETHERITE_AXE:
-            case Item.NETHERITE_HOE:
-            case Item.NETHERITE_HELMET:
-            case Item.NETHERITE_CHESTPLATE:
-            case Item.NETHERITE_LEGGINGS:
-            case Item.NETHERITE_BOOTS:
-                return Item.NETHERITE_INGOT;
+            case ItemID.NETHERITE_SWORD:
+            case ItemID.NETHERITE_PICKAXE:
+            case ItemID.NETHERITE_SHOVEL:
+            case ItemID.NETHERITE_AXE:
+            case ItemID.NETHERITE_HOE:
+            case ItemID.NETHERITE_HELMET:
+            case ItemID.NETHERITE_CHESTPLATE:
+            case ItemID.NETHERITE_LEGGINGS:
+            case ItemID.NETHERITE_BOOTS:
+                return ItemID.NETHERITE_INGOT;
+                
+            case ItemID.ELYTRA:
+                return ItemID.PHANTOM_MEMBRANE;
 
             default:
                 return 0;
