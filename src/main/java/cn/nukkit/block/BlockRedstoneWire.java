@@ -51,7 +51,7 @@ public class BlockRedstoneWire extends BlockFlowable {
         }
 
         if (this.level.getServer().isRedstoneEnabled()) {
-            this.getLevel().setBlock(block, this, true, false);
+            this.getLevel().setBlock(block, this, true);
 
             this.updateSurroundingRedstone(true);
             Vector3 pos = getLocation();
