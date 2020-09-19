@@ -14,7 +14,9 @@ import cn.nukkit.item.ItemBed;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.*;
 
@@ -122,24 +124,14 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
             return true;
         }
 
-        Block blockNorth = this.north();
-        Block blockSouth = this.south();
-        Block blockEast = this.east();
-        Block blockWest = this.west();
-
+        BlockFace dir = getBlockFace();
+        
         Block b;
         if (isHeadPiece()) {
             b = this;
         } else {
-            if (blockNorth.getId() == this.getId() && ((BlockBed) blockNorth).isHeadPiece()) {
-                b = blockNorth;
-            } else if (blockSouth.getId() == this.getId() && ((BlockBed) blockSouth).isHeadPiece()) {
-                b = blockSouth;
-            } else if (blockEast.getId() == this.getId() && ((BlockBed) blockEast).isHeadPiece()) {
-                b = blockEast;
-            } else if (blockWest.getId() == this.getId() && ((BlockBed) blockWest).isHeadPiece()) {
-                b = blockWest;
-            } else {
+            b = getSide(dir);
+            if (b.getId() != getId() || !((BlockBed) b).isHeadPiece() || !((BlockBed) b).getBlockFace().equals(dir)) {
                 if (player != null) {
                     player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.notValid"));
                 }
@@ -149,6 +141,15 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
         }
 
         if (player != null) {
+            BlockFace footPart = dir.getOpposite();
+            AxisAlignedBB accessArea = new SimpleAxisAlignedBB(b.x - 2, b.y - 5.5, b.z - 2, b.x + 3, b.y + 2.5, b.z + 3)
+                    .addCoord(footPart.getXOffset(), 0, footPart.getZOffset());
+            
+            if (!accessArea.isVectorInside(player)) {
+                player.sendMessage(new TranslationContainer(TextFormat.GRAY+"%tile.bed.tooFar"));
+                return true;
+            }
+            
             Location spawn = Location.fromObject(b.add(0.5, 0.5, 0.5), player.getLevel(), player.getYaw(), player.getPitch());
             if (!player.getSpawn().equals(spawn)) {
                 player.setSpawn(spawn);
@@ -181,7 +182,8 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
             return false;
         }
         
-        Block next = this.getSide(player.getDirection());
+        BlockFace direction = player == null? BlockFace.NORTH : player.getDirection();
+        Block next = this.getSide(direction);
         Block downNext = next.down();
 
         if (!next.canBeReplaced() || !(BlockLever.isSupportValid(downNext, BlockFace.UP) || downNext instanceof BlockCauldron)) {
@@ -193,7 +195,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
         Block nextLayer0 = level.getBlock(next, 0);
         Block nextLayer1 = level.getBlock(next, 1);
         
-        setBlockFace(player.getDirection());
+        setBlockFace(direction);
 
         level.setBlock(block, this, true, true);
         if (next instanceof BlockLiquid && ((BlockLiquid) next).usesWaterLogging()) {
