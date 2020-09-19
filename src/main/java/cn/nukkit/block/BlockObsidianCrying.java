@@ -6,7 +6,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by good777LUCKY
+ * @author good777LUCKY
  */
 public class BlockObsidianCrying extends BlockSolid {
 

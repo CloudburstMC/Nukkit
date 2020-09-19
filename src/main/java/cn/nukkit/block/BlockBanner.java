@@ -25,7 +25,7 @@ import cn.nukkit.utils.MainLogger;
 import javax.annotation.Nonnull;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockBanner extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBanner> {

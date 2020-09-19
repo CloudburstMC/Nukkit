@@ -10,7 +10,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.network.protocol.BlockEventPacket;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class ShulkerBoxInventory extends ContainerInventory {
 

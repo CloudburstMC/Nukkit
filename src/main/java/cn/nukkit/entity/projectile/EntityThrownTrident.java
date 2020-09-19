@@ -21,7 +21,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class EntityThrownTrident extends EntityProjectile {
 

@@ -16,7 +16,7 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class ItemTrident extends ItemTool {
 

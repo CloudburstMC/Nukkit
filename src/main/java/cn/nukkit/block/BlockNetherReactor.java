@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- * Created by good777LUCKY
+ * @author good777LUCKY
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")

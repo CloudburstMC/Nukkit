@@ -8,7 +8,7 @@ import cn.nukkit.utils.BannerPattern;
 import cn.nukkit.utils.DyeColor;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class ItemBanner extends Item {
 
