@@ -51,6 +51,40 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     protected static String UNKNOWN_STR = "Unknown";
     public static Class[] list = null;
+    
+    private static Map<String, Integer> itemIds = Arrays.stream(ItemID.class.getDeclaredFields())
+            .filter(field-> field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL))
+            .filter(field -> field.getType().equals(int.class))
+            .collect(Collectors.toMap(
+                    field -> field.getName().toLowerCase(),
+                    field -> {
+                        try {
+                            return field.getInt(null);
+                        } catch (IllegalAccessException e) {
+                            throw new InternalError(e);
+                        }
+                    },
+                    (e1, e2) -> e1, LinkedHashMap::new
+            ));
+
+    private static Map<String, Integer> blockIds = Arrays.stream(BlockID.class.getDeclaredFields())
+            .filter(field-> field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL))
+            .filter(field -> field.getType().equals(int.class))
+            .collect(Collectors.toMap(
+                    field -> field.getName().toLowerCase(),
+                    field -> {
+                        try {
+                            int blockId = field.getInt(null);
+                            if (blockId > 255) {
+                                return 255 - blockId;
+                            }
+                            return blockId;
+                        } catch (IllegalAccessException e) {
+                            throw new InternalError(e);
+                        }
+                    },
+                    (e1, e2) -> e1, LinkedHashMap::new
+            ));
 
     protected Block block = null;
     protected final int id;
@@ -380,11 +414,8 @@ public class Item implements Cloneable, BlockID, ItemID {
         return itemList = Collections.unmodifiableList(Stream.of(
                 BlockStateRegistry.getPersistenceNames().stream()
                         .map(name-> name.substring(name.indexOf(':') + 1)),
-                Arrays.stream(ItemID.class.getDeclaredFields())
-                        .filter(field -> field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL))
-                        .filter(field -> field.getType().equals(int.class))
-                        .map(field -> field.getName().toLowerCase())
-        ).flatMap(Function.identity()).collect(Collectors.toList()));
+                itemIds.keySet().stream()
+        ).flatMap(Function.identity()).distinct().collect(Collectors.toList()));
     }
 
     @PowerNukkitOnly
@@ -556,31 +587,28 @@ public class Item implements Cloneable, BlockID, ItemID {
         String metaNumber;
         if (matcher.matches()) {
             String namespace = matcher.group(1);
-            String itemName = matcher.group(2);
+            String itemName = matcher.group(2).toLowerCase();
             metaNumber = matcher.group(3);
             if (namespace == null || namespace.isEmpty()) {
                 namespace = "minecraft";
             } else {
                 namespace = namespace.toLowerCase();
             }
-            Integer blockId = BlockStateRegistry.getBlockId(namespace + ":" + itemName.toLowerCase());
-            if (blockId != null) {
-                id = blockId;
-                if (id > 255) {
-                    id = 255 - id;
-                }
-            } else if (namespace.equals("minecraft")) {
-                try {
-                    id = BlockID.class.getField(itemName.toUpperCase()).getInt(null);
+            
+            Integer idFound;
+            if (namespace.equals("minecraft") && (idFound = itemIds.get(itemName)) != null) {
+                id = idFound;
+            } else {
+                Integer blockId = BlockStateRegistry.getBlockId(namespace + ":" + itemName);
+                if (blockId != null) {
+                    id = blockId;
                     if (id > 255) {
                         id = 255 - id;
                     }
-                } catch (Exception ignore1) {
-                    try {
-                        id = ItemID.class.getField(itemName.toUpperCase()).getInt(null);
-                    } catch (Exception ignore2) {
-                        return get(0, 0);
-                    }
+                } else if (namespace.equals("minecraft") && (idFound = blockIds.get(itemName)) != null) {
+                    id = idFound;
+                } else {
+                    return get(0, 0);
                 }
             }
         } else {
