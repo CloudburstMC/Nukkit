@@ -46,6 +46,8 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 
@@ -1502,8 +1504,13 @@ public abstract class Entity extends Location implements Metadatable {
                         public void onRun(int currentTick) {
                             // dirty hack to make sure chunks are loaded and generated before spawning
                             // player
-                            teleport(newPos.add(1.5, 1, 0.5));
-                            BlockNetherPortal.spawnPortal(newPos);
+                            Position nearestPortal = getNearestValidPortal(newPos);
+                            if (nearestPortal != null) {
+                                teleport(nearestPortal.add(1.5, 1, 1.5));
+                            } else {
+                                teleport(newPos.add(1.5, 1, 0.5));
+                                BlockNetherPortal.spawnPortal(newPos);
+                            }
                         }
                     }, 20);
                 }
@@ -1516,6 +1523,30 @@ public abstract class Entity extends Location implements Metadatable {
 
         Timings.entityBaseTickTimer.stopTiming();
         return hasUpdate;
+    }
+
+    private Position getNearestValidPortal(Position currentPos) {
+        AxisAlignedBB axisAlignedBB = new SimpleAxisAlignedBB(new Vector3(currentPos.getFloorX() - 128, currentPos.getFloorY(), getFloorZ() - 128), new Vector3(currentPos.getFloorX() + 128, currentPos.getFloorY(), getFloorZ() + 128));
+        Predicate<Block> condition = new Predicate<Block>() {
+            @Override
+            public boolean test(Block block) {
+                return block.getId() == BlockID.NETHER_PORTAL && block.down().getId() == BlockID.OBSIDIAN;
+            }
+        };
+        Block[] blocks = this.level.getCollisionBlocks(axisAlignedBB, false, true, condition);
+
+        if (blocks == null || blocks.length == 0) {
+            return null;
+        }
+
+        ToDoubleFunction<Double> toDoubleFunction = (Double value) -> value;
+
+        Block nearestPortal = Arrays.stream(blocks).min(Comparator.comparingDouble( block -> toDoubleFunction.applyAsDouble(getEuclideanDistance(new Vector2(currentPos.getFloorX(), currentPos.getFloorZ()), new Vector2(block.getFloorX(), block.getFloorZ()))))).get();
+        return new Position(nearestPortal.getFloorX(), nearestPortal.getFloorY(), nearestPortal.getFloorZ());
+    }
+
+    private double getEuclideanDistance(Vector2 centerPos, Vector2 blockPos) {
+        return Math.sqrt( (blockPos.y - centerPos.y) * ( blockPos.y - centerPos.y) + (blockPos.x - centerPos.x) * (blockPos.x - centerPos.x));
     }
 
     public void updateMovement() {
@@ -2253,7 +2284,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
         
         if (portal) {
-            if (this.inPortalTicks < 80) {
+            if (this.inPortalTicks > 80) {
                 this.inPortalTicks = 80;
             } else {
                 this.inPortalTicks++;
