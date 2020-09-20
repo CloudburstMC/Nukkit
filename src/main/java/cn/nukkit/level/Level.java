@@ -4126,7 +4126,15 @@ public class Level implements ChunkManager, Metadatable {
 
         return false;
     }
-    
+
+    @Override
+    public String toString() {
+        return "Level{" +
+                "folderName='" + folderName + '\'' +
+                ", dimension=" + dimension +
+                '}';
+    }
+
     @AllArgsConstructor
     @Data
     private static class QueuedUpdate {

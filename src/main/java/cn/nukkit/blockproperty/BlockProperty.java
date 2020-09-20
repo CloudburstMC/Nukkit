@@ -475,4 +475,14 @@ public abstract class BlockProperty<T extends Serializable> implements Serializa
     public boolean isExportedToItem() {
         return exportedToItem;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName()+"{" +
+                "name='" + name + '\'' +
+                ", bitSize=" + bitSize +
+                ", exportedToItem=" + exportedToItem +
+                ", persistenceName='" + persistenceName + '\'' +
+                '}';
+    }
 }
