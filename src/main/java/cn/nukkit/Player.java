@@ -3031,6 +3031,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     break;
                 case ProtocolInfo.CRAFTING_EVENT_PACKET:
+                    CraftingEventPacket craftingEventPacket = (CraftingEventPacket) packet;
+                    if (craftingType == CRAFTING_BIG && craftingEventPacket.type == CraftingEventPacket.TYPE_WORKBENCH 
+                            || craftingType == CRAFTING_SMALL && craftingEventPacket.type == CraftingEventPacket.TYPE_INVENTORY) {
+                        if (craftingTransaction != null) {
+                            craftingTransaction.setReadyToExecute(true);
+                            if (craftingTransaction.getPrimaryOutput() == null) {
+                                craftingTransaction.setPrimaryOutput(craftingEventPacket.output[0]);
+                            }
+                        }
+                    }
                     break;
                 case ProtocolInfo.BLOCK_ENTITY_DATA_PACKET:
                     if (!this.spawned || !this.isAlive()) {
@@ -3213,7 +3223,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                         }
 
-                        if (this.craftingTransaction.getPrimaryOutput() != null && this.craftingTransaction.canExecute()) {
+                        if (this.craftingTransaction.getPrimaryOutput() != null && (this.craftingTransaction.isReadyToExecute() || this.craftingTransaction.canExecute())) {
                             //we get the actions for this in several packets, so we can't execute it until we get the result
 
                             if (this.craftingTransaction.execute()) {
