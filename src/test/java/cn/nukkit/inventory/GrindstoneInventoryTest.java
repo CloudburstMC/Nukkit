@@ -1,38 +1,25 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.ServerTest;
-import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
-import cn.nukkit.plugin.PluginManager;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.powernukkit.tests.api.MockPlayer;
+import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
 
 /**
  * @author joserobjr
  */
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(PowerNukkitExtension.class)
 class GrindstoneInventoryTest {
-    
-    @Mock
-    Server server;
-    
-    @Mock
-    PluginManager pluginManager;
-    
-    @Mock
+    @MockPlayer
     Player player;
             
     PlayerUIInventory playerUIInventory;
@@ -78,17 +65,7 @@ class GrindstoneInventoryTest {
 
     @BeforeEach
     void setUp() {
-        ServerTest.setInstance(server);
-        playerUIInventory = new PlayerUIInventory(player);
+        playerUIInventory = player.getUIInventory();
         grindstoneInventory = new GrindstoneInventory(playerUIInventory, new Position());
-        
-        when(server.getPluginManager()).thenReturn(pluginManager);
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        Block.init();
-        Item.init();
-        Enchantment.init();
     }
 }

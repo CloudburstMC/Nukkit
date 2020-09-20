@@ -1,50 +1,27 @@
 package cn.nukkit;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
-import cn.nukkit.blockstate.BlockStateRegistry;
-import cn.nukkit.dispenser.DispenseBehaviorRegister;
-import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
-import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.format.anvil.Anvil;
-import cn.nukkit.level.format.anvil.Chunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
 import cn.nukkit.network.protocol.LoginPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
-import cn.nukkit.permission.BanList;
-import cn.nukkit.plugin.PluginManager;
-import cn.nukkit.positiontracking.PositionTrackingService;
-import cn.nukkit.potion.Effect;
-import cn.nukkit.potion.Potion;
-import cn.nukkit.resourcepacks.ResourcePackManager;
-import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.timings.LevelTimings;
-import cn.nukkit.utils.PlayerDataSerializer;
-import org.iq80.leveldb.DB;
-import org.iq80.leveldb.util.FileUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.powernukkit.tests.api.MockLevel;
+import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,54 +29,17 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(PowerNukkitExtension.class)
 class PlayerTest {
     private final Long clientId = 32L;
     private final String clientIp = "1.2.3.4";
     private final int clientPort = 3232;
     
-    /// Server Mocks ///
-    @Mock
-    PluginManager pluginManager;
-
-    @Mock
-    ServerScheduler scheduler;
-
-    @Mock
-    BanList banList;
-
-    @Mock
-    PlayerDataSerializer playerDataSerializer;
-
-    @Mock
-    ResourcePackManager resourcePackManager;
-
-    @Mock
-    Network network;
-
-    @Mock
-    DB db;
-    
-    @Mock
-    PositionTrackingService positionTrackingService;
-
-    File dataPath = FileUtils.createTempDir("powernukkit-player-test-data");
-
-    @InjectMocks
-    Server server = mock(Server.class, withSettings()
-            .useConstructor(dataPath)
-            .defaultAnswer(CALLS_REAL_METHODS));
-
-    /// Level Mocks ///
-    
-    @Mock
-    Anvil levelProvider;
-
+    @MockLevel
     Level level;
     
-    /// Player Mocks ///
     @Mock
     SourceInterface sourceInterface;
 
@@ -228,23 +168,10 @@ class PlayerTest {
     @BeforeEach
     void setUp() {
         /// Setup Level ///
-        doReturn("normal").when(levelProvider).getGenerator();
-        doReturn("TestLevel").when(levelProvider).getName();
-        level = mock(Level.class, withSettings()
-                .defaultAnswer(CALLS_REAL_METHODS)
-                .useConstructor(server, "DefaultLevel", new File(dataPath, "worlds/TestLevel"), true, levelProvider));
-        doReturn(new Position(100,64,200,level)).when(level).getSafeSpawn();
-        doReturn("TestLevel").when(level).getFolderName();
-        doReturn("TestLevel").when(level).getName();
-        doReturn(new Chunk(levelProvider)).when(level).getChunk(eq(100>>4), eq(200>>4), anyBoolean());
-        level.timings = new LevelTimings(level);
-        doReturn(level).when(levelProvider).getLevel();
-        doReturn(server).when(level).getServer();
+        doReturn(new Position(100,64,200, level)).when(level).getSafeSpawn();
         
         /// Setup Server ///
-        server.getLevels().put(0, level);
-        server.setDefaultLevel(level);
-        doNothing().when(server).updatePlayerListData(any(), anyLong(), anyString(), any(), anyString());
+        doReturn(level).when(Server.getInstance()).getDefaultLevel();
         
         /// Setup skin ///
         skin = new Skin();
@@ -269,23 +196,5 @@ class PlayerTest {
         assertTrue(player.isOnline(), "Failed to make the fake player login");
         
         player.doFirstSpawn();
-    }
-
-    @AfterEach
-    void tearDown() {
-        FileUtils.deleteRecursively(dataPath);
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        Block.init();
-        Enchantment.init();
-        Item.init();
-        EnumBiome.values(); //load class, this also registers biomes
-        Effect.init();
-        Potion.init();
-        Attribute.init();
-        DispenseBehaviorRegister.init();
-        BlockStateRegistry.getRuntimeId(0); //Force it to load
     }
 }

@@ -1,13 +1,13 @@
 package cn.nukkit.level.format.anvil.util;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockStone;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.utils.BinaryStream;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static cn.nukkit.blockstate.BlockState.AIR;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(PowerNukkitExtension.class)
 class BlockStorageTest {
     private static final BlockState DIRT = BlockState.of(BlockID.DIRT);
     private static final BlockState STONE = BlockState.of(BlockID.STONE);
@@ -32,11 +33,6 @@ class BlockStorageTest {
     int x;
     int y;
     int z;
-
-    @BeforeAll
-    static void beforeAll() {
-        Block.init();
-    }
 
     @BeforeEach
     void setUp() {

@@ -9,12 +9,15 @@ import org.apache.logging.log4j.Level;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
 import static cn.nukkit.block.BlockID.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+@ExtendWith(PowerNukkitExtension.class)
 class IBlockStateTest {
     static LogLevelAdjuster logLevelAdjuster = new LogLevelAdjuster();
 
@@ -25,7 +28,6 @@ class IBlockStateTest {
     static void beforeAll() {
         logLevelAdjuster.setLevel(MainLogger.class, Level.ERROR);
         logLevelAdjuster.setLevel(BlockStateRegistry.class, Level.ERROR);
-        Block.init();
     }
 
     @AfterAll
