@@ -44,18 +44,17 @@ public class ChunkUpdater {
             }
             
             if (section.getContentVersion() < 5) {
-                updated = updateToV9FromV0toV5(level, chunk, updated, section, section.getContentVersion());
+                updated = updateToV8FromV0toV5(level, chunk, updated, section, section.getContentVersion());
             } else if (section.getContentVersion() == 5 || section.getContentVersion() == 7) {
-                updated = updateBeehiveToV8(chunk, updated, section, false);
+                updated = updateBeehiveFromV5or6or7toV8(chunk, updated, section, false);
             } else if (section.getContentVersion() == 6) {
-                updated = updateBeehiveToV8(chunk, updated, section, true);
+                updated = updateBeehiveFromV5or6or7toV8(chunk, updated, section, true);
             } 
             if (section.getContentVersion() == 8) {
-                updated = walk(chunk, section, new WallUpdater(level, section)) || updated;
-                section.setContentVersion(9);
+                updated = upgradeWallsFromV8toV9(level, chunk, updated, section);
             }
             if (section.getContentVersion() == 9) {
-                updated = upgradeSnowLayersToV10(level, chunk, updated, section);
+                updated = upgradeSnowLayersFromV9toV10(level, chunk, updated, section);
             }
         }
 
@@ -63,8 +62,14 @@ public class ChunkUpdater {
             chunk.setChanged();
         }
     }
-    
-    private boolean upgradeSnowLayersToV10(Level level, BaseChunk chunk, boolean updated, ChunkSection section) {
+
+    private boolean upgradeWallsFromV8toV9(Level level, BaseChunk chunk, boolean updated, ChunkSection section) {
+        updated = walk(chunk, section, new WallUpdater(level, section)) || updated;
+        section.setContentVersion(9);
+        return updated;
+    }
+
+    private boolean upgradeSnowLayersFromV9toV10(Level level, BaseChunk chunk, boolean updated, ChunkSection section) {
         updated |= walk(chunk, section, new GroupedUpdaters(
                 new NewLeafUpdater(section),
                 new SnowLayerUpdater(level, section)
@@ -73,7 +78,7 @@ public class ChunkUpdater {
         return updated;
     }
     
-    private boolean updateBeehiveToV8(BaseChunk chunk, boolean updated, ChunkSection section, boolean updateDirection) {
+    private boolean updateBeehiveFromV5or6or7toV8(BaseChunk chunk, boolean updated, ChunkSection section, boolean updateDirection) {
         if (walk(chunk, section, new BeehiveUpdater(section, updateDirection))) {
             updated = true;
         }
@@ -81,7 +86,7 @@ public class ChunkUpdater {
         return updated;
     }
 
-    private boolean updateToV9FromV0toV5(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
+    private boolean updateToV8FromV0toV5(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
         WallUpdater wallUpdater = new WallUpdater(level, section);
         boolean sectionUpdated = walk(chunk, section, new GroupedUpdaters(
                 new MesaBiomeUpdater(section),
