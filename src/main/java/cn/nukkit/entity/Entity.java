@@ -1527,12 +1527,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     private Position getNearestValidPortal(Position currentPos) {
         AxisAlignedBB axisAlignedBB = new SimpleAxisAlignedBB(new Vector3(currentPos.getFloorX() - 128, currentPos.getFloorY(), getFloorZ() - 128), new Vector3(currentPos.getFloorX() + 128, currentPos.getFloorY(), getFloorZ() + 128));
-        Predicate<Block> condition = new Predicate<Block>() {
-            @Override
-            public boolean test(Block block) {
-                return block.getId() == BlockID.NETHER_PORTAL && block.down().getId() == BlockID.OBSIDIAN;
-            }
-        };
+        Predicate<Block> condition = block -> block.getId() == BlockID.NETHER_PORTAL && block.down().getId() == BlockID.OBSIDIAN;
         Block[] blocks = this.level.getCollisionBlocks(axisAlignedBB, false, true, condition);
 
         if (blocks == null || blocks.length == 0) {
