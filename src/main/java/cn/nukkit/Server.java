@@ -170,6 +170,7 @@ public class Server {
     private boolean networkCompressionAsync = true;
     public int networkCompressionLevel = 7;
     private int networkZlibProvider = 0;
+    private int timeout = 10000;
 
     private boolean autoTickRate = true;
     private int autoTickRateLimit = 20;
@@ -398,6 +399,7 @@ public class Server {
 
         this.networkCompressionLevel = this.getConfig("network.compression-level", 7);
         this.networkCompressionAsync = this.getConfig("network.async-compression", true);
+        this.timeout = this.getConfig("network.timeout", 10000);
 
         this.autoTickRate = this.getConfig("level-settings.auto-tick-rate", true);
         this.autoTickRateLimit = this.getConfig("level-settings.auto-tick-rate-limit", 20);
@@ -1309,6 +1311,10 @@ public class Server {
 
     public UUID getServerUniqueId() {
         return this.serverID;
+    }
+
+    public int getTimeout(){
+        return this.timeout;
     }
 
     public boolean getAutoSave() {

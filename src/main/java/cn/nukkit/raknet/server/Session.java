@@ -1,5 +1,6 @@
 package cn.nukkit.raknet.server;
 
+import cn.nukkit.Server;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.raknet.RakNet;
 import cn.nukkit.raknet.protocol.DataPacket;
@@ -49,6 +50,8 @@ public class Session {
     private long lastUpdate;
     private final long startTime;
 
+    private final long timeout;
+
     private boolean isTemporal = true;
 
     private final List<DataPacket> packetToSend = new ArrayList<>();
@@ -79,6 +82,7 @@ public class Session {
         this.sessionManager = sessionManager;
         this.address = address;
         this.port = port;
+        this.timeout = Server.getInstance().getTimeout();
         this.sendQueue = new DATA_PACKET_4();
         this.lastUpdate = System.currentTimeMillis();
         this.startTime = System.currentTimeMillis();
@@ -107,7 +111,7 @@ public class Session {
     }
 
     public void update(long time) throws Exception {
-        if (!this.isActive && (this.lastUpdate + 10000) < time) { //10 second timeout
+        if (!this.isActive && (this.lastUpdate + this.timeout) < time) { //Default is 10 second
             this.disconnect("timeout");
 
             return;
