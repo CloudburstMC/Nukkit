@@ -111,55 +111,60 @@ public class GrindstoneInventory extends FakeBlockUIComponent {
             if (index > 1) {
                 return;
             }
-            Item firstItem = getFirstItem();
-            Item secondItem = getSecondItem();
-            if (!firstItem.isNull() && !secondItem.isNull() && firstItem.getId() != secondItem.getId()) {
-                setResult(Item.get(0), send);
-                setResultExperience(0);
-                return;
-            }
-    
-            if (firstItem.isNull()) {
-                Item air = firstItem;
-                firstItem = secondItem;
-                secondItem = air;
-            }
-    
-            if (firstItem.isNull()) {
-                setResult(Item.get(0), send);
-                setResultExperience(0);
-                return;
-            }
-            
-            if (firstItem.getId() == ItemID.ENCHANTED_BOOK) {
-                if (secondItem.isNull()) {
-                    setResult(Item.get(ItemID.BOOK, 0, firstItem.getCount()), send);
-                    recalculateResultExperience();
-                } else {
-                    setResultExperience(0);
-                    setResult(Item.get(0), send);
-                }
-                return;
-            } 
-            
-            Item result = firstItem.clone();
-            CompoundTag tag = result.getNamedTag();
-            if (tag == null) tag = new CompoundTag(); 
-            tag.remove("ench");
-            tag.putInt("RepairCost", 0);
-            result.setCompoundTag(tag);
-            if (!secondItem.isNull() && firstItem.getMaxDurability() > 0) {
-                int first = firstItem.getMaxDurability() - firstItem.getDamage();
-                int second = secondItem.getMaxDurability() - secondItem.getDamage();
-                int reduction = first + second + firstItem.getMaxDurability() * 5 / 100;
-                int resultingDamage = Math.max(firstItem.getMaxDurability() - reduction + 1, 0);
-                result.setDamage(resultingDamage);
-            }
-            setResult(result, send);
-            recalculateResultExperience();
+            updateResult(send);
         } finally {
             super.onSlotChange(index, before, send);
         }
+    }
+
+    public boolean updateResult(boolean send) {
+        Item firstItem = getFirstItem();
+        Item secondItem = getSecondItem();
+        if (!firstItem.isNull() && !secondItem.isNull() && firstItem.getId() != secondItem.getId()) {
+            setResult(Item.get(0), send);
+            setResultExperience(0);
+            return false;
+        }
+
+        if (firstItem.isNull()) {
+            Item air = firstItem;
+            firstItem = secondItem;
+            secondItem = air;
+        }
+
+        if (firstItem.isNull()) {
+            setResult(Item.get(0), send);
+            setResultExperience(0);
+            return false;
+        }
+
+        if (firstItem.getId() == ItemID.ENCHANTED_BOOK) {
+            if (secondItem.isNull()) {
+                setResult(Item.get(ItemID.BOOK, 0, firstItem.getCount()), send);
+                recalculateResultExperience();
+            } else {
+                setResultExperience(0);
+                setResult(Item.get(0), send);
+            }
+            return false;
+        }
+
+        Item result = firstItem.clone();
+        CompoundTag tag = result.getNamedTag();
+        if (tag == null) tag = new CompoundTag();
+        tag.remove("ench");
+        tag.putInt("RepairCost", 0);
+        result.setCompoundTag(tag);
+        if (!secondItem.isNull() && firstItem.getMaxDurability() > 0) {
+            int first = firstItem.getMaxDurability() - firstItem.getDamage();
+            int second = secondItem.getMaxDurability() - secondItem.getDamage();
+            int reduction = first + second + firstItem.getMaxDurability() * 5 / 100;
+            int resultingDamage = Math.max(firstItem.getMaxDurability() - reduction + 1, 0);
+            result.setDamage(resultingDamage);
+        }
+        setResult(result, send);
+        recalculateResultExperience();
+        return true;
     }
 
     @PowerNukkitOnly

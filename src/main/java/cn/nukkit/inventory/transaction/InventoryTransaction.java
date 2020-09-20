@@ -1,12 +1,14 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.Since;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
+import cn.nukkit.inventory.transaction.action.TakeLevelAction;
 import cn.nukkit.item.Item;
 
 import java.util.*;
@@ -150,6 +152,8 @@ public class InventoryTransaction {
                 SlotChangeAction sca = (SlotChangeAction) action;
 
                 sca.getInventory().sendSlot(sca.getSlot(), this.source);
+            } else if (action instanceof TakeLevelAction) {
+                this.source.sendExperienceLevel();
             }
         }
     }
@@ -201,6 +205,7 @@ public class InventoryTransaction {
         return !ev.isCancelled();
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Always returns false if the execution is not possible")
     public boolean execute() {
         if (this.hasExecuted() || !this.canExecute()) {
             this.sendInventories();
@@ -210,13 +215,13 @@ public class InventoryTransaction {
 
         if (!callExecuteEvent()) {
             this.sendInventories();
-            return true;
+            return false;
         }
 
         for (InventoryAction action : this.actions) {
             if (!action.onPreExecute(this.source)) {
                 this.sendInventories();
-                return true;
+                return false;
             }
         }
 
