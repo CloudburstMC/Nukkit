@@ -5,6 +5,9 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.math.ChunkVector2;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -78,6 +81,12 @@ public interface ChunkManager {
     void setBlockDataAt(int x, int y, int z, int data);
 
     BaseFullChunk getChunk(int chunkX, int chunkZ);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    default BaseFullChunk getChunk(@Nonnull ChunkVector2 pos) {
+        return getChunk(pos.getX(), pos.getZ());
+    }
 
     void setChunk(int chunkX, int chunkZ);
 

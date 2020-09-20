@@ -74,9 +74,9 @@ import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiFunction;
-import java.util.function.BooleanSupplier;
-import java.util.function.Predicate;
+import java.util.function.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static cn.nukkit.utils.Utils.dynamic;
 
@@ -1401,6 +1401,22 @@ public class Level implements ChunkManager, Metadatable {
 
     public Set<BlockUpdateEntry> getPendingBlockUpdates(AxisAlignedBB boundingBox) {
         return updateQueue.getPendingBlockUpdates(boundingBox);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public List<Block> scanBlocks(@Nonnull AxisAlignedBB bb, @Nonnull BiPredicate<BlockVector3, BlockState> condition) {
+        BlockVector3 min = new BlockVector3(NukkitMath.floorDouble(bb.getMaxX()), NukkitMath.floorDouble(bb.getMaxY()), NukkitMath.floorDouble(bb.getMaxZ()));
+        BlockVector3 max = new BlockVector3(NukkitMath.floorDouble(bb.getMaxX()), NukkitMath.floorDouble(bb.getMaxY()), NukkitMath.floorDouble(bb.getMaxZ()));
+        ChunkVector2 minChunk = min.getChunkVector();
+        ChunkVector2 maxChunk = max.getChunkVector();
+        return IntStream.rangeClosed(minChunk.getX(), maxChunk.getX())
+                .mapToObj(x-> IntStream.rangeClosed(minChunk.getZ(), maxChunk.getZ()).mapToObj(z-> new ChunkVector2(x, z)))
+                .flatMap(Function.identity()).parallel()
+                .map(this::getChunk).filter(Objects::nonNull)
+                .map(chunk-> chunk.scanBlocks(min, max, condition))
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
     }
 
     public Block[] getCollisionBlocks(AxisAlignedBB bb) {

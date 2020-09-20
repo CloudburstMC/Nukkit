@@ -190,6 +190,30 @@ public class BlockVector3 implements Cloneable {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    public int getChunkX() {
+        return x >> 4;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getChunkZ() {
+        return z >> 4;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getChunkSectionY() {
+        return y >> 4;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public ChunkVector2 getChunkVector() {
+        return new ChunkVector2(getChunkX(), getChunkZ());
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int getAxis(BlockFace.Axis axis) {
         switch (axis) {
             case X:

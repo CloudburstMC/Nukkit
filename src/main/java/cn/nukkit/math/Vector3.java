@@ -65,6 +65,18 @@ public class Vector3 implements Cloneable {
     public int getChunkZ() {
         return getFloorZ() >> 4;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getChunkSectionY() {
+        return getFloorY() >> 4;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public ChunkVector2 getChunkVector() {
+        return new ChunkVector2(getChunkX(), getChunkZ());
+    }
 
     public double getRight() {
         return this.x;
