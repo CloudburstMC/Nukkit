@@ -696,12 +696,16 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         List<Block> results = new ArrayList<>();
         
         BlockVector3 current = new BlockVector3();
+
+        int minX = Math.max(0, min.x - offsetX);
+        int minY = Math.max(0, min.y);
+        int minZ = Math.max(0, min.z - offsetZ);
         
-        for (int x = Math.min(max.x - offsetX, 15); x >= Math.max(0, min.x - offsetX); x--) {
+        for (int x = Math.min(max.x - offsetX, 15); x >= minX; x--) {
             current.x = offsetX + x;
-            for (int z = Math.min(max.z - offsetZ, 15); z >= Math.max(0, min.z - offsetZ); z--) {
+            for (int z = Math.min(max.z - offsetZ, 15); z >= minZ; z--) {
                 current.z = offsetZ + z;
-                for (int y = Math.min(max.y, 255); y >= Math.max(0, min.y); y--) {
+                for (int y = Math.min(max.y, 255); y >= minY; y--) {
                     current.y = y;
                     BlockState state = getBlockState(x, y, z);
                     if (condition.test(current, state)) {
