@@ -19,6 +19,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
     public static final int RESULT = ANVIL_OUTPUT_UI_SLOT - 1; //1: offset
 
     private int cost;
+    private int damage;
 
     public AnvilInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.ANVIL, 1, position);
@@ -60,5 +61,13 @@ public class AnvilInventory extends FakeBlockUIComponent {
 
     public void setCost(int cost) {
         this.cost = cost;
+    }
+
+    public int getDamage() {
+        return this.damage;
+    }
+
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 }

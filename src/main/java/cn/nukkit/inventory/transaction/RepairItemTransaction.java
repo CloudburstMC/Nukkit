@@ -1,15 +1,18 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
+import cn.nukkit.event.block.AnvilDamageEvent;
 import cn.nukkit.event.inventory.RepairItemEvent;
 import cn.nukkit.inventory.AnvilInventory;
+import cn.nukkit.inventory.FakeBlockMenu;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.RepairItemAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDurable;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 
 import java.util.List;
@@ -64,10 +67,34 @@ public class RepairItemTransaction extends InventoryTransaction {
             }
         }
 
+        FakeBlockMenu holder = inventory.getHolder();
+        Block block = this.source.level.getBlock(holder.getFloorX(), holder.getFloorY(), holder.getFloorZ());
+        if (block.getId() == Block.ANVIL) {
+            int oldDamage = block.getDamage() >= 8 ? 2 : block.getDamage() >= 4 ? 1 : 0;
+            int newDamage = inventory.getDamage();
+            AnvilDamageEvent ev = new AnvilDamageEvent(block, oldDamage, this.source.isCreative() ? oldDamage : newDamage, this.source);
+            this.source.getServer().getPluginManager().callEvent(ev);
+            if (!ev.isCancelled()) {
+                newDamage = ev.getNewDamage();
+                if (newDamage > 2) {
+                    this.source.level.setBlock(block, Block.get(Block.AIR), true);
+                    this.source.level.addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ANVIL_BREAK);
+                } else {
+                    if (newDamage < 0) {
+                        newDamage = 0;
+                    }
+                    if (newDamage != oldDamage) {
+                        block.setDamage(newDamage * 4 + (block.getDamage() & 0x3));
+                        this.source.level.setBlock(block, block, true);
+                    }
+                    this.source.level.addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ANVIL_USE);
+                }
+            }
+        }
+
         if (!this.source.isCreative()) {
             this.source.setExperience(this.source.getExperience(), this.source.getExperienceLevel() - event.getCost());
         }
-        this.source.getLevel().addLevelSoundEvent(this.source, LevelSoundEventPacket.SOUND_RANDOM_ANVIL_USE);
         return true;
     }
 
