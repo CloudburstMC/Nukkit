@@ -246,4 +246,13 @@ public interface ItemID {
     int RECORD_WAIT = 511;
 
     int SHIELD = 513;
+
+    int HONEYCOMB = 736;
+    int HONEY_BOTTLE = 737;
+
+    int LODESTONECOMPASS = 741;
+
+    int WARPED_FUNGUS_ON_A_STICK = 757;
+
+    int RECORD_PIGSTEP = 759;
 }

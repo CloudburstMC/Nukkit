@@ -29,6 +29,11 @@ public class EntityMinecartChest extends EntityMinecartAbstract implements Inven
     }
 
     @Override
+    public String getName() {
+        return getType().getName();
+    }
+
+    @Override
     public MinecartType getType() {
         return MinecartType.valueOf(1);
     }

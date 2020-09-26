@@ -3,10 +3,11 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
 
 /**
@@ -68,7 +69,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
             level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
         }
 
-        this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
+        this.level.addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_POWER_ON, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
         return true;
     }
 
@@ -83,7 +84,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
             if (this.isActivated()) {
                 this.setDamage(this.getDamage() ^ 0x08);
                 this.level.setBlock(this, this, true, false);
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.RANDOM_CLICK);
+                this.level.addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_POWER_OFF, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
 
                 if (this.level.getServer().isRedstoneEnabled()) {
                     this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));

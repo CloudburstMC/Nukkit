@@ -1,7 +1,6 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.Utils;
 import io.netty.util.collection.CharObjectHashMap;
 
 import java.util.*;

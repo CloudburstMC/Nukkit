@@ -272,7 +272,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         return false;
     }
 
-    public class BlocksCalculator {
+    public static class BlocksCalculator {
 
         private final Vector3 pistonPos;
         private Vector3 armPos;

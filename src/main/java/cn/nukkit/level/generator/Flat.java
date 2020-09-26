@@ -6,8 +6,8 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.generator.object.ore.OreType;
-import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.level.generator.populator.impl.PopulatorOre;
+import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
@@ -70,8 +70,7 @@ public class Flat extends Generator {
         this.options = options;
 
         if (this.options.containsKey("decoration")) {
-            PopulatorOre ores = new PopulatorOre();
-            ores.setOreTypes(new OreType[]{
+            PopulatorOre ores = new PopulatorOre(BlockID.STONE, new OreType[]{
                     new OreType(Block.get(BlockID.COAL_ORE), 20, 16, 0, 128),
                     new OreType(Block.get(BlockID.IRON_ORE), 20, 8, 0, 64),
                     new OreType(Block.get(BlockID.REDSTONE_ORE), 8, 7, 0, 16),
@@ -89,9 +88,9 @@ public class Flat extends Generator {
         try {
             this.preset = preset;
             String[] presetArray = preset.split(";");
-            int version = Integer.valueOf(presetArray[0]);
+            int version = Integer.parseInt(presetArray[0]);
             String blocks = presetArray.length > 1 ? presetArray[1] : "";
-            this.biome = presetArray.length > 2 ? Integer.valueOf(presetArray[2]) : 1;
+            this.biome = presetArray.length > 2 ? Integer.parseInt(presetArray[2]) : 1;
             String options = presetArray.length > 3 ? presetArray[1] : "";
             this.structure = new int[256][];
             int y = 0;
@@ -100,16 +99,16 @@ public class Flat extends Generator {
                 if (Pattern.matches("^[0-9]{1,3}x[0-9]$", block)) {
                     //AxB
                     String[] s = block.split("x");
-                    cnt = Integer.valueOf(s[0]);
-                    id = Integer.valueOf(s[1]);
+                    cnt = Integer.parseInt(s[0]);
+                    id = Integer.parseInt(s[1]);
                 } else if (Pattern.matches("^[0-9]{1,3}:[0-9]{0,2}$", block)) {
                     //A:B
                     String[] s = block.split(":");
-                    id = Integer.valueOf(s[0]);
-                    meta = Integer.valueOf(s[1]);
+                    id = Integer.parseInt(s[0]);
+                    meta = Integer.parseInt(s[1]);
                 } else if (Pattern.matches("^[0-9]{1,3}$", block)) {
                     //A
-                    id = Integer.valueOf(block);
+                    id = Integer.parseInt(block);
                 } else {
                     continue;
                 }
