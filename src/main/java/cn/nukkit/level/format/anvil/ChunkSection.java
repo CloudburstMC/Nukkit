@@ -7,11 +7,13 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
+import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.anvil.util.BlockStorage;
 import cn.nukkit.level.format.anvil.util.NibbleArray;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.level.format.updater.ChunkUpdater;
 import cn.nukkit.level.util.PalettedBlockStorage;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.nbt.tag.ByteArrayTag;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -27,6 +29,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiPredicate;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -803,6 +806,39 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         synchronized (storageList) {
             return layer < storageList.size()? storageList.get(layer) : null;
         }
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public List<Block> scanBlocks(LevelProvider provider, int offsetX, int offsetZ, BlockVector3 min, BlockVector3 max, BiPredicate<BlockVector3, BlockState> condition) {
+        int offsetY = getY() << 4;
+        List<Block> results = new ArrayList<>();
+
+        BlockVector3 current = new BlockVector3();
+        
+        synchronized (storageList) {
+            BlockStorage storage = storageList.get(0);
+            int minX = Math.max(0, min.x - offsetX);
+            int minY = Math.max(0, min.y - offsetY);
+            int minZ = Math.max(0, min.z - offsetZ);
+            
+            for (int x = Math.min(max.x - offsetX, 15); x >= minX; x--) {
+                current.x = offsetX + x;
+                for (int z = Math.min(max.z - offsetZ, 15); z >= minZ; z--) {
+                    current.z = offsetZ + z;
+                    for (int y = Math.min(max.y - offsetY, 15); y >= minY; y--) {
+                        current.y = offsetY + y;
+                        BlockState state = storage.getBlockState(x, y, z);
+                        if (condition.test(current, state)) {
+                            results.add(state.getBlockRepairing(provider.getLevel(), current, 0));
+                        }
+                    }
+                }
+            }
+        }
+
+        return results;
     }
 
     @Nonnull
