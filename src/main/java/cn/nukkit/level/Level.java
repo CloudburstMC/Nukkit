@@ -478,7 +478,7 @@ public class Level implements ChunkManager, Metadatable {
             }
             throw levelException;
         }
-        return this.provider;
+        return levelProvider;
     }
 
     public final int getId() {

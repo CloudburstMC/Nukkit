@@ -1489,7 +1489,7 @@ public abstract class Entity extends Location implements Metadatable {
             if (!ev.isCancelled() && (level == EnumLevel.OVERWORLD.getLevel() || level == EnumLevel.NETHER.getLevel())) {
                 Position newPos = EnumLevel.moveToNether(this);
                 if (newPos != null) {
-                    for (int x = -1; x < 2; x++) {
+                    /*for (int x = -1; x < 2; x++) {
                         for (int z = -1; z < 2; z++) {
                             int chunkX = (newPos.getFloorX() >> 4) + x, chunkZ = (newPos.getFloorZ() >> 4) + z;
                             FullChunk chunk = newPos.level.getChunk(chunkX, chunkZ, false);
@@ -1497,22 +1497,25 @@ public abstract class Entity extends Location implements Metadatable {
                                 newPos.level.generateChunk(chunkX, chunkZ, true);
                             }
                         }
-                    }
-                    this.teleport(newPos.add(1.5, 1, 0.5));
-                    server.getScheduler().scheduleDelayedTask(new Task() {
-                        @Override
-                        public void onRun(int currentTick) {
-                            // dirty hack to make sure chunks are loaded and generated before spawning
-                            // player
-                            Position nearestPortal = getNearestValidPortal(newPos);
-                            if (nearestPortal != null) {
-                                teleport(nearestPortal.add(1.5, 0.1, 1.5));
-                            } else {
-                                teleport(newPos.add(1.5, 1, 0.5));
-                                BlockNetherPortal.spawnPortal(newPos);
-                            }
+                    }*/
+                    Position nearestPortal = getNearestValidPortal(newPos);
+                    if (nearestPortal != null) {
+                        teleport(nearestPortal.add(0.5, 0, 0.5), PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
+                    } else {
+                        final Position finalPos = newPos.add(1.5, 1, 1.5);
+                        if (teleport(finalPos, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
+                            server.getScheduler().scheduleDelayedTask(new Task() {
+                                @Override
+                                public void onRun(int currentTick) {
+                                    // dirty hack to make sure chunks are loaded and generated before spawning
+                                    // player
+                                    inPortalTicks = 81;
+                                    teleport(finalPos, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
+                                    BlockNetherPortal.spawnPortal(newPos);
+                                }
+                            }, 5);
                         }
-                    }, 20);
+                    }
                 }
             }
         }
@@ -1527,10 +1530,10 @@ public abstract class Entity extends Location implements Metadatable {
 
     private Position getNearestValidPortal(Position currentPos) {
         AxisAlignedBB axisAlignedBB = new SimpleAxisAlignedBB(
-                new Vector3(currentPos.getFloorX() - 128.0, 1.0, getFloorZ() - 128.0), 
-                new Vector3(currentPos.getFloorX() + 128.0, currentPos.level.getDimension() == Level.DIMENSION_NETHER? 128 : 256, getFloorZ() + 128.0));
+                new Vector3(currentPos.getFloorX() - 128.0, 1.0, currentPos.getFloorZ() - 128.0), 
+                new Vector3(currentPos.getFloorX() + 128.0, currentPos.level.getDimension() == Level.DIMENSION_NETHER? 128 : 256, currentPos.getFloorZ() + 128.0));
         BiPredicate<BlockVector3, BlockState> condition = (pos, state) -> state.getBlockId() == BlockID.NETHER_PORTAL;
-        List<Block> blocks = this.level.scanBlocks(axisAlignedBB, condition);
+        List<Block> blocks = currentPos.level.scanBlocks(axisAlignedBB, condition);
 
         if (blocks.isEmpty()) {
             return null;
@@ -1553,7 +1556,7 @@ public abstract class Entity extends Location implements Metadatable {
             return null;
         }
         
-        return new Position(nearestPortal.getFloorX(), nearestPortal.getFloorY(), nearestPortal.getFloorZ());
+        return nearestPortal;
     }
 
     public void updateMovement() {
@@ -2291,9 +2294,8 @@ public abstract class Entity extends Location implements Metadatable {
         }
         
         if (portal) {
-            if (this.inPortalTicks > 80) {
-                this.inPortalTicks = 80;
-            } else {
+            if (this.inPortalTicks <= 80) {
+                // 81 means the server won't try to teleport
                 this.inPortalTicks++;
             }
         } else {
