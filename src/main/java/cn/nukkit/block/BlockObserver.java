@@ -105,11 +105,21 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
             if (ev.isCancelled()) {
                 return 0;
             }
-
-            pluginManager.callEvent(new BlockRedstoneEvent(this, 15, 0));
-            setPowered(false);
-            level.setBlock(this, this);
-            getSide(getBlockFace().getOpposite()).onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+            
+            if (!isPowered()) {
+                level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
+                setPowered(true);
+                if (level.setBlock(this, this)) {
+                    level.scheduleUpdate(this, 3);
+                    getSide(getBlockFace().getOpposite()).onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+                    level.scheduleUpdate(this, 3);
+                }
+            } else {
+                pluginManager.callEvent(new BlockRedstoneEvent(this, 15, 0));
+                setPowered(false);
+                level.setBlock(this, this);
+                getSide(getBlockFace().getOpposite()).onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+            }
             return Level.BLOCK_UPDATE_SCHEDULED;
         } else if (type == Level.BLOCK_UPDATE_MOVED) {
             onNeighborChange(getBlockFace());
@@ -132,13 +142,8 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
         if (ev.isCancelled()) {
             return;
         }
-
-        server.getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
-        setPowered(true);
-        if (level.setBlock(this, this)) {
-            level.scheduleUpdate(this, 3);
-            getSide(blockFace.getOpposite()).onUpdate(Level.BLOCK_UPDATE_REDSTONE);
-        }
+        
+        level.scheduleUpdate(this, 3);
     }
 
     @Override
