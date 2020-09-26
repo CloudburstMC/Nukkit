@@ -27,8 +27,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -97,7 +97,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly
     @Nonnull
     @Override
-    public List<Block> scanBlocks(BlockVector3 min, BlockVector3 max, BiPredicate<BlockVector3, BlockState> condition) {
+    public Stream<Block> scanBlocks(BlockVector3 min, BlockVector3 max, BiPredicate<BlockVector3, BlockState> condition) {
         int offsetX = getX() << 4;
         int offsetZ = getZ() << 4;
         return IntStream.rangeClosed(min.getChunkSectionY(), max.getChunkSectionY())
@@ -105,8 +105,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 .mapToObj(sectionY -> sections[sectionY])
                 .filter(section -> !section.isEmpty()).parallel()
                 .map(section-> section.scanBlocks(getProvider(), offsetX, offsetZ, min, max, condition))
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
+                .flatMap(Collection::stream);
     }
 
     @Deprecated

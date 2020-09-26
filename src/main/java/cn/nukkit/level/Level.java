@@ -478,7 +478,7 @@ public class Level implements ChunkManager, Metadatable {
             }
             throw levelException;
         }
-        return this.provider;
+        return levelProvider;
     }
 
     public final int getId() {
@@ -1442,8 +1442,7 @@ public class Level implements ChunkManager, Metadatable {
                 .mapToObj(x-> IntStream.rangeClosed(minChunk.getZ(), maxChunk.getZ()).mapToObj(z-> new ChunkVector2(x, z)))
                 .flatMap(Function.identity()).parallel()
                 .map(this::getChunk).filter(Objects::nonNull)
-                .map(chunk-> chunk.scanBlocks(min, max, condition))
-                .flatMap(Collection::stream)
+                .flatMap(chunk-> chunk.scanBlocks(min, max, condition))
                 .collect(Collectors.toList());
     }
 
