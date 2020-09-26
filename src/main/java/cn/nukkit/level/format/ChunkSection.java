@@ -5,11 +5,15 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BinaryStream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiPredicate;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -168,5 +172,34 @@ public interface ChunkSection {
     @Since("1.4.0.0-PN")
     default void delayPaletteUpdates() {
         // Does nothing
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    default List<Block> scanBlocks(LevelProvider provider, int offsetX, int offsetZ, BlockVector3 min, BlockVector3 max, BiPredicate<BlockVector3, BlockState> condition) {
+        int offsetY = getY() << 4;
+        List<Block> results = new ArrayList<>();
+
+        BlockVector3 current = new BlockVector3();
+        
+        int minX = Math.max(0, min.x - offsetX);
+        int minY = Math.max(0, min.y - offsetY);
+        int minZ = Math.max(0, min.z - offsetZ);
+
+        for (int x = Math.min(max.x - offsetX, 15); x >= minX; x--) {
+            current.x = offsetX + x;
+            for (int z = Math.min(max.z - offsetZ, 15); z >= minZ; z--) {
+                current.z = offsetZ + z;
+                for (int y = Math.min(max.y - offsetY, 15); y >= minY; y--) {
+                    current.y = offsetY + y;
+                    BlockState state = getBlockState(x, y, z);
+                    if (condition.test(current, state)) {
+                        results.add(state.getBlockRepairing(provider.getLevel(), current, 0));
+                    }
+                }
+            }
+        }
+        
+        return results;
     }
 }
