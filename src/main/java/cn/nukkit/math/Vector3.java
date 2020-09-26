@@ -224,6 +224,33 @@ public class Vector3 implements Cloneable {
         return Math.pow(this.x - pos.x, 2) + Math.pow(this.y - pos.y, 2) + Math.pow(this.z - pos.z, 2);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public double euclideanDistance(double x, double y, double z) {
+        return Math.sqrt(euclideanDistanceSquared(x, y, z));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public double euclideanDistanceSquared(double x, double y, double z) {
+        double ex = this.x - x;
+        double ey = this.y - y;
+        double ez = this.z - z;
+        return ey * ey + ex * ex + ez * ez;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public double euclideanDistanceSquared(Vector3 vector3) {
+        return euclideanDistanceSquared(vector3.x, vector3.y, vector3.z);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public double euclideanDistance(Vector3 vector3) {
+        return euclideanDistance(vector3.x, vector3.y, vector3.z);
+    }
+
     public double maxPlainDistance() {
         return this.maxPlainDistance(0, 0);
     }

@@ -8,6 +8,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
@@ -46,8 +47,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Predicate;
-import java.util.function.ToDoubleFunction;
+import java.util.function.BiPredicate;
 
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 
@@ -1506,7 +1506,7 @@ public abstract class Entity extends Location implements Metadatable {
                             // player
                             Position nearestPortal = getNearestValidPortal(newPos);
                             if (nearestPortal != null) {
-                                teleport(nearestPortal.add(1.5, 1, 1.5));
+                                teleport(nearestPortal.add(1.5, 0.1, 1.5));
                             } else {
                                 teleport(newPos.add(1.5, 1, 0.5));
                                 BlockNetherPortal.spawnPortal(newPos);
@@ -1526,22 +1526,34 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     private Position getNearestValidPortal(Position currentPos) {
-        AxisAlignedBB axisAlignedBB = new SimpleAxisAlignedBB(new Vector3(currentPos.getFloorX() - 128, currentPos.getFloorY(), getFloorZ() - 128), new Vector3(currentPos.getFloorX() + 128, currentPos.getFloorY(), getFloorZ() + 128));
-        Predicate<Block> condition = block -> block.getId() == BlockID.NETHER_PORTAL && block.down().getId() == BlockID.OBSIDIAN;
-        Block[] blocks = this.level.getCollisionBlocks(axisAlignedBB, false, true, condition);
+        AxisAlignedBB axisAlignedBB = new SimpleAxisAlignedBB(
+                new Vector3(currentPos.getFloorX() - 128.0, 1.0, getFloorZ() - 128.0), 
+                new Vector3(currentPos.getFloorX() + 128.0, currentPos.level.getDimension() == Level.DIMENSION_NETHER? 128 : 256, getFloorZ() + 128.0));
+        BiPredicate<BlockVector3, BlockState> condition = (pos, state) -> state.getBlockId() == BlockID.NETHER_PORTAL;
+        List<Block> blocks = this.level.scanBlocks(axisAlignedBB, condition);
 
-        if (blocks == null || blocks.length == 0) {
+        if (blocks.isEmpty()) {
             return null;
         }
 
-        ToDoubleFunction<Double> toDoubleFunction = (Double value) -> value;
-
-        Block nearestPortal = Arrays.stream(blocks).min(Comparator.comparingDouble( block -> toDoubleFunction.applyAsDouble(getEuclideanDistance(new Vector2(currentPos.getFloorX(), currentPos.getFloorZ()), new Vector2(block.getFloorX(), block.getFloorZ()))))).get();
+        final Vector2 currentPosV2 = new Vector2(currentPos.getFloorX(), currentPos.getFloorZ());
+        final double by = currentPos.getFloorY();
+        Comparator<Block> euclideanDistance = Comparator.comparingDouble(block -> currentPosV2.euclideanDistanceSquared(block.getFloorX(), block.getFloorZ()));
+        Comparator<Block> heightDistance = Comparator.comparingDouble(block-> {
+            double ey = by - block.y;
+            return ey * ey;
+        });
+        
+        Block nearestPortal = blocks.stream()
+                .filter(block-> block.down().getId() != BlockID.NETHER_PORTAL)
+                .min(euclideanDistance.thenComparing(heightDistance))
+                .orElse(null);
+        
+        if (nearestPortal == null) {
+            return null;
+        }
+        
         return new Position(nearestPortal.getFloorX(), nearestPortal.getFloorY(), nearestPortal.getFloorZ());
-    }
-
-    private double getEuclideanDistance(Vector2 centerPos, Vector2 blockPos) {
-        return Math.sqrt( (blockPos.y - centerPos.y) * ( blockPos.y - centerPos.y) + (blockPos.x - centerPos.x) * (blockPos.x - centerPos.x));
     }
 
     public void updateMovement() {

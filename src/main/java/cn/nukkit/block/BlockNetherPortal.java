@@ -95,53 +95,48 @@ public class BlockNetherPortal extends BlockFlowable implements Faceable {
 
     public static void spawnPortal(Position pos)   {
         Level lvl = pos.level;
-        int x = pos.getFloorX(), y = pos.getFloorY(), z = pos.getFloorZ();
-
+        int x = pos.getFloorX();
+        int y = pos.getFloorY();
+        int z = pos.getFloorZ();
+        
+        Block air = Block.get(AIR);
+        Block obsidian = Block.get(OBSIDIAN);
+        Block netherPortal = Block.get(NETHER_PORTAL);
         for (int xx = -1; xx < 4; xx++) {
             for (int yy = 1; yy < 4; yy++)  {
                 for (int zz = -1; zz < 3; zz++) {
-                    lvl.setBlockAt(x + xx, y + yy, z + zz, AIR);
+                    lvl.setBlock(x + xx, y + yy, z + zz, air, false, true);
                 }
             }
         }
 
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
+        lvl.setBlock(x + 1, y, z, obsidian, false, true);
+        lvl.setBlock(x + 2, y, z, obsidian, false, true);
 
-        z += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+        z++;
+        lvl.setBlock(x, y, z, obsidian, false, true);
+        lvl.setBlock(x + 1, y, z, obsidian, false, true);
+        lvl.setBlock(x + 2, y, z, obsidian, false, true);
+        lvl.setBlock(x + 3, y, z, obsidian, false, true);
 
-        z += 1;
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
+        z++;
+        lvl.setBlock(x + 1, y, z, obsidian, false, true);
+        lvl.setBlock(x + 2, y, z, obsidian, false, true);
+        z--;
+        
+        for (int i = 0; i < 3; i++) {
+            y++;
+            lvl.setBlock(x, y, z, obsidian, false, true);
+            lvl.setBlock(x + 1, y, z, netherPortal, false, true);
+            lvl.setBlock(x + 2, y, z, netherPortal, false, true);
+            lvl.setBlock(x + 3, y, z, obsidian, false, true);
+        }
 
-        z -= 1;
-        y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
-
-        y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
-
-        y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 2, y, z, NETHER_PORTAL);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
-
-        y += 1;
-        lvl.setBlockAt(x, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 1, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 2, y, z, OBSIDIAN);
-        lvl.setBlockAt(x + 3, y, z, OBSIDIAN);
+        y++;
+        lvl.setBlock(x, y, z, obsidian, false, true);
+        lvl.setBlock(x + 1, y, z, obsidian, false, true);
+        lvl.setBlock(x + 2, y, z, obsidian, false, true);
+        lvl.setBlock(x + 3, y, z, obsidian, false, true);
     }
 
     @Override

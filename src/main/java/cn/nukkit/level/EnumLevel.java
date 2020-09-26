@@ -2,6 +2,7 @@ package cn.nukkit.level;
 
 import cn.nukkit.Server;
 import cn.nukkit.level.generator.Generator;
+import cn.nukkit.math.NukkitMath;
 
 public enum EnumLevel {
     OVERWORLD,
@@ -61,9 +62,9 @@ public enum EnumLevel {
             return null;
         } else {
             if (current.level == OVERWORLD.level) {
-                return new Position(Math.floor(current.getFloorX() >> 3), current.getFloorY(), Math.floor(current.getFloorZ() >> 3), NETHER.level);
+                return new Position(current.getFloorX() >> 3, NukkitMath.clamp(current.getFloorY(), 70, 118), current.getFloorZ() >> 3, NETHER.level);
             } else if (current.level == NETHER.level) {
-                return new Position(Math.floor(current.getFloorX() << 3), current.getFloorY(), Math.floor(current.getFloorZ() << 3), OVERWORLD.level);
+                return new Position(current.getFloorX() << 3, NukkitMath.clamp(current.getFloorY(), 70, 246), current.getFloorZ() << 3, OVERWORLD.level);
             } else {
                 throw new IllegalArgumentException("Neither overworld nor nether given!");
             }
