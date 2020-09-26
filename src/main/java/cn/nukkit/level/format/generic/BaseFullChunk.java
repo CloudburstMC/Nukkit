@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiPredicate;
+import java.util.stream.Stream;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -690,7 +691,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public List<Block> scanBlocks(BlockVector3 min, BlockVector3 max, BiPredicate<BlockVector3, BlockState> condition) {
+    public Stream<Block> scanBlocks(BlockVector3 min, BlockVector3 max, BiPredicate<BlockVector3, BlockState> condition) {
         int offsetX = getX() << 4;
         int offsetZ = getZ() << 4;
         List<Block> results = new ArrayList<>();
@@ -715,6 +716,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             }
         }
         
-        return results;
+        return results.stream();
     }
 }
