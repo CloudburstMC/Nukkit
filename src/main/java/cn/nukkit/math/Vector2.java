@@ -1,8 +1,5 @@
 package cn.nukkit.math;
 
-import cn.nukkit.api.PowerNukkitOnly;
-import cn.nukkit.api.Since;
-
 /**
  * @author MagicDroidX (Nukkit Project)
  */
@@ -96,7 +93,7 @@ public class Vector2 {
     }
 
     public double distance(Vector2 vector) {
-        return Math.sqrt(this.distanceSquared(vector.getX(), vector.getY()));
+        return distance(vector.x, vector.y);
     }
 
     public double distanceSquared(double x) {
@@ -104,37 +101,13 @@ public class Vector2 {
     }
 
     public double distanceSquared(double x, double y) {
-        return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2);
-    }
-
-    public double distanceSquared(Vector2 vector) {
-        return this.distanceSquared(vector.getX(), vector.getY());
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public double euclideanDistance(double x, double y) {
-        return Math.sqrt(euclideanDistanceSquared(x, y));
-    }
-    
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public double euclideanDistanceSquared(double x, double y) {
         double ex = this.x - x;
         double ey = this.y - y;
         return ey * ey + ex * ex;
     }
 
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public double euclideanDistanceSquared(Vector2 vector2) {
-        return euclideanDistanceSquared(vector2.x, vector2.y);
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public double euclideanDistance(Vector2 vector2) {
-        return euclideanDistance(vector2.x, vector2.y);
+    public double distanceSquared(Vector2 vector) {
+        return this.distanceSquared(vector.x, vector.y);
     }
 
     public double length() {

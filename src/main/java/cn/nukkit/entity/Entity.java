@@ -1541,7 +1541,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         final Vector2 currentPosV2 = new Vector2(currentPos.getFloorX(), currentPos.getFloorZ());
         final double by = currentPos.getFloorY();
-        Comparator<Block> euclideanDistance = Comparator.comparingDouble(block -> currentPosV2.euclideanDistanceSquared(block.getFloorX(), block.getFloorZ()));
+        Comparator<Block> euclideanDistance = Comparator.comparingDouble(block -> currentPosV2.distanceSquared(block.getFloorX(), block.getFloorZ()));
         Comparator<Block> heightDistance = Comparator.comparingDouble(block-> {
             double ey = by - block.y;
             return ey * ey;
