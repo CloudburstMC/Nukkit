@@ -1873,7 +1873,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
     
     public Optional<Block> firstInLayers(int startingLayer, Predicate<Block> condition) {
-        int maximumLayer = this.level.getProvider().getMaximumLayer();
+        int maximumLayer = this.level.requireProvider().getMaximumLayer();
         for (int layer = startingLayer; layer <= maximumLayer; layer++) {
             Block block = this.getLevelBlockAtLayer(layer);
             if (condition.test(block)) {
