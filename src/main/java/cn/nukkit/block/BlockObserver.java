@@ -134,7 +134,7 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
     public void onNeighborChange(@Nonnull BlockFace side) {
         Server server = level.getServer();
         BlockFace blockFace = getBlockFace();
-        if (!server.isRedstoneEnabled() || isPowered() || side != blockFace) {
+        if (!server.isRedstoneEnabled() || isPowered() || side != blockFace || level.isUpdateScheduled(this, this)) {
             return;
         }
         RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
