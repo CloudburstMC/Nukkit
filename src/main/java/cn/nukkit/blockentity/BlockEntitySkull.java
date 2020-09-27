@@ -104,7 +104,10 @@ public class BlockEntitySkull extends BlockEntitySpawnable {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.remove("Creator");
+        this.namedTag
+                .putBoolean("MouthMoving", this.mouthMoving)
+                .putInt("MouthTickCount", mouthTickCount)
+                .remove("Creator");
     }
 
     @Override
