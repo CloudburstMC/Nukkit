@@ -109,7 +109,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
 
         boolean redstone = this.level.getServer().isRedstoneEnabled();
 
-        this.getLevel().setBlock(this, this, false, !redstone);
+        this.getLevel().setBlock(this, this, false, true);
         this.getLevel().addSound(this, Sound.RANDOM_CLICK, 0.8f, isPowerOn() ? 0.58f : 0.5f );
 
         LeverOrientation orientation = getLeverOrientation();
