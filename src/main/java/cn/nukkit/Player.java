@@ -4882,7 +4882,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.address = hostName;
         pk.port = port;
         this.dataPacket(pk);
-        //this.close("", "Transferred to " + hostName + ":" + port, false);
         log.info(this.getName() + " transferred to " + hostName + ":" + port);
     }
 
