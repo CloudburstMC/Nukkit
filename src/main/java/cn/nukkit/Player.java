@@ -4882,8 +4882,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.address = hostName;
         pk.port = port;
         this.dataPacket(pk);
-        String message = "Transferred to " + hostName + ":" + port;
-        this.close("", message, false);
     }
 
     public LoginChainData getLoginChainData() {
