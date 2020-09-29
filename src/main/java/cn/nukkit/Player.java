@@ -3434,19 +3434,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
-                case ProtocolInfo.ANVIL_DAMAGE_PACKET:
-                    if (!this.spawned || !this.isAlive() || this.isSpectator()) {
-                        break;
-                    }
-                    AnvilDamagePacket anvilDamagePacket = (AnvilDamagePacket) packet;
-                    Inventory anvilInventory = this.getWindowById(ANVIL_WINDOW_ID);
-                    if (anvilInventory instanceof AnvilInventory) {
-                        Position position = ((AnvilInventory) anvilInventory).getHolder();
-                        if (position.x == anvilDamagePacket.x && position.y == anvilDamagePacket.y && position.z == anvilDamagePacket.z) {
-                            ((AnvilInventory) anvilInventory).setDamage(anvilDamagePacket.damage);
-                        }
-                    }
-                    break;
                 default:
                     break;
             }

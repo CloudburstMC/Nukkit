@@ -15,12 +15,14 @@ public class AnvilDamageEvent extends BlockEvent implements Cancellable {
 
     private final int oldDamage;
     private int newDamage;
+    private DamageCause cause;
     private final Player player;
 
-    public AnvilDamageEvent(Block block, int oldDamage, int newDamage, Player player) {
+    public AnvilDamageEvent(Block block, int oldDamage, int newDamage, DamageCause cause, Player player) {
         super(block);
         this.oldDamage = oldDamage;
         this.newDamage = newDamage;
+        this.cause = cause;
         this.player = player;
     }
 
@@ -36,7 +38,16 @@ public class AnvilDamageEvent extends BlockEvent implements Cancellable {
         this.newDamage = newDamage;
     }
 
+    public DamageCause getCause() {
+        return this.cause;
+    }
+
     public Player getPlayer() {
         return this.player;
+    }
+
+    public enum DamageCause {
+        USE,
+        FALL
     }
 }
