@@ -25,21 +25,28 @@ public enum InventoryType {
     CURSOR(1, "Cursor", -1),
     SHULKER_BOX(27, "Shulker Box", 0),
     BEACON(1, "Beacon", 13),
-    // 14 is something (crash)
+    // 14 STRUCTURE_EDITOR
+    // 15 TRADE
+    // 18 ARMOR
     //COMPOUND_CREATOR typeId:20
     //ELEMENT_CONSTRUCTOR typeId:21
     //MATERIAL_REDUCER typeId:22
     //LAB_TABLE typeId:23
+    // 24 LOOM
+    // 25 LECTERN
+    // 31 HUD
+    // 32 JIGSAW_EDITOR
     GRINDSTONE(3, "Grindstone", 26),
     BLAST_FURNACE(3, "Blast Furnace", 27),
     SMOKER(3, "Smoker", 28),
     STONECUTTER(2, "Stonecutter", 29), // Should be 29 but it's totally driven by the client, so setting to -1 = UI
-    CARTOGRAPHY(3, "Cartography Table", -1),
+    CARTOGRAPHY(3, "Cartography Table", 30),
     BARREL(27, "Barrel", 0),
     CAMPFIRE(4, "Campfire", -9), // -9 = NONE
-    MINECART_CHEST(27, "Minecart with Chest", 0),
-    MINECART_HOPPER(5, "Minecart with Hopper", 8),
-    OFFHAND(1, "Offhand", -1);
+    MINECART_CHEST(27, "Minecart with Chest", 0), // Should be 10
+    MINECART_HOPPER(5, "Minecart with Hopper", 8), // Should be 11
+    OFFHAND(1, "Offhand", -1),
+    SMITHING_TABLE(2, "Smithing Table", 33);
 
     private final int size;
     private final String title;

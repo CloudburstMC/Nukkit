@@ -147,21 +147,40 @@ public class NetworkInventoryAction {
                 }
                 // ID 124 with slot 14/15 is enchant inventory
                 if (this.windowId == ContainerIds.UI) {
-                    if (this.inventorySlot == EnchantInventory.ENCHANT_INPUT_ITEM_UI_SLOT) {
-                        if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
-                            player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
-                            return null;
-                        }
-                        this.windowId = Player.ENCHANT_WINDOW_ID;
-                        this.inventorySlot = 0;
-                        // TODO, check if unenchanted item and send EnchantOptionsPacket
-                    } else if (this.inventorySlot == EnchantInventory.ENCHANT_REAGENT_UI_SLOT) {
-                        if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
-                            player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
-                            return null;
-                        }
-                        this.windowId = Player.ENCHANT_WINDOW_ID;
-                        this.inventorySlot = 1;
+                    switch (this.inventorySlot) {
+                        case EnchantInventory.ENCHANT_INPUT_ITEM_UI_SLOT:
+                            if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
+                                player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
+                                return null;
+                            }
+                            this.windowId = Player.ENCHANT_WINDOW_ID;
+                            this.inventorySlot = 0;
+                            // TODO, check if unenchanted item and send EnchantOptionsPacket
+                            break;
+                        case EnchantInventory.ENCHANT_REAGENT_UI_SLOT:
+                            if (player.getWindowById(Player.ENCHANT_WINDOW_ID) == null) {
+                                player.getServer().getLogger().error("Player " + player.getName() + " does not have enchant window open");
+                                return null;
+                            }
+                            this.windowId = Player.ENCHANT_WINDOW_ID;
+                            this.inventorySlot = 1;
+                            break;
+                        case SmithingInventory.SMITHING_EQUIPMENT_UI_SLOT:
+                            if (player.getWindowById(Player.SMITHING_WINDOW_ID) == null) {
+                                player.getServer().getLogger().error("Player " + player.getName() + " does not have smithing table window open");
+                                return null;
+                            }
+                            this.windowId = Player.SMITHING_WINDOW_ID;
+                            this.inventorySlot = 0;
+                            break;
+                        case SmithingInventory.SMITHING_INGREDIENT_UI_SLOT:
+                            if (player.getWindowById(Player.SMITHING_WINDOW_ID) == null) {
+                                player.getServer().getLogger().error("Player " + player.getName() + " does not have smithing table window open");
+                                return null;
+                            }
+                            this.windowId = Player.SMITHING_WINDOW_ID;
+                            this.inventorySlot = 1;
+                            break;
                     }
                 }
 
@@ -216,9 +235,8 @@ public class NetworkInventoryAction {
                 }
 
                 if (this.windowId >= SOURCE_TYPE_ANVIL_OUTPUT && this.windowId <= SOURCE_TYPE_ANVIL_INPUT) { //anvil actions
-                    Inventory inv = player.getWindowById(Player.ANVIL_WINDOW_ID);
-
-                    if (inv instanceof AnvilInventory) {
+                    Inventory inv;
+                    if ((inv = player.getWindowById(Player.ANVIL_WINDOW_ID)) instanceof AnvilInventory) {
                         AnvilInventory anvil = (AnvilInventory) inv;
 
                         switch (this.windowId) {
@@ -237,7 +255,7 @@ public class NetworkInventoryAction {
                                 anvil.updateResult();
                                 return new CraftingTakeResultAction(this.oldItem, this.newItem);
                         }
-                    } else if (inv instanceof GrindstoneInventory) {
+                    } else if ((inv = player.getWindowById(Player.GRINDSTONE_WINDOW_ID)) instanceof GrindstoneInventory) {
                         switch (this.windowId) {
                             case SOURCE_TYPE_ANVIL_INPUT:
                                 this.inventorySlot = 0;
@@ -251,6 +269,20 @@ public class NetworkInventoryAction {
                             case SOURCE_TYPE_ANVIL_RESULT:
                                 this.inventorySlot = 2;
                                 return new CraftingTakeResultExperienceAction(this.oldItem, this.newItem, ((GrindstoneInventory) inv).getResultExperience());
+                        }
+                    } else if (player.getWindowById(Player.SMITHING_WINDOW_ID) instanceof SmithingInventory) {
+                        switch (this.windowId) {
+                            case SOURCE_TYPE_ANVIL_INPUT:
+                                this.inventorySlot = 0;
+                                return new CraftingTransferMaterialAction(this.oldItem, this.newItem, this.inventorySlot);
+                            case SOURCE_TYPE_ANVIL_MATERIAL:
+                                this.inventorySlot = 1;
+                                return new CraftingTransferMaterialAction(this.oldItem, this.newItem, this.inventorySlot);
+                            case SOURCE_TYPE_ANVIL_OUTPUT:
+                                break;
+                            case SOURCE_TYPE_ANVIL_RESULT:
+                                this.inventorySlot = 2;
+                                return new CraftingTakeResultAction(this.oldItem, this.newItem);
                         }
                     } else {
                         player.getServer().getLogger().debug("Player " + player.getName() + " has no open anvil or grindstone inventory");

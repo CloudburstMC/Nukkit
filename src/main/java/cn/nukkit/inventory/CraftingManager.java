@@ -1,6 +1,8 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.BatchPacket;
@@ -10,9 +12,13 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import io.netty.util.collection.CharObjectHashMap;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
@@ -41,6 +47,8 @@ public class CraftingManager {
     private static int RECIPE_COUNT = 0;
     protected final Map<Integer, Map<UUID, ShapelessRecipe>> shapelessRecipes = new Int2ObjectOpenHashMap<>();
     protected final Map<Integer, Map<UUID, CartographyRecipe>> cartographyRecipes = new Int2ObjectOpenHashMap<>();
+    
+    private final Int2ObjectOpenHashMap<Map<UUID, SmithingRecipe>> smithingRecipes = new Int2ObjectOpenHashMap<>();
 
     public static final Comparator<Item> recipeComparator = (i1, i2) -> {
         if (i1.getId() > i2.getId()) {
@@ -60,6 +68,8 @@ public class CraftingManager {
             throw new AssertionError("Unable to find recipes.json");
         }
 
+        registerSmithingRecipes();
+
         Config recipesConfig = new Config(Config.JSON);
         recipesConfig.load(recipesStream);
         this.loadRecipes(recipesConfig);
@@ -74,6 +84,25 @@ public class CraftingManager {
         this.rebuildPacket();
 
         MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes.");
+    }
+    
+    private void registerSmithingRecipes() {
+        Item ingot = Item.get(ItemID.NETHERITE_INGOT);
+        Int2IntMap ids = new Int2IntOpenHashMap();
+        ids.put(ItemID.DIAMOND_HELMET, ItemID.NETHERITE_HELMET);
+        ids.put(ItemID.DIAMOND_CHESTPLATE, ItemID.NETHERITE_CHESTPLATE);
+        ids.put(ItemID.DIAMOND_LEGGINGS, ItemID.NETHERITE_LEGGINGS);
+        ids.put(ItemID.DIAMOND_BOOTS, ItemID.NETHERITE_BOOTS);
+        ids.put(ItemID.DIAMOND_SWORD, ItemID.NETHERITE_SWORD);
+        ids.put(ItemID.DIAMOND_PICKAXE, ItemID.NETHERITE_PICKAXE);
+        ids.put(ItemID.DIAMOND_HOE, ItemID.NETHERITE_HOE);
+        ids.int2IntEntrySet().forEach(e-> 
+                new SmithingRecipe(
+                        Item.get(e.getIntKey()).createFuzzyCraftingRecipe(),
+                        ingot,
+                        Item.get(e.getIntValue())
+                ).registerToCraftingManager(this)
+        );
     }
 
     @SuppressWarnings("unchecked")
@@ -393,6 +422,81 @@ public class CraftingManager {
 
         map.put(hash, recipe);
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void registerSmithingRecipe(@Nonnull SmithingRecipe recipe) {
+        List<Item> list = recipe.getIngredientsAggregate();
+
+        UUID hash = getMultiItemHash(list);
+
+        int resultHash = getItemHash(recipe.getResult());
+        Map<UUID, SmithingRecipe> map = smithingRecipes.computeIfAbsent(resultHash, k -> new HashMap<>());
+
+        map.put(hash, recipe);
+    }
+
+    @Nullable
+    public SmithingRecipe matchSmithingRecipe(Item equipment, Item ingredient) {
+        List<Item> inputList = new ArrayList<>(2);
+        inputList.add(equipment);
+        inputList.add(ingredient);
+        return matchSmithingRecipe(inputList);
+    }
+    
+    @Nullable
+    public SmithingRecipe matchSmithingRecipe(@Nonnull List<Item> inputList) {
+        inputList.sort(recipeComparator);
+        UUID inputHash = getMultiItemHash(inputList);
+        
+        return smithingRecipes.values().stream().flatMap(map-> map.entrySet().stream())
+                .filter(entry-> entry.getKey().equals(inputHash))
+                .map(Map.Entry::getValue)
+                .findFirst().orElseGet(()->
+                        smithingRecipes.values().stream().flatMap(map-> map.values().stream())
+                        .filter(recipe -> recipe.matchItems(inputList))
+                        .findFirst().orElse(null)
+                );
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public SmithingRecipe matchSmithingRecipe(@Nonnull Item equipment, @Nonnull Item ingredient, @Nonnull Item primaryOutput) {
+        List<Item> inputList = new ArrayList<>(2);
+        inputList.add(equipment);
+        inputList.add(ingredient);
+        return matchSmithingRecipe(inputList, primaryOutput);
+    }
+    
+    public SmithingRecipe matchSmithingRecipe(@Nonnull List<Item> inputList, @Nonnull Item primaryOutput) {
+        int outputHash = getItemHash(primaryOutput);
+        if (!this.smithingRecipes.containsKey(outputHash)) {
+            return null;
+        }
+        
+        inputList.sort(recipeComparator);
+
+        UUID inputHash = getMultiItemHash(inputList);
+
+        Map<UUID, SmithingRecipe> recipeMap = smithingRecipes.get(outputHash);
+
+        if (recipeMap != null) {
+            SmithingRecipe recipe = recipeMap.get(inputHash);
+
+            if (recipe != null && (recipe.matchItems(inputList) || matchItemsAccumulation(recipe, inputList, primaryOutput))) {
+                return recipe;
+            }
+
+            for (SmithingRecipe smithingRecipe : recipeMap.values()) {
+                if (smithingRecipe.matchItems(inputList) || matchItemsAccumulation(smithingRecipe, inputList, primaryOutput)) {
+                    return smithingRecipe;
+                }
+            }
+        }
+
+        return null;
+    }
 
     private static int getPotionHash(Item ingredient, Item potion) {
         int ingredientHash = ((ingredient.getId() & 0x3FF) << 6) | (ingredient.getDamage() & 0x3F);
@@ -433,7 +537,7 @@ public class CraftingManager {
     public StonecutterRecipe matchStonecutterRecipe(Item output) {
         return this.stonecutterRecipes.get(getItemHash(output));
     }
-    
+
     public CartographyRecipe matchCartographyRecipe(List<Item> inputList, Item primaryOutput, List<Item> extraOutputList) {
         int outputHash = getItemHash(primaryOutput);
     
@@ -515,6 +619,15 @@ public class CraftingManager {
         }
 
         return null;
+    }
+
+    private boolean matchItemsAccumulation(SmithingRecipe recipe, List<Item> inputList, Item primaryOutput) {
+        Item recipeResult = recipe.getResult();
+        if (primaryOutput.equals(recipeResult, recipeResult.hasMeta(), recipeResult.hasCompoundTag()) && primaryOutput.getCount() % recipeResult.getCount() == 0) {
+            int multiplier = primaryOutput.getCount() / recipeResult.getCount();
+            return recipe.matchItems(inputList, multiplier);
+        }
+        return false;
     }
 
     private boolean matchItemsAccumulation(CraftingRecipe recipe, List<Item> inputList, Item primaryOutput, List<Item> extraOutputList) {

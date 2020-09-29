@@ -101,6 +101,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
+import static cn.nukkit.utils.Utils.dynamic;
+
 /**
  * @author MagicDroidX &amp; Box (Nukkit Project)
  */
@@ -125,6 +127,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final @PowerNukkitOnly int CRAFTING_GRINDSTONE = 1000;
     public static final @PowerNukkitOnly int CRAFTING_STONECUTTER = 1001;
     public static final @PowerNukkitOnly int CRAFTING_CARTOGRAPHY = 1002;
+    public static final @PowerNukkitOnly int CRAFTING_SMITHING = 1003;
 
     public static final float DEFAULT_SPEED = 0.1f;
     public static final float MAXIMUM_SPEED = 0.5f;
@@ -137,7 +140,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int ANVIL_WINDOW_ID = 2;
     public static final int ENCHANT_WINDOW_ID = 3;
     public static final int BEACON_WINDOW_ID = 4;
-    public static final int GRINDSTONE_WINDOW_ID = 2;
+    public static final @PowerNukkitOnly int GRINDSTONE_WINDOW_ID = dynamic(5);
+    public static final @Since("1.4.0.0-PN") @PowerNukkitOnly int SMITHING_WINDOW_ID = dynamic(6);
 
     protected final SourceInterface interfaz;
 
@@ -3237,6 +3241,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         break;
                                     case CRAFTING_CARTOGRAPHY:
                                         sound = Sound.BLOCK_CARTOGRAPHY_TABLE_USE;
+                                        break;
+                                    case CRAFTING_SMITHING:
+                                        sound = Sound.SMITHING_TABLE_USE;
                                         break;
                                 }
 
