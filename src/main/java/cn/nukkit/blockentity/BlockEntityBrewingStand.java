@@ -31,7 +31,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
 
     public static final int MAX_BREW_TIME = 400;
 
-    public int brewTime = MAX_BREW_TIME;
+    public int brewTime;
     public int fuelTotal;
     public int fuelAmount;
 

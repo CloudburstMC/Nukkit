@@ -68,20 +68,6 @@ public class BlockJukebox extends BlockSolid {
         return false;
     }
 
-    @Override
-    public boolean onBreak(Item item) {
-        if (super.onBreak(item)) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
-
-            if (blockEntity instanceof BlockEntityJukebox) {
-                ((BlockEntityJukebox) blockEntity).dropItem();
-            }
-            return true;
-        }
-
-        return false;
-    }
-
     private BlockEntity createBlockEntity() {
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))

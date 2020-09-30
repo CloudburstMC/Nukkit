@@ -4,12 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -88,7 +88,7 @@ public class BlockTNT extends BlockSolid {
             return;
         }
         tnt.spawnToAll();
-        this.level.addSound(this, Sound.RANDOM_FUSE);
+        this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TNT);
     }
 
     @Override
@@ -109,7 +109,6 @@ public class BlockTNT extends BlockSolid {
         }
         if (item.getId() == Item.FIRE_CHARGE) {
             if (!player.isCreative()) player.getInventory().removeItem(Item.get(Item.FIRE_CHARGE, 0, 1));
-            this.level.addSound(player, Sound.MOB_GHAST_FIREBALL);
             this.prime(80, player);
             return true;
         }

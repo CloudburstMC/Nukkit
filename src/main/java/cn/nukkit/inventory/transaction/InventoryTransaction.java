@@ -75,13 +75,22 @@ public class InventoryTransaction {
                     SlotChangeAction existingSlotChangeAction = (SlotChangeAction) existingAction;
                     if (!existingSlotChangeAction.getInventory().equals(slotChangeAction.getInventory()))
                         continue;
+                    Item existingSource = existingSlotChangeAction.getSourceItem();
                     Item existingTarget = existingSlotChangeAction.getTargetItem();
                     Item targetItem = slotChangeAction.getTargetItem();
                     Item sourceItem = slotChangeAction.getSourceItem();
                     if (targetItem.getCount() > targetItem.getMaxStackSize() || sourceItem.getCount() > sourceItem.getMaxStackSize()) return;
-                    if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot() && slotChangeAction.getSourceItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
-                        iterator.set(new SlotChangeAction(existingSlotChangeAction.getInventory(), existingSlotChangeAction.getSlot(), existingSlotChangeAction.getSourceItem(), slotChangeAction.getTargetItem()));
+                    if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot()
+                            && sourceItem.equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
+                        iterator.set(new SlotChangeAction(existingSlotChangeAction.getInventory(), existingSlotChangeAction.getSlot(), existingSource, targetItem));
                         action.onAddToTransaction(this);
+                        return;
+                    } else if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot()
+                            && slotChangeAction.getSourceItem().equals(existingSource, existingSource.hasMeta(), existingSource.hasCompoundTag())
+                            && slotChangeAction.getTargetItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
+                        existingSource.setCount(existingSource.getCount() + sourceItem.getCount());
+                        existingTarget.setCount(existingTarget.getCount() + targetItem.getCount());
+                        iterator.set(new SlotChangeAction(existingSlotChangeAction.getInventory(), existingSlotChangeAction.getSlot(), existingSource, existingTarget));
                         return;
                     }
                 }
