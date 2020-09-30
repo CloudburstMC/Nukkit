@@ -143,7 +143,7 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public boolean setItem(int index, Item item, boolean send) {
         item = item.clone();
-        if (index < 0 || index >= this.size) {
+        if (index < 0 || index >= this.size || !this.canAddItem(item)) {
             return false;
         } else if (item.getId() == 0 || item.getCount() <= 0) {
             return this.clear(index, send);

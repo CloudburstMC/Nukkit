@@ -76,9 +76,9 @@ public class InventoryTransaction {
                     if (!existingSlotChangeAction.getInventory().equals(slotChangeAction.getInventory()))
                         continue;
                     Item existingTarget = existingSlotChangeAction.getTargetItem();
-                    Item pt = slotChangeAction.getTargetItem();
-                    Item ps = slotChangeAction.getSourceItem();
-                    if ((pt.getCount() > pt.getMaxStackSize() || pt.getCount() < 0) || (ps.getCount() > ps.getMaxStackSize() || ps.getCount() < 0)) return;
+                    Item targetItem = slotChangeAction.getTargetItem();
+                    Item sourceItem = slotChangeAction.getSourceItem();
+                    if (targetItem.getCount() > targetItem.getMaxStackSize() || sourceItem.getCount() > sourceItem.getMaxStackSize()) return;
                     if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot() && slotChangeAction.getSourceItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
                         iterator.set(new SlotChangeAction(existingSlotChangeAction.getInventory(), existingSlotChangeAction.getSlot(), existingSlotChangeAction.getSourceItem(), slotChangeAction.getTargetItem()));
                         action.onAddToTransaction(this);
