@@ -214,15 +214,13 @@ public class RepairItemTransaction extends InventoryTransaction {
         if (this.inputItem.getId() == Item.EMPTY_MAP) {
             return this.inputItem.getDamage() != 2 && this.materialItem.getId() == Item.COMPASS // locator
                     && this.outputItem.getId() == Item.EMPTY_MAP && this.outputItem.getDamage() == 2 && this.outputItem.getCount() == 1;
-        } else if (this.inputItem.getId() == Item.MAP) {
+        } else if (this.inputItem.getId() == Item.MAP && this.outputItem.getDamage() == this.inputItem.getDamage()) {
             if (this.materialItem.getId() == Item.COMPASS) { // locator
-                return this.inputItem.getDamage() < 2 && this.outputItem.getId() == Item.MAP
-                        && this.outputItem.getDamage() == 2 && this.outputItem.getCount() == 1;
+                return this.inputItem.getDamage() != 2 && this.outputItem.getId() == Item.MAP && this.outputItem.getCount() == 1;
             } else if (this.materialItem.getId() == Item.EMPTY_MAP) { // clone
-                return this.outputItem.getId() == Item.MAP && this.outputItem.getDamage() == this.inputItem.getDamage() && this.outputItem.getCount() == 2;
+                return this.outputItem.getId() == Item.MAP && this.outputItem.getCount() == 2;
             } else if (this.materialItem.getId() == Item.PAPER && this.materialItem.getCount() >= 8) { // zoom out
-                return this.inputItem.getDamage() < 3 && this.outputItem.getId() == Item.MAP
-                        && this.outputItem.getDamage() == this.inputItem.getDamage() && this.outputItem.getCount() == 1;
+                return this.inputItem.getDamage() < 3 && this.outputItem.getId() == Item.MAP && this.outputItem.getCount() == 1;
             }
         }
         return false;
