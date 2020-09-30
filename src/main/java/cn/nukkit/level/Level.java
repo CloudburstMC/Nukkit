@@ -1710,7 +1710,7 @@ public class Level implements ChunkManager, Metadatable {
         AtomicBoolean repaired = new AtomicBoolean();
         Block block = fullState.getBlockRepairing(this, x, y, z, layer, repair -> repaired.set(true));
         if (repaired.get()) {
-            setBlock(x, y, z, layer, block, false, true);
+            setBlock(x, y, z, layer, block, false, false); // Update set to false to fix PowerNukkit#650 
         }
         return block;
     }
