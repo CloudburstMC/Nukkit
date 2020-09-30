@@ -458,6 +458,10 @@ public class BinaryStream {
             return;
         }
 
+        if (item.getCount() > item.getMaxStackSize()) {
+            item.setCount(item.getMaxStackSize());
+        }
+
         boolean isDurable = item instanceof ItemDurable;
 
         this.putVarInt(item.getId());
