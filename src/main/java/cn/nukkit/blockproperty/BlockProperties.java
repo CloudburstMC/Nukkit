@@ -4,10 +4,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
-import cn.nukkit.blockstate.BigIntegerMutableBlockState;
-import cn.nukkit.blockstate.IntMutableBlockState;
-import cn.nukkit.blockstate.LongMutableBlockState;
-import cn.nukkit.blockstate.MutableBlockState;
+import cn.nukkit.blockstate.*;
 import cn.nukkit.utils.functional.ToIntTriFunctionTwoInts;
 import cn.nukkit.utils.functional.ToLongTriFunctionOneIntOneLong;
 import cn.nukkit.utils.functional.TriFunction;
@@ -65,9 +62,13 @@ public final class BlockProperties {
     @Since("1.4.0.0-PN")
     @Nonnull
     public MutableBlockState createMutableState(int blockId) {
-        if (bitSize <= 32) {
+        if (bitSize == 0) {
+            return new ZeroMutableBlockState(blockId, this);
+        } else if (bitSize < 8) {
+            return new ByteMutableBlockState(blockId, this);
+        } else if (bitSize < 32) {
             return new IntMutableBlockState(blockId, this);
-        } else if (bitSize <= 64) {
+        } else if (bitSize < 64) {
             return new LongMutableBlockState(blockId, this);
         } else {
             return new BigIntegerMutableBlockState(blockId, this);

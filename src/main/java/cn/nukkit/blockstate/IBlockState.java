@@ -378,13 +378,12 @@ public interface IBlockState {
             Server.getInstance().getPluginManager().callEvent(event);
             block = event.getResult();
         }
-        
-        if (!repairs.isEmpty()) {
-            if (logIBlockState.isDebugEnabled()) {
-                logIBlockState.debug("The block that at " + new Position(x, y, z, level) + " was repaired. Result: " + block + ", Repairs: " + repairs,
-                        new Exception("Stacktrace")
-                );
-            }
+
+        if (!repairs.isEmpty() && logIBlockState.isDebugEnabled()) {
+            logIBlockState.debug("The block that at Level:{}, X:{}, Y:{}, Z:{}, L:{} was repaired. Result: {}, Repairs: {}",
+                    level, x, y, z, layer, block, repairs,
+                    new Exception("Stacktrace")
+            );
         }
         
         return block;

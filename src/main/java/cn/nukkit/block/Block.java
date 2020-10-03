@@ -1889,6 +1889,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public void setState(@Nonnull IBlockState state) throws InvalidBlockStateException {
+        if (state.getBlockId() == getId() && state.isDefaultState() && this.isDefaultState()) {
+            return;
+        }
         getMutableState().setState(state);
     }
 

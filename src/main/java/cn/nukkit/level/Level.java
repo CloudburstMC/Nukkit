@@ -9,6 +9,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -73,7 +74,6 @@ import java.io.File;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -1321,7 +1321,7 @@ public class Level implements ChunkManager, Metadatable {
                 continue;
             }
 
-            this.getBlock(pos.getSide(side)).onUpdate(BLOCK_UPDATE_REDSTONE);
+            this.getBlock(temporalVector.setComponentsAdding(pos, side)).onUpdate(BLOCK_UPDATE_REDSTONE);
         }
     }
 
@@ -1707,11 +1707,18 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             fullState = BlockState.AIR;
         }
-        AtomicBoolean repaired = new AtomicBoolean();
-        Block block = fullState.getBlockRepairing(this, x, y, z, layer, repair -> repaired.set(true));
-        if (repaired.get()) {
-            setBlock(x, y, z, layer, block, false, false); // Update set to false to fix PowerNukkit#650 
+        OptionalBoolean valid = fullState.getCachedValidation();
+        if (valid == OptionalBoolean.TRUE) {
+            return fullState.getBlock(this, x, y, z, layer);
         }
+        if (valid == OptionalBoolean.EMPTY) {
+            try {
+                return fullState.getBlock(this, x, y, z, layer);
+            } catch (InvalidBlockStateException ignored) {
+            }
+        }
+        Block block = fullState.getBlockRepairing(this, x, y, z, layer);
+        setBlock(x, y, z, layer, block, false, false); // Update set to false to fix PowerNukkit#650 
         return block;
     }
     
@@ -3845,7 +3852,7 @@ public class Level implements ChunkManager, Metadatable {
         int i = 0;
 
         for (BlockFace face : BlockFace.values()) {
-            i = Math.max(i, this.getStrongPower(pos.getSide(face), face));
+            i = Math.max(i, this.getStrongPower(temporalVector.setComponentsAdding(pos, face), face));
 
             if (i >= 15) {
                 return i;
@@ -3906,7 +3913,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public boolean isBlockPowered(Vector3 pos) {
         for (BlockFace face : BlockFace.values()) {
-            if (this.getRedstonePower(pos.getSide(face), face) > 0) {
+            if (this.getRedstonePower(temporalVector.setComponentsAdding(pos, face), face) > 0) {
                 return true;
             }
         }
@@ -3918,7 +3925,7 @@ public class Level implements ChunkManager, Metadatable {
         int power = 0;
 
         for (BlockFace face : BlockFace.values()) {
-            int blockPower = this.getRedstonePower(pos.getSide(face), face);
+            int blockPower = this.getRedstonePower(temporalVector.setComponentsAdding(pos, face), face);
 
             if (blockPower >= 15) {
                 return 15;

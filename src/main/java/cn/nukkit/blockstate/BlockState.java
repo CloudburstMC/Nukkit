@@ -48,6 +48,13 @@ public final class BlockState implements Serializable, IBlockState {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
+    public static BlockState of(int blockId, byte blockData) {
+        return STATES.computeIfAbsent(blockId+":"+blockData, k-> new BlockState(blockId, blockData));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
     public static BlockState of(int blockId, int blockData) {
         return STATES.computeIfAbsent(blockId+":"+blockData, k-> new BlockState(blockId, blockData));
     }
@@ -406,6 +413,12 @@ public final class BlockState implements Serializable, IBlockState {
     @Since("1.4.0.0-PN")
     public boolean isCachedValidationValid() {
         return valid.orElse(false);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public OptionalBoolean getCachedValidation() {
+        return valid;
     }
 
     @Nonnull

@@ -77,6 +77,26 @@ public class NukkitMath {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    public static int bitLength(byte data) {
+        if (data < 0) {
+            return 32;
+        }
+
+        if (data == 0) {
+            return 1;
+        }
+
+        int bits = 0;
+        while (data != 0) {
+            data >>>= 1;
+            bits++;
+        }
+
+        return bits;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static int bitLength(int data) {
         if (data < 0) {
             return 32;

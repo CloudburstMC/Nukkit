@@ -228,6 +228,8 @@ public class BlockStorage {
         return states[getIndex(x, y, z)];
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public void recheckBlocks() {
         flags = computeFlags((byte)(flags & FLAG_PALETTE_UPDATED), states);
     }
@@ -420,6 +422,8 @@ public class BlockStorage {
         return newFlags; 
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockStorage copy() {
         BitSet deny = denyStates;
         return new BlockStorage(states.clone(), flags, palette.copy(), (BitSet) (deny != null? deny.clone() : null));

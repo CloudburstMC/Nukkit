@@ -26,7 +26,6 @@ import cn.nukkit.level.util.PalettedBlockStorage;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import java.util.BitSet;
 
 import static cn.nukkit.api.API.Definition.INTERNAL;
@@ -62,8 +61,18 @@ public final class ImmutableBlockStorage extends BlockStorage {
         
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public ImmutableBlockStorage copy() {
+    public void recheckBlocks() {
+        
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public ImmutableBlockStorage immutableCopy() {
         return this;
     }
 }
