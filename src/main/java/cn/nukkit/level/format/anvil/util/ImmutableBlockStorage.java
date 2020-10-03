@@ -38,7 +38,7 @@ import static cn.nukkit.api.API.Usage.BLEEDING;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-public class ImmutableBlockStorage extends BlockStorage {
+public final class ImmutableBlockStorage extends BlockStorage {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final ImmutableBlockStorage EMPTY = new BlockStorage().immutableCopy();
@@ -60,5 +60,10 @@ public class ImmutableBlockStorage extends BlockStorage {
     @Override
     public void delayPaletteUpdates() {
         
+    }
+
+    @Override
+    public ImmutableBlockStorage copy() {
+        return this;
     }
 }

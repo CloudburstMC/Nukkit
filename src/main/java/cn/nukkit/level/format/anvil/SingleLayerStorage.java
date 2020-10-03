@@ -61,9 +61,7 @@ public final class SingleLayerStorage extends LayerStorage {
     @Override
     public LayerStorage clone() {
         SingleLayerStorage clone = (SingleLayerStorage) super.clone();
-        if (clone.storage != ImmutableBlockStorage.EMPTY) {
-            clone.storage = clone.storage.copy();
-        }
+        clone.storage = clone.storage.copy();
         return clone;
     }
 
@@ -122,10 +120,7 @@ public final class SingleLayerStorage extends LayerStorage {
     @PowerNukkitOnly
     @Override
     public void delayPaletteUpdates() {
-        BlockStorage blockStorage = this.storage;
-        if (blockStorage != ImmutableBlockStorage.EMPTY) {
-            blockStorage.delayPaletteUpdates();
-        }
+        storage.delayPaletteUpdates();
     }
 
     @Since("1.4.0.0-PN")

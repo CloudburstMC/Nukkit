@@ -104,9 +104,7 @@ public final class MultiLayerStorage extends LayerStorage {
     @Override
     public void delayPaletteUpdates() {
         for (BlockStorage storage : storages) {
-            if (storage != ImmutableBlockStorage.EMPTY) {
-                storage.delayPaletteUpdates();
-            }
+            storage.delayPaletteUpdates();
         }
     }
 
@@ -175,9 +173,7 @@ public final class MultiLayerStorage extends LayerStorage {
         MultiLayerStorage clone = (MultiLayerStorage) super.clone();
         clone.storages = clone.storages.clone();
         for (int i = 0; i < clone.storages.length; i++) {
-            if (clone.storages[i] != ImmutableBlockStorage.EMPTY) {
-                clone.storages[i] = clone.storages[i].copy();
-            }
+            clone.storages[i] = clone.storages[i].copy();
         }
         return clone;
     }
