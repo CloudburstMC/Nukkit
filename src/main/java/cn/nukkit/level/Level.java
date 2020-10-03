@@ -2593,7 +2593,9 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Entity[] getCollidingEntities(AxisAlignedBB bb, Entity entity) {
-        List<Entity> nearby = new ArrayList<>();
+        int index = 0;
+
+        ArrayList<Entity> overflow = null;
 
         if (entity == null || entity.canCollide()) {
             int minX = NukkitMath.floorDouble((bb.getMinX() - 2) / 16);
@@ -2606,22 +2608,23 @@ public class Level implements ChunkManager, Metadatable {
                     for (Entity ent : this.getChunkEntities(x, z, false).values()) {
                         if ((entity == null || (ent != entity && entity.canCollideWith(ent)))
                                 && ent.boundingBox.intersectsWith(bb)) {
-                            nearby.add(ent);
+                            overflow = addEntityToBuffer(index, overflow, ent);
+                            index++;
                         }
                     }
                 }
             }
         }
 
-        return nearby.toArray(new Entity[0]);
+        return getEntitiesFromBuffer(index, overflow);
     }
 
     public Entity[] getNearbyEntities(AxisAlignedBB bb) {
         return this.getNearbyEntities(bb, null);
     }
 
-    private static Entity[] EMPTY_ENTITY_ARR = new Entity[0];
-    private static Entity[] ENTITY_BUFFER = new Entity[512];
+    private static final Entity[] EMPTY_ENTITY_ARR = new Entity[0];
+    private static final Entity[] ENTITY_BUFFER = new Entity[512];
 
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
         return getNearbyEntities(bb, entity, false);
@@ -2641,18 +2644,27 @@ public class Level implements ChunkManager, Metadatable {
             for (int z = minZ; z <= maxZ; ++z) {
                 for (Entity ent : this.getChunkEntities(x, z, loadChunks).values()) {
                     if (ent != entity && ent.boundingBox.intersectsWith(bb)) {
-                        if (index < ENTITY_BUFFER.length) {
-                            ENTITY_BUFFER[index] = ent;
-                        } else {
-                            if (overflow == null) overflow = new ArrayList<>(1024);
-                            overflow.add(ent);
-                        }
+                        overflow = addEntityToBuffer(index, overflow, ent);
                         index++;
                     }
                 }
             }
         }
 
+        return getEntitiesFromBuffer(index, overflow);
+    }
+
+    private ArrayList<Entity> addEntityToBuffer(int index, ArrayList<Entity> overflow, Entity ent) {
+        if (index < ENTITY_BUFFER.length) {
+            ENTITY_BUFFER[index] = ent;
+        } else {
+            if (overflow == null) overflow = new ArrayList<>(1024);
+            overflow.add(ent);
+        }
+        return overflow;
+    }
+
+    private Entity[] getEntitiesFromBuffer(int index, ArrayList<Entity> overflow) {
         if (index == 0) return EMPTY_ENTITY_ARR;
         Entity[] copy;
         if (overflow == null) {

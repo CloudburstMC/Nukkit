@@ -1,11 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityHopper;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemHopper;
@@ -19,11 +21,18 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
+import static cn.nukkit.blockproperty.CommonBlockProperties.TOGGLE;
+
 /**
  * @author CreeperFace
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockHopper extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityHopper> {
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(FACING_DIRECTION, TOGGLE);
 
     public BlockHopper() {
         this(0);
@@ -36,6 +45,14 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
     @Override
     public int getId() {
         return HOPPER_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Since("1.4.0.0-PN")
@@ -82,11 +99,11 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         if (facing == BlockFace.UP) {
             facing = BlockFace.DOWN;
         }
-
-        this.setDamage(facing.getIndex());
+        
+        setBlockFace(facing);
 
         if (this.level.getServer().isRedstoneEnabled()) {
-            boolean powered = this.level.isBlockPowered(this.getLocation());
+            boolean powered = this.level.isBlockPowered(this);
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);
@@ -99,6 +116,10 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
+        if (player == null) {
+            return false;
+        }
+        
         BlockEntityHopper blockEntity = getOrCreateBlockEntity();
 
         return player.addWindow(blockEntity.getInventory()) != -1;
@@ -125,18 +146,18 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         return super.getComparatorInputOverride();
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", replaceWith = "getBlockFace()", reason = "Duplicated")
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.getDamage() & 7);
+        return getBlockFace();
     }
 
     public boolean isEnabled() {
-        return (this.getDamage() & 0x08) != 8;
+        return !getBooleanValue(TOGGLE);
     }
 
     public void setEnabled(boolean enabled) {
-        if (isEnabled() != enabled) {
-            this.setDamage(this.getDamage() ^ 0x08);
-        }
+        setBooleanValue(TOGGLE, !enabled);
     }
 
     @Override
@@ -146,16 +167,15 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         }
 
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
-            boolean powered = this.level.isBlockPowered(this.getLocation());
+            boolean disabled = this.level.isBlockPowered(this.getLocation());
 
-            if (powered == this.isEnabled()) {
-                this.setEnabled(!powered);
+            if (disabled == this.isEnabled()) {
+                this.setEnabled(!disabled);
                 this.level.setBlock(this, this, false, true);
-
-                if (!powered) {
-                    BlockEntityHopper be = getBlockEntity();
-
-                    if (be != null) {
+                BlockEntityHopper be = getBlockEntity();
+                if (be != null) {
+                    be.setDisabled(disabled);
+                    if (!disabled) {
                         be.scheduleUpdate();
                     }
                 }
@@ -187,9 +207,16 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         return false;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(FACING_DIRECTION, face);
+    }
+
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return getPropertyValue(FACING_DIRECTION);
     }
 
     @Since("1.3.0.0-PN")

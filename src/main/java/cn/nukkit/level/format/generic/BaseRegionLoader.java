@@ -1,12 +1,15 @@
 package cn.nukkit.level.format.generic;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,8 +29,11 @@ abstract public class BaseRegionLoader {
 
     private RandomAccessFile randomAccessFile;
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected final Int2ObjectMap<Integer[]> primitiveLocationTable = new Int2ObjectOpenHashMap<>();
     // TODO: A simple array will perform better and use less memory
-    protected final Map<Integer, Integer[]> locationTable = new HashMap<>();
+    protected final Map<Integer, Integer[]> locationTable = primitiveLocationTable;
 
     public long lastUsed;
 
@@ -96,7 +102,7 @@ abstract public class BaseRegionLoader {
     public abstract int getZ();
 
     public Integer[] getLocationIndexes() {
-        return this.locationTable.keySet().toArray(new Integer[0]);
+        return this.primitiveLocationTable.keySet().toArray(new Integer[0]);
     }
 
 }
