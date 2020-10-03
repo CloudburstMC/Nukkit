@@ -69,7 +69,12 @@ public class Chunk extends BaseChunk {
             if (section instanceof CompoundTag) {
                 int y = ((CompoundTag) section).getByte("Y");
                 if (y < 16) {
-                    sections[y] = new ChunkSection((CompoundTag) section);
+                    ChunkSection chunkSection = new ChunkSection((CompoundTag) section);
+                    if (chunkSection.hasBlocks()) {
+                        sections[y] = chunkSection;
+                    } else {
+                        sections[y] = EmptyChunkSection.EMPTY[y];
+                    }
                 }
             }
         }
