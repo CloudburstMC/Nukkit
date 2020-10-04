@@ -64,7 +64,29 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     public Item toItem() {
         return new ItemBlock(this, 0);
     }
-
+    
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+    
+    @Override
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        if (item.isShears()) {
+            Block carvedPumpkin = Block.get(CARVED_PUMPKIN);
+            // TODO: Use the activated block face not the player direction
+            if (player == null) {
+                carvedPumpkin.setBlockFace(BlockFace.SOUTH);
+            } else {
+                carvedPumpkin.setBlockFace(player.getDirection().getOpposite());
+            }
+            item.useOn(this);
+            this.level.setBlock(this, carvedPumpkin, true, true);
+            return true;
+        }
+        return false;
+    }
+    
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (player == null) {
