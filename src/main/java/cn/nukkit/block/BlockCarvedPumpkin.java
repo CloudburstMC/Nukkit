@@ -3,6 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
+import javax.annotation.Nonnull;
+
 public class BlockCarvedPumpkin extends BlockPumpkin {
 
     @Override
