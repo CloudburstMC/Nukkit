@@ -1,9 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.BlockCarvedPumpkin;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemSeedsPumpkin;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -73,7 +75,7 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.isShears()) {
-            Block carvedPumpkin = Block.get(CARVED_PUMPKIN);
+            BlockCarvedPumpkin carvedPumpkin = new BlockCarvedPumpkin;
             // TODO: Use the activated block face not the player direction
             if (player == null) {
                 carvedPumpkin.setBlockFace(BlockFace.SOUTH);
@@ -82,6 +84,7 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
             }
             item.useOn(this);
             this.level.setBlock(this, carvedPumpkin, true, true);
+            this.getLevel().dropItem(add(0.5, 0.5, 0.5), new ItemSeedsPumpkin); // TODO: Get correct drop item position
             return true;
         }
         return false;
