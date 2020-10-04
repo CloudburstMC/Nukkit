@@ -147,7 +147,7 @@ public class ZeroMutableBlockState extends MutableBlockState {
     @PowerNukkitOnly
     @Nonnull
     @Override
-    public Object getPropertyValue(String propertyName) {
+    public Serializable getPropertyValue(String propertyName) {
         throw new NoSuchElementException("ZeroMutableBlockState can't have properties. Attempted get property "+propertyName);
     }
 

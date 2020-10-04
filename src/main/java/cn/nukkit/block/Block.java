@@ -19,6 +19,7 @@ import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.metadata.Metadatable;
@@ -1161,6 +1162,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Deprecated
     @DeprecationDetails(reason = "Limited to 32 bits", since = "1.4.0.0-PN")
     public void setDamage(int meta) {
+        if (meta == 0 && isDefaultState()) {
+            return;
+        }
         getMutableState().setDataStorageFromInt(meta);
     }
 
@@ -1824,7 +1828,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             return false;
         }
         if (checkDamage) {
-            return b1.getMutableState().equals(b2.getMutableState());
+            return (b1.isDefaultState() && b2.isDefaultState()) || b1.getMutableState().equals(b2.getMutableState());
         } else {
             return b1.getId() == b2.getId();
         }
@@ -1889,7 +1893,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public void setState(@Nonnull IBlockState state) throws InvalidBlockStateException {
-        if (state.getBlockId() == getId() && state.isDefaultState() && this.isDefaultState()) {
+        if (state.getBlockId() == getId() && this.isDefaultState() && state.isDefaultState()) {
             return;
         }
         getMutableState().setState(state);
@@ -1899,6 +1903,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public void setDataStorage(@Nonnull Number storage) {
+        if (NukkitMath.isZero(storage) && isDefaultState()) {
+            return;
+        }
         getMutableState().setDataStorage(storage);
     }
 
@@ -1906,6 +1913,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public void setDataStorageFromInt(int storage) {
+        if (storage == 0 && isDefaultState()) {
+            return;
+        }
         getMutableState().setDataStorageFromInt(storage);
     }
 
@@ -1913,6 +1923,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Override
     public boolean setDataStorage(@Nonnull Number storage, boolean repair, Consumer<BlockStateRepair> callback) {
+        if (NukkitMath.isZero(storage) && isDefaultState()) {
+            return false;
+        }
         return getMutableState().setDataStorage(storage, repair, callback);
     }
 
@@ -1920,6 +1933,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Override
     public boolean setDataStorageFromInt(int storage, boolean repair, Consumer<BlockStateRepair> callback) {
+        if (storage == 0 && isDefaultState()) {
+            return false;
+        }
         return getMutableState().setDataStorageFromInt(storage, repair, callback);
     }
 
@@ -1927,6 +1943,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public void setPropertyValue(@Nonnull String propertyName, @Nullable Serializable value) {
+        if (isDefaultState() && getProperties().isDefaultValue(propertyName, value)) {
+            return;
+        }
         getMutableState().setPropertyValue(propertyName, value);
     }
 
@@ -1934,6 +1953,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public void setBooleanValue(@Nonnull String propertyName, boolean value) {
+        if (isDefaultState() && getProperties().isDefaultBooleanValue(propertyName, value)) {
+            return;
+        }
         getMutableState().setBooleanValue(propertyName, value);
     }
 
@@ -1941,6 +1963,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public void setIntValue(@Nonnull String propertyName, int value) {
+        if (isDefaultState() && getProperties().isDefaultIntValue(propertyName, value)) {
+            return;
+        }
         getMutableState().setIntValue(propertyName, value);
     }
 
@@ -1991,7 +2016,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Nonnull
     @Override
-    public Object getPropertyValue(@Nonnull String propertyName) {
+    public Serializable getPropertyValue(@Nonnull String propertyName) {
+        if (isDefaultState()) {
+            return getProperties().getBlockProperty(propertyName).getDefaultValue();
+        }
         return getMutableState().getPropertyValue(propertyName);
     }
 
@@ -1999,6 +2027,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public int getIntValue(@Nonnull String propertyName) {
+        if (isDefaultState()) {
+            return getProperties().getBlockProperty(propertyName).getDefaultIntValue();
+        }
         return getMutableState().getIntValue(propertyName);
     }
 
@@ -2006,6 +2037,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @Override
     public boolean getBooleanValue(@Nonnull String propertyName) {
+        if (isDefaultState()) {
+            return getProperties().getBlockProperty(propertyName).getDefaultBooleanValue();
+        }
         return getMutableState().getBooleanValue(propertyName);
     }
 
@@ -2014,6 +2048,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Nonnull
     @Override
     public String getPersistenceValue(@Nonnull String propertyName) {
+        if (isDefaultState()) {
+            return getProperties().getBlockProperty(propertyName).getPersistenceValueForMeta(0);
+        }
         return getMutableState().getPersistenceValue(propertyName);
     }
 

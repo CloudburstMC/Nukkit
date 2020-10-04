@@ -309,7 +309,7 @@ public final class BlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public Object getValue(int currentMeta, String propertyName) {
+    public Serializable getValue(int currentMeta, String propertyName) {
         RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getValue(currentMeta, registry.offset);
     }
@@ -321,7 +321,7 @@ public final class BlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public Object getValue(long currentMeta, String propertyName) {
+    public Serializable getValue(long currentMeta, String propertyName) {
         RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getValue(currentMeta, registry.offset);
     }
@@ -333,7 +333,7 @@ public final class BlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public Object getValue(BigInteger currentMeta, String propertyName) {
+    public Serializable getValue(BigInteger currentMeta, String propertyName) {
         RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
         return registry.property.getValue(currentMeta, registry.offset);
     }
@@ -584,6 +584,48 @@ public final class BlockProperties {
                 "bitSize=" + bitSize +
                 ", properties=" + byName.values() +
                 '}';
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @SuppressWarnings({"rawtypes", "java:S3740", "unchecked"})
+    public boolean isDefaultValue(String propertyName, @Nullable Serializable value) {
+        BlockProperty blockProperty = getBlockProperty(propertyName);
+        return blockProperty.isDefaultValue(value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public <T extends Serializable> boolean isDefaultValue(BlockProperty<T> property, @Nullable T value) {
+        return isDefaultValue(property.getName(), value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @SuppressWarnings({"rawtypes", "java:S3740"})
+    public boolean isDefaultIntValue(String propertyName, int value) {
+        BlockProperty blockProperty = getBlockProperty(propertyName);
+        return blockProperty.isDefaultIntValue(value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public <T extends Serializable> boolean isDefaultIntValue(BlockProperty<T> property, int value) {
+        return isDefaultIntValue(property.getName(), value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @SuppressWarnings({"rawtypes", "java:S3740"})
+    public boolean isDefaultBooleanValue(String propertyName, boolean value) {
+        BlockProperty blockProperty = getBlockProperty(propertyName);
+        return blockProperty.isDefaultBooleanValue(value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public <T extends Serializable> boolean isDefaultBooleanValue(BlockProperty<T> property, boolean value) {
+        return isDefaultBooleanValue(property.getName(), value);
     }
 
     @PowerNukkitOnly

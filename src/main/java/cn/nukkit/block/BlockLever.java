@@ -27,7 +27,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final ArrayBlockProperty<LeverOrientation> LEVER_DIRECTION = new ArrayBlockProperty<>("lever_direction", false,
-            LeverOrientation.values(), LeverOrientation.DOWN_X, 3, "lever_direction", false, new String[]{
+            LeverOrientation.values(), 3, "lever_direction", false, new String[]{
                     "down_east_west", "east", "west", "south", "north", "up_north_south", "up_east_west", "down_north_south"
     });
     @PowerNukkitOnly

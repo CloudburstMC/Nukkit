@@ -76,7 +76,7 @@ public interface IBlockState {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    Object getPropertyValue(String propertyName);
+    Serializable getPropertyValue(String propertyName);
 
     /**
      * @throws NoSuchElementException If the property is not registered

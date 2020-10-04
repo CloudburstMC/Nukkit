@@ -291,7 +291,7 @@ public final class BlockState implements Serializable, IBlockState {
 
     @Nonnull
     @Override
-    public Object getPropertyValue(String propertyName) {
+    public Serializable getPropertyValue(String propertyName) {
         return storage.getPropertyValue(propertyName);
     }
 
@@ -483,7 +483,7 @@ public final class BlockState implements Serializable, IBlockState {
         int getBigDamage();
 
         @Nonnull
-        Object getPropertyValue(String propertyName);
+        Serializable getPropertyValue(String propertyName);
 
         int getIntValue(String propertyName);
 
@@ -547,7 +547,7 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         @Override
-        public Object getPropertyValue(String propertyName) {
+        public Serializable getPropertyValue(String propertyName) {
             return getProperties().getValue(0, propertyName);
         }
 
@@ -647,7 +647,7 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         @Override
-        public Object getPropertyValue(String propertyName) {
+        public Serializable getPropertyValue(String propertyName) {
             return getProperties().getValue(data, propertyName);
         }
 
@@ -749,7 +749,7 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         @Override
-        public Object getPropertyValue(String propertyName) {
+        public Serializable getPropertyValue(String propertyName) {
             return getProperties().getValue(data, propertyName);
         }
 
@@ -857,7 +857,7 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         @Override
-        public Object getPropertyValue(String propertyName) {
+        public Serializable getPropertyValue(String propertyName) {
             return getProperties().getValue(data, propertyName);
         }
 
@@ -965,7 +965,7 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         @Override
-        public Object getPropertyValue(String propertyName) {
+        public Serializable getPropertyValue(String propertyName) {
             return getProperties().getValue(data, propertyName);
         }
 
