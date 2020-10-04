@@ -1,12 +1,15 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 
 import javax.annotation.Nonnull;
 
@@ -15,6 +18,10 @@ import javax.annotation.Nonnull;
  * @since 2015/12/8
  */
 public class BlockPumpkin extends BlockSolidMeta implements Faceable {
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+        DIRECTION
+    );
+    
     public BlockPumpkin() {
         this(0);
     }
@@ -32,7 +39,12 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     public int getId() {
         return PUMPKIN;
     }
-
+    
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+    
     @Override
     public double getHardness() {
         return 1;
@@ -40,7 +52,7 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 1;
     }
 
     @Override
@@ -55,8 +67,11 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
 
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
-        this.getLevel().setBlock(block, this, true, true);
+        if (player == null) {
+            setBlockFace(BlockFace.SOUTH);
+        } else {
+            setBlockFace(player.getDirection().getOpposite());
+        }
         return true;
     }
 
@@ -74,9 +89,14 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     public boolean sticksToPiston() {
         return false;
     }
-
+    
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return getPropertyValue(DIRECTION);
+    }
+    
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(DIRECTION, face);
     }
 }
