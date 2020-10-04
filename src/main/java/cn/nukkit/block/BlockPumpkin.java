@@ -76,7 +76,7 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.isShears()) {
-            BlockCarvedPumpkin carvedPumpkin = new BlockCarvedPumpkin(0);
+            BlockCarvedPumpkin carvedPumpkin = new BlockCarvedPumpkin();
             // TODO: Use the activated block face not the player direction
             if (player == null) {
                 carvedPumpkin.setBlockFace(BlockFace.SOUTH);
