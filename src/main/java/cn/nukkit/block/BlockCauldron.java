@@ -195,14 +195,33 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     break;
                 }
                 
-                CompoundTag compoundTag = item.hasCompoundTag()? item.getNamedTag() : new CompoundTag();
-                compoundTag.putInt("customColor", cauldron.getCustomColor().getRGB());
-                item.setCompoundTag(compoundTag);
-                player.getInventory().setItemInHand(item);
-                
-                setFillLevel(getFillLevel() - 1);
-                this.level.setBlock(this, this, true, true);
-                this.level.addSound(add(0.5, 0.5, 0.5), Sound.CAULDRON_DYEARMOR);
+                if (cauldron.isCustomColor())
+                    CompoundTag compoundTag = item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag();
+                    compoundTag.putInt("customColor", cauldron.getCustomColor().getRGB());
+                    item.setCompoundTag(compoundTag);
+                    player.getInventory().setItemInHand(item);
+                    
+                    setFillLevel(getFillLevel() - 1);
+                    this.level.setBlock(this, this, true, true);
+                    this.level.addSound(add(0.5, 0.5, 0.5), Sound.CAULDRON_DYEARMOR);
+                } else {
+                    if (!item.hasCompoundTag()) {
+                        break;
+                    }
+                    
+                    CompoundTag compoundTag = item.getNamedTag();
+                    if (!compoundTag.exist("customColor")) {
+                        break;
+                    }
+                    
+                    compoundTag.remove("customColor");
+                    item.setCompoundTag(compoundTag);
+                    player.getInventory().setItemInHand(item);
+                    
+                    setFillLevel(getFillLevel() - 1);
+                    this.level.setBlock(this, this, true, true);
+                    this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.CAULDRON_TAKEWATER);
+                }
                 
                 break;
             case ItemID.POTION:
