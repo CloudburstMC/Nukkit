@@ -38,7 +38,7 @@ public class Watchdog extends Thread {
             log.fatal(" - https://github.com/PowerNukkit/PowerNukkit/issues/new");
             log.fatal("---------------- ForcedFinalizer ----------------");
             dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(forcedFinalizer.getId(), Integer.MAX_VALUE));
-            log.fatal("---------------- ForcedFinalizer ----------------");
+            log.fatal("-------------------------------------------------");
             warnedAboutFinalizer = true;
         } else {
             if (warnedAboutFinalizer) {
@@ -100,6 +100,10 @@ public class Watchdog extends Thread {
     }
 
     private static void dumpThread(ThreadInfo thread) {
+        if (thread == null) {
+            log.fatal("Attempted to dump a null thread!");
+            return;
+        }
         log.fatal("Current Thread: " + thread.getThreadName());
         log.fatal("\tPID: " + thread.getThreadId() + " | Suspended: " + thread.isSuspended() + " | Native: " + thread.isInNative() + " | State: " + thread.getThreadState());
         // Monitors
