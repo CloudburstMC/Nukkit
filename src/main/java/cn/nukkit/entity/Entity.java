@@ -2648,6 +2648,12 @@ public abstract class Entity extends Location implements Metadatable {
         return inEndPortal;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isPreventingSleep(Player player) {
+        return false;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
