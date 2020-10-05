@@ -1333,10 +1333,10 @@ public class Level implements ChunkManager, Metadatable {
     @Since("1.4.0.0-PN")
     public void updateComparatorOutputLevelSelective(Vector3 v, boolean observer) {
         for (BlockFace face : Plane.HORIZONTAL) {
-            Vector3 pos = v.getSide(face);
+            temporalVector.setComponentsAdding(v, face);
 
-            if (this.isChunkLoaded((int) pos.x >> 4, (int) pos.z >> 4)) {
-                Block block1 = this.getBlock(pos);
+            if (this.isChunkLoaded((int) temporalVector.x >> 4, (int) temporalVector.z >> 4)) {
+                Block block1 = this.getBlock(temporalVector);
                 
                 if (block1.getId() == BlockID.OBSERVER) {
                     if (observer) {
@@ -1345,8 +1345,7 @@ public class Level implements ChunkManager, Metadatable {
                 } else if (BlockRedstoneDiode.isDiode(block1)) {
                     block1.onUpdate(BLOCK_UPDATE_REDSTONE);
                 } else if (block1.isNormalBlock()) {
-                    pos = pos.getSide(face);
-                    block1 = this.getBlock(pos);
+                    block1 = this.getBlock(temporalVector.setComponentsAdding(temporalVector, face));
 
                     if (BlockRedstoneDiode.isDiode(block1)) {
                         block1.onUpdate(BLOCK_UPDATE_REDSTONE);
@@ -1360,8 +1359,7 @@ public class Level implements ChunkManager, Metadatable {
         }
         
         for (BlockFace face : Plane.VERTICAL) {
-            Vector3 pos = v.getSide(face);
-            Block block1 = this.getBlock(pos);
+            Block block1 = this.getBlock(temporalVector.setComponentsAdding(v, face));
 
             if (block1.getId() == BlockID.OBSERVER) {
                 block1.onNeighborChange(face.getOpposite());

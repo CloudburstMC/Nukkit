@@ -29,7 +29,7 @@ public class BlockVector3 implements Cloneable {
     public BlockVector3 setComponentsAdding(Vector3 pos, BlockFace face) {
         this.x = pos.getFloorX() + face.getXOffset();
         this.y = pos.getFloorY() + face.getYOffset();
-        this.z = pos.getChunkZ() + face.getZOffset();
+        this.z = pos.getFloorZ() + face.getZOffset();
         return this;
     }
 
