@@ -44,6 +44,11 @@ public class EntityZoglin extends EntityMob {
     }
 
     @Override
+    public boolean isUndead() {
+        return true;
+    }
+
+    @Override
     public boolean isPreventingSleep(Player player) {
         return true;
     }
