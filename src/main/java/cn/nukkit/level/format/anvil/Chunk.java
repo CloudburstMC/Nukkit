@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.format.generic.BaseChunk;
@@ -62,6 +63,9 @@ public class Chunk extends BaseChunk {
         System.arraycopy(EmptyChunkSection.EMPTY, 0, this.sections, 0, 16);
         if (nbt == null) {
             this.biomes = new byte[16 * 16];
+            this.heightMap = new byte[256];
+            this.NBTentities = new ArrayList<>(0);
+            this.NBTtiles = new ArrayList<>(0);
             return;
         }
 
@@ -353,6 +357,9 @@ public class Chunk extends BaseChunk {
                 continue;
             }
             CompoundTag s = section.toNBT();
+            if (!section.hasBlocks()) {
+                continue;
+            }
             sectionList.add(s);
         }
         nbt.putList(sectionList);
@@ -385,7 +392,13 @@ public class Chunk extends BaseChunk {
         tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
 
-        Set<BlockUpdateEntry> entries = this.provider.getLevel().getPendingBlockUpdates(this);
+        Set<BlockUpdateEntry> entries = null;
+        if (this.provider != null) {
+            Level level = provider.getLevel();
+            if (level != null) {
+                entries = level.getPendingBlockUpdates(this);
+            }
+        }
 
         if (entries != null) {
             ListTag<CompoundTag> tileTickTag = new ListTag<>("TileTicks");

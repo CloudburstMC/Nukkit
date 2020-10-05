@@ -722,6 +722,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         return s;
     }
     
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
     public synchronized void compressStorageLayers() {
         layerStorage.compress(this::setLayerStorage);
     }
