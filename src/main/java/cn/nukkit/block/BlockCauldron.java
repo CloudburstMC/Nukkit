@@ -195,7 +195,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     break;
                 }
                 
-                if (cauldron.isCustomColor())
+                if (cauldron.isCustomColor()) {
                     CompoundTag compoundTag = item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag();
                     compoundTag.putInt("customColor", cauldron.getCustomColor().getRGB());
                     item.setCompoundTag(compoundTag);
