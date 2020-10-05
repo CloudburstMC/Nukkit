@@ -286,11 +286,16 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                 this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_TAKEPOTION);
                 break;
             case ItemID.BANNER:
-                if (isEmpty() || cauldron.isCustomColor() || cauldron.hasPotion() || !((ItemBanner) item.hasPatterns())) {
+                if (isEmpty() || cauldron.isCustomColor() || cauldron.hasPotion()) {
                     break;
                 }
                 
-                Item banner = item.removePattern(((ItemBanner) item.getPatternsSize()) - 1).clone();
+                ItemBanner banner = (ItemBanner) item;
+                if (!banner.hasPatterns()) {
+                    break;
+                }
+                
+                banner.removePattern(bannerItem.getPatternsSize() - 1);
                 boolean consumeBanner = player.isSurvival() || player.isAdventure();
                 if (consumeBanner && item.getCount() < item.getMaxStackSize()) {
                     player.getInventory().setItemInHand(banner);
