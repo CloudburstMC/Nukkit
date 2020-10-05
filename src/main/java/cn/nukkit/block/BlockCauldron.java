@@ -295,7 +295,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     break;
                 }
                 
-                banner.removePattern(bannerItem.getPatternsSize() - 1);
+                banner.removePattern(banner.getPatternsSize() - 1);
                 boolean consumeBanner = player.isSurvival() || player.isAdventure();
                 if (consumeBanner && item.getCount() < item.getMaxStackSize()) {
                     player.getInventory().setItemInHand(banner);
