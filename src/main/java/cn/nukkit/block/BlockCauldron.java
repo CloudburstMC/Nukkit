@@ -167,7 +167,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                 }
     
                 if (player.isSurvival() || player.isAdventure()) {
-                    item.setCount(item.getCount()-1);
+                    item.setCount(item.getCount() - 1);
                     player.getInventory().setItemInHand(item);
                 }
     
@@ -286,11 +286,11 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                 this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_TAKEPOTION);
                 break;
             case ItemID.BANNER:
-                if (isEmpty() || cauldron.isCustomColor() || cauldron.hasPotion() || !item.hasPatterns()) {
+                if (isEmpty() || cauldron.isCustomColor() || cauldron.hasPotion() || !((ItemBanner) item.hasPatterns())) {
                     break;
                 }
                 
-                Item banner = item.removePattern(item.getPatternsSize() - 1).clone();
+                Item banner = item.removePattern(((ItemBanner) item.getPatternsSize()) - 1).clone();
                 boolean consumeBanner = player.isSurvival() || player.isAdventure();
                 if (consumeBanner && item.getCount() < item.getMaxStackSize()) {
                     player.getInventory().setItemInHand(banner);
