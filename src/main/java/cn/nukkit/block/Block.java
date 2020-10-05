@@ -1824,13 +1824,21 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public static boolean equals(Block b1, Block b2, boolean checkDamage) {
-        if (b1 == null || b2 == null) {
+        if (b1 == null || b2 == null || b1.getId() != b2.getId()) {
             return false;
         }
         if (checkDamage) {
-            return (b1.isDefaultState() && b2.isDefaultState()) || b1.getMutableState().equals(b2.getMutableState());
+            boolean b1Default = b1.isDefaultState();
+            boolean b2Default = b2.isDefaultState();
+            if (b1Default != b2Default) {
+                return false;
+            } else if (b1Default) { // both are default
+                return true;
+            } else {
+                return b1.getMutableState().equals(b2.getMutableState());
+            }
         } else {
-            return b1.getId() == b2.getId();
+            return true;
         }
     }
 

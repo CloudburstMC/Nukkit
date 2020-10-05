@@ -747,7 +747,8 @@ public class Server {
             this.watchdog = new Watchdog(this, 60000);
             this.watchdog.start();
         }
-
+        
+        System.runFinalization();
         this.start();
     }
 
@@ -1120,6 +1121,14 @@ public class Server {
     private int lastLevelGC;
 
     public void tickProcessor() {
+        getScheduler().scheduleDelayedTask(new Task() {
+            @Override
+            public void onRun(int currentTick) {
+                System.runFinalization();
+                System.gc();
+            }
+        }, 60);
+        
         this.nextTick = System.currentTimeMillis();
         try {
             while (this.isRunning.get()) {
