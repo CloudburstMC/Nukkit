@@ -259,6 +259,8 @@ public class Server {
 
     private boolean safeSpawn;
 
+    private boolean forceSkinTrusted = false;
+
     /**
      * Minimal initializer for testing
      */
@@ -562,7 +564,9 @@ public class Server {
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
         this.baseTickRate = this.getConfig("level-settings.base-tick-rate", 1);
         this.redstoneEnabled = this.getConfig("level-settings.tick-redstone", true);
-        this.safeSpawn = this.getConfig().getBoolean("settings.safe-spawn",true);
+        this.safeSpawn = this.getConfig().getBoolean("settings.safe-spawn", true);
+        this.forceSkinTrusted = this.getConfig().getBoolean("player.force-skin-trusted", false);
+
         this.scheduler = new ServerScheduler();
 
         if (this.getPropertyBoolean("enable-rcon", false)) {
@@ -2624,6 +2628,12 @@ public class Server {
     @Nonnull
     public PositionTrackingService getPositionTrackingService() {
         return positionTrackingService;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isForceSkinTrusted(){
+        return forceSkinTrusted;
     }
 
     private class ConsoleThread extends Thread implements InterruptibleThread {
