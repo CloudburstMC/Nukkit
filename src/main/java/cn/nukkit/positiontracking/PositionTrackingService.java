@@ -451,7 +451,7 @@ public class PositionTrackingService implements Closeable {
         }
 
         if (!players.isEmpty()) {
-            Server.getInstance().batchPackets(players.toArray(new Player[0]), new DataPacket[]{destroyPacket(trackingHandler)});
+            Server.getInstance().batchPackets(players.toArray(Player.EMPTY_ARRAY), new DataPacket[]{destroyPacket(trackingHandler)});
         }
     }
     

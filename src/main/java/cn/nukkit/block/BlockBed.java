@@ -8,7 +8,9 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBed;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPrimedTNT;
+import cn.nukkit.entity.mob.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBed;
 import cn.nukkit.lang.TranslationContainer;
@@ -19,6 +21,9 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.*;
+
+import java.util.Arrays;
+import java.util.List;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -119,7 +124,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
 
-        if (this.level.getDimension() == Level.DIMENSION_NETHER || this.level.getDimension() == Level.DIMENSION_THE_END) {
+        if (!(this.level.getDimension() == Level.DIMENSION_OVERWORLD)) {
             CompoundTag tag = EntityPrimedTNT.getDefaultNBT(this).putShort("Fuse", 0);
             new EntityPrimedTNT(this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), tag);
             return true;
@@ -141,13 +146,13 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
             }
         }
 
+        BlockFace footPart = dir.getOpposite();
         if (player != null) {
-            BlockFace footPart = dir.getOpposite();
             AxisAlignedBB accessArea = new SimpleAxisAlignedBB(b.x - 2, b.y - 5.5, b.z - 2, b.x + 3, b.y + 2.5, b.z + 3)
                     .addCoord(footPart.getXOffset(), 0, footPart.getZOffset());
             
             if (!accessArea.isVectorInside(player)) {
-                player.sendMessage(new TranslationContainer(TextFormat.GRAY+"%tile.bed.tooFar"));
+                player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.tooFar"));
                 return true;
             }
             
@@ -165,6 +170,19 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
         if (player != null && !isNight) {
             player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.noSleep"));
             return true;
+        }
+
+        if (player != null && !player.isCreative()) {
+            AxisAlignedBB checkMonsterArea = new SimpleAxisAlignedBB(b.x - 8, b.y - 6.5, b.z - 8, b.x + 9, b.y + 5.5, b.z + 9)
+                    .addCoord(footPart.getXOffset(), 0, footPart.getZOffset());
+
+            for (Entity entity : this.level.getCollidingEntities(checkMonsterArea)) {
+                if (!entity.isClosed() && entity.isPreventingSleep(player)) {
+                    player.sendTranslation(TextFormat.GRAY + "%tile.bed.notSafe");
+                    return true;
+                }
+                // TODO: Check Chicken Jockey, Spider Jockey
+            }
         }
 
         if (player != null && !player.sleepOn(b)) {

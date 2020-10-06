@@ -9,7 +9,7 @@ import lombok.ToString;
 public class CreativeContentPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.CREATIVE_CONTENT_PACKET;
 
-    @Since("1.3.0.0-PN") public Item[] entries = new Item[0];
+    @Since("1.3.0.0-PN") public Item[] entries = Item.EMPTY_ARRAY;
 
     @Override
     public byte pid() {

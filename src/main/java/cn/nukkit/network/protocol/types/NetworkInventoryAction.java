@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol.types;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.*;
@@ -15,6 +16,10 @@ import java.util.Optional;
  */
 @ToString
 public class NetworkInventoryAction {
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final NetworkInventoryAction[] EMPTY_ARRAY = new NetworkInventoryAction[0];
 
     public static final int SOURCE_CONTAINER = 0;
 
