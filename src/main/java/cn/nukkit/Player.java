@@ -4090,20 +4090,34 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.save(false);
     }
 
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+        
+        if (spawnBlockPosition == null) {
+            namedTag.remove("SpawnBlockPositionX").remove("SpawnBlockPositionY").remove("SpawnBlockPositionZ");
+        } else {
+            namedTag.putInt("SpawnBlockPositionX", spawnBlockPosition.getFloorX())
+                    .putInt("SpawnBlockPositionY", spawnBlockPosition.getFloorY())
+                    .putInt("SpawnBlockPositionZ", spawnBlockPosition.getFloorZ());
+        }
+    }
+
     public void save(boolean async) {
         if (this.closed) {
             throw new IllegalStateException("Tried to save closed player");
         }
 
-        super.saveNBT();
+        saveNBT();
 
         if (this.level != null) {
             this.namedTag.putString("Level", this.level.getFolderName());
             if (this.spawnPosition != null && this.spawnPosition.getLevel() != null) {
                 this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getFolderName());
-                this.namedTag.putInt("SpawnX", (int) this.spawnPosition.x);
-                this.namedTag.putInt("SpawnY", (int) this.spawnPosition.y);
-                this.namedTag.putInt("SpawnZ", (int) this.spawnPosition.z);
+                this.namedTag.putInt("SpawnX", this.spawnPosition.getFloorX());
+                this.namedTag.putInt("SpawnY", this.spawnPosition.getFloorY());
+                this.namedTag.putInt("SpawnZ", this.spawnPosition.getFloorZ());
+                this.namedTag.putInt("SpawnDimension", this.spawnPosition.getLevel().getDimension());
             }
 
             CompoundTag achievements = new CompoundTag();
