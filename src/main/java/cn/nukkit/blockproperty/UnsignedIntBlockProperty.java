@@ -15,13 +15,12 @@ import javax.annotation.Nullable;
 public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     private static final long serialVersionUID = 7896101036099245755L;
     
-    private final int defaultMeta;
     private final long minValue;
     private final long maxValue;
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public UnsignedIntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int defaultValue, int bitSize, String persistenceName) {
+    public UnsignedIntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int bitSize, String persistenceName) {
         super(name, exportedToItem, bitSize, persistenceName);
         long unsignedMinValue = removeSign(minValue);
         long unsignedMaxValue = removeSign(maxValue);
@@ -31,29 +30,20 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
         long mask = removeSign(-1 >>> (32 - bitSize));
         Preconditions.checkArgument(delta <= mask, "The data range from %s to %s can't be stored in %s bits", unsignedMinValue, unsignedMaxValue, bitSize);
         
-        long unsignedDefault = removeSign(defaultValue);
-        Preconditions.checkArgument(unsignedMinValue <= unsignedDefault && unsignedDefault <= unsignedMaxValue, "The default value %s is not inside the %s .. %s range", unsignedDefault, unsignedMinValue, unsignedMaxValue);
         this.minValue = unsignedMinValue;
         this.maxValue = unsignedMaxValue;
-        this.defaultMeta = getMetaForValue(defaultValue);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public UnsignedIntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int defaultValue, int bitSize) {
-        this(name, exportedToItem, maxValue, minValue, defaultValue, bitSize, name);
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public UnsignedIntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int defaultValue) {
-        this(name, exportedToItem, maxValue, minValue, defaultValue, NukkitMath.bitLength(maxValue - minValue));
+    public UnsignedIntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int bitSize) {
+        this(name, exportedToItem, maxValue, minValue, bitSize, name);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public UnsignedIntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue) {
-        this(name, exportedToItem, maxValue, minValue, minValue);
+        this(name, exportedToItem, maxValue, minValue, NukkitMath.bitLength(maxValue - minValue));
     }
 
     @PowerNukkitOnly
@@ -69,7 +59,7 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     @Override
     public int getMetaForValue(@Nullable Integer value) {
         if (value == null) {
-            return defaultMeta;
+            return 0;
         }
         long unsigned = removeSign(value);
         try {
@@ -141,9 +131,31 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
         return minValue;
     }
 
+    @Nonnull
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public int getDefaultValue() {
-        return getValueForMeta(defaultMeta);
+    public Integer getDefaultValue() {
+        return (int)minValue;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDefaultValue(@Nullable Integer value) {
+        return value == null || removeSign(value)==minValue;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDefaultIntValue(int value) {
+        return removeSign(value)==minValue;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getDefaultIntValue() {
+        return (int)minValue;
     }
 }

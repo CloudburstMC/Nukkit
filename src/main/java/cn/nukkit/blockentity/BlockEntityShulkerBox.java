@@ -16,7 +16,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import java.util.HashSet;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class BlockEntityShulkerBox extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 

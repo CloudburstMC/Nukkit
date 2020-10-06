@@ -49,7 +49,7 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
 
     @Override
     public String getInteractButtonText() {
-        return "Mount";
+        return "action.interact.mount";
     }
 
     @Override

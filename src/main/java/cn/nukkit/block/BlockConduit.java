@@ -12,6 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @PowerNukkitOnly
 public class BlockConduit extends BlockTransparent implements BlockEntityHolder<BlockEntityConduit> {
@@ -62,7 +63,7 @@ public class BlockConduit extends BlockTransparent implements BlockEntityHolder<
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (item.getBlock() != null && item.getBlockId() == CONDUIT && target.getId() == CONDUIT) {
             return false;
         }

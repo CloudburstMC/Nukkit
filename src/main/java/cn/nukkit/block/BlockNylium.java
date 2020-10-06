@@ -71,7 +71,7 @@ public abstract class BlockNylium extends BlockSolid {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{ Item.get(NETHERRACK) };
         }
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

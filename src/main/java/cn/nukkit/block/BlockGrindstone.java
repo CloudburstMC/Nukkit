@@ -16,16 +16,23 @@ import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
+    @PowerNukkitOnly
     public static final int TYPE_ATTACHMENT_STANDING = 0;
+    @PowerNukkitOnly
     public static final int TYPE_ATTACHMENT_HANGING = 1;
+    @PowerNukkitOnly
     public static final int TYPE_ATTACHMENT_SIDE = 2;
+    @PowerNukkitOnly
     public static final int TYPE_ATTACHMENT_MULTIPLE = 3;
 
+    @PowerNukkitOnly
     public BlockGrindstone() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockGrindstone(int meta) {
         super(meta);
     }
@@ -96,10 +103,12 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
         setDamage(getDamage() & (DATA_MASK ^ 0b11) | face.getHorizontalIndex());
     }
 
+    @PowerNukkitOnly
     public int getAttachmentType() {
         return (getDamage() & 0b1100) >> 2 & 0b11;
     }
 
+    @PowerNukkitOnly
     public void setAttachmentType(int attachmentType) {
         attachmentType = attachmentType & 0b11;
         setDamage(getDamage() & (DATA_MASK ^ 0b1100) | (attachmentType << 2));
@@ -136,6 +145,9 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (block.getId() != AIR && block.canBeReplaced()) {
+            face = BlockFace.UP;
+        }
         switch (face) {
             case UP:
                 setAttachmentType(TYPE_ATTACHMENT_STANDING);

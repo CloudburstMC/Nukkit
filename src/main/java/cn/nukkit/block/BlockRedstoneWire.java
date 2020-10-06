@@ -51,7 +51,7 @@ public class BlockRedstoneWire extends BlockFlowable {
         }
 
         if (this.level.getServer().isRedstoneEnabled()) {
-            this.getLevel().setBlock(block, this, true, false);
+            this.getLevel().setBlock(block, this, true);
 
             this.updateSurroundingRedstone(true);
             Vector3 pos = getLocation();
@@ -146,7 +146,7 @@ public class BlockRedstoneWire extends BlockFlowable {
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, meta, maxStrength));
 
             this.setDamage(maxStrength);
-            this.level.setBlock(this, this, false, false);
+            this.level.setBlock(this, this, false, true);
 
             this.level.updateAroundRedstone(this, null);
             for (BlockFace face : BlockFace.values()) {

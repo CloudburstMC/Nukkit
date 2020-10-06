@@ -1,10 +1,18 @@
 package cn.nukkit.command.data;
 
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.item.Item;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CommandParameter {
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final CommandParameter[] EMPTY_ARRAY = new CommandParameter[0];
 
     public final static String ARG_TYPE_STRING = "string";
     public final static String ARG_TYPE_STRING_ENUM = "stringenum";
@@ -15,7 +23,7 @@ public class CommandParameter {
     public final static String ARG_TYPE_RAW_TEXT = "rawtext";
     public final static String ARG_TYPE_INT = "int";
 
-    public static final String ENUM_TYPE_ITEM_LIST = "itemType";
+    public static final String ENUM_TYPE_ITEM_LIST = "Item";
     public static final String ENUM_TYPE_BLOCK_LIST = "blockType";
     public static final String ENUM_TYPE_COMMAND_LIST = "commandName";
     public static final String ENUM_TYPE_ENCHANTMENT_LIST = "enchantmentType";
@@ -54,7 +62,7 @@ public class CommandParameter {
         this.name = name;
         this.type = CommandParamType.RAWTEXT;
         this.optional = optional;
-        this.enumData = new CommandEnum(enumType, new ArrayList<>());
+        this.enumData = new CommandEnum(enumType, ENUM_TYPE_ITEM_LIST.equals(enumType)? Item.getItemList() : new ArrayList<>());
     }
 
     public CommandParameter(String name, boolean optional, String[] enumValues) {

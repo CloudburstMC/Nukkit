@@ -1,7 +1,6 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.BatchPacket;
@@ -11,6 +10,7 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import io.netty.util.collection.CharObjectHashMap;
+import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
@@ -127,7 +127,7 @@ public class CraftingManager {
                         outputs = (List<Map>) recipe.get("output");
 
                         first = outputs.remove(0);
-                        String[] shape = ((List<String>) recipe.get("shape")).toArray(new String[0]);
+                        String[] shape = ((List<String>) recipe.get("shape")).toArray(EmptyArrays.EMPTY_STRINGS);
                         Map<Character, Item> ingredients = new CharObjectHashMap<>();
                         List<Item> extraResults = new ArrayList<>();
 
@@ -346,7 +346,7 @@ public class CraftingManager {
     }
 
     private static int getItemHash(int id, int meta) {
-        return (id << Block.DATA_BITS) | (meta & Block.DATA_MASK);
+        return id << 8 | meta & 0xFF;
     }
 
     public void registerShapedRecipe(ShapedRecipe recipe) {

@@ -23,6 +23,7 @@ import cn.nukkit.utils.MainLogger;
 import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,20 +78,23 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        if (Math.abs(player.getFloorX() - this.x) <= 1 && Math.abs(player.getFloorZ() - this.z) <= 1) {
-            double y = player.y + player.getEyeHeight();
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        if (player != null) {
+            if (Math.abs(player.getFloorX() - this.x) <= 1 && Math.abs(player.getFloorZ() - this.z) <= 1) {
+                double y = player.y + player.getEyeHeight();
 
-            if (y - this.y > 2) {
-                this.setDamage(BlockFace.UP.getIndex());
-            } else if (this.y - y > 0) {
-                this.setDamage(BlockFace.DOWN.getIndex());
+                if (y - this.y > 2) {
+                    this.setDamage(BlockFace.UP.getIndex());
+                } else if (this.y - y > 0) {
+                    this.setDamage(BlockFace.DOWN.getIndex());
+                } else {
+                    this.setDamage(player.getHorizontalFacing().getIndex());
+                }
             } else {
                 this.setDamage(player.getHorizontalFacing().getIndex());
             }
-        } else {
-            this.setDamage(player.getHorizontalFacing().getIndex());
         }
+        
         if(this.level.getBlockEntity(this) != null) {
             BlockEntity blockEntity = this.level.getBlockEntity(this);
             MainLogger.getLogger().warning("Found unused BlockEntity at world=" + blockEntity.getLevel().getName() + " x=" + blockEntity.getX() + " y=" + blockEntity.getY() + " z=" + blockEntity.getZ() + " whilst attempting to place piston, closing it.");

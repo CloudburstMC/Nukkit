@@ -151,8 +151,8 @@ public class AddEntityPacket extends DataPacket {
     public float pitch;
     public float headYaw;
     public EntityMetadata metadata = new EntityMetadata();
-    public Attribute[] attributes = new Attribute[0];
-    public EntityLink[] links = new EntityLink[0];
+    public Attribute[] attributes = Attribute.EMPTY_ARRAY;
+    public EntityLink[] links = EntityLink.EMPTY_ARRAY;
 
     @Override
     public void decode() {

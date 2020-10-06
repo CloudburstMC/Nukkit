@@ -5,7 +5,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockWallBanner extends BlockBanner {

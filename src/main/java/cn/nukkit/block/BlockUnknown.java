@@ -20,8 +20,11 @@ public class BlockUnknown extends BlockMeta {
     }
 
     public BlockUnknown(int id, Integer meta) {
-        super(meta);
+        super(0);
         this.id = id;
+        if (meta != null && meta != 0) {
+            getMutableState().setDataStorageFromInt(meta, true);
+        }
     }
 
     @Since("1.4.0.0-PN")

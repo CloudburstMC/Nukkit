@@ -1,39 +1,25 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
-import cn.nukkit.ServerTest;
-import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.plugin.PluginManager;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.powernukkit.tests.api.MockPlayer;
+import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doCallRealMethod;
 
 /**
  * @author joserobjr
  */
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(PowerNukkitExtension.class)
 class EnchantInventoryTest {
-    @Mock
-    PluginManager pluginManager;
     
-    @Mock
-    Server server;
-    
-    @Mock
-    Level level;
-
-    @Mock
+    @MockPlayer
     Player player;
     
     PlayerInventory playerInventory;
@@ -63,23 +49,9 @@ class EnchantInventoryTest {
 
     @BeforeEach
     void setUp() {
-        playerInventory = spy(new PlayerInventory(player));
-        playerUIInventory = spy(new PlayerUIInventory(player));
+        playerInventory = player.getInventory();
+        playerUIInventory = player.getUIInventory();
         
-        lenient().when(player.getInventory()).thenReturn(playerInventory);
-        lenient().when(player.getUIInventory()).thenReturn(playerUIInventory);
-        lenient().when(player.getLevel()).thenReturn(level);
-        lenient().when(player.getServer()).thenReturn(server);
-        lenient().when(level.getServer()).thenReturn(server);
-        lenient().when(server.getPluginManager()).thenReturn(pluginManager);
-        ServerTest.setInstance(server);
-        
-        enchantInventory = new EnchantInventory(playerUIInventory, new Position(1, 2, 3, level));
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        Block.init();
-        Item.init();
+        enchantInventory = new EnchantInventory(playerUIInventory, new Position(1, 2, 3, player.getLevel()));
     }
 }

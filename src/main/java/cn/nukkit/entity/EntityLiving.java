@@ -3,11 +3,14 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockMagma;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
 import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.weather.EntityWeather;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
@@ -22,6 +25,7 @@ import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockIterator;
+import cn.nukkit.utils.Utils;
 import co.aikar.timings.Timings;
 
 import java.util.ArrayList;
@@ -49,14 +53,14 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     protected int attackTime = 0;
+    private boolean attackTimeByShieldKb;
+    private int attackTimeBefore;
 
     protected boolean invisible = false;
 
     protected float movementSpeed = 0.1f;
 
     protected int turtleTicks = 200;
-
-    private boolean blocking = false;
 
     @Override
     protected void initEntity() {
@@ -106,14 +110,14 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     public boolean attack(EntityDamageEvent source) {
         if (this.noDamageTicks > 0) {
             return false;
-        } else if (this.attackTime > 0) {
+        } else if (this.attackTime > 0 && !attackTimeByShieldKb) {
             EntityDamageEvent lastCause = this.getLastDamageCause();
             if (lastCause != null && lastCause.getDamage() >= source.getDamage()) {
                 return false;
             }
         }
 
-        if (this.blockedByShield(source)) {
+        if (isBlocking() && this.blockedByShield(source)) {
             return false;
         }
 
@@ -151,6 +155,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             Server.broadcastPacket(this.hasSpawned.values(), pk);
 
             this.attackTime = source.getAttackCooldown();
+            this.attackTimeByShieldKb = false;
             this.scheduleUpdate();
 
             return true;
@@ -281,6 +286,9 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
         if (this.attackTime > 0) {
             this.attackTime -= tickDiff;
+            if (this.attackTime <= 0) {
+                attackTimeByShieldKb = false;
+            }
             hasUpdate = true;
         }
 
@@ -302,7 +310,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public Item[] getDrops() {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     public Block[] getLineOfSight(int maxDistance) {
@@ -315,7 +323,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     @Deprecated
     public Block[] getLineOfSight(int maxDistance, int maxLength, Map<Integer, Object> transparent) {
-        return this.getLineOfSight(maxDistance, maxLength, transparent.keySet().toArray(new Integer[0]));
+        return this.getLineOfSight(maxDistance, maxLength, transparent.keySet().toArray(Utils.EMPTY_INTEGERS));
     }
 
     public Block[] getLineOfSight(int maxDistance, int maxLength, Integer[] transparent) {
@@ -352,7 +360,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             }
         }
 
-        return blocks.toArray(new Block[0]);
+        return blocks.toArray(Block.EMPTY_ARRAY);
     }
 
     public Block getTargetBlock(int maxDistance) {
@@ -361,7 +369,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     @Deprecated
     public Block getTargetBlock(int maxDistance, Map<Integer, Object> transparent) {
-        return getTargetBlock(maxDistance, transparent.keySet().toArray(new Integer[0]));
+        return getTargetBlock(maxDistance, transparent.keySet().toArray(Utils.EMPTY_INTEGERS));
     }
 
     public Block getTargetBlock(int maxDistance, Integer[] transparent) {
@@ -401,8 +409,13 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     protected boolean blockedByShield(EntityDamageEvent source) {
-        Entity damager = source instanceof EntityDamageByEntityEvent? ((EntityDamageByEntityEvent) source).getDamager() : null;
-        if (damager == null || !this.isBlocking()) {
+        Entity damager = null;
+        if (source instanceof EntityDamageByChildEntityEvent) {
+            damager = ((EntityDamageByChildEntityEvent) source).getChild();
+        } else if (source instanceof EntityDamageByEntityEvent) {
+            damager = ((EntityDamageByEntityEvent) source).getDamager();
+        }
+        if (damager == null || damager instanceof EntityWeather || !this.isBlocking()) {
             return false;
         }
 
@@ -422,9 +435,12 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         }
 
         if (event.getKnockBackAttacker() && damager instanceof EntityLiving) {
-            double deltaX = damager.getX() - this.getX();
-            double deltaZ = damager.getZ() - this.getZ();
-            ((EntityLiving) damager).knockBack(this, 0, deltaX, deltaZ);
+            EntityLiving attacker = (EntityLiving) damager;
+            double deltaX = attacker.getX() - this.getX();
+            double deltaZ = attacker.getZ() - this.getZ();
+            attacker.knockBack(this, 0, deltaX, deltaZ);
+            attacker.attackTime = 10;
+            attacker.attackTimeByShieldKb = true;
         }
 
         onBlock(damager, event.getAnimation());
@@ -438,11 +454,27 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public boolean isBlocking() {
-        return this.blocking;
+        return this.getDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING);
     }
 
     public void setBlocking(boolean value) {
-        this.blocking = value;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_BLOCKING, value);
+        this.setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void preAttack(Player player) {
+        if (attackTimeByShieldKb) {
+            attackTimeBefore = attackTime;
+            attackTime = 0;
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void postAttack(Player player) {
+        if (attackTimeByShieldKb && attackTime == 0) {
+            attackTime = attackTimeBefore;
+        }
     }
 }

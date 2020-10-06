@@ -5,6 +5,7 @@ settings:
  query-plugins: true
  deprecated-verbose: true
  async-workers: auto
+ safe-spawn: true
 
 network:
  batch-threshold: 256
@@ -63,6 +64,7 @@ spawn-limits:
 player:
  save-player-data: true
  skin-change-cooldown: 30
+ force-skin-trusted: false
 
 aliases:
 

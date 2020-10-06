@@ -7,6 +7,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBell;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.block.BellRingEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -21,6 +22,7 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @PowerNukkitOnly
 public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBell> {
@@ -311,7 +313,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (block.canBeReplaced() && block.getId() != AIR && block.getId() != BUBBLE_COLUMN && !(block instanceof BlockLiquid)) {
             face = BlockFace.UP;
         }
@@ -336,6 +338,17 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
             return false;
         }
         return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean onProjectileHit(@Nonnull Entity projectile, @Nonnull Position position, @Nonnull Vector3 motion) {
+        ring(projectile, BellRingEvent.RingCause.PROJECTILE);
+        if (projectile.isOnFire() && projectile instanceof EntityArrow && level.getBlock(projectile).getId() == BlockID.AIR) {
+            level.setBlock(projectile, Block.get(BlockID.FIRE), true);
+        }
+        return true;
     }
 
     @Override

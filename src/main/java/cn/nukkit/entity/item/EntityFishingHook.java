@@ -29,7 +29,7 @@ import java.util.Random;
 
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class EntityFishingHook extends EntityProjectile {
 

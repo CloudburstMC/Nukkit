@@ -90,6 +90,16 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    
+    <repositories>
+        <repository>
+            <id>powernukkit-snapshots</id>
+            <name>powernukkit-snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -97,6 +107,12 @@
             <artifactId>raknet</artifactId>
             <version>1.6.15-PN2</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powernukkit</groupId>
+            <artifactId>powernukkit-tests-junit5</artifactId>
+            <version>0.1.0-20200920.193605-4</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powernukkit.fastutil</groupId>

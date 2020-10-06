@@ -128,7 +128,7 @@ public class InventoryTransactionPacket extends DataPacket {
         for (int i = 0; i < length; i++) {
             actions.add(new NetworkInventoryAction().read(this));
         }
-        this.actions = actions.toArray(new NetworkInventoryAction[0]);
+        this.actions = actions.toArray(NetworkInventoryAction.EMPTY_ARRAY);
 
         switch (this.transactionType) {
             case TYPE_NORMAL:

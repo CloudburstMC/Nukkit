@@ -8,6 +8,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
@@ -16,6 +17,8 @@ import cn.nukkit.event.entity.EntityPortalEnterEvent.PortalType;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
+import cn.nukkit.inventory.PlayerInventory;
+import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.*;
 import cn.nukkit.level.format.FullChunk;
@@ -44,6 +47,7 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.BiPredicate;
 
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 
@@ -51,6 +55,9 @@ import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
  * @author MagicDroidX
  */
 public abstract class Entity extends Location implements Metadatable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Entity[] EMPTY_ARRAY = new Entity[0];
 
     public static final int NETWORK_ID = -1;
 
@@ -866,7 +873,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.dataProperties.put(bbH);
         this.dataProperties.put(bbW);
         if (send) {
-            sendData(this.hasSpawned.values().toArray(new Player[0]), new EntityMetadata().put(bbH).put(bbW));
+            sendData(this.hasSpawned.values().toArray(Player.EMPTY_ARRAY), new EntityMetadata().put(bbH).put(bbW));
         }
     }
 
@@ -1199,7 +1206,39 @@ public abstract class Entity extends Location implements Metadatable {
             this.setAbsorption(Math.max(0, this.getAbsorption() + source.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION)));
         }
         setLastDamageCause(source);
-        setHealth(getHealth() - source.getFinalDamage());
+        float health = getHealth() - source.getFinalDamage();
+        if (health < 1 && this.isPlayer) {
+            if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.SUICIDE) {
+                Player p = (Player) this;
+                PlayerOffhandInventory offhandInventory = p.getOffhandInventory();
+                PlayerInventory playerInventory = p.getInventory();
+                if (offhandInventory.getItem(0).getId() == Item.TOTEM || playerInventory.getItemInHand().getId() == Item.TOTEM) {
+                    this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
+                    this.extinguish();
+                    this.removeAllEffects();
+                    this.setHealth(1);
+
+                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
+
+                    EntityEventPacket pk = new EntityEventPacket();
+                    pk.eid = this.getId();
+                    pk.event = EntityEventPacket.CONSUME_TOTEM;
+                    p.dataPacket(pk);
+
+                    if (offhandInventory.getItem(0).getId() == Item.TOTEM) {
+                        offhandInventory.clear(0);
+                    } else {
+                        playerInventory.clear(playerInventory.getHeldItemIndex());
+                    }
+
+                    source.setCancelled(true);
+                    return false;
+                }
+            }
+        }
+        setHealth(health);
         return true;
     }
 
@@ -1453,7 +1492,7 @@ public abstract class Entity extends Location implements Metadatable {
             if (!ev.isCancelled() && (level == EnumLevel.OVERWORLD.getLevel() || level == EnumLevel.NETHER.getLevel())) {
                 Position newPos = EnumLevel.moveToNether(this);
                 if (newPos != null) {
-                    for (int x = -1; x < 2; x++) {
+                    /*for (int x = -1; x < 2; x++) {
                         for (int z = -1; z < 2; z++) {
                             int chunkX = (newPos.getFloorX() >> 4) + x, chunkZ = (newPos.getFloorZ() >> 4) + z;
                             FullChunk chunk = newPos.level.getChunk(chunkX, chunkZ, false);
@@ -1461,17 +1500,25 @@ public abstract class Entity extends Location implements Metadatable {
                                 newPos.level.generateChunk(chunkX, chunkZ, true);
                             }
                         }
-                    }
-                    this.teleport(newPos.add(1.5, 1, 0.5));
-                    server.getScheduler().scheduleDelayedTask(new Task() {
-                        @Override
-                        public void onRun(int currentTick) {
-                            // dirty hack to make sure chunks are loaded and generated before spawning
-                            // player
-                            teleport(newPos.add(1.5, 1, 0.5));
-                            BlockNetherPortal.spawnPortal(newPos);
+                    }*/
+                    Position nearestPortal = getNearestValidPortal(newPos);
+                    if (nearestPortal != null) {
+                        teleport(nearestPortal.add(0.5, 0, 0.5), PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
+                    } else {
+                        final Position finalPos = newPos.add(1.5, 1, 1.5);
+                        if (teleport(finalPos, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL)) {
+                            server.getScheduler().scheduleDelayedTask(new Task() {
+                                @Override
+                                public void onRun(int currentTick) {
+                                    // dirty hack to make sure chunks are loaded and generated before spawning
+                                    // player
+                                    inPortalTicks = 81;
+                                    teleport(finalPos, PlayerTeleportEvent.TeleportCause.NETHER_PORTAL);
+                                    BlockNetherPortal.spawnPortal(newPos);
+                                }
+                            }, 5);
                         }
-                    }, 20);
+                    }
                 }
             }
         }
@@ -1482,6 +1529,37 @@ public abstract class Entity extends Location implements Metadatable {
 
         Timings.entityBaseTickTimer.stopTiming();
         return hasUpdate;
+    }
+
+    private Position getNearestValidPortal(Position currentPos) {
+        AxisAlignedBB axisAlignedBB = new SimpleAxisAlignedBB(
+                new Vector3(currentPos.getFloorX() - 128.0, 1.0, currentPos.getFloorZ() - 128.0), 
+                new Vector3(currentPos.getFloorX() + 128.0, currentPos.level.getDimension() == Level.DIMENSION_NETHER? 128 : 256, currentPos.getFloorZ() + 128.0));
+        BiPredicate<BlockVector3, BlockState> condition = (pos, state) -> state.getBlockId() == BlockID.NETHER_PORTAL;
+        List<Block> blocks = currentPos.level.scanBlocks(axisAlignedBB, condition);
+
+        if (blocks.isEmpty()) {
+            return null;
+        }
+
+        final Vector2 currentPosV2 = new Vector2(currentPos.getFloorX(), currentPos.getFloorZ());
+        final double by = currentPos.getFloorY();
+        Comparator<Block> euclideanDistance = Comparator.comparingDouble(block -> currentPosV2.distanceSquared(block.getFloorX(), block.getFloorZ()));
+        Comparator<Block> heightDistance = Comparator.comparingDouble(block-> {
+            double ey = by - block.y;
+            return ey * ey;
+        });
+        
+        Block nearestPortal = blocks.stream()
+                .filter(block-> block.down().getId() != BlockID.NETHER_PORTAL)
+                .min(euclideanDistance.thenComparing(heightDistance))
+                .orElse(null);
+        
+        if (nearestPortal == null) {
+            return null;
+        }
+        
+        return nearestPortal;
     }
 
     public void updateMovement() {
@@ -2219,9 +2297,8 @@ public abstract class Entity extends Location implements Metadatable {
         }
         
         if (portal) {
-            if (this.inPortalTicks < 80) {
-                this.inPortalTicks = 80;
-            } else {
+            if (this.inPortalTicks <= 80) {
+                // 81 means the server won't try to teleport
                 this.inPortalTicks++;
             }
         } else {
@@ -2458,7 +2535,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (!Objects.equals(data, this.getDataProperties().get(data.getId()))) {
             this.getDataProperties().put(data);
             if (send) {
-                this.sendData(this.hasSpawned.values().toArray(new Player[0]), new EntityMetadata().put(this.dataProperties.get(data.getId())));
+                this.sendData(this.hasSpawned.values().toArray(Player.EMPTY_ARRAY), new EntityMetadata().put(this.dataProperties.get(data.getId())));
             }
             return true;
         }
@@ -2580,6 +2657,12 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.2.1.0-PN")
     public boolean isInEndPortal() {
         return inEndPortal;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isPreventingSleep(Player player) {
+        return false;
     }
 
     @Override

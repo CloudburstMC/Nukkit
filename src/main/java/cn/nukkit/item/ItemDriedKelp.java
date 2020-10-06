@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class ItemDriedKelp extends ItemEdible {
 

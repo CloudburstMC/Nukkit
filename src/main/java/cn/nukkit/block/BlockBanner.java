@@ -23,9 +23,10 @@ import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.MainLogger;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockBanner extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBanner> {
@@ -96,7 +97,7 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable, Block
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (face == BlockFace.DOWN) {
             return false;
         }

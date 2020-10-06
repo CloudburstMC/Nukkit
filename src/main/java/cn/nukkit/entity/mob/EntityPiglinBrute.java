@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -30,6 +31,11 @@ public class EntityPiglinBrute extends EntityMob {
     @Override
     public float getHeight() {
         return 1.95f;
+    }
+
+    @Override
+    public boolean isPreventingSleep(Player player) {
+        return true;
     }
 
     @Override

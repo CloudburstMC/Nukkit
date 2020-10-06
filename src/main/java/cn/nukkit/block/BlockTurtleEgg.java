@@ -2,8 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.DeprecationDetails;
-import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.blockproperty.BlockProperties;
@@ -40,7 +40,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @PowerNukkitOnly
 public class BlockTurtleEgg extends BlockFlowable {
     public static final BlockProperty<Integer> EGG_COUNT = new ArrayBlockProperty<>("turtle_egg_count", false,
-            new Integer[]{1,2,3,4}, 1, 2, "turtle_egg_count", false,
+            new Integer[]{1,2,3,4}, 2, "turtle_egg_count", false,
             new String[]{"one_egg", "two_egg", "three_egg", "four_egg"});
     
     @PowerNukkitOnly
@@ -367,7 +367,7 @@ public class BlockTurtleEgg extends BlockFlowable {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

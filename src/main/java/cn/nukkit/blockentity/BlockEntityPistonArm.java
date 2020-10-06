@@ -7,6 +7,7 @@ import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityMoveByPistonEvent;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
@@ -189,7 +190,9 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
                         BlockEntity.createBlockEntity(blockEntity.getString("id"), this.level.getChunk(movingBlock.getChunkX(), movingBlock.getChunkZ()), blockEntity);
                     }
 
-                    this.level.setBlock(movingBlock, moved);
+                    if (this.level.setBlock(movingBlock, moved)) {
+                        moved.onUpdate(Level.BLOCK_UPDATE_MOVED);
+                    }
                 }
             }
 

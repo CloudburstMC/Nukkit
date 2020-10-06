@@ -116,7 +116,7 @@ public class BlockSeagrass extends BlockFlowable {
         if (item.isShears()) {
             return new Item[] { toItem() };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
     

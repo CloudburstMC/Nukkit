@@ -19,7 +19,7 @@ public class BlockLeaves2 extends BlockLeaves {
     @Since("1.4.0.0-PN")
     public static final ArrayBlockProperty<WoodType> NEW_LEAF_TYPE = new ArrayBlockProperty<>("new_leaf_type", true, new WoodType[]{
             WoodType.ACACIA, WoodType.DARK_OAK
-    }, WoodType.ACACIA, 2);
+    }, 2);
 
     @PowerNukkitOnly @Since("1.4.0.0-PN")
     public static final BlockProperties NEW_LEAF_PROPERTIES = new BlockProperties(NEW_LEAF_TYPE, PERSISTENT, UPDATE);

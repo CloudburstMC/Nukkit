@@ -14,6 +14,7 @@ import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.updater.ChunkUpdater;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.utils.ChunkException;
 import lombok.extern.log4j.Log4j2;
 
@@ -22,8 +23,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -64,9 +69,43 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
     private void removeInvalidTile(int x, int y, int z) {
         BlockEntity entity = getTile(x, y, z);
-        if (entity != null && !entity.isBlockEntityValid()) {
+        if (entity != null) {
+            try {
+                if (!entity.closed && entity.isBlockEntityValid()) {
+                    return;
+                }
+            } catch (Exception e) {
+                try {
+                    log.warn("Block entity validation of {} at {}, {} {} {} failed, removing as invalid.",
+                            entity.getClass().getName(),
+                            getProvider().getLevel().getName(),
+                            entity.x,
+                            entity.y,
+                            entity.z,
+                            e
+                    );
+                } catch (Exception e2) {
+                    e.addSuppressed(e2);
+                    log.warn("Block entity validation failed", e);
+                }
+            }
             removeBlockEntity(entity);
         }
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Stream<Block> scanBlocks(BlockVector3 min, BlockVector3 max, BiPredicate<BlockVector3, BlockState> condition) {
+        int offsetX = getX() << 4;
+        int offsetZ = getZ() << 4;
+        return IntStream.rangeClosed(min.getChunkSectionY(), max.getChunkSectionY())
+                .filter(sectionY -> sectionY >= 0 && sectionY < sections.length)
+                .mapToObj(sectionY -> sections[sectionY])
+                .filter(section -> !section.isEmpty()).parallel()
+                .map(section-> section.scanBlocks(getProvider(), offsetX, offsetZ, min, max, condition))
+                .flatMap(Collection::stream);
     }
 
     @Deprecated

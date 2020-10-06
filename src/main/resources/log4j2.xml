@@ -17,5 +17,9 @@
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>
         </Root>
+        <Logger name="cn.nukkit.utils.Watchdog" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Logger>
     </Loggers>
 </Configuration>
