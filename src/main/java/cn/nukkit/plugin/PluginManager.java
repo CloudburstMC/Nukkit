@@ -14,6 +14,7 @@ import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import io.netty.util.internal.EmptyArrays;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -502,7 +503,7 @@ public class PluginManager {
                             aliasList.add(alias);
                         }
 
-                        newCmd.setAliases(aliasList.toArray(new String[0]));
+                        newCmd.setAliases(aliasList.toArray(EmptyArrays.EMPTY_STRINGS));
                     }
                 }
 

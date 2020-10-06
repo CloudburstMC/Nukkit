@@ -25,6 +25,7 @@ import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockIterator;
+import cn.nukkit.utils.Utils;
 import co.aikar.timings.Timings;
 
 import java.util.ArrayList;
@@ -309,7 +310,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     }
 
     public Item[] getDrops() {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     public Block[] getLineOfSight(int maxDistance) {
@@ -322,7 +323,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     @Deprecated
     public Block[] getLineOfSight(int maxDistance, int maxLength, Map<Integer, Object> transparent) {
-        return this.getLineOfSight(maxDistance, maxLength, transparent.keySet().toArray(new Integer[0]));
+        return this.getLineOfSight(maxDistance, maxLength, transparent.keySet().toArray(Utils.EMPTY_INTEGERS));
     }
 
     public Block[] getLineOfSight(int maxDistance, int maxLength, Integer[] transparent) {
@@ -359,7 +360,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             }
         }
 
-        return blocks.toArray(new Block[0]);
+        return blocks.toArray(Block.EMPTY_ARRAY);
     }
 
     public Block getTargetBlock(int maxDistance) {
@@ -368,7 +369,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     @Deprecated
     public Block getTargetBlock(int maxDistance, Map<Integer, Object> transparent) {
-        return getTargetBlock(maxDistance, transparent.keySet().toArray(new Integer[0]));
+        return getTargetBlock(maxDistance, transparent.keySet().toArray(Utils.EMPTY_INTEGERS));
     }
 
     public Block getTargetBlock(int maxDistance, Integer[] transparent) {

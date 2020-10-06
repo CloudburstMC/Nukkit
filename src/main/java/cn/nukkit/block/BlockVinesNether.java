@@ -349,7 +349,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
             return new Item[]{ toItem() };
         }
         
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @PowerNukkitOnly

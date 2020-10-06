@@ -27,6 +27,7 @@ import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import lombok.extern.log4j.Log4j2;
@@ -48,7 +49,11 @@ import java.util.stream.Stream;
 @Log4j2
 public class Item implements Cloneable, BlockID, ItemID {
     //Normal Item IDs
-
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Item[] EMPTY_ARRAY = new Item[0];
+    
     protected static String UNKNOWN_STR = "Unknown";
     public static Class[] list = null;
     
@@ -90,7 +95,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     protected final int id;
     protected int meta;
     protected boolean hasMeta = true;
-    private byte[] tags = new byte[0];
+    private byte[] tags = EmptyArrays.EMPTY_BYTES;
     private transient CompoundTag cachedNBT = null;
     public int count;
     protected int durability = 0;
@@ -117,7 +122,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             this.hasMeta = false;
         }
         this.count = count;
-        this.name = name;
+        this.name = name != null? name.intern() : null;
         /*f (this.block != null && this.id <= 0xff && Block.list[id] != null) { //probably useless
             this.block = Block.get(this.id, this.meta);
             this.name = this.block.getName();
@@ -497,7 +502,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static Item getBlock(int id, Integer meta, int count) {
-        return getBlock(id, meta, count, new byte[0]);
+        return getBlock(id, meta, count, EmptyArrays.EMPTY_BYTES);
     }
 
     public static Item getBlock(int id, Integer meta, int count, byte[] tags) {
@@ -516,7 +521,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static Item get(int id, Integer meta, int count) {
-        return get(id, meta, count, new byte[0]);
+        return get(id, meta, count, EmptyArrays.EMPTY_BYTES);
     }
 
     @PowerNukkitDifference(
@@ -637,7 +642,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         } else { // Support old format for backwards compat
             nbt = (String) data.getOrDefault("nbt_hex", null);
             if (nbt == null) {
-                nbtBytes = new byte[0];
+                nbtBytes = EmptyArrays.EMPTY_BYTES;
             } else {
                 nbtBytes = Utils.parseHexBinary(nbt);
             }
@@ -748,6 +753,16 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     /**
+     * Convenience method to check if the item stack has positive level on a specific enchantment by it's id.
+     * @param id The enchantment ID from {@link Enchantment} constants.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean hasEnchantment(int id) {
+        return getEnchantmentLevel(id) > 0;
+    }
+
+    /**
      * Find the enchantment level by the enchantment id.
      * @param id The enchantment ID from {@link Enchantment} constants.
      * @return {@code 0} if the item don't have that enchantment or the current level of the given enchantment.
@@ -834,7 +849,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     public Enchantment[] getEnchantments() {
         if (!this.hasEnchantments()) {
-            return new Enchantment[0];
+            return Enchantment.EMPTY_ARRAY;
         }
 
         List<Enchantment> enchantments = new ArrayList<>();
@@ -848,7 +863,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
         }
 
-        return enchantments.toArray(new Enchantment[0]);
+        return enchantments.toArray(Enchantment.EMPTY_ARRAY);
     }
 
     public boolean hasCustomName() {
@@ -937,7 +952,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
         }
 
-        return lines.toArray(new String[0]);
+        return lines.toArray(EmptyArrays.EMPTY_STRINGS);
     }
 
     public Item setLore(String... lines) {
@@ -1001,7 +1016,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public Item clearNamedTag() {
-        return this.setCompoundTag(new byte[0]);
+        return this.setCompoundTag(EmptyArrays.EMPTY_BYTES);
     }
 
     public static CompoundTag parseCompoundTag(byte[] tag) {

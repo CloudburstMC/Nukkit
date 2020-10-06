@@ -47,7 +47,7 @@ public class ResourcePackManager {
             }
         }
 
-        this.resourcePacks = loadedResourcePacks.toArray(new ResourcePack[0]);
+        this.resourcePacks = loadedResourcePacks.toArray(ResourcePack.EMPTY_ARRAY);
         Server.getInstance().getLogger().info(Server.getInstance().getLanguage()
                 .translateString("nukkit.resources.success", String.valueOf(this.resourcePacks.length)));
     }

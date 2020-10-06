@@ -213,13 +213,13 @@ public class BlockSnowLayer extends BlockFallableMeta {
         level.setBlock(this, 1, get(AIR), true, false);
         level.setBlock(this, 0, newBlock, true, false);
         Server.getInstance().getScheduler().scheduleDelayedTask(()-> {
-            Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(new Player[0]);
+            Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(Player.EMPTY_ARRAY);
             Vector3[] blocks = {getLocation()};
             level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 0, false);
             level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1, false);
         }, 10);
         
-        Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(new Player[0]);
+        Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(Player.EMPTY_ARRAY);
         Vector3[] blocks = {getLocation()};
         level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 0, false);
         level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1, false);
@@ -287,7 +287,7 @@ public class BlockSnowLayer extends BlockFallableMeta {
     @Override
     public Item[] getDrops(Item item) {
         if (!item.isShovel() || item.getTier() < ItemTool.TIER_WOODEN) {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
         
         int amount;

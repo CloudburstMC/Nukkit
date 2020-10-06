@@ -10,6 +10,7 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import io.netty.util.collection.CharObjectHashMap;
+import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.extern.log4j.Log4j2;
 
@@ -126,7 +127,7 @@ public class CraftingManager {
                         outputs = (List<Map>) recipe.get("output");
 
                         first = outputs.remove(0);
-                        String[] shape = ((List<String>) recipe.get("shape")).toArray(new String[0]);
+                        String[] shape = ((List<String>) recipe.get("shape")).toArray(EmptyArrays.EMPTY_STRINGS);
                         Map<Character, Item> ingredients = new CharObjectHashMap<>();
                         List<Item> extraResults = new ArrayList<>();
 

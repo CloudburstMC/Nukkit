@@ -202,4 +202,9 @@ public interface ChunkSection {
         
         return results;
     }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    default void compressStorageLayers() {
+    }
 }

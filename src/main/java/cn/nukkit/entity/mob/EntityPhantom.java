@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -49,6 +50,11 @@ public class EntityPhantom extends EntityMob implements EntitySmite {
 
     @Override
     public boolean isUndead() {
+        return true;
+    }
+
+    @Override
+    public boolean isPreventingSleep(Player player) {
         return true;
     }
 }

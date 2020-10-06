@@ -228,7 +228,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
             namedTag.remove("ench");
             result.setNamedTag(namedTag);
             if (!enchantmentMap.isEmpty()) {
-                result.addEnchantment(enchantmentMap.values().toArray(new Enchantment[0]));
+                result.addEnchantment(enchantmentMap.values().toArray(Enchantment.EMPTY_ARRAY));
             }
         }
         setResult(result);

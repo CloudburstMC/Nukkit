@@ -63,7 +63,7 @@ public class BlockCobweb extends BlockFlowable {
                     new ItemString()
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

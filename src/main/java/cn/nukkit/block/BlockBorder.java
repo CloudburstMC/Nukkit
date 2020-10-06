@@ -82,7 +82,7 @@ public class BlockBorder extends BlockWallBase {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

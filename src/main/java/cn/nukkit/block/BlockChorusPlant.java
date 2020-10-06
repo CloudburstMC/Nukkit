@@ -98,7 +98,7 @@ public class BlockChorusPlant extends BlockTransparent {
 
     @Override
     public Item[] getDrops(Item item) {
-        return ThreadLocalRandom.current().nextBoolean() ? new Item[]{Item.get(ItemID.CHORUS_FRUIT, 0, 1)} : new Item[0];
+        return ThreadLocalRandom.current().nextBoolean() ? new Item[]{Item.get(ItemID.CHORUS_FRUIT, 0, 1)} : Item.EMPTY_ARRAY;
     }
 
     @Override

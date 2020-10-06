@@ -66,7 +66,7 @@ public class BlockOreQuartz extends BlockSolid {
                     new ItemQuartz(0, count)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

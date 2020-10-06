@@ -18,6 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author MagicDroidX (Nukkit Project)
  */
 public class Utils {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Integer[] EMPTY_INTEGERS = new Integer[0];
 
     public static final SplittableRandom random = new SplittableRandom();
 

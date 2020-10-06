@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.EntityArthropod;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -45,5 +46,10 @@ public class EntitySpider extends EntityMob implements EntityArthropod {
     @Override
     public Item[] getDrops() {
         return new Item[]{Item.get(Item.STRING, Item.SPIDER_EYE)};
+    }
+
+    @Override
+    public boolean isPreventingSleep(Player player) {
+        return true;
     }
 }

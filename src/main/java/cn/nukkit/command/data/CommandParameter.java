@@ -1,12 +1,18 @@
 package cn.nukkit.command.data;
 
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class CommandParameter {
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final CommandParameter[] EMPTY_ARRAY = new CommandParameter[0];
 
     public final static String ARG_TYPE_STRING = "string";
     public final static String ARG_TYPE_STRING_ENUM = "stringenum";

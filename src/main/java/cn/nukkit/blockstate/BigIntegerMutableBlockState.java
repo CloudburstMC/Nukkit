@@ -174,7 +174,7 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
 
     @Nonnull
     @Override
-    public Object getPropertyValue(String propertyName) {
+    public Serializable getPropertyValue(String propertyName) {
         return properties.getValue(storage, propertyName);
     }
 

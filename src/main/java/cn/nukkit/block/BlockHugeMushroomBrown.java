@@ -52,7 +52,7 @@ public class BlockHugeMushroomBrown extends BlockSolidMeta {
                     new ItemBlock(Block.get(BlockID.BROWN_MUSHROOM))
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

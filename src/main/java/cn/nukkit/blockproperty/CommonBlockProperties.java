@@ -11,6 +11,7 @@ public final class CommonBlockProperties {
     public static final BlockProperties LEGACY_BIG_PROPERTIES = new BlockProperties(new UnsignedIntBlockProperty(LEGACY_PROPERTY_NAME, true, 0xFFFFFFFF));
 
     public static final BooleanBlockProperty OPEN = new BooleanBlockProperty("open_bit", false);
+    public static final BooleanBlockProperty TOGGLE = new BooleanBlockProperty("toggle_bit", false);
     public static final IntBlockProperty REDSTONE_SIGNAL = new IntBlockProperty("redstone_signal", false, 15);
 
     public static final BlockProperty<BlockFace> FACING_DIRECTION = new ArrayBlockProperty<>("facing_direction", false, new BlockFace[] {
