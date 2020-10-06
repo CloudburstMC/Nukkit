@@ -15,13 +15,12 @@ import javax.annotation.Nullable;
 public class IntBlockProperty extends BlockProperty<Integer> {
     private static final long serialVersionUID = -2239010977496415152L;
     
-    private final int defaultMeta;
     private final int minValue;
     private final int maxValue;
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int defaultValue, int bitSize, String persistenceName) {
+    public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int bitSize, String persistenceName) {
         super(name, exportedToItem, bitSize, persistenceName);
         int delta = maxValue - minValue;
         Preconditions.checkArgument(delta > 0, "maxValue must be higher than minValue. Got min:%s and max:%s", minValue, maxValue);
@@ -29,28 +28,20 @@ public class IntBlockProperty extends BlockProperty<Integer> {
         int mask = -1 >>> (32 - bitSize);
         Preconditions.checkArgument(delta <= mask, "The data range from %s to %s can't be stored in %s bits", minValue, maxValue, bitSize);
 
-        Preconditions.checkArgument(minValue <= defaultValue && defaultValue <= maxValue, "The default value %s is not inside the %s .. %s range", defaultValue, minValue, maxValue);
         this.minValue = minValue;
         this.maxValue = maxValue;
-        this.defaultMeta = getMetaForValue(defaultValue);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int defaultValue, int bitSize) {
-        this(name, exportedToItem, maxValue, minValue, defaultValue, bitSize, name);
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int defaultValue) {
-        this(name, exportedToItem, maxValue, minValue, defaultValue, NukkitMath.bitLength(maxValue - minValue));
+    public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue, int bitSize) {
+        this(name, exportedToItem, maxValue, minValue, bitSize, name);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public IntBlockProperty(String name, boolean exportedToItem, int maxValue, int minValue) {
-        this(name, exportedToItem, maxValue, minValue, minValue);
+        this(name, exportedToItem, maxValue, minValue, NukkitMath.bitLength(maxValue - minValue));
     }
 
     @PowerNukkitOnly
@@ -62,7 +53,7 @@ public class IntBlockProperty extends BlockProperty<Integer> {
     @Override
     public int getMetaForValue(@Nullable Integer value) {
         if (value == null) {
-            return defaultMeta;
+            return 0;
         }
         try {
             validateDirectly(value);
@@ -123,8 +114,30 @@ public class IntBlockProperty extends BlockProperty<Integer> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public int getDefaultValue() {
-        return getValueForMeta(defaultMeta);
+    @Nonnull
+    public Integer getDefaultValue() {
+        return minValue;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDefaultIntValue(int value) {
+        return minValue == value;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getDefaultIntValue() {
+        return minValue;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDefaultValue(@Nullable Integer value) {
+        return value == null || minValue == value;
     }
 
     @Nonnull

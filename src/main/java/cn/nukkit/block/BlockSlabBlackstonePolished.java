@@ -63,7 +63,7 @@ public class BlockSlabBlackstonePolished extends BlockSlab {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
             return new Item[]{ toItem() };
         }
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

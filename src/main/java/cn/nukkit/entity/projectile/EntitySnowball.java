@@ -103,6 +103,6 @@ public class EntitySnowball extends EntityProjectile {
         int chunkX = (int) x >> 4;
         int chunkZ = (int) z >> 4;
         Level level = this.level;
-        level.getServer().batchPackets(level.getChunkPlayers(chunkX, chunkZ).values().toArray(new Player[0]), allPackets);
+        level.getServer().batchPackets(level.getChunkPlayers(chunkX, chunkZ).values().toArray(Player.EMPTY_ARRAY), allPackets);
     }
 }

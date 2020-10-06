@@ -157,6 +157,6 @@ public class FloatingTextParticle extends Particle {
             packets.add(playerRemove);
         }
 
-        return packets.toArray(new DataPacket[0]);
+        return packets.toArray(DataPacket.EMPTY_ARRAY);
     }
 }

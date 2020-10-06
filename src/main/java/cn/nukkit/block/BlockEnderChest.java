@@ -173,7 +173,7 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable, B
                     Item.get(Item.OBSIDIAN, 0, 8)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

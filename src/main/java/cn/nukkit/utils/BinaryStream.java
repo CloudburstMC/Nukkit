@@ -14,6 +14,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.protocol.types.EntityLink;
+import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
 import java.io.IOException;
@@ -90,7 +91,7 @@ public class BinaryStream {
     public byte[] get(int len) {
         if (len < 0) {
             this.offset = this.count - 1;
-            return new byte[0];
+            return EmptyArrays.EMPTY_BYTES;
         }
         len = Math.min(len, this.getCount() - this.offset);
         this.offset += len;
@@ -234,7 +235,7 @@ public class BinaryStream {
             }
         }
 
-        return list.toArray(new Attribute[0]);
+        return list.toArray(Attribute.EMPTY_ARRAY);
     }
 
     /**
@@ -378,7 +379,7 @@ public class BinaryStream {
         int cnt = auxValue & 0xff;
 
         int nbtLen = this.getLShort();
-        byte[] nbt = new byte[0];
+        byte[] nbt = EmptyArrays.EMPTY_BYTES;
         if (nbtLen < Short.MAX_VALUE) {
             nbt = this.get(nbtLen);
         } else if (nbtLen == 65535) {

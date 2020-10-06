@@ -54,8 +54,8 @@ public class QueryRegenerateEvent extends ServerEvent {
         this.timeout = timeout;
         this.serverName = server.getMotd();
         this.listPlugins = server.getConfig("settings.query-plugins", true);
-        this.plugins = server.getPluginManager().getPlugins().values().toArray(new Plugin[0]);
-        this.players = server.getOnlinePlayers().values().toArray(new Player[0]);
+        this.plugins = server.getPluginManager().getPlugins().values().toArray(Plugin.EMPTY_ARRAY);
+        this.players = server.getOnlinePlayers().values().toArray(Player.EMPTY_ARRAY);
         this.gameType = (server.getGamemode() & 0x01) == 0 ? "SMP" : "CMP";
         this.version = server.getVersion();
         this.server_engine = server.getName() + " " + server.getNukkitVersion() + " ("+server.getGitCommit()+")";

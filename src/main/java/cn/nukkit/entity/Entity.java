@@ -55,6 +55,9 @@ import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
  * @author MagicDroidX
  */
 public abstract class Entity extends Location implements Metadatable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Entity[] EMPTY_ARRAY = new Entity[0];
 
     public static final int NETWORK_ID = -1;
 
@@ -870,7 +873,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.dataProperties.put(bbH);
         this.dataProperties.put(bbW);
         if (send) {
-            sendData(this.hasSpawned.values().toArray(new Player[0]), new EntityMetadata().put(bbH).put(bbW));
+            sendData(this.hasSpawned.values().toArray(Player.EMPTY_ARRAY), new EntityMetadata().put(bbH).put(bbW));
         }
     }
 
@@ -2532,7 +2535,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (!Objects.equals(data, this.getDataProperties().get(data.getId()))) {
             this.getDataProperties().put(data);
             if (send) {
-                this.sendData(this.hasSpawned.values().toArray(new Player[0]), new EntityMetadata().put(this.dataProperties.get(data.getId())));
+                this.sendData(this.hasSpawned.values().toArray(Player.EMPTY_ARRAY), new EntityMetadata().put(this.dataProperties.get(data.getId())));
             }
             return true;
         }

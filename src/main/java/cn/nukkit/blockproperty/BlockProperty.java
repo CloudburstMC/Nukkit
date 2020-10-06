@@ -485,4 +485,37 @@ public abstract class BlockProperty<T extends Serializable> implements Serializa
                 ", persistenceName='" + persistenceName + '\'' +
                 '}';
     }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract boolean isDefaultValue(@Nullable T value);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public abstract T getDefaultValue();
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isDefaultIntValue(int value) {
+        return value == getDefaultIntValue();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isDefaultBooleanValue(boolean value) {
+        return value == getDefaultBooleanValue();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getDefaultIntValue() {
+        return 0;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean getDefaultBooleanValue() {
+        return false;
+    }
 }

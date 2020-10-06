@@ -91,7 +91,7 @@ public class EntityCreeper extends EntityMob {
         if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
             return new Item[]{Item.get(Item.GUNPOWDER, ThreadLocalRandom.current().nextInt(2) + 1)};
         }
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package cn.nukkit.lang;
 
 import cn.nukkit.Server;
+import io.netty.util.internal.EmptyArrays;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -118,7 +119,7 @@ public class BaseLang {
         if (params != null) {
             return this.translateString(str, params, null);
         }
-        return this.translateString(str, new String[0], null);
+        return this.translateString(str, EmptyArrays.EMPTY_STRINGS, null);
     }
 
     public String translateString(String str, Object... params) {
@@ -129,7 +130,7 @@ public class BaseLang {
             }
             return this.translateString(str, paramsToString, null);
         }
-        return this.translateString(str, new String[0], null);
+        return this.translateString(str, EmptyArrays.EMPTY_STRINGS, null);
     }
 
     public String translateString(String str, String param, String onlyPrefix) {

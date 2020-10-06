@@ -146,7 +146,7 @@ class PlayerTest {
         }
 
         InventoryTransactionPacket packet = new InventoryTransactionPacket();
-        packet.actions = actions.toArray(new NetworkInventoryAction[0]);
+        packet.actions = actions.toArray(NetworkInventoryAction.EMPTY_ARRAY);
         
         player.handleDataPacket(packet);
 
