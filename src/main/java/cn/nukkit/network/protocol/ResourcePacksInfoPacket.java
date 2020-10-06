@@ -10,8 +10,8 @@ public class ResourcePacksInfoPacket extends DataPacket {
 
     public boolean mustAccept;
     public boolean scripting;
-    public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
-    public ResourcePack[] resourcePackEntries = new ResourcePack[0];
+    public ResourcePack[] behaviourPackEntries = ResourcePack.EMPTY_ARRAY;
+    public ResourcePack[] resourcePackEntries = ResourcePack.EMPTY_ARRAY;
 
     @Override
     public void decode() {

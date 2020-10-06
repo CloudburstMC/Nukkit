@@ -140,14 +140,14 @@ public class BlockDoublePlant extends BlockFlowable {
                                 new ItemSeedsWheat()
                         };
                     } else {
-                        return new Item[0];
+                        return Item.EMPTY_ARRAY;
                     }
             }
 
             return new Item[]{toItem()};
         }
 
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 import java.util.Optional;
 
 public enum GameRule {
@@ -33,6 +36,10 @@ public enum GameRule {
     SHOW_TAGS("showTags");
 
     private final String name;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final GameRule[] EMPTY_ARRAY = new GameRule[0];
 
     GameRule(String name) {
         this.name = name;

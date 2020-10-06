@@ -147,9 +147,9 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         if (this.inventory != null) {
             List<Item> drops = new ArrayList<>(this.inventory.getContents().values());
             drops.addAll(this.offhandInventory.getContents().values());
-            return drops.toArray(new Item[0]);
+            return drops.toArray(Item.EMPTY_ARRAY);
         }
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

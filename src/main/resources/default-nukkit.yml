@@ -64,6 +64,7 @@ spawn-limits:
 player:
  save-player-data: true
  skin-change-cooldown: 30
+ force-skin-trusted: false
 
 aliases:
 

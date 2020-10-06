@@ -25,6 +25,8 @@ package co.aikar.timings;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
@@ -74,7 +76,7 @@ public class TimingsHistory {
             this.minuteReports = MINUTE_REPORTS.toArray(new MinuteReport[MINUTE_REPORTS.size() + 1]);
             this.minuteReports[this.minuteReports.length - 1] = new MinuteReport();
         } else {
-            this.minuteReports = MINUTE_REPORTS.toArray(new MinuteReport[0]);
+            this.minuteReports = MINUTE_REPORTS.toArray(MinuteReport.EMPTY_ARRAY);
         }
 
         long ticks = 0;
@@ -163,6 +165,9 @@ public class TimingsHistory {
     }
 
     static class MinuteReport {
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        public static final MinuteReport[] EMPTY_ARRAY = new MinuteReport[0]; 
         final long time = System.currentTimeMillis() / 1000;
 
         final TicksRecord ticksRecord = new TicksRecord();

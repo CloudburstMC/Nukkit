@@ -1,12 +1,19 @@
 package cn.nukkit.level.format.generic;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.utils.Utils;
+import cn.nukkit.utils.collection.ConvertingMapWrapper;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -26,8 +33,17 @@ abstract public class BaseRegionLoader {
 
     private RandomAccessFile randomAccessFile;
 
-    // TODO: A simple array will perform better and use less memory
-    protected final Map<Integer, Integer[]> locationTable = new HashMap<>();
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected final Int2ObjectMap<int[]> primitiveLocationTable = new Int2ObjectOpenHashMap<>();
+    
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Integer boxing was polluting the memory heap", replaceWith = "primitiveLocationTable")
+    protected final Map<Integer, Integer[]> locationTable = new ConvertingMapWrapper<>(
+            primitiveLocationTable,
+            table-> Arrays.stream(table).mapToInt(Integer::intValue).toArray(),
+            table -> Arrays.stream(table).boxed().toArray(Integer[]::new)
+    );
 
     public long lastUsed;
 
@@ -95,8 +111,18 @@ abstract public class BaseRegionLoader {
 
     public abstract int getZ();
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.4.0.0-PN", by = "PowerNukkit",
+            reason = "Unnecessary int-boxing causing heap pollution", 
+            replaceWith = "getIntLocationIndexes()")
     public Integer[] getLocationIndexes() {
-        return this.locationTable.keySet().toArray(new Integer[0]);
+        return this.primitiveLocationTable.keySet().toArray(Utils.EMPTY_INTEGERS);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int[] getIntLocationIndexes() {
+        return this.primitiveLocationTable.keySet().toIntArray();
+    }
 }
