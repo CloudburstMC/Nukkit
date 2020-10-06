@@ -50,6 +50,10 @@ import static cn.nukkit.utils.Utils.dynamic;
 @SuppressWarnings({"java:S2160", "java:S3400"})
 @Log4j2
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID, IMutableBlockState {
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Block[] EMPTY_ARRAY = new Block[0];
 
     //<editor-fold desc="static fields" defaultstate="collapsed">
     @Deprecated
@@ -1183,13 +1187,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public Item[] getDrops(Item item) {
         if (this.getId() < 0 || this.getId() > list.length) { //Unknown blocks
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         } else if(canHarvestWithHand() || canHarvest(item)) {
             return new Item[]{
                     this.toItem()
             };
         }
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     private double toolBreakTimeBonus0(Item item) {

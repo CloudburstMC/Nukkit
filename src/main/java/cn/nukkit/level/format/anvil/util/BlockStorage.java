@@ -27,6 +27,9 @@ import static cn.nukkit.api.API.Usage.BLEEDING;
 @ParametersAreNonnullByDefault
 @Log4j2
 public class BlockStorage {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockStorage[] EMPTY_ARRAY = new BlockStorage[0];
 
     private static final byte FLAG_HAS_ID           = 0b00_0001;
     private static final byte FLAG_HAS_ID_EXTRA     = 0b00_0010;

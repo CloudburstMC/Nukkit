@@ -5,6 +5,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
+import cn.nukkit.utils.Utils;
 import cn.nukkit.utils.collection.ConvertingMapWrapper;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
@@ -116,7 +117,7 @@ abstract public class BaseRegionLoader {
             reason = "Unnecessary int-boxing causing heap pollution", 
             replaceWith = "getIntLocationIndexes()")
     public Integer[] getLocationIndexes() {
-        return this.primitiveLocationTable.keySet().toArray(new Integer[0]);
+        return this.primitiveLocationTable.keySet().toArray(Utils.EMPTY_INTEGERS);
     }
 
     @PowerNukkitOnly

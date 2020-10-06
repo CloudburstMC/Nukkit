@@ -8,6 +8,7 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.Utils;
+import io.netty.util.internal.EmptyArrays;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -107,7 +108,7 @@ public class SimpleCommandMap implements CommandMap {
                 iterator.remove();
             }
         }
-        command.setAliases(aliases.toArray(new String[0]));
+        command.setAliases(aliases.toArray(EmptyArrays.EMPTY_STRINGS));
 
         if (!registered) {
             command.setLabel(fallbackPrefix + ":" + label);
@@ -245,7 +246,7 @@ public class SimpleCommandMap implements CommandMap {
         }
 
         String sentCommandLabel = parsed.remove(0).toLowerCase();
-        String[] args = parsed.toArray(new String[0]);
+        String[] args = parsed.toArray(EmptyArrays.EMPTY_STRINGS);
         Command target = this.getCommand(sentCommandLabel);
 
         if (target == null) {

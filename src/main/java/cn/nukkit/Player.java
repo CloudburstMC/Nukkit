@@ -76,6 +76,7 @@ import co.aikar.timings.Timings;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
@@ -106,6 +107,10 @@ import java.util.function.Consumer;
  */
 @Log4j2
 public class Player extends EntityHuman implements CommandSender, InventoryHolder, ChunkLoader, IPlayer {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Player[] EMPTY_ARRAY = new Player[0];
+    
     private static final int NO_SHIELD_DELAY = 10;
 
     public static final int SURVIVAL = 0;
@@ -1399,7 +1404,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return super.getDrops();
         }
 
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override
@@ -1727,7 +1732,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
-        this.sendPosition(new Vector3(x, y, z), yaw, pitch, MovePlayerPacket.MODE_NORMAL, this.getViewers().values().toArray(new Player[0]));
+        this.sendPosition(new Vector3(x, y, z), yaw, pitch, MovePlayerPacket.MODE_NORMAL, this.getViewers().values().toArray(EMPTY_ARRAY));
     }
 
     @Override
@@ -1980,7 +1985,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             Player[] pArr = new Player[]{this};
             for (Entry<Integer, List<DataPacket>> entry : this.batchedPackets.entrySet()) {
                 List<DataPacket> packets = entry.getValue();
-                DataPacket[] arr = packets.toArray(new DataPacket[0]);
+                DataPacket[] arr = packets.toArray(DataPacket.EMPTY_ARRAY);
                 packets.clear();
                 this.server.batchPackets(pArr, arr, false);
             }
@@ -3805,7 +3810,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendTranslation(String message) {
-        this.sendTranslation(message, new String[0]);
+        this.sendTranslation(message, EmptyArrays.EMPTY_STRINGS);
     }
 
     public void sendTranslation(String message, String[] parameters) {
@@ -4220,7 +4225,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         }
 
-        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(new String[0])), this.expLevel);
+        PlayerDeathEvent ev = new PlayerDeathEvent(this, this.getDrops(), new TranslationContainer(message, params.toArray(EmptyArrays.EMPTY_STRINGS)), this.expLevel);
         ev.setKeepExperience(this.level.gameRules.getBoolean(GameRule.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());
 
@@ -4706,7 +4711,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 LevelChunkPacket chunk = new LevelChunkPacket();
                 chunk.chunkX = chunkPositionX + x;
                 chunk.chunkZ = chunkPositionZ + z;
-                chunk.data = new byte[0];
+                chunk.data = EmptyArrays.EMPTY_BYTES;
                 this.dataPacket(chunk);
             }
         }
@@ -4992,7 +4997,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void resetCraftingGridType() {
         if (this.craftingGrid != null) {
-            Item[] drops = this.inventory.addItem(this.craftingGrid.getContents().values().toArray(new Item[0]));
+            Item[] drops = this.inventory.addItem(this.craftingGrid.getContents().values().toArray(Item.EMPTY_ARRAY));
 
             if (drops.length > 0) {
                 for (Item drop : drops) {

@@ -65,7 +65,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

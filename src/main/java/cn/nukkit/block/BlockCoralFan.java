@@ -195,7 +195,7 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
         if (item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null) {
             return super.getDrops(item);
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 }

@@ -125,7 +125,7 @@ public class BlockStone extends BlockSolidMeta {
                             : toItem()
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

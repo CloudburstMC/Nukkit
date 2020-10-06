@@ -42,7 +42,7 @@ public final class MultiLayerStorage extends LayerStorage {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public MultiLayerStorage() {
-        storages = new BlockStorage[0];
+        storages = BlockStorage.EMPTY_ARRAY;
     }
 
     @PowerNukkitOnly

@@ -42,7 +42,7 @@ public abstract class BlockDoubleSlabBase extends BlockSolidMeta {
             slab.setCount(2);
             return new Item[]{ slab };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 }

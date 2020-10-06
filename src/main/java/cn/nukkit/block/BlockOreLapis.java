@@ -67,7 +67,7 @@ public class BlockOreLapis extends BlockSolid {
                     new ItemDye(4, new Random().nextInt(4) + 4)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

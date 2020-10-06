@@ -10,6 +10,7 @@ import com.nukkitx.network.raknet.RakNetReliability;
  * @author MagicDroidX (Nukkit Project)
  */
 public abstract class DataPacket extends BinaryStream implements Cloneable {
+    public static final DataPacket[] EMPTY_ARRAY = new DataPacket[0];
 
     public boolean isEncoded = false;
     private int channel = 0;

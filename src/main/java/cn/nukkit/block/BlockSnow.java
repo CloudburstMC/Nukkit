@@ -42,7 +42,7 @@ public class BlockSnow extends BlockSolid {
                     new ItemSnowball(0, 4)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

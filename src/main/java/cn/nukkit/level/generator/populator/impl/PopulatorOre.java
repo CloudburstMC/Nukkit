@@ -16,7 +16,7 @@ import cn.nukkit.math.NukkitRandom;
  */
 public class PopulatorOre extends Populator {
     private final int replaceId;
-    private OreType[] oreTypes = new OreType[0];
+    private OreType[] oreTypes = OreType.EMPTY_ARRAY;
 
     /**
      * @implNote Removed from the new-raknet branch

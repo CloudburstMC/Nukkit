@@ -84,6 +84,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.internal.EmptyArrays;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
@@ -222,24 +223,24 @@ public class Server {
     private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
         public Level put(Integer key, Level value) {
             Level result = super.put(key, value);
-            levelArray = levels.values().toArray(new Level[0]);
+            levelArray = levels.values().toArray(Level.EMPTY_ARRAY);
             return result;
         }
 
         public boolean remove(Object key, Object value) {
             boolean result = super.remove(key, value);
-            levelArray = levels.values().toArray(new Level[0]);
+            levelArray = levels.values().toArray(Level.EMPTY_ARRAY);
             return result;
         }
 
         public Level remove(Object key) {
             Level result = super.remove(key);
-            levelArray = levels.values().toArray(new Level[0]);
+            levelArray = levels.values().toArray(Level.EMPTY_ARRAY);
             return result;
         }
     };
 
-    private Level[] levelArray = new Level[0];
+    private Level[] levelArray = Level.EMPTY_ARRAY;
 
     private final ServiceManager serviceManager = new NKServiceManager();
 
@@ -273,7 +274,7 @@ public class Server {
         }
         instance = this;
         CraftingManager.packet = new BatchPacket();
-        CraftingManager.packet.payload = new byte[0];
+        CraftingManager.packet.payload = EmptyArrays.EMPTY_BYTES;
         
         currentThread = Thread.currentThread();
         File abs = tempDir.getAbsoluteFile();
@@ -825,7 +826,7 @@ public class Server {
     }
 
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
-        broadcastPacket(players.toArray(new Player[0]), packet);
+        broadcastPacket(players.toArray(Player.EMPTY_ARRAY), packet);
     }
 
     public static void broadcastPacket(Player[] players, DataPacket packet) {
@@ -1224,7 +1225,7 @@ public class Server {
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Collection<Player> players) {
-        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId, players.toArray(new Player[0]));
+        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId, players.toArray(Player.EMPTY_ARRAY));
     }
 
     public void removePlayerListData(UUID uuid) {
@@ -1239,7 +1240,7 @@ public class Server {
     }
 
     public void removePlayerListData(UUID uuid, Collection<Player> players) {
-        this.removePlayerListData(uuid, players.toArray(new Player[0]));
+        this.removePlayerListData(uuid, players.toArray(Player.EMPTY_ARRAY));
     }
 
     public void sendFullPlayerListData(Player player) {
@@ -2033,7 +2034,7 @@ public class Server {
             }
         }
 
-        return matchedPlayer.toArray(new Player[0]);
+        return matchedPlayer.toArray(Player.EMPTY_ARRAY);
     }
 
     public void removePlayer(Player player) {

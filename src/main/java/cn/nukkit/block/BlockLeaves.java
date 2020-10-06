@@ -175,7 +175,7 @@ public class BlockLeaves extends BlockTransparentMeta {
             drops.add(getSapling());
         }
         
-        return drops.toArray(new Item[0]);
+        return drops.toArray(Item.EMPTY_ARRAY);
     }
 
     @Override
