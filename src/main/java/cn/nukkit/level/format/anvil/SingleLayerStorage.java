@@ -110,7 +110,7 @@ public final class SingleLayerStorage extends LayerStorage {
     @Override
     public BlockStorage getStorageOrNull(int layer) {
         if (layer != 0) {
-            return ImmutableBlockStorage.EMPTY;
+            return null;
         }
         BlockStorage blockStorage = this.storage;
         return blockStorage != ImmutableBlockStorage.EMPTY ? blockStorage : null;
