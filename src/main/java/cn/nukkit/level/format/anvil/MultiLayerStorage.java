@@ -169,7 +169,7 @@ public final class MultiLayerStorage extends LayerStorage {
 
     @SneakyThrows(CloneNotSupportedException.class)
     @Override
-    public LayerStorage clone() {
+    public MultiLayerStorage clone() {
         MultiLayerStorage clone = (MultiLayerStorage) super.clone();
         clone.storages = clone.storages.clone();
         for (int i = 0; i < clone.storages.length; i++) {

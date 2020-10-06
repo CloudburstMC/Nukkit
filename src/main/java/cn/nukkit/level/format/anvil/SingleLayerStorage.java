@@ -59,7 +59,7 @@ public final class SingleLayerStorage extends LayerStorage {
 
     @SneakyThrows(CloneNotSupportedException.class)
     @Override
-    public LayerStorage clone() {
+    public SingleLayerStorage clone() {
         SingleLayerStorage clone = (SingleLayerStorage) super.clone();
         clone.storage = clone.storage.copy();
         return clone;
@@ -110,7 +110,7 @@ public final class SingleLayerStorage extends LayerStorage {
     @Override
     public BlockStorage getStorageOrNull(int layer) {
         if (layer != 0) {
-            return ImmutableBlockStorage.EMPTY;
+            return null;
         }
         BlockStorage blockStorage = this.storage;
         return blockStorage != ImmutableBlockStorage.EMPTY ? blockStorage : null;
@@ -143,7 +143,7 @@ public final class SingleLayerStorage extends LayerStorage {
     @PowerNukkitOnly
     @Override
     public int size() {
-        return 1;
+        return storage == ImmutableBlockStorage.EMPTY? 0 : 1;
     }
 
     @Since("1.4.0.0-PN")
