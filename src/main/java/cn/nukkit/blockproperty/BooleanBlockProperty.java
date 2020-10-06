@@ -14,37 +14,27 @@ import java.math.BigInteger;
 public final class BooleanBlockProperty extends BlockProperty<Boolean> {
     private static final long serialVersionUID = 8249827149092664486L;
     
-    private final boolean defaultValue;
-
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public BooleanBlockProperty(String name, boolean exportedToItem, boolean defaultValue, String persistenceName) {
+    public BooleanBlockProperty(String name, boolean exportedToItem, String persistenceName) {
         super(name, exportedToItem, 1, persistenceName);
-        this.defaultValue = defaultValue;
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public BooleanBlockProperty(String name, boolean exportedToItem, boolean defaultValue) {
-        super(name, exportedToItem, 1, name);
-        this.defaultValue = defaultValue;
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BooleanBlockProperty(String name, boolean exportedToItem) {
-        this(name, exportedToItem, false);
+        super(name, exportedToItem, 1, name);
     }
 
     @Override
     public int setValue(int currentMeta, int bitOffset, @Nullable Boolean newValue) {
-        boolean value = newValue == null? defaultValue : newValue;
+        boolean value = newValue != null && newValue;
         return setValue(currentMeta, bitOffset, value);
     }
 
     @Override
     public long setValue(long currentBigMeta, int bitOffset, @Nullable Boolean newValue) {
-        boolean value = newValue == null? defaultValue : newValue;
+        boolean value = newValue != null && newValue;
         return setValue(currentBigMeta, bitOffset, value);
     }
 
@@ -142,8 +132,16 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public boolean getDefaultValue() {
-        return defaultValue;
+    @Nonnull
+    public Boolean getDefaultValue() {
+        return Boolean.FALSE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDefaultValue(@Nullable Boolean value) {
+        return value == null || Boolean.FALSE.equals(value);
     }
 
     @Override

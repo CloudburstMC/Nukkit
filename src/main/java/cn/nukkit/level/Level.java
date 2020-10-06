@@ -9,6 +9,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -73,7 +74,6 @@ import java.io.File;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -1321,7 +1321,7 @@ public class Level implements ChunkManager, Metadatable {
                 continue;
             }
 
-            this.getBlock(pos.getSide(side)).onUpdate(BLOCK_UPDATE_REDSTONE);
+            this.getBlock(temporalVector.setComponentsAdding(pos, side)).onUpdate(BLOCK_UPDATE_REDSTONE);
         }
     }
 
@@ -1333,10 +1333,10 @@ public class Level implements ChunkManager, Metadatable {
     @Since("1.4.0.0-PN")
     public void updateComparatorOutputLevelSelective(Vector3 v, boolean observer) {
         for (BlockFace face : Plane.HORIZONTAL) {
-            Vector3 pos = v.getSide(face);
+            temporalVector.setComponentsAdding(v, face);
 
-            if (this.isChunkLoaded((int) pos.x >> 4, (int) pos.z >> 4)) {
-                Block block1 = this.getBlock(pos);
+            if (this.isChunkLoaded((int) temporalVector.x >> 4, (int) temporalVector.z >> 4)) {
+                Block block1 = this.getBlock(temporalVector);
                 
                 if (block1.getId() == BlockID.OBSERVER) {
                     if (observer) {
@@ -1345,8 +1345,7 @@ public class Level implements ChunkManager, Metadatable {
                 } else if (BlockRedstoneDiode.isDiode(block1)) {
                     block1.onUpdate(BLOCK_UPDATE_REDSTONE);
                 } else if (block1.isNormalBlock()) {
-                    pos = pos.getSide(face);
-                    block1 = this.getBlock(pos);
+                    block1 = this.getBlock(temporalVector.setComponentsAdding(temporalVector, face));
 
                     if (BlockRedstoneDiode.isDiode(block1)) {
                         block1.onUpdate(BLOCK_UPDATE_REDSTONE);
@@ -1360,8 +1359,7 @@ public class Level implements ChunkManager, Metadatable {
         }
         
         for (BlockFace face : Plane.VERTICAL) {
-            Vector3 pos = v.getSide(face);
-            Block block1 = this.getBlock(pos);
+            Block block1 = this.getBlock(temporalVector.setComponentsAdding(v, face));
 
             if (block1.getId() == BlockID.OBSERVER) {
                 block1.onNeighborChange(face.getOpposite());
@@ -1707,11 +1705,18 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             fullState = BlockState.AIR;
         }
-        AtomicBoolean repaired = new AtomicBoolean();
-        Block block = fullState.getBlockRepairing(this, x, y, z, layer, repair -> repaired.set(true));
-        if (repaired.get()) {
-            setBlock(x, y, z, layer, block, false, false); // Update set to false to fix PowerNukkit#650 
+        OptionalBoolean valid = fullState.getCachedValidation();
+        if (valid == OptionalBoolean.TRUE) {
+            return fullState.getBlock(this, x, y, z, layer);
         }
+        if (valid == OptionalBoolean.EMPTY) {
+            try {
+                return fullState.getBlock(this, x, y, z, layer);
+            } catch (InvalidBlockStateException ignored) {
+            }
+        }
+        Block block = fullState.getBlockRepairing(this, x, y, z, layer);
+        setBlock(x, y, z, layer, block, false, false); // Update set to false to fix PowerNukkit#650 
         return block;
     }
     
@@ -2586,7 +2591,9 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Entity[] getCollidingEntities(AxisAlignedBB bb, Entity entity) {
-        List<Entity> nearby = new ArrayList<>();
+        int index = 0;
+
+        ArrayList<Entity> overflow = null;
 
         if (entity == null || entity.canCollide()) {
             int minX = NukkitMath.floorDouble((bb.getMinX() - 2) / 16);
@@ -2599,22 +2606,23 @@ public class Level implements ChunkManager, Metadatable {
                     for (Entity ent : this.getChunkEntities(x, z, false).values()) {
                         if ((entity == null || (ent != entity && entity.canCollideWith(ent)))
                                 && ent.boundingBox.intersectsWith(bb)) {
-                            nearby.add(ent);
+                            overflow = addEntityToBuffer(index, overflow, ent);
+                            index++;
                         }
                     }
                 }
             }
         }
 
-        return nearby.toArray(new Entity[0]);
+        return getEntitiesFromBuffer(index, overflow);
     }
 
     public Entity[] getNearbyEntities(AxisAlignedBB bb) {
         return this.getNearbyEntities(bb, null);
     }
 
-    private static Entity[] EMPTY_ENTITY_ARR = new Entity[0];
-    private static Entity[] ENTITY_BUFFER = new Entity[512];
+    private static final Entity[] EMPTY_ENTITY_ARR = new Entity[0];
+    private static final Entity[] ENTITY_BUFFER = new Entity[512];
 
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
         return getNearbyEntities(bb, entity, false);
@@ -2634,18 +2642,27 @@ public class Level implements ChunkManager, Metadatable {
             for (int z = minZ; z <= maxZ; ++z) {
                 for (Entity ent : this.getChunkEntities(x, z, loadChunks).values()) {
                     if (ent != entity && ent.boundingBox.intersectsWith(bb)) {
-                        if (index < ENTITY_BUFFER.length) {
-                            ENTITY_BUFFER[index] = ent;
-                        } else {
-                            if (overflow == null) overflow = new ArrayList<>(1024);
-                            overflow.add(ent);
-                        }
+                        overflow = addEntityToBuffer(index, overflow, ent);
                         index++;
                     }
                 }
             }
         }
 
+        return getEntitiesFromBuffer(index, overflow);
+    }
+
+    private ArrayList<Entity> addEntityToBuffer(int index, ArrayList<Entity> overflow, Entity ent) {
+        if (index < ENTITY_BUFFER.length) {
+            ENTITY_BUFFER[index] = ent;
+        } else {
+            if (overflow == null) overflow = new ArrayList<>(1024);
+            overflow.add(ent);
+        }
+        return overflow;
+    }
+
+    private Entity[] getEntitiesFromBuffer(int index, ArrayList<Entity> overflow) {
         if (index == 0) return EMPTY_ENTITY_ARR;
         Entity[] copy;
         if (overflow == null) {
@@ -3845,7 +3862,7 @@ public class Level implements ChunkManager, Metadatable {
         int i = 0;
 
         for (BlockFace face : BlockFace.values()) {
-            i = Math.max(i, this.getStrongPower(pos.getSide(face), face));
+            i = Math.max(i, this.getStrongPower(temporalVector.setComponentsAdding(pos, face), face));
 
             if (i >= 15) {
                 return i;
@@ -3906,7 +3923,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public boolean isBlockPowered(Vector3 pos) {
         for (BlockFace face : BlockFace.values()) {
-            if (this.getRedstonePower(pos.getSide(face), face) > 0) {
+            if (this.getRedstonePower(temporalVector.setComponentsAdding(pos, face), face) > 0) {
                 return true;
             }
         }
@@ -3918,7 +3935,7 @@ public class Level implements ChunkManager, Metadatable {
         int power = 0;
 
         for (BlockFace face : BlockFace.values()) {
-            int blockPower = this.getRedstonePower(pos.getSide(face), face);
+            int blockPower = this.getRedstonePower(temporalVector.setComponentsAdding(pos, face), face);
 
             if (blockPower >= 15) {
                 return 15;

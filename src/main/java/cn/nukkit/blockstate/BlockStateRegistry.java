@@ -32,6 +32,8 @@ import java.io.*;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +43,7 @@ import java.util.regex.Pattern;
 @Log4j2
 public class BlockStateRegistry {
     public final int BIG_META_MASK = 0xFFFFFFFF;
+    private final ExecutorService asyncStateRemover = Executors.newSingleThreadExecutor();
     private final Pattern BLOCK_ID_NAME_PATTERN = Pattern.compile("^blockid:(\\d+)$"); 
     private final Set<String> LEGACY_NAME_SET = Collections.singleton(CommonBlockProperties.LEGACY_PROPERTY_NAME);
     
@@ -292,7 +295,7 @@ public class BlockStateRegistry {
     
     private void removeStateIdsAsync(@Nullable Registration registration) {
         if (registration != null && registration != updateBlockRegistration) {
-            new Thread(() -> stateIdRegistration.values().removeIf(r -> r.runtimeId == registration.runtimeId)).start();
+            asyncStateRemover.submit(() -> stateIdRegistration.values().removeIf(r -> r.runtimeId == registration.runtimeId));
         }
     }
 

@@ -24,6 +24,15 @@ public class BlockVector3 implements Cloneable {
         return this;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockVector3 setComponentsAdding(Vector3 pos, BlockFace face) {
+        this.x = pos.getFloorX() + face.getXOffset();
+        this.y = pos.getFloorY() + face.getYOffset();
+        this.z = pos.getFloorZ() + face.getZOffset();
+        return this;
+    }
+
     public int getX() {
         return this.x;
     }
