@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -39,5 +40,10 @@ public class EntityElderGuardian extends EntityMob {
     @Override
     public String getName() {
         return "Elder Guardian";
+    }
+
+    @Override
+    public boolean isPreventingSleep(Player player) {
+        return true;
     }
 }

@@ -1213,7 +1213,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             case ItemTool.TIER_GOLD:
                 return 12.0;
             default:
-                if (toolType == ItemTool.TIER_NETHERITE) {
+                if (toolTier == ItemTool.TIER_NETHERITE) {
                     return 9.0;
                 }
                 return 1.0;
@@ -1375,7 +1375,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     /**
-     * @deprecated This function is lack of Player class and is not accurate enough, use #getBreakTime(Item, Player)
+     * @deprecated This function is lack of Player class and is not accurate enough, use {@link #getBreakTime(Item, Player)}
      * @param item item used
      * @return break time
      */

@@ -748,6 +748,16 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     /**
+     * Convenience method to check if the item stack has positive level on a specific enchantment by it's id.
+     * @param id The enchantment ID from {@link Enchantment} constants.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean hasEnchantment(int id) {
+        return getEnchantmentLevel(id) > 0;
+    }
+
+    /**
      * Find the enchantment level by the enchantment id.
      * @param id The enchantment ID from {@link Enchantment} constants.
      * @return {@code 0} if the item don't have that enchantment or the current level of the given enchantment.
