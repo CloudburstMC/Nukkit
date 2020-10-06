@@ -105,6 +105,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
             return;
         }
         Explosion explosion = new Explosion(this, event.getForce(), this);
+        explosion.setFireChance(event.getFireChance());
         if (event.isBlockBreaking()) {
             explosion.explodeA();
         }
