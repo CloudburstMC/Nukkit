@@ -976,6 +976,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public void afterRemoval(Block newBlock, boolean update) {
     }
 
+    public boolean isSoulSpeedCompatible() {
+        return false;
+    }
+
     public double getHardness() {
         return 10;
     }
