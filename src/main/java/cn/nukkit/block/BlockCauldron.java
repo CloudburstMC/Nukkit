@@ -310,7 +310,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                 }
                 
                 ItemBanner banner = (ItemBanner) item;
-                if (!banner.hasPatterns()) {
+                if (!banner.hasPattern()) {
                     break;
                 }
                 
