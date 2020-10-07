@@ -4242,7 +4242,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             if (!ev.getKeepInventory() && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
                 for (Item item : ev.getDrops()) {
-                    this.level.dropItem(this, item, null, true, 40);
+                    if (item.getEnchantmentLevel(Enchantment.ID_VANISHING_CURSE) <= 0) {
+                        this.level.dropItem(this, item, null, true, 40);
+                    }
                 }
 
                 if (this.inventory != null) {

@@ -6,10 +6,12 @@ import cn.nukkit.api.Since;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.inventory.transaction.action.TakeLevelAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
 
 import java.util.*;
 
@@ -222,6 +224,20 @@ public class InventoryTransaction {
             if (!action.onPreExecute(this.source)) {
                 this.sendInventories();
                 return false;
+            }
+            if(action instanceof SlotChangeAction){
+                if(source.isPlayer()){
+                    Player player = (Player) source;
+                    if(player.isSurvival()){
+                        int slot = ((SlotChangeAction) action).getSlot();
+                        if(slot == 36 || slot == 37 || slot == 38 || slot == 39){
+                            if(action.getSourceItem().hasEnchantment(Enchantment.ID_BINDING_CURSE)){
+                                this.sendInventories();
+                                return false;
+                            }
+                        }
+                    }
+                }
             }
         }
 
