@@ -76,7 +76,7 @@ public class ItemBanner extends Item {
         return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).getList("Patterns").size();
     }
 
-    public boolean hasPatterns() {
+    public boolean hasPattern() {
         return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).contains("Patterns");
     }
 
