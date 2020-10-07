@@ -180,8 +180,11 @@ public class EntityItem extends Entity {
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
         boolean lavaResistant = item != null && item.isLavaResistant();
-        
-        if (!lavaResistant && isInsideOfFire()) {
+
+        int blockId = this.getLevelBlock().getId();
+        boolean insideOfHotBlock = blockId == BlockID.FIRE || blockId == BlockID.LAVA;
+
+        if (!lavaResistant && insideOfHotBlock) {
             this.kill();
         }
 
