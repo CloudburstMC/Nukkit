@@ -182,7 +182,7 @@ public class EntityItem extends Entity {
         boolean lavaResistant = item != null && item.isLavaResistant();
 
         int blockId = this.getLevelBlock().getId();
-        boolean insideOfHotBlock = blockId == BlockID.FIRE || blockId == BlockID.LAVA;
+        boolean insideOfHotBlock = blockId == BlockID.FIRE || blockId == BlockID.SOUL_FIRE || blockId == BlockID.LAVA || blockId == BlockID.STILL_LAVA;
 
         if (!lavaResistant && insideOfHotBlock) {
             this.kill();
