@@ -148,12 +148,16 @@ public class DebugPasteCommand extends VanillaCommand {
                     Utils.zipFolder(dir, zipPath);
                     Path relative = dataPath.relativize(zipPath);
                     log.info("A debug paste was created at {}", relative);
-                    sender.sendMessage("A debug paste has been saved in "+ relative);
+                    if (sender.isPlayer()) {
+                        sender.sendMessage("A debug paste has been saved in " + relative);
+                    }
                     FileUtils.deleteRecursively(dir.toFile());
                 } catch (IOException e) {
                     log.error("Failed to create a debugpaste in debugpastes/debugpaste-{}", now, e);
-                    sender.sendMessage("An error has occurred: "+e);
-                    sender.sendMessage("A partial paste might be available in debugpastes/debugpaste-"+now);
+                    if (sender.isPlayer()) {
+                        sender.sendMessage("An error has occurred: " + e);
+                        sender.sendMessage("A partial paste might be available in debugpastes/debugpaste-" + now);
+                    }
                     return;
                 }
 
@@ -171,8 +175,9 @@ public class DebugPasteCommand extends VanillaCommand {
             final URL url = new URL(ENDPOINT);
             final HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod("PUT");
             connection.setRequestProperty("User-Agent", USER_AGENT);
+            connection.setRequestProperty("Content-Type", "application/zip");
             connection.setDoOutput(true);
             
             try (BufferedOutputStream bos = new BufferedOutputStream(connection.getOutputStream())) {
@@ -189,9 +194,21 @@ public class DebugPasteCommand extends VanillaCommand {
                 BufferedReader reader = new BufferedReader(rd)
             ) {
                 String response = reader.readLine();
+                StringBuilder sb = new StringBuilder().append(response);
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line).append("\n");
+                }
+                String fullReturn = sb.toString();
+                if (!fullReturn.equals(response)) {
+                    log.debug(fullReturn);
+                }
+                
                 URL publicUrl = new URL(response);
                 log.info("The debug paste {} was uploaded to {}", zipPath.getFileName(), publicUrl);
-                sender.sendMessage("Your paste was uploaded to: "+publicUrl);
+                if (sender.isPlayer()) {
+                    sender.sendMessage("Your paste was uploaded to: " + publicUrl);
+                }
                 Utils.writeFile(zipPath.resolveSibling(zipPath.getFileName() + ".url").toString(), 
                         "[InternetShortcut]" + System.lineSeparator() +
                                 "URL="+publicUrl + System.lineSeparator());
