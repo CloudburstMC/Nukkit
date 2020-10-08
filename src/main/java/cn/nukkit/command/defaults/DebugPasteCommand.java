@@ -139,7 +139,7 @@ public class DebugPasteCommand extends VanillaCommand {
                     b.append("os.arch: '").append(System.getProperty("os.arch")).append("'\n");
                     b.append("os.name: '").append(System.getProperty("os.name")).append("'\n");
                     b.append("os.version: '").append(System.getProperty("os.version")).append("'\n");
-                    b.append("ulimit:\n'").append(eval("ulimit", "-a")).append("'\n\n");
+                    b.append("ulimit:\n").append(eval( "sh", "-c", "ulimit -a")).append("\n\n");
                     b.append("\n# Create a ticket: https://github.com/PowerNukkit/PowerNukkit/issues/new");
 
                     Utils.writeFile(dir.resolve("server-info.txt").toString(), b.toString());
