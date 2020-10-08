@@ -1860,7 +1860,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean isLavaResistant() {
-        return true;
+        return false;
     }
 
     @Nonnull
