@@ -1729,7 +1729,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 } else if (!this.wasInSoulSandCompatible && downBlock.isSoulSpeedCompatible()) {
                     this.wasInSoulSandCompatible = true;
 
-                    this.soulSpeedMultiplier = 0.9f + soulSpeedLevel * 0.125f;
+                    this.soulSpeedMultiplier = (soulSpeedLevel * 0.105f) + 1.3f;
 
                     this.sendMovementSpeed(this.movementSpeed * this.soulSpeedMultiplier);
                 }
