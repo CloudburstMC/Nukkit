@@ -7,6 +7,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockHopper;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
@@ -357,15 +358,21 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     }
 
     public boolean pushItems() {
-        BlockFace side = getLevelBlockState().getPropertyValue(CommonBlockProperties.FACING_DIRECTION);
         if (this.inventory.isEmpty()) {
             return false;
         }
+
+        BlockState levelBlockState = getLevelBlockState();
+        if (levelBlockState.getBlockId() != BlockID.HOPPER_BLOCK) {
+            return false;
+        }
         
+        BlockFace side = levelBlockState.getPropertyValue(CommonBlockProperties.FACING_DIRECTION);
         BlockEntity be = this.level.getBlockEntity(temporalVector.setComponentsAdding(this, side));
 
-        if (be instanceof BlockEntityHopper && this.getBlock().getDamage() == 0 || !(be instanceof InventoryHolder))
+        if (be instanceof BlockEntityHopper && levelBlockState.isDefaultState() || !(be instanceof InventoryHolder)) {
             return false;
+        }
 
         InventoryMoveItemEvent event;
 
