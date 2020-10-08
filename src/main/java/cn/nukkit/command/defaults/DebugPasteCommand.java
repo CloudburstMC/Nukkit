@@ -194,14 +194,16 @@ public class DebugPasteCommand extends VanillaCommand {
                 BufferedReader reader = new BufferedReader(rd)
             ) {
                 String response = reader.readLine();
-                StringBuilder sb = new StringBuilder().append(response);
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line).append("\n");
-                }
-                String fullReturn = sb.toString();
-                if (!fullReturn.equals(response)) {
-                    log.debug(fullReturn);
+                if (log.isDebugEnabled()) {
+                    StringBuilder sb = new StringBuilder().append(response);
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        sb.append(line).append("\n");
+                    }
+                    String fullReturn = sb.toString();
+                    if (!fullReturn.equals(response)) {
+                        log.debug(fullReturn);
+                    }
                 }
                 
                 URL publicUrl = new URL(response);
