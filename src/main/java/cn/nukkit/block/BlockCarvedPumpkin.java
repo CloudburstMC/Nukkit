@@ -14,7 +14,7 @@ public class BlockCarvedPumpkin extends BlockPumpkin {
     
     @Override
     public String getName() {
-        return "Caved Pumpkin";
+        return "Carved Pumpkin";
     }
     
     @Override
