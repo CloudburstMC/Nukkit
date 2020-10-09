@@ -72,6 +72,7 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_TRIDENT_RIPTIDE = 30;
     public static final int ID_TRIDENT_LOYALTY = 31;
     public static final int ID_TRIDENT_CHANNELING = 32;
+    public static final int ID_SOUL_SPEED = 36;
 
     public static void init() {
         enchantments = new Enchantment[256];
@@ -109,6 +110,7 @@ public abstract class Enchantment implements Cloneable {
         enchantments[ID_TRIDENT_RIPTIDE]  = new EnchantmentTridentRiptide();
         enchantments[ID_TRIDENT_LOYALTY]  = new EnchantmentTridentLoyalty();
         enchantments[ID_TRIDENT_CHANNELING]  = new EnchantmentTridentChanneling();
+        enchantments[ID_SOUL_SPEED]  = new EnchantmentSoulSpeed();
     }
 
     public static Enchantment get(int id) {
