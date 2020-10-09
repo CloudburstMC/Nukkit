@@ -280,6 +280,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     
     private TaskHandler delayedPosTrackingUpdate;
 
+    private float soulSpeedMultiplier = 1;
+    private boolean wasInSoulSandCompatible;
+
+    public float getSoulSpeedMultiplier() {
+        return this.soulSpeedMultiplier;
+    }
+
     public int getStartActionTick() {
         return startAction;
     }
@@ -1706,6 +1713,29 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         }
 
+        if (!revert) {
+            int soulSpeedLevel = this.getInventory().getBoots().getEnchantmentLevel(Enchantment.ID_SOUL_SPEED);
+
+            if (soulSpeedLevel > 0) {
+                Block downBlock = this.getLevelBlock().down();
+
+                if (this.wasInSoulSandCompatible && !downBlock.isSoulSpeedCompatible()) {
+                    this.wasInSoulSandCompatible = false;
+
+                    this.soulSpeedMultiplier = 1;
+
+                    this.sendMovementSpeed(this.movementSpeed);
+                } else if (!this.wasInSoulSandCompatible && downBlock.isSoulSpeedCompatible()) {
+                    this.wasInSoulSandCompatible = true;
+
+                    this.soulSpeedMultiplier = (soulSpeedLevel * 0.105f) + 1.3f;
+
+                    this.sendMovementSpeed(this.movementSpeed * this.soulSpeedMultiplier);
+                }
+
+            }
+        }
+
         if (revert) {
 
             this.lastX = from.x;
@@ -1756,6 +1786,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         return false;
+    }
+
+    public void sendMovementSpeed(float movementSpeed) {
+        Attribute attribute = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(movementSpeed);
+
+        this.setAttribute(attribute);
     }
 
     public void sendAttributes() {

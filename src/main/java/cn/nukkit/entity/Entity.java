@@ -2045,6 +2045,17 @@ public abstract class Entity extends Location implements Metadatable {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    public <T extends Block> boolean collideWithBlock(Class<T> classType){
+        for(Block block : this.getCollisionBlocks()){
+            if(classType.isInstance(block)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean isInsideOfLava() {
         for (Block block : this.getCollisionBlocks()) {
             if (block instanceof BlockLava) {
