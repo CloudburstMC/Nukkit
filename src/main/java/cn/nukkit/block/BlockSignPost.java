@@ -24,6 +24,7 @@ import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.MainLogger;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
 import static cn.nukkit.math.CompassRoseDirection.*;
@@ -33,13 +34,17 @@ import static cn.nukkit.math.CompassRoseDirection.*;
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockSignPost extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntitySign> {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<CompassRoseDirection> GROUND_SIGN_DIRECTION = new ArrayBlockProperty<>("ground_sign_direction", false, new CompassRoseDirection[] {
             SOUTH, SOUTH_SOUTH_WEST, SOUTH_WEST, WEST_SOUTH_WEST, 
             WEST, WEST_NORTH_WEST, NORTH_WEST, NORTH_NORTH_WEST, 
             NORTH, NORTH_NORTH_EAST, NORTH_EAST, EAST_NORTH_EAST,
             EAST, EAST_SOUTH_EAST, SOUTH_EAST, SOUTH_SOUTH_EAST
     }).ordinal(true);
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(GROUND_SIGN_DIRECTION); 
 
     public BlockSignPost() {
@@ -126,7 +131,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable, Blo
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (face == BlockFace.DOWN) {
             return false;
         }
@@ -142,7 +147,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable, Blo
 
         if (face == BlockFace.UP) {
             CompassRoseDirection direction = GROUND_SIGN_DIRECTION.getValueForMeta(
-                    (int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f
+                    (int) Math.floor((((player != null? player.yaw : 0) + 180) * 16 / 360) + 0.5) & 0x0f
             );
 
             BlockState post = BlockState.of(getPostId()).withProperty(GROUND_SIGN_DIRECTION, direction);
@@ -201,10 +206,14 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable, Blo
         return BlockColor.AIR_BLOCK_COLOR;
     }
     
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public CompassRoseDirection getSignDirection() {
         return getPropertyValue(GROUND_SIGN_DIRECTION);
     }
     
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setSignDirection(CompassRoseDirection direction) {
         setPropertyValue(GROUND_SIGN_DIRECTION, direction);
     }
