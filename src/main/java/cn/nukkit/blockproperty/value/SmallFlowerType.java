@@ -34,18 +34,56 @@ import lombok.RequiredArgsConstructor;
 @Since("1.4.0.0-PN")
 @RequiredArgsConstructor
 public enum SmallFlowerType {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     POPPY("Poppy", DyeColor.RED, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     ORCHID("Blue Orchid", DyeColor.LIGHT_BLUE, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     ALLIUM("Allium", DyeColor.MAGENTA, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     HOUSTONIA("Azure Bluet", DyeColor.LIGHT_GRAY, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     TULIP_RED("Red Tulip", DyeColor.RED, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     TULIP_ORANGE("Orange Tulip", DyeColor.ORANGE, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     TULIP_WHITE("White Tulip", DyeColor.LIGHT_GRAY, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     TULIP_PINK("Pink Tulip", DyeColor.PINK, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     OXEYE("Oxeye Daisy", DyeColor.LIGHT_GRAY, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     CORNFLOWER("Cornflower", DyeColor.BLUE, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     LILY_OF_THE_VALLEY("Lily of the Valley", DyeColor.WHITE, BlockID.RED_FLOWER),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     DANDELION("Dandelion", DyeColor.YELLOW, BlockID.DANDELION),
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     WITHER_ROSE("Wither Rose", DyeColor.BLACK, BlockID.WITHER_ROSE);
 
     private final String englishName;
