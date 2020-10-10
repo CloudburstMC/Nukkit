@@ -2,7 +2,6 @@ package cn.nukkit.blockproperty.value;
 
 import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.utils.BlockColor;
-import lombok.Getter;
 
 public enum WoodType {
     OAK(BlockColor.WOOD_BLOCK_COLOR),
@@ -12,10 +11,7 @@ public enum WoodType {
     ACACIA(BlockColor.ORANGE_BLOCK_COLOR),
     DARK_OAK(BlockColor.BROWN_BLOCK_COLOR, "Dark Oak");
     
-    @Getter
     private final BlockColor color;
-    
-    @Getter
     private final String englishName;
     
     public static final ArrayBlockProperty<WoodType> PROPERTY = new ArrayBlockProperty<>("wood_type", true, values());
@@ -28,5 +24,18 @@ public enum WoodType {
     WoodType(BlockColor color, String name) {
         this.color = color;
         englishName = name;
+    }
+
+    WoodType(BlockColor color, double tallTreeChance) {
+        this.color = color;
+        englishName = name().substring(0, 1) + name().substring(1).toLowerCase();
+    }
+
+    public BlockColor getColor() {
+        return color;
+    }
+
+    public String getEnglishName() {
+        return englishName;
     }
 }
