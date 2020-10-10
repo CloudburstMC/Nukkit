@@ -1,9 +1,14 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.OptionalBoolean;
 import cn.nukkit.utils.Rail;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Snake1999, larryTheCoder (Nukkit Project, Minecart and Riding Project)
@@ -23,6 +28,14 @@ public class BlockRailPowered extends BlockRail {
     @Override
     public int getId() {
         return POWERED_RAIL;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return ACTIVABLE_PROPERTIES;
     }
 
     @Override
@@ -156,7 +169,7 @@ public class BlockRailPowered extends BlockRail {
         }
         // Next check the if rail is on power state
         return canPowered(new Vector3(dx, dy, dz), base, power, relative)
-                || onStraight && canPowered(new Vector3(dx, dy - 1, dz), base, power, relative);
+                || onStraight && canPowered(new Vector3(dx, dy - 1., dz), base, power, relative);
     }
 
     protected boolean canPowered(Vector3 pos, Rail.Orientation state, int power, boolean relative) {
@@ -183,9 +196,21 @@ public class BlockRailPowered extends BlockRail {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                Item.get(Item.POWERED_RAIL, 0, 1)
-        };
+    public boolean isActive() {
+        return getBooleanValue(ACTIVE);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public OptionalBoolean isRailActive() {
+        return OptionalBoolean.of(getBooleanValue(ACTIVE));
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setRailActive(boolean active) {
+        setBooleanValue(ACTIVE, active);
     }
 }

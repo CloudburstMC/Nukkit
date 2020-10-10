@@ -81,6 +81,16 @@ public final class BlockProperties {
         return byName.containsKey(propertyName);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean contains(BlockProperty<?> property) {
+        RegisteredBlockProperty registry = byName.get(property.getName());
+        if (registry == null) {
+            return false;
+        }
+        return registry.getProperty().getValueClass().equals(property.getValueClass());
+    }
+
     /**
      * @throws NoSuchElementException If the property is not registered
      */
