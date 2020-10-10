@@ -566,6 +566,13 @@ public class Server {
 
         EnumLevel.initLevels();
 
+        for (Map.Entry<Integer, Level> entry : this.getLevels().entrySet()) {
+            log.info("Preparing start region for level " + entry.getKey());
+            Level level = entry.getValue();
+            Position spawn = level.getSpawnLocation();
+            level.populateChunk(spawn.getChunkX(), spawn.getChunkZ(), true);
+        }
+
         if (this.getConfig("ticks-per.autosave", 6000) > 0) {
             this.autoSaveTicks = this.getConfig("ticks-per.autosave", 6000);
         }
