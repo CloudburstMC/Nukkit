@@ -410,6 +410,10 @@ public class Level implements ChunkManager, Metadatable {
         Generator generator = generators.get();
         this.dimension = generator.getDimension();
         this.gameRules = this.provider.getGamerules();
+
+        this.server.getLogger().info("Preparing start region for level \"" + this.getFolderName() + "\"");
+        Position spawn = this.getSpawnLocation();
+        this.populateChunk(spawn.getChunkX(), spawn.getChunkZ(), true);
     }
 
     public Generator getGenerator() {
