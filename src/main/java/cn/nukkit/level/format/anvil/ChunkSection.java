@@ -595,6 +595,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 idsExtra[anvil] = (byte)(blockId >>> 8 & 0xFF);
             }
             
+            @SuppressWarnings("deprecation")
             int intData = state.getBigDamage();
             dataBase.set(anvil, (byte)(intData & 0x0F));
             if (dataExtra != null) {
@@ -622,7 +623,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         intData >>>= 16;
         int processedBits = 16;
         
-        int pos = 2;
+        int pos = 1;
         for (; processedBits < 32 && processedBits <= bitSize; processedBits += 8, pos++, intData >>>= 8) {
             byte[] blob = allocateBlob(hugeList, pos);
             blob[anvil] = (byte)(intData & 0xFF);
@@ -632,7 +633,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             return;
         }
 
-        BigInteger hugeData = state.getHugeDamage();
+        BigInteger hugeData = state.getHugeDamage().shiftRight(32);
         for (; processedBits <= bitSize; processedBits += 8, pos++, hugeData = hugeData.shiftRight(8)) {
             byte[] blob = allocateBlob(hugeList, pos);
             blob[anvil] = hugeData.and(BYTE_MASK).byteValue(); 

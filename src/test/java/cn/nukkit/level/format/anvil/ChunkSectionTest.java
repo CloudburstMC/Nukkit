@@ -2,15 +2,33 @@ package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockWall;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.ByteArrayTag;
 import cn.nukkit.nbt.tag.CompoundTag;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(PowerNukkitExtension.class)
 class ChunkSectionTest {
+    @Test
+    void issuePowerNukkit698() {
+        ChunkSection section = new ChunkSection(4);
+        section.delayPaletteUpdates();
+        BlockState bigState = BlockState.of(2, 0x01_00_00_00_0_0L);
+        section.setBlockState(1,2,3, bigState);
+        assertEquals(bigState, section.getBlockState(1,2,3));
+        
+        CompoundTag tag = section.toNBT();
+        ChunkSection loadedSection = new ChunkSection(tag);
+        
+        assertEquals(bigState, loadedSection.getBlockState(1,2,3));
+    }
+    
     @Test
     void hugeIdPersistence() {
         ChunkSection section = new ChunkSection(4);
