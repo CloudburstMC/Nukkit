@@ -165,9 +165,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     private static BlockState loadState(int index, int blockId, int composedData, ListTag<ByteArrayTag> hugeDataList, int hugeDataSize) {
         if (hugeDataSize == 0) {
             return BlockState.of(blockId, composedData);
-        } else if (hugeDataSize <= 3) {
+        } else if (hugeDataSize < 3) {
             return loadHugeIntData(index, blockId, composedData, hugeDataList, hugeDataSize);
-        } else if (hugeDataSize <= 7) {
+        } else if (hugeDataSize < 7) {
             return loadHugeLongData(index, blockId, composedData, hugeDataList, hugeDataSize);
         } else {
             return loadHugeBigData(index, blockId, composedData, hugeDataList, hugeDataSize);

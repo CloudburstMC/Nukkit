@@ -10,11 +10,36 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
+import java.math.BigInteger;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(PowerNukkitExtension.class)
 class ChunkSectionTest {
+    @Test
+    void longPersistence() {
+        ChunkSection section = new ChunkSection(4);
+        section.setBlockState(0,0,0,BlockState.of(BlockID.STONE, 0x81_34_00_00L));
+        CompoundTag nbt = section.toNBT();
+
+        ChunkSection loaded = new ChunkSection(nbt);
+        assertEquals(BigInteger.valueOf(0x81_34_00_00L), loaded.getBlockState(0,0,0).getHugeDamage());
+    }
+    
+    @Test
+    void negativePersistence() {
+        ChunkSection section = new ChunkSection(4);
+        section.setBlockState(0,0,0,BlockState.of(BlockID.STONE, 1));
+        CompoundTag nbt = section.toNBT();
+        
+        nbt.getByteArray("Data")[0] = -1;
+        assertEquals(-1, nbt.getByteArray("Data")[0]);
+        
+        ChunkSection loaded = new ChunkSection(nbt);
+        assertEquals(15, loaded.getBlockState(0,0,0).getExactIntStorage());
+    }
+    
     @Test
     void issuePowerNukkit698() {
         ChunkSection section = new ChunkSection(4);

@@ -2073,6 +2073,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return getMutableState().getPersistenceValue(propertyName);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public final int getExactIntStorage() {
         return mutableState == null? 0 : mutableState.getExactIntStorage();

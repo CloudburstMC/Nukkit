@@ -219,6 +219,8 @@ public class ByteMutableBlockState extends MutableBlockState {
         return BlockState.of(blockId, storage);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public int getExactIntStorage() {
         return storage;

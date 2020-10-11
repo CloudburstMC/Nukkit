@@ -461,6 +461,7 @@ public interface IBlockState {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    @Nonnegative
     int getExactIntStorage();
 
     @PowerNukkitOnly

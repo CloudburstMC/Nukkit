@@ -89,6 +89,7 @@ public final class BlockState implements Serializable, IBlockState {
     @Since("1.4.0.0-PN")
     @Nonnull
     public static BlockState of(@Nonnegative int blockId, @Nonnegative byte blockData) {
+        Validation.checkPositive("blockData", blockData);
         if (blockData < 16) {
             return of0xF(blockId, blockData);
         }
@@ -392,11 +393,13 @@ public final class BlockState implements Serializable, IBlockState {
     /**
      * @throws ArithmeticException If the storage have more than 32 bits
      */
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public int getExactIntStorage() {
         Class<? extends Storage> storageClass = storage.getClass();
-        if (storageClass != ZeroStorage.class && storageClass != ByteStorage.class && storageClass != IntStorage.class) {
-            throw new ArithmeticException(getDataStorage()+" cant be stored in a 32 bits integer without losses. It has "+getBitSize()+" bits");
+        if (getBitSize() >= 32 || storageClass != ZeroStorage.class && storageClass != ByteStorage.class && storageClass != IntStorage.class) {
+            throw new ArithmeticException(getDataStorage()+" cant be stored in a signed 32 bits integer without losses. It has "+getBitSize()+" bits");
         }
         return getBigDamage();
     }
