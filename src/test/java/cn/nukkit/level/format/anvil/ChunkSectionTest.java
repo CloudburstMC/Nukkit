@@ -18,6 +18,17 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(PowerNukkitExtension.class)
 class ChunkSectionTest {
     @Test
+    void omgThatIsHugePersistence() {
+        ChunkSection section = new ChunkSection(4);
+        BigInteger sixteenBytesData = new BigInteger("86151413121110090807060504030201", 16);
+        section.setBlockState(0,0,0,BlockState.of(BlockID.STONE, sixteenBytesData));
+        CompoundTag nbt = section.toNBT();
+
+        ChunkSection loaded = new ChunkSection(nbt);
+        assertEquals(sixteenBytesData, loaded.getBlockState(0,0,0).getHugeDamage());
+    }
+    
+    @Test
     void longPersistence() {
         ChunkSection section = new ChunkSection(4);
         section.setBlockState(0,0,0,BlockState.of(BlockID.STONE, 0x81_34_00_00L));
