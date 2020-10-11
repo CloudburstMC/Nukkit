@@ -22,7 +22,7 @@ public class XpCommand extends Command {
                 new CommandParameter("player", CommandParamType.TARGET, true)
         });
         this.commandParameters.put("level", new CommandParameter[]{
-                new CommandParameter(false, "amount", "l"),
+                new CommandParameter("amount", "l", false),
                 new CommandParameter("player", CommandParamType.TARGET, true)
         });
     }
