@@ -70,9 +70,9 @@ public class LayerStorage implements Cloneable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockStorage getOrSetStorage(Consumer<LayerStorage> setLayerStorage, IntSupplier contentVersion, int layer) {
-        MultiLayerStorage populatedLayerStorage = new MultiLayerStorage();
+        LayerStorage populatedLayerStorage = layer == 0? new SingleLayerStorage() : new MultiLayerStorage();
         setLayerStorage.accept(populatedLayerStorage);
-        return populatedLayerStorage.getOrSetStorage(null, contentVersion, layer);
+        return populatedLayerStorage.getOrSetStorage(setLayerStorage, contentVersion, layer);
     }
 
     @PowerNukkitOnly
