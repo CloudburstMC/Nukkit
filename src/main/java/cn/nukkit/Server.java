@@ -262,6 +262,8 @@ public class Server {
 
     private boolean forceSkinTrusted = false;
 
+    private boolean checkMovement = true;
+
     /**
      * Minimal initializer for testing
      */
@@ -567,6 +569,7 @@ public class Server {
         this.redstoneEnabled = this.getConfig("level-settings.tick-redstone", true);
         this.safeSpawn = this.getConfig().getBoolean("settings.safe-spawn", true);
         this.forceSkinTrusted = this.getConfig().getBoolean("player.force-skin-trusted", false);
+        this.checkMovement = this.getConfig().getBoolean("player.check-movement", true);
 
         this.scheduler = new ServerScheduler();
 
@@ -2644,6 +2647,12 @@ public class Server {
     @Since("1.4.0.0-PN")
     public boolean isForceSkinTrusted(){
         return forceSkinTrusted;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isCheckMovement(){
+        return checkMovement;
     }
 
     private class ConsoleThread extends Thread implements InterruptibleThread {
