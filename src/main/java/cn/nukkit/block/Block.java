@@ -548,10 +548,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
     }
 
-    private static double toolBreakTimeBonus0(
-            int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
-        if (toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0 : 1.0;
-        if (toolType == ItemTool.TYPE_SHEARS) return isWoolBlock ? 5.0 : 15.0;
+    private static double toolBreakTimeBonus0(int toolType, int toolTier, int blockId) {
+        if (toolType == ItemTool.TYPE_SWORD) return blockId == Block.COBWEB ? 15.0 : 1.0;
+        if (toolType == ItemTool.TYPE_SHEARS) return blockId == Block.WOOL ? 15.0 : 1.0;
         if (toolType == ItemTool.TYPE_NONE) return 1.0;
         switch (toolTier) {
             case ItemTool.TIER_WOODEN:
@@ -562,6 +561,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 return 6.0;
             case ItemTool.TIER_DIAMOND:
                 return 8.0;
+            case ItemTool.TIER_NETHERITE:
+                return 9.0;
             case ItemTool.TIER_GOLD:
                 return 12.0;
             default:
@@ -602,8 +603,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                                      boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
         double baseTime = ((correctTool || canHarvestWithHand) ? 1.5 : 5.0) * blockHardness;
         double speed = 1.0 / baseTime;
-        boolean isWoolBlock = blockId == Block.WOOL, isCobweb = blockId == Block.COBWEB;
-        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
+        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, blockId);
         speed += speedBonusByEfficiencyLore0(efficiencyLoreLevel);
         speed *= speedRateByHasteLore0(hasteEffectLevel);
         if (insideOfWaterWithoutAquaAffinity) speed *= 0.2;
@@ -666,6 +666,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                         break;
                     case ItemTool.TIER_DIAMOND:
                         base /= 8;
+                        break;
+                    case ItemTool.TIER_NETHERITE:
+                        base /= 9;
                         break;
                     case ItemTool.TIER_GOLD:
                         base /= 12;
