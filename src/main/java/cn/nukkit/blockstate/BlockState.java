@@ -349,6 +349,16 @@ public final class BlockState implements Serializable, IBlockState {
     }
 
     @Nonnegative
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getSignedBigDamage() {
+        return storage.getSignedBigDamage();
+    }
+
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
@@ -401,7 +411,7 @@ public final class BlockState implements Serializable, IBlockState {
         if (getBitSize() >= 32 || storageClass != ZeroStorage.class && storageClass != ByteStorage.class && storageClass != IntStorage.class) {
             throw new ArithmeticException(getDataStorage()+" cant be stored in a signed 32 bits integer without losses. It has "+getBitSize()+" bits");
         }
-        return getBigDamage();
+        return getSignedBigDamage();
     }
 
     @Since("1.4.0.0-PN")
@@ -551,6 +561,10 @@ public final class BlockState implements Serializable, IBlockState {
         int getLegacyDamage();
 
         int getBigDamage();
+        
+        default int getSignedBigDamage() {
+            return getBigDamage();
+        }
 
         @Nonnull
         Serializable getPropertyValue(BlockProperties properties, String propertyName);
@@ -925,6 +939,11 @@ public final class BlockState implements Serializable, IBlockState {
             return (int)(data & BlockStateRegistry.BIG_META_MASK);
         }
 
+        @Override
+        public int getSignedBigDamage() {
+            return (int)(data & Integer.MAX_VALUE);
+        }
+
         @Nonnull
         @Override
         public Serializable getPropertyValue(BlockProperties properties, String propertyName) {
@@ -1031,6 +1050,11 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public int getBigDamage() {
             return data.and(BigInteger.valueOf(BlockStateRegistry.BIG_META_MASK)).intValue();
+        }
+
+        @Override
+        public int getSignedBigDamage() {
+            return data.and(BigInteger.valueOf(Integer.MAX_VALUE)).intValue();
         }
 
         @Nonnull

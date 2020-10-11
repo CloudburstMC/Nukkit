@@ -67,7 +67,7 @@ public class IntMutableBlockState extends MutableBlockState {
     @Nonnull
     @Override
     public Integer getDataStorage() {
-        return getBigDamage();
+        return storage;
     }
 
     @Since("1.4.0.0-PN")

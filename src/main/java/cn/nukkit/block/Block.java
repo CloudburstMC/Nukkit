@@ -2023,6 +2023,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     @Nonnegative
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getSignedBigDamage() {
+        return mutableState == null? 0 : mutableState.getSignedBigDamage();
+    }
+
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull

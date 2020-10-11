@@ -72,6 +72,15 @@ public interface IBlockState {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Nonnegative
+    default int getSignedBigDamage() {
+        return getBigDamage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     @Nonnegative
     BigInteger getHugeDamage();

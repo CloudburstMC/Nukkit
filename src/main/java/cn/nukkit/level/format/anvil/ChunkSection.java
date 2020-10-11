@@ -596,19 +596,19 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             }
             
             @SuppressWarnings("deprecation")
-            int intData = state.getBigDamage();
-            dataBase.set(anvil, (byte)(intData & 0x0F));
+            int unsignedIntData = state.getBigDamage();
+            dataBase.set(anvil, (byte)(unsignedIntData & 0x0F));
             if (dataExtra != null) {
-                dataExtra.set(anvil, (byte)(intData >>> 4 & 0x0F));
+                dataExtra.set(anvil, (byte)(unsignedIntData >>> 4 & 0x0F));
             }
             
             if (!big) {
                 return;
             }
 
-            hugeList.get(0)[anvil] = (byte)(intData >>> 8 & 0xFF);
+            hugeList.get(0)[anvil] = (byte)(unsignedIntData >>> 8 & 0xFF);
             if (huge) {
-                saveHugeData(hugeList, state, anvil, intData);
+                saveHugeData(hugeList, state, anvil, unsignedIntData);
             }
         }));
         

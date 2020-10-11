@@ -91,7 +91,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @Deprecated @DeprecationDetails(reason = "Limited amount of state data", since = "1.4.0.0-PN", replaceWith = "getCurrentState()")
     public int getFullDamage() {
-        return getBigDamage();
+        return getSignedBigDamage();
     }
 
     @Override

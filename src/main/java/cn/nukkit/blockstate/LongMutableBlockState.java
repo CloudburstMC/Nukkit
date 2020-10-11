@@ -124,6 +124,16 @@ public class LongMutableBlockState extends MutableBlockState {
     }
 
     @Nonnegative
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getSignedBigDamage() {
+        return (int) (storage & Integer.MAX_VALUE);
+    }
+
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
