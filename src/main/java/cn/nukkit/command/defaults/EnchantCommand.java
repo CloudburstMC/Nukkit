@@ -3,12 +3,14 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Created by Pub4Game on 23.01.2016.
@@ -21,12 +23,16 @@ public class EnchantCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("enchantment ID", CommandParamType.INT, false),
+                new CommandParameter("enchantmentId", CommandParamType.INT, false),
                 new CommandParameter("level", CommandParamType.INT, true)
         });
         this.commandParameters.put("byName", new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("id", false, CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST),
+                new CommandParameter("enchantmentName", false, new CommandEnum("Enchant",
+                        ImmutableList.of("protection", "fire_protection", "feather_falling", "blast_protection", "projectile_projection", "thorns", "respiration",
+                                "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods", "knockback", "fire_aspect", "looting", "efficiency",
+                                "silk_touch", "durability", "fortune", "power", "punch", "flame", "infinity", "luck_of_the_sea", "lure", "frost_walker", "mending",
+                                "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling"))),
                 new CommandParameter("level", CommandParamType.INT, true)
         });
     }

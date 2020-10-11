@@ -21,7 +21,7 @@ public class TellCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("message")
+                new CommandParameter("message", CommandParamType.MESSAGE, false)
         });
     }
 

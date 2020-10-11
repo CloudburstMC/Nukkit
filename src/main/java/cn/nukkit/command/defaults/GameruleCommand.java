@@ -2,13 +2,16 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.Player;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 
@@ -18,10 +21,55 @@ public class GameruleCommand extends VanillaCommand {
         super(name, "%nukkit.command.gamerule.description", "%nukkit.command.gamerule.usage");
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
-        this.commandParameters.put("byString", new CommandParameter[]{
-                new CommandParameter("gamerule", true , GameRule.getNames()),
-                new CommandParameter("value", CommandParamType.STRING, true)
+
+        GameRules rules = GameRules.getDefault();
+        List<String> boolGameRules = new ArrayList<>();
+        List<String> intGameRules = new ArrayList<>();
+        List<String> floatGameRules = new ArrayList<>();
+        List<String> unknownGameRules = new ArrayList<>();
+
+        rules.getGameRules().forEach((rule, value) -> {
+            switch (value.getType()) {
+                case BOOLEAN:
+                    boolGameRules.add(rule.getName().toLowerCase());
+                    break;
+                case INTEGER:
+                    intGameRules.add(rule.getName().toLowerCase());
+                    break;
+                case FLOAT:
+                    floatGameRules.add(rule.getName().toLowerCase());
+                    break;
+                case UNKNOWN:
+                default:
+                    unknownGameRules.add(rule.getName().toLowerCase());
+                    break;
+            }
         });
+
+        if (!boolGameRules.isEmpty()) {
+            this.commandParameters.put("boolGameRules", new CommandParameter[]{
+                    new CommandParameter("rule", false , new CommandEnum("BoolGameRule", boolGameRules)),
+                    new CommandParameter("value", true, CommandEnum.ENUM_BOOLEAN)
+            });
+        }
+        if (!intGameRules.isEmpty()) {
+            this.commandParameters.put("intGameRules", new CommandParameter[]{
+                    new CommandParameter("rule", false , new CommandEnum("IntGameRule", intGameRules)),
+                    new CommandParameter("value", CommandParamType.INT, true)
+            });
+        }
+        if (!floatGameRules.isEmpty()) {
+            this.commandParameters.put("floatGameRules", new CommandParameter[]{
+                    new CommandParameter("rule", false , new CommandEnum("FloatGameRule", floatGameRules)),
+                    new CommandParameter("value", CommandParamType.FLOAT, true)
+            });
+        }
+        if (!unknownGameRules.isEmpty()) {
+            this.commandParameters.put("unknownGameRules", new CommandParameter[]{
+                    new CommandParameter("rule", false , new CommandEnum("UnknownGameRule", unknownGameRules)),
+                    new CommandParameter("value", CommandParamType.STRING, true)
+            });
+        }
     }
 
     @Override
@@ -51,7 +99,7 @@ public class GameruleCommand extends VanillaCommand {
                     return true;
                 }
 
-                sender.sendMessage(gameRule.get().getName() + " = " + rules.getString(gameRule.get()));
+                sender.sendMessage(gameRule.get().getName() .toLowerCase()+ " = " + rules.getString(gameRule.get()));
                 return true;
             default:
                 Optional<GameRule> optionalRule = GameRule.parseString(args[0]);
@@ -64,7 +112,7 @@ public class GameruleCommand extends VanillaCommand {
 
                 try {
                     rules.setGameRules(optionalRule.get(), args[1]);
-                    sender.sendMessage(new TranslationContainer("commands.gamerule.success", optionalRule.get().getName(), args[1]));
+                    sender.sendMessage(new TranslationContainer("commands.gamerule.success", optionalRule.get().getName().toLowerCase(), args[1]));
                 } catch (IllegalArgumentException e) {
                     sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule "  + args[0] + " ", args[1], " " + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
                 }

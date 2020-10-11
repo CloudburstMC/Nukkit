@@ -3,11 +3,13 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.TextFormat;
+import com.google.common.collect.ImmutableList;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -23,15 +25,19 @@ public class TimeCommand extends VanillaCommand {
                 "nukkit.command.time.stop");
         this.commandParameters.clear();
         this.commandParameters.put("1arg", new CommandParameter[]{
-                new CommandParameter("start|stop", CommandParamType.STRING, false)
+                new CommandParameter("mode", false, new CommandEnum("TimeMode", ImmutableList.of("query", "start", "stop")))
         });
-        this.commandParameters.put("2args", new CommandParameter[]{
-                new CommandParameter("add|set", CommandParamType.STRING, false),
-                new CommandParameter("value", CommandParamType.INT, false)
+        this.commandParameters.put("add", new CommandParameter[]{
+                new CommandParameter("mode", false, new CommandEnum("TimeModeAdd", ImmutableList.of("add"))),
+                new CommandParameter("amount", CommandParamType.INT, false)
         });
-        this.commandParameters.put("2args_", new CommandParameter[]{
-                new CommandParameter("add|set", CommandParamType.STRING, false),
-                new CommandParameter("value", CommandParamType.STRING, false)
+        this.commandParameters.put("setAmount", new CommandParameter[]{
+                new CommandParameter("mode", false, new CommandEnum("TimeModeSet", ImmutableList.of("set"))),
+                new CommandParameter("amount", CommandParamType.INT, false)
+        });
+        this.commandParameters.put("setTime", new CommandParameter[]{
+                new CommandParameter("mode", false, new CommandEnum("TimeModeSet", ImmutableList.of("set"))),
+                new CommandParameter("time", false, new CommandEnum("TimeSpec", ImmutableList.of("day", "night", "midnight", "noon", "sunrise", "sunset")))
         });
     }
 

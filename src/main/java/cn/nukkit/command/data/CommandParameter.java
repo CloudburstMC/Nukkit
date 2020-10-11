@@ -64,6 +64,20 @@ public class CommandParameter {
         this.enumData = new CommandEnum(name + "Enums", Arrays.asList(enumValues));
     }
 
+    public CommandParameter(String name, boolean optional, CommandEnum enumData) {
+        this.name = name;
+        this.type = CommandParamType.RAWTEXT;
+        this.optional = optional;
+        this.enumData = enumData;
+    }
+
+    public CommandParameter(boolean optional, String name, String postFix) {
+        this.name = name;
+        this.type = CommandParamType.RAWTEXT;
+        this.optional = optional;
+        this.postFix = postFix;
+    }
+
     public CommandParameter(String name, String enumType) {
         this(name, false, enumType);
     }

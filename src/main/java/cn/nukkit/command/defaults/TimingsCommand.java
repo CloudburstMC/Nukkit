@@ -1,10 +1,12 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsExport;
+import com.google.common.collect.ImmutableList;
 
 /**
  * @author fromgate
@@ -17,7 +19,8 @@ public class TimingsCommand extends VanillaCommand {
         this.setPermission("nukkit.command.timings");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("on|off|paste")
+                new CommandParameter("action", false, new CommandEnum("TimingsAction",
+                        ImmutableList.of("on", "off", "paste", "verbon", "verboff", "reset", "report")))
         });
     }
 
@@ -71,4 +74,3 @@ public class TimingsCommand extends VanillaCommand {
         return true;
     }
 }
-

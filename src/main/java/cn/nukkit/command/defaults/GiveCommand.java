@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
@@ -20,22 +21,22 @@ public class GiveCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("item", false, CommandParameter.ENUM_TYPE_ITEM_LIST),
+                new CommandParameter("itemName", false, CommandEnum.ENUM_ITEM),
                 new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("meta", CommandParamType.INT, true),
-                new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
+                //new CommandParameter("data", CommandParamType.INT, true),
+                new CommandParameter("tags", CommandParamType.RAWTEXT, true)
         });
         this.commandParameters.put("toPlayerById", new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("item ID", CommandParamType.INT, false),
+                new CommandParameter("itemId", CommandParamType.INT, false),
                 new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
+                new CommandParameter("tags", CommandParamType.RAWTEXT, true)
         });
         this.commandParameters.put("toPlayerByIdMeta", new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("item ID:meta", CommandParamType.RAWTEXT, false),
+                new CommandParameter("itemAndData", CommandParamType.STRING, false),
                 new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("tags...", CommandParamType.RAWTEXT, true)
+                new CommandParameter("tags", CommandParamType.RAWTEXT, true)
         });
     }
 

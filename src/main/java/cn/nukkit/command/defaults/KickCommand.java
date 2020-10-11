@@ -21,7 +21,7 @@ public class KickCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("reason", true)
+                new CommandParameter("reason", CommandParamType.MESSAGE, true)
         });
     }
 

@@ -18,7 +18,11 @@ public class XpCommand extends Command {
         this.setPermission("nukkit.command.xp");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("amount|level", CommandParamType.INT, false),
+                new CommandParameter("amount", CommandParamType.INT, false),
+                new CommandParameter("player", CommandParamType.TARGET, true)
+        });
+        this.commandParameters.put("level", new CommandParameter[]{
+                new CommandParameter(false, "amount", "l"),
                 new CommandParameter("player", CommandParamType.TARGET, true)
         });
     }
