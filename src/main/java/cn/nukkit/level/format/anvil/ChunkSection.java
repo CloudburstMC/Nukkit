@@ -641,7 +641,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
     private byte[] allocateBlob(List<byte[]> hugeList, int pos) {
         byte[] blob;
-        if (hugeList.size() < pos) {
+        if (hugeList.size() <= pos) {
             blob = new byte[BlockStorage.SECTION_SIZE];
             hugeList.add(blob);
         } else {
