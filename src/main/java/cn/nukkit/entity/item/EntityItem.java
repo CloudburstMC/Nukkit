@@ -146,7 +146,7 @@ public class EntityItem extends Entity {
                         if (!closeItem.equals(getItem(), true, true)) {
                             continue;
                         }
-                        if(!entity.isOnGround()) {
+                        if (!entity.isOnGround()) {
                             continue;
                         }
                         int newAmount = this.getItem().getCount() + closeItem.getCount();
@@ -159,7 +159,7 @@ public class EntityItem extends Entity {
                         packet.eid = getId();
                         packet.data = newAmount;
                         packet.event = EntityEventPacket.MERGE_ITEMS;
-                        Server.broadcastPacket(this.getLevel().getPlayers().values(), packet);
+                        Server.broadcastPacket(this.getViewers().values(), packet);
                     }
                 }
             }
