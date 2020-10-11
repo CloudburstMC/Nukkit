@@ -53,7 +53,7 @@ class ChunkSectionTest {
         assertEquals(BlockID.COBBLE_WALL, section.getBlockId(x, y, z));
         assertEquals(expected, section.getBlockData(x, y, z));
 
-        int higherBits = 0x81_34_00_00;
+        int higherBits = 0x71_34_00_00;
         expected |= higherBits;
         
         section.setBlockData(x, y, z, expected);
@@ -64,7 +64,7 @@ class ChunkSectionTest {
         assertEquals(3, compoundTag.getList("DataHyper", ByteArrayTag.class).size());
         assertEquals((byte) 0b0001_1001, compoundTag.getList("DataHyper", ByteArrayTag.class).get(0).data[anvilIndex]);
         assertEquals((byte) 0b0011_0100, compoundTag.getList("DataHyper", ByteArrayTag.class).get(1).data[anvilIndex]);
-        assertEquals((byte) 0b1000_0001, compoundTag.getList("DataHyper", ByteArrayTag.class).get(2).data[anvilIndex]);
+        assertEquals((byte) 0b0111_0001, compoundTag.getList("DataHyper", ByteArrayTag.class).get(2).data[anvilIndex]);
         compoundTag.remove("ContentVersion");
         section = new ChunkSection(compoundTag);
         section.delayPaletteUpdates();

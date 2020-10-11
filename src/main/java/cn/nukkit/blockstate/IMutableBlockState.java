@@ -8,7 +8,9 @@ import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateDataTypeException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.math.NukkitMath;
+import cn.nukkit.utils.Validation;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -49,14 +51,14 @@ public interface IMutableBlockState extends IBlockState {
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    void setDataStorage(Number storage);
+    void setDataStorage(@Nonnegative Number storage);
 
     /**
      * @throws InvalidBlockStateException If the given storage has invalid data properties
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    void setDataStorageFromInt(int storage);
+    void setDataStorageFromInt(@Nonnegative int storage);
 
     /**
      * @throws InvalidBlockStateException If the given storage has invalid data properties
@@ -64,7 +66,7 @@ public interface IMutableBlockState extends IBlockState {
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    default boolean setDataStorage(Number storage, boolean repair) {
+    default boolean setDataStorage(@Nonnegative Number storage, boolean repair) {
         return setDataStorage(storage, repair, null);
     }
 
@@ -73,7 +75,7 @@ public interface IMutableBlockState extends IBlockState {
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    default boolean setDataStorageFromInt(int storage, boolean repair) {
+    default boolean setDataStorageFromInt(@Nonnegative int storage, boolean repair) {
         return setDataStorageFromInt(storage, repair, null);
     }
 
@@ -84,7 +86,7 @@ public interface IMutableBlockState extends IBlockState {
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    default boolean setDataStorage(Number storage, boolean repair, @Nullable Consumer<BlockStateRepair> callback) {
+    default boolean setDataStorage(@Nonnegative Number storage, boolean repair, @Nullable Consumer<BlockStateRepair> callback) {
         try {
             setDataStorage(storage);
             return false;
@@ -117,7 +119,7 @@ public interface IMutableBlockState extends IBlockState {
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    default boolean setDataStorageFromInt(final int storage, boolean repair, @Nullable Consumer<BlockStateRepair> callback) {
+    default boolean setDataStorageFromInt(@Nonnegative final int storage, boolean repair, @Nullable Consumer<BlockStateRepair> callback) {
         try {
             setDataStorageFromInt(storage);
             return false;
@@ -179,8 +181,10 @@ public interface IMutableBlockState extends IBlockState {
     @SuppressWarnings("unchecked")
     @Nonnull
     static BigInteger repairStorage(
-            int blockId, @Nonnull final BigInteger storage, @Nonnull final BlockProperties properties, 
+            @Nonnegative int blockId, @Nonnull final BigInteger storage, @Nonnull final BlockProperties properties, 
             @Nullable final Consumer<BlockStateRepair> callback) {
+        Validation.checkPositive("blockId", blockId);
+        
         int checkedBits = 0;
         int repairs = 0;
         BigInteger current = storage;
@@ -238,7 +242,7 @@ public interface IMutableBlockState extends IBlockState {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    static RuntimeException handleUnsupportedStorageType(int blockId, Number storage, RuntimeException e) {
+    static RuntimeException handleUnsupportedStorageType(@Nonnegative int blockId, @Nonnegative Number storage, RuntimeException e) {
         InvalidBlockStateException ex;
         try {
             ex = new InvalidBlockStateException(BlockState.of(blockId, storage), e);
