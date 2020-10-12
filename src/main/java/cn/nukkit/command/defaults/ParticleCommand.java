@@ -30,10 +30,10 @@ public class ParticleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.particle");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("effect", false, new CommandEnum("Particle", Arrays.asList(ENUM_VALUES))),
-                new CommandParameter("position", CommandParamType.POSITION, false),
-                new CommandParameter("count", CommandParamType.INT, true),
-                new CommandParameter("data", CommandParamType.INT, true)
+                CommandParameter.newEnum("effect", new CommandEnum("Particle", Arrays.asList(ENUM_VALUES))),
+                CommandParameter.newType("position", CommandParamType.POSITION),
+                CommandParameter.newType("count", true, CommandParamType.INT),
+                CommandParameter.newType("data", true, CommandParamType.INT)
         });
     }
 

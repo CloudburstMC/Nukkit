@@ -22,18 +22,18 @@ public class EnchantCommand extends VanillaCommand {
         this.setPermission("nukkit.command.enchant");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("enchantmentId", CommandParamType.INT, false),
-                new CommandParameter("level", CommandParamType.INT, true)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newType("enchantmentId", CommandParamType.INT),
+                CommandParameter.newType("level", true, CommandParamType.INT)
         });
         this.commandParameters.put("byName", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("enchantmentName", false, new CommandEnum("Enchant",
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("enchantmentName", new CommandEnum("Enchant",
                         ImmutableList.of("protection", "fire_protection", "feather_falling", "blast_protection", "projectile_projection", "thorns", "respiration",
                                 "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods", "knockback", "fire_aspect", "looting", "efficiency",
                                 "silk_touch", "durability", "fortune", "power", "punch", "flame", "infinity", "luck_of_the_sea", "lure", "frost_walker", "mending",
                                 "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling"))),
-                new CommandParameter("level", CommandParamType.INT, true)
+                CommandParameter.newType("level", true, CommandParamType.INT)
         });
     }
 

@@ -22,7 +22,7 @@ public class PardonIpCommand extends VanillaCommand {
         this.setAliases(new String[]{"unbanip", "unban-ip", "pardonip"});
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("ip", CommandParamType.STRING, false)
+                CommandParameter.newType("ip", CommandParamType.STRING)
         });
     }
 

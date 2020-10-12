@@ -21,22 +21,22 @@ public class TeleportCommand extends VanillaCommand {
         this.setPermission("nukkit.command.teleport");
         this.commandParameters.clear();
         this.commandParameters.put("->Player", new CommandParameter[]{
-                new CommandParameter("destination", CommandParamType.TARGET, false),
+                CommandParameter.newType("destination", CommandParamType.TARGET),
         });
         this.commandParameters.put("Player->Player", new CommandParameter[]{
-                new CommandParameter("victim", CommandParamType.TARGET, false),
-                new CommandParameter("destination", CommandParamType.TARGET, false)
+                CommandParameter.newType("victim", CommandParamType.TARGET),
+                CommandParameter.newType("destination", CommandParamType.TARGET)
         });
         this.commandParameters.put("Player->Pos", new CommandParameter[]{
-                new CommandParameter("victim", CommandParamType.TARGET, false),
-                new CommandParameter("destination", CommandParamType.POSITION, false),
-                new CommandParameter("yRot", CommandParamType.VALUE, true),
-                new CommandParameter("xRot", CommandParamType.VALUE, true)
+                CommandParameter.newType("victim", CommandParamType.TARGET),
+                CommandParameter.newType("destination", CommandParamType.POSITION),
+                CommandParameter.newType("yRot", true, CommandParamType.VALUE),
+                CommandParameter.newType("xRot", true, CommandParamType.VALUE)
         });
         this.commandParameters.put("->Pos", new CommandParameter[]{
-                new CommandParameter("destination", CommandParamType.POSITION, false),
-                new CommandParameter("yRot", CommandParamType.VALUE, true),
-                new CommandParameter("xRot", CommandParamType.VALUE, true)
+                CommandParameter.newType("destination", CommandParamType.POSITION),
+                CommandParameter.newType("yRot", true, CommandParamType.VALUE),
+                CommandParameter.newType("xRot", true, CommandParamType.VALUE)
         });
     }
 

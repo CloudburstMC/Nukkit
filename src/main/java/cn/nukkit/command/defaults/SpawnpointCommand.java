@@ -22,8 +22,8 @@ public class SpawnpointCommand extends VanillaCommand {
         this.setPermission("nukkit.command.spawnpoint");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, true),
-                new CommandParameter("spawnPos", CommandParamType.POSITION, true),
+                CommandParameter.newType("player", true, CommandParamType.TARGET),
+                CommandParameter.newType("spawnPos", true, CommandParamType.POSITION),
         });
     }
 

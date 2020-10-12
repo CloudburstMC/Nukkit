@@ -26,7 +26,7 @@ public class VersionCommand extends VanillaCommand {
         this.setPermission("nukkit.command.version");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("pluginName", CommandParamType.STRING, true)
+                CommandParameter.newType("pluginName", true, CommandParamType.STRING)
         });
     }
 

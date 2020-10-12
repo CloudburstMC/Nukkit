@@ -23,10 +23,10 @@ public class DifficultyCommand extends VanillaCommand {
         this.setPermission("nukkit.command.difficulty");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("difficulty", CommandParamType.INT, false)
+                CommandParameter.newType("difficulty", CommandParamType.INT)
         });
         this.commandParameters.put("byString", new CommandParameter[]{
-                new CommandParameter("difficulty", false, new CommandEnum("Difficulty",
+                CommandParameter.newEnum("difficulty", new CommandEnum("Difficulty",
                         ImmutableList.of("peaceful", "p", "easy", "e", "normal", "n", "hard", "h")))
         });
     }

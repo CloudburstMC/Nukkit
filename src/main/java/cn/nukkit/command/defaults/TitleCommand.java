@@ -20,24 +20,24 @@ public class TitleCommand extends VanillaCommand {
 
         this.commandParameters.clear();
         this.commandParameters.put("clear", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("clear", false, new CommandEnum("TitleClear", ImmutableList.of("clear")))
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("clear", new CommandEnum("TitleClear", ImmutableList.of("clear")))
         });
         this.commandParameters.put("reset", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("reset", false, new CommandEnum("TitleReset", ImmutableList.of("reset")))
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("reset", new CommandEnum("TitleReset", ImmutableList.of("reset")))
         });
         this.commandParameters.put("set", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("titleLocation", false, new CommandEnum("TitleSet", ImmutableList.of("title", "subtitle", "actionbar"))),
-                new CommandParameter("titleText", CommandParamType.MESSAGE, false)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("titleLocation", new CommandEnum("TitleSet", ImmutableList.of("title", "subtitle", "actionbar"))),
+                CommandParameter.newType("titleText", CommandParamType.MESSAGE)
         });
         this.commandParameters.put("times", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("times", false, new CommandEnum("TitleTimes", ImmutableList.of("times"))),
-                new CommandParameter("fadeIn", CommandParamType.INT, false),
-                new CommandParameter("stay", CommandParamType.INT, false),
-                new CommandParameter("fadeOut", CommandParamType.INT, false)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("times", new CommandEnum("TitleTimes", ImmutableList.of("times"))),
+                CommandParameter.newType("fadeIn", CommandParamType.INT),
+                CommandParameter.newType("stay", CommandParamType.INT),
+                CommandParameter.newType("fadeOut", CommandParamType.INT)
         });
     }
 

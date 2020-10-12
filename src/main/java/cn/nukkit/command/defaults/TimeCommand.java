@@ -25,19 +25,19 @@ public class TimeCommand extends VanillaCommand {
                 "nukkit.command.time.stop");
         this.commandParameters.clear();
         this.commandParameters.put("1arg", new CommandParameter[]{
-                new CommandParameter("mode", false, new CommandEnum("TimeMode", ImmutableList.of("query", "start", "stop")))
+                CommandParameter.newEnum("mode", new CommandEnum("TimeMode", ImmutableList.of("query", "start", "stop")))
         });
         this.commandParameters.put("add", new CommandParameter[]{
-                new CommandParameter("mode", false, new CommandEnum("TimeModeAdd", ImmutableList.of("add"))),
-                new CommandParameter("amount", CommandParamType.INT, false)
+                CommandParameter.newEnum("mode", new CommandEnum("TimeModeAdd", ImmutableList.of("add"))),
+                CommandParameter.newType("amount", CommandParamType.INT)
         });
         this.commandParameters.put("setAmount", new CommandParameter[]{
-                new CommandParameter("mode", false, new CommandEnum("TimeModeSet", ImmutableList.of("set"))),
-                new CommandParameter("amount", CommandParamType.INT, false)
+                CommandParameter.newEnum("mode", false, new CommandEnum("TimeModeSet", ImmutableList.of("set"))),
+                CommandParameter.newType("amount", CommandParamType.INT)
         });
         this.commandParameters.put("setTime", new CommandParameter[]{
-                new CommandParameter("mode", false, new CommandEnum("TimeModeSet", ImmutableList.of("set"))),
-                new CommandParameter("time", false, new CommandEnum("TimeSpec", ImmutableList.of("day", "night", "midnight", "noon", "sunrise", "sunset")))
+                CommandParameter.newEnum("mode", new CommandEnum("TimeModeSet", ImmutableList.of("set"))),
+                CommandParameter.newEnum("time", new CommandEnum("TimeSpec", ImmutableList.of("day", "night", "midnight", "noon", "sunrise", "sunset")))
         });
     }
 

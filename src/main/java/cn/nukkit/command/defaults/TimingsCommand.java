@@ -19,7 +19,7 @@ public class TimingsCommand extends VanillaCommand {
         this.setPermission("nukkit.command.timings");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("action", false, new CommandEnum("TimingsAction",
+                CommandParameter.newEnum("action", new CommandEnum("TimingsAction",
                         ImmutableList.of("on", "off", "paste", "verbon", "verboff", "reset", "report")))
         });
     }

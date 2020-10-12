@@ -21,8 +21,8 @@ public class WeatherCommand extends VanillaCommand {
         this.setPermission("nukkit.command.weather");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("type", false, new CommandEnum("WeatherType", ImmutableList.of("clear", "rain", "thunder"))),
-                new CommandParameter("duration", CommandParamType.INT, true)
+                CommandParameter.newEnum("type", new CommandEnum("WeatherType", ImmutableList.of("clear", "rain", "thunder"))),
+                CommandParameter.newType("duration", true, CommandParamType.INT)
         });
     }
 

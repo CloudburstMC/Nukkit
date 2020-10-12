@@ -48,26 +48,26 @@ public class GameruleCommand extends VanillaCommand {
 
         if (!boolGameRules.isEmpty()) {
             this.commandParameters.put("boolGameRules", new CommandParameter[]{
-                    new CommandParameter("rule", false , new CommandEnum("BoolGameRule", boolGameRules)),
-                    new CommandParameter("value", true, CommandEnum.ENUM_BOOLEAN)
+                    CommandParameter.newEnum("rule", new CommandEnum("BoolGameRule", boolGameRules)),
+                    CommandParameter.newEnum("value", true, CommandEnum.ENUM_BOOLEAN)
             });
         }
         if (!intGameRules.isEmpty()) {
             this.commandParameters.put("intGameRules", new CommandParameter[]{
-                    new CommandParameter("rule", false , new CommandEnum("IntGameRule", intGameRules)),
-                    new CommandParameter("value", CommandParamType.INT, true)
+                    CommandParameter.newEnum("rule", new CommandEnum("IntGameRule", intGameRules)),
+                    CommandParameter.newType("value", true, CommandParamType.INT)
             });
         }
         if (!floatGameRules.isEmpty()) {
             this.commandParameters.put("floatGameRules", new CommandParameter[]{
-                    new CommandParameter("rule", false , new CommandEnum("FloatGameRule", floatGameRules)),
-                    new CommandParameter("value", CommandParamType.FLOAT, true)
+                    CommandParameter.newEnum("rule", new CommandEnum("FloatGameRule", floatGameRules)),
+                    CommandParameter.newType("value", true, CommandParamType.FLOAT)
             });
         }
         if (!unknownGameRules.isEmpty()) {
             this.commandParameters.put("unknownGameRules", new CommandParameter[]{
-                    new CommandParameter("rule", false , new CommandEnum("UnknownGameRule", unknownGameRules)),
-                    new CommandParameter("value", CommandParamType.STRING, true)
+                    CommandParameter.newEnum("rule", new CommandEnum("UnknownGameRule", unknownGameRules)),
+                    CommandParameter.newType("value", true, CommandParamType.STRING)
             });
         }
     }

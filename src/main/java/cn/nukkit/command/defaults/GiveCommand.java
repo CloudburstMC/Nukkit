@@ -20,23 +20,22 @@ public class GiveCommand extends VanillaCommand {
         this.setPermission("nukkit.command.give");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("itemName", false, CommandEnum.ENUM_ITEM),
-                new CommandParameter("amount", CommandParamType.INT, true),
-                //new CommandParameter("data", CommandParamType.INT, true),
-                new CommandParameter("tags", CommandParamType.RAWTEXT, true)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("itemName", CommandEnum.ENUM_ITEM),
+                CommandParameter.newType("amount", true, CommandParamType.INT),
+                CommandParameter.newType("tags", true, CommandParamType.RAWTEXT)
         });
         this.commandParameters.put("toPlayerById", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("itemId", CommandParamType.INT, false),
-                new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("tags", CommandParamType.RAWTEXT, true)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newType("itemId", CommandParamType.INT),
+                CommandParameter.newType("amount", true, CommandParamType.INT),
+                CommandParameter.newType("tags", true, CommandParamType.RAWTEXT)
         });
         this.commandParameters.put("toPlayerByIdMeta", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("itemAndData", CommandParamType.STRING, false),
-                new CommandParameter("amount", CommandParamType.INT, true),
-                new CommandParameter("tags", CommandParamType.RAWTEXT, true)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newType("itemAndData", CommandParamType.STRING),
+                CommandParameter.newType("amount", true, CommandParamType.INT),
+                CommandParameter.newType("tags", true, CommandParamType.RAWTEXT)
         });
     }
 

@@ -27,11 +27,11 @@ public class WhitelistCommand extends VanillaCommand {
         );
         this.commandParameters.clear();
         this.commandParameters.put("1arg", new CommandParameter[]{
-                new CommandParameter("action", false, new CommandEnum("WhitelistAction", ImmutableList.of("on", "off", "list", "reload")))
+                CommandParameter.newEnum("action", new CommandEnum("WhitelistAction", ImmutableList.of("on", "off", "list", "reload")))
         });
         this.commandParameters.put("2args", new CommandParameter[]{
-                new CommandParameter("action", false, new CommandEnum("WhitelistPlayerAction", ImmutableList.of("add", "remove"))),
-                new CommandParameter("player", CommandParamType.TARGET, false)
+                CommandParameter.newEnum("action", new CommandEnum("WhitelistPlayerAction", ImmutableList.of("add", "remove"))),
+                CommandParameter.newType("player", CommandParamType.TARGET)
         });
     }
 

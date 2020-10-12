@@ -19,7 +19,7 @@ public class SayCommand extends VanillaCommand {
         this.setPermission("nukkit.command.say");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("message", CommandParamType.MESSAGE, false)
+                CommandParameter.newType("message", CommandParamType.MESSAGE)
         });
     }
 
