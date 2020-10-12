@@ -764,7 +764,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         // Tick Weather
-        if (gameRules.getBoolean(GameRule.DO_WEATHER_CYCLE)) {
+        if (this.dimension != DIMENSION_NETHER && this.dimension != DIMENSION_THE_END && gameRules.getBoolean(GameRule.DO_WEATHER_CYCLE)) {
             this.rainTime--;
             if (this.rainTime <= 0) {
                 if (!this.setRaining(!this.raining)) {
