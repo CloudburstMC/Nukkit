@@ -411,6 +411,10 @@ public class Level implements ChunkManager, Metadatable {
         Generator generator = generators.get();
         this.dimension = generator.getDimension();
         this.gameRules = this.provider.getGamerules();
+
+        this.server.getLogger().info("Preparing start region for level \"" + this.getFolderName() + "\"");
+        Position spawn = this.getSpawnLocation();
+        this.populateChunk(spawn.getChunkX(), spawn.getChunkZ(), true);
     }
 
     public Generator getGenerator() {
@@ -2929,7 +2933,7 @@ public class Level implements ChunkManager, Metadatable {
             FullChunk chunk = this.getChunk((int) v.x >> 4, (int) v.z >> 4, false);
             int x = (int) v.x & 0x0f;
             int z = (int) v.z & 0x0f;
-            if (chunk != null) {
+            if (chunk != null && chunk.isGenerated()) {
                 int y = (int) NukkitMath.clamp(v.y, 0, 254);
                 boolean wasAir = chunk.getBlockId(x, y - 1, z) == 0;
                 for (; y > 0; --y) {
