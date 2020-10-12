@@ -188,7 +188,7 @@ public class BlockVine extends BlockTransparentMeta {
                         }
                         putVineOnHorizontalFace(block, meta, this);
                     }
-                } else if (face.getHorizontalIndex() != -1 && (meta & faceMeta) == faceMeta) {
+                } else if (face.getHorizontalIndex() != -1 && (meta & faceMeta) != faceMeta) {
                     if (this.canSpread()) {
                         if (block.getId() == AIR) {
                             BlockFace cwFace = face.rotateY();
@@ -225,7 +225,7 @@ public class BlockVine extends BlockTransparentMeta {
                                 meta &= ~getMetaFromFace(horizontalFace);
                             }
                         }
-                        putVineOnHorizontalFace(below, meta, id == AIR ? this : null);
+                        putVineOnHorizontalFace(below, below.getDamage() | meta, id == AIR ? this : null);
                     }
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
@@ -241,8 +241,8 @@ public class BlockVine extends BlockTransparentMeta {
 
         int count = 0;
         for (int x = blockX - 4; x <= blockX + 4; x++) {
-            for (int z = blockX - 4; z <= blockZ + 4; z++) {
-                for (int y = blockX - 1; y <= blockY + 1; y++) {
+            for (int z = blockZ - 4; z <= blockZ + 4; z++) {
+                for (int y = blockY - 1; y <= blockY + 1; y++) {
                     if (this.level.getBlock(x, y, z).getId() == VINE) {
                         if (++count >= 5) return false;
                     }
@@ -313,11 +313,16 @@ public class BlockVine extends BlockTransparentMeta {
 
     @Override
     public int getToolType() {
-        return ItemTool.TYPE_SHEARS;
+        return ItemTool.TYPE_AXE;
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
     }
 }
