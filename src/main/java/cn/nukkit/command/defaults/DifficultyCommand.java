@@ -8,7 +8,6 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.network.protocol.SetDifficultyPacket;
-import com.google.common.collect.ImmutableList;
 
 import java.util.ArrayList;
 
@@ -26,8 +25,7 @@ public class DifficultyCommand extends VanillaCommand {
                 CommandParameter.newType("difficulty", CommandParamType.INT)
         });
         this.commandParameters.put("byString", new CommandParameter[]{
-                CommandParameter.newEnum("difficulty", new CommandEnum("Difficulty",
-                        ImmutableList.of("peaceful", "p", "easy", "e", "normal", "n", "hard", "h")))
+                CommandParameter.newEnum("difficulty", new CommandEnum("Difficulty", "peaceful", "p", "easy", "e", "normal", "n", "hard", "h"))
         });
     }
 

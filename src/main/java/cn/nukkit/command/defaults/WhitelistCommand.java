@@ -7,7 +7,6 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
-import com.google.common.collect.ImmutableList;
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -27,10 +26,10 @@ public class WhitelistCommand extends VanillaCommand {
         );
         this.commandParameters.clear();
         this.commandParameters.put("1arg", new CommandParameter[]{
-                CommandParameter.newEnum("action", new CommandEnum("WhitelistAction", ImmutableList.of("on", "off", "list", "reload")))
+                CommandParameter.newEnum("action", new CommandEnum("WhitelistAction", "on", "off", "list", "reload"))
         });
         this.commandParameters.put("2args", new CommandParameter[]{
-                CommandParameter.newEnum("action", new CommandEnum("WhitelistPlayerAction", ImmutableList.of("add", "remove"))),
+                CommandParameter.newEnum("action", new CommandEnum("WhitelistPlayerAction", "add", "remove")),
                 CommandParameter.newType("player", CommandParamType.TARGET)
         });
     }

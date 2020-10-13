@@ -10,7 +10,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
-import com.google.common.collect.ImmutableList;
 
 /**
  * Created by Pub4Game on 23.01.2016.
@@ -29,10 +28,10 @@ public class EnchantCommand extends VanillaCommand {
         this.commandParameters.put("byName", new CommandParameter[]{
                 CommandParameter.newType("player", CommandParamType.TARGET),
                 CommandParameter.newEnum("enchantmentName", new CommandEnum("Enchant",
-                        ImmutableList.of("protection", "fire_protection", "feather_falling", "blast_protection", "projectile_projection", "thorns", "respiration",
-                                "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods", "knockback", "fire_aspect", "looting", "efficiency",
-                                "silk_touch", "durability", "fortune", "power", "punch", "flame", "infinity", "luck_of_the_sea", "lure", "frost_walker", "mending",
-                                "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling"))),
+                        "protection", "fire_protection", "feather_falling", "blast_protection", "projectile_projection", "thorns", "respiration",
+                        "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods", "knockback", "fire_aspect", "looting", "efficiency",
+                        "silk_touch", "durability", "fortune", "power", "punch", "flame", "infinity", "luck_of_the_sea", "lure", "frost_walker", "mending",
+                        "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling")),
                 CommandParameter.newType("level", true, CommandParamType.INT)
         });
     }

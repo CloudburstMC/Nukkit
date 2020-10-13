@@ -1,7 +1,6 @@
 package cn.nukkit.command.data;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class CommandParameter {
 
@@ -66,7 +65,7 @@ public class CommandParameter {
         this.name = name;
         this.type = CommandParamType.RAWTEXT;
         this.optional = optional;
-        this.enumData = new CommandEnum(name + "Enums", Arrays.asList(enumValues));
+        this.enumData = new CommandEnum(name + "Enums", enumValues);
     }
 
     /**
@@ -106,7 +105,7 @@ public class CommandParameter {
     }
 
     public static CommandParameter newEnum(String name, boolean optional, String[] values) {
-        return newEnum(name, optional, new CommandEnum(name + "Enums", Arrays.asList(values)));
+        return newEnum(name, optional, new CommandEnum(name + "Enums", values));
     }
 
     public static CommandParameter newEnum(String name, String type) {

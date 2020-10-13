@@ -12,7 +12,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
 
-import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -30,7 +29,7 @@ public class ParticleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.particle");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newEnum("effect", new CommandEnum("Particle", Arrays.asList(ENUM_VALUES))),
+                CommandParameter.newEnum("effect", new CommandEnum("Particle", ENUM_VALUES)),
                 CommandParameter.newType("position", CommandParamType.POSITION),
                 CommandParameter.newType("count", true, CommandParamType.INT),
                 CommandParameter.newType("data", true, CommandParamType.INT)

@@ -11,7 +11,6 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.InstantEffect;
 import cn.nukkit.utils.ServerException;
 import cn.nukkit.utils.TextFormat;
-import com.google.common.collect.ImmutableList;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -44,7 +43,7 @@ public class EffectCommand extends Command {
         });
         this.commandParameters.put("clear", new CommandParameter[]{
                 CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("clear", new CommandEnum("ClearEffects", ImmutableList.of("clear")))
+                CommandParameter.newEnum("clear", new CommandEnum("ClearEffects", "clear"))
         });
     }
 

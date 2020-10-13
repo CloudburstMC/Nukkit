@@ -8,7 +8,6 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
-import com.google.common.collect.ImmutableList;
 
 /**
  * @author Tee7even
@@ -21,20 +20,20 @@ public class TitleCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("clear", new CommandParameter[]{
                 CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("clear", new CommandEnum("TitleClear", ImmutableList.of("clear")))
+                CommandParameter.newEnum("clear", new CommandEnum("TitleClear", "clear"))
         });
         this.commandParameters.put("reset", new CommandParameter[]{
                 CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("reset", new CommandEnum("TitleReset", ImmutableList.of("reset")))
+                CommandParameter.newEnum("reset", new CommandEnum("TitleReset", "reset"))
         });
         this.commandParameters.put("set", new CommandParameter[]{
                 CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("titleLocation", new CommandEnum("TitleSet", ImmutableList.of("title", "subtitle", "actionbar"))),
+                CommandParameter.newEnum("titleLocation", new CommandEnum("TitleSet", "title", "subtitle", "actionbar")),
                 CommandParameter.newType("titleText", CommandParamType.MESSAGE)
         });
         this.commandParameters.put("times", new CommandParameter[]{
                 CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("times", new CommandEnum("TitleTimes", ImmutableList.of("times"))),
+                CommandParameter.newEnum("times", new CommandEnum("TitleTimes", "times")),
                 CommandParameter.newType("fadeIn", CommandParamType.INT),
                 CommandParameter.newType("stay", CommandParamType.INT),
                 CommandParameter.newType("fadeOut", CommandParamType.INT)

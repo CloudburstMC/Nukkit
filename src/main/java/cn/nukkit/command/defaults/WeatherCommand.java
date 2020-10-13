@@ -8,7 +8,6 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
-import com.google.common.collect.ImmutableList;
 
 /**
  * author: Angelic47
@@ -21,7 +20,7 @@ public class WeatherCommand extends VanillaCommand {
         this.setPermission("nukkit.command.weather");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newEnum("type", new CommandEnum("WeatherType", ImmutableList.of("clear", "rain", "thunder"))),
+                CommandParameter.newEnum("type", new CommandEnum("WeatherType", "clear", "rain", "thunder")),
                 CommandParameter.newType("duration", true, CommandParamType.INT)
         });
     }
