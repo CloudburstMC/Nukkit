@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.SmokeParticle;
@@ -47,6 +48,11 @@ public class BlockSponge extends BlockSolidMeta {
     @Override
     public double getResistance() {
         return 3;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_HOE;
     }
 
     @Override
