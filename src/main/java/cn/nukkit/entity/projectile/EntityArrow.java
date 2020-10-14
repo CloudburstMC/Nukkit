@@ -3,6 +3,7 @@ package cn.nukkit.entity.projectile;
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
@@ -140,6 +141,13 @@ public class EntityArrow extends EntityProjectile {
 
         if (this.age > 1200) {
             this.close();
+            hasUpdate = true;
+        }
+
+        if (this.level.isRaining() && this.fireTicks > 0 && this.level.canBlockSeeSky(this)) {
+            this.fireTicks = 0;
+            this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, false);
+
             hasUpdate = true;
         }
 
