@@ -976,6 +976,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public void afterRemoval(Block newBlock, boolean update) {
     }
 
+    public boolean isSoulSpeedCompatible() {
+        return false;
+    }
+
     public double getHardness() {
         return 10;
     }
@@ -1860,7 +1864,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean isLavaResistant() {
-        return true;
+        return false;
     }
 
     @Nonnull
