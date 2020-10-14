@@ -1,5 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.item.Item;
+
+import javax.annotation.Nonnull;
+
 /**
  * @author xtypr
  * @since 2015/12/8
@@ -27,5 +32,14 @@ public class BlockPumpkinLit extends BlockPumpkin {
     public int getLightLevel() {
         return 15;
     }
-
+    
+    @Override
+    public boolean canBeActivated() {
+        return false;
+    }
+    
+    @Override
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        return false;
+    }
 }

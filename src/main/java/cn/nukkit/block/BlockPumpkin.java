@@ -1,12 +1,16 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 
 import javax.annotation.Nonnull;
 
@@ -15,6 +19,10 @@ import javax.annotation.Nonnull;
  * @since 2015/12/8
  */
 public class BlockPumpkin extends BlockSolidMeta implements Faceable {
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+        DIRECTION
+    );
+    
     public BlockPumpkin() {
         this(0);
     }
@@ -32,7 +40,13 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     public int getId() {
         return PUMPKIN;
     }
-
+    
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+    
     @Override
     public double getHardness() {
         return 1;
@@ -40,7 +54,7 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
 
     @Override
     public double getResistance() {
-        return 5;
+        return 1;
     }
 
     @Override
@@ -52,11 +66,38 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     public Item toItem() {
         return new ItemBlock(this, 0);
     }
-
+    
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+    
+    @Override
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        if (item.isShears()) {
+            BlockCarvedPumpkin carvedPumpkin = new BlockCarvedPumpkin();
+            // TODO: Use the activated block face not the player direction
+            if (player == null) {
+                carvedPumpkin.setBlockFace(BlockFace.SOUTH);
+            } else {
+                carvedPumpkin.setBlockFace(player.getDirection().getOpposite());
+            }
+            item.useOn(this);
+            this.level.setBlock(this, carvedPumpkin, true, true);
+            this.getLevel().dropItem(add(0.5, 0.5, 0.5), Item.get(ItemID.PUMPKIN_SEEDS)); // TODO: Get correct drop item position
+            return true;
+        }
+        return false;
+    }
+    
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
-        this.getLevel().setBlock(block, this, true, true);
+        if (player == null) {
+            setBlockFace(BlockFace.SOUTH);
+        } else {
+            setBlockFace(player.getDirection().getOpposite());
+        }
+        this.level.setBlock(block, this, true, true);
         return true;
     }
 
@@ -74,9 +115,14 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
     public boolean sticksToPiston() {
         return false;
     }
-
+    
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return getPropertyValue(DIRECTION);
+    }
+    
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(DIRECTION, face);
     }
 }
