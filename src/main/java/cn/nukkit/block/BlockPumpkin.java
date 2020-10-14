@@ -43,6 +43,7 @@ public class BlockPumpkin extends BlockSolidMeta implements Faceable {
         return PUMPKIN;
     }
     
+    @Nonnull
     @Override
     public BlockProperties getProperties() {
         return PROPERTIES;
