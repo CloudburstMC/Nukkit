@@ -551,7 +551,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     private static double toolBreakTimeBonus0(int toolType, int toolTier, int blockId) {
         if (toolType == ItemTool.TYPE_SWORD) return blockId == Block.COBWEB ? 15.0 : 1.0;
         if (toolType == ItemTool.TYPE_SHEARS) {
-            if (blockId == Block.WOOL || blockId == LEAVES) {
+            if (blockId == Block.WOOL || blockId == LEAVES || blockId == LEAVES2) {
                 return 5.0;
             } else if (blockId == COBWEB) {
                 return 15.0;
