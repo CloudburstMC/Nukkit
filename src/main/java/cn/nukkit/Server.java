@@ -1428,7 +1428,7 @@ public class Server {
 
     public int getDifficulty() {
         if (this.difficulty == Integer.MAX_VALUE) {
-            this.difficulty = this.getPropertyInt("difficulty", 1);
+            this.difficulty = getDifficultyFromString(this.getPropertyString("difficulty", "1"));
         }
         return this.difficulty;
     }
