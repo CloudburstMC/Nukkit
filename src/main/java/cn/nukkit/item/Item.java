@@ -654,6 +654,10 @@ public class Item implements Cloneable, BlockID, ItemID {
         return enchantments.toArray(new Enchantment[0]);
     }
 
+    public boolean hasEnchantment(int id) {
+        return this.getEnchantment(id) != null;
+    }
+
     public boolean hasCustomName() {
         if (!this.hasCompoundTag()) {
             return false;
