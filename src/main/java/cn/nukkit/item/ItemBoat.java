@@ -58,7 +58,7 @@ public class ItemBoat extends Item {
             return false;
         }
 
-        if (player.isSurvival()) {
+        if (player.isSurvival() || player.isAdventure()) {
             Item item = player.getInventory().getItemInHand();
             item.setCount(item.getCount() - 1);
             player.getInventory().setItemInHand(item);
