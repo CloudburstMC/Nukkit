@@ -17,7 +17,6 @@ import cn.nukkit.item.ItemBoat;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
@@ -129,9 +128,6 @@ public class EntityBoat extends EntityVehicle {
         for (Entity linkedEntity : this.passengers) {
             linkedEntity.riding = null;
         }
-
-        SmokeParticle particle = new SmokeParticle(this);
-        this.level.addParticle(particle);
     }
 
     @Override
