@@ -1,10 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.api.DeprecationDetails;
-import cn.nukkit.api.PowerNukkitDifference;
-import cn.nukkit.api.PowerNukkitOnly;
-import cn.nukkit.api.Since;
+import cn.nukkit.api.*;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockstate.*;
@@ -29,6 +26,7 @@ import cn.nukkit.utils.BlockColor;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.io.Serializable;
@@ -1918,7 +1916,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
-    public void setDataStorage(@Nonnull Number storage) {
+    public void setDataStorage(@Nonnegative @Nonnull Number storage) {
         if (NukkitMath.isZero(storage) && isDefaultState()) {
             return;
         }
@@ -1928,7 +1926,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
-    public void setDataStorageFromInt(int storage) {
+    public void setDataStorageFromInt(@Nonnegative int storage) {
         if (storage == 0 && isDefaultState()) {
             return;
         }
@@ -1938,7 +1936,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
-    public boolean setDataStorage(@Nonnull Number storage, boolean repair, Consumer<BlockStateRepair> callback) {
+    public boolean setDataStorage(@Nonnegative @Nonnull Number storage, boolean repair, Consumer<BlockStateRepair> callback) {
         if (NukkitMath.isZero(storage) && isDefaultState()) {
             return false;
         }
@@ -1948,7 +1946,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
-    public boolean setDataStorageFromInt(int storage, boolean repair, Consumer<BlockStateRepair> callback) {
+    public boolean setDataStorageFromInt(@Nonnegative int storage, boolean repair, Consumer<BlockStateRepair> callback) {
         if (storage == 0 && isDefaultState()) {
             return false;
         }
@@ -1985,6 +1983,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         getMutableState().setIntValue(propertyName, value);
     }
 
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
@@ -1994,6 +1993,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return getId();
     }
 
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
@@ -2002,6 +2002,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return mutableState == null? 0 : mutableState.getDataStorage();
     }
 
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Deprecated
@@ -2011,6 +2012,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return mutableState == null? 0 : mutableState.getLegacyDamage();
     }
 
+    @Unsigned
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Deprecated
@@ -2020,6 +2022,17 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return mutableState == null? 0 : mutableState.getBigDamage();
     }
 
+    @Nonnegative
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getSignedBigDamage() {
+        return mutableState == null? 0 : mutableState.getSignedBigDamage();
+    }
+
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
@@ -2070,6 +2083,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return getMutableState().getPersistenceValue(propertyName);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public final int getExactIntStorage() {
         return mutableState == null? 0 : mutableState.getExactIntStorage();

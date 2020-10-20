@@ -15,6 +15,7 @@ import cn.nukkit.utils.functional.BlockPositionDataConsumer;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -85,22 +86,24 @@ public class BlockStorage {
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
+    @Nonnegative
     public int getBlockData(int x, int y, int z) {
-        return states[getIndex(x, y, z)].getBigDamage();
+        return states[getIndex(x, y, z)].getSignedBigDamage();
     }
     
+    @Nonnegative
     public int getBlockId(int x, int y, int z) {
         return states[getIndex(x, y, z)].getBlockId();
     }
     
-    public void setBlockId(int x, int y, int z, int id) {
+    public void setBlockId(int x, int y, int z, @Nonnegative int id) {
         int index = getIndex(x, y, z);
         setBlockState(index, states[index].withBlockId(id));    
     }
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
-    public void setBlockData(int x, int y, int z, int data) {
+    public void setBlockData(int x, int y, int z, @Nonnegative int data) {
         int index = getIndex(x, y, z);
         setBlockState(index, states[index].withData(data));
     }
@@ -109,7 +112,7 @@ public class BlockStorage {
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
-    public void setBlock(int x, int y, int z, int id, int data) {
+    public void setBlock(int x, int y, int z, @Nonnegative int id, @Nonnegative int data) {
         int index = getIndex(x, y, z);
         BlockState state = BlockState.of(id, data);
         setBlockState(index, state);
@@ -123,13 +126,13 @@ public class BlockStorage {
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
-    public void setFullBlock(int x, int y, int z, int value) {
+    public void setFullBlock(int x, int y, int z, @Nonnegative int value) {
         this.setFullBlock(getIndex(x, y, z), value);
     }
 
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
-    public BlockState getAndSetBlock(int x, int y, int z, int id, int meta) {
+    public BlockState getAndSetBlock(int x, int y, int z, @Nonnegative int id, @Nonnegative int meta) {
         return setBlockState(getIndex(x, y, z), BlockState.of(id, meta));
     }
 
