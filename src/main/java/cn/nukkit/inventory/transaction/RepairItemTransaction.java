@@ -11,10 +11,11 @@ import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.RepairItemAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDurable;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
+import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -38,10 +39,9 @@ public class RepairItemTransaction extends InventoryTransaction {
             return false;
         }
         AnvilInventory anvilInventory = (AnvilInventory) inventory;
-        this.cost = anvilInventory.getCost();
         return this.inputItem != null && this.outputItem != null && this.inputItem.equals(anvilInventory.getInputSlot(), true, true)
                 && (!this.hasMaterial() || this.materialItem.equals(anvilInventory.getMaterialSlot(), true, true))
-                && this.checkRecipeValid() && this.checkRenameValid();
+                && this.checkRecipeValid();
     }
 
     @Override
@@ -52,6 +52,10 @@ public class RepairItemTransaction extends InventoryTransaction {
             return false;
         }
         AnvilInventory inventory = (AnvilInventory) getSource().getWindowById(Player.ANVIL_WINDOW_ID);
+
+        if (inventory.getCost() != this.cost && !this.source.isCreative()) {
+            this.source.getServer().getLogger().debug("Got unexpected cost " + inventory.getCost() + " from " + this.source.getName() + "(expected " + this.cost + ")");
+        }
 
         RepairItemEvent event = new RepairItemEvent(inventory, this.inputItem, this.outputItem, this.materialItem, this.cost, this.source);
         this.source.getServer().getPluginManager().callEvent(event);
@@ -123,86 +127,160 @@ public class RepairItemTransaction extends InventoryTransaction {
     }
 
     private boolean checkRecipeValid() {
-        if (this.cost < 0 || this.outputItem.getRepairCost() < this.inputItem.getRepairCost()) {
+        int cost = 0;
+        int baseRepairCost = this.inputItem.getRepairCost();
+
+        if (this.isMapRecipe()) {
+            if (!this.matchMapRecipe()) {
+                return false;
+            }
+            baseRepairCost = 0;
+        } else if (this.hasMaterial()) {
+            baseRepairCost += this.materialItem.getRepairCost();
+
+            if (this.inputItem.getMaxDurability() != -1 && this.matchRepairItem()) {
+                int maxRepairDamage = this.inputItem.getMaxDurability() / 4;
+                int repairDamage = Math.min(this.inputItem.getDamage(), maxRepairDamage);
+                if (repairDamage <= 0) {
+                    return false;
+                }
+
+                int damage = this.inputItem.getDamage();
+                for (; repairDamage > 0 && cost < this.materialItem.getCount(); cost++) {
+                    damage = damage - repairDamage;
+                    repairDamage = Math.min(damage, maxRepairDamage);
+                }
+                if (this.outputItem.getDamage() != damage) {
+                    return false;
+                }
+            } else {
+                boolean consumeEnchantedBook = this.materialItem.getId() == Item.ENCHANTED_BOOK && this.materialItem.hasEnchantments();
+                if (!consumeEnchantedBook && (this.inputItem.getMaxDurability() == -1 || this.inputItem.getId() != this.materialItem.getId())) {
+                    return false;
+                }
+
+                if (!consumeEnchantedBook && this.inputItem.getMaxDurability() != -1) {
+                    int damage = this.inputItem.getDamage() - this.inputItem.getMaxDurability() + this.materialItem.getDamage() - this.inputItem.getMaxDurability() * 12 / 100 + 1;
+                    if (damage < 0) {
+                        damage = 0;
+                    }
+
+                    if (damage < this.inputItem.getDamage()) {
+                        if (this.outputItem.getDamage() != damage) {
+                            return false;
+                        }
+                        cost += 2;
+                    }
+                }
+
+                Int2IntMap enchantments = new Int2IntOpenHashMap();
+                enchantments.defaultReturnValue(-1);
+                for (Enchantment enchantment : this.inputItem.getEnchantments()) {
+                    enchantments.put(enchantment.getId(), enchantment.getLevel());
+                }
+
+                boolean hasCompatibleEnchantments = false;
+                boolean hasIncompatibleEnchantments = false;
+                for (Enchantment materialEnchantment : this.materialItem.getEnchantments()) {
+                    Enchantment enchantment = this.inputItem.getEnchantment(materialEnchantment.getId());
+                    int inputLevel = enchantment != null ? enchantment.getLevel() : 0;
+                    int materialLevel = materialEnchantment.getLevel();
+                    int outputLevel = inputLevel == materialLevel ? materialLevel + 1 : Math.max(materialLevel, inputLevel);
+
+                    boolean canEnchant = materialEnchantment.canEnchant(this.inputItem) || this.inputItem.getId() == Item.ENCHANTED_BOOK;
+                    for (Enchantment inputEnchantment : this.inputItem.getEnchantments()) {
+                        if (inputEnchantment.getId() != materialEnchantment.getId() && !materialEnchantment.isCompatibleWith(inputEnchantment)) {
+                            canEnchant = false;
+                            cost++;
+                        }
+                    }
+
+                    if (!canEnchant) {
+                        hasIncompatibleEnchantments = true;
+                    } else {
+                        hasCompatibleEnchantments = true;
+                        if (outputLevel > materialEnchantment.getMaxLevel()) {
+                            outputLevel = materialEnchantment.getMaxLevel();
+                        }
+
+                        enchantments.put(materialEnchantment.getId(), outputLevel);
+                        int rarityFactor;
+                        switch (materialEnchantment.getRarity()) {
+                            case COMMON:
+                                rarityFactor = 1;
+                                break;
+                            case UNCOMMON:
+                                rarityFactor = 2;
+                                break;
+                            case RARE:
+                                rarityFactor = 4;
+                                break;
+                            case VERY_RARE:
+                            default:
+                                rarityFactor = 8;
+                                break;
+                        }
+
+                        if (consumeEnchantedBook) {
+                            rarityFactor = Math.max(1, rarityFactor / 2);
+                        }
+
+                        cost += rarityFactor * Math.max(0, outputLevel - inputLevel);
+                        if (this.inputItem.getCount() > 1) {
+                            cost = 40;
+                        }
+                    }
+                }
+
+                Enchantment[] outputEnchantments = this.outputItem.getEnchantments();
+                if (hasIncompatibleEnchantments && !hasCompatibleEnchantments || enchantments.size() != outputEnchantments.length) {
+                    return false;
+                }
+
+                for (Enchantment enchantment : outputEnchantments) {
+                    if (enchantments.get(enchantment.getId()) != enchantment.getLevel()) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        int renameCost = 0;
+        if (!this.inputItem.getCustomName().equals(this.outputItem.getCustomName())) {
+            if (this.outputItem.getCustomName().length() > 30) {
+                return false;
+            }
+            renameCost = 1;
+            cost += renameCost;
+        }
+
+        this.cost = baseRepairCost + cost;
+        if (renameCost == cost && renameCost > 0 && this.cost >= 40) {
+            this.cost = 39;
+        }
+        if (baseRepairCost < 0 || cost < 0 || cost == 0 && !this.isMapRecipe() || this.cost > 39 && !this.source.isCreative()) {
             return false;
         }
-        if (this.isMapRecipe()) {
-            return this.matchMapRecipe();
-        } else if (this.isEnchantedBookCombine()) {
-            return this.matchEnchantedBookRecipe();
+
+        int nextBaseRepairCost = this.inputItem.getRepairCost();
+        if (!this.isMapRecipe()) {
+            if (this.hasMaterial() && nextBaseRepairCost < this.materialItem.getRepairCost()) {
+                nextBaseRepairCost = this.materialItem.getRepairCost();
+            }
+            if (renameCost == 0 || renameCost != cost) {
+                nextBaseRepairCost = 2 * nextBaseRepairCost + 1;
+            }
         }
-        //TODO: Check item has valid enchantments
-        return (this.hasMaterial() && (!(this.materialItem instanceof ItemDurable) || this.materialItem.getId() == this.inputItem.getId()
-                && this.materialItem.getCount() == 1 && this.inputItem.getCount() == 1) || this.inputItem.equals(this.outputItem, true, false)
-                && this.inputItem.getCount() == this.outputItem.getCount()) && (this.cost < 40 || this.source.isCreative());
+        if (this.outputItem.getRepairCost() != nextBaseRepairCost) {
+            this.source.getServer().getLogger().debug("Got unexpected base cost " + this.outputItem.getRepairCost() + " from " + this.source.getName() + "(expected " + nextBaseRepairCost + ")");
+            return false;
+        }
+
+        return true;
     }
 
     private boolean hasMaterial() {
         return this.materialItem != null && !this.materialItem.isNull();
-    }
-
-    private boolean checkRenameValid() {
-        return this.inputItem.getCustomName().equals(this.outputItem.getCustomName())
-                || this.outputItem.getCustomName().length() <= 30 && (this.cost > 0 || this.source.isCreative());
-    }
-
-    private boolean isEnchantedBookCombine() {
-        return this.inputItem.getId() == Item.ENCHANTED_BOOK && this.outputItem.getId() == Item.ENCHANTED_BOOK
-                && this.hasMaterial() && this.materialItem.getId() == Item.ENCHANTED_BOOK;
-    }
-
-    private boolean matchEnchantedBookRecipe() {
-        if (!this.materialItem.hasEnchantments()) {
-            return false;
-        }
-
-        for (Enchantment ench : this.inputItem.getEnchantments()) {
-            if (this.outputItem.getEnchantment(ench.getId()) == null) {
-                return false;
-            }
-        }
-        for (Enchantment ench : this.materialItem.getEnchantments()) {
-            if (this.outputItem.getEnchantment(ench.getId()) == null) {
-                return false;
-            }
-        }
-
-        boolean combine = false;
-        for (Enchantment ench : this.outputItem.getEnchantments()) {
-            if (ench.getLevel() > ench.getMaxLevel()) {
-                return false;
-            }
-            Enchantment inputEnch = this.inputItem.getEnchantment(ench.getId());
-            Enchantment materialEnch = this.materialItem.getEnchantment(ench.getId());
-            if (inputEnch == null && materialEnch == null) {
-                return false;
-            } else if (inputEnch != null && materialEnch != null) {
-                if (inputEnch.getLevel() > materialEnch.getLevel()) {
-                    //return false;
-                } else if (inputEnch.getLevel() < materialEnch.getLevel()) {
-                    if (ench.getLevel() != materialEnch.getLevel()) {
-                        return false;
-                    }
-                    combine = true;
-                } else if (inputEnch.getLevel() == materialEnch.getLevel() && inputEnch.getLevel() + 1 <= ench.getMaxLevel()) {
-                    if (ench.getLevel() != inputEnch.getLevel() + 1) {
-                        return false;
-                    }
-                    combine = true;
-                }
-            } else if (inputEnch != null) {
-                if (inputEnch.getLevel() != ench.getLevel()) {
-                    return false;
-                }
-                combine = true;
-            } else {
-                if (materialEnch.getLevel() != ench.getLevel()) {
-                    return false;
-                }
-                combine = true;
-            }
-        }
-        return combine;
     }
 
     private boolean isMapRecipe() {
@@ -226,6 +304,59 @@ public class RepairItemTransaction extends InventoryTransaction {
         return false;
     }
 
+    private boolean matchRepairItem() {
+        switch (this.inputItem.getId()) {
+            case Item.LEATHER_CAP:
+            case Item.LEATHER_TUNIC:
+            case Item.LEATHER_PANTS:
+            case Item.LEATHER_BOOTS:
+                return this.materialItem.getId() == Item.LEATHER;
+            case Item.WOODEN_SWORD:
+            case Item.WOODEN_PICKAXE:
+            case Item.WOODEN_SHOVEL:
+            case Item.WOODEN_AXE:
+            case Item.WOODEN_HOE:
+                return this.materialItem.getId() == Item.PLANKS;
+            case Item.IRON_SWORD:
+            case Item.IRON_PICKAXE:
+            case Item.IRON_SHOVEL:
+            case Item.IRON_AXE:
+            case Item.IRON_HOE:
+            case Item.IRON_HELMET:
+            case Item.IRON_CHESTPLATE:
+            case Item.IRON_LEGGINGS:
+            case Item.IRON_BOOTS:
+            case Item.CHAIN_HELMET:
+            case Item.CHAIN_CHESTPLATE:
+            case Item.CHAIN_LEGGINGS:
+            case Item.CHAIN_BOOTS:
+                return this.materialItem.getId() == Item.IRON_INGOT;
+            case Item.GOLD_SWORD:
+            case Item.GOLD_PICKAXE:
+            case Item.GOLD_SHOVEL:
+            case Item.GOLD_AXE:
+            case Item.GOLD_HOE:
+            case Item.GOLD_HELMET:
+            case Item.GOLD_CHESTPLATE:
+            case Item.GOLD_LEGGINGS:
+            case Item.GOLD_BOOTS:
+                return this.materialItem.getId() == Item.GOLD_INGOT;
+            case Item.DIAMOND_SWORD:
+            case Item.DIAMOND_PICKAXE:
+            case Item.DIAMOND_SHOVEL:
+            case Item.DIAMOND_AXE:
+            case Item.DIAMOND_HOE:
+            case Item.DIAMOND_HELMET:
+            case Item.DIAMOND_CHESTPLATE:
+            case Item.DIAMOND_LEGGINGS:
+            case Item.DIAMOND_BOOTS:
+                return this.materialItem.getId() == Item.DIAMOND;
+            case Item.TURTLE_SHELL:
+                return this.materialItem.getId() == Item.SCUTE;
+        }
+        return false;
+    }
+
     public Item getInputItem() {
         return this.inputItem;
     }
@@ -240,10 +371,6 @@ public class RepairItemTransaction extends InventoryTransaction {
 
     public int getCost() {
         return this.cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 
     public static boolean checkForRepairItemPart(List<InventoryAction> actions) {

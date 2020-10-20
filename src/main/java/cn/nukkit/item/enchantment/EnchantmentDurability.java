@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class EnchantmentDurability extends Enchantment {
     protected EnchantmentDurability() {
-        super(ID_DURABILITY, "durability", 5, EnchantmentType.BREAKABLE);
+        super(ID_DURABILITY, "durability", Rarity.UNCOMMON, EnchantmentType.BREAKABLE);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class EnchantmentDurability extends Enchantment {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 50;
+        return super.getMinEnchantAbility(level) + 50;
     }
 
     @Override
@@ -29,8 +29,8 @@ public class EnchantmentDurability extends Enchantment {
     }
 
     @Override
-    public boolean isCompatibleWith(Enchantment enchantment) {
-        return super.isCompatibleWith(enchantment) && enchantment.id != ID_FORTUNE_DIGGING;
+    public boolean checkCompatibility(Enchantment enchantment) {
+        return super.checkCompatibility(enchantment) && enchantment.id != ID_FORTUNE_DIGGING;
     }
 
     @Override
