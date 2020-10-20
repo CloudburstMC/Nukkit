@@ -2,18 +2,20 @@ package cn.nukkit.utils;
 
 import cn.nukkit.Server;
 import com.google.common.base.Preconditions;
-import lombok.RequiredArgsConstructor;
 
 import java.io.*;
 import java.util.Optional;
 import java.util.UUID;
 
-@RequiredArgsConstructor
 public class DefaultPlayerDataSerializer implements PlayerDataSerializer {
     private String dataPath;
     
     public DefaultPlayerDataSerializer(Server server) {
         this(server.getDataPath());
+    }
+    
+    public DefaultPlayerDataSerializer(String dataPath) {
+        this.dataPath = dataPath;
     }
 
     @Override
