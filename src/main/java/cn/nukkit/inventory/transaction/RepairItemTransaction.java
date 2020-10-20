@@ -351,8 +351,20 @@ public class RepairItemTransaction extends InventoryTransaction {
             case Item.DIAMOND_LEGGINGS:
             case Item.DIAMOND_BOOTS:
                 return this.materialItem.getId() == Item.DIAMOND;
+            case Item.NETHERITE_SWORD:
+            case Item.NETHERITE_PICKAXE:
+            case Item.NETHERITE_SHOVEL:
+            case Item.NETHERITE_AXE:
+            case Item.NETHERITE_HOE:
+            case Item.NETHERITE_HELMET:
+            case Item.NETHERITE_CHESTPLATE:
+            case Item.NETHERITE_LEGGINGS:
+            case Item.NETHERITE_BOOTS:
+                return this.materialItem.getId() == Item.NETHERITE_INGOT;
             case Item.TURTLE_SHELL:
                 return this.materialItem.getId() == Item.SCUTE;
+            case Item.ELYTRA:
+                return this.materialItem.getId() == Item.PHANTOM_MEMBRANE;
         }
         return false;
     }
