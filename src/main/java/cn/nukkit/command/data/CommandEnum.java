@@ -1,5 +1,11 @@
 package cn.nukkit.command.data;
 
+import cn.nukkit.block.BlockID;
+import cn.nukkit.item.ItemID;
+import com.google.common.collect.ImmutableList;
+
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -7,8 +13,33 @@ import java.util.List;
  */
 public class CommandEnum {
 
+    public static final CommandEnum ENUM_BOOLEAN = new CommandEnum("Boolean", ImmutableList.of("true", "false"));
+    public static final CommandEnum ENUM_GAMEMODE = new CommandEnum("GameMode",
+            ImmutableList.of("survival", "creative", "s", "c", "adventure", "a", "spectator", "view", "v", "spc"));
+    public static final CommandEnum ENUM_BLOCK;
+    public static final CommandEnum ENUM_ITEM;
+
+    static {
+        ImmutableList.Builder<String> blocks = ImmutableList.builder();
+        for (Field field : BlockID.class.getDeclaredFields()) {
+            blocks.add(field.getName().toLowerCase());
+        }
+        ENUM_BLOCK = new CommandEnum("Block", blocks.build());
+
+        ImmutableList.Builder<String> items = ImmutableList.builder();
+        for (Field field : ItemID.class.getDeclaredFields()) {
+            items.add(field.getName().toLowerCase());
+        }
+        items.addAll(ENUM_BLOCK.getValues());
+        ENUM_ITEM = new CommandEnum("Item", items.build());
+    }
+
     private String name;
     private List<String> values;
+
+    public CommandEnum(String name, String... values) {
+        this(name, Arrays.asList(values));
+    }
 
     public CommandEnum(String name, List<String> values) {
         this.name = name;

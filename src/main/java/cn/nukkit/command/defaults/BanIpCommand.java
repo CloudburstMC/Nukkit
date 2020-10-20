@@ -13,6 +13,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -28,8 +30,12 @@ public class BanIpCommand extends VanillaCommand {
         this.setAliases(new String[]{"banip"});
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("reason", CommandParamType.STRING, true)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newType("reason", true, CommandParamType.STRING)
+        });
+        this.commandParameters.put("byIp", new CommandParameter[]{
+                CommandParameter.newType("ip", CommandParamType.STRING),
+                CommandParameter.newType("reason", true, CommandParamType.STRING)
         });
     }
 
@@ -101,6 +107,10 @@ public class BanIpCommand extends VanillaCommand {
             }
         }
 
-        sender.getServer().getNetwork().blockAddress(ip, -1);
+        try {
+            sender.getServer().getNetwork().blockAddress(InetAddress.getByName(ip), -1);
+        } catch (UnknownHostException e) {
+            // ignore
+        }
     }
 }

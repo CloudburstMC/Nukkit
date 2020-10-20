@@ -548,10 +548,16 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
     }
 
-    private static double toolBreakTimeBonus0(
-            int toolType, int toolTier, boolean isWoolBlock, boolean isCobweb) {
-        if (toolType == ItemTool.TYPE_SWORD) return isCobweb ? 15.0 : 1.0;
-        if (toolType == ItemTool.TYPE_SHEARS) return isWoolBlock ? 5.0 : 15.0;
+    private static double toolBreakTimeBonus0(int toolType, int toolTier, int blockId) {
+        if (toolType == ItemTool.TYPE_SWORD) return blockId == Block.COBWEB ? 15.0 : 1.0;
+        if (toolType == ItemTool.TYPE_SHEARS) {
+            if (blockId == Block.WOOL || blockId == LEAVES || blockId == LEAVES2) {
+                return 5.0;
+            } else if (blockId == COBWEB) {
+                return 15.0;
+            }
+            return 1.0;
+        }
         if (toolType == ItemTool.TYPE_NONE) return 1.0;
         switch (toolTier) {
             case ItemTool.TIER_WOODEN:
@@ -562,6 +568,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 return 6.0;
             case ItemTool.TIER_DIAMOND:
                 return 8.0;
+            case ItemTool.TIER_NETHERITE:
+                return 9.0;
             case ItemTool.TIER_GOLD:
                 return 12.0;
             default:
@@ -583,6 +591,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         if (item.isShovel()) return ItemTool.TYPE_SHOVEL;
         if (item.isPickaxe()) return ItemTool.TYPE_PICKAXE;
         if (item.isAxe()) return ItemTool.TYPE_AXE;
+        if (item.isHoe()) return ItemTool.TYPE_HOE;
         if (item.isShears()) return ItemTool.TYPE_SHEARS;
         return ItemTool.TYPE_NONE;
     }
@@ -592,6 +601,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 (blockToolType == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
                 (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
                 (blockToolType == ItemTool.TYPE_AXE && item.isAxe()) ||
+                (blockToolType == ItemTool.TYPE_HOE && item.isHoe()) ||
                 (blockToolType == ItemTool.TYPE_SHEARS && item.isShears()) ||
                 blockToolType == ItemTool.TYPE_NONE;
     }
@@ -602,8 +612,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                                      boolean insideOfWaterWithoutAquaAffinity, boolean outOfWaterButNotOnGround) {
         double baseTime = ((correctTool || canHarvestWithHand) ? 1.5 : 5.0) * blockHardness;
         double speed = 1.0 / baseTime;
-        boolean isWoolBlock = blockId == Block.WOOL, isCobweb = blockId == Block.COBWEB;
-        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, isWoolBlock, isCobweb);
+        if (correctTool) speed *= toolBreakTimeBonus0(toolType, toolTier, blockId);
         speed += speedBonusByEfficiencyLore0(efficiencyLoreLevel);
         speed *= speedRateByHasteLore0(hasteEffectLevel);
         if (insideOfWaterWithoutAquaAffinity) speed *= 0.2;
@@ -620,9 +629,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             return 0;
         }
 
-        boolean correctTool = correctTool0(getToolType(), item);
-        boolean canHarvestWithHand = canHarvestWithHand();
         int blockId = getId();
+        boolean correctTool = correctTool0(getToolType(), item)
+                || item.isShears() && (blockId == COBWEB || blockId == LEAVES || blockId == LEAVES2);
+        boolean canHarvestWithHand = canHarvestWithHand();
         int itemToolType = toolType0(item);
         int itemTier = item.getTier();
         int efficiencyLoreLevel = Optional.ofNullable(item.getEnchantment(Enchantment.ID_EFFICIENCY))
@@ -651,7 +661,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             } else if (
                     (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
                             (this.getToolType() == ItemTool.TYPE_AXE && item.isAxe()) ||
-                            (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel())
+                            (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
+                            (this.getToolType() == ItemTool.TYPE_HOE && item.isHoe())
                     ) {
                 int tier = item.getTier();
                 switch (tier) {
@@ -666,6 +677,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                         break;
                     case ItemTool.TIER_DIAMOND:
                         base /= 8;
+                        break;
+                    case ItemTool.TIER_NETHERITE:
+                        base /= 9;
                         break;
                     case ItemTool.TIER_GOLD:
                         base /= 12;
