@@ -44,12 +44,12 @@
         <repository>
             <id>releases</id>
             <name>nukkitx-releases</name>
-            <url>https://repo.nukkitx.com/release</url>
+            <url>https://repo.opencollab.dev/maven-releases</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>nukkitx-snapshots</name>
-            <url>https://repo.nukkitx.com/snapshot</url>
+            <url>https://repo.opencollab.dev/maven-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
