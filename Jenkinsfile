@@ -21,14 +21,33 @@ pipeline {
         }
 
         stage ('Deploy') {
-            when {
-                branch "master"
-            }
+//            when {
+//                branch "master"
+//            }
+
             steps {
-                sh 'mvn javadoc:javadoc javadoc:jar source:jar deploy -DskipTests'
-                step([$class: 'JavadocArchiver',
-                        javadocDir: 'target/site/apidocs',
-                        keepAll: false])
+                rtMavenDeployer (
+                        id: "MAVEN_DEPLOYER",
+                        serverId: "ARTIFACTORY",
+                        releaseRepo: "maven-releases",
+                        snapshotRepo: "maven-snapshots"
+                )
+                rtMavenResolver (
+                        id: "MAVEN_RESOLVER",
+                        serverId: "ARTIFACTORY",
+                        releaseRepo: "release",
+                        snapshotRepo: "snapshot"
+                )
+                rtMavenRun (
+                        tool: MAVEN_TOOL,
+                        goals: 'clean javadoc:javadoc source:jar install -DskipTests',
+                        deployerId: "MAVEN_DEPLOYER",
+                        resolverId: "MAVEN_RESOLVER"
+                )
+                rtPublishBuildInfo (
+                        serverId: "ARTIFACTORY"
+                )
+                step([$class: 'JavadocArchiver', javadocDir: 'target/site/apidocs', keepAll: false])
             }
         }
     }
