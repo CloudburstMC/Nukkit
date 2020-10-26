@@ -40,6 +40,7 @@ pipeline {
                 )
                 rtMavenRun (
                         tool: MAVEN_TOOL,
+                        pom: 'pom.xml',
                         goals: 'clean javadoc:javadoc source:jar install -DskipTests',
                         deployerId: "MAVEN_DEPLOYER",
                         resolverId: "MAVEN_RESOLVER"
