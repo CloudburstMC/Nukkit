@@ -2392,6 +2392,7 @@ public class Level implements ChunkManager, Metadatable {
 
 
     @PowerNukkitDifference(info = "PowerNukkit#403", since = "1.3.1.2-PN")
+    @PowerNukkitDifference(info = "Fixed PowerNukkit#716, block stops placing when towering up", since = "1.4.0.0-PN")
     public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz, Player player, boolean playSound) {
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
