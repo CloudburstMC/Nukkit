@@ -15,7 +15,7 @@ public abstract class BasicGenerator {
 
     @Deprecated
     public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {
-        return false;
+        return this.generate(level, new BlockList(level), rand, new BlockVector3(position.getFloorX(), position.getFloorY(), position.getFloorZ()));
     }
 
     public void setDecorationDefaults() {
