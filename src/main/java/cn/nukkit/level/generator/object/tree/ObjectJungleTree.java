@@ -5,6 +5,8 @@ import cn.nukkit.block.BlockWood;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 
+import java.util.List;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -33,8 +35,8 @@ public class ObjectJungleTree extends ObjectTree {
     }
 
     @Override
-    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
+    public void placeObject(ChunkManager level, List<Block> blocks, int x, int y, int z, NukkitRandom random) {
         this.treeHeight = random.nextBoundedInt(6) + 4;
-        super.placeObject(level, x, y, z, random);
+        super.placeObject(level, blocks, x, y, z, random);
     }
 }

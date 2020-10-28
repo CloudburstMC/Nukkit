@@ -3,7 +3,10 @@ package cn.nukkit.level.generator.object.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.NukkitRandom;
+
+import java.util.List;
 
 /**
  * author: MagicDroidX
@@ -41,11 +44,11 @@ public abstract class ObjectTree {
         return 7;
     }
 
-    public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        growTree(level, x, y, z, random, 0);
+    public static void growTree(ChunkManager level, List<Block> blocks, int x, int y, int z, NukkitRandom random) {
+        growTree(level, blocks, x, y, z, random, 0);
     }
 
-    public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random, int type) {
+    public static void growTree(ChunkManager level, List<Block> blocks, int x, int y, int z, NukkitRandom random, int type) {
         ObjectTree tree;
         switch (type) {
             case BlockSapling.SPRUCE:
@@ -68,7 +71,7 @@ public abstract class ObjectTree {
         }
 
         if (tree.canPlaceObject(level, x, y, z, random)) {
-            tree.placeObject(level, x, y, z, random);
+            tree.placeObject(level, blocks, x, y, z, random);
         }
     }
 
@@ -91,9 +94,8 @@ public abstract class ObjectTree {
         return true;
     }
 
-    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-
-        this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - 1);
+    public void placeObject(ChunkManager level, List<Block> blocks, int x, int y, int z, NukkitRandom random) {
+        this.placeTrunk(level, blocks, x, y, z, random, this.getTreeHeight() - 1);
 
         for (int yy = y - 3 + this.getTreeHeight(); yy <= y + this.getTreeHeight(); ++yy) {
             double yOff = yy - (y + this.getTreeHeight());
@@ -106,21 +108,21 @@ public abstract class ObjectTree {
                         continue;
                     }
                     if (!Block.solid[level.getBlockIdAt(xx, yy, zz)]) {
-                        level.setBlockAt(xx, yy, zz, this.getLeafBlock(), this.getType());
+                        blocks.add(Block.get(this.getLeafBlock(), this.getType(), new Position(xx, yy, zz)));
                     }
                 }
             }
         }
     }
 
-    protected void placeTrunk(ChunkManager level, int x, int y, int z, NukkitRandom random, int trunkHeight) {
+    protected void placeTrunk(ChunkManager level, List<Block> blocks, int x, int y, int z, NukkitRandom random, int trunkHeight) {
         // The base dirt block
-        level.setBlockAt(x, y - 1, z, Block.DIRT);
+        blocks.add(Block.get(Block.DIRT, 0, new Position(x, y - 1, z)));
 
         for (int yy = 0; yy < trunkHeight; ++yy) {
             int blockId = level.getBlockIdAt(x, y + yy, z);
             if (this.overridable(blockId)) {
-                level.setBlockAt(x, y + yy, z, this.getTrunkBlock(), this.getType());
+                blocks.add(Block.get(this.getTrunkBlock(), this.getType(), new Position(x, y + yy, z)));
             }
         }
     }

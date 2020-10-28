@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.level.StructureGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.mushroom.BigMushroom;
@@ -10,6 +11,8 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class BlockMushroom extends BlockFlowable {
@@ -69,8 +72,17 @@ public abstract class BlockMushroom extends BlockFlowable {
         this.level.setBlock(this, Block.get(BlockID.AIR), true, false);
 
         BigMushroom generator = new BigMushroom(getType());
+        List<Block> blocks = new ArrayList<>();
 
-        if (generator.generate(this.level, new NukkitRandom(), this)) {
+        if (generator.generate(this.level, blocks, new NukkitRandom(), this.asBlockVector3())) {
+            StructureGrowEvent ev = new StructureGrowEvent(this, blocks);
+            this.level.getServer().getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return false;
+            }
+            for(Block block : blocks) {
+                this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
+            }
             return true;
         } else {
             this.level.setBlock(this, this, true, false);

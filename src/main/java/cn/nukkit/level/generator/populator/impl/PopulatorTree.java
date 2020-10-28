@@ -4,6 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.generator.object.BlockList;
 import cn.nukkit.level.generator.object.tree.ObjectTree;
 import cn.nukkit.level.generator.populator.type.PopulatorCount;
 import cn.nukkit.math.NukkitMath;
@@ -35,7 +36,7 @@ public class PopulatorTree extends PopulatorCount {
         if (y < 3) {
             return;
         }
-        ObjectTree.growTree(this.level, x, y, z, random, this.type);
+        ObjectTree.growTree(this.level, new BlockList(this.level), x, y, z, random, this.type);
     }
 
     private int getHighestWorkableBlock(int x, int z) {

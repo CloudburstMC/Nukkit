@@ -3,10 +3,11 @@ package cn.nukkit.level.generator.populator.impl;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.generator.object.BlockList;
 import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.level.generator.populator.type.PopulatorCount;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
 
 /**
  * @author DaPorkchop_
@@ -28,7 +29,7 @@ public class MushroomPopulator extends PopulatorCount {
         int z = (chunkZ << 4) | random.nextBoundedInt(16);
         int y = this.getHighestWorkableBlock(level, x, z, chunk);
         if (y != -1) {
-            new BigMushroom(type).generate(level, random, new Vector3(x, y, z));
+            new BigMushroom(type).generate(level, new BlockList(level), random, new BlockVector3(x, y, z));
         }
     }
 

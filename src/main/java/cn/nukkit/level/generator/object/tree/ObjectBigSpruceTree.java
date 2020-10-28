@@ -2,7 +2,10 @@ package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.NukkitRandom;
+
+import java.util.List;
 
 /**
  * author: DaPorkchop_
@@ -18,19 +21,18 @@ public class ObjectBigSpruceTree extends ObjectSpruceTree {
     }
 
     @Override
-    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
+    public void placeObject(ChunkManager level, List<Block> blocks, int x, int y, int z, NukkitRandom random) {
         this.treeHeight = random.nextBoundedInt(15) + 20;
 
         int topSize = this.treeHeight - (int) (this.treeHeight * leafStartHeightMultiplier);
         int lRadius = baseLeafRadius + random.nextBoundedInt(2);
 
-        this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - random.nextBoundedInt(3));
-
-        this.placeLeaves(level, topSize, lRadius, x, y, z, random);
+        this.placeTrunk(level, blocks, x, y, z, random, this.getTreeHeight() - random.nextBoundedInt(3));
+        this.placeLeaves(level, blocks, topSize, lRadius, x, y, z, random);
     }
 
     @Override
-    protected void placeTrunk(ChunkManager level, int x, int y, int z, NukkitRandom random, int trunkHeight) {
+    protected void placeTrunk(ChunkManager level, List<Block> blocks, int x, int y, int z, NukkitRandom random, int trunkHeight) {
         // The base dirt block
         level.setBlockAt(x, y - 1, z, Block.DIRT);
         int radius = 2;
@@ -40,7 +42,7 @@ public class ObjectBigSpruceTree extends ObjectSpruceTree {
                 for (int zz = 0; zz < radius; zz++) {
                     int blockId = level.getBlockIdAt(x, y + yy, z);
                     if (this.overridable(blockId)) {
-                        level.setBlockAt(x + xx, y + yy, z + zz, this.getTrunkBlock(), this.getType());
+                        blocks.add(Block.get(this.getTrunkBlock(), this.getType(), new Position(x + xx, y + yy, z + zz)));
                     }
                 }
             }

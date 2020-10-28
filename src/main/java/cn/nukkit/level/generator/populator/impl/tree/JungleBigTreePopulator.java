@@ -3,12 +3,12 @@ package cn.nukkit.level.generator.populator.impl.tree;
 import cn.nukkit.block.*;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.generator.object.BlockList;
 import cn.nukkit.level.generator.object.tree.ObjectJungleBigTree;
 import cn.nukkit.level.generator.populator.type.Populator;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
-
 
 public class JungleBigTreePopulator extends Populator {
     private ChunkManager level;
@@ -37,7 +37,7 @@ public class JungleBigTreePopulator extends Populator {
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
         this.level = level;
         int amount = random.nextBoundedInt(this.randomAmount + 1) + this.baseAmount;
-        Vector3 v = new Vector3();
+        BlockVector3 v = new BlockVector3();
 
         for (int i = 0; i < amount; ++i) {
             int x = NukkitMath.randomRange(random, chunkX << 4, (chunkX << 4) + 15);
@@ -46,7 +46,7 @@ public class JungleBigTreePopulator extends Populator {
             if (y == -1) {
                 continue;
             }
-            new ObjectJungleBigTree(10, 20, Block.get(BlockID.WOOD, BlockWood.JUNGLE), Block.get(BlockID.LEAVES, BlockLeaves.JUNGLE)).generate(this.level, random, v.setComponents(x, y, z));
+            new ObjectJungleBigTree(10, 20, Block.get(BlockID.WOOD, BlockWood.JUNGLE), Block.get(BlockID.LEAVES, BlockLeaves.JUNGLE)).generate(this.level, new BlockList(this.level), random, v.setComponents(x, y, z));
         }
     }
 
