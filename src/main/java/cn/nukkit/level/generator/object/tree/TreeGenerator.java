@@ -33,4 +33,16 @@ public abstract class TreeGenerator extends cn.nukkit.level.generator.object.Bas
         }
     }
 
+    @Deprecated
+    protected void setDirtAt(ChunkManager level, BlockVector3 pos) {
+        setDirtAt(level, new Vector3(pos.x, pos.y, pos.z));
+    }
+
+    @Deprecated
+    protected void setDirtAt(ChunkManager level, Vector3 pos) {
+        if (level.getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z) != Item.DIRT) {
+            this.setBlockAndNotifyAdequately(level, pos, Block.get(BlockID.DIRT));
+        }
+    }
+
 }

@@ -32,6 +32,19 @@ public class ObjectBigSpruceTree extends ObjectSpruceTree {
     }
 
     @Override
+    @Deprecated
+    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
+        this.treeHeight = random.nextBoundedInt(15) + 20;
+
+        int topSize = this.treeHeight - (int) (this.treeHeight * leafStartHeightMultiplier);
+        int lRadius = baseLeafRadius + random.nextBoundedInt(2);
+
+        this.placeTrunk(level, x, y, z, random, this.getTreeHeight() - random.nextBoundedInt(3));
+
+        this.placeLeaves(level, topSize, lRadius, x, y, z, random);
+    }
+
+    @Override
     protected void placeTrunk(ChunkManager level, List<Block> blocks, int x, int y, int z, NukkitRandom random, int trunkHeight) {
         // The base dirt block
         level.setBlockAt(x, y - 1, z, Block.DIRT);
@@ -43,6 +56,25 @@ public class ObjectBigSpruceTree extends ObjectSpruceTree {
                     int blockId = level.getBlockIdAt(x, y + yy, z);
                     if (this.overridable(blockId)) {
                         blocks.add(Block.get(this.getTrunkBlock(), this.getType(), new Position(x + xx, y + yy, z + zz)));
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    @Deprecated
+    protected void placeTrunk(ChunkManager level, int x, int y, int z, NukkitRandom random, int trunkHeight) {
+        // The base dirt block
+        level.setBlockAt(x, y - 1, z, Block.DIRT);
+        int radius = 2;
+
+        for (int yy = 0; yy < trunkHeight; ++yy) {
+            for (int xx = 0; xx < radius; xx++) {
+                for (int zz = 0; zz < radius; zz++) {
+                    int blockId = level.getBlockIdAt(x, y + yy, z);
+                    if (this.overridable(blockId)) {
+                        level.setBlockAt(x + xx, y + yy, z + zz, this.getTrunkBlock(), this.getType());
                     }
                 }
             }
