@@ -5,6 +5,7 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.generator.object.BlockList;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 
@@ -35,14 +36,12 @@ public abstract class TreeGenerator extends cn.nukkit.level.generator.object.Bas
 
     @Deprecated
     protected void setDirtAt(ChunkManager level, BlockVector3 pos) {
-        setDirtAt(level, new Vector3(pos.x, pos.y, pos.z));
+        setDirtAt(level, new BlockList(level), pos);
     }
 
     @Deprecated
     protected void setDirtAt(ChunkManager level, Vector3 pos) {
-        if (level.getBlockIdAt((int) pos.x, (int) pos.y, (int) pos.z) != Item.DIRT) {
-            this.setBlockAndNotifyAdequately(level, pos, Block.get(BlockID.DIRT));
-        }
+        this.setDirtAt(level, new BlockList(level), pos.asBlockVector3());
     }
 
 }

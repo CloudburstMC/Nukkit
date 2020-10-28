@@ -11,7 +11,9 @@ import java.util.List;
 
 public abstract class BasicGenerator {
 
-    public abstract boolean generate(ChunkManager level, List<Block> blocks, NukkitRandom rand, BlockVector3 position);
+    public boolean generate(ChunkManager level, List<Block> blocks, NukkitRandom rand, BlockVector3 position) {
+        return false;
+    }
 
     @Deprecated
     public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {
