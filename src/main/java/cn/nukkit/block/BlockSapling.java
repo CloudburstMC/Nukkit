@@ -1,8 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.level.StructureGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.ListChunkManager;
 import cn.nukkit.level.generator.object.BasicGenerator;
 import cn.nukkit.level.generator.object.tree.*;
 import cn.nukkit.level.particle.BoneMealParticle;
@@ -160,7 +162,16 @@ public class BlockSapling extends BlockFlowable {
                 break;
             //TODO: big spruce
             default:
-                ObjectTree.growTree(this.level, this.getFloorX(), this.getFloorY(), this.getFloorZ(), new NukkitRandom(), this.getDamage() & 0x07);
+                ListChunkManager chunkManager = new ListChunkManager(this.level);
+                ObjectTree.growTree(chunkManager, this.getFloorX(), this.getFloorY(), this.getFloorZ(), new NukkitRandom(), this.getDamage() & 0x07);
+                StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
+                this.level.getServer().getPluginManager().callEvent(ev);
+                if (ev.isCancelled()) {
+                    return;
+                }
+                for(Block block : ev.getBlockList()) {
+                    this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
+                }
                 return;
         }
 
@@ -173,7 +184,8 @@ public class BlockSapling extends BlockFlowable {
             this.level.setBlock(this, get(AIR), true, false);
         }
 
-        if (!generator.generate(this.level, new NukkitRandom(), this.add(x, 0, z))) {
+        ListChunkManager chunkManager = new ListChunkManager(this.level);
+        if (!generator.generate(chunkManager, new NukkitRandom(), this.add(x, 0, z))) {
             if (bigTree) {
                 this.level.setBlock(this.add(x, 0, z), this, true, false);
                 this.level.setBlock(this.add(x + 1, 0, z), this, true, false);
@@ -181,6 +193,15 @@ public class BlockSapling extends BlockFlowable {
                 this.level.setBlock(this.add(x + 1, 0, z + 1), this, true, false);
             } else {
                 this.level.setBlock(this, this, true, false);
+            }
+        } else {
+            StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
+            this.level.getServer().getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return;
+            }
+            for(Block block : ev.getBlockList()) {
+                this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
             }
         }
     }
