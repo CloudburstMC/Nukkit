@@ -119,6 +119,7 @@ public class BlockSapling extends BlockFlowable {
         BasicGenerator generator = null;
         boolean bigTree = false;
 
+        Vector3 vector3 = new Vector3(this.x, this.y, this.z);
         int x = 0;
         int z = 0;
 
@@ -128,6 +129,7 @@ public class BlockSapling extends BlockFlowable {
                 for (; x >= -1; --x) {
                     for (; z >= -1; --z) {
                         if (this.findSaplings(x, z, JUNGLE)) {
+                            vector3 = vector3.add(x, 0, z);
                             generator = new ObjectJungleBigTree(10, 20, Block.get(BlockID.WOOD, BlockWood.JUNGLE), Block.get(BlockID.LEAVES, BlockLeaves.JUNGLE));
                             bigTree = true;
                             break loop;
@@ -149,6 +151,7 @@ public class BlockSapling extends BlockFlowable {
                 for (; x >= -1; --x) {
                     for (; z >= -1; --z) {
                         if (this.findSaplings(x, z, DARK_OAK)) {
+                            vector3 = vector3.add(x, 0, z);
                             generator = new ObjectDarkOakTree();
                             bigTree = true;
                             break loop;
@@ -176,33 +179,31 @@ public class BlockSapling extends BlockFlowable {
         }
 
         if (bigTree) {
-            this.level.setBlock(this.add(x, 0, z), get(AIR), true, false);
-            this.level.setBlock(this.add(x + 1, 0, z), get(AIR), true, false);
-            this.level.setBlock(this.add(x, 0, z + 1), get(AIR), true, false);
-            this.level.setBlock(this.add(x + 1, 0, z + 1), get(AIR), true, false);
+            this.level.setBlock(vector3, get(AIR), true, false);
+            this.level.setBlock(vector3.add(1, 0, 0), get(AIR), true, false);
+            this.level.setBlock(vector3.add(0, 0, 1), get(AIR), true, false);
+            this.level.setBlock(vector3.add(1, 0, 1), get(AIR), true, false);
         } else {
             this.level.setBlock(this, get(AIR), true, false);
         }
 
         ListChunkManager chunkManager = new ListChunkManager(this.level);
-        if (!generator.generate(chunkManager, new NukkitRandom(), this.add(x, 0, z))) {
+        boolean success = generator.generate(chunkManager, new NukkitRandom(), this.add(x, 0, z));
+        StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
+        this.level.getServer().getPluginManager().callEvent(ev);
+        if (ev.isCancelled() || !success) {
             if (bigTree) {
-                this.level.setBlock(this.add(x, 0, z), this, true, false);
-                this.level.setBlock(this.add(x + 1, 0, z), this, true, false);
-                this.level.setBlock(this.add(x, 0, z + 1), this, true, false);
-                this.level.setBlock(this.add(x + 1, 0, z + 1), this, true, false);
+                this.level.setBlock(vector3, this, true, false);
+                this.level.setBlock(vector3.add(1, 0, 0), this, true, false);
+                this.level.setBlock(vector3.add(0, 0, 1), this, true, false);
+                this.level.setBlock(vector3.add(1, 0, 1), this, true, false);
             } else {
                 this.level.setBlock(this, this, true, false);
             }
-        } else {
-            StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
-            this.level.getServer().getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) {
-                return;
-            }
-            for(Block block : ev.getBlockList()) {
-                this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
-            }
+            return;
+        }
+        for(Block block : ev.getBlockList()) {
+            this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
         }
     }
 
