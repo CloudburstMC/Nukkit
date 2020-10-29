@@ -36,9 +36,9 @@ public class StructureGrowEvent extends LevelEvent implements Cancellable {
     }
 
     public void setBlockList(List<Block> blocks) {
-        // Prevent NullPointerExceptions
         this.blocks.clear();
-        this.blocks.addAll(blocks);
+        if(blocks != null)
+            this.blocks.addAll(blocks);
     }
 
 }
