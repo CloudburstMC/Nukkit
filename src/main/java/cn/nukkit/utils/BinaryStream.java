@@ -421,6 +421,10 @@ public class BinaryStream {
                 id, data, cnt, nbt
         );
 
+        if (cnt > item.getMaxStackSize()) {
+            item.setCount(item.getMaxStackSize());
+        }
+
         if (canDestroy.length > 0 || canPlaceOn.length > 0) {
             CompoundTag namedTag = item.getNamedTag();
             if (namedTag == null) {
@@ -462,7 +466,7 @@ public class BinaryStream {
 
         this.putVarInt(item.getId());
 
-        int auxValue = item.getCount();
+        int auxValue = (item.getCount() < item.getMaxStackSize() ? item.getCount() : item.getMaxStackSize());
         if (!isDurable) {
             auxValue |= (((item.hasMeta() ? item.getDamage() : -1) & 0x7fff) << 8);
         }
