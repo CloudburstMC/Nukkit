@@ -1,24 +1,18 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemRedstoneRepeater;
 import cn.nukkit.math.BlockFace;
-
-import javax.annotation.Nonnull;
 
 /**
  * @author CreeperFace
  * @since 10.4.2017
  */
-public class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
+public class BlockRedstoneRepeaterUnpowered extends BlockRedstoneRepeater {
 
     public BlockRedstoneRepeaterUnpowered() {
-        this(0);
-    }
-
-    public BlockRedstoneRepeaterUnpowered(int meta) {
-        super(meta);
+        super();
         this.isPowered = false;
     }
 
@@ -30,15 +24,6 @@ public class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
     @Override
     public String getName() {
         return "Unpowered Repeater";
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull Item item, Player player) {
-        this.setDamage(this.getDamage() + 4);
-        if (this.getDamage() > 15) this.setDamage(this.getDamage() % 4);
-
-        this.level.setBlock(this, this, true, true);
-        return true;
     }
 
     @Override
@@ -58,12 +43,12 @@ public class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
 
     @Override
     protected int getDelay() {
-        return (1 + (getDamage() >> 2)) * 2;
+        return (1 + getPropertyValue(REPEATER_DELAY)) * 2;
     }
 
     @Override
     protected Block getPowered() {
-        return Block.get(BlockID.POWERED_REPEATER, this.getDamage());
+        return BlockState.of(BlockID.POWERED_REPEATER, getCurrentState().getDataStorage()).getBlock();
     }
 
     @Override
@@ -75,4 +60,5 @@ public class BlockRedstoneRepeaterUnpowered extends BlockRedstoneDiode {
     public boolean isLocked() {
         return this.getPowerOnSides() > 0;
     }
+
 }

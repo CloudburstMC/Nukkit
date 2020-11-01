@@ -1,24 +1,18 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemRedstoneRepeater;
 import cn.nukkit.math.BlockFace;
-
-import javax.annotation.Nonnull;
 
 /**
  * @author CreeperFace
  * @since 10.4.2017
  */
-public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
+public class BlockRedstoneRepeaterPowered extends BlockRedstoneRepeater {
 
     public BlockRedstoneRepeaterPowered() {
-        this(0);
-    }
-
-    public BlockRedstoneRepeaterPowered(int meta) {
-        super(meta);
+        super();
         this.isPowered = true;
     }
 
@@ -59,21 +53,12 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     protected Block getUnpowered() {
-        return Block.get(BlockID.UNPOWERED_REPEATER, this.getDamage());
+        return BlockState.of(BlockID.UNPOWERED_REPEATER, getCurrentState().getDataStorage()).getBlock();
     }
 
     @Override
     public int getLightLevel() {
         return 7;
-    }
-
-    @Override
-    public boolean onActivate(@Nonnull Item item, Player player) {
-        this.setDamage(this.getDamage() + 4);
-        if (this.getDamage() > 15) this.setDamage(this.getDamage() % 4);
-
-        this.level.setBlock(this, this, true, true);
-        return true;
     }
 
     @Override
