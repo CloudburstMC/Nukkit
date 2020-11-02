@@ -307,10 +307,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
                 Item[] items = this.inventory.addItem(itemToAdd);
 
-                if (items.length >= 1) {
-                    return false;
-                }
-                return true;
+                return items.length < 1;
             }
         }
         return false;
