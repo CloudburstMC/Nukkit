@@ -1,9 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.blockstate.BlockState;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRedstoneRepeater;
-import cn.nukkit.math.BlockFace;
 
 /**
  * @author CreeperFace
@@ -27,26 +24,6 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneRepeater {
     }
 
     @Override
-    public BlockFace getFacing() {
-        return BlockFace.fromHorizontalIndex(getDamage());
-    }
-
-    @Override
-    protected boolean isAlternateInput(Block block) {
-        return isDiode(block);
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemRedstoneRepeater();
-    }
-
-    @Override
-    protected int getDelay() {
-        return (1 + (getDamage() >> 2)) * 2;
-    }
-
-    @Override
     protected Block getPowered() {
         return this;
     }
@@ -59,10 +36,5 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneRepeater {
     @Override
     public int getLightLevel() {
         return 7;
-    }
-
-    @Override
-    public boolean isLocked() {
-        return this.getPowerOnSides() > 0;
     }
 }

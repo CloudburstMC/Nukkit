@@ -7,6 +7,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemRedstoneRepeater;
 import cn.nukkit.math.BlockFace;
 
 import javax.annotation.Nonnull;
@@ -64,5 +65,30 @@ public abstract class BlockRedstoneRepeater extends BlockRedstoneDiode {
             }
         }
         return true;
+    }
+
+    @Override
+    public BlockFace getFacing() {
+        return getPropertyValue(DIRECTION);
+    }
+
+    @Override
+    protected boolean isAlternateInput(Block block) {
+        return isDiode(block);
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemRedstoneRepeater();
+    }
+
+    @Override
+    protected int getDelay() {
+        return (1 + (getPropertyValue(REPEATER_DELAY) >> 2)) * 2;
+    }
+
+    @Override
+    public boolean isLocked() {
+        return this.getPowerOnSides() > 0;
     }
 }
