@@ -23,6 +23,7 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     private final String name;
     private final UUID uuid;
+    private final String xuid;
     private final String address;
     private final int port;
 
@@ -31,9 +32,10 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     private final List<Consumer<Server>> scheduledActions = new ArrayList<>();
 
-    public PlayerAsyncPreLoginEvent(String name, UUID uuid, String address, int port) {
+    public PlayerAsyncPreLoginEvent(String name, UUID uuid, String xuid, String address, int port) {
         this.name = name;
         this.uuid = uuid;
+        this.xuid = xuid;
         this.address = address;
         this.port = port;
     }
@@ -44,6 +46,10 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    public String getXuid() {
+        return xuid;
     }
 
     public String getAddress() {
