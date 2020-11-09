@@ -18,19 +18,18 @@
 
 package cn.nukkit.blockstate;
 
-import cn.nukkit.api.API;
-import cn.nukkit.api.DeprecationDetails;
-import cn.nukkit.api.PowerNukkitOnly;
-import cn.nukkit.api.Since;
+import cn.nukkit.api.*;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.math.NukkitMath;
+import cn.nukkit.utils.Validation;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -61,6 +60,7 @@ public class ByteMutableBlockState extends MutableBlockState {
         this(blockId, properties, (byte)0);
     }
 
+    @Nonnegative
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
@@ -68,6 +68,7 @@ public class ByteMutableBlockState extends MutableBlockState {
         return storage & Block.DATA_MASK;
     }
 
+    @Unsigned
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
@@ -75,6 +76,7 @@ public class ByteMutableBlockState extends MutableBlockState {
         return storage;
     }
 
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
@@ -83,6 +85,7 @@ public class ByteMutableBlockState extends MutableBlockState {
         return BigInteger.valueOf(storage);
     }
 
+    @Nonnegative
     @Nonnull
     @Override
     public Byte getDataStorage() {
@@ -99,7 +102,7 @@ public class ByteMutableBlockState extends MutableBlockState {
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
-    public void setDataStorage(Number storage) {
+    public void setDataStorage(@Nonnegative Number storage) {
         Class<? extends Number> c = storage.getClass();
         byte state;
         if (c == Byte.class) {
@@ -118,7 +121,7 @@ public class ByteMutableBlockState extends MutableBlockState {
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
-    public void setDataStorageFromInt(int storage) {
+    public void setDataStorageFromInt(@Nonnegative int storage) {
         validate(storage);
         this.storage = (byte)storage;
     }
@@ -140,6 +143,8 @@ public class ByteMutableBlockState extends MutableBlockState {
         if (state == 0) {
             return;
         }
+
+        Validation.checkPositive("state", state);
         
         if (state < 0 || state > Byte.MAX_VALUE) {
             throw new InvalidBlockStateException(BlockState.of(getBlockId(), state), 
@@ -214,6 +219,8 @@ public class ByteMutableBlockState extends MutableBlockState {
         return BlockState.of(blockId, storage);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public int getExactIntStorage() {
         return storage;

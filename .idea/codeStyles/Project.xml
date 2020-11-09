@@ -7,6 +7,8 @@
         <ANNO name="cn.nukkit.api.PowerNukkitOnly" />
         <ANNO name="cn.nukkit.api.RemovedFromNewRakNet" />
         <ANNO name="cn.nukkit.api.Since" />
+        <ANNO name="cn.nukkit.api.Unsigned" />
+        <ANNO name="javax.annotation.Nonnegative" />
         <ANNO name="javax.annotation.Nonnull" />
         <ANNO name="javax.annotation.Nullable" />
       </REPEAT_ANNOTATIONS>
