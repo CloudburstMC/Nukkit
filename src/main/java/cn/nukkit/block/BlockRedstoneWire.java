@@ -116,14 +116,12 @@ public class BlockRedstoneWire extends BlockFlowable {
                 continue;
             }
 
-
             strength = this.getMaxCurrentStrength(v, strength);
 
-            boolean vNormal = this.level.getBlock(v).isNormalBlock();
-
-            if (vNormal && !this.level.getBlock(pos.up()).isNormalBlock()) {
+            if (this.getMaxCurrentStrength(v.up(), strength) > strength && !this.level.getBlock(pos.up()).isNormalBlock()) {
                 strength = this.getMaxCurrentStrength(v.up(), strength);
-            } else if (!vNormal) {
+            }
+            if (this.getMaxCurrentStrength(v.down(), strength) > strength && !this.level.getBlock(v).isNormalBlock()) {
                 strength = this.getMaxCurrentStrength(v.down(), strength);
             }
         }

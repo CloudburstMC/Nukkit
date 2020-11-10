@@ -263,7 +263,13 @@ public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<Bloc
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            BlockEntityMusic music = getOrCreateBlockEntity();
+            // We can't use getOrCreateBlockEntity(), because the update method is called on block place,
+            // before the "real" BlockEntity is set. That means, if we'd use the other method here,
+            // it would create two BlockEntities.
+            BlockEntityMusic music = getBlockEntity();
+            if (music == null)
+                return 0;
+
             if (this.getLevel().isBlockPowered(this)) {
                 if (!music.isPowered()) {
                     this.emitSound();

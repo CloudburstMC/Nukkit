@@ -125,6 +125,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode impleme
         return getMode() == Mode.SUBTRACT ? Math.max(this.calculateInputStrength() - this.getPowerOnSides(), 0) : this.calculateInputStrength();
     }
 
+    @PowerNukkitDifference(info = "Trigger observer.", since = "1.4.0.0-PN")
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
         if (getMode() == Mode.SUBTRACT) {
@@ -135,6 +136,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode impleme
 
         this.level.addSound(this, Sound.RANDOM_CLICK, 1, getMode() == Mode.SUBTRACT ? 0.55F : 0.5F);
         this.level.setBlock(this, this, true, false);
+        this.level.updateComparatorOutputLevelSelective(this, true);
         //bug?
 
         this.onChange();
@@ -151,13 +153,19 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode impleme
         return super.onUpdate(type);
     }
 
+    @PowerNukkitDifference(info = "Trigger observer.", since = "1.4.0.0-PN")
     private void onChange() {
         if (!this.level.getServer().isRedstoneEnabled()) {
             return;
         }
 
         int output = this.calculateOutput();
-        BlockEntityComparator blockEntityComparator = getOrCreateBlockEntity();
+        // We can't use getOrCreateBlockEntity(), because the update method is called on block place,
+        // before the "real" BlockEntity is set. That means, if we'd use the other method here,
+        // it would create two BlockEntities.
+        BlockEntityComparator blockEntityComparator = getBlockEntity();
+        if (blockEntityComparator == null)
+            return;
 
         int currentOutput = blockEntityComparator.getOutputSignal();
         blockEntityComparator.setOutputSignal(output);
@@ -168,8 +176,10 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode impleme
 
             if (isPowered && !shouldBePowered) {
                 this.level.setBlock(this, getUnpowered(), true, false);
+                this.level.updateComparatorOutputLevelSelective(this, true);
             } else if (!isPowered && shouldBePowered) {
                 this.level.setBlock(this, getPowered(), true, false);
+                this.level.updateComparatorOutputLevelSelective(this, true);
             }
 
             Block side = this.getSide(getFacing().getOpposite());

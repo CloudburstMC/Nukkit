@@ -94,7 +94,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 this.setDamage(player.getHorizontalFacing().getIndex());
             }
         }
-        
+
         if(this.level.getBlockEntity(this) != null) {
             BlockEntity blockEntity = this.level.getBlockEntity(this);
             MainLogger.getLogger().warning("Found unused BlockEntity at world=" + blockEntity.getLevel().getName() + " x=" + blockEntity.getX() + " y=" + blockEntity.getY() + " z=" + blockEntity.getZ() + " whilst attempting to place piston, closing it.");
@@ -145,7 +145,13 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 return 0;
             }
 
-            BlockEntityPistonArm arm = getOrCreateBlockEntity();
+            // We can't use getOrCreateBlockEntity(), because the update method is called on block place,
+            // before the "real" BlockEntity is set. That means, if we'd use the other method here,
+            // it would create two BlockEntities.
+            BlockEntityPistonArm arm = this.getBlockEntity();
+            if (arm == null)
+                return 0;
+
             boolean powered = this.isPowered();
 
             if (arm.state % 2 == 0 && arm.powered != powered && checkState(powered)) {
@@ -189,6 +195,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         return false;
     }
 
+    @PowerNukkitDifference(info = "Piston shouldn't be powered from redstone under it.", since = "1.4.0.0-PN")
     private boolean isPowered() {
         BlockFace face = getBlockFace();
 
@@ -199,7 +206,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
             Block b = this.getSide(side);
 
-            if (b.getId() == Block.REDSTONE_WIRE && b.getDamage() > 0) {
+            if (b.getId() == Block.REDSTONE_WIRE && b.getDamage() > 0 && b.y >= this.getY()) {
                 return true;
             }
 

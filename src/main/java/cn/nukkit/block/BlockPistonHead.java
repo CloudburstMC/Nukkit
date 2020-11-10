@@ -48,10 +48,13 @@ public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean onBreak(Item item) {
         this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
-        Block piston = getSide(getBlockFace().getOpposite());
+        Block side = getSide(getBlockFace().getOpposite());
 
-        if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getBlockFace() == this.getBlockFace()) {
+        if (side instanceof BlockPistonBase && ((BlockPistonBase) side).getBlockFace() == this.getBlockFace()) {
+            BlockPistonBase piston = (BlockPistonBase) side;
             piston.onBreak(item);
+
+            if(piston.getBlockEntity() != null) piston.getBlockEntity().close();
         }
         return true;
     }
