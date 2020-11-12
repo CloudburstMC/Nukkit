@@ -80,7 +80,22 @@ public abstract class Particle extends Vector3 {
     //65 same as 64
     public static final int TYPE_FALLING_DRAGONS_BREATH = 66;
     public static final int TYPE_DRAGONS_BREATH = 67;
-
+    
+    public static final Integer getParticleIdByName(String name) {
+        name = name.toUpperCase();
+        Field field = Particle.class.getField((name.startWith("TYPE_") == true ? name : ("TYPE_" + name)));
+        Class<?> type = field.getType();
+        
+        if(type==int.class) {
+            return field.getInt(null);
+        }
+        return null;
+    }
+    
+    public static final boolean particleExists(String name) {
+        return getParticleIdByName(name) != null;   
+    }
+    
     public Particle() {
         super(0, 0, 0);
     }
