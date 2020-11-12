@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -145,28 +146,26 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
     }
 
+    @PowerNukkitDifference(info = "Disables the triggered state, when the block is no longer powered.")
     @Override
     public int onUpdate(int type) {
         if (!this.level.getServer().isRedstoneEnabled()) {
             return 0;
         }
 
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
-            this.setTriggered(false);
-            this.level.setBlock(this, this, false, false);
-
-            dispense();
+        if (type == Level.BLOCK_UPDATE_SCHEDULED && this.isTriggered()) {
+            this.dispense();
             return type;
         } else if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            Vector3 pos = this.add(0);
+            boolean triggered = this.isTriggered();
 
-            boolean powered = level.isBlockPowered(pos) || level.isBlockPowered(pos.up());
-            boolean triggered = isTriggered();
-
-            if (powered && !triggered) {
+            if (this.isPowered() && !triggered) {
                 this.setTriggered(true);
                 this.level.setBlock(this, this, false, false);
                 level.scheduleUpdate(this, this, 4);
+            } else if (!this.isPowered()) {
+                this.setTriggered(false);
+                this.level.setBlock(this, this, false, false);
             }
 
             return type;
@@ -175,6 +174,23 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         return 0;
     }
 
+    @PowerNukkitDifference(info = "Using this method to check if powered", since = "1.4.0.0-PN")
+    private boolean isPowered() {
+        for (BlockFace side : BlockFace.values()) {
+            Block b = this.getSide(side);
+
+            if (b.getId() == Block.REDSTONE_WIRE && b.getDamage() > 0) {
+                return true;
+            }
+
+            if (this.level.isSidePowered(b, side)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @PowerNukkitDifference(info = "Trigger observer on dispense fail (with #setDirty()).", since = "1.4.0.0-PN")
     public void dispense() {
         InventoryHolder blockEntity = getBlockEntity();
 
@@ -210,6 +226,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
             pk.data = 1200;
 
             this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
+            getBlockEntity().setDirty();
             return;
         } else {
             pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
