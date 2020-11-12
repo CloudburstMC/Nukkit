@@ -3,6 +3,8 @@ package cn.nukkit.level.particle;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.DataPacket;
 
+import java.lang.reflect.Field;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
