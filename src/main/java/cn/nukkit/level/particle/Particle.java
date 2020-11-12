@@ -85,7 +85,8 @@ public abstract class Particle extends Vector3 {
     
     public static final Integer getParticleIdByName(String name) {
         name = name.toUpperCase();
-        Field field = Particle.class.getField((name.startWith("TYPE_") == true ? name : ("TYPE_" + name)));
+        
+        Field field = Particle.class.getField((name.startsWith("TYPE_") == true ? name : ("TYPE_" + name)));
         Class<?> type = field.getType();
         
         if(type==int.class) {
