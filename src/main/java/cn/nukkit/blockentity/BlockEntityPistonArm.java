@@ -2,6 +2,8 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
@@ -142,6 +144,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
         }
     }
 
+    @PowerNukkitDifference(info = "Trigger observer (with #setDirty()).", since = "1.4.0.0-PN")
     public void move(boolean extending, List<BlockVector3> attachedBlocks) {
         this.extending = extending;
         this.lastProgress = this.progress = extending ? 0 : 1;
@@ -151,6 +154,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
         this.level.addChunkPacket(getChunkX(), getChunkZ(), getSpawnPacket());
         this.lastProgress = extending ? -MOVE_STEP : 1 + MOVE_STEP;
+        this.setDirty();
         this.moveCollidedEntities();
         this.scheduleUpdate();
     }
