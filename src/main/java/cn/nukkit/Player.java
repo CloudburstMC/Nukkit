@@ -23,6 +23,7 @@ import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
+import cn.nukkit.event.inventory.InventoryPickupTridentEvent;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.player.PlayerAsyncPreLoginEvent.LoginResult;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
@@ -4925,6 +4926,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             } else if (entity instanceof EntityThrownTrident && ((EntityThrownTrident) entity).hadCollision) {
                 Item item = ((EntityThrownTrident) entity).getItem();
                 if (this.isSurvival() && !this.inventory.canAddItem(item)) {
+                    return false;
+                }
+
+                InventoryPickupTridentEvent ev = new InventoryPickupTridentEvent(this.inventory, (EntityThrownTrident) entity);
+                this.server.getPluginManager().callEvent(ev);
+                if (ev.isCancelled()) {
                     return false;
                 }
 
