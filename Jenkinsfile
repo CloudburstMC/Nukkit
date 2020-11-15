@@ -27,25 +27,25 @@ pipeline {
 
             steps {
                 rtMavenDeployer (
-                        id: "MAVEN_DEPLOYER",
-                        serverId: "ARTIFACTORY",
+                        id: "maven-deployer",
+                        serverId: "opencollab-artifactory",
                         releaseRepo: "maven-releases",
                         snapshotRepo: "maven-snapshots"
                 )
                 rtMavenResolver (
-                        id: "MAVEN_RESOLVER",
-                        serverId: "ARTIFACTORY",
+                        id: "maven-resolver",
+                        serverId: "opencollab-artifactory",
                         releaseRepo: "release",
                         snapshotRepo: "snapshot"
                 )
                 rtMavenRun (
                         pom: 'pom.xml',
                         goals: 'clean javadoc:javadoc source:jar install -DskipTests',
-                        deployerId: "MAVEN_DEPLOYER",
-                        resolverId: "MAVEN_RESOLVER"
+                        deployerId: "maven-deployer",
+                        resolverId: "maven-resolver"
                 )
                 rtPublishBuildInfo (
-                        serverId: "ARTIFACTORY"
+                        serverId: "opencollab-artifactory"
                 )
                 step([$class: 'JavadocArchiver', javadocDir: 'target/site/apidocs', keepAll: false])
             }
