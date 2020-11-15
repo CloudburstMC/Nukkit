@@ -21,9 +21,9 @@ pipeline {
         }
 
         stage ('Deploy') {
-//            when {
-//                branch "master"
-//            }
+            when {
+                branch "master"
+            }
 
             steps {
                 rtMavenDeployer (
@@ -40,7 +40,7 @@ pipeline {
                 )
                 rtMavenRun (
                         pom: 'pom.xml',
-                        goals: 'clean javadoc:javadoc source:jar install -DskipTests',
+                        goals: 'javadoc:javadoc javadoc:jar source:jar install -DskipTests',
                         deployerId: "maven-deployer",
                         resolverId: "maven-resolver"
                 )
