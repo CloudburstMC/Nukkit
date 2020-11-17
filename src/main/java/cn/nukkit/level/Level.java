@@ -2934,7 +2934,7 @@ public class Level implements ChunkManager, Metadatable {
             int x = (int) v.x & 0x0f;
             int z = (int) v.z & 0x0f;
             if (chunk != null && chunk.isGenerated()) {
-                int y = (int) NukkitMath.clamp(v.y, 0, 254);
+                int y = (int) NukkitMath.clamp(v.y, 1, 254);
                 boolean wasAir = chunk.getBlockId(x, y - 1, z) == 0;
                 for (; y > 0; --y) {
                     int b = chunk.getFullBlock(x, y, z);
