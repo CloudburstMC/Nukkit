@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -33,6 +34,7 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
         return new ItemBlock(Block.get(BlockID.REDSTONE_LAMP));
     }
 
+    @PowerNukkitDifference(info = "Redstone Event on scheduled update part.", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (!this.level.getServer().isRedstoneEnabled()) {
@@ -40,17 +42,18 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
         }
 
         if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && !this.level.isBlockPowered(this.getLocation())) {
+            this.level.scheduleUpdate(this, 4);
+            return 1;
+        }
+
+        if (type == Level.BLOCK_UPDATE_SCHEDULED && !this.level.isBlockPowered(this.getLocation())) {
             // Redstone event
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
             getLevel().getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return 0;
             }
-            this.level.scheduleUpdate(this, 4);
-            return 1;
-        }
 
-        if (type == Level.BLOCK_UPDATE_SCHEDULED && !this.level.isBlockPowered(this.getLocation())) {
             this.level.setBlock(this, Block.get(BlockID.REDSTONE_LAMP), false, false);
         }
         return 0;
