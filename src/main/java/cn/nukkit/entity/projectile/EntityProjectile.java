@@ -4,6 +4,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.item.EntityEndCrystal;
+import cn.nukkit.entity.mob.EntityBlaze;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.MovingObjectPosition;
@@ -59,7 +60,7 @@ public abstract class EntityProjectile extends Entity {
 
     public void onCollideWithEntity(Entity entity) {
         this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity)));
-        float damage = this.getResultDamage();
+        float damage = this instanceof EntitySnowball && entity instanceof EntityBlaze ? 3 : this.getResultDamage();
 
         EntityDamageEvent ev;
         if (this.shootingEntity == null) {
