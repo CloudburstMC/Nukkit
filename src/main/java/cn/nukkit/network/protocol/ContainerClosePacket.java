@@ -16,6 +16,7 @@ public class ContainerClosePacket extends DataPacket {
     }
 
     public int windowId;
+    public boolean wasServerInitiated = true;
 
     @Override
     public void decode() {
@@ -26,5 +27,6 @@ public class ContainerClosePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte((byte) this.windowId);
+        this.putBoolean(this.wasServerInitiated);
     }
 }

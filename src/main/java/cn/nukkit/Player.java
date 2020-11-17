@@ -2824,6 +2824,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.resetCraftingGridType();
                         this.addWindow(this.craftingGrid, ContainerIds.NONE);
                         ContainerClosePacket pk = new ContainerClosePacket();
+                        pk.wasServerInitiated = false;
                         pk.windowId = -1;
                         this.dataPacket(pk);
                     }
