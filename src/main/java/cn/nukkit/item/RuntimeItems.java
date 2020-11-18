@@ -48,57 +48,9 @@ public class RuntimeItems {
             paletteBuffer.putString(entry.name);
             paletteBuffer.putLShort(entry.id);
             paletteBuffer.putBoolean(false); // Component item
-
-            if (entry.oldId != null) {
-                boolean hasData = entry.oldData != null;
-                int fullId = getFullId(entry.oldId, hasData ? entry.oldData : 0);
-                LEGACY_NETWORK_MAP.put(fullId, (entry.id << 1) | (hasData ? 1 : 0));
-                NETWORK_LEGACY_MAP.put(entry.id, fullId | (hasData ? 1 : 0));
-            }
         }
 
         ITEM_DATA_PALETTE = paletteBuffer.getBuffer();
-    }
-
-    public static int getNetworkFullId(Item item) {
-        int fullId = getFullId(item.getId(), item.hasMeta() ? item.getDamage() : -1);
-        int networkId = LEGACY_NETWORK_MAP.get(fullId);
-        if (networkId == -1) {
-            networkId = LEGACY_NETWORK_MAP.get(getFullId(item.getId(), 0));
-        }
-        if (networkId == -1) {
-            throw new IllegalArgumentException("Unknown item mapping " + item.getId() + ":" + item.getDamage());
-        }
-
-        return networkId;
-    }
-
-    public static int getLegacyFullId(int networkId) {
-        int fullId = NETWORK_LEGACY_MAP.get(networkId);
-        if (fullId == -1) {
-            throw new IllegalArgumentException("Unknown network mapping: " + networkId);
-        }
-        return fullId;
-    }
-
-    public static int getId(int fullId) {
-        return (short) (fullId >> 16);
-    }
-
-    public static int getData(int fullId) {
-        return ((fullId >> 1) & 0x7fff);
-    }
-
-    private static int getFullId(int id, int data) {
-        return (((short) id) << 16) | ((data & 0x7fff) << 1);
-    }
-
-    public static int getNetworkId(int networkFullId) {
-        return networkFullId >> 1;
-    }
-
-    public static boolean hasData(int id) {
-        return (id & 0x1) != 0;
     }
 
     @ToString
@@ -106,7 +58,5 @@ public class RuntimeItems {
     static class Entry {
         String name;
         int id;
-        Integer oldId;
-        Integer oldData;
     }
 }

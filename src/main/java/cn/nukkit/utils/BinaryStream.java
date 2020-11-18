@@ -366,23 +366,16 @@ public class BinaryStream {
     }
 
     public Item getSlot() {
-        int networkId = this.getVarInt();
+        int id = this.getVarInt();
 
-        if (networkId == 0) {
+        if (id == 0) {
             return Item.get(0, 0, 0);
         }
-
-        int fullId = RuntimeItems.getLegacyFullId(networkId);
-        boolean hasData = RuntimeItems.hasData(fullId);
-        int id = RuntimeItems.getId(fullId);
 
         int auxValue = this.getVarInt();
         int data = auxValue >> 8;
         if (data == Short.MAX_VALUE) {
             data = -1;
-        }
-        if (hasData) {
-            data = RuntimeItems.getData(fullId);
         }
         int cnt = auxValue & 0xff;
 
@@ -469,15 +462,15 @@ public class BinaryStream {
 
         boolean isDurable = item instanceof ItemDurable;
 
-        int networkFullId = RuntimeItems.getNetworkFullId(item);
-        boolean clearData = RuntimeItems.hasData(networkFullId);
-        int networkId = RuntimeItems.getNetworkId(networkFullId);
+//        int networkFullId = RuntimeItems.getNetworkFullId(item);
+//        boolean clearData = RuntimeItems.hasData(networkFullId);
+//        int networkId = RuntimeItems.getNetworkId(networkFullId);
 
-        this.putVarInt(networkId);
+        this.putVarInt(item.getId());
 
         int auxValue = item.getCount();
         if (!isDurable) {
-            int meta = clearData ? 0 : item.hasMeta() ? item.getDamage() : -1;
+            int meta = item.hasMeta() ? item.getDamage() : -1;
             auxValue |= ((meta & 0x7fff) << 8);
         }
         this.putVarInt(auxValue);

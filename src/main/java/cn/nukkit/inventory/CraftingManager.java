@@ -196,18 +196,18 @@ public class CraftingManager {
 //                pk.addShapelessRecipe((ShapelessRecipe) recipe);
 //            }
 //        }
-//
+
 //        for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
 //            pk.addFurnaceRecipe(recipe);
 //        }
-//
-//        for (BrewingRecipe recipe : brewingRecipes.values()) {
-//            pk.addBrewingRecipe(recipe);
-//        }
-//
-//        for (ContainerRecipe recipe : containerRecipes.values()) {
-//            pk.addContainerRecipe(recipe);
-//        }
+
+        for (BrewingRecipe recipe : brewingRecipes.values()) {
+            pk.addBrewingRecipe(recipe);
+        }
+
+        for (ContainerRecipe recipe : containerRecipes.values()) {
+            pk.addContainerRecipe(recipe);
+        }
 
         pk.encode();
 
