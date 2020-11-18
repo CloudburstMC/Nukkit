@@ -51,14 +51,14 @@ public class ItemBoat extends Item {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (float) ((player.yaw + 90f) % 360)))
                         .add(new FloatTag("", 0)))
-                .putByte("woodID", this.getDamage())
+                .putInt("Variant", this.getDamage())
         );
 
         if (boat == null) {
             return false;
         }
 
-        if (player.isSurvival()) {
+        if (player.isSurvival() || player.isAdventure()) {
             Item item = player.getInventory().getItemInHand();
             item.setCount(item.getCount() - 1);
             player.getInventory().setItemInHand(item);
