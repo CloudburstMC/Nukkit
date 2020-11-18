@@ -189,25 +189,25 @@ public class CraftingManager {
         CraftingDataPacket pk = new CraftingDataPacket();
         pk.cleanRecipes = true;
 
-        for (Recipe recipe : this.getRecipes()) {
-            if (recipe instanceof ShapedRecipe) {
-                pk.addShapedRecipe((ShapedRecipe) recipe);
-            } else if (recipe instanceof ShapelessRecipe) {
-                pk.addShapelessRecipe((ShapelessRecipe) recipe);
-            }
-        }
-
-        for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
-            pk.addFurnaceRecipe(recipe);
-        }
-
-        for (BrewingRecipe recipe : brewingRecipes.values()) {
-            pk.addBrewingRecipe(recipe);
-        }
-
-        for (ContainerRecipe recipe : containerRecipes.values()) {
-            pk.addContainerRecipe(recipe);
-        }
+//        for (Recipe recipe : this.getRecipes()) {
+//            if (recipe instanceof ShapedRecipe) {
+//                pk.addShapedRecipe((ShapedRecipe) recipe);
+//            } else if (recipe instanceof ShapelessRecipe) {
+//                pk.addShapelessRecipe((ShapelessRecipe) recipe);
+//            }
+//        }
+//
+//        for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
+//            pk.addFurnaceRecipe(recipe);
+//        }
+//
+//        for (BrewingRecipe recipe : brewingRecipes.values()) {
+//            pk.addBrewingRecipe(recipe);
+//        }
+//
+//        for (ContainerRecipe recipe : containerRecipes.values()) {
+//            pk.addContainerRecipe(recipe);
+//        }
 
         pk.encode();
 

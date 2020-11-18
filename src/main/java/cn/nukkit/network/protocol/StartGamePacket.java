@@ -141,7 +141,7 @@ public class StartGamePacket extends DataPacket {
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
         this.putBoolean(this.isTrial);
-        this.putBoolean(this.isMovementServerAuthoritative);
+        this.putVarInt(this.isMovementServerAuthoritative ? 1 : 0); // 2 - rewind
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
         this.putUnsignedVarInt(0); // Custom blocks
