@@ -156,7 +156,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         if (type == Level.BLOCK_UPDATE_SCHEDULED && this.isTriggered()) {
             this.dispense();
             return type;
-        } else if (type == Level.BLOCK_UPDATE_REDSTONE) {
+        } else if (type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_NORMAL) {
             boolean triggered = this.isTriggered();
 
             if (this.isPowered() && !triggered) {
@@ -176,14 +176,13 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
 
     @PowerNukkitDifference(info = "Using this method to check if powered", since = "1.4.0.0-PN")
     private boolean isPowered() {
+        if (this.level.isBlockPowered(this.getLocation()))
+            return true;
+
         for (BlockFace side : BlockFace.values()) {
             Block b = this.getSide(side);
 
-            if (b.getId() == Block.REDSTONE_WIRE && b.getDamage() > 0) {
-                return true;
-            }
-
-            if (this.level.isSidePowered(b, side)) {
+            if (this.level.isSidePowered(b.getLocation(), side)) {
                 return true;
             }
         }
