@@ -20,8 +20,10 @@ package cn.nukkit.blockstate;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.api.Unsigned;
 import cn.nukkit.blockproperty.BlockProperties;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -59,7 +61,7 @@ public class ZeroMutableBlockState extends MutableBlockState {
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
-    public void setDataStorage(Number storage) {
+    public void setDataStorage(@Nonnegative Number storage) {
         Class<? extends Number> c = storage.getClass();
         int state;
         if (c == Integer.class || c == Short.class || c == Byte.class) {
@@ -79,7 +81,7 @@ public class ZeroMutableBlockState extends MutableBlockState {
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
-    public void setDataStorageFromInt(int storage) {
+    public void setDataStorageFromInt(@Nonnegative int storage) {
         if (storage != 0) {
             throw handleUnsupportedStorageType(getBlockId(), storage, new ArithmeticException("ZeroMutableBlockState only accepts zero"));
         }
@@ -106,6 +108,7 @@ public class ZeroMutableBlockState extends MutableBlockState {
         throw new NoSuchElementException("ZeroMutableBlockState can't have properties. Attempted to set "+propertyName+" to "+value);
     }
 
+    @Nonnegative
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Nonnull
@@ -121,6 +124,7 @@ public class ZeroMutableBlockState extends MutableBlockState {
         return true;
     }
 
+    @Nonnegative
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
@@ -128,6 +132,7 @@ public class ZeroMutableBlockState extends MutableBlockState {
         return 0;
     }
 
+    @Unsigned
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
@@ -135,6 +140,7 @@ public class ZeroMutableBlockState extends MutableBlockState {
         return 0;
     }
 
+    @Nonnegative
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Nonnull
