@@ -13,11 +13,10 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBoat;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
@@ -35,8 +34,8 @@ import java.util.ArrayList;
 public class EntityBoat extends EntityVehicle {
 
     public static final int NETWORK_ID = 90;
-
-    public static final int DATA_WOOD_ID = 20;
+    
+    protected int variant;
 
     public static final Vector3f RIDER_PLAYER_OFFSET = new Vector3f(0, 1.02001f, 0);
     public static final Vector3f RIDER_OFFSET = new Vector3f(0, -0.2f, 0);
@@ -63,8 +62,11 @@ public class EntityBoat extends EntityVehicle {
     @Override
     protected void initEntity() {
         super.initEntity();
-
-        this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
+        
+        if (this.namedTag.contains("Variant")) {
+            this.variant = this.namedTag.getInt("Variant");
+        }
+        this.dataProperties.putInt(DATA_VARIANT, this.variant);
     }
 
     @Override
@@ -126,9 +128,6 @@ public class EntityBoat extends EntityVehicle {
         for (Entity linkedEntity : this.passengers) {
             linkedEntity.riding = null;
         }
-
-        SmokeParticle particle = new SmokeParticle(this);
-        this.level.addParticle(particle);
     }
 
     @Override
@@ -425,7 +424,22 @@ public class EntityBoat extends EntityVehicle {
         super.kill();
 
         if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-            this.level.dropItem(this, new ItemBoat());
+            this.level.dropItem(this, Item.get(ItemID.BOAT, this.variant));
         }
+    }
+    
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+        this.namedTag.putInt("Variant", this.variant);
+    }
+    
+    public int getVariant() {
+        return this.variant;
+    }
+    
+    public void setVariant(int variant) {
+        this.variant = variant;
+        this.dataProperties.putInt(DATA_VARIANT, variant);
     }
 }
