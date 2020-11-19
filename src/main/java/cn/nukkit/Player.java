@@ -870,6 +870,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.inventory.sendContents(this);
         this.inventory.sendArmorContents(this);
         this.offhandInventory.sendContents(this);
+        this.setEnableClientCommand(true);
 
         SetTimePacket setTimePacket = new SetTimePacket();
         setTimePacket.time = this.level.getTime();
@@ -2107,7 +2108,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.dataPacket(new BiomeDefinitionListPacket());
         this.dataPacket(new AvailableEntityIdentifiersPacket());
         this.inventory.sendCreativeContents();
-        this.setEnableClientCommand(true);
         this.getAdventureSettings().update();
 
         this.sendAttributes();
