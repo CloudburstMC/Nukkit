@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -153,8 +152,9 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
             return 0;
         }
 
-        if (type == Level.BLOCK_UPDATE_SCHEDULED && this.isTriggered()) {
+        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             this.dispense();
+
             return type;
         } else if (type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_NORMAL) {
             boolean triggered = this.isTriggered();
@@ -163,7 +163,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
                 this.setTriggered(true);
                 this.level.setBlock(this, this, false, false);
                 level.scheduleUpdate(this, this, 4);
-            } else if (!this.isPowered()) {
+            } else if (!this.isPowered() && triggered) {
                 this.setTriggered(false);
                 this.level.setBlock(this, this, false, false);
             }
