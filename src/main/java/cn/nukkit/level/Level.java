@@ -3865,9 +3865,11 @@ public class Level implements ChunkManager, Metadatable {
         return this.getBlock(pos).getStrongPower(direction);
     }
 
+    @PowerNukkitDifference(info = "Check if the block to check is a piston, then return 0.", since = "1.4.0.0-PN")
     public int getStrongPower(Vector3 pos) {
-        int i = 0;
+        if (pos instanceof BlockPistonBase || this.getBlock(pos) instanceof BlockPistonBase) return 0;
 
+        int i = 0;
         for (BlockFace face : BlockFace.values()) {
             i = Math.max(i, this.getStrongPower(temporalVector.setComponentsAdding(pos, face), face));
 
