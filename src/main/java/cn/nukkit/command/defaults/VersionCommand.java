@@ -1,6 +1,8 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandParamType;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.plugin.Plugin;
@@ -23,6 +25,9 @@ public class VersionCommand extends VanillaCommand {
         );
         this.setPermission("nukkit.command.version");
         this.commandParameters.clear();
+        this.commandParameters.put("default", new CommandParameter[]{
+                CommandParameter.newType("pluginName", true, CommandParamType.STRING)
+        });
     }
 
     @Override
@@ -38,15 +43,15 @@ public class VersionCommand extends VanillaCommand {
                     sender.getServer().getVersion(),
                     String.valueOf(ProtocolInfo.CURRENT_PROTOCOL)));
         } else {
-            String pluginName = "";
-            for (String arg : args) pluginName += arg + " ";
-            pluginName = pluginName.trim();
+            StringBuilder pluginName = new StringBuilder();
+            for (String arg : args) pluginName.append(arg).append(" ");
+            pluginName = new StringBuilder(pluginName.toString().trim());
             final boolean[] found = {false};
-            final Plugin[] exactPlugin = {sender.getServer().getPluginManager().getPlugin(pluginName)};
+            final Plugin[] exactPlugin = {sender.getServer().getPluginManager().getPlugin(pluginName.toString())};
 
             if (exactPlugin[0] == null) {
-                pluginName = pluginName.toLowerCase();
-                final String finalPluginName = pluginName;
+                pluginName = new StringBuilder(pluginName.toString().toLowerCase());
+                final String finalPluginName = pluginName.toString();
                 sender.getServer().getPluginManager().getPlugins().forEach((s, p) -> {
                     if (s.toLowerCase().contains(finalPluginName)) {
                         exactPlugin[0] = p;

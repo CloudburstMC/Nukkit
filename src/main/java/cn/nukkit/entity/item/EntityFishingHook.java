@@ -21,9 +21,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 
@@ -183,17 +180,17 @@ public class EntityFishingHook extends EntityProjectile {
         EntityEventPacket pk = new EntityEventPacket();
         pk.eid = this.getId();
         pk.event = EntityEventPacket.FISH_HOOK_HOOK;
-        Server.broadcastPacket(this.level.getPlayers().values(), pk);
+        Server.broadcastPacket(this.getViewers().values(), pk);
 
         EntityEventPacket bubblePk = new EntityEventPacket();
         bubblePk.eid = this.getId();
         bubblePk.event = EntityEventPacket.FISH_HOOK_BUBBLE;
-        Server.broadcastPacket(this.level.getPlayers().values(), bubblePk);
+        Server.broadcastPacket(this.getViewers().values(), bubblePk);
 
         EntityEventPacket teasePk = new EntityEventPacket();
         teasePk.eid = this.getId();
         teasePk.event = EntityEventPacket.FISH_HOOK_TEASE;
-        Server.broadcastPacket(this.level.getPlayers().values(), teasePk);
+        Server.broadcastPacket(this.getViewers().values(), teasePk);
 
         Random random = new Random();
         for (int i = 0; i < 5; i++) {
@@ -244,24 +241,9 @@ public class EntityFishingHook extends EntityProjectile {
                 motion = new Vector3();
             }
 
-            CompoundTag itemTag = NBTIO.putItemHelper(item);
-            itemTag.setName("Item");
-
             EntityItem itemEntity = new EntityItem(
                     this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true),
-                    new CompoundTag()
-                            .putList(new ListTag<DoubleTag>("Pos")
-                                    .add(new DoubleTag("", this.getX()))
-                                    .add(new DoubleTag("", this.getWaterHeight()))
-                                    .add(new DoubleTag("", this.getZ())))
-                            .putList(new ListTag<DoubleTag>("Motion")
-                                    .add(new DoubleTag("", motion.x))
-                                    .add(new DoubleTag("", motion.y))
-                                    .add(new DoubleTag("", motion.z)))
-                            .putList(new ListTag<FloatTag>("Rotation")
-                                    .add(new FloatTag("", new Random().nextFloat() * 360))
-                                    .add(new FloatTag("", 0)))
-                            .putShort("Health", 5).putCompound("Item", itemTag).putShort("PickupDelay", 1));
+                    Entity.getDefaultNBT(new Vector3(this.x, this.getWaterHeight(), this.z), motion, new Random().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(item)).putShort("PickupDelay", 1));
 
             if (this.shootingEntity != null && this.shootingEntity instanceof Player) {
                 itemEntity.setOwner(this.shootingEntity.getName());
@@ -277,7 +259,7 @@ public class EntityFishingHook extends EntityProjectile {
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getId();
             pk.event = EntityEventPacket.FISH_HOOK_TEASE;
-            Server.broadcastPacket(this.level.getPlayers().values(), pk);
+            Server.broadcastPacket(this.getViewers().values(), pk);
         }
         if (!this.closed) {
             this.kill();

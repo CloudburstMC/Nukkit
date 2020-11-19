@@ -3,6 +3,9 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
 
+/**
+ * @author joserobjr
+ */
 public class ItemHoneyBottle extends ItemEdible {
     
     public ItemHoneyBottle() {

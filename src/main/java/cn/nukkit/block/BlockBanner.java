@@ -119,8 +119,6 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
         if (blockEntity instanceof BlockEntityBanner) {
             BlockEntityBanner banner = (BlockEntityBanner) blockEntity;
             item.setDamage(banner.getBaseColor() & 0xf);
-            item.setNamedTag((item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag())
-                    .putInt("Base", banner.getBaseColor() & 0xf));
             int type = banner.namedTag.getInt("Type");
             if (type > 0) {
                 item.setNamedTag((item.hasCompoundTag() ? item.getNamedTag() : new CompoundTag())

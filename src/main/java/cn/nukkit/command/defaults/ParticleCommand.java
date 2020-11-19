@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
@@ -12,6 +13,7 @@ import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -27,10 +29,10 @@ public class ParticleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.particle");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("name", false, ENUM_VALUES),
-                new CommandParameter("position", CommandParamType.POSITION, false),
-                new CommandParameter("count", CommandParamType.INT, true),
-                new CommandParameter("data", true)
+                CommandParameter.newEnum("effect", new CommandEnum("Particle", ENUM_VALUES)),
+                CommandParameter.newType("position", CommandParamType.POSITION),
+                CommandParameter.newType("count", true, CommandParamType.INT),
+                CommandParameter.newType("data", true, CommandParamType.INT)
         });
     }
 
@@ -71,7 +73,7 @@ public class ParticleCommand extends VanillaCommand {
         int count = 1;
         if (args.length > 4) {
             try {
-                double c = Double.valueOf(args[4]);
+                double c = Double.parseDouble(args[4]);
                 count = (int) c;
             } catch (Exception e) {
                 //ignore
@@ -82,7 +84,7 @@ public class ParticleCommand extends VanillaCommand {
         int data = -1;
         if (args.length > 5) {
             try {
-                double d = Double.valueOf(args[5]);
+                double d = Double.parseDouble(args[5]);
                 data = (int) d;
             } catch (Exception e) {
                 //ignore
@@ -98,7 +100,7 @@ public class ParticleCommand extends VanillaCommand {
 
         sender.sendMessage(new TranslationContainer("commands.particle.success", name, String.valueOf(count)));
 
-        Random random = new Random(System.currentTimeMillis());
+        Random random = ThreadLocalRandom.current();
 
         for (int i = 0; i < count; i++) {
             particle.setComponents(
@@ -183,17 +185,17 @@ public class ParticleCommand extends VanillaCommand {
         if (name.startsWith("iconcrack_")) {
             String[] d = name.split("_");
             if (d.length == 3) {
-                return new ItemBreakParticle(pos, Item.get(Integer.valueOf(d[1]), Integer.valueOf(d[2])));
+                return new ItemBreakParticle(pos, Item.get(Integer.parseInt(d[1]), Integer.valueOf(d[2])));
             }
         } else if (name.startsWith("blockcrack_")) {
             String[] d = name.split("_");
             if (d.length == 2) {
-                return new TerrainParticle(pos, Block.get(Integer.valueOf(d[1]) & 0xff, Integer.valueOf(d[1]) >> 12));
+                return new TerrainParticle(pos, Block.get(Integer.parseInt(d[1]) & 0xff, Integer.parseInt(d[1]) >> 12));
             }
         } else if (name.startsWith("blockdust_")) {
             String[] d = name.split("_");
             if (d.length >= 4) {
-                return new DustParticle(pos, Integer.valueOf(d[1]) & 0xff, Integer.valueOf(d[2]) & 0xff, Integer.valueOf(d[3]) & 0xff, d.length >= 5 ? Integer.valueOf(d[4]) & 0xff : 255);
+                return new DustParticle(pos, Integer.parseInt(d[1]) & 0xff, Integer.parseInt(d[2]) & 0xff, Integer.parseInt(d[3]) & 0xff, d.length >= 5 ? Integer.parseInt(d[4]) & 0xff : 255);
             }
         }
 

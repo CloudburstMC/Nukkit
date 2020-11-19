@@ -145,7 +145,7 @@ public class SimpleCommandMap implements CommandMap {
                 if (commandParameters != null) {
                     Map<String, CommandParameter[]> map = Arrays.stream(commandParameters.parameters())
                             .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
-                                    .map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional()))
+                                    .map(parameter -> CommandParameter.newType(parameter.name(), parameter.optional(), parameter.type()))
                                     .distinct()
                                     .toArray(CommandParameter[]::new)));
 
@@ -301,7 +301,7 @@ public class SimpleCommandMap implements CommandMap {
             }
             List<String> targets = new ArrayList<>();
 
-            String bad = "";
+            StringBuilder bad = new StringBuilder();
 
             for (String commandString : commandStrings) {
                 String[] args = commandString.split(" ");
@@ -309,16 +309,16 @@ public class SimpleCommandMap implements CommandMap {
 
                 if (command == null) {
                     if (bad.length() > 0) {
-                        bad += ", ";
+                        bad.append(", ");
                     }
-                    bad += commandString;
+                    bad.append(commandString);
                 } else {
                     targets.add(commandString);
                 }
             }
 
             if (bad.length() > 0) {
-                this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.command.alias.notFound", new String[]{alias, bad}));
+                this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.command.alias.notFound", new String[]{alias, bad.toString()}));
                 continue;
             }
 

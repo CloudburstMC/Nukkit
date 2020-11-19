@@ -117,16 +117,14 @@ public class NetworkInventoryAction {
 
         switch (this.sourceType) {
             case SOURCE_CONTAINER:
+            case SOURCE_CRAFT_SLOT:
+            case SOURCE_TODO:
                 packet.putVarInt(this.windowId);
                 break;
             case SOURCE_WORLD:
                 packet.putUnsignedVarInt(this.unknown);
                 break;
             case SOURCE_CREATIVE:
-                break;
-            case SOURCE_CRAFT_SLOT:
-            case SOURCE_TODO:
-                packet.putVarInt(this.windowId);
                 break;
         }
 

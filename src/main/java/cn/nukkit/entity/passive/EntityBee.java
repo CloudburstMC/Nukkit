@@ -11,6 +11,9 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * @author joserobjr
+ */
 public class EntityBee extends EntityAnimal {
 
     public static final int NETWORK_ID = 122;
@@ -28,12 +31,18 @@ public class EntityBee extends EntityAnimal {
 
     @Override
     public float getWidth() {
-        return 0.7F;
+        if (this.isBaby()) {
+            return 0.35f;
+        }
+        return 0.7f;
     }
 
     @Override
     public float getHeight() {
-        return 0.6F;
+        if (this.isBaby()) {
+            return 0.30f;
+        }
+        return 0.6f;
     }
 
     public boolean getHasNectar() {

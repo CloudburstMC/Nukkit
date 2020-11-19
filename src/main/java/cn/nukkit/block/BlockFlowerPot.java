@@ -35,7 +35,6 @@ public class BlockFlowerPot extends BlockFlowable {
             case CACTUS:
             case WITHER_ROSE:
             case BAMBOO:
-                // TODO: 2016/2/4 case NETHER_WART:
                 return true;
             default:
                 return false;

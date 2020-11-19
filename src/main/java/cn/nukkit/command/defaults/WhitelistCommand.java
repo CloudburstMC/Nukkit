@@ -2,6 +2,7 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
@@ -25,14 +26,13 @@ public class WhitelistCommand extends VanillaCommand {
         );
         this.commandParameters.clear();
         this.commandParameters.put("1arg", new CommandParameter[]{
-                new CommandParameter("on|off|list|reload", CommandParamType.STRING, false)
+                CommandParameter.newEnum("action", new CommandEnum("WhitelistAction", "on", "off", "list", "reload"))
         });
         this.commandParameters.put("2args", new CommandParameter[]{
-                new CommandParameter("add|remove", CommandParamType.STRING, false),
-                new CommandParameter("player", CommandParamType.TARGET, false)
+                CommandParameter.newEnum("action", new CommandEnum("WhitelistPlayerAction", "add", "remove")),
+                CommandParameter.newType("player", CommandParamType.TARGET)
         });
     }
-
 
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
@@ -66,10 +66,10 @@ public class WhitelistCommand extends VanillaCommand {
 
                     return true;
                 case "list":
-                    String result = "";
+                    StringBuilder result = new StringBuilder();
                     int count = 0;
                     for (String player : sender.getServer().getWhitelist().getAll().keySet()) {
-                        result += player + ", ";
+                        result.append(player).append(", ");
                         ++count;
                     }
                     sender.sendMessage(new TranslationContainer("commands.whitelist.list", String.valueOf(count), String.valueOf(count)));

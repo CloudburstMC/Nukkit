@@ -2,7 +2,6 @@ package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BannerPattern;
 import cn.nukkit.utils.DyeColor;
@@ -23,7 +22,6 @@ public class ItemBanner extends Item {
     public ItemBanner(Integer meta, int count) {
         super(BANNER, meta, count, "Banner");
         this.block = Block.get(Block.STANDING_BANNER);
-        //this.correctNBT(); // this was added by KCodeYT in pr #1019 but it seems to be causing crashes when crafting banners
     }
 
     @Override
@@ -32,14 +30,11 @@ public class ItemBanner extends Item {
     }
 
     public int getBaseColor() {
-        return this.getNamedTag().getInt("Base");
+        return this.getDamage() & 0x0f;
     }
 
     public void setBaseColor(DyeColor color) {
-        CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
-        tag.putInt("Base", color.getDyeData() & 0x0f);
         this.setDamage(color.getDyeData() & 0x0f);
-        this.setNamedTag(tag);
     }
 
     public int getType() {
@@ -81,11 +76,6 @@ public class ItemBanner extends Item {
     }
 
     public void correctNBT() {
-        CompoundTag tag = this.getNamedTag() != null ? this.getNamedTag() : new CompoundTag();
-        if (!tag.contains("Base") || !(tag.get("Base") instanceof IntTag)) {
-            tag.putInt("Base", this.meta);
-        }
 
-        this.setNamedTag(tag);
     }
 }

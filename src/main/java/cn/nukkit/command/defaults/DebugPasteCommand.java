@@ -20,6 +20,7 @@ public class DebugPasteCommand extends VanillaCommand {
     public DebugPasteCommand(String name) {
         super(name, "%nukkit.command.debug.description", "%nukkit.command.debug.usage");
         this.setPermission("nukkit.command.debug.perform");
+        this.commandParameters.clear();
     }
 
     @Override
