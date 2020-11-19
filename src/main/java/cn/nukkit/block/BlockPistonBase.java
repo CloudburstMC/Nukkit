@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  */
 public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable {
 
-    public boolean sticky = false;
+    public boolean sticky;
 
     public BlockPistonBase() {
         this(0);
@@ -298,7 +298,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         return false;
     }
 
-    public static class BlocksCalculator {
+    public class BlocksCalculator {
 
         private final Vector3 pistonPos;
         private Vector3 armPos;
