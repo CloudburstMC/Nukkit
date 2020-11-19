@@ -1,5 +1,6 @@
 package cn.nukkit.level.particle;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.DataPacket;
 
@@ -83,11 +84,12 @@ public abstract class Particle extends Vector3 {
     public static final int TYPE_FALLING_DRAGONS_BREATH = 66;
     public static final int TYPE_DRAGONS_BREATH = 67;
     
-    public static final Integer getParticleIdByName(String name) {
+    @Since("1.3.2.0-PN")
+    public static Integer getParticleIdByName(String name) {
         name = name.toUpperCase();
         
         try {
-            Field field = Particle.class.getField((name.startsWith("TYPE_") == true ? name : ("TYPE_" + name)));
+            Field field = Particle.class.getDeclaredField(name.startsWith("TYPE_") ? name : "TYPE_" + name);
 
             Class<?> type = field.getType();
 
@@ -99,8 +101,9 @@ public abstract class Particle extends Vector3 {
         }
         return null;
     }
-    
-    public static final boolean particleExists(String name) {
+
+    @Since("1.3.2.0-PN")
+    public static boolean particleExists(String name) {
         return getParticleIdByName(name) != null;   
     }
     

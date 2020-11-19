@@ -92,8 +92,8 @@ import java.net.UnknownHostException;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -4415,6 +4415,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param item to drop
      * @return EntityItem if the item was dropped or null if the item was null
      */
+    @Since("1.3.2.0-PN")
     public EntityItem dropAndGetItem(Item item) {
         if (!this.spawned || !this.isAlive()) {
             return null;

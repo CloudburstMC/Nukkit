@@ -1,5 +1,7 @@
 package cn.nukkit.item;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -18,7 +20,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TIER_STONE = 3;
     public static final int TIER_IRON = 4;
     public static final int TIER_DIAMOND = 5;
-    public static final int TIER_NETHERITE = 6;
+    @Since("1.3.2.0-PN") public static final int TIER_NETHERITE = 6;
 
     public static final int TYPE_NONE = 0;
     public static final int TYPE_SWORD = 1;
@@ -26,10 +28,12 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TYPE_PICKAXE = 3;
     public static final int TYPE_AXE = 4;
     public static final int TYPE_SHEARS = 5;
-    public static final int TYPE_HOE = 6;
+    @Since("1.3.2.0-PN") public static final int TYPE_HOE = 6;
+    
     /**
      * Same breaking speed independent of the tool.
      */
+    @PowerNukkitOnly
     public static final int TYPE_HANDS_ONLY = 100000;
 
     public static final int DURABILITY_WOODEN = 60;
@@ -37,7 +41,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_STONE = 132;
     public static final int DURABILITY_IRON = 251;
     public static final int DURABILITY_DIAMOND = 1562;
-    public static final int DURABILITY_NETHERITE = 2032;
+    @Since("1.3.2.0-PN") public static final int DURABILITY_NETHERITE = 2032;
     public static final int DURABILITY_FLINT_STEEL = 65;
     public static final int DURABILITY_SHEARS = 239;
     public static final int DURABILITY_BOW = 385;

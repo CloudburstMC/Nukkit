@@ -1,5 +1,6 @@
 package cn.nukkit.command.data;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.item.ItemID;
 import com.google.common.collect.ImmutableList;
@@ -12,11 +13,18 @@ import java.util.List;
  * @author CreeperFace
  */
 public class CommandEnum {
-
+    
+    @Since("1.3.2.0-PN")
     public static final CommandEnum ENUM_BOOLEAN = new CommandEnum("Boolean", ImmutableList.of("true", "false"));
+
+    @Since("1.3.2.0-PN")
     public static final CommandEnum ENUM_GAMEMODE = new CommandEnum("GameMode",
             ImmutableList.of("survival", "creative", "s", "c", "adventure", "a", "spectator", "view", "v", "spc"));
+
+    @Since("1.3.2.0-PN")
     public static final CommandEnum ENUM_BLOCK;
+
+    @Since("1.3.2.0-PN")
     public static final CommandEnum ENUM_ITEM;
 
     static {
@@ -37,6 +45,7 @@ public class CommandEnum {
     private String name;
     private List<String> values;
 
+    @Since("1.3.2.0-PN")
     public CommandEnum(String name, String... values) {
         this(name, Arrays.asList(values));
     }

@@ -1,5 +1,6 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 
@@ -7,11 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Since("1.3.2.0-PN")
 public class ListChunkManager implements ChunkManager {
 
     private ChunkManager parent;
     private List<Block> blocks;
 
+    @Since("1.3.2.0-PN")
     public ListChunkManager(ChunkManager parent) {
         this.parent = parent;
         this.blocks = new ArrayList<>();
@@ -110,6 +113,7 @@ public class ListChunkManager implements ChunkManager {
         return this.parent.getSeed();
     }
 
+    @Since("1.3.2.0-PN")
     public List<Block> getBlocks() {
         return this.blocks;
     }

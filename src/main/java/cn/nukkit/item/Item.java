@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
@@ -701,6 +702,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         return enchantments.toArray(new Enchantment[0]);
     }
 
+    @Since("1.3.2.0-PN")
     public boolean hasEnchantment(int id) {
         return this.getEnchantment(id) != null;
     }

@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Attribute;
 import lombok.ToString;
 
@@ -13,7 +14,7 @@ public class UpdateAttributesPacket extends DataPacket {
 
     public Attribute[] entries;
     public long entityId;
-    public long frame;
+    @Since("1.3.2.0-PN") public long frame;
 
     @Override
     public byte pid() {

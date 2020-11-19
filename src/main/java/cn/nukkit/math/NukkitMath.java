@@ -1,5 +1,7 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.Since;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -54,6 +56,7 @@ public class NukkitMath {
         return value < min ? min : (value > max ? max : value);
     }
 
+    @Since("1.3.2.0-PN")
     public static float clamp(float value, float min, float max) {
         return value < min ? min : (value > max ? max : value);
     }

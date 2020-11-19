@@ -1,6 +1,9 @@
 package cn.nukkit.item.food;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.player.PlayerEatFoodEvent;
 import cn.nukkit.item.Item;
@@ -99,9 +102,12 @@ public abstract class Food {
             .addEffect(Effect.getEffect(Effect.REGENERATION).setAmplifier(1).setDuration(6 * 20)).addRelative(Item.SUSPICIOUS_STEW, 8));
     public static final Food suspicious_stew_wither = registerDefaultFood(new FoodEffectiveInBow(6, 7.2F)
             .addEffect(Effect.getEffect(Effect.WITHER).setAmplifier(1).setDuration(6 * 20)).addRelative(Item.SUSPICIOUS_STEW, 9));
-    // TODO Deprecate this in PowerNukkit, it was added as honey_bottle in the upstream
-    public static final Food honey = registerDefaultFood(new FoodHoney(6, 2.4F).addRelative(Item.HONEY_BOTTLE));
-    //public static final Food honey_bottle = registerDefaultFood(new FoodNormal(6, 1.2F).addRelative(Item.HONEY_BOTTLE));
+    
+    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Was added in Cloudburst Nukkit with another name", replaceWith = "honey_bottle")
+    @PowerNukkitOnly
+    public static final Food honey = registerDefaultFood(new FoodHoney(6, 1.2F).addRelative(Item.HONEY_BOTTLE));
+    
+    @Since("1.3.2.0-PN")
     public static final Food honey_bottle = honey;
 
     //Opened API for plugins

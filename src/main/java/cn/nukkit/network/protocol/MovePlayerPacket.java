@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
@@ -28,7 +29,7 @@ public class MovePlayerPacket extends DataPacket {
     public long ridingEid;
     public int int1 = 0;
     public int int2 = 0;
-    public long frame;
+    @Since("1.3.2.0-PN") public long frame;
 
     @Override
     public void decode() {
