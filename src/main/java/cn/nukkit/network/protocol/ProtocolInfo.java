@@ -15,12 +15,12 @@ public interface ProtocolInfo {
      * Actual Minecraft: PE protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("408"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("419"); // DO NOT REMOVE BOXING
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.16.20";
-    String MINECRAFT_VERSION_NETWORK = "1.16.20";
+    String MINECRAFT_VERSION = "v1.16.100";
+    String MINECRAFT_VERSION_NETWORK = "1.16.100";
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
@@ -172,6 +172,12 @@ public interface ProtocolInfo {
     @Since("1.3.0.0-PN") byte POS_TRACKING_CLIENT_REQUEST_PACKET = (byte) 0x9a;
     @Since("1.3.0.0-PN") byte DEBUG_INFO_PACKET = (byte) 0x9b;
     @Since("1.3.0.0-PN") byte PACKET_VIOLATION_WARNING_PACKET = (byte) 0x9c;
+    byte MOTION_PREDICTION_HINTS_PACKET = (byte) 0x9d;
+    byte ANIMATE_ENTITY_PACKET = (byte) 0x9e;
+    byte CAMERA_SHAKE_PACKET = (byte) 0x9f;
+    byte PLAYER_FOG_PACKET = (byte) 0xa0;
+    byte CORRECT_PLAYER_MOVE_PREDICTION_PACKET = (byte) 0xa1;
+    byte ITEM_COMPONENT_PACKET = (byte) 0xa2;
 
     byte BATCH_PACKET = (byte) 0xff;
 }
