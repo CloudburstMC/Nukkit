@@ -3,9 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
-import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.level.Sound;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.ByteTag;
@@ -99,10 +97,7 @@ abstract public class ItemArmor extends Item implements ItemDurable {
                 case TIER_NETHERITE:
                     player.getLevel().addSound(player, Sound.ARMOR_EQUIP_NETHERITE);
                     break;
-                case TIER_NETHERITE:
-                    player.getLevel().addSound(player, Sound.ARMOR_EQUIP_NETHERITE);
                 case TIER_OTHER:
-                case TIER_LEGACY_OTHER:
                 default:
                     player.getLevel().addSound(player, Sound.ARMOR_EQUIP_GENERIC);
             }

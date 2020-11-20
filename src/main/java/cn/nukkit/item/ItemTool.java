@@ -45,7 +45,6 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_IRON = dynamic(251);
     public static final int DURABILITY_DIAMOND = dynamic(1562);
     @Since("1.3.2.0-PN") public static final int DURABILITY_NETHERITE = dynamic(2032);
-    public static final int DURABILITY_NETHERITE = dynamic(2032);
     public static final int DURABILITY_FLINT_STEEL = dynamic(65);
     public static final int DURABILITY_SHEARS = dynamic(239);
     public static final int DURABILITY_BOW = dynamic(385);
