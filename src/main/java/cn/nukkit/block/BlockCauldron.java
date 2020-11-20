@@ -13,7 +13,6 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Map;
@@ -145,31 +144,6 @@ public class BlockCauldron extends BlockSolidMeta {
                     }
                 }
                 break;
-            case Item.DYE:
-                if (isEmpty() || cauldron.hasPotion()) {
-                    break;
-                }
-    
-                if (player.isSurvival() || player.isAdventure()) {
-                    item.setCount(item.getCount()-1);
-                    player.getInventory().setItemInHand(item);
-                }
-    
-                BlockColor color = new ItemDye(item.getDamage()).getDyeColor().getColor();
-                if (!cauldron.isCustomColor()) {
-                    cauldron.setCustomColor(color);
-                } else {
-                    BlockColor current = cauldron.getCustomColor();
-                    BlockColor mixed = new BlockColor(
-                            current.getRed() + (color.getRed() - current.getRed()) / 2,
-                            current.getGreen() + (color.getGreen() - current.getGreen()) / 2,
-                            current.getBlue() + (color.getBlue() - current.getBlue()) / 2
-                    );
-                    cauldron.setCustomColor(mixed);
-                }
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_ADDDYE);
-                
-                break;
             case Item.LEATHER_CAP:
             case Item.LEATHER_TUNIC:
             case Item.LEATHER_PANTS:
@@ -270,7 +244,32 @@ public class BlockCauldron extends BlockSolidMeta {
                 this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_POTION);
                 break;
             default:
-                return true;
+                if (item instanceof ItemDye) {
+                    if (isEmpty() || cauldron.hasPotion()) {
+                        break;
+                    }
+
+                    if (player.isSurvival() || player.isAdventure()) {
+                        item.setCount(item.getCount() - 1);
+                        player.getInventory().setItemInHand(item);
+                    }
+
+                    BlockColor color = ((ItemDye)item).getDyeColor().getColor();
+                    if (!cauldron.isCustomColor()) {
+                        cauldron.setCustomColor(color);
+                    } else {
+                        BlockColor current = cauldron.getCustomColor();
+                        BlockColor mixed = new BlockColor(
+                                current.getRed() + (color.getRed() - current.getRed()) / 2,
+                                current.getGreen() + (color.getGreen() - current.getGreen()) / 2,
+                                current.getBlue() + (color.getBlue() - current.getBlue()) / 2
+                        );
+                        cauldron.setCustomColor(mixed);
+                    }
+                    this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_ADDDYE);
+                } else {
+                    return true;
+                }
         }
 
         this.level.updateComparatorOutputLevel(this);

@@ -1,5 +1,8 @@
 package cn.nukkit.item;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.utils.BlockColor;
@@ -44,28 +47,100 @@ public class ItemDye extends Item {
     @Deprecated
     public static final int BLACK = DyeColor.BLACK.getDyeData();
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
+                    "so you may get 0 as result even though you have a colored dye.",
+            replaceWith = "new ItemInkSac()"
+    )
     public ItemDye() {
         this(0, 1);
     }
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
+                    "so you may get 0 as result even though you have a colored dye.",
+            replaceWith = "An item class specific for the item you want. Eg: ItemDyeGray, ItemDyeWhite, ItemBoneMeal, etc"
+    )
     public ItemDye(Integer meta) {
         this(meta, 1);
     }
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
+                    "so you may get 0 as result even though you have a colored dye.",
+            replaceWith = "An item class specific for the item you want. Eg: ItemDyeGray, ItemDyeWhite, ItemBoneMeal, etc"
+    )
     public ItemDye(DyeColor dyeColor) {
         this(dyeColor.getDyeData(), 1);
     }
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
+                    "so you may get 0 as result even though you have a colored dye.",
+            replaceWith = "An item class specific for the item you want. Eg: ItemDyeGray, ItemDyeWhite, ItemBoneMeal, etc"
+    )
     public ItemDye(DyeColor dyeColor, int amount) {
         this(dyeColor.getDyeData(), amount);
     }
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
+                    "so you may get 0 as result even though you have a colored dye.",
+            replaceWith = "An item class specific for the item you want. Eg: ItemDyeGray, ItemDyeWhite, ItemBoneMeal, etc"
+    )
     public ItemDye(Integer meta, int amount) {
         super(DYE, meta, amount, DyeColor.getByDyeData(meta).getDyeName());
 
         if (this.meta == DyeColor.BROWN.getDyeData()) {
             this.block = Block.get(BlockID.COCOA_BLOCK);
         }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    protected ItemDye(int id, Integer meta, int count, String name) {
+        super(id, meta, count, name);
+    }
+
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
+                    "so you may get 0 as result even though you have a colored dye.",
+            replaceWith = "getDyeColor() or isFertilizer()"
+    )
+    @Override
+    public int getDamage() {
+        return super.getDamage();
+    }
+
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isFertilizer() {
+        return getId() == DYE && getDyeColor().equals(DyeColor.WHITE);
+    }
+    
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
+    public boolean isLapisLazuli() {
+        return getId() == DYE && getDyeColor().equals(DyeColor.BLUE);
+    }
+
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
+    public boolean isCocoaBeans() {
+        return getId() == DYE && getDyeColor().equals(DyeColor.BROWN);
     }
 
     @Deprecated

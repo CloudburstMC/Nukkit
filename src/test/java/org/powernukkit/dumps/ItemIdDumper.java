@@ -37,7 +37,7 @@ import java.util.TreeMap;
  * @since 2020-11-20
  */
 @PowerNukkitOnly
-@Since("1.4.0.0-PN")
+@Since("1.3.2.0-PN")
 public class ItemIdDumper {
     public static void main(String[] args) throws IOException {
         Gson gson = new Gson();

@@ -41,7 +41,7 @@ public abstract class BlockCrops extends BlockFlowable {
     @Override
     public boolean onActivate(Item item, Player player) {
         //Bone meal
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.isFertilizer()) {
             if (this.getDamage() < 7) {
                 BlockCrops block = (BlockCrops) this.clone();
                 block.setDamage(block.getDamage() + ThreadLocalRandom.current().nextInt(3) + 2);

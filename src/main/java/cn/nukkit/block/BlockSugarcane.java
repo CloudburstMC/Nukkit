@@ -45,7 +45,7 @@ public class BlockSugarcane extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //Bonemeal
+        if (item.isFertilizer()) { //Bonemeal
             int count = 1;
 
             for (int i = 1; i <= 2; i++) {

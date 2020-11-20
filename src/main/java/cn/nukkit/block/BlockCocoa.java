@@ -171,7 +171,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.isFertilizer()) {
             if (this.getGrowthStage() < 2) {
                 if (!this.grow()) {
                     return false;

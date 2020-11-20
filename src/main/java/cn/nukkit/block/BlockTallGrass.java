@@ -84,7 +84,7 @@ public class BlockTallGrass extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.isFertilizer()) {
             Block up = this.up();
 
             if (up.getId() == AIR) {

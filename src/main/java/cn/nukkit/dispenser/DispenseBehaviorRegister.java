@@ -30,6 +30,7 @@ public final class DispenseBehaviorRegister {
         registerBehavior(ItemID.BOAT, new BoatDispenseBehavior());
         registerBehavior(ItemID.BUCKET, new BucketDispenseBehavior());
         registerBehavior(ItemID.DYE, new DyeDispenseBehavior());
+        registerBehavior(ItemID.BONE_MEAL, new DyeDispenseBehavior());
         registerBehavior(ItemID.FIREWORKS, new FireworksDispenseBehavior());
         registerBehavior(ItemID.FLINT_AND_STEEL, new FlintAndSteelDispenseBehavior());
         registerBehavior(BlockID.SHULKER_BOX, new ShulkerBoxDispenseBehavior());

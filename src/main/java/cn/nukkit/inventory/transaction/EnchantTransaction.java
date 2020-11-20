@@ -8,7 +8,10 @@ import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.EnchantingAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
+import cn.nukkit.utils.DyeColor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,10 +36,15 @@ public class EnchantTransaction extends InventoryTransaction {
         if (inv == null) return false;
         EnchantInventory eInv = (EnchantInventory) inv;
         if (!getSource().isCreative()) {
-            if (cost == -1 || !eInv.getReagentSlot().equals(Item.get(Item.DYE, 4), true, false) || eInv.getReagentSlot().count < cost)
+            if (cost == -1 || !isLapisLazuli(eInv.getReagentSlot()) || eInv.getReagentSlot().count < cost)
                 return false;
         }
         return (inputItem != null && outputItem != null && inputItem.equals(eInv.getInputSlot(), true, true));
+    }
+    
+    private boolean isLapisLazuli(Item item) {
+        int id = item.getId();
+        return id == ItemID.LAPIS_LAZULI || id == ItemID.DYE && ((ItemDye) item).getDyeColor().equals(DyeColor.BLUE); 
     }
 
     @Override

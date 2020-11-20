@@ -8,7 +8,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 
 public class BlockSeagrass extends BlockFlowable {
     
@@ -94,7 +93,7 @@ public class BlockSeagrass extends BlockFlowable {
     
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (getDamage() == 0 && item.getId() == Item.DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) {
+        if (getDamage() == 0 && item.isFertilizer()) {
             Block up = this.up();
             int damage;
             if (up instanceof BlockWater && ((damage = up.getDamage()) == 0 || damage == 8)) {
