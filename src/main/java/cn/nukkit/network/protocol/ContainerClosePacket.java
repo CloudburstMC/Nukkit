@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.Since;
 import lombok.ToString;
 
 /**
@@ -15,11 +16,12 @@ public class ContainerClosePacket extends DataPacket {
     }
 
     public int windowId;
-    public boolean wasServerInitiated = true;
+    @Since("1.3.2.0-PN") public boolean wasServerInitiated = true;
 
     @Override
     public void decode() {
         this.windowId = (byte) this.getByte();
+        this.wasServerInitiated = this.getBoolean();
     }
 
     @Override
