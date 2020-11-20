@@ -59,7 +59,7 @@ public class ItemBucketWater extends ItemBucket {
     @Since("1.3.2.0-PN")
     @PowerNukkitOnly
     @Override
-    protected Block getTargetBlock() {
+    public Block getTargetBlock() {
         return Block.get(BlockID.WATER);
     }
 

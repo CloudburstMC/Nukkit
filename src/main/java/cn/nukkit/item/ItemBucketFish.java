@@ -24,6 +24,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Level;
 
+import javax.annotation.Nullable;
+
 /**
  * @author joserobjr
  * @since 2020-11-20
@@ -51,5 +53,13 @@ abstract public class ItemBucketFish extends ItemBucketWater {
                 entity.spawnToAll();
             }
         }
+    }
+
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
+    @Nullable
+    @Override
+    public String getFishEntityId() {
+        return entityId;
     }
 }

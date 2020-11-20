@@ -51,7 +51,7 @@ public class ItemDye extends Item {
     @DeprecationDetails(
             since = "1.3.2.0-PN",
             reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
-                    "so you may get 0 as result even though you have a colored dye.",
+                    "so you may get 0 as meta result even though you have a colored dye.",
             replaceWith = "new ItemInkSac()"
     )
     public ItemDye() {
@@ -62,7 +62,7 @@ public class ItemDye extends Item {
     @DeprecationDetails(
             since = "1.3.2.0-PN",
             reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
-                    "so you may get 0 as result even though you have a colored dye.",
+                    "so you may get 0 as meta result even though you have a colored dye.",
             replaceWith = "An item class specific for the item you want. Eg: ItemDyeGray, ItemDyeWhite, ItemBoneMeal, etc"
     )
     public ItemDye(Integer meta) {
@@ -73,7 +73,7 @@ public class ItemDye extends Item {
     @DeprecationDetails(
             since = "1.3.2.0-PN",
             reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
-                    "so you may get 0 as result even though you have a colored dye.",
+                    "so you may get 0 as meta result even though you have a colored dye.",
             replaceWith = "An item class specific for the item you want. Eg: ItemDyeGray, ItemDyeWhite, ItemBoneMeal, etc"
     )
     public ItemDye(DyeColor dyeColor) {
@@ -84,7 +84,7 @@ public class ItemDye extends Item {
     @DeprecationDetails(
             since = "1.3.2.0-PN",
             reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
-                    "so you may get 0 as result even though you have a colored dye.",
+                    "so you may get 0 as meta result even though you have a colored dye.",
             replaceWith = "An item class specific for the item you want. Eg: ItemDyeGray, ItemDyeWhite, ItemBoneMeal, etc"
     )
     public ItemDye(DyeColor dyeColor, int amount) {
@@ -95,7 +95,7 @@ public class ItemDye extends Item {
     @DeprecationDetails(
             since = "1.3.2.0-PN",
             reason = "Dye item now have they own ids, and their implementation extends ItemDye, " +
-                    "so you may get 0 as result even though you have a colored dye.",
+                    "so you may get 0 as meta result even though you have a colored dye.",
             replaceWith = "An item class specific for the item you want. Eg: ItemDyeGray, ItemDyeWhite, ItemBoneMeal, etc"
     )
     public ItemDye(Integer meta, int amount) {

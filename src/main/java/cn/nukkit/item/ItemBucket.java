@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
@@ -15,6 +16,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.UpdateBlockPacket;
 
+import javax.annotation.Nullable;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -25,16 +28,44 @@ public class ItemBucket extends Item {
         this(0, 1);
     }
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
+                    "so you may get 0 as meta result even though you have filled bucket.",
+            replaceWith = "An item class specific for the item you want. Eg: ItemBucketWater, ItemBucketFishCod, etc"
+    )
     public ItemBucket(Integer meta) {
         this(meta, 1);
     }
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
+                    "so you may get 0 as meta result even though you have filled bucket.",
+            replaceWith = "An item class specific for the item you want. Eg: ItemBucketWater, ItemBucketFishCod, etc"
+    )
     public ItemBucket(Integer meta, int count) {
         super(BUCKET, meta, count, getName(meta));
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
     protected ItemBucket(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
+    }
+
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
+                    "so you may get 0 as meta result even though you have filled bucket.",
+            replaceWith = "isEmpty() isLava() isWater() getFishEntityId()"
+    )
+    @Override
+    public int getDamage() {
+        return super.getDamage();
     }
 
     protected static String getName(int meta) {
@@ -74,6 +105,40 @@ public class ItemBucket extends Item {
                 return BlockID.AIR;
         }
     }
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public boolean isEmpty() {
+        return getId() == BUCKET && getDamage() == 0;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public boolean isWater() {
+        return getTargetBlock().getId() == BlockID.WATER;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public boolean isLava() {
+        return getTargetBlock().getId() == BlockID.LAVA;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    @Nullable
+    public String getFishEntityId() {
+        if (getId() != BUCKET) {
+            return null;
+        }
+        switch (this.getDamage()) {
+            case 2: return "Cod";
+            case 3: return "Salmon";
+            case 4: return "TropicalFish";
+            case 5: return "Pufferfish";
+            default: return null;
+        }
+    }
 
     @Override
     public int getMaxStackSize() {
@@ -87,7 +152,7 @@ public class ItemBucket extends Item {
     
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
-    protected Block getTargetBlock() {
+    public Block getTargetBlock() {
         return getId() == BUCKET? Block.get(getDamageByTarget(this.meta)) : Block.get(BlockID.AIR);
     }
     
