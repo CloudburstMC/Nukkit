@@ -507,4 +507,5 @@ public interface BlockID {
     int CHISELED_NETHER_BRICKS = 557;
     int CRACKED_NETHER_BRICKS = 558;
     int QUARTZ_BRICKS = 559;
+    //int UNKNOWN = 600;
 }
