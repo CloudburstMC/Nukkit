@@ -11,6 +11,7 @@ import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.inventory.SmeltingRecipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemBucket;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -235,7 +236,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         if (burnTime > 0 && ev.isBurning()) {
             fuel.setCount(fuel.getCount() - 1);
             if (fuel.getCount() == 0) {
-                if (fuel.getId() == Item.BUCKET && fuel.getDamage() == 10) {
+                if ((fuel instanceof ItemBucket) && ((ItemBucket) fuel).isLava()) {
                     fuel.setDamage(0);
                     fuel.setCount(1);
                 } else {

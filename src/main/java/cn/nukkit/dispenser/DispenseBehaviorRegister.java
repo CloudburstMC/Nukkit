@@ -29,6 +29,12 @@ public final class DispenseBehaviorRegister {
     public static void init() {
         registerBehavior(ItemID.BOAT, new BoatDispenseBehavior());
         registerBehavior(ItemID.BUCKET, new BucketDispenseBehavior());
+        registerBehavior(ItemID.WATER_BUCKET, new BucketDispenseBehavior());
+        registerBehavior(ItemID.LAVA_BUCKET, new BucketDispenseBehavior());
+        registerBehavior(ItemID.COD_BUCKET, new BucketDispenseBehavior());
+        registerBehavior(ItemID.SALMON_BUCKET, new BucketDispenseBehavior());
+        registerBehavior(ItemID.PUFFERFISH_BUCKET, new BucketDispenseBehavior());
+        registerBehavior(ItemID.TROPICAL_FISH_BUCKET, new BucketDispenseBehavior());
         registerBehavior(ItemID.DYE, new DyeDispenseBehavior());
         registerBehavior(ItemID.BONE_MEAL, new DyeDispenseBehavior());
         registerBehavior(ItemID.FIREWORKS, new FireworksDispenseBehavior());

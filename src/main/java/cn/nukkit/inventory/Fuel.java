@@ -41,6 +41,7 @@ public abstract class Fuel {
         addBlock(BlockID.BOOKSHELF, (short) 300);
         addBlock(BlockID.CHEST, (short) 300);
         addItem(ItemID.BUCKET, (short) 20000);
+        addItem(ItemID.LAVA_BUCKET, (short) 20000);
         addBlock(BlockID.LADDER, (short) 300);
         addItem(ItemID.BOW, (short) 200);
         addItem(ItemID.BOWL, (short) 200);
