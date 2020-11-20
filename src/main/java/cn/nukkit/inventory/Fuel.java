@@ -67,6 +67,9 @@ public abstract class Fuel {
         addItem(ItemID.ACACIA_DOOR, (short) 200);
         addItem(ItemID.DARK_OAK_DOOR, (short) 200);
         addItem(ItemID.BANNER, (short) 300);
+        addBlock(BlockID.DEAD_BUSH, (short) 100);
+        addItem(ItemID.SIGN, (short) 200);
+        // TODO PowerNukkit - Add other signs?
         addBlock(BlockID.DRIED_KELP_BLOCK, (short) 4000);
     }
 

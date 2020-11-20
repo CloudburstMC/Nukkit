@@ -3,7 +3,7 @@ How to submit a bug report
 
 Before creating an issue, make sure:
   1. Your title and content is not confusing or content-less.
-  2. All texts are written in proper English.
+  2. All text is written in proper English.
   
 If it's a bug or problem:
   1. This bug can be reproduced.
@@ -11,7 +11,7 @@ If it's a bug or problem:
   3. Dumps, backtraces or files are provided.
   4. It's you yourself who first found this bug.
   
-If it's an advice, or a feature request:
+If it's advice or a feature request:
   1. This feature does not exist in the latest build.
   2. This feature is logical and clear-cut.
   3. It's you yourself who first came up with the idea.
@@ -20,7 +20,7 @@ Nukkit will create a bug report for EVERY exception and error detected, and ther
 
 In the report, you can see if the error is caused by Nukkit or a plugin. However, when "PLUGIN ERROR" is "false" and there are plugins running, it does not necessarily indicate that the error is caused by Nukkit.
  
-To sumbit bugs and problems, please upload the automaticly generated report. Make sure you have filled in all blanks in the template. Please provide **as much information as you could**, or our developers might got stuck or confused when looking into your issue. 
+To submit bugs and problems, please upload the automatically generated report. Make sure you have filled in all blanks in the template. Please provide **as much information as you could**, or our developers might got stuck or confused when looking into your issue. 
 
 To submit feature requests and suggestions, please explicitly describe the feature you want or your suggestion.
 

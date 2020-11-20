@@ -15,6 +15,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
@@ -122,7 +124,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                         this.setFillLevel(0);//empty
                         this.level.setBlock(this, this, true);
                         cauldron.clearCustomColor();
-                        this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.CAULDRON_TAKEWATER);
+                        this.getLevel().addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_WATER);
                     }
                 } else if (item.getDamage() == 8 || item.getDamage() == 10) {//water and lava buckets
                     if (isFull() && !cauldron.isCustomColor() && !cauldron.hasPotion() && item.getDamage() == 8) {
@@ -233,7 +235,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
     
                 consumePotion(item, player);
     
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_FILLPOTION);
+                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_FILL_POTION);
                 break;
             case ItemID.GLASS_BOTTLE:
                 if (isEmpty()) {
@@ -283,7 +285,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     }
                 }
 
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_TAKEPOTION);
+                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_POTION);
                 break;
             default:
                 return true;

@@ -145,7 +145,7 @@ public class SimpleCommandMap implements CommandMap {
                 if (commandParameters != null) {
                     Map<String, CommandParameter[]> map = Arrays.stream(commandParameters.parameters())
                             .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
-                                    .map(parameter -> new CommandParameter(parameter.name(), parameter.type(), parameter.optional()))
+                                    .map(parameter -> CommandParameter.newType(parameter.name(), parameter.optional(), parameter.type()))
                                     .distinct()
                                     .toArray(CommandParameter[]::new)));
 
