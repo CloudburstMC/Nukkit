@@ -20,9 +20,7 @@ import cn.nukkit.utils.MinecartType;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Author: Adam Matthew [larryTheCoder]
- * <p>
- * Nukkit Project.
+ * @author Adam Matthew [larryTheCoder] (Nukkit Project)
  */
 public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityExplosive {
 
