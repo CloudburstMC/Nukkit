@@ -64,7 +64,7 @@ public class ListChunkManager implements ChunkManager {
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, int layer, int id, int data) {
         boolean removed = this.blocks.removeIf(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z && block.layer == layer);
-        this.blocks.add(Block.get(id, data, new Position(x, y, z)));
+        this.blocks.add(Block.get(id, data, new Position(x, y, z), layer));
         return !removed;
     }
 

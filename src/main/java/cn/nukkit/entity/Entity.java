@@ -1751,11 +1751,13 @@ public abstract class Entity extends Location implements Metadatable {
         float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
         Location floorLocation = this.floor();
         Block down = this.level.getBlock(floorLocation.down());
-        if (damage > 0 && (!this.isPlayer || level.getGameRules().getBoolean(GameRule.FALL_DAMAGE))) {
+        if (damage > 0) {
             if (down.getId() == BlockID.HONEY_BLOCK) {
                 damage *= 0.2F;
             }
-            this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
+            if (!this.isPlayer || level.getGameRules().getBoolean(GameRule.FALL_DAMAGE)) {
+                this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
+            }
         }
 
         if (fallDistance > 0.75) {

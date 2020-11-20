@@ -10,6 +10,8 @@ import cn.nukkit.nbt.tag.Tag;
 
 import java.util.Random;
 
+import static cn.nukkit.utils.Utils.dynamic;
+
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -34,7 +36,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
      * Same breaking speed independent of the tool.
      */
     @PowerNukkitOnly
-    public static final int TYPE_HANDS_ONLY = 100000;
+    public static final int TYPE_HANDS_ONLY = dynamic(Integer.MAX_VALUE);
 
     public static final int DURABILITY_WOODEN = 60;
     public static final int DURABILITY_GOLD = 33;
