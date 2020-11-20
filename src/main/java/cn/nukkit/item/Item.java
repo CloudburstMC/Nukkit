@@ -574,7 +574,7 @@ public class Item implements Cloneable, BlockID, ItemID {
                 item.setCompoundTag(tags);
             }
 
-            return item;
+            return item.selfUpgrade();
         } catch (Exception e) {
             return new Item(id, meta, count).setCompoundTag(tags);
         }
@@ -1169,6 +1169,12 @@ public class Item implements Cloneable, BlockID, ItemID {
      */
     public boolean onClickAir(Player player, Vector3 directionVector) {
         return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public Item selfUpgrade() {
+        return this;
     }
 
     @Override

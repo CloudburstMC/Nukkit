@@ -50,6 +50,6 @@ public class ItemBoneMeal extends ItemDye {
     @PowerNukkitOnly
     @Override
     public boolean isFertilizer() {
-        return super.isFertilizer();
+        return true;
     }
 }

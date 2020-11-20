@@ -62,7 +62,7 @@ public class NBTIO {
             item.setNamedTag((CompoundTag) tagTag);
         }
 
-        return item;
+        return item.selfUpgrade();
     }
 
     public static CompoundTag read(File file) throws IOException {

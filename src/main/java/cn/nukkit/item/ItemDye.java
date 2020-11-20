@@ -156,4 +156,39 @@ public class ItemDye extends Item {
     public static String getColorName(int meta) {
         return DyeColor.getByDyeData(meta).getName();
     }
+
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public Item selfUpgrade() {
+        if (getId() != DYE) {
+            return super.selfUpgrade();
+        }
+        int newId;
+        switch (getDamage()) {
+            case 19: newId = WHITE_DYE; break;
+            case 18: newId = BLUE_DYE; break;
+            case 17: newId = BROWN_DYE; break;
+            case 16: newId = BLACK_DYE; break;
+            case 15: newId = BONE_MEAL; break;
+            case 14: newId = ORANGE_DYE; break; 
+            case 13: newId = MAGENTA_DYE; break; 
+            case 12: newId = LIGHT_BLUE_DYE; break; 
+            case 11: newId = YELLOW_DYE; break; 
+            case 10: newId = LIME_DYE; break; 
+            case 9: newId = PINK_DYE; break; 
+            case 8: newId = GRAY_DYE; break; 
+            case 7: newId = LIGHT_GRAY_DYE; break; 
+            case 6: newId = CYAN_DYE; break; 
+            case 5: newId = PURPLE_DYE; break; 
+            case 4: newId = LAPIS_LAZULI; break; 
+            case 3: newId = COCOA_BEANS; break; 
+            case 2: newId = GREEN_DYE; break; 
+            case 1: newId = RED_DYE; break; 
+            case 0: newId = INK_SAC; break;
+            default:
+                return super.selfUpgrade();
+        }
+        return Item.get(newId, 0, getCount(), getCompoundTag());
+    }
 }
