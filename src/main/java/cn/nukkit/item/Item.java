@@ -338,7 +338,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             list[RECORD_PIGSTEP] = ItemRecordPigstep.class; //759
             
-            //list[COD_BUCKET] = Item.Cod_bucket.class; //802
+            list[COD_BUCKET] = ItemBucketFishCod.class; //802
             //list[GHAST_SPAWN_EGG] = Item.Ghast_spawn_egg.class; //803
             //list[FLOWER_BANNER_PATTERN] = Item.Flower_banner_pattern.class; //804
             //list[ZOGLIN_SPAWN_EGG] = Item.Zoglin_spawn_egg.class; //805
@@ -347,7 +347,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[ENDERMITE_SPAWN_EGG] = Item.Endermite_spawn_egg.class; //808
             //list[POLAR_BEAR_SPAWN_EGG] = Item.Polar_bear_spawn_egg.class; //809
             list[WHITE_DYE] = ItemDyeWhite.class; //810
-            //list[TROPICAL_FISH_BUCKET] = Item.Tropical_fish_bucket.class; //811
+            list[TROPICAL_FISH_BUCKET] = ItemBucketFishTropical.class; //811
             list[CYAN_DYE] = ItemDyeCyan.class; //812
             list[LIGHT_BLUE_DYE] = ItemDyeLightBlue.class; //813
             list[LIME_DYE] = ItemDyeLime.class; //814
@@ -356,7 +356,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[GREEN_DYE] = ItemDyeGreen.class; //817
             //list[EVOKER_SPAWN_EGG] = Item.Evoker_spawn_egg.class; //818
             //list[WITHER_SKELETON_SPAWN_EGG] = Item.Wither_skeleton_spawn_egg.class; //819
-            //list[SALMON_BUCKET] = Item.Salmon_bucket.class; //820
+            list[SALMON_BUCKET] = ItemBucketFishSalmon.class; //820
             //list[JUNGLE_BOAT] = Item.Jungle_boat.class; //821
             list[BLACK_DYE] = ItemDyeBlack.class; //822
             //list[MAGMA_CUBE_SPAWN_EGG] = Item.Magma_cube_spawn_egg.class; //823
@@ -368,7 +368,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[PANDA_SPAWN_EGG] = Item.Panda_spawn_egg.class; //829
             //list[SILVERFISH_SPAWN_EGG] = Item.Silverfish_spawn_egg.class; //830
             //list[OCELOT_SPAWN_EGG] = Item.Ocelot_spawn_egg.class; //831
-            //list[LAVA_BUCKET] = Item.Lava_bucket.class; //832
+            list[LAVA_BUCKET] = ItemBucketLava.class; //832
             //list[SKELETON_SPAWN_EGG] = Item.Skeleton_spawn_egg.class; //833
             //list[VILLAGER_SPAWN_EGG] = Item.Villager_spawn_egg.class; //834
             //list[ELDER_GUARDIAN_SPAWN_EGG] = Item.Elder_guardian_spawn_egg.class; //835
@@ -400,7 +400,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[PILLAGER_SPAWN_EGG] = Item.Pillager_spawn_egg.class; //861
             //list[CAVE_SPIDER_SPAWN_EGG] = Item.Cave_spider_spawn_egg.class; //862
             list[BONE_MEAL] = ItemBoneMeal.class; //863
-            //list[PUFFERFISH_BUCKET] = Item.Pufferfish_bucket.class; //864
+            list[PUFFERFISH_BUCKET] = ItemBucketFishPufferfish.class; //864
             //list[BAT_SPAWN_EGG] = Item.Bat_spawn_egg.class; //865
             //list[SPRUCE_BOAT] = Item.Spruce_boat.class; //866
             //list[SPIDER_SPAWN_EGG] = Item.Spider_spawn_egg.class; //867
@@ -421,7 +421,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[SLIME_SPAWN_EGG] = Item.Slime_spawn_egg.class; //882
             //list[VINDICATOR_SPAWN_EGG] = Item.Vindicator_spawn_egg.class; //883
             //list[DROWNED_SPAWN_EGG] = Item.Drowned_spawn_egg.class; //884
-            //list[MILK_BUCKET] = Item.Milk_bucket.class; //885
+            list[MILK_BUCKET] = ItemBucketMilk.class; //885
             //list[DOLPHIN_SPAWN_EGG] = Item.Dolphin_spawn_egg.class; //886
             //list[DONKEY_SPAWN_EGG] = Item.Donkey_spawn_egg.class; //887
             list[PURPLE_DYE] = ItemDyePurple.class; //888
@@ -441,7 +441,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[HORSE_SPAWN_EGG] = Item.Horse_spawn_egg.class; //902
             list[LAPIS_LAZULI] = ItemLapisLazuli.class; //903
             //list[RAVAGER_SPAWN_EGG] = Item.Ravager_spawn_egg.class; //904
-            //list[WATER_BUCKET] = Item.Water_bucket.class; //905
+            list[WATER_BUCKET] = ItemBucketWater.class; //905
             list[LIGHT_GRAY_DYE] = ItemDyeLightGray.class; //906
             //list[CHARCOAL] = Item.Charcoal.class; //907
             //list[AGENT_SPAWN_EGG] = Item.Agent_spawn_egg.class; //908

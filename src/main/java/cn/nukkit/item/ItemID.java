@@ -291,7 +291,7 @@ public interface ItemID {
     //int SOUL_CAMPFIRE = 801;
     
     //TODO: Make all this work!
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int COD_BUCKET = 802;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int COD_BUCKET = 802;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int GHAST_SPAWN_EGG = 803;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int FLOWER_BANNER_PATTERN = 804;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int ZOGLIN_SPAWN_EGG = 805;
@@ -300,7 +300,7 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int ENDERMITE_SPAWN_EGG = 808;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int POLAR_BEAR_SPAWN_EGG = 809;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int WHITE_DYE = 810;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int TROPICAL_FISH_BUCKET = 811;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int TROPICAL_FISH_BUCKET = 811;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int CYAN_DYE = 812;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int LIGHT_BLUE_DYE = 813;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int LIME_DYE = 814;
@@ -309,7 +309,7 @@ public interface ItemID {
     @Since("1.3.2.0-PN") @PowerNukkitOnly int GREEN_DYE = 817;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int EVOKER_SPAWN_EGG = 818;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int WITHER_SKELETON_SPAWN_EGG = 819;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int SALMON_BUCKET = 820;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int SALMON_BUCKET = 820;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int JUNGLE_BOAT = 821;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int BLACK_DYE = 822;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int MAGMA_CUBE_SPAWN_EGG = 823;
@@ -321,7 +321,7 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int PANDA_SPAWN_EGG = 829;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int SILVERFISH_SPAWN_EGG = 830;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int OCELOT_SPAWN_EGG = 831;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int LAVA_BUCKET = 832;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int LAVA_BUCKET = 832;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int SKELETON_SPAWN_EGG = 833;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int VILLAGER_SPAWN_EGG = 834;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int ELDER_GUARDIAN_SPAWN_EGG = 835;
@@ -353,7 +353,7 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int PILLAGER_SPAWN_EGG = 861;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int CAVE_SPIDER_SPAWN_EGG = 862;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int BONE_MEAL = 863;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int PUFFERFISH_BUCKET = 864;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int PUFFERFISH_BUCKET = 864;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int BAT_SPAWN_EGG = 865;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int SPRUCE_BOAT = 866;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int SPIDER_SPAWN_EGG = 867;
@@ -374,7 +374,7 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int SLIME_SPAWN_EGG = 882;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int VINDICATOR_SPAWN_EGG = 883;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int DROWNED_SPAWN_EGG = 884;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int MILK_BUCKET = 885;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int MILK_BUCKET = 885;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int DOLPHIN_SPAWN_EGG = 886;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int DONKEY_SPAWN_EGG = 887;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int PURPLE_DYE = 888;
@@ -394,7 +394,7 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int HORSE_SPAWN_EGG = 902;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int LAPIS_LAZULI = 903;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int RAVAGER_SPAWN_EGG = 904;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int WATER_BUCKET = 905;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int WATER_BUCKET = 905;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int LIGHT_GRAY_DYE = 906;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int CHARCOAL = 907;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int AGENT_SPAWN_EGG = 908;

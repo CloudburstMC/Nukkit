@@ -1,6 +1,8 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
@@ -29,6 +31,10 @@ public class ItemBucket extends Item {
 
     public ItemBucket(Integer meta, int count) {
         super(BUCKET, meta, count, getName(meta));
+    }
+
+    protected ItemBucket(int id, Integer meta, int count, String name) {
+        super(id, meta, count, name);
     }
 
     protected static String getName(int meta) {
@@ -60,32 +66,38 @@ public class ItemBucket extends Item {
             case 5:
             case 8:
             case 9:
-                return 8;
+                return BlockID.WATER;
             case 10:
             case 11:
-                return 10;
+                return BlockID.LAVA;
             default:
-                return 0;
+                return BlockID.AIR;
         }
     }
 
     @Override
     public int getMaxStackSize() {
-        return this.meta == 0 ? 16 : 1;
+        return this.meta == 0 && getId() == BUCKET ? 16 : 1;
     }
 
     @Override
     public boolean canBeActivated() {
         return true;
     }
-
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    protected Block getTargetBlock() {
+        return getId() == BUCKET? Block.get(getDamageByTarget(this.meta)) : Block.get(BlockID.AIR);
+    }
+    
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (player.isAdventure()) {
             return false;
         }
 
-        Block targetBlock = Block.get(getDamageByTarget(this.meta));
+        Block targetBlock = getTargetBlock();
 
         if (targetBlock instanceof BlockAir) {
             if (!(target instanceof BlockLiquid) || target.getDamage() != 0) {
@@ -162,7 +174,7 @@ public class ItemBucket extends Item {
                 ev.setCancelled(!canBeFlowedInto);
             }
 
-            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
+            if (!canBeUsedOnDimension(player.getLevel().getDimension())) {
                 ev.setCancelled(true);
             }
 
@@ -181,30 +193,7 @@ public class ItemBucket extends Item {
                     }
                 }
 
-                if (this.getDamage() == 10) {
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
-                } else {
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_WATER);
-                }
-
-                switch (this.getDamage()) {
-                    case 2:
-                        Entity e2 = Entity.createEntity("Cod", block);
-                        if (e2 != null) e2.spawnToAll();
-                        break;
-                    case 3:
-                        Entity e3 = Entity.createEntity("Salmon", block);
-                        if (e3 != null) e3.spawnToAll();
-                        break;
-                    case 4:
-                        Entity e4 = Entity.createEntity("TropicalFish", block);
-                        if (e4 != null) e4.spawnToAll();
-                        break;
-                    case 5:
-                        Entity e5 = Entity.createEntity("Pufferfish", block);
-                        if (e5 != null) e5.spawnToAll();
-                        break;
-                }
+                afterUse(level, block);
 
                 return true;
             } else {
@@ -215,10 +204,53 @@ public class ItemBucket extends Item {
 
         return false;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    protected boolean canBeUsedOnDimension(int dimension) {
+        if (getId() != BUCKET) {
+            return true;
+        }
+        
+        return dimension != Level.DIMENSION_NETHER || (getDamage() == 10 || getDamage() == 1);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    protected void afterUse(Level level, Block block) {
+        if (getId() != BUCKET) {
+            return;
+        }
+        
+        if (this.getDamage() == 10) {
+            level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
+        } else {
+            level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_WATER);
+        }
+
+        switch (this.getDamage()) {
+            case 2:
+                Entity e2 = Entity.createEntity("Cod", block);
+                if (e2 != null) e2.spawnToAll();
+                break;
+            case 3:
+                Entity e3 = Entity.createEntity("Salmon", block);
+                if (e3 != null) e3.spawnToAll();
+                break;
+            case 4:
+                Entity e4 = Entity.createEntity("TropicalFish", block);
+                if (e4 != null) e4.spawnToAll();
+                break;
+            case 5:
+                Entity e5 = Entity.createEntity("Pufferfish", block);
+                if (e5 != null) e5.spawnToAll();
+                break;
+        }
+    }
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return this.getDamage() == 1; // Milk
+        return getId() == BUCKET && this.getDamage() == 1; // Milk
     }
 
     @Override
@@ -243,5 +275,28 @@ public class ItemBucket extends Item {
 
         player.removeAllEffects();
         return true;
+    }
+
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public Item selfUpgrade() {
+        if (getId() != BUCKET || getDamage() == 0) {
+            return this;
+        }
+        
+        int newId;
+        switch (getDamage()) {
+            case 1: newId = MILK_BUCKET; break; 
+            case 2: newId = COD_BUCKET; break; 
+            case 3: newId = SALMON_BUCKET; break; 
+            case 4: newId = TROPICAL_FISH_BUCKET; break; 
+            case 5: newId = PUFFERFISH_BUCKET; break; 
+            case 8: newId = WATER_BUCKET; break; 
+            case 10: newId = LAVA_BUCKET; break;
+            default: return this;
+        }
+        
+        return Item.get(newId, 0, getCount(), getCompoundTag());
     }
 }
