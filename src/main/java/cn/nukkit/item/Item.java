@@ -340,10 +340,10 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             list[COD_BUCKET] = ItemBucketFishCod.class; //802
             //list[GHAST_SPAWN_EGG] = Item.Ghast_spawn_egg.class; //803
-            //list[FLOWER_BANNER_PATTERN] = Item.Flower_banner_pattern.class; //804
+            list[FLOWER_BANNER_PATTERN] = ItemBannerPatternFlower.class; //804
             //list[ZOGLIN_SPAWN_EGG] = Item.Zoglin_spawn_egg.class; //805
             list[BLUE_DYE] = ItemDyeBlue.class; //806
-            //list[SKULL_BANNER_PATTERN] = Item.Skull_banner_pattern.class; //807
+            list[SKULL_BANNER_PATTERN] = ItemBannerPatternSkull.class; //807
             //list[ENDERMITE_SPAWN_EGG] = Item.Endermite_spawn_egg.class; //808
             //list[POLAR_BEAR_SPAWN_EGG] = Item.Polar_bear_spawn_egg.class; //809
             list[WHITE_DYE] = ItemDyeWhite.class; //810
@@ -362,7 +362,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[MAGMA_CUBE_SPAWN_EGG] = Item.Magma_cube_spawn_egg.class; //823
             //list[TROPICAL_FISH_SPAWN_EGG] = Item.Tropical_fish_spawn_egg.class; //824
             //list[VEX_SPAWN_EGG] = Item.Vex_spawn_egg.class; //825
-            //list[FIELD_MASONED_BANNER_PATTERN] = Item.Field_masoned_banner_pattern.class; //826
+            list[FIELD_MASONED_BANNER_PATTERN] = ItemBannerPatternFieldMasoned.class; //826
             //list[WANDERING_TRADER_SPAWN_EGG] = Item.Wandering_trader_spawn_egg.class; //827
             list[BROWN_DYE] = ItemDyeBrown.class; //828
             //list[PANDA_SPAWN_EGG] = Item.Panda_spawn_egg.class; //829
@@ -379,9 +379,9 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[DARK_OAK_BOAT] = Item.Dark_oak_boat.class; //840
             //list[HUSK_SPAWN_EGG] = Item.Husk_spawn_egg.class; //841
             //list[BLAZE_SPAWN_EGG] = Item.Blaze_spawn_egg.class; //842
-            //list[BORDURE_INDENTED_BANNER_PATTERN] = Item.Bordure_indented_banner_pattern.class; //843
+            list[BORDURE_INDENTED_BANNER_PATTERN] = ItemBannerPatternBordureIndented.class; //843
             //list[MULE_SPAWN_EGG] = Item.Mule_spawn_egg.class; //844
-            //list[CREEPER_BANNER_PATTERN] = Item.Creeper_banner_pattern.class; //845
+            list[CREEPER_BANNER_PATTERN] = ItemBannerPatternCreeper.class; //845
             //list[ZOMBIE_HORSE_SPAWN_EGG] = Item.Zombie_horse_spawn_egg.class; //846
             //list[BEE_SPAWN_EGG] = Item.Bee_spawn_egg.class; //847
             //list[COD_SPAWN_EGG] = Item.Cod_spawn_egg.class; //848
@@ -404,9 +404,9 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[BAT_SPAWN_EGG] = Item.Bat_spawn_egg.class; //865
             //list[SPRUCE_BOAT] = Item.Spruce_boat.class; //866
             //list[SPIDER_SPAWN_EGG] = Item.Spider_spawn_egg.class; //867
-            //list[PIGLIN_BANNER_PATTERN] = Item.Piglin_banner_pattern.class; //868
+            list[PIGLIN_BANNER_PATTERN] = ItemBannerPatternPiglin.class; //868
             //list[RABBIT_SPAWN_EGG] = Item.Rabbit_spawn_egg.class; //869
-            //list[MOJANG_BANNER_PATTERN] = Item.Mojang_banner_pattern.class; //870
+            list[MOJANG_BANNER_PATTERN] = ItemBannerPatternMojang.class; //870
             //list[PIGLIN_SPAWN_EGG] = Item.Piglin_spawn_egg.class; //871
             //list[TURTLE_SPAWN_EGG] = Item.Turtle_spawn_egg.class; //872
             //list[MOOSHROOM_SPAWN_EGG] = Item.Mooshroom_spawn_egg.class; //873

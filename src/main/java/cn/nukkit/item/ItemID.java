@@ -293,10 +293,10 @@ public interface ItemID {
     //TODO: Make all this work!
     @Since("1.3.2.0-PN") @PowerNukkitOnly int COD_BUCKET = 802;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int GHAST_SPAWN_EGG = 803;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int FLOWER_BANNER_PATTERN = 804;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int FLOWER_BANNER_PATTERN = 804;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int ZOGLIN_SPAWN_EGG = 805;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int BLUE_DYE = 806;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int SKULL_BANNER_PATTERN = 807;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int SKULL_BANNER_PATTERN = 807;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int ENDERMITE_SPAWN_EGG = 808;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int POLAR_BEAR_SPAWN_EGG = 809;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int WHITE_DYE = 810;
@@ -315,7 +315,7 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int MAGMA_CUBE_SPAWN_EGG = 823;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int TROPICAL_FISH_SPAWN_EGG = 824;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int VEX_SPAWN_EGG = 825;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int FIELD_MASONED_BANNER_PATTERN = 826;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int FIELD_MASONED_BANNER_PATTERN = 826;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int WANDERING_TRADER_SPAWN_EGG = 827;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int BROWN_DYE = 828;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int PANDA_SPAWN_EGG = 829;
@@ -332,9 +332,9 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int DARK_OAK_BOAT = 840;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int HUSK_SPAWN_EGG = 841;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int BLAZE_SPAWN_EGG = 842;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int BORDURE_INDENTED_BANNER_PATTERN = 843;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int BORDURE_INDENTED_BANNER_PATTERN = 843;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int MULE_SPAWN_EGG = 844;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int CREEPER_BANNER_PATTERN = 845;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int CREEPER_BANNER_PATTERN = 845;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int ZOMBIE_HORSE_SPAWN_EGG = 846;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int BEE_SPAWN_EGG = 847;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int COD_SPAWN_EGG = 848;
@@ -357,9 +357,9 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int BAT_SPAWN_EGG = 865;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int SPRUCE_BOAT = 866;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int SPIDER_SPAWN_EGG = 867;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int PIGLIN_BANNER_PATTERN = 868;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int PIGLIN_BANNER_PATTERN = 868;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int RABBIT_SPAWN_EGG = 869;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int MOJANG_BANNER_PATTERN = 870;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int MOJANG_BANNER_PATTERN = 870;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int PIGLIN_SPAWN_EGG = 871;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int TURTLE_SPAWN_EGG = 872;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int MOOSHROOM_SPAWN_EGG = 873;
