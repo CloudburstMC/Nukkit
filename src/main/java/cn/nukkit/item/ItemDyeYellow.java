@@ -28,22 +28,22 @@ import cn.nukkit.utils.DyeColor;
  */
 @PowerNukkitOnly
 @Since("1.3.2.0-PN")
-public class ItemSimpleDyeYellow extends ItemDye {
+public class ItemDyeYellow extends ItemDye {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
-    public ItemSimpleDyeYellow() {
+    public ItemDyeYellow() {
         this(0, 1);
     }
 
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
-    public ItemSimpleDyeYellow(Integer meta) {
+    public ItemDyeYellow(Integer meta) {
         this(meta, 1);
     }
 
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
-    public ItemSimpleDyeYellow(Integer meta, int amount) {
+    public ItemDyeYellow(Integer meta, int amount) {
         super(YELLOW_DYE, meta, amount, DyeColor.YELLOW.getDyeName());
     }
     

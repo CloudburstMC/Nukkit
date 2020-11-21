@@ -432,7 +432,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[SHULKER_SPAWN_EGG] = ItemSpawnEggShulker.class; //893
             list[STRIDER_SPAWN_EGG] = ItemSpawnEggStrider.class; //894
             list[ZOMBIE_PIGMAN_SPAWN_EGG] = ItemSpawnEggZombiePigman.class; //895
-            list[YELLOW_DYE] = ItemSimpleDyeYellow.class; //896
+            list[YELLOW_DYE] = ItemDyeYellow.class; //896
             list[CAT_SPAWN_EGG] = ItemSpawnEggCat.class; //897
             list[GUARDIAN_SPAWN_EGG] = ItemSpawnEggGuardian.class; //898
             list[PINK_DYE] = ItemDyePink.class; //899
