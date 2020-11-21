@@ -357,7 +357,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[EVOKER_SPAWN_EGG] = Item.Evoker_spawn_egg.class; //818
             //list[WITHER_SKELETON_SPAWN_EGG] = Item.Wither_skeleton_spawn_egg.class; //819
             list[SALMON_BUCKET] = ItemBucketFishSalmon.class; //820
-            //list[JUNGLE_BOAT] = Item.Jungle_boat.class; //821
+            list[JUNGLE_BOAT] = ItemBoatJungle.class; //821
             list[BLACK_DYE] = ItemDyeBlack.class; //822
             //list[MAGMA_CUBE_SPAWN_EGG] = Item.Magma_cube_spawn_egg.class; //823
             //list[TROPICAL_FISH_SPAWN_EGG] = Item.Tropical_fish_spawn_egg.class; //824
@@ -372,11 +372,11 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[SKELETON_SPAWN_EGG] = Item.Skeleton_spawn_egg.class; //833
             //list[VILLAGER_SPAWN_EGG] = Item.Villager_spawn_egg.class; //834
             //list[ELDER_GUARDIAN_SPAWN_EGG] = Item.Elder_guardian_spawn_egg.class; //835
-            //list[ACACIA_BOAT] = Item.Acacia_boat.class; //836
-            //list[OAK_BOAT] = Item.Oak_boat.class; //837
+            list[ACACIA_BOAT] = ItemBoatAcacia.class; //836
+            list[OAK_BOAT] = ItemBoatOak.class; //837
             //list[PHANTOM_SPAWN_EGG] = Item.Phantom_spawn_egg.class; //838
             //list[HOGLIN_SPAWN_EGG] = Item.Hoglin_spawn_egg.class; //839
-            //list[DARK_OAK_BOAT] = Item.Dark_oak_boat.class; //840
+            list[DARK_OAK_BOAT] = ItemBoatDarkOak.class; //840
             //list[HUSK_SPAWN_EGG] = Item.Husk_spawn_egg.class; //841
             //list[BLAZE_SPAWN_EGG] = Item.Blaze_spawn_egg.class; //842
             list[BORDURE_INDENTED_BANNER_PATTERN] = ItemBannerPatternBordureIndented.class; //843
@@ -402,7 +402,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[BONE_MEAL] = ItemBoneMeal.class; //863
             list[PUFFERFISH_BUCKET] = ItemBucketFishPufferfish.class; //864
             //list[BAT_SPAWN_EGG] = Item.Bat_spawn_egg.class; //865
-            //list[SPRUCE_BOAT] = Item.Spruce_boat.class; //866
+            list[SPRUCE_BOAT] = ItemBoatSpruce.class; //866
             //list[SPIDER_SPAWN_EGG] = Item.Spider_spawn_egg.class; //867
             list[PIGLIN_BANNER_PATTERN] = ItemBannerPatternPiglin.class; //868
             //list[RABBIT_SPAWN_EGG] = Item.Rabbit_spawn_egg.class; //869
@@ -425,7 +425,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[DOLPHIN_SPAWN_EGG] = Item.Dolphin_spawn_egg.class; //886
             //list[DONKEY_SPAWN_EGG] = Item.Donkey_spawn_egg.class; //887
             list[PURPLE_DYE] = ItemDyePurple.class; //888
-            //list[BIRCH_BOAT] = Item.Birch_boat.class; //889
+            list[BIRCH_BOAT] = ItemBoatBirch.class; //889
             //list[DEBUG_STICK] = Item.Debug_stick.class; //890
             //list[ENDERMAN_SPAWN_EGG] = Item.Enderman_spawn_egg.class; //891
             //list[CHICKEN_SPAWN_EGG] = Item.Chicken_spawn_egg.class; //892

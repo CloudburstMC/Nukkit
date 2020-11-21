@@ -310,7 +310,7 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int EVOKER_SPAWN_EGG = 818;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int WITHER_SKELETON_SPAWN_EGG = 819;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int SALMON_BUCKET = 820;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int JUNGLE_BOAT = 821;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int JUNGLE_BOAT = 821;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int BLACK_DYE = 822;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int MAGMA_CUBE_SPAWN_EGG = 823;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int TROPICAL_FISH_SPAWN_EGG = 824;
@@ -325,11 +325,11 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int SKELETON_SPAWN_EGG = 833;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int VILLAGER_SPAWN_EGG = 834;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int ELDER_GUARDIAN_SPAWN_EGG = 835;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int ACACIA_BOAT = 836;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int OAK_BOAT = 837;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int ACACIA_BOAT = 836;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int OAK_BOAT = 837;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int PHANTOM_SPAWN_EGG = 838;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int HOGLIN_SPAWN_EGG = 839;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int DARK_OAK_BOAT = 840;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int DARK_OAK_BOAT = 840;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int HUSK_SPAWN_EGG = 841;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int BLAZE_SPAWN_EGG = 842;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int BORDURE_INDENTED_BANNER_PATTERN = 843;
@@ -355,7 +355,7 @@ public interface ItemID {
     @Since("1.3.2.0-PN") @PowerNukkitOnly int BONE_MEAL = 863;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int PUFFERFISH_BUCKET = 864;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int BAT_SPAWN_EGG = 865;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int SPRUCE_BOAT = 866;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int SPRUCE_BOAT = 866;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int SPIDER_SPAWN_EGG = 867;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int PIGLIN_BANNER_PATTERN = 868;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int RABBIT_SPAWN_EGG = 869;
@@ -378,7 +378,7 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int DOLPHIN_SPAWN_EGG = 886;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int DONKEY_SPAWN_EGG = 887;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int PURPLE_DYE = 888;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int BIRCH_BOAT = 889;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int BIRCH_BOAT = 889;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int DEBUG_STICK = 890;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int ENDERMAN_SPAWN_EGG = 891;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int CHICKEN_SPAWN_EGG = 892;
