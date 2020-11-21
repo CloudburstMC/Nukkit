@@ -9,6 +9,11 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+## 1.3.2.0-PN-ALPHA.3 - Future
+
+### Fixes
+- _Alpha Bug_: Fixes entities from the MobPlugin going into the ground (compatibility issue)
+
 ## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
 
 ### Fixes
