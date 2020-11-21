@@ -99,6 +99,13 @@
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
+        <repository>
+            <id>powernukkit-bintray</id>
+            <name>powernukkit-bintray</name>
+            <url>https://dl.bintray.com/powernukkit/powernukkit</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -111,7 +118,7 @@
         <dependency>
             <groupId>org.powernukkit</groupId>
             <artifactId>powernukkit-tests-junit5</artifactId>
-            <version>0.1.0-20200920.193605-4</version>
+            <version>0.1.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
