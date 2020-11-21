@@ -11,7 +11,6 @@ import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
@@ -54,7 +53,7 @@ public abstract class BlockMushroom extends BlockFlowable {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) {
+        if (item.isFertilizer()) {
             if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;
             }

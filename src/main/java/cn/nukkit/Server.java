@@ -2549,6 +2549,7 @@ public class Server {
         Entity.registerEntity("WanderingTrader", EntityWanderingTrader.class);
         Entity.registerEntity("Wolf", EntityWolf.class);
         Entity.registerEntity("ZombieHorse", EntityZombieHorse.class);
+        Entity.registerEntity("NPC", EntityNPCEntity.class);
         //Projectile
         Entity.registerEntity("AreaEffectCloud", EntityAreaEffectCloud.class);
         Entity.registerEntity("Egg", EntityEgg.class);

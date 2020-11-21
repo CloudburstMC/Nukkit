@@ -16,7 +16,6 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
@@ -108,16 +107,17 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
 
         switch (item.getId()) {
             case ItemID.BUCKET:
-                if (item.getDamage() == 0) {//empty bucket
+            case ItemID.LAVA_BUCKET:
+            case ItemID.WATER_BUCKET: {
+                ItemBucket bucket = (ItemBucket) item;
+                if (bucket.isEmpty()) {
                     if (!isFull() || cauldron.isCustomColor() || cauldron.hasPotion()) {
                         break;
                     }
+                    
+                    Item waterBucket = Item.get(ItemID.WATER_BUCKET);
 
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(8);//water bucket
-
-                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, bucket);
+                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, waterBucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         replaceBucket(item, player, ev.getItem());
@@ -126,16 +126,14 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                         cauldron.clearCustomColor();
                         this.getLevel().addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_WATER);
                     }
-                } else if (item.getDamage() == 8 || item.getDamage() == 10) {//water and lava buckets
+                } else if (bucket.isWater() || bucket.isLava()) {
                     if (isFull() && !cauldron.isCustomColor() && !cauldron.hasPotion() && item.getDamage() == 8) {
                         break;
                     }
+                    
+                    Item emptyBucket = Item.get(ItemID.BUCKET);
 
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(0);//empty bucket
-
-                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, bucket);
+                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, emptyBucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         if (player.isSurvival() || player.isAdventure()) {
@@ -143,7 +141,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                         }
                         if (cauldron.hasPotion()) {//if has potion
                             clearWithFizz(cauldron);
-                        } else if (item.getDamage() == 8) { //water bucket
+                        } else if (bucket.isWater()) {
                             this.setFillLevel(3);//fill
                             cauldron.clearCustomColor();
                             this.level.setBlock(this, this, true);
@@ -163,31 +161,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     }
                 }
                 break;
-            case ItemID.DYE:
-                if (isEmpty() || cauldron.hasPotion()) {
-                    break;
-                }
-    
-                if (player.isSurvival() || player.isAdventure()) {
-                    item.setCount(item.getCount()-1);
-                    player.getInventory().setItemInHand(item);
-                }
-    
-                BlockColor color = new ItemDye(item.getDamage()).getDyeColor().getColor();
-                if (!cauldron.isCustomColor()) {
-                    cauldron.setCustomColor(color);
-                } else {
-                    BlockColor current = cauldron.getCustomColor();
-                    BlockColor mixed = new BlockColor(
-                            current.getRed() + (color.getRed() - current.getRed()) / 2,
-                            current.getGreen() + (color.getGreen() - current.getGreen()) / 2,
-                            current.getBlue() + (color.getBlue() - current.getBlue()) / 2
-                    );
-                    cauldron.setCustomColor(mixed);
-                }
-                this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_ADDDYE);
-                
-                break;
+            }
             case ItemID.LEATHER_CAP:
             case ItemID.LEATHER_TUNIC:
             case ItemID.LEATHER_PANTS:
@@ -288,7 +262,32 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                 this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_POTION);
                 break;
             default:
-                return true;
+                if (item instanceof ItemDye) {
+                    if (isEmpty() || cauldron.hasPotion()) {
+                        break;
+                    }
+
+                    if (player.isSurvival() || player.isAdventure()) {
+                        item.setCount(item.getCount() - 1);
+                        player.getInventory().setItemInHand(item);
+                    }
+
+                    BlockColor color = ((ItemDye)item).getDyeColor().getColor();
+                    if (!cauldron.isCustomColor()) {
+                        cauldron.setCustomColor(color);
+                    } else {
+                        BlockColor current = cauldron.getCustomColor();
+                        BlockColor mixed = new BlockColor(
+                                current.getRed() + (color.getRed() - current.getRed()) / 2,
+                                current.getGreen() + (color.getGreen() - current.getGreen()) / 2,
+                                current.getBlue() + (color.getBlue() - current.getBlue()) / 2
+                        );
+                        cauldron.setCustomColor(mixed);
+                    }
+                    this.level.addSound(this.add(0.5, 0.5, 0.5), Sound.CAULDRON_ADDDYE);
+                } else {
+                    return true;
+                }
         }
 
         this.level.updateComparatorOutputLevel(this);

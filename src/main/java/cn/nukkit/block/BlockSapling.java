@@ -80,7 +80,7 @@ public class BlockSapling extends BlockFlowable {
     }
 
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //BoneMeal
+        if (item.isFertilizer()) { //BoneMeal
             if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;
             }
