@@ -20,8 +20,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-
-import java.util.OptionalInt;
+import cn.nukkit.entity.mob.EntityCreeper;
 
 /**
  * @author joserobjr
@@ -29,23 +28,29 @@ import java.util.OptionalInt;
  */
 @PowerNukkitOnly
 @Since("1.3.2.0-PN")
-public class ItemBoatSpruce extends ItemBoat {
-    public ItemBoatSpruce() {
+public class ItemSpawnEggCreeper extends ItemSpawnEgg {
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public ItemSpawnEggCreeper() {
         this(0, 1);
     }
 
-    public ItemBoatSpruce(Integer meta) {
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public ItemSpawnEggCreeper(Integer meta) {
         this(meta, 1);
     }
 
-    public ItemBoatSpruce(Integer meta, int count) {
-        super(SPRUCE_BOAT, meta, count, "Spruce Boat");
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public ItemSpawnEggCreeper(Integer meta, int count) {
+        super(CREEPER_SPAWN_EGG, meta, count, "Spawn Creeper");
     }
 
     @Since("1.3.2.0-PN")
     @PowerNukkitOnly
     @Override
-    public OptionalInt getLegacyBoatDamage() {
-        return OptionalInt.of(1);
+    public int getEntityNetworkId() {
+        return EntityCreeper.NETWORK_ID;
     }
 }

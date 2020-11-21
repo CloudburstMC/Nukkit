@@ -20,8 +20,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-
-import java.util.OptionalInt;
+import cn.nukkit.entity.mob.EntityZombieVillager;
 
 /**
  * @author joserobjr
@@ -29,23 +28,29 @@ import java.util.OptionalInt;
  */
 @PowerNukkitOnly
 @Since("1.3.2.0-PN")
-public class ItemBoatSpruce extends ItemBoat {
-    public ItemBoatSpruce() {
+public class ItemSpawnEggZombieVillager extends ItemSpawnEgg {
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public ItemSpawnEggZombieVillager() {
         this(0, 1);
     }
 
-    public ItemBoatSpruce(Integer meta) {
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public ItemSpawnEggZombieVillager(Integer meta) {
         this(meta, 1);
     }
 
-    public ItemBoatSpruce(Integer meta, int count) {
-        super(SPRUCE_BOAT, meta, count, "Spruce Boat");
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public ItemSpawnEggZombieVillager(Integer meta, int count) {
+        super(ZOMBIE_VILLAGER_SPAWN_EGG, meta, count, "Spawn Zombie Villager");
     }
 
     @Since("1.3.2.0-PN")
     @PowerNukkitOnly
     @Override
-    public OptionalInt getLegacyBoatDamage() {
-        return OptionalInt.of(1);
+    public int getEntityNetworkId() {
+        return EntityZombieVillager.NETWORK_ID;
     }
 }

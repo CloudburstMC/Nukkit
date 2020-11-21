@@ -1,6 +1,8 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.CreatureSpawnEvent;
@@ -33,6 +35,10 @@ public class ItemSpawnEgg extends Item {
         super(SPAWN_EGG, meta, count, "Spawn EntityEgg");
     }
 
+    protected ItemSpawnEgg(int id, Integer meta, int count, String name) {
+        super(id, meta, count, name);
+    }
+
     @Override
     public boolean canBeActivated() {
         return true;
@@ -63,14 +69,15 @@ public class ItemSpawnEgg extends Item {
             nbt.putString("CustomName", this.getCustomName());
         }
 
-        CreatureSpawnEvent ev = new CreatureSpawnEvent(this.meta, block, nbt, SpawnReason.SPAWN_EGG);
+        int networkId = getEntityNetworkId();
+        CreatureSpawnEvent ev = new CreatureSpawnEvent(networkId, block, nbt, SpawnReason.SPAWN_EGG);
         level.getServer().getPluginManager().callEvent(ev);
 
         if (ev.isCancelled()) {
             return false;
         }
 
-        Entity entity = Entity.createEntity(this.meta, chunk, nbt);
+        Entity entity = Entity.createEntity(networkId, chunk, nbt);
 
         if (entity != null) {
             if (player.isSurvival()) {
@@ -81,5 +88,11 @@ public class ItemSpawnEgg extends Item {
         }
 
         return false;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public int getEntityNetworkId() {
+        return this.meta;
     }
 }
