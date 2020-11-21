@@ -176,6 +176,7 @@ public class ItemSpawnEgg extends Item {
         newIds.put(EntityTropicalFish.NETWORK_ID, TROPICAL_FISH_SPAWN_EGG);
         newIds.put(EntityTurtle.NETWORK_ID, TURTLE_SPAWN_EGG);
         newIds.put(EntityVex.NETWORK_ID, VEX_SPAWN_EGG);
+        newIds.put(EntityVillagerV1.NETWORK_ID, VILLAGER_SPAWN_EGG);
         newIds.put(EntityVillager.NETWORK_ID, VILLAGER_SPAWN_EGG);
         newIds.put(EntityVindicator.NETWORK_ID, VINDICATOR_SPAWN_EGG);
         newIds.put(EntityWanderingTrader.NETWORK_ID, WANDERING_TRADER_SPAWN_EGG);
@@ -186,6 +187,7 @@ public class ItemSpawnEgg extends Item {
         newIds.put(EntityZombie.NETWORK_ID, ZOMBIE_SPAWN_EGG);
         newIds.put(EntityZombieHorse.NETWORK_ID, ZOMBIE_HORSE_SPAWN_EGG);
         newIds.put(EntityZombiePigman.NETWORK_ID, ZOMBIE_PIGMAN_SPAWN_EGG);
+        newIds.put(EntityZombieVillagerV1.NETWORK_ID, ZOMBIE_VILLAGER_SPAWN_EGG);
         newIds.put(EntityZombieVillager.NETWORK_ID, ZOMBIE_VILLAGER_SPAWN_EGG);
     }
 }
