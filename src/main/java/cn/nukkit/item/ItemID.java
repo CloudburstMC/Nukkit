@@ -396,6 +396,6 @@ public interface ItemID {
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int RAVAGER_SPAWN_EGG = 904;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int WATER_BUCKET = 905;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int LIGHT_GRAY_DYE = 906;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int CHARCOAL = 907;
+    @Since("1.3.2.0-PN") @PowerNukkitOnly int CHARCOAL = 907;
     //@Since("1.3.2.0-PN") @PowerNukkitOnly int AGENT_SPAWN_EGG = 908;
 }

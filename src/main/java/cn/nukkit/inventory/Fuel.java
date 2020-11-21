@@ -15,6 +15,7 @@ public abstract class Fuel {
 
     static {
         addItem(ItemID.COAL, (short) 1600);
+        addItem(ItemID.CHARCOAL, (short) 1600);
         addBlock(BlockID.COAL_BLOCK, (short) 16000);
         addBlock(BlockID.TRUNK, (short) 300);
         addBlock(BlockID.WOODEN_PLANKS, (short) 300);

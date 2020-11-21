@@ -443,7 +443,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             //list[RAVAGER_SPAWN_EGG] = Item.Ravager_spawn_egg.class; //904
             list[WATER_BUCKET] = ItemBucketWater.class; //905
             list[LIGHT_GRAY_DYE] = ItemDyeLightGray.class; //906
-            //list[CHARCOAL] = Item.Charcoal.class; //907
+            list[CHARCOAL] = ItemCharcoal.class; //907
             //list[AGENT_SPAWN_EGG] = Item.Agent_spawn_egg.class; //908
 
             for (int i = 0; i < 256; ++i) {
