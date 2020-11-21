@@ -9,6 +9,12 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+## 1.3.2.0-PN-ALPHA.1 - 2020-20-11
+This changelog is still being worked on.
+
+This version pull all changes from Cloudburst Nukkit into PowerNukkit 1.3, bringing a lot of fixes, new issues,
+and support for Minecraft 1.16.100
+
 ## [1.3.1.5-PN] - 2020-09-01
 Fixes a critical duplication exploit.
 
