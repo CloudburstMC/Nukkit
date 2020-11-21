@@ -33,14 +33,14 @@ public class ItemBannerPatternBordureIndented extends ItemBannerPattern {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemBannerPatternBordureIndented() {
-        this(0,0);
+        this(0,1);
     }
 
 
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemBannerPatternBordureIndented(Integer meta) {
-        this(meta, 0);
+        this(meta, 1);
     }
 
 

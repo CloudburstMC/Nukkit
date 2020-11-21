@@ -33,13 +33,13 @@ public class ItemCocoaBeans extends ItemDye {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemCocoaBeans() {
-        this(0, 0);
+        this(0, 1);
     }
 
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemCocoaBeans(Integer meta) {
-        this(meta, 0);
+        this(meta, 1);
     }
 
     @PowerNukkitOnly

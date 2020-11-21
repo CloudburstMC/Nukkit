@@ -33,14 +33,14 @@ public class ItemBannerPatternCreeper extends ItemBannerPattern {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemBannerPatternCreeper() {
-        this(0,0);
+        this(0,1);
     }
 
 
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemBannerPatternCreeper(Integer meta) {
-        this(meta, 0);
+        this(meta, 1);
     }
 
 

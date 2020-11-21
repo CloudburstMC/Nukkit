@@ -31,13 +31,13 @@ public class ItemCharcoal extends ItemCoal {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemCharcoal() {
-        this(0, 0);
+        this(0, 1);
     }
 
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemCharcoal(Integer meta) {
-        this(meta, 0);
+        this(meta, 1);
     }
 
     @PowerNukkitOnly

@@ -32,13 +32,13 @@ public class ItemInkSac extends ItemDye {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemInkSac() {
-        this(0, 0);
+        this(0, 1);
     }
 
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemInkSac(Integer meta) {
-        this(meta, 0);
+        this(meta, 1);
     }
 
     @PowerNukkitOnly

@@ -33,14 +33,14 @@ public class ItemBannerPatternFlower extends ItemBannerPattern {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemBannerPatternFlower() {
-        this(0,0);
+        this(0,1);
     }
 
 
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemBannerPatternFlower(Integer meta) {
-        this(meta, 0);
+        this(meta, 1);
     }
 
 
