@@ -9,10 +9,20 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
-## 1.3.2.0-PN-ALPHA.1 - 2020-20-11
+## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
+
+### Fixes
+- _Alpha Bug_: Some blocks were still dropping the old `minecraft:dye`
+- _Alpha Bug_: Drinking milk would give the player a hardcoded `ItemBucket`
+- _Alpha Bug_: Boat entities should drop the correct item now
+
+### Changed
+- Translations updated. Help us to translate PowerNukkit at https://translate.powernukkit.org
+
+## 1.3.2.0-PN-ALPHA.1 - 2020-11-20
 This changelog is still being worked on.
 
-This version pull all changes from Cloudburst Nukkit into PowerNukkit 1.3, bringing a lot of fixes, new issues,
+This version pulls all changes from Cloudburst Nukkit into PowerNukkit 1.3, bringing a lot of fixes, new issues,
 and support for Minecraft 1.16.100
 
 ## [1.3.1.5-PN] - 2020-09-01
