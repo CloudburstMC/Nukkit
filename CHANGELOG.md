@@ -13,6 +13,7 @@ Click the link above to see the future.
 
 ### Fixes
 - _Alpha Bug_: Fixes entities from the MobPlugin going into the ground (compatibility issue)
+- [#770] Bamboo not dropping when broken, were also affecting blocks with id > 255
 
 ## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
 
@@ -621,3 +622,4 @@ Fixes several anvil issues.
 [#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
 [#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475
 [#544]: https://github.com/PowerNukkit/PowerNukkit/issues/544
+[#770]: https://github.com/PowerNukkit/PowerNukkit/issues/770

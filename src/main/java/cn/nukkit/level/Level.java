@@ -1963,7 +1963,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        if (item.getId() > 0 && item.getCount() > 0) {
+        if (item.getId() != 0 && item.getCount() > 0) {
             EntityItem itemEntity = (EntityItem) Entity.createEntity("Item",
                     this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true),
                     Entity.getDefaultNBT(source, motion, new Random().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(item)).putShort("PickupDelay", delay));
