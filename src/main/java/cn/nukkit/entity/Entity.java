@@ -4,6 +4,7 @@ import cn.nukkit.AdventureSettings;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
@@ -2221,7 +2222,11 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    @PowerNukkitDifference(since = "1.3.2.0-PN", info = "Will do nothing if the entity is on ground and all args are 0")
     protected void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
+        if (onGround && movX == 0 && movY == 0 && movZ == 0 && dx == 0 && dy == 0 && dz == 0) {
+            return;
+        }
         this.isCollidedVertically = movY != dy;
         this.isCollidedHorizontally = (movX != dx || movZ != dz);
         this.isCollided = (this.isCollidedHorizontally || this.isCollidedVertically);

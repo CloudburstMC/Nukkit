@@ -12,6 +12,11 @@ Click the link above to see the future.
 ## 1.4.0.0-PN-ALPHA.1 - 2020-11-21
 This changelog is still being worked on.
 
+## 1.3.2.0-PN-ALPHA.3 - Future
+
+### Fixes
+- _Alpha Bug_: Fixes entities from the MobPlugin going into the ground (compatibility issue)
+
 ## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
 
 ### Fixes
