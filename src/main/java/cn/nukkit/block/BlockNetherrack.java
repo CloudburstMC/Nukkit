@@ -5,8 +5,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/12/26 by Pub4Game.
- * Package cn.nukkit.block in project Nukkit .
+ * @author Pub4Game
+ * @since 2015/12/26
  */
 public class BlockNetherrack extends BlockSolid {
 

@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
@@ -12,7 +11,6 @@ import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -229,7 +227,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemDye(DyeColor.BROWN.getDyeData());
+        return Item.get(ItemID.COCOA_BEANS);
     }
 
     @Override
