@@ -205,18 +205,29 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
         BlockEntityCampfire campfire = getOrCreateBlockEntity();
 
         boolean itemUsed = false;
-        if (item.isShovel() && !isExtinguished()) {
-            setExtinguished(true);
-            this.level.setBlock(this, this, true, true);
-            this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
-            itemUsed = true;
-        } else if (item.getId() == ItemID.FLINT_AND_STEEL) {
-            item.useOn(this);
-            setExtinguished(false);
-            this.level.setBlock(this, this, true, true);
-            campfire.scheduleUpdate();
-            this.level.addSound(this, Sound.FIRE_IGNITE);
-            itemUsed = true;
+        if (!isExtinguished()) {
+            if (item.isShovel()) {
+                setExtinguished(true);
+                this.level.setBlock(this, this, true, true);
+                this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
+                itemUsed = true;
+            }
+        } else {
+            if (item.getId() == ItemID.FLINT_AND_STEEL) {
+                item.useOn(this);
+                setExtinguished(false);
+                this.level.setBlock(this, this, true, true);
+                campfire.scheduleUpdate();
+                this.level.addSound(this, Sound.FIRE_IGNITE);
+                itemUsed = true;
+            } else if (item.getEnchantment(Enchantment.ID_FIRE_ASPECT) != null) {
+                item.useOn(this);
+                setExtinguished(false);
+                this.level.setBlock(this, this, true, true);
+                campfire.scheduleUpdate();
+                this.level.addSound(this, Sound.FIRE_IGNITE);
+                itemUsed = true;
+            }
         }
 
         Item cloned = item.clone();
