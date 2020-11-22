@@ -122,12 +122,12 @@ public class BlockLantern extends BlockFlowable {
 
     @Override
     public double getResistance() {
-        return 17.5;
+        return 3.5;
     }
 
     @Override
     public double getHardness() {
-        return 5.0;
+        return 3.5;
     }
 
     @Override
