@@ -17,9 +17,14 @@ This changelog is still being worked on.
 ### Fixes
 - _Alpha Bug_: Fixes entities from the MobPlugin going into the ground (compatibility issue)
 - [#770] Bamboo not dropping when broken, were also affecting blocks with id > 255
-- [#776] Error saving region files with content over 2 GB
-- [#778] Compatibility fix: Unable to change MobPlugin spawner with eggs
+- [#766] Error saving region files with content over 2 GB
+- [#776] _Alpha Bug_: Grindstone can't remove enchants
+- [#777] Falling block falling though scaffolds
+- [#778] _Alpha Bug_: Compatibility fix: Unable to change MobPlugin spawner with eggs
 - [#778] Unable to get `minecraft:mob_spawner` with `/give Nick mob_spawner`
+
+### Changed
+- [#776] Grindstone won't reset the repair cost anymore
 
 ## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
 
@@ -628,6 +633,8 @@ Fixes several anvil issues.
 [#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
 [#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475
 [#544]: https://github.com/PowerNukkit/PowerNukkit/issues/544
+[#766]: https://github.com/PowerNukkit/PowerNukkit/issues/766
 [#770]: https://github.com/PowerNukkit/PowerNukkit/issues/770
 [#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
+[#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
