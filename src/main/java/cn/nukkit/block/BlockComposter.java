@@ -199,7 +199,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
                                   TWISTING_VINES, WEEPING_VINES);
         registerBlocks(65, DANDELION, RED_FLOWER, DOUBLE_PLANT, WITHER_ROSE, LILY_PAD, MELON_BLOCK,
                                   PUMPKIN, CARVED_PUMPKIN, SEA_PICKLE, BROWN_MUSHROOM, RED_MUSHROOM, 
-                                  WARPED_ROOTS, CRIMSON_ROOTS);
+                                  WARPED_ROOTS, CRIMSON_ROOTS, SHROOMLIGHT);
         registerBlocks(85, HAY_BALE, BROWN_MUSHROOM_BLOCK, RED_MUSHROOM_BLOCK, MUSHROOM_STEW);
         registerBlocks(100, CAKE_BLOCK);
 
