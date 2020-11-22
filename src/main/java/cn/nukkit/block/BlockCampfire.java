@@ -169,7 +169,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
 
     @Override
     public void onEntityCollide(Entity entity) {
-        if (!isExtinguished() && !entity.isSneaking()) {
+        if (!isExtinguished()) {
             entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 1));
         }
     }
