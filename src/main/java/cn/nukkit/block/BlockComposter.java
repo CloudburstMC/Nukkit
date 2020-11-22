@@ -47,7 +47,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
 
     @Override
     public double getResistance() {
-        return 3;
+        return 0.6;
     }
 
     @Override
