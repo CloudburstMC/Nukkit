@@ -162,4 +162,9 @@ public class EntityPotion extends EntityProjectile {
         this.timing.stopTiming();
         return hasUpdate;
     }
+    
+    @Since("1.4.0.0-PN")
+    public int getPotionId() {
+        return this.potionId;
+    }
 }
