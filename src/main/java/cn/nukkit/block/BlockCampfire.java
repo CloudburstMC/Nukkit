@@ -16,6 +16,7 @@ import cn.nukkit.inventory.CampfireInventory;
 import cn.nukkit.inventory.CampfireRecipe;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.*;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.Sound;
@@ -172,6 +173,11 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
     public void onEntityCollide(Entity entity) {
         if (!isExtinguished()) {
             entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 1));
+        } else {
+            if (entity.isOnFire()) {
+                setExtinguished(false);
+                level.setBlock(this, this, true);
+            }
         }
     }
 
