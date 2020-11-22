@@ -4,8 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.ComposterEmptyEvent;
 import cn.nukkit.event.block.ComposterFillEvent;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemID;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.DyeColor;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
@@ -13,7 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 public class BlockComposter extends BlockSolidMeta implements ItemID {
-    private static Int2IntOpenHashMap compostableItems = new Int2IntOpenHashMap();
+    private static final Int2IntOpenHashMap compostableItems = new Int2IntOpenHashMap();
     static {
         registerDefaults();
     }
@@ -99,7 +103,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         }
 
         if (isFull()) {
-            ComposterEmptyEvent event = new ComposterEmptyEvent(this, player, item, new ItemDye(DyeColor.WHITE), 0);
+            ComposterEmptyEvent event = new ComposterEmptyEvent(this, player, item, Item.get(ItemID.BONE_MEAL), 0);
             this.level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 setDamage(event.getNewLevel());

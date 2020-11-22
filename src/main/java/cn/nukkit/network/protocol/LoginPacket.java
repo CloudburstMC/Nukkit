@@ -153,7 +153,8 @@ public class LoginPacket extends DataPacket {
         byte[] data = Base64.getDecoder().decode(element.get("Image").getAsString());
         int width = element.get("ImageWidth").getAsInt();
         int height = element.get("ImageHeight").getAsInt();
-        return new SkinAnimation(new SerializedImage(width, height, data), type, frames);
+        int expression = element.get("AnimationExpression").getAsInt();
+        return new SkinAnimation(new SerializedImage(width, height, data), type, frames, expression);
     }
 
     private static SerializedImage getImage(JsonObject token, String name) {
