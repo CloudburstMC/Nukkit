@@ -9,6 +9,7 @@ import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityPotion;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.CampfireInventory;
@@ -241,6 +242,12 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
             setExtinguished(false);
             level.setBlock(this, this, true);
             return true;
+        } else if (projectile instanceof EntityPotion && !isExtinguished()) {
+            if (((EntityPotion) projectile).getPotionId() == 0) {
+                setExtinguished(true);
+                level.setBlock(this, this, true);
+                return true;
+            }
         }
         return false;
     }
