@@ -101,6 +101,12 @@ public class ItemSpawnEgg extends Item {
 
     @Since("1.3.2.0-PN")
     @PowerNukkitOnly
+    public Item getLegacySpawnEgg() {
+        return Item.getItem(SPAWN_EGG, getEntityNetworkId(), getCount(), getCompoundTag(), false);
+    }
+
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
     @Override
     public Item selfUpgrade() {
         if (getId() != SPAWN_EGG) {
