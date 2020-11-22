@@ -202,4 +202,10 @@ public class BlockLantern extends BlockFlowable {
     public void setHanging(boolean hanging) {
         setBooleanValue(HANGING, hanging);
     }
+    
+    @PowerNukkitOnly
+    @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
 }
