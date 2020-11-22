@@ -14,11 +14,11 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.ThreadCache;
+import cn.nukkit.utils.Utils;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import lombok.extern.log4j.Log4j2;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +30,7 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class Anvil extends BaseLevelProvider {
     public static final int VERSION = 19133;
     static private final byte[] PAD_256 = new byte[256];
@@ -68,8 +69,9 @@ public class Anvil extends BaseLevelProvider {
     }
 
     public static void generate(String path, String name, long seed, Class<? extends Generator> generator, Map<String, String> options) throws IOException {
-        if (!new File(path + "/region").exists()) {
-            new File(path + "/region").mkdirs();
+        File regionDir = new File(path + "/region");
+        if (!regionDir.exists() && !regionDir.mkdirs()) {
+            throw new IOException("Could not create the directory "+regionDir);
         }
 
         CompoundTag levelData = new CompoundTag("Data")
@@ -96,7 +98,13 @@ public class Anvil extends BaseLevelProvider {
                 .putLong("Time", 0)
                 .putLong("SizeOnDisk", 0);
 
-        NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
+        Utils.safeWrite(new File(path, "level.dat"), file -> {
+            try(FileOutputStream fos = new FileOutputStream(file); BufferedOutputStream out = new BufferedOutputStream(fos)) {
+                NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), out, ByteOrder.BIG_ENDIAN);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
     }
 
     @Override
