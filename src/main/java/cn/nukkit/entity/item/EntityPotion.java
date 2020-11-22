@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.potion.PotionCollideEvent;
