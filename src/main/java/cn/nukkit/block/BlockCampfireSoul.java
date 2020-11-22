@@ -39,4 +39,11 @@ public class BlockCampfireSoul extends BlockCampfire {
     public Item toItem() {
         return Item.get(ItemID.SOUL_CAMPFIRE);
     }
+    
+    @Override
+    public void onEntityCollide(Entity entity) {
+        if (!isExtinguished()) {
+            entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 2));
+        }
+    }
 }
