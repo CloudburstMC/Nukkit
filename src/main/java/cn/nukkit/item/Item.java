@@ -635,6 +635,12 @@ public class Item implements Cloneable, BlockID, ItemID {
             info = "Prevents players from getting invalid items by limiting the return to the maximum damage defined in Block.getMaxItemDamage()",
             since = "1.4.0.0-PN")
     public static Item get(int id, Integer meta, int count, byte[] tags) {
+        return getItem(id, meta, count, tags, true);
+    }
+
+    @PowerNukkitOnly("Created with a new name to avoid possible signature conflicts in future")
+    @Since("1.3.2.0-PN")
+    public static Item getItem(int id, Integer meta, int count, byte[] tags, boolean selfUpgrade) {
         try {
             Class c = null;
             if (id < 0) {
@@ -680,8 +686,12 @@ public class Item implements Cloneable, BlockID, ItemID {
             if (tags.length != 0) {
                 item.setCompoundTag(tags);
             }
-
-            return item.selfUpgrade();
+            
+            if (selfUpgrade) {
+                item = item.selfUpgrade();
+            }
+            
+            return item;
         } catch (Exception e) {
             log.error("Error getting the item " + id + ":" + meta + (id < 0? " ("+(255 - id)+")":"") + "! Returning an unsafe item stack!", e);
             return new Item(id, meta, count).setCompoundTag(tags);

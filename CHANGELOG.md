@@ -18,6 +18,8 @@ This changelog is still being worked on.
 - _Alpha Bug_: Fixes entities from the MobPlugin going into the ground (compatibility issue)
 - [#770] Bamboo not dropping when broken, were also affecting blocks with id > 255
 - [#776] Error saving region files with content over 2 GB
+- [#778] Compatibility fix: Unable to change MobPlugin spawner with eggs
+- [#778] Unable to get `minecraft:mob_spawner` with `/give Nick mob_spawner`
 
 ## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
 
@@ -628,3 +630,4 @@ Fixes several anvil issues.
 [#544]: https://github.com/PowerNukkit/PowerNukkit/issues/544
 [#770]: https://github.com/PowerNukkit/PowerNukkit/issues/770
 [#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
+[#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
