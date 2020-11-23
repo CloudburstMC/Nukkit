@@ -289,7 +289,6 @@ public interface ItemID {
 
     @Since("1.4.0.0-PN") @PowerNukkitOnly int SOUL_CAMPFIRE = 801;
     
-    //TODO: Make all this work!
     @Since("1.3.2.0-PN") @PowerNukkitOnly int COD_BUCKET = 802;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int GHAST_SPAWN_EGG = 803;
     @Since("1.3.2.0-PN") @PowerNukkitOnly int FLOWER_BANNER_PATTERN = 804;
