@@ -6,16 +6,21 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
+import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
@@ -27,6 +32,9 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     public static final BooleanBlockProperty IN_WALL = new BooleanBlockProperty("in_wall_bit", false);
     public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, OPEN, IN_WALL);
+
+    // no idea how to make this better :d
+    private static final List<Location> manualOverrides = new ArrayList<>();
 
     public BlockFenceGate() {
         this(0);
@@ -128,6 +136,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     }
 
     @PowerNukkitDifference(info = "InWall property is now properly set, returns false if setBlock fails", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Open door if redstone signal is detected.", since = "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         BlockFace direction = player.getDirection();
@@ -137,22 +146,21 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
                 || getSide(direction.rotateYCCW()) instanceof BlockWallBase) {
             setInWall(true);
         }
+
+        if (!this.getLevel().setBlock(block, this, true, true)) {
+            return false;
+        }
+
+        if (level.getServer().isRedstoneEnabled() && !this.isOpen() && this.isPowered()) {
+            this.setOpen(null, true);
+        }
         
-        return this.getLevel().setBlock(block, this, true, true);
+        return true;
     }
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (player == null) {
-            return false;
-        }
-
-        if (!this.toggle(player)) {
-            return false;
-        }
-
-        this.getLevel().addLevelEvent(this.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_DOOR);
-        return true;
+        return toggle(player);
     }
 
     @Override
@@ -160,7 +168,19 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         return BlockColor.WOOD_BLOCK_COLOR;
     }
 
+    @PowerNukkitDifference(info = "Just call the #setOpen() method.", since = "1.4.0.0-PN")
     public boolean toggle(Player player) {
+        return this.setOpen(player, !this.isOpen());
+    }
+
+    @PowerNukkitDifference(info = "Using direct values, instead of toggling (fixes a redstone bug, that the door won't open). " +
+            "Also adding possibility to detect, whether a player or redstone recently opened/closed the door.", since = "1.4.0.0-PN")
+    @PowerNukkitOnly
+    public boolean setOpen(Player player, boolean open) {
+        if (open == this.isOpen()) {
+            return false;
+        }
+
         DoorToggleEvent event = new DoorToggleEvent(this, player);
         this.getLevel().getServer().getPluginManager().callEvent(event);
 
@@ -207,7 +227,35 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         setBlockFace(direction);
         toggleBooleanProperty(OPEN);
         this.level.setBlock(this, this, false, false);
+
+        if (player != null) {
+            this.setManualOverride(this.isPowered() || isOpen());
+        }
+
+        playOpenCloseSound();
         return true;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void playOpenCloseSound() {
+        if (this.isOpen()) {
+            this.playOpenSound();
+        } else {
+            this.playCloseSound();
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void playOpenSound() {
+        level.addSound(this, Sound.RANDOM_DOOR_OPEN);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void playCloseSound() {
+        level.addSound(this, Sound.RANDOM_DOOR_CLOSE);
     }
 
     public boolean isOpen() {
@@ -227,20 +275,64 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
             BlockFace face = getBlockFace();
             boolean touchingWall = getSide(face.rotateY()) instanceof BlockWallBase || getSide(face.rotateYCCW()) instanceof BlockWallBase;
             if (touchingWall != isInWall()) {
-                setInWall(touchingWall);
+                this.setInWall(touchingWall);
                 level.setBlock(this, this, true);
                 return type;
             }
         } else if (type == Level.BLOCK_UPDATE_REDSTONE && this.level.getServer().isRedstoneEnabled()) {
-            boolean isPowered = level.isBlockPowered(this.getLocation());
-            
-            if (isOpen() != isPowered) {
-                this.toggle(null);
-                return type;
-            }
+            this.onRedstoneUpdate();
+            return type;
         }
 
         return 0;
+    }
+
+    @PowerNukkitDifference(info = "Checking if the door was opened/closed manually.", since = "1.4.0.0-PN")
+    private void onRedstoneUpdate() {
+        if ((this.isOpen() != this.isPowered()) && !this.getManualOverride()) {
+            if (this.isOpen() != this.isPowered()) {
+                level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, this.isOpen() ? 15 : 0, this.isOpen() ? 0 : 15));
+
+                this.setOpen(null, this.isPowered());
+            }
+        } else if (this.getManualOverride() && (this.isPowered() == this.isOpen())) {
+            this.setManualOverride(false);
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setManualOverride(boolean val) {
+        if (val) {
+            manualOverrides.add(this.getLocation());
+        } else {
+            manualOverrides.remove(this.getLocation());
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean getManualOverride() {
+        return manualOverrides.contains(this.getLocation());
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    private boolean isPowered() {
+        for (BlockFace side : BlockFace.values()) {
+            Block b = getSide(side).getLevelBlock();
+
+            if (this.level.isSidePowered(b.getLocation(), side)) {
+                return true;
+            }
+        }
+        return this.level.isBlockPowered(this.getLocation());
+    }
+
+    @Override
+    public boolean onBreak(Item item) {
+        this.setManualOverride(false);
+        return super.onBreak(item);
     }
 
     @PowerNukkitOnly
