@@ -2,11 +2,14 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
@@ -56,7 +59,7 @@ public class BlockRedstoneLamp extends BlockSolid {
         return true;
     }
 
-    @PowerNukkitDifference(info = "Redstone Event after Block powered check.", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Redstone Event after Block powered check + use #isPowered() method.", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
@@ -64,7 +67,7 @@ public class BlockRedstoneLamp extends BlockSolid {
                 return 0;
             }
 
-            if (this.level.isBlockPowered(this.getLocation())) {
+            if (this.isPowered()) {
                 // Redstone event
                 RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
                 getLevel().getServer().getPluginManager().callEvent(ev);
@@ -78,6 +81,19 @@ public class BlockRedstoneLamp extends BlockSolid {
         }
 
         return 0;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isPowered() {
+        for (BlockFace side : BlockFace.values()) {
+            Block b = this.getSide(side);
+
+            if (this.level.isSidePowered(b.getLocation(), side)) {
+                return true;
+            }
+        }
+        return this.level.isBlockPowered(this.getLocation());
     }
 
     @Override
