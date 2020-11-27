@@ -41,11 +41,13 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         return false;
     }
 
+    @PowerNukkitDifference(info = "Add missing update around redstone", since = "1.4.0.0-PN")
     @Override
     public boolean onBreak(Item item) {
         Vector3 pos = getLocation();
         this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
 
+        this.level.updateAroundRedstone(pos, null);
         if (this.level.getServer().isRedstoneEnabled()) {
             for (BlockFace face : BlockFace.values()) {
                 this.level.updateAroundRedstone(pos.getSide(face), null);

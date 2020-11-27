@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
@@ -38,6 +39,7 @@ public class BlockRedstoneTorch extends BlockTorch {
         return 7;
     }
 
+    @PowerNukkitDifference(info = "Fixed wrong usage of around redstone update.", since = "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (!super.place(item, block, target, face, fx, fy, fz, player)) {
@@ -49,8 +51,9 @@ public class BlockRedstoneTorch extends BlockTorch {
                 BlockFace facing = getBlockFace().getOpposite();
                 Vector3 pos = getLocation();
 
+                this.level.updateAroundRedstone(pos, facing);
                 for (BlockFace side : BlockFace.values()) {
-                    if (facing == side) {
+                    if (side == facing) {
                         continue;
                     }
 
@@ -74,15 +77,19 @@ public class BlockRedstoneTorch extends BlockTorch {
         return side == BlockFace.DOWN ? this.getWeakPower(side) : 0;
     }
 
+    @PowerNukkitDifference(info = "Add missing update around redstone", since = "1.4.0.0-PN")
     @Override
     public boolean onBreak(Item item) {
-        super.onBreak(item);
+        if (!super.onBreak(item)) {
+            return false;
+        }
 
         Vector3 pos = getLocation();
 
         BlockFace face = getBlockFace().getOpposite();
 
         if (this.level.getServer().isRedstoneEnabled()) {
+            this.level.updateAroundRedstone(pos, face);
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {
                     continue;
@@ -120,6 +127,7 @@ public class BlockRedstoneTorch extends BlockTorch {
         return 0;
     }
 
+    @PowerNukkitDifference(info = "Add missing update around redstone", since = "1.4.0.0-PN")
     private boolean checkState() {
         if (isPoweredFromSide()) {
             BlockFace face = getBlockFace().getOpposite();
@@ -127,6 +135,7 @@ public class BlockRedstoneTorch extends BlockTorch {
 
             this.level.setBlock(pos, Block.get(BlockID.UNLIT_REDSTONE_TORCH, getDamage()), false, true);
 
+            this.level.updateAroundRedstone(pos, face);
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {
                     continue;
@@ -134,7 +143,6 @@ public class BlockRedstoneTorch extends BlockTorch {
 
                 this.level.updateAroundRedstone(pos.getSide(side), null);
             }
-
             return true;
         }
 

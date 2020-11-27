@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -76,6 +77,7 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
         return 0;
     }
 
+    @PowerNukkitDifference(info = "Add missing update around redstone", since = "1.4.0.0-PN")
     private boolean checkState() {
         BlockFace face = getBlockFace().getOpposite();
         Vector3 pos = getLocation();
@@ -83,6 +85,7 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
         if (!this.level.isSidePowered(pos.getSide(face), face)) {
             this.level.setBlock(pos, Block.get(BlockID.REDSTONE_TORCH, getDamage()), false, true);
 
+            this.level.updateAroundRedstone(pos, face);
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {
                     continue;

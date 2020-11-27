@@ -1,8 +1,15 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /*
  * @author Pub4Game
@@ -43,8 +50,6 @@ public class BlockRedstone extends BlockSolidMeta {
         return "Redstone Block";
     }
 
-    //TODO: redstone
-
     @Override
     public int getToolTier() {
         return ItemTool.TIER_WOODEN;
@@ -53,6 +58,31 @@ public class BlockRedstone extends BlockSolidMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.REDSTONE_BLOCK_COLOR;
+    }
+
+    @Override
+    @PowerNukkitOnly
+    @PowerNukkitDifference(info = "Update around redstone", since = "1.4.0.0-PN")
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        if (super.place(item, block, target, face, fx, fy, fz, player)) {
+            level.updateAroundRedstone(this.getLocation(), null);
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @PowerNukkitOnly
+    @PowerNukkitDifference(info = "Update around redstone", since = "1.4.0.0-PN")
+    public boolean onBreak(Item item) {
+        if (!super.onBreak(item)) {
+            return false;
+        }
+
+        level.updateAroundRedstone(this.getLocation(), null);
+
+        return true;
     }
 
     @Override
