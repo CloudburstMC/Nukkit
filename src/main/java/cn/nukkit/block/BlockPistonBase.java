@@ -444,7 +444,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             int count = 1;
             List<Block> sticked = new ArrayList<>();
 
-            while (block.getId() == SLIME_BLOCK) {
+            while (block.getId() == SLIME_BLOCK || block.getId() == HONEY_BLOCK) {
                 block = origin.getSide(this.moveDirection.getOpposite(), count);
 
                 if (block.getId() == AIR || !canPush(block, this.moveDirection, false, extending) || block.equals(this.pistonPos)) {
@@ -456,9 +456,10 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     break;
                 }
 
-                if (++count + this.toMove.size() > 12) {
+                if (count + this.toMove.size() > 12) {
                     return false;
                 }
+                count++;
 
                 sticked.add(block);
             }
@@ -481,7 +482,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     for (int i = 0; i <= index + stickedCount; ++i) {
                         Block b = this.toMove.get(i);
 
-                        if (b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
+                        if ((b.getId() == SLIME_BLOCK || b.getId() == HONEY_BLOCK) && !this.addBranchingBlocks(b)) {
                             return false;
                         }
                     }
