@@ -92,6 +92,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         return 1;
     }
 
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         BlockFace facing = face.getOpposite();
@@ -103,7 +104,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         setBlockFace(facing);
 
         if (this.level.getServer().isRedstoneEnabled()) {
-            boolean powered = this.level.isBlockPowered(this);
+            boolean powered = this.isGettingPower();
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);

@@ -261,6 +261,7 @@ public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<Bloc
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
             // We can't use getOrCreateBlockEntity(), because the update method is called on block place,
@@ -270,7 +271,7 @@ public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<Bloc
             if (music == null)
                 return 0;
 
-            if (this.getLevel().isBlockPowered(this)) {
+            if (this.isGettingPower()) {
                 if (!music.isPowered()) {
                     this.emitSound();
                 }

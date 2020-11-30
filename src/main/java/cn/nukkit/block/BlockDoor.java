@@ -57,7 +57,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     @Deprecated @DeprecationDetails(reason = "Use the accessors or properties instead", since = "1.4.0.0-PN", replaceWith = "DOOR_HINGE")
     public static final int DOOR_HINGE_BIT = PROPERTIES.getOffset(DOOR_HINGE.getName());
 
-    @Deprecated @DeprecationDetails(reason = "Was removed from the game", since = "1.4.0.0-PN", replaceWith = "Level.isBlockPowered(block.getLocation())")
+    @Deprecated @DeprecationDetails(reason = "Was removed from the game", since = "1.4.0.0-PN", replaceWith = "#isGettingPower()")
     public static final int DOOR_POWERED_BIT = PROPERTIES.getBitSize();
 
     protected BlockDoor(int meta) {
@@ -174,13 +174,13 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @PowerNukkitDifference(info = "Checking if the door was opened/closed manually.")
     private void onRedstoneUpdate() {
-        if ((this.isOpen() != this.isPowered()) && !this.getManualOverride()) {
-            if (this.isOpen() != this.isPowered()) {
+        if ((this.isOpen() != this.isGettingPower()) && !this.getManualOverride()) {
+            if (this.isOpen() != this.isGettingPower()) {
                 level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, this.isOpen() ? 15 : 0, this.isOpen() ? 0 : 15));
 
-                this.setOpen(null, this.isPowered());
+                this.setOpen(null, this.isGettingPower());
             }
-        } else if (this.getManualOverride() && (this.isPowered() == this.isOpen())) {
+        } else if (this.getManualOverride() && (this.isGettingPower() == this.isOpen())) {
             this.setManualOverride(false);
         }
     }
@@ -223,9 +223,10 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         return manualOverrides.contains(up) || manualOverrides.contains(down);
     }
 
+    @Override
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    private boolean isPowered() {
+    public boolean isGettingPower() {
         Location down;
         Location up;
         if (this.isTop()) {
@@ -291,7 +292,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         
         level.updateAround(block);
 
-        if (level.getServer().isRedstoneEnabled() && !this.isOpen() && this.isPowered()) {
+        if (level.getServer().isRedstoneEnabled() && !this.isOpen() && this.isGettingPower()) {
             this.setOpen(null, true);
         }
 
@@ -391,7 +392,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         down.level.setBlock(down, down, true, true);
 
         if (player != null) {
-            this.setManualOverride(this.isPowered() || isOpen());
+            this.setManualOverride(this.isGettingPower() || isOpen());
         }
 
         playOpenCloseSound();

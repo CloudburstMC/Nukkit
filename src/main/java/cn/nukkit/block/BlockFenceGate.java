@@ -151,7 +151,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
             return false;
         }
 
-        if (level.getServer().isRedstoneEnabled() && !this.isOpen() && this.isPowered()) {
+        if (level.getServer().isRedstoneEnabled() && !this.isOpen() && this.isGettingPower()) {
             this.setOpen(null, true);
         }
         
@@ -229,7 +229,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         this.level.setBlock(this, this, false, false);
 
         if (player != null) {
-            this.setManualOverride(this.isPowered() || isOpen());
+            this.setManualOverride(this.isGettingPower() || isOpen());
         }
 
         playOpenCloseSound();
@@ -289,13 +289,13 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
     @PowerNukkitDifference(info = "Checking if the door was opened/closed manually.", since = "1.4.0.0-PN")
     private void onRedstoneUpdate() {
-        if ((this.isOpen() != this.isPowered()) && !this.getManualOverride()) {
-            if (this.isOpen() != this.isPowered()) {
+        if ((this.isOpen() != this.isGettingPower()) && !this.getManualOverride()) {
+            if (this.isOpen() != this.isGettingPower()) {
                 level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, this.isOpen() ? 15 : 0, this.isOpen() ? 0 : 15));
 
-                this.setOpen(null, this.isPowered());
+                this.setOpen(null, this.isGettingPower());
             }
-        } else if (this.getManualOverride() && (this.isPowered() == this.isOpen())) {
+        } else if (this.getManualOverride() && (this.isGettingPower() == this.isOpen())) {
             this.setManualOverride(false);
         }
     }
@@ -314,19 +314,6 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     @Since("1.4.0.0-PN")
     public boolean getManualOverride() {
         return manualOverrides.contains(this.getLocation());
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    private boolean isPowered() {
-        for (BlockFace side : BlockFace.values()) {
-            Block b = getSide(side).getLevelBlock();
-
-            if (this.level.isSidePowered(b.getLocation(), side)) {
-                return true;
-            }
-        }
-        return this.level.isBlockPowered(this.getLocation());
     }
 
     @Override

@@ -129,6 +129,7 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if ((type != Level.BLOCK_UPDATE_REDSTONE && type != Level.BLOCK_UPDATE_NORMAL) || !level.getServer().isRedstoneEnabled()) {
             return 0;
@@ -145,7 +146,7 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
             return 0;
         }
         
-        entity.setMouthMoving(this.level.isBlockPowered(this.getLocation()));
+        entity.setMouthMoving(this.isGettingPower());
         return Level.BLOCK_UPDATE_REDSTONE;
     }
 

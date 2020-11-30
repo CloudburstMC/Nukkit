@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
@@ -290,14 +291,15 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (!checkSupport()) {
                 this.level.useBreakOn(this);
             }
             return type;
-        } else if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if (level.isBlockPowered(this)) {
+        } else if (type == Level.BLOCK_UPDATE_REDSTONE && this.level.getServer().isRedstoneEnabled()) {
+            if (this.isGettingPower()) {
                 if (!isToggled()) {
                     setToggled(true);
                     this.level.setBlock(this, this, true, true);
@@ -310,6 +312,24 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
             return type;
         }
         return 0;
+    }
+
+    @Override
+    @PowerNukkitOnly
+    public boolean isGettingPower() {
+        for (BlockFace side : BlockFace.values()) {
+            Block b = this.getSide(side);
+
+            if (b.getId() == Block.REDSTONE_WIRE && b.getDamage() > 0 && b.y >= this.getY()) {
+                return true;
+            }
+
+            if (this.level.isSidePowered(b, side)) {
+                return true;
+            }
+        }
+
+        return this.level.isBlockPowered(this.getLocation());
     }
 
     @Override

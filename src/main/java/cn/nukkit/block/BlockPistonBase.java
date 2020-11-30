@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -78,6 +79,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (player != null) {
             if (Math.abs(player.getFloorX() - this.x) <= 1 && Math.abs(player.getFloorZ() - this.z) <= 1) {
@@ -105,7 +107,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         CompoundTag nbt = new CompoundTag()
                 .putInt("facing", this.getBlockFace().getIndex())
                 .putBoolean("Sticky", this.sticky)
-                .putBoolean("powered", isPowered());
+                .putBoolean("powered", isGettingPower());
 
 
         BlockEntityPistonArm piston = BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt);
@@ -137,6 +139,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type != Level.BLOCK_UPDATE_NORMAL && type != Level.BLOCK_UPDATE_REDSTONE && type != Level.BLOCK_UPDATE_SCHEDULED) {
             return 0;
@@ -152,7 +155,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             if (arm == null)
                 return 0;
 
-            boolean powered = this.isPowered();
+            boolean powered = this.isGettingPower();
 
             if (arm.state % 2 == 0 && arm.powered != powered && checkState(powered)) {
                 arm.powered = powered;
@@ -167,13 +170,14 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     private boolean checkState(Boolean isPowered) {
         if (!this.level.getServer().isRedstoneEnabled()) {
             return false;
         }
 
         if (isPowered == null) {
-            isPowered = this.isPowered();
+            isPowered = this.isGettingPower();
         }
 
         if (isPowered && !isExtended()) {
@@ -196,7 +200,8 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     @PowerNukkitDifference(info = "Piston shouldn't be powered from redstone under it.", since = "1.4.0.0-PN")
-    private boolean isPowered() {
+    @Override
+    public boolean isGettingPower() {
         BlockFace face = getBlockFace();
 
         for (BlockFace side : BlockFace.values()) {
@@ -216,6 +221,11 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         }
 
         return false;
+    }
+
+    @Deprecated @DeprecationDetails(reason = "New method; keeping for plugin compatibility.", replaceWith = "#isGettingPower()", since = "1.4.0.0-PN", by = "PowerNukkit")
+    public boolean isPowered() {
+        return this.isGettingPower();
     }
 
     private boolean doMove(boolean extending) {

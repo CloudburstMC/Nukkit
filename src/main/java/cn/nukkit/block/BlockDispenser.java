@@ -145,7 +145,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
     }
 
-    @PowerNukkitDifference(info = "Disables the triggered state, when the block is no longer powered.")
+    @PowerNukkitDifference(info = "Disables the triggered state, when the block is no longer powered + use #isGettingPower() method.", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (!this.level.getServer().isRedstoneEnabled()) {
@@ -159,11 +159,11 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         } else if (type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_NORMAL) {
             boolean triggered = this.isTriggered();
 
-            if (this.isPowered() && !triggered) {
+            if (this.isGettingPower() && !triggered) {
                 this.setTriggered(true);
                 this.level.setBlock(this, this, false, false);
                 level.scheduleUpdate(this, this, 4);
-            } else if (!this.isPowered() && triggered) {
+            } else if (!this.isGettingPower() && triggered) {
                 this.setTriggered(false);
                 this.level.setBlock(this, this, false, false);
             }
@@ -172,21 +172,6 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         }
 
         return 0;
-    }
-
-    @PowerNukkitDifference(info = "Using this method to check if powered", since = "1.4.0.0-PN")
-    private boolean isPowered() {
-        if (this.level.isBlockPowered(this.getLocation()))
-            return true;
-
-        for (BlockFace side : BlockFace.values()) {
-            Block b = this.getSide(side);
-
-            if (this.level.isSidePowered(b.getLocation(), side)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @PowerNukkitDifference(info = "Trigger observer on dispense fail (with #setDirty()).", since = "1.4.0.0-PN")

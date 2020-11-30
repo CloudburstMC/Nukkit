@@ -2152,4 +2152,19 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public int getItemMaxStackSize() {
         return 64;
     }
+
+    @PowerNukkitOnly
+    @PowerNukkitDifference(info = "Used so often, why not create own method here?", since = "1.4.0.0-PN")
+    public boolean isGettingPower() {
+        if (!this.level.getServer().isRedstoneEnabled()) return false;
+
+        for (BlockFace side : BlockFace.values()) {
+            Block b = this.getSide(side).getLevelBlock();
+
+            if (this.level.isSidePowered(b.getLocation(), side)) {
+                return true;
+            }
+        }
+        return this.level.isBlockPowered(this.getLocation());
+    }
 }

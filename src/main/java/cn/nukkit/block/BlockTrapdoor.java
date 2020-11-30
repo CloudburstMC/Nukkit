@@ -201,13 +201,13 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE && this.level.getServer().isRedstoneEnabled()) {
-            if ((this.isOpen() != this.isPowered()) && !this.getManualOverride()) {
-                if (this.isOpen() != this.isPowered()) {
+            if ((this.isOpen() != this.isGettingPower()) && !this.getManualOverride()) {
+                if (this.isOpen() != this.isGettingPower()) {
                     level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, this.isOpen() ? 15 : 0, this.isOpen() ? 0 : 15));
 
-                    this.setOpen(null, this.isPowered());
+                    this.setOpen(null, this.isGettingPower());
                 }
-            } else if (this.getManualOverride() && (this.isPowered() == this.isOpen())) {
+            } else if (this.getManualOverride() && (this.isGettingPower() == this.isOpen())) {
                 this.setManualOverride(false);
             }
             return type;
@@ -232,19 +232,6 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
         return manualOverrides.contains(this.getLocation());
     }
 
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    private boolean isPowered() {
-        for (BlockFace side : BlockFace.values()) {
-            Block b = getSide(side).getLevelBlock();
-
-            if (this.level.isSidePowered(b.getLocation(), side)) {
-                return true;
-            }
-        }
-        return this.level.isBlockPowered(this.getLocation());
-    }
-
     @Override
     public boolean onBreak(Item item) {
         this.setManualOverride(false);
@@ -266,7 +253,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
             return false;
         }
 
-        if (level.getServer().isRedstoneEnabled() && !this.isOpen() && this.isPowered()) {
+        if (level.getServer().isRedstoneEnabled() && !this.isOpen() && this.isGettingPower()) {
             this.setOpen(null, true);
         }
 
@@ -306,7 +293,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
             return false;
 
         if (player != null) {
-            this.setManualOverride(this.isPowered() || isOpen());
+            this.setManualOverride(this.isGettingPower() || isOpen());
         }
 
         playOpenCloseSound();
