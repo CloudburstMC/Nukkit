@@ -3021,7 +3021,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     boolean spamBug = (lastRightClickPos != null && System.currentTimeMillis() - lastRightClickTime < 100.0 && blockVector.distanceSquared(lastRightClickPos) < 0.00001);
                                     lastRightClickPos = blockVector.asVector3();
                                     lastRightClickTime = System.currentTimeMillis();
-                                    if (spamBug) {
+                                    if (spamBug && this.getInventory().getItemInHand().getBlock().getId() == BlockID.AIR) {
                                         return;
                                     }
 
