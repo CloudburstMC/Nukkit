@@ -248,7 +248,6 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             } else {
                 this.disconnectReason = "Disconnected from Server";
             }
-            RakNetInterface.this.sessions.remove(session.getAddress());
             RakNetInterface.this.sessionsToTick.get().remove(this);
         }
 
