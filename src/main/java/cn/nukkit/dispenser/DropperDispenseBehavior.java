@@ -7,6 +7,7 @@ import cn.nukkit.block.BlockDispenser;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 
 @PowerNukkitDifference(info = "Spend items in container, the dropper faces to (if there is one).", since = "1.4.0.0-PN")
@@ -28,6 +29,7 @@ public class DropperDispenseBehavior extends DefaultDispenseBehavior {
                 return clone;
             }
         } else {
+            block.level.addSound(block, Sound.RANDOM_CLICK);
             return super.dispense(block, face, item);
         }
         return null;

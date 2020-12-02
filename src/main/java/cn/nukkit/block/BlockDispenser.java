@@ -9,6 +9,8 @@ import cn.nukkit.blockentity.BlockEntityDispenser;
 import cn.nukkit.blockentity.BlockEntityEjectable;
 import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehaviorRegister;
+import cn.nukkit.dispenser.DropperDispenseBehavior;
+import cn.nukkit.dispenser.FlintAndSteelDispenseBehavior;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
@@ -16,6 +18,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelEventPacket;
@@ -206,17 +209,13 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         pk.z = 0.5f + facing.getZOffset() * 0.7f;
 
         if (target == null) {
-            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK_FAIL;
-            pk.data = 1200;
-
-            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
+            this.level.addSound(this, Sound.RANDOM_CLICK, 1.0f, 1.2f);
             getBlockEntity().setDirty();
             return;
         } else {
-            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
-            pk.data = 1000;
-
-            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
+            if (!(getDispenseBehavior(target) instanceof DropperDispenseBehavior)
+                    && !(getDispenseBehavior(target) instanceof FlintAndSteelDispenseBehavior))
+                this.level.addSound(this, Sound.RANDOM_CLICK, 1.0f, 1.0f);
         }
 
         pk.evid = LevelEventPacket.EVENT_PARTICLE_SHOOT;
@@ -228,9 +227,6 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
 
         DispenseBehavior behavior = getDispenseBehavior(target);
         Item result = behavior.dispense(this, facing, target);
-
-
-        pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
 
         target.count--;
         inv.setItem(slot, target);
