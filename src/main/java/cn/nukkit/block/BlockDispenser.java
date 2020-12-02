@@ -21,10 +21,14 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -127,6 +131,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         return true;
     }
 
+    @PowerNukkitDifference(info = "BlockData is implemented.", since = "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (player != null) {
@@ -144,8 +149,21 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
                 this.setDamage(player.getHorizontalFacing().getOpposite().getIndex());
             }
         }
+
+        CompoundTag nbt = new CompoundTag().putList(new ListTag<>("Items"));
+
+        if (item.hasCustomName()) {
+            nbt.putString("CustomName", item.getCustomName());
+        }
+
+        if (item.hasCustomBlockData()) {
+            Map<String, Tag> customData = item.getCustomBlockData().getTags();
+            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
+                nbt.put(tag.getKey(), tag.getValue());
+            }
+        }
         
-        return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
     @PowerNukkitDifference(info = "Disables the triggered state, when the block is no longer powered + use #isGettingPower() method.", since = "1.4.0.0-PN")
