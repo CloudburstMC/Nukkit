@@ -93,6 +93,7 @@ public class BlockRedstoneWire extends BlockFlowable {
         this.calculateCurrentChanges(force);
     }
 
+    @PowerNukkitDifference(info = "Let redstone go down transparent blocks.", since = "1.4.0.0-PN")
     private void calculateCurrentChanges(boolean force) {
         Vector3 pos = this.getLocation();
 

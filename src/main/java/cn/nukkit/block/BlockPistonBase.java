@@ -421,6 +421,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             return true;
         }
 
+        @PowerNukkitDifference(info = "Fix honeyblock on piston facing direction and fix block pushing limit for slime/honey blocks.", since = "1.4.0.0-PN")
         private boolean addBlockLine(Block origin, Block from) {
             Block block = origin.clone();
 
