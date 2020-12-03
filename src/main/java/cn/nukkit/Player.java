@@ -285,7 +285,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private float soulSpeedMultiplier = 1;
     private boolean wasInSoulSandCompatible;
 
-    @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     private int timeSinceRest;
 
@@ -5545,13 +5544,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
-    @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getTimeSinceRest() {
         return timeSinceRest;
     }
 
-    @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setTimeSinceRest(int timeSinceRest) {
         this.timeSinceRest = timeSinceRest;
