@@ -122,12 +122,12 @@ public class BlockLantern extends BlockFlowable {
 
     @Override
     public double getResistance() {
-        return 17.5;
+        return 3.5;
     }
 
     @Override
     public double getHardness() {
-        return 5.0;
+        return 3.5;
     }
 
     @Override
@@ -201,5 +201,11 @@ public class BlockLantern extends BlockFlowable {
     @Since("1.4.0.0-PN")
     public void setHanging(boolean hanging) {
         setBooleanValue(HANGING, hanging);
+    }
+    
+    @PowerNukkitOnly
+    @Override
+    public int getWaterloggingLevel() {
+        return 1;
     }
 }
