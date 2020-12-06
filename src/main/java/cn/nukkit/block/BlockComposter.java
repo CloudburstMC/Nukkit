@@ -42,7 +42,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
 
     @Override
     public double getHardness() {
-        return 2;
+        return 0.6;
     }
 
     @Override
