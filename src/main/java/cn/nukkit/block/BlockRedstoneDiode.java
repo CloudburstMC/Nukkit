@@ -77,7 +77,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         return true;
     }
     
-    private boolean isSupportValid(Block support) {
+    protected boolean isSupportValid(Block support) {
         return BlockLever.isSupportValid(support, BlockFace.UP) || support instanceof BlockCauldron;
     }
 
