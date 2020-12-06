@@ -138,8 +138,8 @@ public class BlockStateRegistry {
             int runtimeId = runtimeIdAllocator.getAndIncrement();
             String name = state.getCompound("block").getString("name").toLowerCase();
             
-            if (name.equals("minecraft:info_update")) {
-                infoUpdateRuntimeId = new Registration(BlockState.of(248), runtimeId);
+            if (name.equals("minecraft:unknown")) {
+                infoUpdateRuntimeId = new Registration(BlockState.of(600), runtimeId);
             }
             
             List<CompoundTag> legacyStates = metaOverrides.get(state.getCompound("block").copy().remove("version"));

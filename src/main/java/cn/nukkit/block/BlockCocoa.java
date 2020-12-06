@@ -5,14 +5,13 @@ import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
@@ -169,7 +168,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.isFertilizer()) {
             if (this.getGrowthStage() < 2) {
                 if (!this.grow()) {
                     return false;
@@ -227,13 +226,13 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemDye(DyeColor.BROWN.getDyeData());
+        return Item.get(ItemID.COCOA_BEANS);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                new ItemDye(3, this.getDamage() >= 8 ? 3 : 1)
+                Item.get(ItemID.COCOA_BEANS, this.getDamage() >= 8 ? 3 : 1)
         };
     }
 

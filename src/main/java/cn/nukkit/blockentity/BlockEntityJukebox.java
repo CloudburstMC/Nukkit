@@ -122,6 +122,6 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
 
     @Override
     public void onBreak() {
-        dropItem();
+        this.dropItem();
     }
 }
