@@ -37,10 +37,9 @@ public class BlockGrassPath extends BlockGrass {
         return ItemTool.TYPE_SHOVEL;
     }
 
-    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Returns y+1, making this a normal cube")
     @Override
     public double getMaxY() {
-        return this.y +1; // Even though the block is visually smaller, the actual bounding box is just a normal cube 
+        return this.y + 1;
     }
 
     @Override

@@ -10,8 +10,8 @@ import cn.nukkit.math.Vector3;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
 import org.powernukkit.tests.api.MockLevel;
+import org.powernukkit.tests.api.MockPlayer;
 import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +27,7 @@ class BlockEnderChestTest {
     @MockLevel
     Level level;
     
-    @Mock
+    @MockPlayer
     Player player;
     
     final Vector3 pos = new Vector3(3, 4, 5);

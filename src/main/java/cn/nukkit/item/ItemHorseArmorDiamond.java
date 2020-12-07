@@ -2,11 +2,11 @@ package cn.nukkit.item;
 
 public class ItemHorseArmorDiamond extends Item {
     public ItemHorseArmorDiamond() {
-        this(0, 0);
+        this(0, 1);
     }
 
     public ItemHorseArmorDiamond(Integer meta) {
-        this(meta, 0);
+        this(meta, 1);
     }
 
     public ItemHorseArmorDiamond(Integer meta, int count) {

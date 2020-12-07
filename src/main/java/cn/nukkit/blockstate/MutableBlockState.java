@@ -9,6 +9,7 @@ import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -57,6 +58,7 @@ public abstract class MutableBlockState implements IMutableBlockState {
         return properties;
     }
 
+    @Nonnegative
     @Override
     public final int getBlockId() {
         return blockId;

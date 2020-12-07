@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.BoneMealParticle;
@@ -93,7 +92,7 @@ public class BlockBambooSapling extends BlockFlowable {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        boolean isBoneMeal = item.getId() == ItemID.DYE && item.getDamage() == 0x0F; //Bonemeal
+        boolean isBoneMeal = item.isFertilizer(); //Bonemeal
         if (isBoneMeal || item.getBlock() != null && item.getBlockId() == BlockID.BAMBOO) {
 
             boolean success = false;

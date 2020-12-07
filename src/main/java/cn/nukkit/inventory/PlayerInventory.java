@@ -481,7 +481,6 @@ public class PlayerInventory extends BaseInventory {
         }
         Player p = (Player) this.getHolder();
 
-        //InventoryContentPacket pk = new InventoryContentPacket();
         CreativeContentPacket pk = new CreativeContentPacket();
 
         if (!p.isSpectator()) { //fill it for all gamemodes except spectator
@@ -515,6 +514,7 @@ public class PlayerInventory extends BaseInventory {
     public void onClose(Player who) {
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = who.getWindowId(this);
+        pk.wasServerInitiated = false;
         who.dataPacket(pk);
         // player can never stop viewing their own inventory
         if (who != holder) {

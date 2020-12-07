@@ -20,6 +20,7 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.AxisDirection;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
@@ -91,7 +92,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @Deprecated @DeprecationDetails(reason = "Limited amount of state data", since = "1.4.0.0-PN", replaceWith = "getCurrentState()")
     public int getFullDamage() {
-        return getBigDamage();
+        return getSignedBigDamage();
     }
 
     @Override

@@ -31,7 +31,7 @@ jobs:
       run: |
         PN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
         echo "Version: $PN_VERSION"
-        echo "::set-env name=PN_VERSION::$PN_VERSION"
+        echo "PN_VERSION=$PN_VERSION" >> $GITHUB_ENV
     - uses: actions/checkout@v2
       name: Checkout last javadoc
       with:
