@@ -7,7 +7,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 
-@PowerNukkitDifference(info = "Player is null when is filled by a hopper pushing the item")
+@PowerNukkitDifference(info = "Player is null when is filled by a hopper pushing the item", since = "1.4.0.0-PN")
 public class ComposterFillEvent extends BlockEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
