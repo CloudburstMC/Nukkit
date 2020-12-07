@@ -1,7 +1,10 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
@@ -34,8 +37,14 @@ import java.util.ArrayList;
 public class EntityBoat extends EntityVehicle {
 
     public static final int NETWORK_ID = 90;
-    
-    protected int variant;
+
+    @DeprecationDetails(since = "1.3.2.0-PN", 
+            reason = "No longer used", 
+            by = "PowerNukkit",
+            replaceWith = "DATA_VARIANT"
+    )
+    @Deprecated
+    public static final int DATA_WOOD_ID = 20;
 
     public static final Vector3f RIDER_PLAYER_OFFSET = new Vector3f(0, 1.02001f, 0);
     public static final Vector3f RIDER_OFFSET = new Vector3f(0, -0.2f, 0);
@@ -50,6 +59,7 @@ public class EntityBoat extends EntityVehicle {
     public static final double SINKING_SPEED = 0.0005;
     public static final double SINKING_MAX_SPEED = 0.005;
 
+    @Since("1.3.2.0-PN") protected int variant;
     protected boolean sinking = true;
 
     public EntityBoat(FullChunk chunk, CompoundTag nbt) {
@@ -434,10 +444,14 @@ public class EntityBoat extends EntityVehicle {
         this.namedTag.putInt("Variant", this.variant);
     }
     
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
     public int getVariant() {
         return this.variant;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
     public void setVariant(int variant) {
         this.variant = variant;
         this.dataProperties.putInt(DATA_VARIANT, variant);

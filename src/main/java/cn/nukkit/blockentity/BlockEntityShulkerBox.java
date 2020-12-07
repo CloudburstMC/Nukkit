@@ -53,10 +53,6 @@ public class BlockEntityShulkerBox extends BlockEntitySpawnable implements Inven
             for (Player player : new HashSet<>(this.getInventory().getViewers())) {
                 player.removeWindow(this.getInventory());
             }
-
-            for (Player player : new HashSet<>(this.getInventory().getViewers())) {
-                player.removeWindow(this.getRealInventory());
-            }
             super.close();
         }
     }

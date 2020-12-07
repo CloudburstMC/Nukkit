@@ -3,6 +3,8 @@ package cn.nukkit.dispenser;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.item.ItemID;
 
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,6 +19,23 @@ public final class DispenseBehaviorRegister {
     public static void registerBehavior(int itemId, DispenseBehavior behavior) {
         behaviors.put(itemId, behavior);
     }
+    
+    private static void registerBehaviorForItemsEndingWith(String suffix, DispenseBehavior behavior, int... additionally) {
+        for (int id : additionally) {
+            registerBehavior(id, behavior);
+        }
+        Arrays.stream(ItemID.class.getDeclaredFields())
+                .filter(field -> field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL))
+                .filter(field -> field.getType().equals(int.class))
+                .filter(field -> field.getName().endsWith(suffix))
+                .forEachOrdered(field -> {
+                    try {
+                        registerBehavior(field.getInt(null), behavior);
+                    } catch (IllegalAccessException e) {
+                        throw new InternalError(e);
+                    }
+                });
+    }
 
     public static DispenseBehavior getBehavior(int id) {
         return behaviors.getOrDefault(id, defaultBehavior);
@@ -27,13 +46,14 @@ public final class DispenseBehaviorRegister {
     }
 
     public static void init() {
-        registerBehavior(ItemID.BOAT, new BoatDispenseBehavior());
-        registerBehavior(ItemID.BUCKET, new BucketDispenseBehavior());
+        registerBehaviorForItemsEndingWith("_BOAT", new BoatDispenseBehavior(), ItemID.BOAT);
+        registerBehaviorForItemsEndingWith("_BUCKET", new BucketDispenseBehavior(), ItemID.BUCKET);
         registerBehavior(ItemID.DYE, new DyeDispenseBehavior());
+        registerBehavior(ItemID.BONE_MEAL, new DyeDispenseBehavior());
         registerBehavior(ItemID.FIREWORKS, new FireworksDispenseBehavior());
         registerBehavior(ItemID.FLINT_AND_STEEL, new FlintAndSteelDispenseBehavior());
         registerBehavior(BlockID.SHULKER_BOX, new ShulkerBoxDispenseBehavior());
-        registerBehavior(ItemID.SPAWN_EGG, new SpawnEggDispenseBehavior());
+        registerBehaviorForItemsEndingWith("_SPAWN_EGG", new SpawnEggDispenseBehavior(), ItemID.SPAWN_EGG);
         registerBehavior(BlockID.TNT, new TNTDispenseBehavior());
         registerBehavior(ItemID.ARROW, new ProjectileDispenseBehavior("Arrow") {
             @Override

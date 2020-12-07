@@ -8,8 +8,13 @@ import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.event.block.ComposterEmptyEvent;
 import cn.nukkit.event.block.ComposterFillEvent;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemID;
+import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.Sound;
+import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.DyeColor;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
@@ -55,12 +60,12 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
 
     @Override
     public double getHardness() {
-        return 2;
+        return 0.6;
     }
 
     @Override
     public double getResistance() {
-        return 3;
+        return 0.6;
     }
 
     @Override
@@ -117,7 +122,14 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         }
 
         if (isFull()) {
-            empty(item, player);
+            ComposterEmptyEvent event = new ComposterEmptyEvent(this, player, item, Item.get(ItemID.BONE_MEAL), 0);
+            this.level.getServer().getPluginManager().callEvent(event);
+            if (!event.isCancelled()) {
+                setDamage(event.getNewLevel());
+                this.level.setBlock(this, this, true, true);
+                this.level.dropItem(add(0.5, 0.85, 0.5), event.getDrop(), event.getMotion(), false, 10);
+                this.level.addSound(add(0.5 , 0.5, 0.5), Sound.BLOCK_COMPOSTER_EMPTY);
+            }
             return true;
         }
 
@@ -225,7 +237,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
                                   TWISTING_VINES, WEEPING_VINES);
         registerBlocks(65, DANDELION, RED_FLOWER, DOUBLE_PLANT, WITHER_ROSE, LILY_PAD, MELON_BLOCK,
                                   PUMPKIN, CARVED_PUMPKIN, SEA_PICKLE, BROWN_MUSHROOM, RED_MUSHROOM, 
-                                  WARPED_ROOTS, CRIMSON_ROOTS);
+                                  WARPED_ROOTS, CRIMSON_ROOTS, SHROOMLIGHT);
         registerBlocks(85, HAY_BALE, BROWN_MUSHROOM_BLOCK, RED_MUSHROOM_BLOCK, MUSHROOM_STEW);
         registerBlocks(100, CAKE_BLOCK);
 

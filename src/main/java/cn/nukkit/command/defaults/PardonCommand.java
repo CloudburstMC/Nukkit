@@ -17,7 +17,7 @@ public class PardonCommand extends VanillaCommand {
         this.setAliases(new String[]{"unban"});
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false)
+                CommandParameter.newType("player", CommandParamType.TARGET)
         });
     }
 
