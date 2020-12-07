@@ -514,6 +514,7 @@ minecraft:turtle_egg
 minecraft:twisting_vines
 minecraft:underwater_torch
 minecraft:undyed_shulker_box
+minecraft:unknown
 minecraft:unlit_redstone_torch
 minecraft:unpowered_comparator
 minecraft:unpowered_repeater

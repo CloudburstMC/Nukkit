@@ -37,8 +37,10 @@ public class ResourcePackStackPacket extends DataPacket {
             this.putString(entry.getPackVersion());
             this.putString(""); //TODO: subpack name
         }
-        this.putBoolean(this.isExperimental);
+
         this.putString(this.gameVersion);
+        this.putLInt(0); // Experiments length
+        this.putBoolean(false); // Were experiments previously toggled
     }
 
     @Override

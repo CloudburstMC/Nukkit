@@ -6,7 +6,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.utils.DyeColor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -35,7 +34,7 @@ class BlockKelpTest {
     void onActivate() {
         BlockKelp kelp = new BlockKelp();
         kelp.position(new Position(2, 3, 4, level));
-        Item boneMeal = Item.get(ItemID.DYE, DyeColor.WHITE.getDyeData(), 5);
+        Item boneMeal = Item.get(ItemID.BONE_MEAL, 0, 5);
         
         when(level.getBlock(eq(2), eq(3), eq(4))).thenReturn(kelp);
         when(level.getBlockStateAt(eq(2), eq(4), eq(4))).thenReturn(BlockState.of(BlockID.WATER));

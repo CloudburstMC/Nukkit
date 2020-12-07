@@ -74,6 +74,7 @@ public interface BlockID {
     int TORCH = 50;
     int FIRE = 51;
     int MONSTER_SPAWNER = 52;
+    @PowerNukkitOnly @Since("1.3.2.0-PN") int MOB_SPAWNER = MONSTER_SPAWNER;
     int WOOD_STAIRS = 53;
     int WOODEN_STAIRS = 53;
     int OAK_WOOD_STAIRS = 53;
@@ -507,4 +508,5 @@ public interface BlockID {
     int CHISELED_NETHER_BRICKS = 557;
     int CRACKED_NETHER_BRICKS = 558;
     int QUARTZ_BRICKS = 559;
+    //int UNKNOWN = 600;
 }
