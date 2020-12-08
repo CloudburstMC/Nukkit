@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.NukkitRandom;
@@ -64,7 +64,7 @@ public class BlockOreLapis extends BlockSolid {
             }
 
             return new Item[]{
-                    new ItemDye(4, new Random().nextInt(4) + 4)
+                    Item.get(ItemID.LAPIS_LAZULI, 0, new Random().nextInt(4) + 4)
             };
         } else {
             return Item.EMPTY_ARRAY;

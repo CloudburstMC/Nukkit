@@ -1,8 +1,12 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
@@ -13,6 +17,8 @@ import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.UpdateBlockPacket;
 
+import javax.annotation.Nullable;
+
 /**
  * @author MagicDroidX (Nukkit Project)
  */
@@ -22,12 +28,44 @@ public class ItemBucket extends Item {
         this(0, 1);
     }
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
+                    "so you may get 0 as meta result even though you have filled bucket.",
+            replaceWith = "An item class specific for the item you want. Eg: ItemBucketWater, ItemBucketFishCod, etc"
+    )
     public ItemBucket(Integer meta) {
         this(meta, 1);
     }
 
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
+                    "so you may get 0 as meta result even though you have filled bucket.",
+            replaceWith = "An item class specific for the item you want. Eg: ItemBucketWater, ItemBucketFishCod, etc"
+    )
     public ItemBucket(Integer meta, int count) {
         super(BUCKET, meta, count, getName(meta));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    protected ItemBucket(int id, Integer meta, int count, String name) {
+        super(id, meta, count, name);
+    }
+
+    @Deprecated
+    @DeprecationDetails(
+            since = "1.3.2.0-PN",
+            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
+                    "so you may get 0 as meta result even though you have filled bucket.",
+            replaceWith = "isEmpty() isLava() isWater() getFishEntityId()"
+    )
+    @Override
+    public int getDamage() {
+        return super.getDamage();
     }
 
     protected static String getName(int meta) {
@@ -59,24 +97,65 @@ public class ItemBucket extends Item {
             case 5:
             case 8:
             case 9:
-                return 8;
+                return BlockID.WATER;
             case 10:
             case 11:
-                return 10;
+                return BlockID.LAVA;
             default:
-                return 0;
+                return BlockID.AIR;
+        }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public boolean isEmpty() {
+        return getId() == BUCKET && getDamage() == 0;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public boolean isWater() {
+        return getTargetBlock().getId() == BlockID.WATER;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public boolean isLava() {
+        return getTargetBlock().getId() == BlockID.LAVA;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    @Nullable
+    public String getFishEntityId() {
+        if (getId() != BUCKET) {
+            return null;
+        }
+        switch (this.getDamage()) {
+            case 2: return "Cod";
+            case 3: return "Salmon";
+            case 4: return "TropicalFish";
+            case 5: return "Pufferfish";
+            default: return null;
         }
     }
 
     @Override
     public int getMaxStackSize() {
-        return this.meta == 0 ? 16 : 1;
+        return this.meta == 0 && getId() == BUCKET ? 16 : 1;
     }
 
     @Override
     public boolean canBeActivated() {
         return true;
     }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public Block getTargetBlock() {
+        return getId() == BUCKET? Block.get(getDamageByTarget(this.meta)) : Block.get(BlockID.AIR);
+    }
+
 
     @PowerNukkitDifference(info = "You can't use bucket in adventure mode.", since = "1.4.0.0-PN")
     @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
@@ -85,7 +164,8 @@ public class ItemBucket extends Item {
         if (player.isAdventure()) {
             return false;
         }
-        Block targetBlock = Block.get(getDamageByTarget(this.meta));
+
+        Block targetBlock = getTargetBlock();
 
         if (targetBlock instanceof BlockAir) {
             if (!(target instanceof BlockLiquid) || target.getDamage() != 0) {
@@ -117,7 +197,11 @@ public class ItemBucket extends Item {
                         Item clone = this.clone();
                         clone.setCount(this.getCount() - 1);
                         player.getInventory().setItemInHand(clone);
-                        player.getInventory().addItem(ev.getItem());
+                        if (player.getInventory().canAddItem(ev.getItem())) {
+                            player.getInventory().addItem(ev.getItem());
+                        } else {
+                            player.dropItem(ev.getItem());
+                        }
                     }
 
                     if (target instanceof BlockLava) {
@@ -158,7 +242,7 @@ public class ItemBucket extends Item {
                 ev.setCancelled(!canBeFlowedInto);
             }
 
-            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
+            if (!canBeUsedOnDimension(player.getLevel().getDimension())) {
                 ev.setCancelled(true);
             }
 
@@ -170,14 +254,14 @@ public class ItemBucket extends Item {
                     Item clone = this.clone();
                     clone.setCount(this.getCount() - 1);
                     player.getInventory().setItemInHand(clone);
-                    player.getInventory().addItem(ev.getItem());
+                    if (player.getInventory().canAddItem(ev.getItem())) {
+                        player.getInventory().addItem(ev.getItem());
+                    } else {
+                        player.dropItem(ev.getItem());
+                    }
                 }
 
-                if (this.getDamage() == 10) {
-                    level.addSound(block, Sound.BUCKET_EMPTY_LAVA);
-                } else {
-                    level.addSound(block, Sound.BUCKET_EMPTY_WATER);
-                }
+                afterUse(level, block);
 
                 return true;
             } else {
@@ -188,10 +272,53 @@ public class ItemBucket extends Item {
 
         return false;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    protected boolean canBeUsedOnDimension(int dimension) {
+        if (getId() != BUCKET) {
+            return true;
+        }
+        
+        return dimension != Level.DIMENSION_NETHER || (getDamage() == 10 || getDamage() == 1);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    protected void afterUse(Level level, Block block) {
+        if (getId() != BUCKET) {
+            return;
+        }
+        
+        if (this.getDamage() == 10) {
+            level.addSound(block, Sound.BUCKET_EMPTY_LAVA);
+        } else {
+            level.addSound(block, Sound.BUCKET_EMPTY_WATER);
+        }
+
+        switch (this.getDamage()) {
+            case 2:
+                Entity e2 = Entity.createEntity("Cod", block);
+                if (e2 != null) e2.spawnToAll();
+                break;
+            case 3:
+                Entity e3 = Entity.createEntity("Salmon", block);
+                if (e3 != null) e3.spawnToAll();
+                break;
+            case 4:
+                Entity e4 = Entity.createEntity("TropicalFish", block);
+                if (e4 != null) e4.spawnToAll();
+                break;
+            case 5:
+                Entity e5 = Entity.createEntity("Pufferfish", block);
+                if (e5 != null) e5.spawnToAll();
+                break;
+        }
+    }
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return this.getDamage() == 1; // Milk
+        return getId() == BUCKET && this.getDamage() == 1; // Milk
     }
 
     @PowerNukkitDifference(info = "You can't use milk in spectator mode and milk is now 'drinked' in adventure mode", since = "1.4.0.0-PN")
@@ -200,6 +327,7 @@ public class ItemBucket extends Item {
         if (player.isSpectator()) {
             return false;
         }
+
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
 
         player.getServer().getPluginManager().callEvent(consumeEvent);
@@ -216,5 +344,28 @@ public class ItemBucket extends Item {
 
         player.removeAllEffects();
         return true;
+    }
+
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public Item selfUpgrade() {
+        if (getId() != BUCKET || getDamage() == 0) {
+            return this;
+        }
+        
+        int newId;
+        switch (getDamage()) {
+            case 1: newId = MILK_BUCKET; break; 
+            case 2: newId = COD_BUCKET; break; 
+            case 3: newId = SALMON_BUCKET; break; 
+            case 4: newId = TROPICAL_FISH_BUCKET; break; 
+            case 5: newId = PUFFERFISH_BUCKET; break; 
+            case 8: newId = WATER_BUCKET; break; 
+            case 10: newId = LAVA_BUCKET; break;
+            default: return this;
+        }
+        
+        return Item.get(newId, 0, getCount(), getCompoundTag());
     }
 }

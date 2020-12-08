@@ -13,6 +13,7 @@ import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBucket;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.potion.Effect;
@@ -94,16 +95,20 @@ public class BlockCauldronLava extends BlockCauldron {
     
         switch (item.getId()) {
             case Item.BUCKET:
-                if (item.getDamage() == 0) { //empty
+            case Item.LAVA_BUCKET:
+            case Item.WATER_BUCKET: {
+                ItemBucket bucket = (ItemBucket) item;
+                if (bucket.getFishEntityId() != null) {
+                    break;
+                }
+                if (bucket.isEmpty()) {
                     if (!isFull() || cauldron.isCustomColor() || cauldron.hasPotion()) {
                         break;
                     }
-    
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(10);//lava bucket
-    
-                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, bucket);
+
+                    Item lavaBucket = Item.get(ItemID.LAVA_BUCKET);
+
+                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, lavaBucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         replaceBucket(item, player, ev.getItem());
@@ -112,20 +117,18 @@ public class BlockCauldronLava extends BlockCauldron {
                         cauldron.clearCustomColor();
                         this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.BUCKET_FILL_LAVA);
                     }
-                } else if (item.getDamage() == 8 || item.getDamage() == 10) { //water or lava bucket
+                } else if (bucket.isWater() || bucket.isLava()) {
                     if (isFull() && !cauldron.isCustomColor() && !cauldron.hasPotion() && item.getDamage() == 10) {
                         break;
                     }
-    
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(0);//empty bucket
-    
-                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, bucket);
+                    
+                    Item emptyBucket = Item.get(ItemID.BUCKET);
+
+                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, emptyBucket);
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         replaceBucket(item, player, ev.getItem());
-    
+
                         if (cauldron.hasPotion()) {//if has potion
                             clearWithFizz(cauldron);
                         } else if (item.getDamage() == 10) { //lava bucket
@@ -145,6 +148,7 @@ public class BlockCauldronLava extends BlockCauldron {
                     }
                 }
                 break;
+            }
             case Item.POTION:
             case Item.SPLASH_POTION:
             case Item.LINGERING_POTION:
