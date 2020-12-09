@@ -118,11 +118,10 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable, B
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         int[] faces = {2, 5, 3, 4};
         this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
-        this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag();
 
         if (item.hasCustomName()) {
@@ -174,7 +173,7 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable, B
                     Item.get(Item.OBSIDIAN, 0, 8)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

@@ -2,11 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
@@ -55,7 +53,7 @@ public class BlockNetherrack extends BlockSolid {
 
     @Override
     public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
-        if (item.isNull() || item.getId() != ItemID.DYE || item.getDamage() != DyeColor.WHITE.getDyeData() || up().getId() != AIR) {
+        if (item.isNull() || !item.isFertilizer() || up().getId() != AIR) {
             return false;
         }
 

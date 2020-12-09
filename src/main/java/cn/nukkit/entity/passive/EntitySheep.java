@@ -85,7 +85,7 @@ public class EntitySheep extends EntityAnimal {
             return true;
         }
 
-        if (item.getId() == Item.DYE) {
+        if (item instanceof ItemDye) {
             this.setColor(((ItemDye) item).getDyeColor().getWoolData());
             return true;
         }
@@ -110,7 +110,7 @@ public class EntitySheep extends EntityAnimal {
         if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
             return new Item[]{Item.get(((this.isOnFire()) ? Item.COOKED_MUTTON : Item.RAW_MUTTON)), Item.get(Item.WOOL, getColor(), 1)};
         }
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     public void setColor(int color) {

@@ -1,8 +1,6 @@
 package cn.nukkit.blockstate;
 
-import cn.nukkit.api.DeprecationDetails;
-import cn.nukkit.api.PowerNukkitOnly;
-import cn.nukkit.api.Since;
+import cn.nukkit.api.*;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
@@ -10,23 +8,32 @@ import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.math.NukkitMath;
+import cn.nukkit.utils.Validation;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
+import static cn.nukkit.api.API.Definition.INTERNAL;
+import static cn.nukkit.api.API.Usage.INCUBATING;
 import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageType;
 
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ParametersAreNonnullByDefault
 public class BigIntegerMutableBlockState extends MutableBlockState {
+    private static final Set<Class<?>> LONG_COMPATIBLE_CLASSES = new HashSet<>(Arrays.asList(
+            Long.class, Integer.class, Short.class, Byte.class));
     private BigInteger storage;
     
     public BigIntegerMutableBlockState(int blockId, BlockProperties properties, BigInteger state) {
@@ -39,12 +46,14 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         this(blockId, properties, BigInteger.ZERO);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public void setDataStorage(Number storage) {
+    public void setDataStorage(@Nonnegative Number storage) {
         BigInteger state;
         if (storage instanceof BigInteger) {
             state = (BigInteger) storage;
-        } else if (storage instanceof Long || storage instanceof Integer || storage instanceof Short || storage instanceof Byte) {
+        } else if (LONG_COMPATIBLE_CLASSES.contains(storage.getClass())) {
             state = BigInteger.valueOf(storage.longValue());
         } else {
             try {
@@ -57,11 +66,25 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         this.storage = state;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public void setDataStorageFromInt(int storage) {
+    public void setDataStorageFromInt(@Nonnegative int storage) {
         BigInteger state = BigInteger.valueOf(storage);
         validate(state);
         this.storage = state;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    @API(definition = INTERNAL, usage = INCUBATING)
+    void setDataStorageWithoutValidation(Number storage) {
+        if (storage instanceof BigInteger) {
+            this.storage = (BigInteger) storage;
+        } else {
+            this.storage = new BigInteger(storage.toString());
+        }
     }
 
     @Override
@@ -70,15 +93,17 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
     }
     
     private void validate(BigInteger state) {
+        if (BigInteger.ZERO.equals(state)) {
+            return;
+        }
+        Validation.checkPositive("state", state);
         BlockProperties properties = this.properties;
-        if (!BigInteger.ZERO.equals(state)) {
-            int bitLength = NukkitMath.bitLength(state);
-            if (bitLength > properties.getBitSize()) {
-                throw new InvalidBlockStateException(
-                        BlockState.of(getBlockId(), state),
-                        "The state have more data bits than specified in the properties. Bits: " + bitLength + ", Max: " + properties.getBitSize()
-                );
-            }
+        int bitLength = NukkitMath.bitLength(state);
+        if (bitLength > properties.getBitSize()) {
+            throw new InvalidBlockStateException(
+                    BlockState.of(getBlockId(), state),
+                    "The state have more data bits than specified in the properties. Bits: " + bitLength + ", Max: " + properties.getBitSize()
+            );
         }
         
         try {
@@ -91,6 +116,7 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         }
     }
 
+    @Nonnegative
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
@@ -98,6 +124,7 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         return storage.and(BigInteger.valueOf(Block.DATA_MASK)).intValue();
     }
 
+    @Unsigned
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
@@ -105,6 +132,17 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         return storage.and(BigInteger.valueOf(BlockStateRegistry.BIG_META_MASK)).intValue();
     }
 
+    @Nonnegative
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getSignedBigDamage() {
+        return storage.and(BigInteger.valueOf(Integer.MAX_VALUE)).intValue();
+    }
+
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
@@ -113,22 +151,36 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         return storage;
     }
 
+    @Nonnegative
     @Nonnull
     @Override
     public Number getDataStorage() {
         return getHugeDamage();
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDefaultState() {
+        return storage.equals(BigInteger.ONE);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setPropertyValue(String propertyName, @Nullable Serializable value) {
         storage = properties.setValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setBooleanValue(String propertyName, boolean value) {
         storage = properties.setValue(storage, propertyName, value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public void setIntValue(String propertyName, int value) {
         storage = properties.setValue(storage, propertyName, value);
@@ -136,7 +188,7 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
 
     @Nonnull
     @Override
-    public Object getPropertyValue(String propertyName) {
+    public Serializable getPropertyValue(String propertyName) {
         return properties.getValue(storage, propertyName);
     }
 
@@ -166,6 +218,8 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
         return BlockState.of(blockId, storage);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public int getExactIntStorage() {
         return storage.intValueExact();

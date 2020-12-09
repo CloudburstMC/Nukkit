@@ -17,7 +17,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
 public class BlockWood2 extends BlockWood {
     public static final BlockProperty<WoodType> NEW_LOG_TYPE = new ArrayBlockProperty<>("new_log_type", true, new WoodType[]{
             WoodType.ACACIA, WoodType.DARK_OAK
-    }, WoodType.ACACIA, 2);
+    }, 2);
 
     public static final BlockProperties PROPERTIES = new BlockProperties(NEW_LOG_TYPE, PILLAR_AXIS);
 

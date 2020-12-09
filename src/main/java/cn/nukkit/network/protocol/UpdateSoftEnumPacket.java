@@ -1,11 +1,12 @@
 package cn.nukkit.network.protocol;
 
+import io.netty.util.internal.EmptyArrays;
 import lombok.ToString;
 
 @ToString
 public class UpdateSoftEnumPacket extends DataPacket {
 
-    public final String[] values = new String[0];
+    public final String[] values = EmptyArrays.EMPTY_STRINGS;
     public String name = "";
     public Type type = Type.SET;
 

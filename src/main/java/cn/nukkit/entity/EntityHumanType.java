@@ -13,6 +13,7 @@ import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.NBTIO;
@@ -50,6 +51,9 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     @Override
     protected void initEntity() {
         this.inventory = new PlayerInventory(this);
+        if (namedTag.containsNumber("SelectedInventorySlot")) {
+            this.inventory.setHeldItemSlot(NukkitMath.clamp(this.namedTag.getInt("SelectedInventorySlot"), 0, 8));
+        }
         this.offhandInventory = new PlayerOffhandInventory(this);
 
         if (this.namedTag.contains("Inventory") && this.namedTag.get("Inventory") instanceof ListTag) {
@@ -112,6 +116,8 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                     inventoryTag.add(NBTIO.putItemHelper(item, slot));
                 }
             }
+            
+            this.namedTag.putInt("SelectedInventorySlot", this.inventory.getHeldItemIndex());
         }
 
         if (this.offhandInventory != null) {
@@ -141,9 +147,9 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         if (this.inventory != null) {
             List<Item> drops = new ArrayList<>(this.inventory.getContents().values());
             drops.addAll(this.offhandInventory.getContents().values());
-            return drops.toArray(new Item[0]);
+            return drops.toArray(Item.EMPTY_ARRAY);
         }
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override
@@ -246,6 +252,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         armor.setDamage(armor.getDamage() + 1);
 
         if (armor.getDamage() >= armor.getMaxDurability()) {
+            getLevel().addSound(this, Sound.RANDOM_BREAK);
             return Item.get(BlockID.AIR, 0, 0);
         }
 

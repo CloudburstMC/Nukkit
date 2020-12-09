@@ -1,5 +1,8 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 public class Vector3f implements Cloneable {
     public static final int SIDE_DOWN = 0;
     public static final int SIDE_UP = 1;
@@ -294,6 +297,19 @@ public class Vector3f implements Cloneable {
         this.y = y;
         this.z = z;
         return this;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public float getAxis(BlockFace.Axis axis) {
+        switch (axis) {
+            case X:
+                return x;
+            case Y:
+                return y;
+            default:
+                return z;
+        }
     }
 
     @Override

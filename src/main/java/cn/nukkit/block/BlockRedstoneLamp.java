@@ -10,6 +10,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author Nukkit Project Team
@@ -45,7 +46,7 @@ public class BlockRedstoneLamp extends BlockSolid {
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (this.level.isBlockPowered(this.getLocation())) {
             this.level.setBlock(this, Block.get(BlockID.LIT_REDSTONE_LAMP), false, true);
         } else {

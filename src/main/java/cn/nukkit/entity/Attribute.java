@@ -6,6 +6,8 @@ package cn.nukkit.entity;
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.utils.ServerException;
 
 import java.util.HashMap;
@@ -13,6 +15,9 @@ import java.util.Map;
 import java.util.Objects;
 
 public class Attribute implements Cloneable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Attribute[] EMPTY_ARRAY = new Attribute[0];
 
     public static final int ABSORPTION = 0;
     public static final int SATURATION = 1;

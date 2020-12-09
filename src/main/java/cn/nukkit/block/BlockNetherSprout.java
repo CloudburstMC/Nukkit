@@ -26,7 +26,7 @@ public class BlockNetherSprout extends BlockRoots {
         if (item.isShears()) {
             return new Item[]{ toItem() };
         }
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

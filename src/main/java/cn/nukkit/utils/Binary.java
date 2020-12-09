@@ -9,6 +9,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -129,7 +130,7 @@ public class Binary {
                     try {
                         stream.put(NBTIO.write(slot.getData(), ByteOrder.LITTLE_ENDIAN, true));
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new UncheckedIOException(e);
                     }
                     break;
                 case Entity.DATA_TYPE_POS:
@@ -184,7 +185,7 @@ public class Binary {
                         CompoundTag tag = NBTIO.read(fbais, ByteOrder.LITTLE_ENDIAN, true);
                         value = new NBTEntityData(key, tag);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new UncheckedIOException(e);
                     }
                     stream.setOffset(offset + (int) fbais.position());
                     break;
@@ -471,11 +472,14 @@ public class Binary {
         for (byte[] b : bytes) {
             length += b.length;
         }
-        ByteBuffer buffer = ByteBuffer.allocate(length);
+
+        byte[] appendedBytes = new byte[length];
+        int index = 0;
         for (byte[] b : bytes) {
-            buffer.put(b);
+            System.arraycopy(b, 0, appendedBytes, index, b.length);
+            index += b.length;
         }
-        return buffer.array();
+        return appendedBytes;
     }
 
     public static byte[] appendBytes(byte byte1, byte[]... bytes2) {
@@ -496,12 +500,16 @@ public class Binary {
         for (byte[] bytes : bytes2) {
             length += bytes.length;
         }
-        ByteBuffer buffer = ByteBuffer.allocate(length);
-        buffer.put(bytes1);
-        for (byte[] bytes : bytes2) {
-            buffer.put(bytes);
+
+        byte[] appendedBytes = new byte[length];
+        System.arraycopy(bytes1, 0, appendedBytes, 0, bytes1.length);
+        int index = bytes1.length;
+
+        for (byte[] b : bytes2) {
+            System.arraycopy(b, 0, appendedBytes, index, b.length);
+            index += b.length;
         }
-        return buffer.array();
+        return appendedBytes;
     }
 
 

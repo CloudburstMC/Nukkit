@@ -1,19 +1,16 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Server;
-import cn.nukkit.ServerTest;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.event.block.BlockSpreadEvent;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.plugin.PluginManager;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.powernukkit.tests.api.MockServer;
+import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -26,18 +23,13 @@ import static org.mockito.Mockito.*;
 /**
  * @author joserobjr
  */
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(PowerNukkitExtension.class)
+@MockServer(callsRealMethods = false)
 class BlockGrassTest {
     static final BlockState STATE_DIRT = BlockState.of(BlockID.DIRT);
     static final BlockState STATE_GRASS = BlockState.of(BlockID.GRASS);
     
     int x = 1, y = 2, z = 3;
-    
-    @Mock
-    PluginManager pluginManager;
-    
-    @Mock
-    Server server;
     
     @Mock
     Level level;
@@ -96,7 +88,7 @@ class BlockGrassTest {
         }
         
         verify(level, times(0)).setBlock(eq(new Vector3(x, y, z)), any());
-        verify(pluginManager, times(9 * 3 - 2)).callEvent(isA(BlockSpreadEvent.class));
+        verify(Server.getInstance().getPluginManager(), times(9 * 3 - 2)).callEvent(isA(BlockSpreadEvent.class));
         assertEquals(expected, states);
     }
     
@@ -114,16 +106,8 @@ class BlockGrassTest {
         verify(level).setBlock(eq(new Vector3(x,y,z)), eq(Block.get(BlockID.DIRT)));
     }
 
-    @BeforeAll
-    static void beforeAll() {
-        Block.init();
-        Item.init();
-    }
-
     @BeforeEach
     void setUp() {
-        lenient().when(server.getPluginManager()).thenReturn(pluginManager);
-        ServerTest.setInstance(server);
         grass = (BlockGrass) Block.get(BlockID.GRASS);
         grass.level = level;
         grass.x = x;

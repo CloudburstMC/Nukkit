@@ -16,10 +16,12 @@ import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import it.unimi.dsi.fastutil.longs.Long2ByteMap;
 import it.unimi.dsi.fastutil.longs.Long2ByteOpenHashMap;
 
 import javax.annotation.Nonnull;
+import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -65,7 +67,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override
@@ -345,7 +347,7 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
             level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 if (block.layer == 0 && block.getId() > 0) {
-                    this.level.useBreakOn(block);
+                    this.level.useBreakOn(block, block.getId() == COBWEB ? Item.get(Item.WOODEN_SWORD) : null);
                 }
                 this.level.setBlock(block, block.layer, getBlock(newFlowDecay), true, true);
                 this.level.scheduleUpdate(block, this.tickRate());
@@ -477,7 +479,8 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
     }
 
     protected void triggerLavaMixEffects(Vector3 pos) {
-        this.getLevel().addSound(pos.add(0.5, 0.5, 0.5), Sound.RANDOM_FIZZ, 1, 2.6F + (ThreadLocalRandom.current().nextFloat() - ThreadLocalRandom.current().nextFloat()) * 0.8F);
+        Random random = ThreadLocalRandom.current();
+        this.getLevel().addLevelEvent(pos.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_FIZZ, (int) ((random.nextFloat() - random.nextFloat()) * 800) + 2600);
 
         for (int i = 0; i < 8; ++i) {
             this.getLevel().addParticle(new SmokeParticle(pos.add(Math.random(), 1.2, Math.random())));

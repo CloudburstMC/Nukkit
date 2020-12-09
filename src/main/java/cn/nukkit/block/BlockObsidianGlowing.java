@@ -64,7 +64,7 @@ public class BlockObsidianGlowing extends BlockSolid {
                     toItem()
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

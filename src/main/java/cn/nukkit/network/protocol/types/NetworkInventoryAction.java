@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol.types;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.*;
@@ -15,6 +16,10 @@ import java.util.Optional;
  */
 @ToString
 public class NetworkInventoryAction {
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final NetworkInventoryAction[] EMPTY_ARRAY = new NetworkInventoryAction[0];
 
     public static final int SOURCE_CONTAINER = 0;
 
@@ -218,7 +223,6 @@ public class NetworkInventoryAction {
                 if (this.windowId >= SOURCE_TYPE_ANVIL_OUTPUT && this.windowId <= SOURCE_TYPE_ANVIL_INPUT) { //anvil actions
                     Inventory inv = player.getWindowById(Player.ANVIL_WINDOW_ID);
 
-                    //TODO Anvil and Grindstones are completely hackable! Needs to be fixed!
                     if (inv instanceof AnvilInventory) {
                         AnvilInventory anvil = (AnvilInventory) inv;
 
@@ -251,7 +255,7 @@ public class NetworkInventoryAction {
                                 break;
                             case SOURCE_TYPE_ANVIL_RESULT:
                                 this.inventorySlot = 2;
-                                return new CraftingTakeResultAction(this.oldItem, this.newItem);
+                                return new CraftingTakeResultExperienceAction(this.oldItem, this.newItem, ((GrindstoneInventory) inv).getResultExperience());
                         }
                     } else {
                         player.getServer().getLogger().debug("Player " + player.getName() + " has no open anvil or grindstone inventory");

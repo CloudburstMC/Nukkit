@@ -1,9 +1,7 @@
 package cn.nukkit.level.format.updater;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.anvil.ChunkSection;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,11 +26,6 @@ class NewLeafUpdaterTest {
     void check(BlockState expected, boolean change) {
         assertEquals(change, updater.update(0, 0, 0, x, y, z, original));
         assertEquals(expected, section.getBlockState(x, y, z, 0));
-    }
-    
-    @BeforeAll
-    static void init() {
-        Block.init();
     }
     
     @BeforeEach

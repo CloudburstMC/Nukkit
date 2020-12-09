@@ -26,13 +26,13 @@ public class ItemHoneyBottle extends ItemEdible {
         return 16;
     }
     
-    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will always return true so it's always drinkable")
+    @PowerNukkitDifference(since = "1.3.2.0-PN", info = "Will always return true so it's always drinkable")
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
         return true;
     }
 
-    @PowerNukkitDifference(since = "1.4.0.0-PN", 
+    @PowerNukkitDifference(since = "1.3.2.0-PN", 
             info = "Cancellable by PlayerItemConsumeEvent and uses the FoodHoney class to handle the food behaviour")
     @Override
     public boolean onUse(Player player, int ticksUsed) {

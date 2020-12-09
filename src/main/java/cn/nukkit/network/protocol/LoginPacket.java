@@ -1,7 +1,10 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.PersonaPiece;
+import cn.nukkit.utils.PersonaPieceTint;
+import cn.nukkit.utils.SerializedImage;
+import cn.nukkit.utils.SkinAnimation;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,7 +17,7 @@ import java.util.*;
 
 
 /**
- * Created by on 15-10-13.
+ * @since on 15-10-13
  */
 @ToString
 public class LoginPacket extends DataPacket {
@@ -150,7 +153,8 @@ public class LoginPacket extends DataPacket {
         byte[] data = Base64.getDecoder().decode(element.get("Image").getAsString());
         int width = element.get("ImageWidth").getAsInt();
         int height = element.get("ImageHeight").getAsInt();
-        return new SkinAnimation(new SerializedImage(width, height, data), type, frames);
+        int expression = element.get("AnimationExpression").getAsInt();
+        return new SkinAnimation(new SerializedImage(width, height, data), type, frames, expression);
     }
 
     private static SerializedImage getImage(JsonObject token, String name) {

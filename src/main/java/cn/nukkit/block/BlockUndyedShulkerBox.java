@@ -130,7 +130,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent implements BlockEnti
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         CompoundTag nbt = new CompoundTag().putByte("facing", face.getIndex());
 
         if (item.hasCustomName()) {
@@ -212,5 +212,12 @@ public class BlockUndyedShulkerBox extends BlockTransparent implements BlockEnti
     @Override
     public boolean isSolid(BlockFace side) {
         return false;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getItemMaxStackSize() {
+        return 1;
     }
 }

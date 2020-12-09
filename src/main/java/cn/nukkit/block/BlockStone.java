@@ -1,19 +1,56 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.value.StoneType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author MagicDroidX (Nukkit Project)
  */
 public class BlockStone extends BlockSolidMeta {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperty<StoneType> STONE_TYPE = new ArrayBlockProperty<>("stone_type", true, StoneType.class);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(STONE_TYPE);
+    
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", replaceWith = "getStoneType()", reason = "Use the BlockProperty API instead")
     public static final int NORMAL = 0;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", replaceWith = "getStoneType()", reason = "Use the BlockProperty API instead")
     public static final int GRANITE = 1;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", replaceWith = "getStoneType()", reason = "Use the BlockProperty API instead")
     public static final int POLISHED_GRANITE = 2;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", replaceWith = "getStoneType()", reason = "Use the BlockProperty API instead")
     public static final int DIORITE = 3;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", replaceWith = "getStoneType()", reason = "Use the BlockProperty API instead")
     public static final int POLISHED_DIORITE = 4;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", replaceWith = "getStoneType()", reason = "Use the BlockProperty API instead")
     public static final int ANDESITE = 5;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", replaceWith = "getStoneType()", reason = "Use the BlockProperty API instead")
     public static final int POLISHED_ANDESITE = 6;
 
     public BlockStone() {
@@ -27,6 +64,14 @@ public class BlockStone extends BlockSolidMeta {
     @Override
     public int getId() {
         return STONE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -43,35 +88,27 @@ public class BlockStone extends BlockSolidMeta {
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public StoneType getStoneType() {
+        return getPropertyValue(STONE_TYPE);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setStoneType(StoneType stoneType) {
+        setPropertyValue(STONE_TYPE, stoneType);
+    }
 
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Stone",
-                "Granite",
-                "Polished Granite",
-                "Diorite",
-                "Polished Diorite",
-                "Andesite",
-                "Polished Andesite",
-                "Unknown Stone"
-        };
-        return names[this.getDamage() & 0x07];
+        return getStoneType().getEnglishName();
     }
 
     @Override
     public BlockColor getColor() {
-        BlockColor[] colors = new BlockColor[]{
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.DIRT_BLOCK_COLOR,
-                BlockColor.DIRT_BLOCK_COLOR,
-                BlockColor.QUARTZ_BLOCK_COLOR,
-                BlockColor.QUARTZ_BLOCK_COLOR,
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.STONE_BLOCK_COLOR,
-                BlockColor.STONE_BLOCK_COLOR
-        };
-        return colors[this.getDamage() & 0x07];
+        return getStoneType().getColor();
     }
 
     @Override
@@ -83,10 +120,12 @@ public class BlockStone extends BlockSolidMeta {
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             return new Item[]{
-                    Item.get(this.getDamage() == 0 ? Item.COBBLESTONE : Item.STONE, this.getDamage(), 1)
+                    StoneType.STONE.equals(getStoneType())
+                            ? Item.getBlock(BlockID.COBBLESTONE)
+                            : toItem()
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

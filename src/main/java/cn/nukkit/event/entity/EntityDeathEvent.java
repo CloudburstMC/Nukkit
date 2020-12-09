@@ -17,7 +17,7 @@ public class EntityDeathEvent extends EntityEvent {
     private Item[] drops;
 
     public EntityDeathEvent(EntityLiving entity) {
-        this(entity, new Item[0]);
+        this(entity, Item.EMPTY_ARRAY);
     }
 
     public EntityDeathEvent(EntityLiving entity, Item[] drops) {
@@ -31,7 +31,7 @@ public class EntityDeathEvent extends EntityEvent {
 
     public void setDrops(Item[] drops) {
         if (drops == null) {
-            drops = new Item[0];
+            drops = Item.EMPTY_ARRAY;
         }
 
         this.drops = drops;

@@ -10,15 +10,18 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySkull;
+import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSkull;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolder<BlockEntitySkull> {
@@ -100,7 +103,7 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
     }
 
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         switch (face) {
             case NORTH:
             case SOUTH:
@@ -123,6 +126,27 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
         }
         return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
         // TODO: 2016/2/3 SPAWN WITHER
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if ((type != Level.BLOCK_UPDATE_REDSTONE && type != Level.BLOCK_UPDATE_NORMAL) || !level.getServer().isRedstoneEnabled()) {
+            return 0;
+        }
+
+        BlockEntitySkull entity = getBlockEntity();
+        if (entity == null || entity.namedTag.getByte("SkullType") != 5) {
+            return 0;
+        }
+
+        RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
+        getLevel().getServer().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return 0;
+        }
+        
+        entity.setMouthMoving(this.level.isBlockPowered(this.getLocation()));
+        return Level.BLOCK_UPDATE_REDSTONE;
     }
 
     @Override

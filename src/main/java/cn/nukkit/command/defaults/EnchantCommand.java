@@ -3,9 +3,12 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
@@ -21,14 +24,18 @@ public class EnchantCommand extends VanillaCommand {
         this.setPermission("nukkit.command.enchant");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("enchantment ID", CommandParamType.INT, false),
-                new CommandParameter("level", CommandParamType.INT, true)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newType("enchantmentId", CommandParamType.INT),
+                CommandParameter.newType("level", true, CommandParamType.INT)
         });
         this.commandParameters.put("byName", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("id", false, CommandParameter.ENUM_TYPE_ENCHANTMENT_LIST),
-                new CommandParameter("level", CommandParamType.INT, true)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("enchantmentName", new CommandEnum("Enchant",
+                        "protection", "fire_protection", "feather_falling", "blast_protection", "projectile_projection", "thorns", "respiration",
+                        "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods", "knockback", "fire_aspect", "looting", "efficiency",
+                        "silk_touch", "durability", "fortune", "power", "punch", "flame", "infinity", "luck_of_the_sea", "lure", "frost_walker", "mending",
+                        "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling")),
+                CommandParameter.newType("level", true, CommandParamType.INT)
         });
     }
 
@@ -62,12 +69,22 @@ public class EnchantCommand extends VanillaCommand {
         }
         enchantment.setLevel(enchantLevel);
         Item item = player.getInventory().getItemInHand();
-        if (item.getId() <= 0) {
+        if (item.getId() == 0) {
             sender.sendMessage(new TranslationContainer("commands.enchant.noItem"));
             return true;
         }
-        item.addEnchantment(enchantment);
-        player.getInventory().setItemInHand(item);
+        if (item.getId() != ItemID.BOOK) {
+            item.addEnchantment(enchantment);
+            player.getInventory().setItemInHand(item);
+        } else {
+            Item enchanted = Item.get(ItemID.ENCHANTED_BOOK, 0, 1, item.getCompoundTag());
+            enchanted.addEnchantment(enchantment);
+            Item clone = item.clone();
+            clone.count--;
+            PlayerInventory inventory = player.getInventory();
+            inventory.setItemInHand(clone);
+            player.giveItem(enchanted);
+        }
         Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success"));
         return true;
     }

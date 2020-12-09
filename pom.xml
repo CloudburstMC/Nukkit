@@ -14,7 +14,7 @@
     Upstream is the NukkitX major version
     PN is a indicator that software is running PowerNukkit, it must be present both in releases and snapshot versions
     -->
-    <version>1.4.0.0-PN-SNAPSHOT</version>
+    <version>1.4.0.0-PN-ALPHA.2-SNAPSHOT</version>
 
     <inceptionYear>2020</inceptionYear>
     <organization>
@@ -90,6 +90,23 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    
+    <repositories>
+        <repository>
+            <id>powernukkit-snapshots</id>
+            <name>powernukkit-snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases><enabled>false</enabled></releases>
+            <snapshots><enabled>true</enabled></snapshots>
+        </repository>
+        <repository>
+            <id>powernukkit-bintray</id>
+            <name>powernukkit-bintray</name>
+            <url>https://dl.bintray.com/powernukkit/powernukkit</url>
+            <releases><enabled>true</enabled></releases>
+            <snapshots><enabled>false</enabled></snapshots>
+        </repository>
+    </repositories>
 
     <dependencies>
         <dependency>
@@ -97,6 +114,12 @@
             <artifactId>raknet</artifactId>
             <version>1.6.15-PN2</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powernukkit</groupId>
+            <artifactId>powernukkit-tests-junit5</artifactId>
+            <version>0.1.0</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powernukkit.fastutil</groupId>

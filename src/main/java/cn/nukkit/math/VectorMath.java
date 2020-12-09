@@ -25,7 +25,7 @@ public abstract class VectorMath {
     public static  BlockFace calculateFace(Vector3 base, Vector3 side) {
         Vector3 vector = side.subtract(base);
         BlockFace.Axis axis = vector.x != 0? BlockFace.Axis.X : vector.z != 0? BlockFace.Axis.Z : BlockFace.Axis.Y;
-        double direction = axis == BlockFace.Axis.X? vector.x : axis == BlockFace.Axis.Y? vector.y : vector.z;
+        double direction = vector.getAxis(axis);
         return BlockFace.fromAxis(direction < 0? BlockFace.AxisDirection.NEGATIVE : BlockFace.AxisDirection.POSITIVE, axis);
     }
 

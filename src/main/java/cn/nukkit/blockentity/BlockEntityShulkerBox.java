@@ -16,7 +16,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import java.util.HashSet;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class BlockEntityShulkerBox extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
@@ -52,10 +52,6 @@ public class BlockEntityShulkerBox extends BlockEntitySpawnable implements Inven
         if (!closed) {
             for (Player player : new HashSet<>(this.getInventory().getViewers())) {
                 player.removeWindow(this.getInventory());
-            }
-
-            for (Player player : new HashSet<>(this.getInventory().getViewers())) {
-                player.removeWindow(this.getRealInventory());
             }
             super.close();
         }

@@ -61,14 +61,14 @@ public class BlockOreRedstone extends BlockSolid {
                     new ItemRedstone(0, count)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_TOUCH) { //type == Level.BLOCK_UPDATE_NORMAL ||
-            this.getLevel().setBlock(this, Block.get(BlockID.GLOWING_REDSTONE_ORE), false, false);
+            this.getLevel().setBlock(this, Block.get(BlockID.GLOWING_REDSTONE_ORE), false, true);
 
             return Level.BLOCK_UPDATE_WEAK;
         }

@@ -1,8 +1,10 @@
 package cn.nukkit.item.food;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.player.PlayerEatFoodEvent;
 import cn.nukkit.item.Item;
@@ -49,7 +51,7 @@ public abstract class Food {
     public static final Food chorus_fruit = registerDefaultFood(new FoodChorusFruit());
     public static final Food cookie = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(Item.COOKIE));
     public static final Food melon_slice = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(Item.MELON_SLICE));
-    public static final Food milk = registerDefaultFood(new FoodMilk().addRelative(Item.BUCKET, 1));
+    public static final Food milk = registerDefaultFood(new FoodMilk().addRelative(Item.BUCKET, 1).addRelative(Item.MILK_BUCKET));
     public static final Food mushroom_stew = registerDefaultFood(new FoodInBowl(6, 7.2F).addRelative(Item.MUSHROOM_STEW));
     public static final Food mutton_cooked = registerDefaultFood(new FoodNormal(6, 9.6F).addRelative(Item.COOKED_MUTTON));
     public static final Food mutton_raw = registerDefaultFood(new FoodNormal(2, 1.2F).addRelative(Item.RAW_MUTTON));
@@ -121,9 +123,14 @@ public abstract class Food {
     public static final Food suspicious_stew_wither = registerDefaultFood(new FoodEffectiveInBow(6, 7.2F)
             .addEffect(Effect.getEffect(Effect.WITHER).setAmplifier(1).setDuration(6 * 20)).addRelative(Item.SUSPICIOUS_STEW, 9));
     
-    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "PowerNukkit uses FoodHoney instead of FoodNormal")
+    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Was added in Cloudburst Nukkit with another name", replaceWith = "honey_bottle")
+    @PowerNukkitOnly
     public static final Food honey = registerDefaultFood(new FoodHoney(6, 1.2F).addRelative(Item.HONEY_BOTTLE));
-    
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "PowerNukkit uses FoodHoney instead of FoodNormal")
+    @Since("1.3.2.0-PN")
+    public static final Food honey_bottle = honey;
+
     //Opened API for plugins
     public static Food registerFood(Food food, Plugin plugin) {
         Objects.requireNonNull(food);

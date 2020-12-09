@@ -15,8 +15,10 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.network.protocol.LevelEventPacket;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.Random;
 
 import static cn.nukkit.math.BlockFace.AxisDirection.POSITIVE;
@@ -102,17 +104,17 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
         	}
             itemOnFrame.setCount(1);
             itemFrame.setItem(itemOnFrame);
-            this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_ADD_ITEM);
+            this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_ADDED);
         } else {
             itemFrame.setItemRotation((itemFrame.getItemRotation() + 1) % 8);
-            this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_ROTATE_ITEM);
+            this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_ROTATED);
         }
         return true;
     }
 
     @PowerNukkitDifference(info = "Allow to place on walls", since = "1.3.0.0-PN")
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (face.getHorizontalIndex() == -1 
                 || (target.getId() != COBBLE_WALL && (!target.isSolid() || (block.isSolid() && !block.canBeReplaced())))) {
             return false;
@@ -139,7 +141,7 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
     @Override
     public boolean onBreak(Item item) {
         this.getLevel().setBlock(this, layer, Block.get(BlockID.AIR), true, true);
-        this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_REMOVE_ITEM);
+        this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_REMOVED);
         return true;
     }
 

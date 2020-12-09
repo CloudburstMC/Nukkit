@@ -11,7 +11,7 @@ import cn.nukkit.utils.DyeColor;
 import javax.annotation.Nonnull;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockShulkerBox extends BlockUndyedShulkerBox {
@@ -21,7 +21,9 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
     }
 
     public BlockShulkerBox(int meta) {
-        getMutableState().setDataStorageFromInt(meta);
+        if (meta != 0) {
+            getMutableState().setDataStorageFromInt(meta, true);
+        }
     }
 
     @Since("1.4.0.0-PN")

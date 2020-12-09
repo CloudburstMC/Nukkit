@@ -60,7 +60,7 @@ public class BlockSlabBlackstone extends BlockSlab {
                     toItem()
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

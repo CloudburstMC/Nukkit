@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.anvil.util;
 
+import cn.nukkit.api.API;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -7,18 +8,30 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.blockstate.BlockStateRegistry;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.functional.BlockPositionDataConsumer;
 import com.google.common.base.Preconditions;
+import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnegative;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.Arrays;
 import java.util.BitSet;
 
+import static cn.nukkit.api.API.Definition.INTERNAL;
+import static cn.nukkit.api.API.Usage.BLEEDING;
+
 @ParametersAreNonnullByDefault
+@Log4j2
 public class BlockStorage {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockStorage[] EMPTY_ARRAY = new BlockStorage[0];
+
     private static final byte FLAG_HAS_ID           = 0b00_0001;
     private static final byte FLAG_HAS_ID_EXTRA     = 0b00_0010;
     private static final byte FLAG_HAS_DATA_EXTRA   = 0b00_0100;
@@ -55,7 +68,10 @@ public class BlockStorage {
         palette = new PalettedBlockStorage();
     }
 
-    private BlockStorage(BlockState[] states, byte flags, PalettedBlockStorage palette, @Nullable BitSet denyStates) {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @API(definition = INTERNAL, usage = BLEEDING)
+    BlockStorage(BlockState[] states, byte flags, PalettedBlockStorage palette, @Nullable BitSet denyStates) {
         this.states = states;
         this.flags = flags;
         this.palette = palette;
@@ -70,22 +86,24 @@ public class BlockStorage {
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
+    @Nonnegative
     public int getBlockData(int x, int y, int z) {
-        return states[getIndex(x, y, z)].getBigDamage();
+        return states[getIndex(x, y, z)].getSignedBigDamage();
     }
     
+    @Nonnegative
     public int getBlockId(int x, int y, int z) {
         return states[getIndex(x, y, z)].getBlockId();
     }
     
-    public void setBlockId(int x, int y, int z, int id) {
+    public void setBlockId(int x, int y, int z, @Nonnegative int id) {
         int index = getIndex(x, y, z);
         setBlockState(index, states[index].withBlockId(id));    
     }
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
-    public void setBlockData(int x, int y, int z, int data) {
+    public void setBlockData(int x, int y, int z, @Nonnegative int data) {
         int index = getIndex(x, y, z);
         setBlockState(index, states[index].withData(data));
     }
@@ -94,7 +112,7 @@ public class BlockStorage {
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
-    public void setBlock(int x, int y, int z, int id, int data) {
+    public void setBlock(int x, int y, int z, @Nonnegative int id, @Nonnegative int data) {
         int index = getIndex(x, y, z);
         BlockState state = BlockState.of(id, data);
         setBlockState(index, state);
@@ -108,13 +126,13 @@ public class BlockStorage {
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
-    public void setFullBlock(int x, int y, int z, int value) {
+    public void setFullBlock(int x, int y, int z, @Nonnegative int value) {
         this.setFullBlock(getIndex(x, y, z), value);
     }
 
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
-    public BlockState getAndSetBlock(int x, int y, int z, int id, int meta) {
+    public BlockState getAndSetBlock(int x, int y, int z, @Nonnegative int id, @Nonnegative int meta) {
         return setBlockState(getIndex(x, y, z), BlockState.of(id, meta));
     }
 
@@ -167,7 +185,18 @@ public class BlockStorage {
         setBlockState(index, state);
     }
 
-    private BlockState setBlockState(int index, BlockState state) {
+    protected BlockState setBlockState(int index, BlockState state) {
+        if (log.isTraceEnabled() && !state.isCachedValidationValid()) {
+            try {
+                int runtimeId = state.getBlock().getRuntimeId();
+                if (runtimeId == BlockStateRegistry.getFallbackRuntimeId()) {
+                    log.trace("Setting a state that will become info update! State: {}", state, new RuntimeException());
+                }
+            } catch (InvalidBlockStateException e) {
+                log.trace("Setting an invalid state! State: {}", state, e);
+            }
+        }
+
         BlockState previous = states[index];
         if (previous.equals(state)) {
             return previous;
@@ -205,6 +234,8 @@ public class BlockStorage {
         return states[getIndex(x, y, z)];
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public void recheckBlocks() {
         flags = computeFlags((byte)(flags & FLAG_PALETTE_UPDATED), states);
     }
@@ -397,9 +428,18 @@ public class BlockStorage {
         return newFlags; 
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockStorage copy() {
         BitSet deny = denyStates;
         return new BlockStorage(states.clone(), flags, palette.copy(), (BitSet) (deny != null? deny.clone() : null));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public ImmutableBlockStorage immutableCopy() {
+        return new ImmutableBlockStorage(states, flags, palette, denyStates);
     }
     
     private boolean getFlag(byte flag) {

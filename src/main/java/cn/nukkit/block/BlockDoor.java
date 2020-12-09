@@ -20,9 +20,11 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.AxisDirection;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 
@@ -90,7 +92,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @Deprecated @DeprecationDetails(reason = "Limited amount of state data", since = "1.4.0.0-PN", replaceWith = "getCurrentState()")
     public int getFullDamage() {
-        return getBigDamage();
+        return getSignedBigDamage();
     }
 
     @Override
@@ -176,7 +178,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
-    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         if (this.y > 254 || face != BlockFace.UP) {
             return false;
         }
@@ -208,6 +210,8 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         doorTop.y++;
         doorTop.setTop(true);
         level.setBlock(doorTop, doorTop, true, true); //Top
+        
+        level.updateAround(block);
 
         if (level.getServer().isRedstoneEnabled() && !isOpen() && level.isBlockPowered(getLocation())) {
             toggle(null);
