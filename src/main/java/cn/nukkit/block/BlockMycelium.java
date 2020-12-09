@@ -104,5 +104,6 @@ public class BlockMycelium extends BlockSolid {
             }
             return true;
         }
+        return false;
     }
 }
