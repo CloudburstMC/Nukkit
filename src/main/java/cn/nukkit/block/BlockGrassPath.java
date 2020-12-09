@@ -29,7 +29,7 @@ public class BlockGrassPath extends BlockGrass {
 
     @Override
     public String getName() {
-        return "Grass Path";
+        return "Dirt Path";
     }
 
     @Override
