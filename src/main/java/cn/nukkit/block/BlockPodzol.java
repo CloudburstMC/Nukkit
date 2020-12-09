@@ -80,6 +80,7 @@ public class BlockPodzol extends BlockDirt {
             }
             return true;
         }
+        return false;
     }
 
     @Override
