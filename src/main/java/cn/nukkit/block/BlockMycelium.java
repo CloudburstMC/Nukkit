@@ -84,4 +84,21 @@ public class BlockMycelium extends BlockSolid {
     public boolean canSilkTouch() {
         return true;
     }
+    
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+    
+    @Override
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        if (item.isShovel()) {
+            item.useOn(this);
+            this.getLevel().setBlock(this, Block.get(BlockID.GRASS_PATH));
+            if (player != null) {
+                player.getLevel().addSound(player, Sound.USE_GRASS);
+            }
+            return true;
+        }
+    }
 }
