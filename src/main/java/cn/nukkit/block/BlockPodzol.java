@@ -8,6 +8,7 @@ import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.blockproperty.value.DirtType;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Sound;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
