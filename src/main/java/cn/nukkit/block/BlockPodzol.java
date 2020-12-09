@@ -70,13 +70,15 @@ public class BlockPodzol extends BlockDirt {
     }
 
     @Override
-    public boolean canBeActivated() {
-        return false;
-    }
-
-    @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        return false;
+        if (item.isShovel()) {
+            item.useOn(this);
+            this.getLevel().setBlock(this, Block.get(BlockID.GRASS_PATH));
+            if (player != null) {
+                player.getLevel().addSound(player, Sound.USE_GRASS);
+            }
+            return true;
+        }
     }
 
     @Override
