@@ -72,6 +72,10 @@ public class BlockPodzol extends BlockDirt {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
+        if (!this.up().canBeReplaced()) {
+            return false;
+        }
+        
         if (item.isShovel()) {
             item.useOn(this);
             this.getLevel().setBlock(this, Block.get(BlockID.GRASS_PATH));
