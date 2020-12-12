@@ -4,6 +4,7 @@ import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDurable;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.math.BlockFace;
@@ -270,6 +271,7 @@ public class BinaryStream {
             this.putImage(animation.image);
             this.putLInt(animation.type);
             this.putLFloat(animation.frames);
+            this.putLInt(animation.expression);
         }
 
         this.putImage(skin.getCapeData());
@@ -315,7 +317,8 @@ public class BinaryStream {
             SerializedImage image = this.getImage();
             int type = this.getLInt();
             float frames = this.getLFloat();
-            skin.getAnimations().add(new SkinAnimation(image, type, frames));
+            int expression = this.getLInt();
+            skin.getAnimations().add(new SkinAnimation(image, type, frames, expression));
         }
 
         skin.setCapeData(this.getImage());
@@ -371,6 +374,7 @@ public class BinaryStream {
         if (id == 0) {
             return Item.get(0, 0, 0);
         }
+
         int auxValue = this.getVarInt();
         int data = auxValue >> 8;
         if (data == Short.MAX_VALUE) {
@@ -461,11 +465,16 @@ public class BinaryStream {
 
         boolean isDurable = item instanceof ItemDurable;
 
+//        int networkFullId = RuntimeItems.getNetworkFullId(item);
+//        boolean clearData = RuntimeItems.hasData(networkFullId);
+//        int networkId = RuntimeItems.getNetworkId(networkFullId);
+
         this.putVarInt(item.getId());
 
         int auxValue = item.getCount();
         if (!isDurable) {
-            auxValue |= (((item.hasMeta() ? item.getDamage() : -1) & 0x7fff) << 8);
+            int meta = item.hasMeta() ? item.getDamage() : -1;
+            auxValue |= ((meta & 0x7fff) << 8);
         }
         this.putVarInt(auxValue);
 

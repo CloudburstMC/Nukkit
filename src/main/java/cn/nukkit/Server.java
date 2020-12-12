@@ -254,7 +254,7 @@ public class Server {
 
     private DB nameLookup;
 
-    private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
+    private PlayerDataSerializer playerDataSerializer;
 
     private final Set<String> ignoredPackets = new HashSet<>();
 
@@ -332,6 +332,8 @@ public class Server {
         this.console = new NukkitConsole(this);
         this.consoleThread = new ConsoleThread();
         this.consoleThread.start();
+
+        this.playerDataSerializer = new DefaultPlayerDataSerializer(this);
 
         //todo: VersionString 现在不必要
 
@@ -862,18 +864,14 @@ public class Server {
 
         Timings.playerNetworkSendTimer.startTiming();
         byte[][] payload = new byte[packets.length * 2][];
-        int size = 0;
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
-            if (!p.isEncoded) {
-                p.encode();
-            }
+            int idx = i * 2;
+            if (!p.isEncoded) p.encode();
             byte[] buf = p.getBuffer();
-            payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
-            payload[i * 2 + 1] = buf;
+            payload[idx] = Binary.writeUnsignedVarInt(buf.length);
+            payload[idx + 1] = buf;
             packets[i] = null;
-            size += payload[i * 2].length;
-            size += payload[i * 2 + 1].length;
         }
 
         List<InetSocketAddress> targets = new ArrayList<>();
@@ -1643,7 +1641,7 @@ public class Server {
 
     public int getDifficulty() {
         if (this.difficulty == Integer.MAX_VALUE) {
-            this.difficulty = this.getPropertyInt("difficulty", 1);
+            this.difficulty = getDifficultyFromString(this.getPropertyString("difficulty", "1"));
         }
         return this.difficulty;
     }
@@ -2551,6 +2549,7 @@ public class Server {
         Entity.registerEntity("WanderingTrader", EntityWanderingTrader.class);
         Entity.registerEntity("Wolf", EntityWolf.class);
         Entity.registerEntity("ZombieHorse", EntityZombieHorse.class);
+        Entity.registerEntity("NPC", EntityNPCEntity.class);
         //Projectile
         Entity.registerEntity("AreaEffectCloud", EntityAreaEffectCloud.class);
         Entity.registerEntity("Egg", EntityEgg.class);

@@ -14,6 +14,8 @@ import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Pub4Game
@@ -110,7 +112,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
 
     @Since("1.3.0.0-PN")
     public void createPortal() {
-        Vector3 centerSpot = this.searchCenter();
+        Vector3 centerSpot = this.searchCenter(new ArrayList<>());
         if(centerSpot != null) {
             for(int x = -2; x <= 2; x++) {
                 for(int z = -2; z <= 2; z++) {
@@ -136,15 +138,16 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
         }
     }
 
-    private Vector3 searchCenter() {
+    private Vector3 searchCenter(List<Block> visited) {
         for(int x = -2; x <= 2; x++) {
             if(x == 0)
                 continue;
             Block block = this.getLevel().getBlock(this.add(x, 0, 0));
             Block iBlock = this.getLevel().getBlock(this.add(x * 2, 0, 0));
-            if(this.checkFrame(block)) {
+            if(this.checkFrame(block) && !visited.contains(block)) {
+                visited.add(block);
                 if((x == -1 || x == 1) && this.checkFrame(iBlock))
-                    return ((BlockEndPortalFrame) block).searchCenter();
+                    return ((BlockEndPortalFrame) block).searchCenter(visited);
                 for(int z = -4; z <= 4; z++) {
                     if(z == 0)
                         continue;
@@ -160,9 +163,10 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
                 continue;
             Block block = this.getLevel().getBlock(this.add(0, 0, z));
             Block iBlock = this.getLevel().getBlock(this.add(0, 0, z * 2));
-            if(this.checkFrame(block)) {
+            if(this.checkFrame(block) && !visited.contains(block)) {
+                visited.add(block);
                 if((z == -1 || z == 1) && this.checkFrame(iBlock))
-                    return ((BlockEndPortalFrame) block).searchCenter();
+                    return ((BlockEndPortalFrame) block).searchCenter(visited);
                 for(int x = -4; x <= 4; x++) {
                     if(x == 0)
                         continue;
