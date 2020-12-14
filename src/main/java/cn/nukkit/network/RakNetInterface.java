@@ -286,9 +286,9 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                     }
 
                     this.sendPacket(((BatchPacket) packet).payload);
+                } else {
+                    toBatch.add(packet);
                 }
-
-                toBatch.add(packet);
             }
 
             if (!toBatch.isEmpty()) {
