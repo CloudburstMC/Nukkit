@@ -323,7 +323,7 @@ public class EntityHuman extends EntityHumanType {
             }
 
             if (!(this instanceof Player)) {
-                this.server.removePlayerListData(this.getUniqueId(), new Player[]{player});
+                this.server.removePlayerListData(this.getUniqueId(), player);
             }
         }
     }
