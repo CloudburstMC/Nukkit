@@ -2714,16 +2714,42 @@
             "priority" : 50
         },
         {
-            "id" : "Torch_recipeId",
+            "id" : "Torch_recipe_from_coal",
             "type" : 1,
             "input" : {
                 "A" : {
                     "id" : 263,
-                  "damage": -1
+                    "damage": -1
                 },
                 "B" : {
                     "id" : 280,
-                  "damage": -1
+                    "damage": -1
+                }
+            },
+            "output" : [
+                {
+                    "id" : 50,
+                    "count" : 4
+                }
+            ],
+            "shape" : [
+                "A",
+                "B"
+            ],
+            "block" : "crafting_table",
+            "priority" : 50
+        },
+        {
+            "id" : "Torch_recipe_from_charcoal",
+            "type" : 1,
+            "input" : {
+                "A" : {
+                    "id" : 907,
+                    "damage": -1
+                },
+                "B" : {
+                    "id" : 280,
+                    "damage": -1
                 }
             },
             "output" : [

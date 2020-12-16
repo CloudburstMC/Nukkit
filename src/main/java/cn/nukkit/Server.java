@@ -1240,6 +1240,13 @@ public class Server {
         Server.broadcastPacket(players, pk);
     }
 
+    public void removePlayerListData(UUID uuid, Player player) {
+        PlayerListPacket pk = new PlayerListPacket();
+        pk.type = PlayerListPacket.TYPE_REMOVE;
+        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid)};
+        player.dataPacket(pk);
+    }
+
     public void removePlayerListData(UUID uuid, Collection<Player> players) {
         this.removePlayerListData(uuid, players.toArray(Player.EMPTY_ARRAY));
     }
