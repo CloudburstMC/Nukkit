@@ -26,7 +26,7 @@ public class PopulatorOreEmerald extends Populator {
             int z = NukkitMath.randomRange(random, sourceZ, endZ);
             int y = NukkitMath.randomRange(random, 4, 31);
             
-            if (chunk.getBlockId(x, y, z) != STONE) {
+            if (level.getBlockIdAt(x, y, z) != STONE) {
                 continue;
             }
             chunk.setBlockId(x, y, z, EMERALD_ORE);
