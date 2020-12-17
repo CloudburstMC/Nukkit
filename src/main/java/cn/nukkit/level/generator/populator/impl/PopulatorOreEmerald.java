@@ -1,12 +1,12 @@
 package cn.nukkit.level.generator.populator.impl;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
-import static cn.nukkit.block.BlockID.EMERALD_ORE;
 import static cn.nukkit.block.BlockID.STONE;
 
 /**
@@ -29,7 +29,7 @@ public class PopulatorOreEmerald extends Populator {
             if (level.getBlockIdAt(x, y, z) != STONE) {
                 continue;
             }
-            chunk.setBlockId(x, y, z, EMERALD_ORE);
+            level.setBlockAt(x, y, z, Block.EMERALD_ORE);
         }
     }
 }
