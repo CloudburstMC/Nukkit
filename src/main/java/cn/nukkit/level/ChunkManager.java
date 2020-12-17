@@ -14,9 +14,11 @@ import javax.annotation.Nonnull;
  */
 public interface ChunkManager {
 
+    @PowerNukkitOnly
     int getBlockIdAt(int x, int y, int z, int layer);
     int getBlockIdAt(int x, int y, int z);
-    
+
+    @PowerNukkitOnly
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     void setBlockFullIdAt(int x, int y, int z, int layer, int fullId);
@@ -25,13 +27,16 @@ public interface ChunkManager {
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     void setBlockFullIdAt(int x, int y, int z, int fullId);
 
+    @PowerNukkitOnly
     void setBlockIdAt(int x, int y, int z, int layer, int id);
     void setBlockIdAt(int x, int y, int z, int id);
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
+    @PowerNukkitOnly
     boolean setBlockAtLayer(int x, int y, int z, int layer, int id, int data);
 
+    @PowerNukkitOnly
     default boolean setBlockAtLayer(int x, int y, int z, int layer, int id) {
         return setBlockAtLayer(x, y, z, layer, id, 0);
     }
@@ -66,6 +71,7 @@ public interface ChunkManager {
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
+    @PowerNukkitOnly
     int getBlockDataAt(int x, int y, int z, int layer);
 
     @Deprecated
@@ -74,6 +80,7 @@ public interface ChunkManager {
 
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
+    @PowerNukkitOnly
     void setBlockDataAt(int x, int y, int z, int layer, int data);
 
     @Deprecated

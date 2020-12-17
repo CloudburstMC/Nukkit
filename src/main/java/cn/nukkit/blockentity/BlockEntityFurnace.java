@@ -11,6 +11,7 @@ import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.inventory.SmeltingRecipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemBucket;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -26,10 +27,10 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
 
     protected FurnaceInventory inventory;
 
-    protected int burnTime = 0;
-    protected int burnDuration = 0;
-    protected int cookTime = 0;
-    protected int maxTime = 0;
+    protected int burnTime;
+    protected int burnDuration;
+    protected int cookTime;
+    protected int maxTime;
 
     public BlockEntityFurnace(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -61,6 +62,12 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
             cookTime = 0;
         } else {
             cookTime = this.namedTag.getShort("CookTime");
+        }
+
+        if (!this.namedTag.contains("BurnDuration") || this.namedTag.getShort("BurnDuration") < 0) {
+            burnDuration = 0;
+        } else {
+            burnDuration = this.namedTag.getShort("BurnDuration");
         }
 
         if (!this.namedTag.contains("MaxTime")) {
@@ -229,7 +236,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         if (burnTime > 0 && ev.isBurning()) {
             fuel.setCount(fuel.getCount() - 1);
             if (fuel.getCount() == 0) {
-                if (fuel.getId() == Item.BUCKET && fuel.getDamage() == 10) {
+                if ((fuel instanceof ItemBucket) && ((ItemBucket) fuel).isLava()) {
                     fuel.setDamage(0);
                     fuel.setCount(1);
                 } else {

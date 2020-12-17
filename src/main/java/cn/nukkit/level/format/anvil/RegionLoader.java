@@ -44,7 +44,7 @@ public class RegionLoader extends BaseRegionLoader {
         try {
             int[] table = this.primitiveLocationTable.get(index);
             RandomAccessFile raf = this.getRandomAccessFile();
-            raf.seek(table[0] << 12);
+            raf.seek((long)table[0] << 12L);
             int length = raf.readInt();
             byte compression = raf.readByte();
             if (length <= 0 || length >= MAX_SECTOR_LENGTH) {
@@ -117,7 +117,7 @@ public class RegionLoader extends BaseRegionLoader {
 
         this.primitiveLocationTable.put(index, table);
         RandomAccessFile raf = this.getRandomAccessFile();
-        raf.seek(table[0] << 12);
+        raf.seek((long)table[0] << 12L);
 
         BinaryStream stream = new BinaryStream();
         stream.put(Binary.writeInt(length));
@@ -172,7 +172,7 @@ public class RegionLoader extends BaseRegionLoader {
             if (table[0] == 0 || table[1] == 0) {
                 continue;
             }
-            raf.seek(table[0] << 12);
+            raf.seek((long)table[0] << 12L);
             byte[] chunk = new byte[table[1] << 12];
             raf.readFully(chunk);
             int length = Binary.readInt(Arrays.copyOfRange(chunk, 0, 3));
@@ -197,7 +197,7 @@ public class RegionLoader extends BaseRegionLoader {
                 this.lastSector += sectors;
                 this.primitiveLocationTable.put(i, table);
             }
-            raf.seek(table[0] << 12);
+            raf.seek((long)table[0] << 12L);
             byte[] bytes = new byte[sectors << 12];
             ByteBuffer buffer1 = ByteBuffer.wrap(bytes);
             buffer1.put(chunk);
@@ -269,10 +269,10 @@ public class RegionLoader extends BaseRegionLoader {
                 shift += sector - lastSector - 1;
             }
             if (shift > 0) {
-                raf.seek(sector << 12);
+                raf.seek((long)sector << 12L);
                 byte[] old = new byte[4096];
                 raf.readFully(old);
-                raf.seek((sector - shift) << 12);
+                raf.seek((long)(sector - shift) << 12L);
                 raf.write(old);
             }
             int[] v = this.primitiveLocationTable.get(index);

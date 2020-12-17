@@ -85,7 +85,7 @@ public class EntitySheep extends EntityAnimal {
             return true;
         }
 
-        if (item.getId() == Item.DYE) {
+        if (item instanceof ItemDye) {
             this.setColor(((ItemDye) item).getDyeColor().getWoolData());
             return true;
         }

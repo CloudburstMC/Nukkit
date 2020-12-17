@@ -9,6 +9,41 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+## 1.4.0.0-PN-ALPHA.1 - 2020-11-21
+This changelog is still being worked on.
+
+## 1.3.2.0-PN-ALPHA.3 - Future
+
+### Fixes
+- _Alpha Bug_: Fixes entities from the MobPlugin going into the ground (compatibility issue)
+- [#770] Bamboo not dropping when broken, were also affecting blocks with id > 255
+- [#765] Unsafe level.dat writes could lead to world corruption
+- [#766] Error saving region files with content over 2 GB
+- [#776] _Alpha Bug_: Grindstone can't remove enchants
+- [#777] Falling block falling though scaffolds
+- [#778] _Alpha Bug_: Compatibility fix: Unable to change MobPlugin spawner with eggs
+- [#778] Unable to get `minecraft:mob_spawner` with `/give Nick mob_spawner`
+
+### Changed
+- [#765] The `ServerBrand` tag in the `level.dat` file will be set to `PowerNukkit` now 
+- [#776] Grindstone won't reset the repair cost anymore
+
+## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
+
+### Fixes
+- _Alpha Bug_: Some blocks were still dropping the old `minecraft:dye`
+- _Alpha Bug_: Drinking milk would give the player a hardcoded `ItemBucket`
+- _Alpha Bug_: Boat entities should drop the correct item now
+
+### Changed
+- Translations updated. Help us to translate PowerNukkit at https://translate.powernukkit.org
+
+## 1.3.2.0-PN-ALPHA.1 - 2020-11-20
+This changelog is still being worked on.
+
+This version pulls all changes from Cloudburst Nukkit into PowerNukkit 1.3, bringing a lot of fixes, new issues,
+and support for Minecraft 1.16.100
+
 ## [1.3.1.5-PN] - 2020-09-01
 Fixes a critical duplication exploit.
 
@@ -600,3 +635,9 @@ Fixes several anvil issues.
 [#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
 [#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475
 [#544]: https://github.com/PowerNukkit/PowerNukkit/issues/544
+[#765]: https://github.com/PowerNukkit/PowerNukkit/issues/765
+[#766]: https://github.com/PowerNukkit/PowerNukkit/issues/766
+[#770]: https://github.com/PowerNukkit/PowerNukkit/issues/770
+[#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
+[#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
+[#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778

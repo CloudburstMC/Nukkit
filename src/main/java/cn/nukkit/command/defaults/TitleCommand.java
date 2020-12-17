@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
@@ -18,34 +19,24 @@ public class TitleCommand extends VanillaCommand {
 
         this.commandParameters.clear();
         this.commandParameters.put("clear", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("clear", new String[]{"clear"})
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("clear", new CommandEnum("TitleClear", "clear"))
         });
         this.commandParameters.put("reset", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("reset", new String[]{"reset"})
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("reset", new CommandEnum("TitleReset", "reset"))
         });
-        this.commandParameters.put("title", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("title", new String[]{"title"}),
-                new CommandParameter("titleText", CommandParamType.STRING, false)
-        });
-        this.commandParameters.put("subtitle", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("subtitle", new String[]{"subtitle"}),
-                new CommandParameter("titleText", CommandParamType.STRING, false)
-        });
-        this.commandParameters.put("actionbar", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("actionbar", new String[]{"actionbar"}),
-                new CommandParameter("titleText", CommandParamType.STRING, false)
+        this.commandParameters.put("set", new CommandParameter[]{
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("titleLocation", new CommandEnum("TitleSet", "title", "subtitle", "actionbar")),
+                CommandParameter.newType("titleText", CommandParamType.MESSAGE)
         });
         this.commandParameters.put("times", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("times", new String[]{"times"}),
-                new CommandParameter("fadeIn", CommandParamType.INT, false),
-                new CommandParameter("stay", CommandParamType.INT, false),
-                new CommandParameter("fadeOut", CommandParamType.INT, false)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("times", new CommandEnum("TitleTimes", "times")),
+                CommandParameter.newType("fadeIn", CommandParamType.INT),
+                CommandParameter.newType("stay", CommandParamType.INT),
+                CommandParameter.newType("fadeOut", CommandParamType.INT)
         });
     }
 

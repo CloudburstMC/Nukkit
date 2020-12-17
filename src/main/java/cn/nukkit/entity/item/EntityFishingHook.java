@@ -181,17 +181,17 @@ public class EntityFishingHook extends EntityProjectile {
         EntityEventPacket pk = new EntityEventPacket();
         pk.eid = this.getId();
         pk.event = EntityEventPacket.FISH_HOOK_HOOK;
-        Server.broadcastPacket(this.level.getPlayers().values(), pk);
+        Server.broadcastPacket(this.getViewers().values(), pk);
 
         EntityEventPacket bubblePk = new EntityEventPacket();
         bubblePk.eid = this.getId();
         bubblePk.event = EntityEventPacket.FISH_HOOK_BUBBLE;
-        Server.broadcastPacket(this.level.getPlayers().values(), bubblePk);
+        Server.broadcastPacket(this.getViewers().values(), bubblePk);
 
         EntityEventPacket teasePk = new EntityEventPacket();
         teasePk.eid = this.getId();
         teasePk.event = EntityEventPacket.FISH_HOOK_TEASE;
-        Server.broadcastPacket(this.level.getPlayers().values(), teasePk);
+        Server.broadcastPacket(this.getViewers().values(), teasePk);
 
         Random random = new Random();
         for (int i = 0; i < 5; i++) {
@@ -270,7 +270,7 @@ public class EntityFishingHook extends EntityProjectile {
             EntityEventPacket pk = new EntityEventPacket();
             pk.eid = this.getId();
             pk.event = EntityEventPacket.FISH_HOOK_TEASE;
-            Server.broadcastPacket(this.level.getPlayers().values(), pk);
+            Server.broadcastPacket(this.getViewers().values(), pk);
         }
         if (!this.closed) {
             this.kill();

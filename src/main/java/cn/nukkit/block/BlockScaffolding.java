@@ -229,7 +229,7 @@ public class BlockScaffolding extends BlockFallableMeta {
 
     @Override
     public boolean canPassThrough() {
-        return true;
+        return false;
     }
 
     @Override
