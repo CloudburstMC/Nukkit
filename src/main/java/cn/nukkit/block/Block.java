@@ -798,10 +798,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static void registerBlockImplementation(int blockId, @Nonnull Class<? extends Block> blockClass, @Nonnull String persistenceName, boolean receivesRandomTick) {
-        Preconditions.checkArgument(blockId >= 0, "Negative block id {}", blockId);
+        Preconditions.checkArgument(blockId >= 0, "Negative block id %s", blockId);
         Preconditions.checkNotNull(blockClass, "blockClass was null");
         Preconditions.checkNotNull(persistenceName, "persistenceName was null");
-        Preconditions.checkArgument(blockId < MAX_BLOCK_ID, "blockId {} must be less than {}", blockId, MAX_BLOCK_ID);
+        Preconditions.checkArgument(blockId < MAX_BLOCK_ID, "blockId %s must be less than %s", blockId, MAX_BLOCK_ID);
         Block mainBlock;
         BlockProperties properties;
         try {
