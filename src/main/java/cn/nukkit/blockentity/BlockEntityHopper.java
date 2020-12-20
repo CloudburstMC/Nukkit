@@ -4,9 +4,11 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockComposter;
 import cn.nukkit.block.BlockHopper;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
@@ -32,7 +34,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     protected HopperInventory inventory;
 
-    public int transferCooldown = 8;
+    public int transferCooldown;
 
     private AxisAlignedBB pickupArea;
     
@@ -48,6 +50,8 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     protected void initBlockEntity() {
         if (this.namedTag.contains("TransferCooldown")) {
             this.transferCooldown = this.namedTag.getInt("TransferCooldown");
+        } else {
+            this.transferCooldown = 8;
         }
 
         this.inventory = new HopperInventory(this);
@@ -191,11 +195,12 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         	return false;
         }
 
+        Block blockSide = this.getBlock().getSide(BlockFace.UP);
         BlockEntity blockEntity = this.level.getBlockEntity(temporalVector.setComponentsAdding(this, BlockFace.UP));
 
         boolean changed = pushItems();
 
-        if (blockEntity instanceof InventoryHolder) {
+        if (blockEntity instanceof InventoryHolder || blockSide instanceof BlockComposter)  {
             changed = pullItems() || changed;
         } else {
             changed = pickupItems() || changed;
@@ -222,7 +227,9 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             return false;
         }
 
+        Block blockSide = this.getBlock().getSide(BlockFace.UP);
         BlockEntity blockEntity = this.level.getBlockEntity(temporalVector.setComponentsAdding(this, BlockFace.UP));
+
         //Fix for furnace outputs
         if (blockEntity instanceof BlockEntityFurnace) {
             FurnaceInventory inv = ((BlockEntityFurnace) blockEntity).getInventory();
@@ -283,6 +290,26 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                     inv.setItem(i, item);
                     return true;
                 }
+            }
+        } else if (blockSide instanceof BlockComposter) {
+            BlockComposter blockComposter = (BlockComposter)blockSide;
+            if (blockComposter.isFull()) {
+                Item item = blockComposter.empty();
+
+                if (item == null || item.isNull()) {
+                    return false;
+                }
+
+                Item itemToAdd = item.clone();
+                itemToAdd.count = 1;
+
+                if (!this.inventory.canAddItem(itemToAdd)) {
+                    return false;
+                }
+
+                Item[] items = this.inventory.addItem(itemToAdd);
+
+                return items.length < 1;
             }
         }
         return false;
@@ -357,15 +384,22 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     }
 
     public boolean pushItems() {
-        BlockFace side = getLevelBlockState().getPropertyValue(CommonBlockProperties.FACING_DIRECTION);
         if (this.inventory.isEmpty()) {
             return false;
         }
+
+        BlockState levelBlockState = getLevelBlockState();
+        if (levelBlockState.getBlockId() != BlockID.HOPPER_BLOCK) {
+            return false;
+        }
         
+        BlockFace side = levelBlockState.getPropertyValue(CommonBlockProperties.FACING_DIRECTION);
+        Block blockSide = this.getBlock().getSide(side);
         BlockEntity be = this.level.getBlockEntity(temporalVector.setComponentsAdding(this, side));
 
-        if (be instanceof BlockEntityHopper && this.getBlock().getDamage() == 0 || !(be instanceof InventoryHolder))
+        if (be instanceof BlockEntityHopper && levelBlockState.isDefaultState() || !(be instanceof InventoryHolder) && !(blockSide instanceof BlockComposter)) {
             return false;
+        }
 
         InventoryMoveItemEvent event;
 
@@ -439,7 +473,31 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             }
 
             return pushedItem;
-        } else {
+        } else if (blockSide instanceof BlockComposter) {
+            BlockComposter composter = (BlockComposter)blockSide;
+            if (composter.isFull()) {
+                return false;
+            }
+
+            for (int i = 0; i < this.inventory.getSize(); i++) {
+                Item item = this.inventory.getItem(i);
+
+                if (item.isNull()) {
+                    continue;
+                }
+
+                Item itemToAdd = item.clone();
+                itemToAdd.setCount(1);
+
+                if (!composter.onActivate(item)) {
+                    return false;
+                }
+                item.count--;
+                this.inventory.setItem(i, item);
+                return true;
+            }
+        }
+        else {
             Inventory inventory = ((InventoryHolder) be).getInventory();
 
             if (inventory.isFull()) {

@@ -20,9 +20,4 @@ public class ItemCake extends Item {
         super(CAKE, 0, count, "Cake");
         this.block = Block.get(BlockID.CAKE_BLOCK);
     }
-
-    @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
 }

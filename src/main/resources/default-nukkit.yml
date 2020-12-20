@@ -65,6 +65,7 @@ player:
  save-player-data: true
  skin-change-cooldown: 30
  force-skin-trusted: false
+ check-movement: true
 
 aliases:
 

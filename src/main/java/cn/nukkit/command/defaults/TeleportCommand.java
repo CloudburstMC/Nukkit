@@ -21,18 +21,22 @@ public class TeleportCommand extends VanillaCommand {
         this.setPermission("nukkit.command.teleport");
         this.commandParameters.clear();
         this.commandParameters.put("->Player", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
+                CommandParameter.newType("destination", CommandParamType.TARGET),
         });
         this.commandParameters.put("Player->Player", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("target", CommandParamType.TARGET, false),
+                CommandParameter.newType("victim", CommandParamType.TARGET),
+                CommandParameter.newType("destination", CommandParamType.TARGET)
         });
         this.commandParameters.put("Player->Pos", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("blockPos", CommandParamType.POSITION, false),
+                CommandParameter.newType("victim", CommandParamType.TARGET),
+                CommandParameter.newType("destination", CommandParamType.POSITION),
+                CommandParameter.newType("yRot", true, CommandParamType.VALUE),
+                CommandParameter.newType("xRot", true, CommandParamType.VALUE)
         });
         this.commandParameters.put("->Pos", new CommandParameter[]{
-                new CommandParameter("blockPos", CommandParamType.POSITION, false),
+                CommandParameter.newType("destination", CommandParamType.POSITION),
+                CommandParameter.newType("yRot", true, CommandParamType.VALUE),
+                CommandParameter.newType("xRot", true, CommandParamType.VALUE)
         });
     }
 

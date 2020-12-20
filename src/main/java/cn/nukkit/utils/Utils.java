@@ -2,6 +2,7 @@ package cn.nukkit.utils;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -13,16 +14,59 @@ import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 
 /**
  * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public class Utils {
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
+    @Since("1.3.2.0-PN")
     public static final Integer[] EMPTY_INTEGERS = new Integer[0];
 
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
     public static final SplittableRandom random = new SplittableRandom();
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public static void safeWrite(File currentFile, Consumer<File> operation) throws IOException {
+        File parent = currentFile.getParentFile();
+        File newFile = new File(parent, currentFile.getName()+"_new");
+        File oldFile = new File(parent, currentFile.getName()+"_old");
+        File olderFile = new File(parent, currentFile.getName()+"_older");
+
+        if (olderFile.isFile() && !olderFile.delete()) {
+            log.fatal("Could not delete the file "+olderFile.getAbsolutePath());
+        }
+
+        if (newFile.isFile() && !newFile.delete()) {
+            log.fatal("Could not delete the file "+newFile.getAbsolutePath());
+        }
+        
+        try {
+            operation.accept(newFile);
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+        
+        if (oldFile.isFile()) {
+            if (olderFile.isFile()) {
+                Utils.copyFile(oldFile, olderFile);
+            } else if (!oldFile.renameTo(olderFile)) {
+                throw new IOException("Could not rename the " + oldFile + " to " + olderFile);
+            }
+        }
+
+        if (currentFile.isFile() && !currentFile.renameTo(oldFile)) {
+            throw new IOException("Could not rename the " + currentFile + " to " + oldFile);
+        }
+
+        if (!newFile.renameTo(currentFile)) {
+            throw new IOException("Could not rename the " + newFile + " to " + currentFile);
+        }
+    }
 
     public static void writeFile(String fileName, String content) throws IOException {
         writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
@@ -301,6 +345,8 @@ public class Utils {
         return -1;
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
     public static int rand(int min, int max) {
         if (min == max) {
             return max;
@@ -308,6 +354,8 @@ public class Utils {
         return random.nextInt(max + 1 - min) + min;
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
     public static double rand(double min, double max) {
         if (min == max) {
             return max;
@@ -315,6 +363,8 @@ public class Utils {
         return min + random.nextDouble() * (max-min);
     }
 
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
     public static boolean rand() {
         return random.nextBoolean();
     }
@@ -328,7 +378,7 @@ public class Utils {
      * @return The same value that was passed as parameter
      */
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
+    @Since("1.3.2.0-PN")
     public static int dynamic(int value) {
         return value;
     }
