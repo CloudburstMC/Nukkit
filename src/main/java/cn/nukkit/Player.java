@@ -264,6 +264,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected double lastRightClickTime = 0.0;
     protected Vector3 lastRightClickPos = null;
 
+    private int timeSinceRest;
+
     protected int lastPlayerdLevelUpSoundTime = 0;
 
     public int getStartActionTick() {
@@ -1136,6 +1138,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.level.sleepTicks = 60;
 
+        this.timeSinceRest = 0;
+
         return true;
     }
 
@@ -1798,6 +1802,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (this.getFoodData() != null) this.getFoodData().update(tickDiff);
                 }
             }
+
+            if (!this.isSleeping()) {
+                this.timeSinceRest++;
+            }
         }
 
         this.checkTeleportPosition();
@@ -2052,6 +2060,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.isSpectator()) this.keepMovement = true;
 
         this.forceMovement = this.teleportPosition = this.getPosition();
+
+        if (!this.namedTag.contains("TimeSinceRest")) {
+            this.namedTag.putInt("TimeSinceRest", 0);
+        }
+        this.timeSinceRest = this.namedTag.getInt("TimeSinceRest");
 
         ResourcePacksInfoPacket infoPacket = new ResourcePacksInfoPacket();
         infoPacket.resourcePackEntries = this.server.getResourcePackManager().getResourceStack();
@@ -3943,6 +3956,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.namedTag.putInt("foodLevel", this.getFoodData().getLevel());
             this.namedTag.putFloat("foodSaturationLevel", this.getFoodData().getFoodSaturationLevel());
 
+            this.namedTag.putInt("TimeSinceRest", this.timeSinceRest);
+
             if (!this.username.isEmpty() && this.namedTag != null) {
                 this.server.saveOfflinePlayerData(this.uuid, this.namedTag, async);
             }
@@ -4145,6 +4160,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
                 this.setExperience(0, 0);
             }
+
+            this.timeSinceRest = 0;
 
             if (showMessages && !ev.getDeathMessage().toString().isEmpty()) {
                 this.server.broadcast(ev.getDeathMessage(), Server.BROADCAST_CHANNEL_USERS);
@@ -5317,5 +5334,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return "Player(name='" + getName() +
                 "', location=" + super.toString() +
                 ')';
+    }
+
+    @Since("1.3.2.0-PN")
+    public int getTimeSinceRest() {
+        return timeSinceRest;
+    }
+
+    @Since("1.3.2.0-PN")
+    public void setTimeSinceRest(int timeSinceRest) {
+        this.timeSinceRest = timeSinceRest;
     }
 }
