@@ -1,16 +1,16 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockBell;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.item.EntityEndCrystal;
-import cn.nukkit.entity.mob.EntityBlaze;
 import cn.nukkit.event.block.BellRingEvent;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
@@ -18,6 +18,7 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -57,6 +58,12 @@ public abstract class EntityProjectile extends Entity {
         }
     }
 
+    @PowerNukkitOnly("Allows to modify the damage based on the entity being damaged")
+    @Since("1.3.2.0-PN")
+    public int getResultDamage(@Nullable Entity entity) {
+        return getResultDamage();
+    }
+
     public int getResultDamage() {
         return NukkitMath.ceilDouble(Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ) * getDamage());
     }
@@ -73,7 +80,7 @@ public abstract class EntityProjectile extends Entity {
             return;
         }
 
-        float damage = this instanceof EntitySnowball && entity instanceof EntityBlaze ? 3 : this.getResultDamage();
+        float damage = this.getResultDamage(entity);
 
         EntityDamageEvent ev;
         if (this.shootingEntity == null) {
