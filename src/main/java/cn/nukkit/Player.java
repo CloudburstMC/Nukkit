@@ -5336,10 +5336,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 ')';
     }
 
+    @Since("1.3.2.0-PN")
     public int getTimeSinceRest() {
         return timeSinceRest;
     }
 
+    @Since("1.3.2.0-PN")
     public void setTimeSinceRest(int timeSinceRest) {
         this.timeSinceRest = timeSinceRest;
     }
