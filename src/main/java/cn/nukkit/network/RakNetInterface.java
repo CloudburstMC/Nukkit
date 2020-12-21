@@ -72,7 +72,12 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         for (EventExecutor executor : this.raknet.getBootstrap().config().group()) {
             this.tickFutures.add(executor.scheduleAtFixedRate(() -> {
                 for (NukkitRakNetSession session : sessionsToTick.get()) {
-                    session.sendOutbound();
+                    try {
+                        session.sendOutbound();
+                    } catch (Exception e) {
+                        log.fatal("Exception while sending packets to {}", session.player.getName(), e);
+                        session.player.close("Outbound packet error");
+                    }
                 }
             }, 0, 50, TimeUnit.MILLISECONDS));
         }
