@@ -9,9 +9,7 @@ import cn.nukkit.inventory.transaction.action.EnchantingAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
-import cn.nukkit.utils.DyeColor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -43,8 +41,7 @@ public class EnchantTransaction extends InventoryTransaction {
     }
     
     private boolean isLapisLazuli(Item item) {
-        int id = item.getId();
-        return id == ItemID.DYE && ((ItemDye) item).getDyeColor().equals(DyeColor.BLUE); 
+        return (item instanceof ItemDye) && ((ItemDye) item).isLapisLazuli();
     }
 
     @Override

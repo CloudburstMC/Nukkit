@@ -909,6 +909,12 @@ public class Item implements Cloneable, BlockID, ItemID {
     public int getId() {
         return id;
     }
+    
+    public String getNamespaceId() {
+        return RuntimeItems.getRuntimeMapping().getNamespacedIdByNetworkId(
+                RuntimeItems.getRuntimeMapping().getNetworkFullId(this)
+        );
+    }
 
     public int getDamage() {
         return meta;

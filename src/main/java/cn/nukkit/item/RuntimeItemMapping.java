@@ -15,6 +15,17 @@ import java.util.Map;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
+/**
+ * Responsible for mapping item full ids, item network ids and item namespaced ids between each other.
+ * <ul>
+ * <li>A <b>full id</b> is a combination of <b>item id</b> and <b>item damage</b>. 
+ * The way they are combined may change in future, so you should not combine them by yourself and neither store them
+ * permanently. It's mainly used to preserve backward compatibility with plugins that don't support <em>namespaced ids</em>.
+ * <li>A <b>network id</b> is an id that is used to communicated with the client, it may change between executions of the
+ * same server version depending on how the plugins are setup.
+ * <li>A <b>namespaced id</b> is the new way Mojang saves the ids, a string like <code>minecraft:stone</code>. It may change
+ * in Minecraft updates but tends to be permanent, unless Mojang decides to change them for some random reasons...
+ */
 @Since("1.3.2.0-PN")
 public class RuntimeItemMapping {
 
@@ -53,6 +64,12 @@ public class RuntimeItemMapping {
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
+    /**
+     * Returns the <b>network id</b> based on the <b>full id</b> of the given item.
+     * @param item Given item
+     * @return The <b>network id</b>
+     * @throws IllegalArgumentException If the mapping of the <b>full id</b> to the <b>network id</b> is unknown
+     */
     @Since("1.3.2.0-PN")
     public int getNetworkFullId(Item item) {
         int fullId = RuntimeItems.getFullId(item.getId(), item.hasMeta() ? item.getDamage() : -1);
@@ -67,6 +84,12 @@ public class RuntimeItemMapping {
         return networkId;
     }
 
+    /**
+     * Returns the <b>full id</b> of a given <b>network id</b>.
+     * @param networkId The given <b>network id</b>
+     * @return The <b>full id</b>
+     * @throws IllegalArgumentException If the mapping of the <b>full id</b> to the <b>network id</b> is unknown
+     */
     @Since("1.3.2.0-PN")
     public int getLegacyFullId(int networkId) {
         int fullId = networkLegacyMap.get(networkId);
@@ -81,6 +104,11 @@ public class RuntimeItemMapping {
         return this.itemDataPalette;
     }
 
+    /**
+     * Returns the <b>namespaced id</b> of a given <b>network id</b>.
+     * @param networkId The given <b>network id</b>
+     * @return The <b>namespace id</b> or {@code null} if it is unknown
+     */
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     @Nullable
@@ -88,6 +116,11 @@ public class RuntimeItemMapping {
         return networkNamespaceMap.get(networkId);
     }
 
+    /**
+     * Returns the <b>network id</b> of a given <b>namespaced id</b>.
+     * @param namespaceId The given <b>namespaced id</b>
+     * @return A <b>network id</b> wrapped in {@link OptionalInt} or an empty {@link OptionalInt} if it is unknown
+     */
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     @Nonnull
@@ -95,15 +128,21 @@ public class RuntimeItemMapping {
         return namespaceNetworkMap.getOrDefault(namespaceId, OptionalInt.empty());
     }
 
+    /**
+     * Creates a new instance of the respective {@link Item} by the <b>namespaced id</b>.
+     * @param namespaceId The namespaced id
+     * @param amount How many items will be in the stack.
+     * @return The correct {@link Item} instance with the write <b>item id</b> and <b>item damage</b> values.
+     * @throws IllegalArgumentException If there are unknown mappings in the process. 
+     */
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
-    @Nullable
+    @Nonnull
     public Item getItemByNamespaceId(@Nonnull String namespaceId, int amount) {
-        OptionalInt netId = getNetworkIdByNamespaceId(namespaceId);
-        if (!netId.isPresent()) {
-            return null;
-        }
-        int legacyFullId = getLegacyFullId(netId.getAsInt());
+        int legacyFullId = getLegacyFullId(
+                getNetworkIdByNamespaceId(namespaceId)
+                        .orElseThrow(()-> new IllegalArgumentException("The network id of \""+namespaceId+"\" is unknown"))
+        );
         if (RuntimeItems.hasData(legacyFullId)) {
             return Item.get(RuntimeItems.getId(legacyFullId), RuntimeItems.getData(legacyFullId), amount);
         } else {

@@ -80,7 +80,7 @@ public class NBTIO {
         if (badAlphaId == null) {
             return null;
         }
-        return badAlphaId.getVanillaItemId().get(count);
+        return badAlphaId.getMinecraftItemId().get(count);
     }
 
     public static CompoundTag read(File file) throws IOException {

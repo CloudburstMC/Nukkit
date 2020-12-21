@@ -22,12 +22,14 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 /**
+ * An enum containing all valid vanilla Minecraft items.
+ * 
  * @author joserobjr
  * @since 2020-12-20
  */
 @PowerNukkitOnly
 @Since("1.3.2.0-PN")
-public enum VanillaItemID {
+public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") UNKNOWN,
     @PowerNukkitOnly @Since("1.3.2.0-PN") QUARTZ_BRICKS,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CRACKED_NETHER_BRICKS,
@@ -947,12 +949,12 @@ public enum VanillaItemID {
     private final String namespacedId;
     private final String itemFormNamespaceId;
 
-    VanillaItemID() {
+    MinecraftItemID() {
         namespacedId = "minecraft:" + name().toLowerCase();
         itemFormNamespaceId = namespacedId;
     }
 
-    VanillaItemID(String namespacedId) {
+    MinecraftItemID(String namespacedId) {
         this.namespacedId = namespacedId;
         if (name().endsWith("_BLOCK_FORM")) {
             itemFormNamespaceId = "minecraft:item." + name().toLowerCase().substring(0, name().length() - 11);
@@ -965,6 +967,14 @@ public enum VanillaItemID {
     @Since("1.3.2.0-PN")
     public Item get(int amount) {
         return RuntimeItems.getRuntimeMapping().getItemByNamespaceId(getItemFormNamespaceId(), amount);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public Item get(int amount, byte[] compoundTag) {
+        Item item = get(amount);
+        item.setCompoundTag(compoundTag != null? compoundTag.clone() : null);
+        return item;
     }
 
     @PowerNukkitOnly

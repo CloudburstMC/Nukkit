@@ -1173,7 +1173,7 @@ public class Server {
     }
 
     public void sendRecipeList(Player player) {
-        player.dataPacket(CraftingManager.packet);
+        player.dataPacket(CraftingManager.getCraftingPacket());
     }
 
     private void checkTickUpdates(int currentTick, long tickTime) {

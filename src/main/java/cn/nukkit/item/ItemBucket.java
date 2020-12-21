@@ -1,7 +1,6 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
@@ -28,24 +27,10 @@ public class ItemBucket extends Item {
         this(0, 1);
     }
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
-                    "so you may get 0 as meta result even though you have filled bucket.",
-            replaceWith = "An item class specific for the item you want. Eg: ItemBucketWater, ItemBucketFishCod, etc"
-    )
     public ItemBucket(Integer meta) {
         this(meta, 1);
     }
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
-                    "so you may get 0 as meta result even though you have filled bucket.",
-            replaceWith = "An item class specific for the item you want. Eg: ItemBucketWater, ItemBucketFishCod, etc"
-    )
     public ItemBucket(Integer meta, int count) {
         super(BUCKET, meta, count, getName(meta));
     }
@@ -54,18 +39,6 @@ public class ItemBucket extends Item {
     @Since("1.3.2.0-PN")
     protected ItemBucket(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
-    }
-
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
-                    "so you may get 0 as meta result even though you have filled bucket.",
-            replaceWith = "isEmpty() isLava() isWater() getFishEntityId()"
-    )
-    @Override
-    public int getDamage() {
-        return super.getDamage();
     }
 
     protected static String getName(int meta) {

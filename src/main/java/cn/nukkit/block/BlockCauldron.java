@@ -89,42 +89,35 @@ public class BlockCauldron extends BlockSolidMeta {
 
         switch (item.getId()) {
             case Item.BUCKET:
-                if (item.getDamage() == 0) {//empty bucket
+                ItemBucket bucket = (ItemBucket) item;
+                if (bucket.isEmpty()) {
                     if (!isFull() || cauldron.isCustomColor() || cauldron.hasPotion()) {
                         break;
                     }
-
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(8);//water bucket
-
-                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, bucket);
+                    
+                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, MinecraftItemID.WATER_BUCKET.get(1, bucket.getCompoundTag()));
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        replaceBucket(item, player, ev.getItem());
+                        replaceBucket(bucket, player, ev.getItem());
                         this.setFillLevel(0);//empty
                         this.level.setBlock(this, this, true);
                         cauldron.clearCustomColor();
                         this.getLevel().addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_WATER);
                     }
-                } else if (item.getDamage() == 8 || item.getDamage() == 10) {//water and lava buckets
+                } else if (bucket.isWater() || bucket.isLava()) {
                     if (isFull() && !cauldron.isCustomColor() && !cauldron.hasPotion() && item.getDamage() == 8) {
                         break;
                     }
 
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(0);//empty bucket
-
-                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, bucket);
+                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, MinecraftItemID.BUCKET.get(1, bucket.getCompoundTag()));
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         if (player.isSurvival() || player.isAdventure()) {
-                            replaceBucket(item, player, ev.getItem());
+                            replaceBucket(bucket, player, ev.getItem());
                         }
                         if (cauldron.hasPotion()) {//if has potion
                             clearWithFizz(cauldron);
-                        } else if (item.getDamage() == 8) { //water bucket
+                        } else if (bucket.isWater()) { //water bucket
                             this.setFillLevel(3);//fill
                             cauldron.clearCustomColor();
                             this.level.setBlock(this, this, true);
