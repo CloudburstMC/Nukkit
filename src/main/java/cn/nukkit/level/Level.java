@@ -2321,13 +2321,13 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
             } else {
-                if((item instanceof ItemBucket) && ((ItemBucket) item).isWater()) {
+                if((item instanceof ItemBucket) && ((ItemBucket)item).isWater()) {
                     player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, target.getLevelBlockAtLayer(1))}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 }
                 return null;
             }
 
-            if((item instanceof ItemBucket) && ((ItemBucket) item).isWater()) {
+            if((item instanceof ItemBucket) && ((ItemBucket)item).isWater()) {
                 player.getLevel().sendBlocks(new Player[] {player}, new Block[] {target.getLevelBlockAtLayer(1)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
             }
         } else if (target.canBeActivated() && target.onActivate(item, player)) {
