@@ -27,6 +27,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import java.io.IOException;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -34,7 +35,19 @@ import java.util.regex.Pattern;
  * Nukkit Project
  */
 public class Item implements Cloneable, BlockID, ItemID {
-    //Normal Item IDs
+    /**
+     * Groups:
+     * <ol>
+     *     <li>namespace (optional)</li>
+     *     <li>item name (choice)</li>
+     *     <li>damage (optional, for item name)</li>
+     *     <li>numeric id (choice)</li>
+     *     <li>damage (optional, for numeric id)</li>
+     * </ol>
+     */
+    private static final Pattern ITEM_STRING_PATTERN = Pattern.compile(
+            //       1:namespace    2:name           3:damage   4:num-id    5:damage
+            "^(?:(?:([a-z_]\\w*):)?([a-z._]\\w*)(?::(-?\\d+))?|(-?\\d+)(?::(-?\\d+))?)$");
 
     protected static String UNKNOWN_STR = "Unknown";
     public static Class[] list = null;
@@ -473,33 +486,66 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static Item fromString(String str) {
-        String[] b = str.trim().replace(' ', '_').replace("minecraft:", "").split(":");
+        String normalized = str.trim().replace(' ', '_').toLowerCase();
+        Matcher matcher = ITEM_STRING_PATTERN.matcher(normalized);
+        if (!matcher.matches()) {
+            return get(AIR);
+        }
+        
+        String name = matcher.group(2);
+        OptionalInt meta = OptionalInt.empty();
+        String metaGroup;
+        if (name != null) {
+            metaGroup = matcher.group(3);
+        } else {
+            metaGroup = matcher.group(5);
+        }
+        if (metaGroup != null) {
+            meta = OptionalInt.of(Integer.parseInt(metaGroup) & 0xFFFF);
+        }
+
+        String numericIdGroup = matcher.group(4);
+        if (name != null) {
+            String namespaceGroup = matcher.group(1);
+            String namespacedId;
+            if (namespaceGroup != null) {
+                namespacedId = namespaceGroup + name;
+            } else {
+                namespacedId = "minecraft:" + name;
+            }
+            MinecraftItemID minecraftItemId = MinecraftItemID.getByNamespaceId(namespacedId);
+            if (minecraftItemId != null) {
+                Item item = minecraftItemId.get(1);
+                meta.ifPresent(item::setDamage);
+                return item;
+            } else if (namespaceGroup != null && !namespaceGroup.equals("minecraft:")) {
+                return get(AIR);
+            }
+        } else if (numericIdGroup != null) {
+            int id = Integer.parseInt(numericIdGroup);
+            return get(id, meta.orElse(0));
+        }
+        
+        if (name == null) {
+            return get(AIR);
+        }
 
         int id = 0;
-        int meta = 0;
 
-        Pattern integerPattern = Pattern.compile("^-?[1-9]\\d*$");
-        if (integerPattern.matcher(b[0]).matches()) {
-            id = Integer.parseInt(b[0]);
-        } else {
+        try {
+            id = ItemID.class.getField(name.toUpperCase()).getInt(null);
+        } catch (Exception ignore1) {
             try {
-                id = BlockID.class.getField(b[0].toUpperCase()).getInt(null);
+                id = BlockID.class.getField(name.toUpperCase()).getInt(null);
                 if (id > 255) {
                     id = 255 - id;
                 }
-            } catch (Exception ignore1) {
-                try {
-                    id = ItemID.class.getField(b[0].toUpperCase()).getInt(null);
-                } catch (Exception ignore2) {
+            } catch (Exception ignore2) {
 
-                }
             }
         }
 
-        //id = id & 0xFFFF;
-        if (b.length != 1) meta = Integer.parseInt(b[1]) & 0xFFFF;
-
-        return get(id, meta);
+        return get(id, meta.orElse(0));
     }
 
     public static Item fromJson(Map<String, Object> data) {

@@ -21,6 +21,12 @@ package cn.nukkit.item;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 /**
  * An enum containing all valid vanilla Minecraft items.
  * 
@@ -45,11 +51,11 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") POLISHED_BLACKSTONE_SLAB,
     @PowerNukkitOnly @Since("1.3.2.0-PN") POLISHED_BLACKSTONE_STAIRS,
     @PowerNukkitOnly @Since("1.3.2.0-PN") POLISHED_BLACKSTONE,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") SOUL_CAMPFIRE_BLOCK_FORM("minecraft:soul_campfire"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") SOUL_CAMPFIRE_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") CRYING_OBSIDIAN,
     @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_GOLD_ORE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") TWISTING_VINES,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CHAIN_BLOCK_FORM("minecraft:chain"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CHAIN_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") POLISHED_BLACKSTONE_BRICK_DOUBLE_SLAB,
     @PowerNukkitOnly @Since("1.3.2.0-PN") POLISHED_BLACKSTONE_BRICK_SLAB,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BLACKSTONE_DOUBLE_SLAB,
@@ -88,14 +94,14 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") CRIMSON_STANDING_SIGN,
     @PowerNukkitOnly @Since("1.3.2.0-PN") WARPED_TRAPDOOR,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CRIMSON_TRAPDOOR,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") WARPED_DOOR_BLOCK_FORM("minecraft:warped_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CRIMSON_DOOR_BLOCK_FORM("minecraft:crimson_door"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") WARPED_DOOR_BLOCK_FORM(true),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CRIMSON_DOOR_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") WARPED_PLANKS,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CRIMSON_PLANKS,
     @PowerNukkitOnly @Since("1.3.2.0-PN") STRIPPED_WARPED_STEM,
     @PowerNukkitOnly @Since("1.3.2.0-PN") STRIPPED_CRIMSON_STEM,
     @PowerNukkitOnly @Since("1.3.2.0-PN") TARGET,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_SPROUTS_BLOCK_FORM("minecraft:nether_sprouts"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_SPROUTS_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") SOUL_FIRE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SOUL_SOIL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") POLISHED_BASALT,
@@ -116,7 +122,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") HONEY_BLOCK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BEEHIVE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BEE_NEST,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") STICKYPISTONARMCOLLISION,
+    //@PowerNukkitOnly @Since("1.3.2.0-PN") STICKYPISTONARMCOLLISION("minecraft:stickyPistonArmCollision", "minecraft:sticky_piston"),
     @PowerNukkitOnly @Since("1.3.2.0-PN") WITHER_ROSE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LIGHT_BLOCK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LIT_BLAST_FURNACE,
@@ -124,7 +130,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") WOOD,
     @PowerNukkitOnly @Since("1.3.2.0-PN") JIGSAW,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LAVA_CAULDRON,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CAMPFIRE_BLOCK_FORM("minecraft:campfire"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CAMPFIRE_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") LANTERN,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SWEET_BERRY_BUSH,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BELL,
@@ -194,7 +200,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") BIRCH_BUTTON,
     @PowerNukkitOnly @Since("1.3.2.0-PN") ACACIA_BUTTON,
     @PowerNukkitOnly @Since("1.3.2.0-PN") DRIED_KELP_BLOCK,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") KELP_BLOCK_FORM("minecraft:kelp"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") KELP_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") CORAL_FAN_HANG3,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CORAL_FAN_HANG2,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CORAL_FAN_HANG,
@@ -356,7 +362,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") DISPENSER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SANDSTONE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") NOTEBLOCK,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") BED_BLOCK_FORM("minecraft:bed"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") BED_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") GOLDEN_RAIL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") DETECTOR_RAIL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") STICKY_PISTON,
@@ -364,7 +370,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") TALLGRASS,
     @PowerNukkitOnly @Since("1.3.2.0-PN") DEADBUSH,
     @PowerNukkitOnly @Since("1.3.2.0-PN") PISTON,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") PISTONARMCOLLISION,
+    //@PowerNukkitOnly @Since("1.3.2.0-PN") PISTONARMCOLLISION("minecraft:pistonArmCollision", "minecraft:piston"),
     @PowerNukkitOnly @Since("1.3.2.0-PN") WOOL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") ELEMENT_0,
     @PowerNukkitOnly @Since("1.3.2.0-PN") YELLOW_FLOWER,
@@ -389,19 +395,19 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") DIAMOND_ORE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") DIAMOND_BLOCK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CRAFTING_TABLE,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") WHEAT_BLOCK("minecraft:wheat"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") WHEAT_BLOCK("minecraft:item.wheat", "minecraft:wheat"),
     @PowerNukkitOnly @Since("1.3.2.0-PN") FARMLAND,
     @PowerNukkitOnly @Since("1.3.2.0-PN") FURNACE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LIT_FURNACE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") STANDING_SIGN,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") WOODEN_DOOR_BLOCK_FORM("minecraft:wooden_door"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") WOODEN_DOOR_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") LADDER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") RAIL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") STONE_STAIRS,
     @PowerNukkitOnly @Since("1.3.2.0-PN") WALL_SIGN,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LEVER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") STONE_PRESSURE_PLATE,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") IRON_DOOR_BLOCK_FORM("minecraft:iron_door"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") IRON_DOOR_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") WOODEN_PRESSURE_PLATE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") REDSTONE_ORE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LIT_REDSTONE_ORE,
@@ -422,7 +428,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") GLOWSTONE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") PORTAL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LIT_PUMPKIN,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CAKE_BLOCK_FORM("minecraft:cake"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CAKE_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") UNPOWERED_REPEATER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") POWERED_REPEATER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") INVISIBLEBEDROCK,
@@ -445,10 +451,10 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_BRICK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_BRICK_FENCE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_BRICK_STAIRS,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_WART_BLOCK_FORM("minecraft:nether_wart"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_WART_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") ENCHANTING_TABLE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BREWINGSTANDBLOCK,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CAULDRON_BLOCK_FORM("minecraft:cauldron"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CAULDRON_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") END_PORTAL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") END_PORTAL_FRAME,
     @PowerNukkitOnly @Since("1.3.2.0-PN") END_STONE,
@@ -470,11 +476,11 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") COMMAND_BLOCK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BEACON,
     @PowerNukkitOnly @Since("1.3.2.0-PN") COBBLESTONE_WALL,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") FLOWER_POT_BLOCK_FORM("minecraft:flower_pot"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") FLOWER_POT_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") CARROTS,
     @PowerNukkitOnly @Since("1.3.2.0-PN") POTATOES,
     @PowerNukkitOnly @Since("1.3.2.0-PN") WOODEN_BUTTON,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") SKULL_BLOCK_FORM("minecraft:skull"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") SKULL_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") ANVIL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") TRAPPED_CHEST,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LIGHT_WEIGHTED_PRESSURE_PLATE,
@@ -484,7 +490,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") DAYLIGHT_DETECTOR,
     @PowerNukkitOnly @Since("1.3.2.0-PN") REDSTONE_BLOCK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") QUARTZ_ORE,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") HOPPER_BLOCK_FORM("minecraft:hopper"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") HOPPER_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") QUARTZ_BLOCK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") QUARTZ_STAIRS,
     @PowerNukkitOnly @Since("1.3.2.0-PN") DOUBLE_WOODEN_SLAB,
@@ -523,13 +529,13 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") HARD_GLASS_PANE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") HARD_STAINED_GLASS_PANE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CHEMICAL_HEAT,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") SPRUCE_DOOR_BLOCK_FORM("minecraft:spruce_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") BIRCH_DOOR_BLOCK_FORM("minecraft:birch_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") JUNGLE_DOOR_BLOCK_FORM("minecraft:jungle_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") ACACIA_DOOR_BLOCK_FORM("minecraft:acacia_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") DARK_OAK_DOOR_BLOCK_FORM("minecraft:dark_oak_door"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") SPRUCE_DOOR_BLOCK_FORM(true),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") BIRCH_DOOR_BLOCK_FORM(true),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") JUNGLE_DOOR_BLOCK_FORM(true),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") ACACIA_DOOR_BLOCK_FORM(true),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") DARK_OAK_DOOR_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") GRASS_PATH,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") FRAME_BLOCK_FORM("minecraft:frame"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") FRAME_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") CHORUS_FLOWER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") PURPUR_BLOCK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") COLORED_TORCH_RG,
@@ -571,15 +577,15 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") UNDERWATER_TORCH,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CHORUS_PLANT,
     @PowerNukkitOnly @Since("1.3.2.0-PN") STAINED_GLASS,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CAMERA_BLOCK_FORM("minecraft:camera"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CAMERA_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") PODZOL,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") BEETROOT_BLOCK_FORM("minecraft:beetroot"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") BEETROOT_BLOCK_FORM(true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") STONECUTTER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") GLOWINGOBSIDIAN,
     @PowerNukkitOnly @Since("1.3.2.0-PN") NETHERREACTOR,
     @PowerNukkitOnly @Since("1.3.2.0-PN") INFO_UPDATE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") INFO_UPDATE2,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") MOVINGBLOCK,
+    //@PowerNukkitOnly @Since("1.3.2.0-PN") MOVINGBLOCK("minecraft:movingBlock", "minecraft:air"),
     @PowerNukkitOnly @Since("1.3.2.0-PN") OBSERVER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") STRUCTURE_BLOCK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") HARD_GLASS,
@@ -625,7 +631,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") DIAMOND_HOE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") GOLDEN_HOE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") WHEAT_SEEDS,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") WHEAT("minecraft:item.wheat"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") WHEAT(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") BREAD,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LEATHER_HELMET,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LEATHER_CHESTPLATE,
@@ -653,16 +659,16 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") PAINTING,
     @PowerNukkitOnly @Since("1.3.2.0-PN") GOLDEN_APPLE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") OAK_SIGN,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") WOODEN_DOOR("minecraft:item.wooden_door"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") WOODEN_DOOR(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") BUCKET,
     @PowerNukkitOnly @Since("1.3.2.0-PN") MINECART,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SADDLE,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") IRON_DOOR("minecraft:item.iron_door"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") IRON_DOOR(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") REDSTONE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SNOWBALL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BOAT,
     @PowerNukkitOnly @Since("1.3.2.0-PN") LEATHER,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") KELP("minecraft:item.kelp"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") KELP(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") BRICK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CLAY_BALL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SUGAR_CANE,
@@ -680,8 +686,8 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") DYE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BONE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SUGAR,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CAKE("minecraft:item.cake"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") BED("minecraft:item.bed"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CAKE(false),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") BED(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") REPEATER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") COOKIE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") FILLED_MAP,
@@ -698,7 +704,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") BLAZE_ROD,
     @PowerNukkitOnly @Since("1.3.2.0-PN") GHAST_TEAR,
     @PowerNukkitOnly @Since("1.3.2.0-PN") GOLD_NUGGET,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_WART("minecraft:item.nether_wart"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_WART(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") POTION,
     @PowerNukkitOnly @Since("1.3.2.0-PN") GLASS_BOTTLE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SPIDER_EYE,
@@ -706,7 +712,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") BLAZE_POWDER,
     @PowerNukkitOnly @Since("1.3.2.0-PN") MAGMA_CREAM,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BREWING_STAND,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CAULDRON("minecraft:item.cauldron"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CAULDRON(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") ENDER_EYE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") GLISTERING_MELON_SLICE,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SPAWN_EGG,
@@ -715,15 +721,15 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") WRITABLE_BOOK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") WRITTEN_BOOK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") EMERALD,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") FRAME("minecraft:item.frame"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") FLOWER_POT("minecraft:item.flower_pot"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") FRAME(false),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") FLOWER_POT(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") CARROT,
     @PowerNukkitOnly @Since("1.3.2.0-PN") POTATO,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BAKED_POTATO,
     @PowerNukkitOnly @Since("1.3.2.0-PN") POISONOUS_POTATO,
     @PowerNukkitOnly @Since("1.3.2.0-PN") EMPTY_MAP,
     @PowerNukkitOnly @Since("1.3.2.0-PN") GOLDEN_CARROT,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") SKULL("minecraft:item.skull"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") SKULL(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") CARROT_ON_A_STICK,
     @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_STAR,
     @PowerNukkitOnly @Since("1.3.2.0-PN") PUMPKIN_PIE,
@@ -736,7 +742,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") TNT_MINECART,
     @PowerNukkitOnly @Since("1.3.2.0-PN") HOPPER_MINECART,
     @PowerNukkitOnly @Since("1.3.2.0-PN") PRISMARINE_SHARD,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") HOPPER("minecraft:item.hopper"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") HOPPER(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") RABBIT,
     @PowerNukkitOnly @Since("1.3.2.0-PN") COOKED_RABBIT,
     @PowerNukkitOnly @Since("1.3.2.0-PN") RABBIT_STEW,
@@ -753,11 +759,11 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") COOKED_MUTTON,
     @PowerNukkitOnly @Since("1.3.2.0-PN") ARMOR_STAND,
     @PowerNukkitOnly @Since("1.3.2.0-PN") END_CRYSTAL,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") SPRUCE_DOOR("minecraft:item.spruce_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") BIRCH_DOOR("minecraft:item.birch_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") JUNGLE_DOOR("minecraft:item.jungle_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") ACACIA_DOOR("minecraft:item.acacia_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") DARK_OAK_DOOR("minecraft:item.dark_oak_door"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") SPRUCE_DOOR(false),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") BIRCH_DOOR(false),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") JUNGLE_DOOR(false),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") ACACIA_DOOR(false),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") DARK_OAK_DOOR(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") CHORUS_FRUIT,
     @PowerNukkitOnly @Since("1.3.2.0-PN") POPPED_CHORUS_FRUIT,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BANNER_PATTERN,
@@ -777,7 +783,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") IRON_NUGGET,
     @PowerNukkitOnly @Since("1.3.2.0-PN") ICE_BOMB,
     @PowerNukkitOnly @Since("1.3.2.0-PN") TRIDENT,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") BEETROOT("minecraft:item.beetroot"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") BEETROOT(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") BEETROOT_SEEDS,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BEETROOT_SOUP,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SALMON,
@@ -798,7 +804,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") ACACIA_SIGN,
     @PowerNukkitOnly @Since("1.3.2.0-PN") DARK_OAK_SIGN,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SWEET_BERRIES,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CAMERA("minecraft:item.camera"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CAMERA(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") COMPOUND,
     @PowerNukkitOnly @Since("1.3.2.0-PN") MUSIC_DISC_13,
     @PowerNukkitOnly @Since("1.3.2.0-PN") MUSIC_DISC_CAT,
@@ -813,7 +819,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") MUSIC_DISC_11,
     @PowerNukkitOnly @Since("1.3.2.0-PN") MUSIC_DISC_WAIT,
     @PowerNukkitOnly @Since("1.3.2.0-PN") SHIELD,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CAMPFIRE("minecraft:item.campfire"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CAMPFIRE(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") SUSPICIOUS_STEW,
     @PowerNukkitOnly @Since("1.3.2.0-PN") HONEYCOMB,
     @PowerNukkitOnly @Since("1.3.2.0-PN") HONEY_BOTTLE,
@@ -831,13 +837,13 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") NETHERITE_SCRAP,
     @PowerNukkitOnly @Since("1.3.2.0-PN") CRIMSON_SIGN,
     @PowerNukkitOnly @Since("1.3.2.0-PN") WARPED_SIGN,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CRIMSON_DOOR("minecraft:item.crimson_door"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") WARPED_DOOR("minecraft:item.warped_door"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CRIMSON_DOOR(false),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") WARPED_DOOR(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") WARPED_FUNGUS_ON_A_STICK,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") CHAIN("minecraft:item.chain"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") CHAIN(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") MUSIC_DISC_PIGSTEP,
-    @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_SPROUTS("minecraft:item.nether_sprouts"),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") SOUL_CAMPFIRE("minecraft:item.soul_campfire"),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") NETHER_SPROUTS(false),
+    @PowerNukkitOnly @Since("1.3.2.0-PN") SOUL_CAMPFIRE(false),
     @PowerNukkitOnly @Since("1.3.2.0-PN") COD_BUCKET,
     @PowerNukkitOnly @Since("1.3.2.0-PN") GHAST_SPAWN_EGG,
     @PowerNukkitOnly @Since("1.3.2.0-PN") FLOWER_BANNER_PATTERN,
@@ -946,6 +952,16 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") CHARCOAL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") AGENT_SPAWN_EGG
     ;
+    private static Map<String, MinecraftItemID> namespacedIdMap = Arrays.stream(values())
+            .collect(Collectors.toMap(id-> id.getNamespacedId().toLowerCase(), Function.identity()));
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    @Nullable
+    public static MinecraftItemID getByNamespaceId(String namespacedId) {
+        return namespacedIdMap.get(namespacedId);
+    }
+    
     private final String namespacedId;
     private final String itemFormNamespaceId;
 
@@ -954,13 +970,19 @@ public enum MinecraftItemID {
         itemFormNamespaceId = namespacedId;
     }
 
-    MinecraftItemID(String namespacedId) {
-        this.namespacedId = namespacedId;
-        if (name().endsWith("_BLOCK_FORM")) {
-            itemFormNamespaceId = "minecraft:item." + name().toLowerCase().substring(0, name().length() - 11);
+    MinecraftItemID(boolean blockForm) {
+        String namespacedId = name().toLowerCase();
+        itemFormNamespaceId = "minecraft:" + namespacedId;
+        if (blockForm) {
+            this.namespacedId = "minecraft:item." + namespacedId;
         } else {
-            itemFormNamespaceId = namespacedId;
+            this.namespacedId = itemFormNamespaceId;
         }
+    }
+
+    MinecraftItemID(String namespacedId, String itemFormNamespaceId) {
+        this.namespacedId = namespacedId;
+        this.itemFormNamespaceId = itemFormNamespaceId;
     }
 
     @PowerNukkitOnly
