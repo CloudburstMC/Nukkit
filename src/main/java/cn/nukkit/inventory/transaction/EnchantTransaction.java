@@ -44,7 +44,7 @@ public class EnchantTransaction extends InventoryTransaction {
     
     private boolean isLapisLazuli(Item item) {
         int id = item.getId();
-        return id == ItemID.LAPIS_LAZULI || id == ItemID.DYE && ((ItemDye) item).getDyeColor().equals(DyeColor.BLUE); 
+        return id == ItemID.DYE && ((ItemDye) item).getDyeColor().equals(DyeColor.BLUE); 
     }
 
     @Override
