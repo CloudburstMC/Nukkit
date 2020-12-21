@@ -26,9 +26,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import lombok.extern.log4j.Log4j2;
+import org.powernukkit.HumanStringComparator;
 
 import java.io.*;
 import java.util.Map;
+import java.util.OptionalInt;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -38,6 +41,7 @@ import java.util.TreeMap;
  */
 @PowerNukkitOnly
 @Since("1.3.2.0-PN")
+@Log4j2
 public class ItemIdDumper {
     public static void main(String[] args) throws IOException {
         Gson gson = new Gson();
@@ -48,14 +52,25 @@ public class ItemIdDumper {
             array = gson.fromJson(reader, JsonArray.class);
         }
 
-        SortedMap<Integer, String> itemIds = new TreeMap<>();
-        SortedMap<Integer, String> blockIds = new TreeMap<>();
+        SortedMap<String, String> itemIds = new TreeMap<>(new HumanStringComparator());
+        SortedMap<String, String> blockIds = new TreeMap<>(new HumanStringComparator());
         
         for (JsonElement element : array) {
             JsonObject object = (JsonObject) element;
-            int itemId = object.get("id").getAsInt();
+            int itemId;
+            if (!object.has("oldId")) {
+                itemId = object.get("id").getAsInt();
+                log.warn(object.get("name").getAsString()+" don't have oldId!");
+                if (itemId > 255) {
+                    log.warn("Skipping id "+itemId);
+                    continue;
+                }
+            } else {
+                itemId = object.get("oldId").getAsInt();
+            }
+            OptionalInt oldData = object.has("oldData")? OptionalInt.of(object.get("oldData").getAsInt()) : OptionalInt.empty();
             String name = object.get("name").getAsString();
-            itemIds.put(itemId, name);
+            itemIds.put(itemId + (oldData.isPresent()? "_"+oldData.getAsInt() : ""), name);
             
             if (itemId <= 255) {
                 int blockId = itemId;
@@ -63,13 +78,13 @@ public class ItemIdDumper {
                     blockId = 255 - blockId;
                 }
                 
-                blockIds.put(blockId, name);
+                blockIds.put(blockId + (oldData.isPresent()? "_"+oldData.getAsInt() : ""), name);
             }
         }
         
         try (FileWriter writer = new FileWriter("item-id-dump.properties")) {
-            for (Map.Entry<Integer, String> entry : itemIds.entrySet()) {
-                writer.write(Integer.toString(entry.getKey()));
+            for (Map.Entry<String, String> entry : itemIds.entrySet()) {
+                writer.write(entry.getKey());
                 writer.write('=');
                 writer.write(entry.getValue());
                 writer.write(System.lineSeparator());
@@ -77,8 +92,8 @@ public class ItemIdDumper {
         }
 
         try (FileWriter writer = new FileWriter("block-id-dump-from-items.properties")) {
-            for (Map.Entry<Integer, String> entry : blockIds.entrySet()) {
-                writer.write(Integer.toString(entry.getKey()));
+            for (Map.Entry<String, String> entry : blockIds.entrySet()) {
+                writer.write(entry.getKey());
                 writer.write('=');
                 writer.write(entry.getValue());
                 writer.write(System.lineSeparator());
