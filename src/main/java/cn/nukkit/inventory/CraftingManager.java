@@ -1,10 +1,15 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
+import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
@@ -27,7 +32,13 @@ public class CraftingManager {
 
     public final Collection<Recipe> recipes = new ArrayDeque<>();
 
+    @Deprecated
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", reason = "Field signature change from BatchPacket to DataPacket",
+        replaceWith = "getCraftingPacket() to be safer", toBeRemovedAt = "1.4.0.0-PN")
     public static BatchPacket packet = null;
+    private static DataPacket packet0 = null;
+    
+    
     protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
 
     public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
@@ -54,6 +65,12 @@ public class CraftingManager {
             return -1;
         } else return Integer.compare(i1.getCount(), i2.getCount());
     };
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public static DataPacket getCraftingPacket() {
+        return packet0;
+    }
 
     public CraftingManager() {
         InputStream recipesStream = Server.class.getClassLoader().getResourceAsStream("recipes.json");
@@ -268,8 +285,9 @@ public class CraftingManager {
         }
 
         pk.encode();
-
+        // TODO: find out whats wrong with compression
         packet = pk.compress(Deflater.BEST_COMPRESSION);
+        packet0 = pk;
     }
 
     public Collection<Recipe> getRecipes() {

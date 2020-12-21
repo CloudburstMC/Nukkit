@@ -4,28 +4,39 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
+import cn.nukkit.math.MathHelper;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Utils;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.nukkitx.network.raknet.*;
 import com.nukkitx.network.util.DisconnectReason;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
+import io.netty.util.concurrent.EventExecutor;
+import io.netty.util.concurrent.FastThreadLocal;
+import io.netty.util.concurrent.ScheduledFuture;
+import io.netty.util.internal.PlatformDependent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.Deflater;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -39,7 +50,16 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     private final RakNetServer raknet;
 
-    private Set<NukkitSessionListener> sessionListeners = Collections.newSetFromMap(new ConcurrentHashMap<>());
+    private final Map<InetSocketAddress, NukkitRakNetSession> sessions = new ConcurrentHashMap<>();
+
+    private final Set<ScheduledFuture<?>> tickFutures = new HashSet<>();
+
+    private final FastThreadLocal<Set<NukkitRakNetSession>> sessionsToTick = new FastThreadLocal<Set<NukkitRakNetSession>>() {
+        @Override
+        protected Set<NukkitRakNetSession> initialValue() {
+            return Collections.newSetFromMap(new IdentityHashMap<>());
+        }
+    };
 
     private byte[] advertisement;
 
@@ -52,6 +72,19 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         this.raknet.setProtocolVersion(10);
         this.raknet.bind().join();
         this.raknet.setListener(this);
+
+        for (EventExecutor executor : this.raknet.getBootstrap().config().group()) {
+            this.tickFutures.add(executor.scheduleAtFixedRate(() -> {
+                for (NukkitRakNetSession session : sessionsToTick.get()) {
+                    try {
+                        session.sendOutbound();
+                    } catch (Exception e) {
+                        log.fatal("Exception while sending packets to {}", session.player.getName(), e);
+                        session.player.close("Outbound packet error");
+                    }
+                }
+            }, 0, 50, TimeUnit.MILLISECONDS));
+        }
     }
 
     @Override
@@ -61,9 +94,9 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public boolean process() {
-        Iterator<NukkitSessionListener> iterator = this.sessionListeners.iterator();
+        Iterator<NukkitRakNetSession> iterator = this.sessions.values().iterator();
         while (iterator.hasNext()) {
-            NukkitSessionListener listener = iterator.next();
+            NukkitRakNetSession listener = iterator.next();
             Player player = listener.player;
             if (listener.disconnectReason != null) {
                 player.close(player.getLeaveMessage(), listener.disconnectReason, false);
@@ -71,7 +104,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                 continue;
             }
             DataPacket packet;
-            while ((packet = listener.packets.poll()) != null) {
+            while ((packet = listener.inbound.poll()) != null) {
                 listener.player.handleDataPacket(packet);
             }
         }
@@ -99,11 +132,13 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public void shutdown() {
+        this.tickFutures.forEach(future -> future.cancel(false));
         this.raknet.close();
     }
 
     @Override
     public void emergencyShutdown() {
+        this.tickFutures.forEach(future -> future.cancel(true));
         this.raknet.close();
     }
 
@@ -160,29 +195,11 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
-        RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
-        if (session == null) {
-            return null;
+        NukkitRakNetSession session = this.sessions.get(player.getSocketAddress());
+
+        if (session != null) {
+            session.outbound.offer(packet);
         }
-
-        byte[] buffer;
-        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-            buffer = ((BatchPacket) packet).payload;
-            if (buffer == null) {
-                return null;
-            }
-        } else {
-            this.server.batchPackets(new Player[]{player}, new DataPacket[]{packet}, true);
-            return null;
-        }
-
-        ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(1 + buffer.length);
-        byteBuf.writeByte(0xfe);
-        byteBuf.writeBytes(buffer);
-        byteBuf.readerIndex(0);
-
-        session.send(byteBuf, immediate ? RakNetPriority.IMMEDIATE : RakNetPriority.MEDIUM, packet.reliability,
-                packet.getChannel());
 
         return null;
     }
@@ -221,9 +238,10 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         }
         
         this.server.addPlayer(session.getAddress(), player);
-        NukkitSessionListener listener = new NukkitSessionListener(player);
-        this.sessionListeners.add(listener);
-        session.setListener(listener);
+        NukkitRakNetSession nukkitSession = new NukkitRakNetSession(session,player);
+        this.sessions.put(session.getAddress(), nukkitSession);
+            this.sessionsToTick.get().add(nukkitSession);
+        session.setListener(nukkitSession);
     }
 
     @Override
@@ -232,14 +250,15 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     }
 
     @RequiredArgsConstructor
-    private class NukkitSessionListener implements RakNetSessionListener {
+    private class NukkitRakNetSession implements RakNetSessionListener {
+        private final RakNetServerSession session;
         private final Player player;
-        private final Queue<DataPacket> packets = new ConcurrentLinkedQueue<>();
+        private final Queue<DataPacket> inbound = PlatformDependent.newSpscQueue();
+        private final Queue<DataPacket> outbound = PlatformDependent.newSpscQueue();
         private String disconnectReason = null;
 
         @Override
         public void onSessionChangeState(RakNetState rakNetState) {
-
         }
 
         @Override
@@ -249,6 +268,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             } else {
                 this.disconnectReason = "Disconnected from Server";
             }
+            RakNetInterface.this.sessionsToTick.get().remove(this);
         }
 
         @Override
@@ -266,13 +286,58 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                 batchPacket.setBuffer(packetBuffer);
                 batchPacket.decode();
 
-                packets.offer(batchPacket);
+                this.inbound.offer(batchPacket);
             }
         }
 
         @Override
         public void onDirect(ByteBuf byteBuf) {
             // We don't allow any direct packets so ignore.
+        }
+
+        private void sendOutbound() {
+            List<DataPacket> toBatch = new ArrayList<>();
+            DataPacket packet;
+            while ((packet = this.outbound.poll()) != null) {
+                if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
+                    if (!toBatch.isEmpty()) {
+                        this.sendPackets(toBatch.toArray(new DataPacket[0]));
+                        toBatch.clear();
+                    }
+
+                    this.sendPacket(((BatchPacket) packet).payload);
+                } else {
+                    toBatch.add(packet);
+                }
+            }
+
+            if (!toBatch.isEmpty()) {
+                this.sendPackets(toBatch.toArray(new DataPacket[0]));
+            }
+        }
+
+        private void sendPackets(DataPacket[] packets) {
+            BinaryStream batched = new BinaryStream();
+            for (DataPacket packet : packets) {
+                Preconditions.checkArgument(!(packet instanceof BatchPacket), "Cannot batch BatchPacket");
+                if (!packet.isEncoded) packet.encode();
+                byte[] buf = packet.getBuffer();
+                batched.putUnsignedVarInt(buf.length);
+                batched.put(buf);
+            }
+
+            try {
+                this.sendPacket(Network.deflateRaw(batched.getBuffer(), network.getServer().networkCompressionLevel));
+            } catch (IOException e) {
+                log.info("Unable to deflate batched packets", e);
+            }
+        }
+
+        private void sendPacket(byte[] payload) {
+            ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(1 + payload.length);
+            byteBuf.writeByte(0xfe);
+            byteBuf.writeBytes(payload);
+            this.session.send(byteBuf);
         }
     }
 }
