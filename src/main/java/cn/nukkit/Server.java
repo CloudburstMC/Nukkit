@@ -821,7 +821,7 @@ public class Server {
         } else {
             try {
                 byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Network.deflateRaw(data, this.networkCompressionLevel), targets, forceSync);
+                this.broadcastPacketsCallback(Network.deflateRaw(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -830,29 +830,12 @@ public class Server {
     }
 
     public void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets) {
-        broadcastPacketsCallback(data, targets, false);
-    }
-
-    /**
-     * @since 1.2.0.2-PN
-     * @apiNote Only in PowerNukkit
-     */
-    private void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets, boolean immediate) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
 
-        // The duplicated for is a micro-optimization
-        if (immediate) {
-            for (InetSocketAddress i : targets) {
-                if (this.players.containsKey(i)) {
-                    this.players.get(i).directDataPacket(pk);
-                }
-            }
-        } else {
-            for (InetSocketAddress i : targets) {
-                if (this.players.containsKey(i)) {
-                    this.players.get(i).dataPacket(pk);
-                }
+        for (InetSocketAddress i : targets) {
+            if (this.players.containsKey(i)) {
+                this.players.get(i).dataPacket(pk);
             }
         }
     }
