@@ -580,9 +580,9 @@ public class Item implements Cloneable, BlockID, ItemID {
                 item.setCompoundTag(tags);
             }
             
-            if (selfUpgrade) {
-                item = item.selfUpgrade();
-            }
+            //if (selfUpgrade) {
+            //    item = item.selfUpgrade();
+            //}
             
             return item;
         } catch (Exception e) {
