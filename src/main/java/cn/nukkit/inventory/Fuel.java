@@ -15,7 +15,6 @@ public abstract class Fuel {
 
     static {
         addItem(ItemID.COAL, (short) 1600);
-        addItem(ItemID.CHARCOAL, (short) 1600);
         addBlock(BlockID.COAL_BLOCK, (short) 16000);
         addBlock(BlockID.TRUNK, (short) 300);
         addBlock(BlockID.WOODEN_PLANKS, (short) 300);
@@ -57,12 +56,6 @@ public abstract class Fuel {
         addBlock(BlockID.WOOD_SLAB, (short) 300);
         addBlock(BlockID.DOUBLE_WOOD_SLAB, (short) 300);
         addItem(ItemID.BOAT, (short) 1200);
-        addItem(ItemID.BIRCH_BOAT, (short) 1200);
-        addItem(ItemID.ACACIA_BOAT, (short) 1200);
-        addItem(ItemID.DARK_OAK_BOAT, (short) 1200);
-        addItem(ItemID.JUNGLE_BOAT, (short) 1200);
-        addItem(ItemID.OAK_BOAT, (short) 1200);
-        addItem(ItemID.SPRUCE_BOAT, (short) 1200);
         addItem(ItemID.BLAZE_ROD, (short) 2400);
         addBlock(BlockID.BROWN_MUSHROOM_BLOCK, (short) 300);
         addBlock(BlockID.RED_MUSHROOM_BLOCK, (short) 300);

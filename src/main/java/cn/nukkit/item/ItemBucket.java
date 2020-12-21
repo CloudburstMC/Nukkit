@@ -341,27 +341,4 @@ public class ItemBucket extends Item {
         player.removeAllEffects();
         return true;
     }
-
-    @Since("1.3.2.0-PN")
-    @PowerNukkitOnly
-    @Override
-    public Item selfUpgrade() {
-        if (getId() != BUCKET || getDamage() == 0) {
-            return this;
-        }
-        
-        int newId;
-        switch (getDamage()) {
-            case 1: newId = MILK_BUCKET; break; 
-            case 2: newId = COD_BUCKET; break; 
-            case 3: newId = SALMON_BUCKET; break; 
-            case 4: newId = TROPICAL_FISH_BUCKET; break; 
-            case 5: newId = PUFFERFISH_BUCKET; break; 
-            case 8: newId = WATER_BUCKET; break; 
-            case 10: newId = LAVA_BUCKET; break;
-            default: return this;
-        }
-        
-        return Item.get(newId, 0, getCount(), getCompoundTag());
-    }
 }

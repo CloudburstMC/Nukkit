@@ -127,26 +127,6 @@ public class ItemBannerPattern extends Item {
         }
     }
 
-    @Since("1.3.2.0-PN")
-    @PowerNukkitOnly
-    @Override
-    public Item selfUpgrade() {
-        if (getId() != BANNER_PATTERN) {
-            return this;
-        }
-        int newId;
-        switch (getDamage()) {
-            case PATTERN_CREEPER_CHARGE: newId = CREEPER_BANNER_PATTERN; break;
-            case PATTERN_SKULL_CHARGE: newId = SKULL_BANNER_PATTERN; break;
-            case PATTERN_FLOWER_CHARGE: newId = FLOWER_BANNER_PATTERN; break;
-            case PATTERN_THING: newId = MOJANG_BANNER_PATTERN; break;
-            case PATTERN_FIELD_MASONED: newId = FIELD_MASONED_BANNER_PATTERN; break;
-            case PATTERN_BORDURE_INDENTED: newId = BORDURE_INDENTED_BANNER_PATTERN; break;
-            default: return this;
-        }
-        return Item.get(newId, 0,getCount(), getCompoundTag());
-    }
-
     protected void updateName() {
         if (getId() != BANNER_PATTERN) {
             return;

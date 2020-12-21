@@ -121,26 +121,6 @@ public class ItemBoat extends Item {
         return true;
     }
 
-    @Since("1.3.2.0-PN")
-    @PowerNukkitOnly
-    @Override
-    public Item selfUpgrade() {
-        if (getId() != BOAT) {
-            return this;
-        }
-        int newId;
-        switch (super.getDamage()) {
-            case 0: newId = OAK_BOAT; break; 
-            case 1: newId = SPRUCE_BOAT; break; 
-            case 2: newId = BIRCH_BOAT; break; 
-            case 3: newId = JUNGLE_BOAT; break; 
-            case 4: newId = ACACIA_BOAT; break; 
-            case 5: newId = DARK_OAK_BOAT; break;
-            default: return this;
-        }
-        return Item.get(newId, 0, getCount(), getCompoundTag());
-    }
-
     @Override
     public int getMaxStackSize() {
         return 1;
