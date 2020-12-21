@@ -1162,6 +1162,7 @@ public class Server {
         Server.broadcastPacket(players, pk);
     }
 
+    @Since("1.3.2.0-PN")
     public void removePlayerListData(UUID uuid, Player player) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_REMOVE;
