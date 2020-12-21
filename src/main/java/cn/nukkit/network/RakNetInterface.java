@@ -4,16 +4,21 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
+import cn.nukkit.math.MathHelper;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Utils;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.nukkitx.network.raknet.*;
 import com.nukkitx.network.util.DisconnectReason;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.ByteBufUtil;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.concurrent.EventExecutor;
@@ -264,7 +269,6 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             } else {
                 this.disconnectReason = "Disconnected from Server";
             }
-            RakNetInterface.this.sessions.remove(session.getAddress());
             RakNetInterface.this.sessionsToTick.get().remove(this);
         }
 
@@ -303,9 +307,9 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                     }
 
                     this.sendPacket(((BatchPacket) packet).payload);
+                } else {
+                    toBatch.add(packet);
                 }
-
-                toBatch.add(packet);
             }
 
             if (!toBatch.isEmpty()) {
@@ -314,19 +318,17 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         }
 
         private void sendPackets(DataPacket[] packets) {
-            byte[][] payload = new byte[packets.length * 2][];
-            for (int i = 0; i < packets.length; i++) {
-                DataPacket p = packets[i];
-                int idx = i * 2;
-                if (!p.isEncoded) p.encode();
-                byte[] buf = p.getBuffer();
-                payload[idx] = Binary.writeUnsignedVarInt(buf.length);
-                payload[idx + 1] = buf;
-                packets[i] = null;
+            BinaryStream batched = new BinaryStream();
+            for (DataPacket packet : packets) {
+                Preconditions.checkArgument(!(packet instanceof BatchPacket), "Cannot batch BatchPacket");
+                if (!packet.isEncoded) packet.encode();
+                byte[] buf = packet.getBuffer();
+                batched.putUnsignedVarInt(buf.length);
+                batched.put(buf);
             }
 
             try {
-                this.sendPacket(Network.deflateRaw(payload, Deflater.DEFAULT_COMPRESSION));
+                this.sendPacket(Network.deflateRaw(batched.getBuffer(), network.getServer().networkCompressionLevel));
             } catch (IOException e) {
                 log.info("Unable to deflate batched packets", e);
             }
@@ -336,8 +338,6 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(1 + payload.length);
             byteBuf.writeByte(0xfe);
             byteBuf.writeBytes(payload);
-            byteBuf.readerIndex(0);
-
             this.session.send(byteBuf);
         }
     }
