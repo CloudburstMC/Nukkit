@@ -1,6 +1,5 @@
 package cn.nukkit.item;
 
-import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.utils.BannerPattern;
@@ -8,73 +7,34 @@ import cn.nukkit.utils.BannerPattern;
 @Since("1.2.1.0-PN")
 @PowerNukkitOnly
 public class ItemBannerPattern extends Item {
-    @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", reason = "Banner pattern items now have they own ids", 
-            replaceWith = "ItemBannerPatternCreeper")
     @PowerNukkitOnly
     public static final int PATTERN_CREEPER_CHARGE = 0;
 
-    @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", reason = "Banner pattern items now have they own ids",
-            replaceWith = "ItemBannerPatternSkull")
     @PowerNukkitOnly
     public static final int PATTERN_SKULL_CHARGE = 1;
 
-    @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", reason = "Banner pattern items now have they own ids",
-            replaceWith = "ItemBannerPatternFlower")
     @PowerNukkitOnly
     public static final int PATTERN_FLOWER_CHARGE = 2;
 
-    @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", reason = "Banner pattern items now have they own ids",
-            replaceWith = "ItemBannerPatternMojang")
     @PowerNukkitOnly
     public static final int PATTERN_THING = 3;
 
-    @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", reason = "Banner pattern items now have they own ids",
-            replaceWith = "ItemBannerPatternFieldMasoned")
     @PowerNukkitOnly
     public static final int PATTERN_FIELD_MASONED = 4;
 
-    @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", reason = "Banner pattern items now have they own ids",
-            replaceWith = "ItemBannerPatternBordureIndented")
     @PowerNukkitOnly
     public static final int PATTERN_BORDURE_INDENTED = 5;
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Banner pattern items now have they own ids, and their implementation extends ItemBannerPattern, " +
-                    "so you may get 0 as meta result even though the pattern is not a creeper charge.",
-            replaceWith = "new ItemBannerPatternCreeperCharge()"
-    )
     @PowerNukkitOnly
     public ItemBannerPattern() {
         this(0, 1);
     }
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Banner pattern items now have they own ids, and their implementation extends ItemBannerPattern, " +
-                    "so you may get 0 as meta result even though the pattern is not a creeper charge.",
-            replaceWith = "ItemBannerPatternCreeperCharge, ItemBannerPatternSkullCharge, etc"
-    )
     @PowerNukkitOnly
     public ItemBannerPattern(Integer meta) {
         this(meta, 1);
     }
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Banner pattern items now have they own ids, and their implementation extends ItemBannerPattern, " +
-                    "so you may get 0 as meta result even though the pattern is not a creeper charge.",
-            replaceWith = "ItemBannerPatternCreeperCharge, ItemBannerPatternSkullCharge, etc"
-    )
     @PowerNukkitOnly
     public ItemBannerPattern(Integer meta, int count) {
         super(BANNER_PATTERN, meta, count, "Bone");
@@ -85,18 +45,6 @@ public class ItemBannerPattern extends Item {
     @Since("1.3.2.0-PN")
     protected ItemBannerPattern(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
-    }
-
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Banner pattern items now have they own ids, and their implementation extends ItemBannerPattern, " +
-                    "so you may get 0 as meta result even though the pattern is not a creeper charge.",
-            replaceWith = ""
-    )
-    @Override
-    public int getDamage() {
-        return super.getDamage();
     }
 
     @Override
