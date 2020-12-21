@@ -158,8 +158,6 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     }
                 }
                 break;
-            }
-
             case ItemID.DYE:
                 if (isEmpty() || cauldron.hasPotion()) {
                     break;
