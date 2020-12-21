@@ -93,6 +93,9 @@ public class BlockCauldronLava extends BlockCauldron {
         switch (item.getId()) {
             case Item.BUCKET:
                 ItemBucket bucket = (ItemBucket) item;
+                if (bucket.getFishEntityId() != null) {
+                    break;
+                }
                 if (item.getDamage() == 0) { //empty
                     if (!isFull() || cauldron.isCustomColor() || cauldron.hasPotion()) {
                         break;

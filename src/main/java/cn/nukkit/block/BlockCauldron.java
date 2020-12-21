@@ -90,6 +90,9 @@ public class BlockCauldron extends BlockSolidMeta {
         switch (item.getId()) {
             case Item.BUCKET:
                 ItemBucket bucket = (ItemBucket) item;
+                if (bucket.getFishEntityId() != null) {
+                    break;
+                }
                 if (bucket.isEmpty()) {
                     if (!isFull() || cauldron.isCustomColor() || cauldron.hasPotion()) {
                         break;
