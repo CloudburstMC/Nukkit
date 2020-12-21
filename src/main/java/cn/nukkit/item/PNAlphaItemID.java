@@ -22,6 +22,10 @@ import cn.nukkit.api.API;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 /**
  * @author joserobjr
@@ -34,112 +38,129 @@ import cn.nukkit.api.Since;
 @DeprecationDetails(since = "1.3.2.0-PN", reason = "" +
         "This interface was created to map item ids which were used in v1.3.2.0-PN-ALPHA.1, v1.3.2.0-PN-ALPHA.2 and v1.4.0.0-PN-ALPHA.1 " +
         "and will no longer be used because Nukkit took an other way and we will follow it to keep plugin compatibility in future.")
-public interface PNAlphaItemID {
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int COD_BUCKET = 802;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int GHAST_SPAWN_EGG = 803;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int FLOWER_BANNER_PATTERN = 804;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ZOGLIN_SPAWN_EGG = 805;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int BLUE_DYE = 806;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SKULL_BANNER_PATTERN = 807;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ENDERMITE_SPAWN_EGG = 808;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int POLAR_BEAR_SPAWN_EGG = 809;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int WHITE_DYE = 810;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int TROPICAL_FISH_BUCKET = 811;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int CYAN_DYE = 812;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int LIGHT_BLUE_DYE = 813;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int LIME_DYE = 814;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ZOMBIE_VILLAGER_SPAWN_EGG = 815;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int STRAY_SPAWN_EGG = 816;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int GREEN_DYE = 817;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int EVOKER_SPAWN_EGG = 818;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int WITHER_SKELETON_SPAWN_EGG = 819;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SALMON_BUCKET = 820;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int JUNGLE_BOAT = 821;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int BLACK_DYE = 822;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int MAGMA_CUBE_SPAWN_EGG = 823;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int TROPICAL_FISH_SPAWN_EGG = 824;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int VEX_SPAWN_EGG = 825;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int FIELD_MASONED_BANNER_PATTERN = 826;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int WANDERING_TRADER_SPAWN_EGG = 827;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int BROWN_DYE = 828;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PANDA_SPAWN_EGG = 829;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SILVERFISH_SPAWN_EGG = 830;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int OCELOT_SPAWN_EGG = 831;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int LAVA_BUCKET = 832;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SKELETON_SPAWN_EGG = 833;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int VILLAGER_SPAWN_EGG = 834;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ELDER_GUARDIAN_SPAWN_EGG = 835;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ACACIA_BOAT = 836;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int OAK_BOAT = 837;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PHANTOM_SPAWN_EGG = 838;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int HOGLIN_SPAWN_EGG = 839;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int DARK_OAK_BOAT = 840;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int HUSK_SPAWN_EGG = 841;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int BLAZE_SPAWN_EGG = 842;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int BORDURE_INDENTED_BANNER_PATTERN = 843;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int MULE_SPAWN_EGG = 844;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int CREEPER_BANNER_PATTERN = 845;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ZOMBIE_HORSE_SPAWN_EGG = 846;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int BEE_SPAWN_EGG = 847;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int COD_SPAWN_EGG = 848;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int LLAMA_SPAWN_EGG = 849;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int FOX_SPAWN_EGG = 850;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PIGLIN_BRUTE_SPAWN_EGG = 851;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PIG_SPAWN_EGG = 852;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int COW_SPAWN_EGG = 853;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int NPC_SPAWN_EGG = 854;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SQUID_SPAWN_EGG = 855;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int MAGENTA_DYE = 856;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int RED_DYE = 857;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int WITCH_SPAWN_EGG = 858;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int INK_SAC = 859;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ORANGE_DYE = 860;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PILLAGER_SPAWN_EGG = 861;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int CAVE_SPIDER_SPAWN_EGG = 862;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int BONE_MEAL = 863;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PUFFERFISH_BUCKET = 864;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int BAT_SPAWN_EGG = 865;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SPRUCE_BOAT = 866;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SPIDER_SPAWN_EGG = 867;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PIGLIN_BANNER_PATTERN = 868;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int RABBIT_SPAWN_EGG = 869;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int MOJANG_BANNER_PATTERN = 870;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PIGLIN_SPAWN_EGG = 871;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int TURTLE_SPAWN_EGG = 872;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int MOOSHROOM_SPAWN_EGG = 873;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PUFFERFISH_SPAWN_EGG = 874;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PARROT_SPAWN_EGG = 875;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ZOMBIE_SPAWN_EGG = 876;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int WOLF_SPAWN_EGG = 877;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int GRAY_DYE = 878;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int COCOA_BEANS = 879;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SKELETON_HORSE_SPAWN_EGG = 880;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SHEEP_SPAWN_EGG = 881;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SLIME_SPAWN_EGG = 882;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int VINDICATOR_SPAWN_EGG = 883;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int DROWNED_SPAWN_EGG = 884;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int MILK_BUCKET = 885;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int DOLPHIN_SPAWN_EGG = 886;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int DONKEY_SPAWN_EGG = 887;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PURPLE_DYE = 888;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int BIRCH_BOAT = 889;
-    //@Since("1.3.2.0-PN") @PowerNukkitOnly int DEBUG_STICK = 890;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ENDERMAN_SPAWN_EGG = 891;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int CHICKEN_SPAWN_EGG = 892;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SHULKER_SPAWN_EGG = 893;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int STRIDER_SPAWN_EGG = 894;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int ZOMBIE_PIGMAN_SPAWN_EGG = 895;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int YELLOW_DYE = 896;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int CAT_SPAWN_EGG = 897;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int GUARDIAN_SPAWN_EGG = 898;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int PINK_DYE = 899;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int SALMON_SPAWN_EGG = 900;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int CREEPER_SPAWN_EGG = 901;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int HORSE_SPAWN_EGG = 902;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int LAPIS_LAZULI = 903;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int RAVAGER_SPAWN_EGG = 904;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int WATER_BUCKET = 905;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int LIGHT_GRAY_DYE = 906;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int CHARCOAL = 907;
-    @Since("1.3.2.0-PN") @PowerNukkitOnly int AGENT_SPAWN_EGG = 908;
+@RequiredArgsConstructor
+@Getter
+public enum PNAlphaItemID {
+    @Since("1.3.2.0-PN") @PowerNukkitOnly COD_BUCKET(802, VanillaItemID.COD_BUCKET),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly GHAST_SPAWN_EGG(803, VanillaItemID.GHAST_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly FLOWER_BANNER_PATTERN(804, VanillaItemID.FLOWER_BANNER_PATTERN),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ZOGLIN_SPAWN_EGG(805, VanillaItemID.ZOGLIN_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly BLUE_DYE(806, VanillaItemID.BLUE_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SKULL_BANNER_PATTERN(807, VanillaItemID.SKULL_BANNER_PATTERN),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ENDERMITE_SPAWN_EGG(808, VanillaItemID.ENDERMITE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly POLAR_BEAR_SPAWN_EGG(809, VanillaItemID.POLAR_BEAR_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly WHITE_DYE(810, VanillaItemID.WHITE_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly TROPICAL_FISH_BUCKET(811, VanillaItemID.TROPICAL_FISH_BUCKET),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly CYAN_DYE(812, VanillaItemID.CYAN_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly LIGHT_BLUE_DYE(813, VanillaItemID.LIGHT_BLUE_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly LIME_DYE(814, VanillaItemID.LIME_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ZOMBIE_VILLAGER_SPAWN_EGG(815, VanillaItemID.ZOMBIE_VILLAGER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly STRAY_SPAWN_EGG(816, VanillaItemID.STRAY_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly GREEN_DYE(817, VanillaItemID.GREEN_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly EVOKER_SPAWN_EGG(818, VanillaItemID.EVOKER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly WITHER_SKELETON_SPAWN_EGG(819, VanillaItemID.WITHER_SKELETON_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SALMON_BUCKET(820, VanillaItemID.SALMON_BUCKET),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly JUNGLE_BOAT(821, VanillaItemID.JUNGLE_BOAT),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly BLACK_DYE(822, VanillaItemID.BLACK_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly MAGMA_CUBE_SPAWN_EGG(823, VanillaItemID.MAGMA_CUBE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly TROPICAL_FISH_SPAWN_EGG(824, VanillaItemID.TROPICAL_FISH_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly VEX_SPAWN_EGG(825, VanillaItemID.VEX_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly FIELD_MASONED_BANNER_PATTERN(826, VanillaItemID.FIELD_MASONED_BANNER_PATTERN),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly WANDERING_TRADER_SPAWN_EGG(827, VanillaItemID.WANDERING_TRADER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly BROWN_DYE(828, VanillaItemID.BROWN_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PANDA_SPAWN_EGG(829, VanillaItemID.PANDA_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SILVERFISH_SPAWN_EGG(830, VanillaItemID.SILVERFISH_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly OCELOT_SPAWN_EGG(831, VanillaItemID.OCELOT_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly LAVA_BUCKET(832, VanillaItemID.LAVA_BUCKET),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SKELETON_SPAWN_EGG(833, VanillaItemID.SKELETON_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly VILLAGER_SPAWN_EGG(834, VanillaItemID.VILLAGER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ELDER_GUARDIAN_SPAWN_EGG(835, VanillaItemID.ELDER_GUARDIAN_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ACACIA_BOAT(836, VanillaItemID.ACACIA_BOAT),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly OAK_BOAT(837, VanillaItemID.OAK_BOAT),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PHANTOM_SPAWN_EGG(838, VanillaItemID.PHANTOM_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly HOGLIN_SPAWN_EGG(839, VanillaItemID.HOGLIN_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly DARK_OAK_BOAT(840, VanillaItemID.DARK_OAK_BOAT),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly HUSK_SPAWN_EGG(841, VanillaItemID.HUSK_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly BLAZE_SPAWN_EGG(842, VanillaItemID.BLAZE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly BORDURE_INDENTED_BANNER_PATTERN(843, VanillaItemID.BORDURE_INDENTED_BANNER_PATTERN),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly MULE_SPAWN_EGG(844, VanillaItemID.MULE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly CREEPER_BANNER_PATTERN(845, VanillaItemID.CREEPER_BANNER_PATTERN),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ZOMBIE_HORSE_SPAWN_EGG(846, VanillaItemID.ZOMBIE_HORSE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly BEE_SPAWN_EGG(847, VanillaItemID.BEE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly COD_SPAWN_EGG(848, VanillaItemID.COD_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly LLAMA_SPAWN_EGG(849, VanillaItemID.LLAMA_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly FOX_SPAWN_EGG(850, VanillaItemID.FOX_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PIGLIN_BRUTE_SPAWN_EGG(851, VanillaItemID.PIGLIN_BRUTE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PIG_SPAWN_EGG(852, VanillaItemID.PIG_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly COW_SPAWN_EGG(853, VanillaItemID.COW_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly NPC_SPAWN_EGG(854, VanillaItemID.NPC_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SQUID_SPAWN_EGG(855, VanillaItemID.SQUID_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly MAGENTA_DYE(856, VanillaItemID.MAGENTA_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly RED_DYE(857, VanillaItemID.RED_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly WITCH_SPAWN_EGG(858, VanillaItemID.WITCH_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly INK_SAC(859, VanillaItemID.INK_SAC),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ORANGE_DYE(860, VanillaItemID.ORANGE_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PILLAGER_SPAWN_EGG(861, VanillaItemID.PILLAGER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly CAVE_SPIDER_SPAWN_EGG(862, VanillaItemID.CAVE_SPIDER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly BONE_MEAL(863, VanillaItemID.BONE_MEAL),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PUFFERFISH_BUCKET(864, VanillaItemID.PUFFERFISH_BUCKET),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly BAT_SPAWN_EGG(865, VanillaItemID.BAT_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SPRUCE_BOAT(866, VanillaItemID.SPRUCE_BOAT),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SPIDER_SPAWN_EGG(867, VanillaItemID.SPIDER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PIGLIN_BANNER_PATTERN(868, VanillaItemID.PIGLIN_BANNER_PATTERN),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly RABBIT_SPAWN_EGG(869, VanillaItemID.RABBIT_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly MOJANG_BANNER_PATTERN(870, VanillaItemID.MOJANG_BANNER_PATTERN),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PIGLIN_SPAWN_EGG(871, VanillaItemID.PIGLIN_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly TURTLE_SPAWN_EGG(872, VanillaItemID.TURTLE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly MOOSHROOM_SPAWN_EGG(873, VanillaItemID.MOOSHROOM_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PUFFERFISH_SPAWN_EGG(874, VanillaItemID.PUFFERFISH_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PARROT_SPAWN_EGG(875, VanillaItemID.PARROT_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ZOMBIE_SPAWN_EGG(876, VanillaItemID.ZOMBIE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly WOLF_SPAWN_EGG(877, VanillaItemID.WOLF_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly GRAY_DYE(878, VanillaItemID.GRAY_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly COCOA_BEANS(879, VanillaItemID.COCOA_BEANS),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SKELETON_HORSE_SPAWN_EGG(880, VanillaItemID.SKELETON_HORSE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SHEEP_SPAWN_EGG(881, VanillaItemID.SHEEP_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SLIME_SPAWN_EGG(882, VanillaItemID.SLIME_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly VINDICATOR_SPAWN_EGG(883, VanillaItemID.VINDICATOR_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly DROWNED_SPAWN_EGG(884, VanillaItemID.DROWNED_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly MILK_BUCKET(885, VanillaItemID.MILK_BUCKET),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly DOLPHIN_SPAWN_EGG(886, VanillaItemID.DOLPHIN_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly DONKEY_SPAWN_EGG(887, VanillaItemID.DONKEY_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PURPLE_DYE(888, VanillaItemID.PURPLE_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly BIRCH_BOAT(889, VanillaItemID.BIRCH_BOAT),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ENDERMAN_SPAWN_EGG(891, VanillaItemID.ENDERMAN_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly CHICKEN_SPAWN_EGG(892, VanillaItemID.CHICKEN_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SHULKER_SPAWN_EGG(893, VanillaItemID.SHULKER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly STRIDER_SPAWN_EGG(894, VanillaItemID.STRIDER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly ZOMBIE_PIGMAN_SPAWN_EGG(895, VanillaItemID.ZOMBIE_PIGMAN_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly YELLOW_DYE(896, VanillaItemID.YELLOW_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly CAT_SPAWN_EGG(897, VanillaItemID.CAT_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly GUARDIAN_SPAWN_EGG(898, VanillaItemID.GUARDIAN_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly PINK_DYE(899, VanillaItemID.PINK_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly SALMON_SPAWN_EGG(900, VanillaItemID.SALMON_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly CREEPER_SPAWN_EGG(901, VanillaItemID.CREEPER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly HORSE_SPAWN_EGG(902, VanillaItemID.HORSE_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly LAPIS_LAZULI(903, VanillaItemID.LAPIS_LAZULI),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly RAVAGER_SPAWN_EGG(904, VanillaItemID.RAVAGER_SPAWN_EGG),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly WATER_BUCKET(905, VanillaItemID.WATER_BUCKET),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly LIGHT_GRAY_DYE(906, VanillaItemID.LIGHT_GRAY_DYE),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly CHARCOAL(907, VanillaItemID.CHARCOAL),
+    @Since("1.3.2.0-PN") @PowerNukkitOnly AGENT_SPAWN_EGG(908, VanillaItemID.AGENT_SPAWN_EGG)
+    ;
+    private final int badItemId;
+    private final VanillaItemID vanillaItemId;
+    
+    private final static Int2ObjectMap<PNAlphaItemID> byId = new Int2ObjectOpenHashMap<>(values().length);
+    static {
+        for (PNAlphaItemID value : values()) {
+            byId.put(value.badItemId, value);
+        }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public static PNAlphaItemID getBadAlphaId(int id) {
+        return byId.get(id);
+    }
 }
