@@ -129,6 +129,7 @@ public enum Sound {
     DIG_GRASS("dig.grass"),
     DIG_GRAVEL("dig.gravel"),
     DIG_HONEY_BLOCK("dig.honey_block"),
+    DIG_LODESTONE("dig.lodestone"),
     DIG_NETHER_BRICK("dig.nether_brick"),
     DIG_NETHER_GOLD_ORE("dig.nether_gold_ore"),
     DIG_NETHER_SPROUTS("dig.nether_sprouts"),
@@ -288,7 +289,6 @@ public enum Sound {
     LIQUID_LAVAPOP("liquid.lavapop"),
     LIQUID_WATER("liquid.water"),
     LODESTONE_COMPASS_LINK_COMPASS_TO_LODESTONE("lodestone_compass.link_compass_to_lodestone"),
-    DIG_LODESTONE("dig.lodestone"),
     MINECART_BASE("minecart.base"),
     MINECART_INSIDE("minecart.inside"),
     MOB_AGENT_SPAWN("mob.agent.spawn"),
@@ -477,6 +477,7 @@ public enum Sound {
     MOB_PARROT_STEP("mob.parrot.step"),
     MOB_PHANTOM_BITE("mob.phantom.bite"),
     MOB_PHANTOM_DEATH("mob.phantom.death"),
+    @Since("1.3.2.0-PN") MOB_PHANTOM_FLAP("mob.phantom.flap"),
     MOB_PHANTOM_HURT("mob.phantom.hurt"),
     MOB_PHANTOM_IDLE("mob.phantom.idle"),
     MOB_PHANTOM_SWOOP("mob.phantom.swoop"),
@@ -497,8 +498,8 @@ public enum Sound {
     @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_AMBIENT("mob.piglin_brute.ambient"),
     @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_ANGRY("mob.piglin_brute.angry"),
     @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_CONVERTED_TO_ZOMBIFIED("mob.piglin_brute.converted_to_zombified"),
-    @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_HURT("mob.piglin_brute.hurt"),
     @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_DEATH("mob.piglin_brute.death"),
+    @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_HURT("mob.piglin_brute.hurt"),
     @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_STEP("mob.piglin_brute.step"),
     MOB_PILLAGER_CELEBRATE("mob.pillager.celebrate"),
     MOB_PILLAGER_DEATH("mob.pillager.death"),
@@ -624,21 +625,21 @@ public enum Sound {
     MOB_WOLF_STEP("mob.wolf.step"),
     MOB_WOLF_WHINE("mob.wolf.whine"),
     @Since("1.3.2.0-PN") MOB_ZOGLIN_ANGRY("mob.zoglin.angry"),
+    @Since("1.3.2.0-PN") MOB_ZOGLIN_ATTACK("mob.zoglin.attack"),
     
     @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Nukkit")
     @PowerNukkitOnly("Re-added for backward compatibility. Actual removal reason is unknown.")
     MOB_ZOGLIN_BOOST("mob.zoglin.boost"),
-
-    @Since("1.3.2.0-PN") MOB_ZOGLIN_DEATH("mob.zoglin.death"),
-    @Since("1.3.2.0-PN") MOB_ZOGLIN_IDLE("mob.zoglin.idle"),
+    
+    MOB_ZOGLIN_DEATH("mob.zoglin.death"),
     @Since("1.3.2.0-PN") MOB_ZOGLIN_HURT("mob.zoglin.hurt"),
+    @Since("1.3.2.0-PN") MOB_ZOGLIN_IDLE("mob.zoglin.idle"),
     
     @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Nukkit")
     @PowerNukkitOnly("Re-added for backward compatibility. Actual removal reason is unknown.")
     MOB_ZOGLIN_SAY("mob.zoglin.say"),
-
-    @Since("1.3.2.0-PN") MOB_ZOGLIN_STEP("mob.zoglin.step"),
-    @Since("1.3.2.0-PN") MOB_ZOGLIN_ATTACK("mob.zoglin.attack"),
+    
+    MOB_ZOGLIN_STEP("mob.zoglin.step"),
     MOB_ZOMBIE_DEATH("mob.zombie.death"),
     MOB_ZOMBIE_HURT("mob.zombie.hurt"),
     MOB_ZOMBIE_REMEDY("mob.zombie.remedy"),
@@ -763,8 +764,8 @@ public enum Sound {
     STEP_ANCIENT_DEBRIS("step.ancient_debris"),
     STEP_BASALT("step.basalt"),
     STEP_BONE_BLOCK("step.bone_block"),
-    STEP_CLOTH("step.cloth"),
     STEP_CHAIN("step.chain"),
+    STEP_CLOTH("step.cloth"),
     STEP_CORAL("step.coral"),
     STEP_GRASS("step.grass"),
     STEP_GRAVEL("step.gravel"),

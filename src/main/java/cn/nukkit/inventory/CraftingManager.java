@@ -1,10 +1,14 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
+import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
@@ -27,7 +31,13 @@ public class CraftingManager {
 
     public final Collection<Recipe> recipes = new ArrayDeque<>();
 
+    @Deprecated
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", reason = "Field signature change from BatchPacket to DataPacket",
+        replaceWith = "getCraftingPacket() to be safer", toBeRemovedAt = "1.4.0.0-PN")
     public static BatchPacket packet = null;
+    private static DataPacket packet0 = null;
+    
+    
     protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
 
     public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
@@ -54,6 +64,12 @@ public class CraftingManager {
             return -1;
         } else return Integer.compare(i1.getCount(), i2.getCount());
     };
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public static DataPacket getCraftingPacket() {
+        return packet0;
+    }
 
     public CraftingManager() {
         InputStream recipesStream = Server.class.getClassLoader().getResourceAsStream("recipes.json");
@@ -98,7 +114,7 @@ public class CraftingManager {
                         Map<String, Object> first = outputs.get(0);
                         List<Item> sorted = new ArrayList<>();
                         for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
-                            sorted.add(Item.fromJson(ingredient));
+                            sorted.add(Item.fromJsonNetworkId(ingredient));
                         }
                         // Bake sorted list
                         sorted.sort(recipeComparator);
@@ -108,13 +124,13 @@ public class CraftingManager {
 
                         switch (craftingBlock) {
                             case "crafting_table":
-                                this.registerRecipe(new ShapelessRecipe(recipeId, priority, Item.fromJson(first), sorted));
+                                this.registerRecipe(new ShapelessRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted));
                                 break;
                             case "stonecutter":
-                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, Item.fromJson(first), sorted.get(0)));
+                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted.get(0)));
                                 break;
                             case "cartography_table":
-                                this.registerRecipe(new CartographyRecipe(recipeId, priority, Item.fromJson(first), sorted));
+                                this.registerRecipe(new CartographyRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted));
                                 break;
                         }
                         break;
@@ -134,19 +150,19 @@ public class CraftingManager {
                         Map<String, Map<String, Object>> input = (Map) recipe.get("input");
                         for (Map.Entry<String, Map<String, Object>> ingredientEntry : input.entrySet()) {
                             char ingredientChar = ingredientEntry.getKey().charAt(0);
-                            Item ingredient = Item.fromJson(ingredientEntry.getValue());
+                            Item ingredient = Item.fromJsonNetworkId(ingredientEntry.getValue());
 
                             ingredients.put(ingredientChar, ingredient);
                         }
 
                         for (Map<String, Object> data : outputs) {
-                            extraResults.add(Item.fromJson(data));
+                            extraResults.add(Item.fromJsonNetworkId(data));
                         }
 
                         recipeId = (String) recipe.get("id");
                         priority = Utils.toInt(recipe.get("priority"));
 
-                        this.registerRecipe(new ShapedRecipe(recipeId, priority, Item.fromJson(first), shape, ingredients, extraResults));
+                        this.registerRecipe(new ShapedRecipe(recipeId, priority, Item.fromJsonNetworkId(first), shape, ingredients, extraResults));
                         break;
                     case 2:
                     case 3:
@@ -157,11 +173,11 @@ public class CraftingManager {
                             continue;
                         }
                         Map<String, Object> resultMap = (Map) recipe.get("output");
-                        Item resultItem = Item.fromJson(resultMap);
+                        Item resultItem = Item.fromJsonNetworkId(resultMap);
                         Item inputItem;
                         try {
                             Map<String, Object> inputMap = (Map) recipe.get("input");
-                            inputItem = Item.fromJson(inputMap);
+                            inputItem = Item.fromJsonNetworkId(inputMap);
                         } catch (Exception old) {
                             inputItem = Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1);
                         }
@@ -268,8 +284,9 @@ public class CraftingManager {
         }
 
         pk.encode();
-
+        // TODO: find out whats wrong with compression
         packet = pk.compress(Deflater.BEST_COMPRESSION);
+        packet0 = pk;
     }
 
     public Collection<Recipe> getRecipes() {

@@ -141,19 +141,6 @@ public class Anvil extends BaseLevelProvider {
             }
         }
 
-        Map<Integer, Integer> extra = chunk.getBlockExtraDataArray();
-        BinaryStream extraData;
-        if (!extra.isEmpty()) {
-            extraData = new BinaryStream();
-            extraData.putVarInt(extra.size());
-            for (Map.Entry<Integer, Integer> entry : extra.entrySet()) {
-                extraData.putVarInt(entry.getKey());
-                extraData.putLShort(entry.getValue());
-            }
-        } else {
-            extraData = null;
-        }
-
         BinaryStream stream = ThreadCache.binaryStream.get().reset();
         int count = 0;
         cn.nukkit.level.format.ChunkSection[] sections = chunk.getSections();
@@ -163,20 +150,13 @@ public class Anvil extends BaseLevelProvider {
                 break;
             }
         }
-//        stream.putByte((byte) count);  count is now sent in packet
+
         for (int i = 0; i < count; i++) {
             sections[i].writeTo(stream);
         }
-//        for (byte height : chunk.getHeightMapArray()) {
-//            stream.putByte(height);
-//        } computed client side?
+
         stream.put(chunk.getBiomeIdArray());
-        stream.putByte((byte) 0);
-        if (extraData != null) {
-            stream.put(extraData.getBuffer());
-        } else {
-            stream.putVarInt(0);
-        }
+        stream.putByte((byte) 0); // Border blocks
         stream.put(blockEntities);
 
         this.getLevel().chunkRequestCallback(timestamp, x, z, count, stream.getBuffer());

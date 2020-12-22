@@ -886,7 +886,7 @@ public class Server {
         } else {
             try {
                 byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Network.deflateRaw(data, this.networkCompressionLevel), targets, forceSync);
+                this.broadcastPacketsCallback(Network.deflateRaw(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -895,29 +895,12 @@ public class Server {
     }
 
     public void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets) {
-        broadcastPacketsCallback(data, targets, false);
-    }
-
-    /**
-     * @since 1.2.0.2-PN
-     * @apiNote Only in PowerNukkit
-     */
-    private void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets, boolean immediate) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
 
-        // The duplicated for is a micro-optimization
-        if (immediate) {
-            for (InetSocketAddress i : targets) {
-                if (this.players.containsKey(i)) {
-                    this.players.get(i).directDataPacket(pk);
-                }
-            }
-        } else {
-            for (InetSocketAddress i : targets) {
-                if (this.players.containsKey(i)) {
-                    this.players.get(i).dataPacket(pk);
-                }
+        for (InetSocketAddress i : targets) {
+            if (this.players.containsKey(i)) {
+                this.players.get(i).dataPacket(pk);
             }
         }
     }
@@ -1240,6 +1223,7 @@ public class Server {
         Server.broadcastPacket(players, pk);
     }
 
+    @Since("1.3.2.0-PN")
     public void removePlayerListData(UUID uuid, Player player) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_REMOVE;
@@ -1267,7 +1251,7 @@ public class Server {
     }
 
     public void sendRecipeList(Player player) {
-        player.dataPacket(CraftingManager.packet);
+        player.dataPacket(CraftingManager.getCraftingPacket());
     }
 
     private void checkTickUpdates(int currentTick, long tickTime) {
@@ -2317,7 +2301,7 @@ public class Server {
     }
 
     public String getPropertyString(String variable, String defaultValue) {
-        return this.properties.exists(variable) ? (String) this.properties.get(variable) : defaultValue;
+        return this.properties.exists(variable) ? String.valueOf(this.properties.get(variable)) : defaultValue;
     }
 
     public int getPropertyInt(String variable) {
