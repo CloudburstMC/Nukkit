@@ -23,9 +23,12 @@ Click the link above to see the future.
 - Snowballs not damaging blazes
 - Issues with the geometry of player and human entities
 - Hay bale not reducing fall damage
+- Lapis ore drops with enchanted pickaxes
 
 ### Added
 - API to get how long the player has been awake
+- New APIs to detect the type of bucket, dye, spawn egg, coal, and a few others
+- A `MinecraftItemID` API for simpler version independent vanilla item creation
 
 ### Changed
 - Changed the protocol version to support Minecraft Bedrock Edition 1.16.201
