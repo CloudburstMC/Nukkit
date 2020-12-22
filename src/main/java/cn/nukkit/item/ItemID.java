@@ -261,7 +261,7 @@ public interface ItemID {
     @PowerNukkitOnly int CAMPFIRE = 720;
 
     @PowerNukkitOnly int SUSPICIOUS_STEW = 734;
-
+    //@PowerNukkitOnly int DEBUG_STICK = 735;
     int HONEYCOMB = 736;
     int HONEY_BOTTLE = 737;
 
