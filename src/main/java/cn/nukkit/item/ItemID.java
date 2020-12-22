@@ -261,7 +261,7 @@ public interface ItemID {
     @PowerNukkitOnly int CAMPFIRE = 720;
 
     @PowerNukkitOnly int SUSPICIOUS_STEW = 734;
-    //@PowerNukkitOnly int DEBUG_STICK = 735;
+    
     int HONEYCOMB = 736;
     int HONEY_BOTTLE = 737;
 
@@ -288,5 +288,7 @@ public interface ItemID {
     @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHER_SPROUTS = 760;
 
     @Since("1.4.0.0-PN") @PowerNukkitOnly int SOUL_CAMPFIRE = 801;
+
+    //@PowerNukkitOnly int DEBUG_STICK = <Possible:> 802+;
     
 }

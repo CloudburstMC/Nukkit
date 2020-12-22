@@ -4497,187 +4497,187 @@
     "oldId": 734
   },
   {
-    "name": "minecraft:debug_stick",
-    "id": 580
-  },
-  {
     "name": "minecraft:honeycomb",
-    "id": 581,
+    "id": 580,
     "oldId": 736
   },
   {
     "name": "minecraft:honey_bottle",
-    "id": 582,
+    "id": 581,
     "oldId": 737
   },
   {
     "name": "minecraft:camera",
-    "id": 583,
+    "id": 582,
     "oldId": 498
   },
   {
     "name": "minecraft:compound",
-    "id": 584,
+    "id": 583,
     "oldId": 499
   },
   {
     "name": "minecraft:ice_bomb",
-    "id": 585,
+    "id": 584,
     "oldId": 453
   },
   {
     "name": "minecraft:bleach",
-    "id": 586,
+    "id": 585,
     "oldId": 451
   },
   {
     "name": "minecraft:rapid_fertilizer",
-    "id": 587,
+    "id": 586,
     "oldId": 449
   },
   {
     "name": "minecraft:balloon",
-    "id": 588,
+    "id": 587,
     "oldId": 448
   },
   {
     "name": "minecraft:medicine",
-    "id": 589,
+    "id": 588,
     "oldId": 447
   },
   {
     "name": "minecraft:sparkler",
-    "id": 590,
+    "id": 589,
     "oldId": 442
   },
   {
     "name": "minecraft:lodestone_compass",
-    "id": 591,
+    "id": 590,
     "oldId": 741
   },
   {
     "name": "minecraft:netherite_ingot",
-    "id": 592,
+    "id": 591,
     "oldId": 742
   },
   {
     "name": "minecraft:netherite_sword",
-    "id": 593,
+    "id": 592,
     "oldId": 743
   },
   {
     "name": "minecraft:netherite_shovel",
-    "id": 594,
+    "id": 593,
     "oldId": 744
   },
   {
     "name": "minecraft:netherite_pickaxe",
-    "id": 595,
+    "id": 594,
     "oldId": 745
   },
   {
     "name": "minecraft:netherite_axe",
-    "id": 596,
+    "id": 595,
     "oldId": 746
   },
   {
     "name": "minecraft:netherite_hoe",
-    "id": 597,
+    "id": 596,
     "oldId": 747
   },
   {
     "name": "minecraft:netherite_helmet",
-    "id": 598,
+    "id": 597,
     "oldId": 748
   },
   {
     "name": "minecraft:netherite_chestplate",
-    "id": 599,
+    "id": 598,
     "oldId": 749
   },
   {
     "name": "minecraft:netherite_leggings",
-    "id": 600,
+    "id": 599,
     "oldId": 750
   },
   {
     "name": "minecraft:netherite_boots",
-    "id": 601,
+    "id": 600,
     "oldId": 751
   },
   {
     "name": "minecraft:netherite_scrap",
-    "id": 602,
+    "id": 601,
     "oldId": 752
   },
   {
     "name": "minecraft:crimson_sign",
-    "id": 603,
+    "id": 602,
     "oldId": 753
   },
   {
     "name": "minecraft:warped_sign",
-    "id": 604,
+    "id": 603,
     "oldId": 754
   },
   {
     "name": "minecraft:crimson_door",
-    "id": 605,
+    "id": 604,
     "oldId": 755
   },
   {
     "name": "minecraft:warped_door",
-    "id": 606,
+    "id": 605,
     "oldId": 756
   },
   {
     "name": "minecraft:warped_fungus_on_a_stick",
-    "id": 607,
+    "id": 606,
     "oldId": 757
   },
   {
     "name": "minecraft:chain",
-    "id": 608,
+    "id": 607,
     "oldId": 758
   },
   {
     "name": "minecraft:music_disc_pigstep",
-    "id": 609,
+    "id": 608,
     "oldId": 759
   },
   {
     "name": "minecraft:nether_sprouts",
-    "id": 610,
+    "id": 609,
     "oldId": 760
   },
   {
     "name": "minecraft:soul_campfire",
-    "id": 611,
+    "id": 610,
     "oldId": 801
   },
   {
     "name": "minecraft:boat",
-    "id": 612,
+    "id": 611,
     "oldId": 333
   },
   {
     "name": "minecraft:dye",
-    "id": 613,
+    "id": 612,
     "oldId": 351
   },
   {
     "name": "minecraft:banner_pattern",
-    "id": 614,
+    "id": 613,
     "oldId": 434
   },
   {
     "name": "minecraft:spawn_egg",
-    "id": 615,
+    "id": 614,
     "oldId": 383
   },
   {
     "name": "minecraft:end_crystal",
-    "id": 616,
+    "id": 615,
     "oldId": 426
+  },
+  {
+    "name": "minecraft:debug_stick",
+    "id": 616
   }
 ]
