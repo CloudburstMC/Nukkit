@@ -112,7 +112,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[] { new ItemCharcoal(0, 2) };
+        return new Item[] { new ItemCoal(1, 2) };
     }
 
     @Override
