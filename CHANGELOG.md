@@ -20,10 +20,23 @@ Click the link above to see the future.
 - [#777] Falling block falling though scaffolds
 - [#778] _Alpha Bug_: Compatibility fix: Unable to change MobPlugin spawner with eggs
 - [#778] Unable to get `minecraft:mob_spawner` with `/give Nick mob_spawner`
+- Snowballs not damaging blazes
+- Issues with the geometry of player and human entities
+- Hay bale not reducing fall damage
+
+### Added
+- API to get how long the player has been awake
 
 ### Changed
+- Changed the protocol version to support Minecraft Bedrock Edition 1.16.201
 - [#765] The `ServerBrand` tag in the `level.dat` file will be set to `PowerNukkit` now 
 - [#776] Grindstone won't reset the repair cost anymore
+- Packet batching is now handled near the RakNet layer
+- Removed extra data from chunk encoding
+- The sound enum has been updated
+- _Alpha Bug_: Reversed the addition of new item ids for every item, the "new ids" should revert to the old id on load
+- Bucket with fish can no longer interact with cauldrons
+- The /give command now support all current vanilla namespaced ids
 
 ## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
 
