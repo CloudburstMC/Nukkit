@@ -1,6 +1,8 @@
 package cn.nukkit;
 
 import cn.nukkit.AdventureSettings.Type;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
@@ -163,6 +165,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected final BiMap<Integer, Inventory> windowIndex = windows.inverse();
     protected final Set<Integer> permanentWindows = new IntOpenHashSet();
     private boolean inventoryOpen;
+    @Since("1.3.2.0-PN") protected int closingWindowId = Integer.MIN_VALUE;
 
     protected int messageCounter = 2;
 
@@ -278,15 +281,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected double lastRightClickTime = 0.0;
     protected Vector3 lastRightClickPos = null;
 
+    private int timeSinceRest;
+
     protected int lastPlayerdLevelUpSoundTime = 0;
     
     private TaskHandler delayedPosTrackingUpdate;
 
     private float soulSpeedMultiplier = 1;
     private boolean wasInSoulSandCompatible;
-
-    @Since("1.4.0.0-PN")
-    private int timeSinceRest;
 
     public float getSoulSpeedMultiplier() {
         return this.soulSpeedMultiplier;
@@ -831,7 +833,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.subChunkCount = subChunkCount;
         pk.data = payload;
 
-        this.batchDataPacket(pk);
+        this.dataPacket(pk);
 
         if (this.spawned) {
             for (Entity entity : this.level.getChunkEntities(x, z).values()) {
@@ -1101,27 +1103,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return true;
     }
 
+    @DeprecationDetails(by = "Cloudburst Nukkit", since = "1.3.2.0-PN", replaceWith = "dataPacket(DataPacket)",
+            reason = "Batching packet is now handled near the RakNet layer")
+    @Deprecated
     public boolean batchDataPacket(DataPacket packet) {
-        if (packet instanceof BatchPacket) {
-            this.directDataPacket(packet); // We don't want to batch a batched packet...
-        }
-        if (!this.connected) {
-            return false;
-        }
-
-        try (Timing timing = Timings.getSendDataPacketTiming(packet)) {
-            DataPacketSendEvent event = new DataPacketSendEvent(this, packet);
-            this.server.getPluginManager().callEvent(event);
-            if (event.isCancelled()) {
-                return false;
-            }
-            if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
-                log.trace("Outbound {}: {}", this.getName(), packet);
-            }
-
-            this.packetQueue.offer(packet);
-        }
-        return true;
+        return this.dataPacket(packet);
     }
 
     /**
@@ -1132,27 +1118,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return packet successfully sent
      */
     public boolean dataPacket(DataPacket packet) {
-        return batchDataPacket(packet);
-    }
-
-    @Deprecated
-    public int dataPacket(DataPacket packet, boolean needACK) {
-        return this.dataPacket(packet) ? 0 : -1;
-    }
-
-    /**
-     * 0 is true
-     * -1 is false
-     * other is identifer
-     * @param packet packet to send
-     * @return packet successfully sent
-     */
-    public boolean directDataPacket(DataPacket packet) {
         if (!this.connected) {
             return false;
         }
 
-        try (Timing timing = Timings.getSendDataPacketTiming(packet)) {
+        try (Timing ignored = Timings.getSendDataPacketTiming(packet)) {
             DataPacketSendEvent ev = new DataPacketSendEvent(this, packet);
             this.server.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
@@ -1164,9 +1134,38 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return true;
     }
 
+    @DeprecationDetails(by = "Cloudburst Nukkit", since = "2019-05-08", replaceWith = "dataPacket(DataPacket)",
+            reason = "ACKs are handled by the RakNet layer only")
+    @PowerNukkitDifference(since = "1.3.2.0-PN", 
+            info = "Cloudburst changed the return values from 0/-1 to 1/0, breaking backward compatibility for no reason, " +
+                    "we reversed that.")
+    @Deprecated
+    public int dataPacket(DataPacket packet, boolean needACK) {
+        return dataPacket(packet) ? 0 : -1;
+    }
+
+    /**
+     * 0 is true
+     * -1 is false
+     * other is identifer
+     * @param packet packet to send
+     * @return packet successfully sent
+     */
+    @Deprecated
+    @DeprecationDetails(by = "Cloudburst Nukkit", since = "1.3.2.0-PN", replaceWith = "dataPacket(DataPacket)",
+            reason = "Direct packets are no longer allowed")
+    public boolean directDataPacket(DataPacket packet) {
+        return this.dataPacket(packet);
+    }
+
+    @DeprecationDetails(by = "Cloudburst Nukkit", since = "2019-05-08", replaceWith = "dataPacket(DataPacket)",
+            reason = "ACK are handled by the RakNet layer and direct packets are no longer allowed")
+    @PowerNukkitDifference(since = "1.3.2.0-PN",
+            info = "Cloudburst changed the return values from 0/-1 to 1/0, breaking backward compatibility for no reason, " +
+                    "we reversed that.")
     @Deprecated
     public int directDataPacket(DataPacket packet, boolean needACK) {
-        return this.directDataPacket(packet) ? 0 : -1;
+        return this.dataPacket(packet) ? 0 : -1;
     }
 
     public int getPing() {
@@ -2319,7 +2318,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             disconnectPacket.encode();
                             BatchPacket batch = new BatchPacket();
                             batch.payload = disconnectPacket.getBuffer();
-                            this.directDataPacket(batch);
+                            this.dataPacket(batch);
                             // Still want to run close() to allow the player to be removed properly
                         }
                         this.close("", message, false);
@@ -3071,7 +3070,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (this.windowIndex.containsKey(containerClosePacket.windowId)) {
                         this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windowIndex.get(containerClosePacket.windowId), this));
                         if (containerClosePacket.windowId == ContainerIds.INVENTORY) this.inventoryOpen = false;
-                        this.removeWindow(this.windowIndex.get(containerClosePacket.windowId));
+                        this.closingWindowId = containerClosePacket.windowId;
+                        this.removeWindow(this.windowIndex.get(containerClosePacket.windowId), true);
+                        this.closingWindowId = Integer.MIN_VALUE;
                     }
                     if (containerClosePacket.windowId == -1) {
                         this.craftingType = CRAFTING_SMALL;
@@ -4000,7 +4001,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (notify && reason.length() > 0) {
                 DisconnectPacket pk = new DisconnectPacket();
                 pk.message = reason;
-                this.directDataPacket(pk);
+                this.dataPacket(pk);
             }
 
             this.connected = false;
@@ -4698,11 +4699,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         PlayStatusPacket pk = new PlayStatusPacket();
         pk.status = status;
 
-        if (immediate) {
-            this.directDataPacket(pk);
-        } else {
-            this.dataPacket(pk);
-        }
+        this.dataPacket(pk);
     }
 
     @Override
@@ -4995,8 +4992,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void removeWindow(Inventory inventory) {
+        this.removeWindow(inventory, false);
+    }
+
+    @Since("1.3.2.0-PN")
+    protected void removeWindow(Inventory inventory, boolean isResponse) {
         inventory.close(this);
-        if (!this.permanentWindows.contains(this.getWindowId(inventory))) {
+        if (isResponse && !this.permanentWindows.contains(this.getWindowId(inventory))) {
             this.windows.remove(inventory);
             updateTrackingPositions(true);
         }
@@ -5085,6 +5087,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
             this.removeWindow(entry.getValue());
         }
+    }
+
+    @Since("1.3.2.0-PN")
+    public int getClosingWindowId() {
+        return this.closingWindowId;
     }
 
     @Override
@@ -5544,12 +5551,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
-    @Since("1.4.0.0-PN")
+    @Since("1.3.2.0-PN")
     public int getTimeSinceRest() {
         return timeSinceRest;
     }
 
-    @Since("1.4.0.0-PN")
+    @Since("1.3.2.0-PN")
     public void setTimeSinceRest(int timeSinceRest) {
         this.timeSinceRest = timeSinceRest;
     }

@@ -5,8 +5,8 @@ import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.MinecraftItemID;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.AxisAlignedBB;
@@ -226,13 +226,13 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return Item.get(ItemID.COCOA_BEANS);
+        return MinecraftItemID.COCOA_BEANS.get(1);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(ItemID.COCOA_BEANS, this.getDamage() >= 8 ? 3 : 1)
+                MinecraftItemID.COCOA_BEANS.get(this.getDamage() >= 8 ? 3 : 1)
         };
     }
 
