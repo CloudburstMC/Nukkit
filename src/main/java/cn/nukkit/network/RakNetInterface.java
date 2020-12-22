@@ -435,6 +435,10 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                     byte[] buf = packet.getBuffer();
                     batched.putUnsignedVarInt(buf.length);
                     batched.put(buf);
+
+                    if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
+                        log.trace("Outbound {}: {}", player.getName(), packet);
+                    }
                 }
 
                 try {
