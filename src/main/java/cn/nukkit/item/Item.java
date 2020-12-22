@@ -457,7 +457,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         for (Map map : list) {
             try {
-                addCreativeItem(fromJson(map));
+                addCreativeItem(fromJsonNetworkId(map));
             } catch (Exception e) {
                 MainLogger.getLogger().logException(e);
             }
