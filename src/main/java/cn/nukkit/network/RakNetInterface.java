@@ -320,6 +320,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                     if (!packet.isEncoded) packet.encode();
                 } catch (Exception e) {
                     log.fatal("Exception while encoding packet {} to {}", packet, player.getName(), e);
+                    continue;
                 }
                 byte[] buf = packet.getBuffer();
                 batched.putUnsignedVarInt(buf.length);
