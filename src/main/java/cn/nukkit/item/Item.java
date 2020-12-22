@@ -674,6 +674,42 @@ public class Item implements Cloneable, BlockID, ItemID {
         return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static Item fromJsonNetworkId(Map<String, Object> data) {
+        String nbt = (String) data.get("nbt_b64");
+        byte[] nbtBytes;
+        if (nbt != null) {
+            nbtBytes = Base64.getDecoder().decode(nbt);
+        } else { // Support old format for backwards compat
+            nbt = (String) data.getOrDefault("nbt_hex", null);
+            if (nbt == null) {
+                nbtBytes = EmptyArrays.EMPTY_BYTES;
+            } else {
+                nbtBytes = Utils.parseHexBinary(nbt);
+            }
+        }
+
+        int networkId = Utils.toInt(data.get("id"));
+        RuntimeItemMapping mapping = RuntimeItems.getRuntimeMapping();
+        int legacyFullId = mapping.getLegacyFullId(networkId);
+        int id = RuntimeItems.getId(legacyFullId);
+        OptionalInt meta = RuntimeItems.hasData(legacyFullId)? OptionalInt.of(RuntimeItems.getData(legacyFullId)) : OptionalInt.empty();
+        if (data.containsKey("damage")) {
+            int jsonMeta = Utils.toInt(data.get("damage"));
+            if (jsonMeta != Short.MAX_VALUE) {
+                if (meta.isPresent() && jsonMeta != meta.getAsInt()) {
+                    throw new IllegalArgumentException(
+                            "Conflicting damage value for " + mapping.getNamespacedIdByNetworkId(networkId) + ". " +
+                                    "From json: " + jsonMeta + ", from mapping: " + meta.getAsInt()
+                    );
+                }
+                meta = OptionalInt.of(jsonMeta);
+            }
+        }
+        return get(id, meta.orElse(0), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+    }
+
     public static Item[] fromStringMultiple(String str) {
         String[] b = str.split(",");
         Item[] items = new Item[b.length - 1];
