@@ -705,6 +705,8 @@ public class Item implements Cloneable, BlockID, ItemID {
                     );
                 }
                 meta = OptionalInt.of(jsonMeta);
+            } else if (!meta.isPresent()) {
+                meta = OptionalInt.of(-1);
             }
         }
         return get(id, meta.orElse(0), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
