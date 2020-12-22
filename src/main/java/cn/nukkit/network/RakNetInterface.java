@@ -48,37 +48,45 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     private final Map<InetSocketAddress, NukkitRakNetSession> sessions = new ConcurrentHashMap<>();
 
     private final Set<ScheduledFuture<?>> tickFutures = new HashSet<>();
-
-    private final FastThreadLocal<Set<NukkitRakNetSession>> sessionsToTick = new FastThreadLocal<Set<NukkitRakNetSession>>() {
+    
+    private final FastThreadLocal<Map.Entry<Object, Set<NukkitRakNetSession>>> sessionsToTick = new FastThreadLocal<Map.Entry<Object, Set<NukkitRakNetSession>>>() {
         @Override
-        protected Set<NukkitRakNetSession> initialValue() {
-            return Collections.newSetFromMap(new IdentityHashMap<>());
+        protected Map.Entry<Object, Set<NukkitRakNetSession>> initialValue() {
+            return new AbstractMap.SimpleEntry<>(new Object(), Collections.newSetFromMap(new IdentityHashMap<>()));
         }
     };
 
     private byte[] advertisement;
 
     public RakNetInterface(Server server) {
-        this.server = server;
+        try {
+            this.server = server;
 
-        InetSocketAddress bindAddress = new InetSocketAddress(Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp(), this.server.getPort());
+            InetSocketAddress bindAddress = new InetSocketAddress(Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp(), this.server.getPort());
 
-        this.raknet = new RakNetServer(bindAddress, Runtime.getRuntime().availableProcessors());
-        this.raknet.setProtocolVersion(10);
-        this.raknet.bind().join();
-        this.raknet.setListener(this);
+            this.raknet = new RakNetServer(bindAddress, Runtime.getRuntime().availableProcessors());
+            this.raknet.setProtocolVersion(10);
+            this.raknet.bind().join();
+            this.raknet.setListener(this);
 
-        for (EventExecutor executor : this.raknet.getBootstrap().config().group()) {
-            this.tickFutures.add(executor.scheduleAtFixedRate(() -> {
-                for (NukkitRakNetSession session : sessionsToTick.get()) {
-                    try {
-                        session.sendOutbound();
-                    } catch (Exception e) {
-                        log.fatal("Exception while sending packets to {}", session.player.getName(), e);
-                        //session.player.close("Outbound packet error");
+            for (EventExecutor executor : this.raknet.getBootstrap().config().group()) {
+                this.tickFutures.add(executor.scheduleAtFixedRate(() -> {
+                    Map.Entry<Object, Set<NukkitRakNetSession>> sess = sessionsToTick.get();
+                    synchronized (sess.getKey()) {
+                        for (NukkitRakNetSession session : sess.getValue()) {
+                            try {
+                                session.sendOutbound();
+                            } catch (Exception e) {
+                                log.fatal("Exception while sending packets to {}", session.player.getName(), e);
+                                //session.player.close("Outbound packet error");
+                            }
+                        }
                     }
-                }
-            }, 0, 50, TimeUnit.MILLISECONDS));
+                }, 0, 50, TimeUnit.MILLISECONDS));
+            }
+        } catch (Exception e) {
+            log.fatal("An exception occurred while creating a new RakNetInterface!", e);
+            throw e;
         }
     }
 
@@ -89,114 +97,184 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public boolean process() {
-        Iterator<NukkitRakNetSession> iterator = this.sessions.values().iterator();
-        while (iterator.hasNext()) {
-            NukkitRakNetSession listener = iterator.next();
-            Player player = listener.player;
-            if (listener.disconnectReason != null) {
-                player.close(player.getLeaveMessage(), listener.disconnectReason, false);
-                iterator.remove();
-                continue;
+        try {
+            Iterator<NukkitRakNetSession> iterator = this.sessions.values().iterator();
+            while (iterator.hasNext()) {
+                NukkitRakNetSession listener = iterator.next();
+                Player player = listener.player;
+                if (listener.disconnectReason != null) {
+                    player.close(player.getLeaveMessage(), listener.disconnectReason, false);
+                    iterator.remove();
+                    continue;
+                }
+                DataPacket packet;
+                while ((packet = listener.inbound.poll()) != null) {
+                    listener.player.handleDataPacket(packet);
+                }
             }
-            DataPacket packet;
-            while ((packet = listener.inbound.poll()) != null) {
-                listener.player.handleDataPacket(packet);
-            }
+            return true;
+        } catch (Exception e) {
+            log.fatal("An exception occurred while processing the RakNetInterface of the sessions: {}", sessions, e);
+            throw e;
         }
-        return true;
     }
 
     @Override
     public int getNetworkLatency(Player player) {
-        RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
-        return session == null ? -1 : (int) session.getPing();
+        try {
+            RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
+            return session == null ? -1 : (int) session.getPing();
+        } catch (Exception e) {
+            log.fatal("An exception occurred while getting the network latency of {}", player, e);
+            throw e;
+        }
     }
 
     @Override
     public void close(Player player) {
-        this.close(player, "unknown reason");
+        try {
+            this.close(player, "unknown reason");
+        } catch (Exception e) {
+            log.fatal("An exception occurred while closing the player connection for {}", player, e);
+            throw e;
+        }
     }
 
     @Override
     public void close(Player player, String reason) {
-        RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
-        if (session != null) {
-            session.close();
+        try {
+            RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
+            if (session != null) {
+                session.close();
+            }
+        } catch (Exception e) {
+            log.fatal("An exception occurred while closing the player connection for {} with reason {}", player, reason, e);
+            throw e;
         }
     }
 
     @Override
     public void shutdown() {
-        this.tickFutures.forEach(future -> future.cancel(false));
-        this.raknet.close();
+        try {
+            this.tickFutures.forEach(future -> future.cancel(false));
+            this.raknet.close();
+        } catch (Exception e) {
+            log.fatal("An exception occurred while shutting down the RakNet interface with {}", sessions, e);
+            throw e;
+        }
     }
 
     @Override
     public void emergencyShutdown() {
-        this.tickFutures.forEach(future -> future.cancel(true));
-        this.raknet.close();
+        try {
+            this.tickFutures.forEach(future -> future.cancel(true));
+            this.raknet.close();
+        } catch (Exception e) {
+            log.fatal("An exception occurred while emergency shutting down the RakNet interface with {}", sessions, e);
+            throw e;
+        }
     }
 
     @Override
     public void blockAddress(InetAddress address) {
-        this.raknet.block(address);
+        try {
+            this.raknet.block(address);
+        } catch (Exception e) {
+            log.fatal("An exception occurred while blocking the address {}", address, e);
+            throw e;
+        }
     }
 
     @Override
     public void blockAddress(InetAddress address, int timeout) {
-        this.raknet.block(address, timeout, TimeUnit.SECONDS);
+        try {
+            this.raknet.block(address, timeout, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            log.fatal("An exception occurred while blocking the address {} with timeout {}", address, timeout, e);
+            throw e;
+        }
     }
 
     @Override
     public void unblockAddress(InetAddress address) {
-        this.raknet.unblock(address);
+        try {
+            this.raknet.unblock(address);
+        } catch (Exception e) {
+            log.fatal("An exception occurred while unblocking the address {}", address, e);
+            throw e;
+        }
     }
 
     @Override
     public void sendRawPacket(InetSocketAddress socketAddress, ByteBuf payload) {
-        this.raknet.send(socketAddress, payload);
+        try {
+            this.raknet.send(socketAddress, payload);
+        } catch (Exception e) {
+            log.fatal("An exception occurred while sending a raw packet to {}", socketAddress, e);
+            throw e;
+        }
     }
 
     @Override
     public void setName(String name) {
-        QueryRegenerateEvent info = this.server.getQueryInformation();
-        String[] names = name.split("!@#");  //Split double names within the program
-        String motd = Utils.rtrim(names[0].replace(";", "\\;"), '\\');
-        String subMotd = names.length > 1 ? Utils.rtrim(names[1].replace(";", "\\;"), '\\') : "";
-        StringJoiner joiner = new StringJoiner(";")
-                .add("MCPE")
-                .add(motd)
-                .add(Integer.toString(ProtocolInfo.CURRENT_PROTOCOL))
-                .add(ProtocolInfo.MINECRAFT_VERSION_NETWORK)
-                .add(Integer.toString(info.getPlayerCount()))
-                .add(Integer.toString(info.getMaxPlayerCount()))
-                .add(Long.toString(this.raknet.getGuid()))
-                .add(subMotd)
-                .add(Server.getGamemodeString(this.server.getDefaultGamemode(), true))
-                .add("1");
+        try {
+            QueryRegenerateEvent info = this.server.getQueryInformation();
+            String[] names = name.split("!@#");  //Split double names within the program
+            String motd = Utils.rtrim(names[0].replace(";", "\\;"), '\\');
+            String subMotd = names.length > 1 ? Utils.rtrim(names[1].replace(";", "\\;"), '\\') : "";
+            StringJoiner joiner = new StringJoiner(";")
+                    .add("MCPE")
+                    .add(motd)
+                    .add(Integer.toString(ProtocolInfo.CURRENT_PROTOCOL))
+                    .add(ProtocolInfo.MINECRAFT_VERSION_NETWORK)
+                    .add(Integer.toString(info.getPlayerCount()))
+                    .add(Integer.toString(info.getMaxPlayerCount()))
+                    .add(Long.toString(this.raknet.getGuid()))
+                    .add(subMotd)
+                    .add(Server.getGamemodeString(this.server.getDefaultGamemode(), true))
+                    .add("1");
 
-        this.advertisement = joiner.toString().getBytes(StandardCharsets.UTF_8);
+            this.advertisement = joiner.toString().getBytes(StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            log.fatal("An exception occurred while updating the MOTD (server ping advertisement)", e);
+            throw e;
+        }
     }
 
     @Override
     public Integer putPacket(Player player, DataPacket packet) {
-        return this.putPacket(player, packet, false);
+        try {
+            return this.putPacket(player, packet, false);
+        } catch (Exception e) {
+            log.fatal("An exception occurred while putting the packet {} to {}", packet, player, e);
+            throw e;
+        }
     }
 
     @Override
     public Integer putPacket(Player player, DataPacket packet, boolean needACK) {
-        return this.putPacket(player, packet, needACK, false);
+        try {
+            return this.putPacket(player, packet, needACK, false);
+        } catch (Exception e) {
+            log.fatal("An exception occurred while putting the packet {} to {} with needACK: {}", packet, player, needACK, e);
+            throw e;
+        }
     }
 
     @Override
     public Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
-        NukkitRakNetSession session = this.sessions.get(player.getSocketAddress());
+        try {
+            NukkitRakNetSession session = this.sessions.get(player.getSocketAddress());
 
-        if (session != null) {
-            session.outbound.offer(packet);
+            if (session != null) {
+                session.outbound.offer(packet);
+            }
+
+            return null;
+        } catch (Exception e) {
+            log.fatal("An exception occurred while putting the packet {} to {} with needACK: {} and immediate {}", packet, player, needACK, immediate, e);
+            throw e;
         }
-
-        return null;
     }
 
     @Override
@@ -211,37 +289,50 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public void onSessionCreation(RakNetServerSession session) {
-        PlayerCreationEvent ev = new PlayerCreationEvent(this, Player.class, Player.class, null, session.getAddress());
-        this.server.getPluginManager().callEvent(ev);
-        Class<? extends Player> clazz = ev.getPlayerClass();
-
-        Player player;
-        InetSocketAddress socketAddress = ev.getSocketAddress();
         try {
-            Constructor<? extends Player> constructor = clazz.getConstructor(SourceInterface.class, Long.class, InetSocketAddress.class);
-            player = constructor.newInstance(this, ev.getClientId(), socketAddress);
-        } catch (ReflectiveOperationException e) {
+            PlayerCreationEvent ev = new PlayerCreationEvent(this, Player.class, Player.class, null, session.getAddress());
+            this.server.getPluginManager().callEvent(ev);
+            Class<? extends Player> clazz = ev.getPlayerClass();
+
+            Player player;
+            InetSocketAddress socketAddress = ev.getSocketAddress();
             try {
-                Constructor<? extends Player> constructor = clazz.getConstructor(SourceInterface.class, Long.class, String.class, Integer.TYPE);
-                player = constructor.newInstance(this, ev.getClientId(), socketAddress.getHostString(), socketAddress.getPort());
-            } catch (ReflectiveOperationException e2) {
-                e2.addSuppressed(e);
-                Server.getInstance().getLogger().logException(e);
-                session.disconnect();
-                return;
+                Constructor<? extends Player> constructor = clazz.getConstructor(SourceInterface.class, Long.class, InetSocketAddress.class);
+                player = constructor.newInstance(this, ev.getClientId(), socketAddress);
+            } catch (ReflectiveOperationException e) {
+                try {
+                    Constructor<? extends Player> constructor = clazz.getConstructor(SourceInterface.class, Long.class, String.class, Integer.TYPE);
+                    player = constructor.newInstance(this, ev.getClientId(), socketAddress.getHostString(), socketAddress.getPort());
+                } catch (ReflectiveOperationException e2) {
+                    e2.addSuppressed(e);
+                    Server.getInstance().getLogger().logException(e);
+                    session.disconnect();
+                    return;
+                }
             }
+
+            this.server.addPlayer(session.getAddress(), player);
+            NukkitRakNetSession nukkitSession = new NukkitRakNetSession(session, player);
+            this.sessions.put(session.getAddress(), nukkitSession);
+            Map.Entry<Object, Set<NukkitRakNetSession>> sess = this.sessionsToTick.get();
+            synchronized (sess.getKey()) {
+                sess.getValue().add(nukkitSession);
+            }
+            session.setListener(nukkitSession);
+        } catch (Exception e) {
+            log.fatal("An exception occurred while processing the RakNetServerSession event for {}", session, e);
+            throw e;
         }
-        
-        this.server.addPlayer(session.getAddress(), player);
-        NukkitRakNetSession nukkitSession = new NukkitRakNetSession(session,player);
-        this.sessions.put(session.getAddress(), nukkitSession);
-            this.sessionsToTick.get().add(nukkitSession);
-        session.setListener(nukkitSession);
     }
 
     @Override
     public void onUnhandledDatagram(ChannelHandlerContext ctx, DatagramPacket datagramPacket) {
-        this.server.handlePacket(datagramPacket.sender(), datagramPacket.content());
+        try {
+            this.server.handlePacket(datagramPacket.sender(), datagramPacket.content());
+        } catch (Exception e) {
+            log.fatal("An exception occurred while processing a datagram from {}", datagramPacket.sender(), e);
+            throw e;
+        }
     }
 
     @RequiredArgsConstructor
@@ -258,30 +349,43 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
         @Override
         public void onDisconnect(DisconnectReason disconnectReason) {
-            if (disconnectReason == DisconnectReason.TIMED_OUT) {
-                this.disconnectReason = "Timed out";
-            } else {
-                this.disconnectReason = "Disconnected from Server";
+            try {
+                if (disconnectReason == DisconnectReason.TIMED_OUT) {
+                    this.disconnectReason = "Timed out";
+                } else {
+                    this.disconnectReason = "Disconnected from Server";
+                }
+                Map.Entry<Object, Set<NukkitRakNetSession>> sess = RakNetInterface.this.sessionsToTick.get();
+                synchronized (sess.getKey()) {
+                    sess.getValue().remove(this);
+                }
+            } catch (Exception e) {
+                log.fatal("An exception occurred while processing the onDisconnect of the player {}", player, e);
+                throw e;
             }
-            RakNetInterface.this.sessionsToTick.get().remove(this);
         }
 
         @Override
         public void onEncapsulated(EncapsulatedPacket packet) {
-            ByteBuf buffer = packet.getBuffer();
-            short packetId = buffer.readUnsignedByte();
-            if (packetId == 0xfe) {
-                DataPacket batchPacket = RakNetInterface.this.network.getPacket(ProtocolInfo.BATCH_PACKET);
-                if (batchPacket == null) {
-                    return;
+            try {
+                ByteBuf buffer = packet.getBuffer();
+                short packetId = buffer.readUnsignedByte();
+                if (packetId == 0xfe) {
+                    DataPacket batchPacket = RakNetInterface.this.network.getPacket(ProtocolInfo.BATCH_PACKET);
+                    if (batchPacket == null) {
+                        return;
+                    }
+
+                    byte[] packetBuffer = new byte[buffer.readableBytes()];
+                    buffer.readBytes(packetBuffer);
+                    batchPacket.setBuffer(packetBuffer);
+                    batchPacket.decode();
+
+                    this.inbound.offer(batchPacket);
                 }
-
-                byte[] packetBuffer = new byte[buffer.readableBytes()];
-                buffer.readBytes(packetBuffer);
-                batchPacket.setBuffer(packetBuffer);
-                batchPacket.decode();
-
-                this.inbound.offer(batchPacket);
+            } catch (Exception e) {
+                log.fatal("An exception occurred while processing the onEncapsulated {} of the player {}", packet, player, e);
+                throw e;
             }
         }
 
@@ -291,52 +395,72 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         }
 
         private void sendOutbound() {
-            List<DataPacket> toBatch = new ArrayList<>();
-            DataPacket packet;
-            while ((packet = this.outbound.poll()) != null) {
-                if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-                    if (!toBatch.isEmpty()) {
-                        this.sendPackets(toBatch.toArray(new DataPacket[0]));
-                        toBatch.clear();
+            try {
+                List<DataPacket> toBatch = new ArrayList<>();
+                DataPacket packet;
+                while ((packet = this.outbound.poll()) != null) {
+                    if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
+                        if (!toBatch.isEmpty()) {
+                            this.sendPackets(toBatch.toArray(new DataPacket[0]));
+                            toBatch.clear();
+                        }
+
+                        this.sendPacket(((BatchPacket) packet).payload);
+                    } else {
+                        toBatch.add(packet);
                     }
-
-                    this.sendPacket(((BatchPacket) packet).payload);
-                } else {
-                    toBatch.add(packet);
                 }
-            }
 
-            if (!toBatch.isEmpty()) {
-                this.sendPackets(toBatch.toArray(new DataPacket[0]));
+                if (!toBatch.isEmpty()) {
+                    this.sendPackets(toBatch.toArray(new DataPacket[0]));
+                }
+            } catch (Exception e) {
+                log.fatal("An exception occurred while processing the sendOutbound of the player {}", player, e);
+                throw e;
             }
         }
 
         private void sendPackets(DataPacket[] packets) {
-            BinaryStream batched = new BinaryStream();
-            for (DataPacket packet : packets) {
-                Preconditions.checkArgument(!(packet instanceof BatchPacket), "Cannot batch BatchPacket");
-                try {
-                    if (!packet.isEncoded) packet.encode();
-                } catch (Exception e) {
-                    log.fatal("Exception while encoding packet {} to {}", packet, player.getName(), e);
-                }
-                byte[] buf = packet.getBuffer();
-                batched.putUnsignedVarInt(buf.length);
-                batched.put(buf);
-            }
-
             try {
-                this.sendPacket(Network.deflateRaw(batched.getBuffer(), network.getServer().networkCompressionLevel));
-            } catch (IOException e) {
-                log.info("Unable to deflate batched packets", e);
+                BinaryStream batched = new BinaryStream();
+                for (DataPacket packet : packets) {
+                    Preconditions.checkArgument(!(packet instanceof BatchPacket), "Cannot batch BatchPacket");
+                    try {
+                        if (!packet.isEncoded) packet.encode();
+                    } catch (Exception e) {
+                        log.fatal("Exception while encoding packet {} to {}", packet, player.getName(), e);
+                        continue;
+                    }
+                    byte[] buf = packet.getBuffer();
+                    batched.putUnsignedVarInt(buf.length);
+                    batched.put(buf);
+
+                    if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
+                        log.trace("Outbound {}: {}", player.getName(), packet);
+                    }
+                }
+
+                try {
+                    this.sendPacket(Network.deflateRaw(batched.getBuffer(), network.getServer().networkCompressionLevel));
+                } catch (IOException e) {
+                    log.info("Unable to deflate batched packets", e);
+                }
+            } catch (Exception e) {
+                log.fatal("An exception occurred while processing the sendPackets of the player {}. Packets: {}", player, packets != null? Arrays.asList(packets) : "null", e);
+                throw e;
             }
         }
 
         private void sendPacket(byte[] payload) {
-            ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(1 + payload.length);
-            byteBuf.writeByte(0xfe);
-            byteBuf.writeBytes(payload);
-            this.session.send(byteBuf);
+            try {
+                ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(1 + payload.length);
+                byteBuf.writeByte(0xfe);
+                byteBuf.writeBytes(payload);
+                this.session.send(byteBuf);
+            } catch (Exception e) {
+                log.fatal("An exception occurred while processing the sendPacket of the player {}. ", player, e);
+                throw e;
+            }
         }
     }
 }
