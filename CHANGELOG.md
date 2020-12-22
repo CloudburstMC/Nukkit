@@ -9,7 +9,7 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
-## 1.3.2.0-PN-ALPHA.3 - Future
+## 1.3.2.0-PN-ALPHA.3 - 2020-12-12
 
 ### Fixes
 - _Alpha Bug_: Fixes entities from the MobPlugin going into the ground (compatibility issue)
@@ -40,6 +40,7 @@ Click the link above to see the future.
 - _Alpha Bug_: Reversed the addition of new item ids for every item, the "new ids" should revert to the old id on load
 - Bucket with fish can no longer interact with cauldrons
 - The /give command now support all current vanilla namespaced ids
+- Updated the raknet dependency from 1.6.15-PN2 to 1.6.25-PN
 
 ## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
 
