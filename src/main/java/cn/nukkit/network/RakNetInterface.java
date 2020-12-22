@@ -4,11 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
-import cn.nukkit.math.MathHelper;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Utils;
 import com.google.common.base.Preconditions;
@@ -17,8 +15,6 @@ import com.nukkitx.network.raknet.*;
 import com.nukkitx.network.util.DisconnectReason;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.util.concurrent.EventExecutor;
@@ -36,7 +32,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-import java.util.zip.Deflater;
 
 /**
  * author: MagicDroidX
@@ -81,7 +76,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                         session.sendOutbound();
                     } catch (Exception e) {
                         log.fatal("Exception while sending packets to {}", session.player.getName(), e);
-                        session.player.close("Outbound packet error");
+                        //session.player.close("Outbound packet error");
                     }
                 }
             }, 0, 50, TimeUnit.MILLISECONDS));
@@ -321,7 +316,11 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             BinaryStream batched = new BinaryStream();
             for (DataPacket packet : packets) {
                 Preconditions.checkArgument(!(packet instanceof BatchPacket), "Cannot batch BatchPacket");
-                if (!packet.isEncoded) packet.encode();
+                try {
+                    if (!packet.isEncoded) packet.encode();
+                } catch (Exception e) {
+                    log.fatal("Exception while encoding packet {} to {}", packet, player.getName(), e);
+                }
                 byte[] buf = packet.getBuffer();
                 batched.putUnsignedVarInt(buf.length);
                 batched.put(buf);
