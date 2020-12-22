@@ -2301,7 +2301,7 @@ public class Server {
     }
 
     public String getPropertyString(String variable, String defaultValue) {
-        return this.properties.exists(variable) ? (String) this.properties.get(variable) : defaultValue;
+        return this.properties.exists(variable) ? String.valueOf(this.properties.get(variable)) : defaultValue;
     }
 
     public int getPropertyInt(String variable) {
