@@ -1840,6 +1840,9 @@ public abstract class Entity extends Location implements Metadatable {
         Location floorLocation = this.floor();
         Block down = this.level.getBlock(floorLocation.down());
         if (damage > 0) {
+            if(down instanceof BlockHayBale) {
+                damage -= (damage * 0.8f);
+            }
             if (down.getId() == BlockID.HONEY_BLOCK) {
                 damage *= 0.2F;
             }
