@@ -6,13 +6,11 @@ metadata:
     {{- include "nukkit.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
-{{- if ne .Values.service.type "ClusterIP" }}
   ports:
     - port: {{ .Values.service.port }}
       targetPort: udp
       protocol: UDP
       name: udp
-{{- end }}
   selector:
     {{- include "nukkit.selectorLabels" . | nindent 4 }}
 {{- if .Values.service.loadBalancerIP }}
