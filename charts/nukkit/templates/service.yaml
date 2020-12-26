@@ -11,6 +11,7 @@ spec:
       targetPort: udp
       protocol: UDP
       name: udp
+      nodePort: {{ .Values.service.nodePort }}
   selector:
     {{- include "nukkit.selectorLabels" . | nindent 4 }}
 {{- if .Values.service.loadBalancerIP }}
