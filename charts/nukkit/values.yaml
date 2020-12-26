@@ -40,7 +40,7 @@ service:
   type: ClusterIP
   port: 19132
   loadBalancerIP: ""
-  nodePort:
+  nodePort: 39132
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
