@@ -34,7 +34,8 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
         return new ItemBlock(Block.get(BlockID.REDSTONE_LAMP));
     }
 
-    @PowerNukkitDifference(info = "Redstone Event on scheduled update part + use #isGettingPower() method.", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Redstone Event on scheduled update part + use #isGettingPower() method" +
+            " + trigger observer.", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (!this.level.getServer().isRedstoneEnabled()) {
@@ -49,10 +50,12 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
         if (type == Level.BLOCK_UPDATE_SCHEDULED && !this.isGettingPower()) {
             // Redstone event
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
-            getLevel().getServer().getPluginManager().callEvent(ev);
+            this.level.getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return 0;
             }
+
+            this.level.updateComparatorOutputLevelSelective(this, true);
 
             this.level.setBlock(this, Block.get(BlockID.REDSTONE_LAMP), false, false);
         }

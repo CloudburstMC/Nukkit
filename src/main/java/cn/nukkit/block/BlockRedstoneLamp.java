@@ -57,7 +57,8 @@ public class BlockRedstoneLamp extends BlockSolid {
         return true;
     }
 
-    @PowerNukkitDifference(info = "Redstone Event after Block powered check + use #isGettingPower() method.", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Redstone Event after Block powered check + use #isGettingPower() method" +
+            " + trigger observer.", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
@@ -72,6 +73,8 @@ public class BlockRedstoneLamp extends BlockSolid {
                 if (ev.isCancelled()) {
                     return 0;
                 }
+
+                this.level.updateComparatorOutputLevelSelective(this, true);
 
                 this.level.setBlock(this, Block.get(BlockID.LIT_REDSTONE_LAMP), false, false);
                 return 1;
