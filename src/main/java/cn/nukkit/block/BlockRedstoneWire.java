@@ -288,16 +288,13 @@ public class BlockRedstoneWire extends BlockFlowable {
         return canConnectTo(block, null);
     }
 
-    @PowerNukkitDifference(info = "Can connect to BlockBell.", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Can't connect to pistons and bells, but powers them either.", since = "1.4.0.0-PN")
     protected static boolean canConnectTo(Block block, BlockFace side) {
         if (block.getId() == Block.REDSTONE_WIRE) {
             return true;
         } else if (BlockRedstoneDiode.isDiode(block)) {
             BlockFace face = ((BlockRedstoneDiode) block).getFacing();
             return face == side || face.getOpposite() == side;
-        } else if (block instanceof BlockPistonBase || block instanceof BlockBell) {
-//            return ((BlockPistonBase) block).getBlockFace() != side.getOpposite();
-            return true;
         } else {
             return block.isPowerSource() && side != null;
         }
