@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -77,12 +79,13 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
         return 0;
     }
 
-    @PowerNukkitDifference(info = "Add missing update around redstone", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Add missing update around redstone and use own #isPoweredFromSide() method.",
+            since = "1.4.0.0-PN")
     private boolean checkState() {
-        BlockFace face = getBlockFace().getOpposite();
-        Vector3 pos = getLocation();
+        if (!this.isPoweredFromSide()) {
+            BlockFace face = getBlockFace().getOpposite();
+            Vector3 pos = getLocation();
 
-        if (!this.level.isSidePowered(pos.getSide(face), face)) {
             this.level.setBlock(pos, Block.get(BlockID.REDSTONE_TORCH, getDamage()), false, true);
 
             this.level.updateAroundRedstone(pos, face);
@@ -97,6 +100,17 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
         }
 
         return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected boolean isPoweredFromSide() {
+        BlockFace face = getBlockFace().getOpposite();
+        if (this.getSide(face) instanceof BlockPistonBase && this.getSide(face).isGettingPower()) {
+            return true;
+        }
+
+        return this.level.isSidePowered(this.getLocation().getSide(face), face);
     }
 
     @Override

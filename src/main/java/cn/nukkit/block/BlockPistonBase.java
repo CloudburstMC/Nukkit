@@ -139,7 +139,8 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     @Override
-    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Using new method for checking if powered and adding #level.updateAroundRedstone()" +
+            "to update attached redstone torches.", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type != Level.BLOCK_UPDATE_NORMAL && type != Level.BLOCK_UPDATE_REDSTONE && type != Level.BLOCK_UPDATE_SCHEDULED) {
             return 0;
@@ -163,6 +164,8 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 if (arm.chunk != null) {
                     arm.chunk.setChanged();
                 }
+
+                level.updateAroundRedstone(this.getLocation(), null);
             }
 
             return type;

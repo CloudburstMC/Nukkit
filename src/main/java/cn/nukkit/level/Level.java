@@ -1329,9 +1329,10 @@ public class Level implements ChunkManager, Metadatable {
         requireProvider().saveChunks();
     }
 
+    @PowerNukkitDifference(info = "The check if the block is a piston was moved to #getStrongPower().", since = "1.4.0.0-PN")
     public void updateAroundRedstone(Vector3 pos, BlockFace face) {
         for (BlockFace side : BlockFace.values()) {
-            if (face != null && side == face || getBlock(pos) instanceof BlockPistonBase) {
+            if (face != null && side == face) {
                 continue;
             }
 

@@ -149,8 +149,14 @@ public class BlockRedstoneTorch extends BlockTorch {
         return false;
     }
 
+    @PowerNukkitDifference(info = "Check if the side block is piston and if piston is getting power.",
+            since = "1.4.0.0-PN")
     protected boolean isPoweredFromSide() {
         BlockFace face = getBlockFace().getOpposite();
+        if (this.getSide(face) instanceof BlockPistonBase && this.getSide(face).isGettingPower()) {
+            return true;
+        }
+
         return this.level.isSidePowered(this.getLocation().getSide(face), face);
     }
 
