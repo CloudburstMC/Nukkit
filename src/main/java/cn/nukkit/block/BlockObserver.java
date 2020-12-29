@@ -147,7 +147,7 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
             return;
         }
 
-        level.scheduleUpdate(this, 6);
+        level.scheduleUpdate(this, 5);
     }
 
     @Override
