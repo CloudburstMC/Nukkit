@@ -139,8 +139,8 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     @Override
-    @PowerNukkitDifference(info = "Using new method for checking if powered and adding #level.updateAroundRedstone()" +
-            "to update attached redstone torches.", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Using new method for checking if powered and update all around redstone torches, " +
+            "even if the piston can't move.", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type != Level.BLOCK_UPDATE_NORMAL && type != Level.BLOCK_UPDATE_REDSTONE && type != Level.BLOCK_UPDATE_SCHEDULED) {
             return 0;
@@ -158,17 +158,35 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
             boolean powered = this.isGettingPower();
 
+            this.updateAroundRedstoneTorches(powered);
+
             if (arm.state % 2 == 0 && arm.powered != powered && checkState(powered)) {
                 arm.powered = powered;
 
                 if (arm.chunk != null) {
                     arm.chunk.setChanged();
                 }
-
-                level.updateAroundRedstone(this.getLocation(), null);
             }
 
             return type;
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    private void updateAroundRedstoneTorches(boolean powered) {
+        for (BlockFace side : BlockFace.values()) {
+            if ((getSide(side) instanceof BlockRedstoneTorch && powered)
+                    || (getSide(side) instanceof BlockRedstoneTorchUnlit && !powered)) {
+                BlockTorch torch = (BlockTorch) getSide(side);
+
+                BlockTorch.TorchAttachment torchAttachment = torch.getTorchAttachment();
+                Block support = torch.getSide(torchAttachment.getAttachedFace());
+
+                if (support.getLocation().equals(this.getLocation())) {
+                    torch.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+                }
+            }
         }
     }
 
