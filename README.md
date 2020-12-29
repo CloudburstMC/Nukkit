@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.powernukkit', name: 'powernukkit', version: '1.4.0.0-PN-ALPHA.1'
+    compile group: 'org.powernukkit', name: 'powernukkit', version: '1.4.0.0-PN-ALPHA.2'
 }
 ```
 
@@ -54,7 +54,7 @@ dependencies {
     <dependency>
         <groupId>org.powernukkit</groupId>
         <artifactId>powernukkit</artifactId>
-        <version>1.4.0.0-PN-ALPHA.1</version>
+        <version>1.4.0.0-PN-ALPHA.2</version>
     </dependency>
 </dependencies>
 ```

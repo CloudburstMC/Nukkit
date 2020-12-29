@@ -150,7 +150,7 @@ public class StartGamePacket extends DataPacket {
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
         this.putUnsignedVarInt(0); // Custom blocks
-        this.put(RuntimeItems.ITEM_DATA_PALETTE);
+        this.put(RuntimeItems.getRuntimeMapping().getItemDataPalette());
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(this.isInventoryServerAuthoritative);
     }

@@ -1,7 +1,6 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -28,24 +27,10 @@ public class ItemBucket extends Item {
         this(0, 1);
     }
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
-                    "so you may get 0 as meta result even though you have filled bucket.",
-            replaceWith = "An item class specific for the item you want. Eg: ItemBucketWater, ItemBucketFishCod, etc"
-    )
     public ItemBucket(Integer meta) {
         this(meta, 1);
     }
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
-                    "so you may get 0 as meta result even though you have filled bucket.",
-            replaceWith = "An item class specific for the item you want. Eg: ItemBucketWater, ItemBucketFishCod, etc"
-    )
     public ItemBucket(Integer meta, int count) {
         super(BUCKET, meta, count, getName(meta));
     }
@@ -54,18 +39,6 @@ public class ItemBucket extends Item {
     @Since("1.3.2.0-PN")
     protected ItemBucket(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
-    }
-
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Bucket items now have they own ids, and their implementation extends ItemBucket, " +
-                    "so you may get 0 as meta result even though you have filled bucket.",
-            replaceWith = "isEmpty() isLava() isWater() getFishEntityId()"
-    )
-    @Override
-    public int getDamage() {
-        return super.getDamage();
     }
 
     protected static String getName(int meta) {
@@ -344,28 +317,5 @@ public class ItemBucket extends Item {
 
         player.removeAllEffects();
         return true;
-    }
-
-    @Since("1.3.2.0-PN")
-    @PowerNukkitOnly
-    @Override
-    public Item selfUpgrade() {
-        if (getId() != BUCKET || getDamage() == 0) {
-            return this;
-        }
-        
-        int newId;
-        switch (getDamage()) {
-            case 1: newId = MILK_BUCKET; break; 
-            case 2: newId = COD_BUCKET; break; 
-            case 3: newId = SALMON_BUCKET; break; 
-            case 4: newId = TROPICAL_FISH_BUCKET; break; 
-            case 5: newId = PUFFERFISH_BUCKET; break; 
-            case 8: newId = WATER_BUCKET; break; 
-            case 10: newId = LAVA_BUCKET; break;
-            default: return this;
-        }
-        
-        return Item.get(newId, 0, getCount(), getCompoundTag());
     }
 }

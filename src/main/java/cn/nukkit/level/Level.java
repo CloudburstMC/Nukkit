@@ -25,7 +25,6 @@ import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemBucket;
-import cn.nukkit.item.ItemSpawnEgg;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.format.Chunk;
@@ -2405,20 +2404,6 @@ public class Level implements ChunkManager, Metadatable {
     @PowerNukkitDifference(info = "PowerNukkit#403", since = "1.3.1.2-PN")
     @PowerNukkitDifference(info = "Fixed PowerNukkit#716, block stops placing when towering up", since = "1.4.0.0-PN")
     public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz, Player player, boolean playSound) {
-        // Hack for backward compatibility with MobPlugin
-        Item input;
-        if (item instanceof ItemSpawnEgg) {
-            input = ((ItemSpawnEgg) item).getLegacySpawnEgg();
-        } else {
-            input = item.clone();
-        }
-        Item output = useItemOn0(vector, input, face, fx, fy, fz, player, playSound);
-        item.setCount(input.getCount());
-        item.setCompoundTag(input.getCompoundTag());
-        return output;
-    }
-
-    private Item useItemOn0(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz, Player player, boolean playSound) {
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
 
@@ -2470,13 +2455,13 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
             } else {
-                if((item instanceof ItemBucket) && ((ItemBucket) item).isWater()) {
+                if((item instanceof ItemBucket) && ((ItemBucket)item).isWater()) {
                     player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, target.getLevelBlockAtLayer(1))}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 }
                 return null;
             }
 
-            if((item instanceof ItemBucket) && ((ItemBucket) item).isWater()) {
+            if((item instanceof ItemBucket) && ((ItemBucket)item).isWater()) {
                 player.getLevel().sendBlocks(new Player[] {player}, new Block[] {target.getLevelBlockAtLayer(1)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
             }
         } else if (target.canBeActivated() && target.onActivate(item, player)) {
