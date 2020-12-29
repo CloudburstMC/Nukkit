@@ -57,7 +57,7 @@ public abstract class ContainerInventory extends BaseInventory {
     public void onClose(Player who) {
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = who.getWindowId(this);
-        pk.wasServerInitiated = false;
+        pk.wasServerInitiated = who.getClosingWindowId() != pk.windowId;
         who.dataPacket(pk);
         super.onClose(who);
     }

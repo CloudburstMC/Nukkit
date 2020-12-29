@@ -1,7 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
+import cn.nukkit.item.MinecraftItemID;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -39,6 +39,6 @@ public class EntitySquid extends EntityWaterAnimal {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(ItemID.INK_SAC)};
+        return new Item[]{MinecraftItemID.INK_SAC.get(1)};
     }
 }

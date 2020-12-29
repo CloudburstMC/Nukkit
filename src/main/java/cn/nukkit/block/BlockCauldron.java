@@ -106,21 +106,20 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
         }
 
         switch (item.getId()) {
-            case ItemID.BUCKET:
-            case ItemID.LAVA_BUCKET:
-            case ItemID.WATER_BUCKET: {
+            case Item.BUCKET:
                 ItemBucket bucket = (ItemBucket) item;
+                if (bucket.getFishEntityId() != null) {
+                    break;
+                }
                 if (bucket.isEmpty()) {
                     if (!isFull() || cauldron.isCustomColor() || cauldron.hasPotion()) {
                         break;
                     }
                     
-                    Item waterBucket = Item.get(ItemID.WATER_BUCKET);
-
-                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, waterBucket);
+                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, MinecraftItemID.WATER_BUCKET.get(1, bucket.getCompoundTag()));
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        replaceBucket(item, player, ev.getItem());
+                        replaceBucket(bucket, player, ev.getItem());
                         this.setFillLevel(0);//empty
                         this.level.setBlock(this, this, true);
                         cauldron.clearCustomColor();
@@ -130,18 +129,16 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     if (isFull() && !cauldron.isCustomColor() && !cauldron.hasPotion() && item.getDamage() == 8) {
                         break;
                     }
-                    
-                    Item emptyBucket = Item.get(ItemID.BUCKET);
 
-                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, emptyBucket);
+                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, MinecraftItemID.BUCKET.get(1, bucket.getCompoundTag()));
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         if (player.isSurvival() || player.isAdventure()) {
-                            replaceBucket(item, player, ev.getItem());
+                            replaceBucket(bucket, player, ev.getItem());
                         }
                         if (cauldron.hasPotion()) {//if has potion
                             clearWithFizz(cauldron);
-                        } else if (bucket.isWater()) {
+                        } else if (bucket.isWater()) { //water bucket
                             this.setFillLevel(3);//fill
                             cauldron.clearCustomColor();
                             this.level.setBlock(this, this, true);
@@ -161,8 +158,6 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     }
                 }
                 break;
-            }
-
             case ItemID.DYE:
                 if (isEmpty() || cauldron.hasPotion()) {
                     break;

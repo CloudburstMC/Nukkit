@@ -1,7 +1,6 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
@@ -23,35 +22,14 @@ import java.util.OptionalInt;
  */
 public class ItemBoat extends Item {
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Boat items now have they own ids, and their implementation extends ItemBoat, " +
-                    "so you may get 0 as meta result even though you have a boat of material different to oak wood.",
-            replaceWith = "new ItemBoatOak()"
-    )
     public ItemBoat() {
         this(0, 1);
     }
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Boat items now have they own ids, and their implementation extends ItemBoat, " +
-                    "so you may get 0 as meta result even though you have a boat of material different to oak wood.",
-            replaceWith = "An item class specific for the item you want. Eg: ItemBoatOak, ItemBoatSpruce, etc"
-    )
     public ItemBoat(Integer meta) {
         this(meta, 1);
     }
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Boat items now have they own ids, and their implementation extends ItemBoat, " +
-                    "so you may get 0 as meta result even though you have a boat of material different to oak wood.",
-            replaceWith = "An item class specific for the item you want. Eg: ItemBoatOak, ItemBoatSpruce, etc"
-    )
     public ItemBoat(Integer meta, int count) {
         super(BOAT, meta, count, "Boat");
     }
@@ -62,13 +40,6 @@ public class ItemBoat extends Item {
         super(id, meta, count, name);
     }
 
-    @Deprecated
-    @DeprecationDetails(
-            since = "1.3.2.0-PN",
-            reason = "Boat items now have they own ids, and their implementation extends ItemBoat, " +
-                    "so you may get 0 as meta result even though you have a boat of material different to oak wood.",
-            replaceWith = "getLegacyBoatDamage()"
-    )
     @Override
     public int getDamage() {
         return super.getDamage();
@@ -120,26 +91,6 @@ public class ItemBoat extends Item {
 
         boat.spawnToAll();
         return true;
-    }
-
-    @Since("1.3.2.0-PN")
-    @PowerNukkitOnly
-    @Override
-    public Item selfUpgrade() {
-        if (getId() != BOAT) {
-            return this;
-        }
-        int newId;
-        switch (super.getDamage()) {
-            case 0: newId = OAK_BOAT; break; 
-            case 1: newId = SPRUCE_BOAT; break; 
-            case 2: newId = BIRCH_BOAT; break; 
-            case 3: newId = JUNGLE_BOAT; break; 
-            case 4: newId = ACACIA_BOAT; break; 
-            case 5: newId = DARK_OAK_BOAT; break;
-            default: return this;
-        }
-        return Item.get(newId, 0, getCount(), getCompoundTag());
     }
 
     @Override
