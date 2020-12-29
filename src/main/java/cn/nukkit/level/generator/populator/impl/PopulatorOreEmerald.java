@@ -10,7 +10,7 @@ import cn.nukkit.math.NukkitRandom;
 import static cn.nukkit.block.BlockID.STONE;
 
 /**
- * @author good777LUCKY
+ * @author GoodLucky777
  */
 public class PopulatorOreEmerald extends Populator {
 
