@@ -5,6 +5,7 @@ import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
@@ -83,6 +84,16 @@ public class BlockRedstone extends BlockSolidMeta {
         level.updateAroundRedstone(this.getLocation(), null);
 
         return true;
+    }
+
+    @Override
+    @PowerNukkitDifference(info = "Update around redstone if moved", since = "1.4.0.0-PN")
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_MOVED) {
+            level.updateAroundRedstone(this.getLocation(), null);
+            return type;
+        }
+        return 0;
     }
 
     @Override

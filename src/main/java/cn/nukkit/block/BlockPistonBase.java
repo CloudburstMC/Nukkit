@@ -139,7 +139,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     @Override
-    @PowerNukkitDifference(info = "Using new method for checking if powered and update all around redstone torches, " +
+    @PowerNukkitDifference(info = "Using new method for checking if powered + update all around redstone torches, " +
             "even if the piston can't move.", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type != Level.BLOCK_UPDATE_NORMAL && type != Level.BLOCK_UPDATE_REDSTONE && type != Level.BLOCK_UPDATE_SCHEDULED) {
@@ -153,12 +153,12 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             // before the "real" BlockEntity is set. That means, if we'd use the other method here,
             // it would create two BlockEntities.
             BlockEntityPistonArm arm = this.getBlockEntity();
-            if (arm == null)
-                return 0;
 
             boolean powered = this.isGettingPower();
-
             this.updateAroundRedstoneTorches(powered);
+
+            if (arm == null || !arm.finished)
+                return 0;
 
             if (arm.state % 2 == 0 && arm.powered != powered && checkState(powered)) {
                 arm.powered = powered;
