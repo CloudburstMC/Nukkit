@@ -172,7 +172,8 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
     }
 
     @Override
-    @PowerNukkitDifference(info = "Add option to see if blockentity is currently handling piston move (var finished)")
+    @PowerNukkitDifference(info = "Add option to see if blockentity is currently handling piston move (var finished)" +
+            "+ update around redstone directly after moved block set", since = "1.4.0.0-PN")
     public boolean onUpdate() {
         boolean hasUpdate = true;
 
@@ -209,6 +210,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
                     if (this.level.setBlock(movingBlock, moved)) {
                         moved.onUpdate(Level.BLOCK_UPDATE_MOVED);
+                        moved.level.updateAroundRedstone(moved.getLocation(), null);
                     }
                 }
             }

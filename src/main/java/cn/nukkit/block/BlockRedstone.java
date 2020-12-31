@@ -87,16 +87,6 @@ public class BlockRedstone extends BlockSolidMeta {
     }
 
     @Override
-    @PowerNukkitDifference(info = "Update around redstone if moved", since = "1.4.0.0-PN")
-    public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_MOVED) {
-            level.updateAroundRedstone(this.getLocation(), null);
-            return type;
-        }
-        return 0;
-    }
-
-    @Override
     public boolean isPowerSource() {
         return true;
     }
