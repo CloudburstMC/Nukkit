@@ -426,7 +426,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 return true;
             }
 
-            if (!this.addBlockLine(this.blockToMove, this.blockToMove.getSide(this.moveDirection.getOpposite()))) {
+            if (!this.addBlockLine(this.blockToMove, this.blockToMove.getSide(this.moveDirection.getOpposite()), true)) {
                 return false;
             }
 
@@ -442,16 +442,19 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             return true;
         }
 
-        @PowerNukkitDifference(info = "Fix honeyblock on piston facing direction and fix block pushing limit for slime/honey blocks.", since = "1.4.0.0-PN")
-        private boolean addBlockLine(Block origin, Block from) {
+        @PowerNukkitDifference(info = "Fix honeyblock on piston facing direction" +
+                "+ fix block pushing limit for slime/honey blocks" +
+                "+ fix that honey/slime blocks could be retracted when the piston retracts in facing direction",
+                since = "1.4.0.0-PN")
+        private boolean addBlockLine(Block origin, Block from, boolean mainBlockLine) {
             Block block = origin.clone();
 
             if (block.getId() == AIR) {
                 return true;
             }
 
-            if (block.getId() == SLIME_BLOCK && from.getId() == HONEY_BLOCK
-                    || block.getId() == HONEY_BLOCK && from.getId() == SLIME_BLOCK) {
+            if (!mainBlockLine && (block.getId() == SLIME_BLOCK && from.getId() == HONEY_BLOCK
+                    || block.getId() == HONEY_BLOCK && from.getId() == SLIME_BLOCK)) {
                 return true;
             }
 
@@ -477,7 +480,13 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             List<Block> sticked = new ArrayList<>();
 
             while (block.getId() == SLIME_BLOCK || block.getId() == HONEY_BLOCK) {
+                Block oldBlock = block.clone();
                 block = origin.getSide(this.moveDirection.getOpposite(), count);
+
+                if (!extending && (block.getId() == SLIME_BLOCK && oldBlock.getId() == HONEY_BLOCK
+                        || block.getId() == HONEY_BLOCK && oldBlock.getId() == SLIME_BLOCK)) {
+                    break;
+                }
 
                 if (block.getId() == AIR || !canPush(block, this.moveDirection, false, extending) || block.equals(this.pistonPos)) {
                     break;
@@ -557,7 +566,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
         private boolean addBranchingBlocks(Block block) {
             for (BlockFace face : BlockFace.values()) {
-                if (face.getAxis() != this.moveDirection.getAxis() && !this.addBlockLine(block.getSide(face), block)) {
+                if (face.getAxis() != this.moveDirection.getAxis() && !this.addBlockLine(block.getSide(face), block, false)) {
                     return false;
                 }
             }
