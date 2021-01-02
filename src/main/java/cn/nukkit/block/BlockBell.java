@@ -316,6 +316,7 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
 
     @Override
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean isGettingPower() {
         for (BlockFace side : BlockFace.values()) {
             Block b = this.getSide(side);
