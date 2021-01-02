@@ -86,7 +86,6 @@ import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -207,8 +206,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected AdventureSettings adventureSettings;
 
     protected boolean checkMovement = true;
-
-    private final Queue<DataPacket> packetQueue = new ConcurrentLinkedDeque<>();
 
     private PermissibleBase perm = null;
 
@@ -1779,17 +1776,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void checkNetwork() {
-        if (!this.packetQueue.isEmpty()) {
-            Player[] pArr = new Player[]{this};
-            List<DataPacket> toBatch = new ArrayList<>();
-            DataPacket packet;
-            while ((packet = this.packetQueue.poll()) != null) {
-                toBatch.add(packet);
-            }
-            DataPacket[] arr = toBatch.toArray(new DataPacket[0]);
-            this.server.batchPackets(pArr, arr, false);
-        }
-
         if (!this.isOnline()) {
             return;
         }
@@ -1801,7 +1787,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (!this.loadQueue.isEmpty() || !this.spawned) {
             this.sendNextChunk();
         }
-
     }
 
     public boolean canInteract(Vector3 pos, double maxDistance) {
@@ -2265,7 +2250,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     break;
                 case ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET:
-                    log.warn("Received packet violation warning: " + packet.toString());
+                    log.warn("Violation warning from {}: {}", this.getName(), packet.toString());
                     break;
                 case ProtocolInfo.EMOTE_PACKET:
                     for (Player viewer : this.getViewers().values()) {

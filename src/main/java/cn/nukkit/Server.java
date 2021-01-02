@@ -651,26 +651,27 @@ public class Server {
     }
 
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
-        broadcastPacket(players.toArray(new Player[0]), packet);
-    }
+        packet.tryEncode();
 
-    public static void broadcastPacket(Player[] players, DataPacket packet) {
-        packet.encode();
-        packet.isEncoded = true;
-
-        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-            for (Player player : players) {
-                player.dataPacket(packet);
-            }
-        } else {
-            getInstance().batchPackets(players, new DataPacket[]{packet}, true);
+        for (Player player : players) {
+            player.dataPacket(packet);
         }
     }
 
+    public static void broadcastPacket(Player[] players, DataPacket packet) {
+        packet.tryEncode();
+
+        for (Player player : players) {
+            player.dataPacket(packet);
+        }
+    }
+
+    @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
 
+    @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
         if (players == null || packets == null || players.length == 0 || packets.length == 0) {
             return;

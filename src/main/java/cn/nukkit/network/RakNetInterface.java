@@ -21,6 +21,7 @@ import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.FastThreadLocal;
 import io.netty.util.concurrent.ScheduledFuture;
 import io.netty.util.internal.PlatformDependent;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -293,12 +294,12 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         }
 
         private void sendOutbound() {
-            List<DataPacket> toBatch = new ArrayList<>();
+            List<DataPacket> toBatch = new ObjectArrayList<>();
             DataPacket packet;
             while ((packet = this.outbound.poll()) != null) {
                 if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
                     if (!toBatch.isEmpty()) {
-                        this.sendPackets(toBatch.toArray(new DataPacket[0]));
+                        this.sendPackets(toBatch);
                         toBatch.clear();
                     }
 
@@ -309,15 +310,15 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             }
 
             if (!toBatch.isEmpty()) {
-                this.sendPackets(toBatch.toArray(new DataPacket[0]));
+                this.sendPackets(toBatch);
             }
         }
 
-        private void sendPackets(DataPacket[] packets) {
+        private void sendPackets(Collection<DataPacket> packets) {
             BinaryStream batched = new BinaryStream();
             for (DataPacket packet : packets) {
                 Preconditions.checkArgument(!(packet instanceof BatchPacket), "Cannot batch BatchPacket");
-                if (!packet.isEncoded) packet.encode();
+                packet.tryEncode();
                 byte[] buf = packet.getBuffer();
                 batched.putUnsignedVarInt(buf.length);
                 batched.put(buf);
