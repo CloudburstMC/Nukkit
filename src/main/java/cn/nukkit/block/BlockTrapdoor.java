@@ -38,7 +38,10 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     private static final double THICKNESS = 0.1875;
 
-    // no idea how to make this better :d
+    // Contains a list of positions of trap doors, which have been opened by hand (by a player).
+    // It is used to detect on redstone update, if the door should be closed if redstone is off on the update,
+    // previously the door always closed, when placing an unpowered redstone at the door, this fixes it
+    // and gives the vanilla behavior; no idea how to make this better :d
     private static final List<Location> manualOverrides = new ArrayList<>();
 
     public static final BlockProperty<BlockFace> TRAPDOOR_DIRECTION = new ArrayBlockProperty<>("direction", false, new BlockFace[] {

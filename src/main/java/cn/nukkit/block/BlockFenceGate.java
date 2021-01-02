@@ -30,11 +30,14 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
  * @since 2015/11/23
  */
 public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
+    // Contains a list of positions of fence gates, which have been opened by hand (by a player).
+    // It is used to detect on redstone update, if the gate should be closed if redstone is off on the update,
+    // previously the gate always closed, when placing an unpowered redstone at the gate, this fixes it
+    // and gives the vanilla behavior; no idea how to make this better :d
+    private static final List<Location> manualOverrides = new ArrayList<>();
+
     public static final BooleanBlockProperty IN_WALL = new BooleanBlockProperty("in_wall_bit", false);
     public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, OPEN, IN_WALL);
-
-    // no idea how to make this better :d
-    private static final List<Location> manualOverrides = new ArrayList<>();
 
     public BlockFenceGate() {
         this(0);
