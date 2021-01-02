@@ -233,28 +233,23 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         Location down;
         Location up;
         if (this.isTop()) {
-            down = down().getLocation().clone();
-            up = getLocation().clone();
+            down = down().getLocation();
+            up = getLocation();
         } else {
-            down = getLocation().clone();
-            up = up().getLocation().clone();
+            down = getLocation();
+            up = up().getLocation();
         }
 
         for (BlockFace side : BlockFace.values()) {
-            Block b = up.getSide(side).getLevelBlock();
+            Block blockDown = down.getSide(side).getLevelBlock();
+            Block blockUp = up.getSide(side).getLevelBlock();
 
-            if (this.level.isSidePowered(b.getLocation(), side)) {
+            if (this.level.isSidePowered(blockDown.getLocation(), side)
+                    || this.level.isSidePowered(blockUp.getLocation(), side)) {
                 return true;
             }
         }
 
-        for (BlockFace side : BlockFace.values()) {
-            Block b = down.getSide(side).getLevelBlock();
-
-            if (this.level.isSidePowered(b.getLocation(), side)) {
-                return true;
-            }
-        }
         return this.level.isBlockPowered(down) || this.level.isBlockPowered(up);
     }
 
