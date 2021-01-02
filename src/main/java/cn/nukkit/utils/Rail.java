@@ -4,11 +4,7 @@ import cn.nukkit.api.API;
 import cn.nukkit.block.Block;
 import cn.nukkit.math.BlockFace;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
-import java.util.stream.Stream;
 
 import static cn.nukkit.math.BlockFace.*;
 import static cn.nukkit.utils.Rail.Orientation.State.*;
@@ -28,27 +24,25 @@ public final class Rail {
     }
 
     public enum Orientation {
-        STRAIGHT_NORTH_SOUTH(0, STRAIGHT, NORTH, SOUTH, null),
-        STRAIGHT_EAST_WEST(1, STRAIGHT, EAST, WEST, null),
-        ASCENDING_EAST(2, ASCENDING, EAST, WEST, EAST),
-        ASCENDING_WEST(3, ASCENDING, EAST, WEST, WEST),
-        ASCENDING_NORTH(4, ASCENDING, NORTH, SOUTH, NORTH),
-        ASCENDING_SOUTH(5, ASCENDING, NORTH, SOUTH, SOUTH),
-        CURVED_SOUTH_EAST(6, CURVED, SOUTH, EAST, null),
-        CURVED_SOUTH_WEST(7, CURVED, SOUTH, WEST, null),
-        CURVED_NORTH_WEST(8, CURVED, NORTH, WEST, null),
-        CURVED_NORTH_EAST(9, CURVED, NORTH, EAST, null);
+        STRAIGHT_NORTH_SOUTH(STRAIGHT, NORTH, SOUTH, null),
+        STRAIGHT_EAST_WEST(STRAIGHT, EAST, WEST, null),
+        ASCENDING_EAST(ASCENDING, EAST, WEST, EAST),
+        ASCENDING_WEST(ASCENDING, EAST, WEST, WEST),
+        ASCENDING_NORTH(ASCENDING, NORTH, SOUTH, NORTH),
+        ASCENDING_SOUTH(ASCENDING, NORTH, SOUTH, SOUTH),
+        CURVED_SOUTH_EAST(CURVED, SOUTH, EAST, null),
+        CURVED_SOUTH_WEST(CURVED, SOUTH, WEST, null),
+        CURVED_NORTH_WEST(CURVED, NORTH, WEST, null),
+        CURVED_NORTH_EAST(CURVED, NORTH, EAST, null);
 
         private static final Orientation[] META_LOOKUP = new Orientation[values().length];
-        private final int meta;
         private final State state;
-        private final List<BlockFace> connectingDirections;
+        private final BlockFace[] connectingDirections;
         private final BlockFace ascendingDirection;
 
-        Orientation(int meta, State state, BlockFace from, BlockFace to, BlockFace ascendingDirection) {
-            this.meta = meta;
+        Orientation(State state, BlockFace from, BlockFace to, BlockFace ascendingDirection) {
             this.state = state;
-            this.connectingDirections = Arrays.asList(from, to);
+            this.connectingDirections = new BlockFace[]{from, to};
             this.ascendingDirection = ascendingDirection;
         }
 
@@ -88,8 +82,15 @@ public final class Rail {
 
         public static Orientation curved(BlockFace f1, BlockFace f2) {
             for (Orientation o : new Orientation[]{CURVED_SOUTH_EAST, CURVED_SOUTH_WEST, CURVED_NORTH_WEST, CURVED_NORTH_EAST}) {
-                if (o.connectingDirections.contains(f1) && o.connectingDirections.contains(f2)) {
-                    return o;
+                BlockFace found = null;
+                for (BlockFace f0 : o.connectingDirections) {
+                    if (found == f1 && f0 == f2 || found == f2 && f0 == f1)
+                        return o;
+                    if (f0 == f1 || f0 == f2) {
+                        if (f1 == f2)
+                            return o;
+                        found = f0;
+                    }
                 }
             }
             return CURVED_SOUTH_EAST;
@@ -97,27 +98,43 @@ public final class Rail {
 
         public static Orientation straightOrCurved(BlockFace f1, BlockFace f2) {
             for (Orientation o : new Orientation[]{STRAIGHT_NORTH_SOUTH, STRAIGHT_EAST_WEST, CURVED_SOUTH_EAST, CURVED_SOUTH_WEST, CURVED_NORTH_WEST, CURVED_NORTH_EAST}) {
-                if (o.connectingDirections.contains(f1) && o.connectingDirections.contains(f2)) {
-                    return o;
+                BlockFace found = null;
+                for (BlockFace f0 : o.connectingDirections) {
+                    if (found == f1 && f0 == f2 || found == f2 && f0 == f1)
+                        return o;
+                    if (f0 == f1 || f0 == f2) {
+                        if (f1 == f2)
+                            return o;
+                        found = f0;
+                    }
                 }
             }
             return STRAIGHT_NORTH_SOUTH;
         }
 
         public int metadata() {
-            return meta;
+            return this.ordinal();
         }
 
         public boolean hasConnectingDirections(BlockFace... faces) {
-            return Stream.of(faces).allMatch(connectingDirections::contains);
+            for1:
+            for (BlockFace f1 : faces) {
+                for (BlockFace f2 : connectingDirections) {
+                    if (f1 == f2)
+                        continue for1;
+                }
+
+                return false;
+            }
+            return true;
         }
 
-        public List<BlockFace> connectingDirections() {
+        public BlockFace[] connectingDirections() {
             return connectingDirections;
         }
 
-        public Optional<BlockFace> ascendingDirection() {
-            return Optional.ofNullable(ascendingDirection);
+        public BlockFace ascendingDirection() {
+            return ascendingDirection;
         }
 
         public enum State {
@@ -138,7 +155,7 @@ public final class Rail {
 
         static {
             for (Orientation o : values()) {
-                META_LOOKUP[o.meta] = o;
+                META_LOOKUP[o.ordinal()] = o;
             }
         }
     }
@@ -156,6 +173,6 @@ public final class Rail {
     }
 
     private Rail() {
-        //no instance
+        throw new UnsupportedOperationException(); // Really no rail instance
     }
 }

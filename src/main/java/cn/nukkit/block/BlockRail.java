@@ -11,10 +11,11 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cn.nukkit.math.BlockFace.*;
 import static cn.nukkit.utils.Rail.Orientation.*;
@@ -71,8 +72,8 @@ public class BlockRail extends BlockFlowable implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            Optional<BlockFace> ascendingDirection = this.getOrientation().ascendingDirection();
-            if (this.down().isTransparent() || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
+            BlockFace ascendingDirection = this.getOrientation().ascendingDirection();
+            if (this.down().isTransparent() || (ascendingDirection != null && this.getSide(ascendingDirection).isTransparent())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -103,8 +104,8 @@ public class BlockRail extends BlockFlowable implements Faceable {
             return false;
         }
         Map<BlockRail, BlockFace> railsAround = this.checkRailsAroundAffected();
-        List<BlockRail> rails = new ArrayList<>(railsAround.keySet());
-        List<BlockFace> faces = new ArrayList<>(railsAround.values());
+        List<BlockRail> rails = new ObjectArrayList<>(railsAround.keySet());
+        List<BlockFace> faces = new ObjectArrayList<>(railsAround.values());
         if (railsAround.size() == 1) {
             BlockRail other = rails.get(0);
             this.setDamage(this.connect(other, railsAround.get(other)).metadata());
@@ -121,15 +122,23 @@ public class BlockRail extends BlockFlowable implements Faceable {
                     BlockRail rail2 = rails.get(1);
                     this.setDamage(this.connect(rail1, railsAround.get(rail1), rail2, railsAround.get(rail2)).metadata());
                 } else {
-                    List<BlockFace> cd = Stream.of(CURVED_SOUTH_EAST, CURVED_NORTH_EAST, CURVED_SOUTH_WEST)
-                            .filter(o -> faces.containsAll(o.connectingDirections()))
-                            .findFirst().get().connectingDirections();
-                    BlockFace f1 = cd.get(0);
-                    BlockFace f2 = cd.get(1);
+                    BlockFace[] cd = null;
+                    for1:
+                    for (Orientation o : new Orientation[]{CURVED_SOUTH_EAST, CURVED_NORTH_EAST, CURVED_SOUTH_WEST}) {
+                        for (BlockFace f1 : o.connectingDirections()) {
+                            if (!faces.contains(f1))
+                                continue for1;
+                        }
+                        cd = o.connectingDirections();
+                    }
+                    BlockFace f1 = cd[0];
+                    BlockFace f2 = cd[1];
                     this.setDamage(this.connect(rails.get(faces.indexOf(f1)), f1, rails.get(faces.indexOf(f2)), f2).metadata());
                 }
             } else {
-                BlockFace f = faces.stream().min((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((x == y) ? 0 : -1)).get();
+                List<BlockFace> facesSort = new ObjectArrayList<>(faces);
+                facesSort.sort((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((x == y) ? 0 : -1));
+                BlockFace f = facesSort.get(0);
                 BlockFace fo = f.getOpposite();
                 if (faces.contains(fo)) { //Opposite connectable
                     this.setDamage(this.connect(rails.get(faces.indexOf(f)), f, rails.get(faces.indexOf(fo)), fo).metadata());
@@ -188,28 +197,36 @@ public class BlockRail extends BlockFlowable implements Faceable {
     }
 
     private Map<BlockRail, BlockFace> checkRailsAroundAffected() {
-        Map<BlockRail, BlockFace> railsAround = this.checkRailsAround(Arrays.asList(SOUTH, EAST, WEST, NORTH));
-        return railsAround.keySet().stream()
-                .filter(r -> r.checkRailsConnected().size() != 2)
-                .collect(Collectors.toMap(r -> r, railsAround::get));
+        Map<BlockRail, BlockFace> railsAround = this.checkRailsAround(SOUTH, EAST, WEST, NORTH);
+        Map<BlockRail, BlockFace> result = new HashMap<>();
+        for (BlockRail r : railsAround.keySet()) {
+            if (r.checkRailsConnected().size() != 2)
+                result.put(r, railsAround.get(r));
+        }
+        return result;
     }
 
-    private Map<BlockRail, BlockFace> checkRailsAround(Collection<BlockFace> faces) {
+    private Map<BlockRail, BlockFace> checkRailsAround(BlockFace... faces) {
         Map<BlockRail, BlockFace> result = new HashMap<>();
-        faces.forEach(f -> {
-            Block b = this.getSide(f);
-            Stream.of(b, b.up(), b.down())
-                    .filter(Rail::isRailBlock)
-                    .forEach(block -> result.put((BlockRail) block, f));
-        });
+        for (BlockFace face : faces) {
+            Block b = this.getSide(face);
+            Block[] blocks = new Block[]{b, b.up(), b.down()};
+            for (Block block : blocks) {
+                if (Rail.isRailBlock(block))
+                    result.put((BlockRail) block, face);
+            }
+        }
         return result;
     }
 
     protected Map<BlockRail, BlockFace> checkRailsConnected() {
         Map<BlockRail, BlockFace> railsAround = this.checkRailsAround(this.getOrientation().connectingDirections());
-        return railsAround.keySet().stream()
-                .filter(r -> r.getOrientation().hasConnectingDirections(railsAround.get(r).getOpposite()))
-                .collect(Collectors.toMap(r -> r, railsAround::get));
+        Map<BlockRail, BlockFace> result = new HashMap<>();
+        for (BlockRail r : railsAround.keySet()) {
+            if (r.getOrientation().hasConnectingDirections(railsAround.get(r).getOpposite()))
+                result.put(r, railsAround.get(r));
+        }
+        return result;
     }
 
     public boolean isAbstract() {

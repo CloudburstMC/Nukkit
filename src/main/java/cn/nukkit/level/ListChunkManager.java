@@ -5,12 +5,11 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class ListChunkManager implements ChunkManager {
 
-    private ChunkManager parent;
-    private List<Block> blocks;
+    private final ChunkManager parent;
+    private final List<Block> blocks;
 
     public ListChunkManager(ChunkManager parent) {
         this.parent = parent;
@@ -19,43 +18,72 @@ public class ListChunkManager implements ChunkManager {
 
     @Override
     public int getBlockIdAt(int x, int y, int z) {
-        Optional<Block> optionalBlock = this.blocks.stream().filter(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z).findAny();
-        return optionalBlock.map(Block::getId).orElseGet(() -> this.parent.getBlockIdAt(x, y, z));
+        for (Block block : this.blocks) {
+            if (block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z)
+                return block.getId();
+        }
+        return this.parent.getBlockIdAt(x, y, z);
     }
 
     @Override
     public void setBlockFullIdAt(int x, int y, int z, int fullId) {
-        this.blocks.removeIf(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z);
-        this.blocks.add(Block.get(fullId, null, x, y, z));
+        Block newBlock = Block.get(fullId, null, x, y, z);
+        for (int i = 0; i < this.blocks.size(); i++) {
+            Block block = this.blocks.get(i);
+            if (block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z) {
+                this.blocks.set(i, newBlock);
+                return;
+            }
+        }
+        this.blocks.add(newBlock);
     }
 
     @Override
     public void setBlockIdAt(int x, int y, int z, int id) {
-        Optional<Block> optionalBlock = this.blocks.stream().filter(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z).findAny();
-        Block block = optionalBlock.orElse(Block.get(this.getBlockIdAt(x, y, z), this.getBlockDataAt(x, y, z), new Position(x, y, z)));
-        this.blocks.remove(block);
-        this.blocks.add(Block.get(this.getBlockIdAt(x, y, z), this.getBlockDataAt(x, y, z), new Position(x, y, z)));
+        Block newBlock = Block.get(id, this.getBlockDataAt(x, y, z), new Position(x, y, z));
+        for (int i = 0; i < this.blocks.size(); i++) {
+            Block block = this.blocks.get(i);
+            if (block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z) {
+                this.blocks.set(i, newBlock);
+                return;
+            }
+        }
+        this.blocks.add(newBlock);
     }
 
     @Override
     public void setBlockAt(int x, int y, int z, int id, int data) {
-        this.blocks.removeIf(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z);
-        this.blocks.add(Block.get(id, data, new Position(x, y, z)));
+        Block newBlock = Block.get(id, data, new Position(x, y, z));
+        for (int i = 0; i < this.blocks.size(); i++) {
+            Block block = this.blocks.get(i);
+            if (block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z) {
+                this.blocks.set(i, newBlock);
+                return;
+            }
+        }
+        this.blocks.add(newBlock);
     }
 
     @Override
     public int getBlockDataAt(int x, int y, int z) {
-        Optional<Block> optionalBlock = this.blocks.stream().filter(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z).findAny();
-        return optionalBlock.map(Block::getDamage).orElseGet(() -> this.parent.getBlockDataAt(x, y, z));
+        for (Block block : this.blocks) {
+            if (block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z)
+                return block.getDamage();
+        }
+        return this.parent.getBlockDataAt(x, y, z);
     }
 
     @Override
     public void setBlockDataAt(int x, int y, int z, int data) {
-        Optional<Block> optionalBlock = this.blocks.stream().filter(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z).findAny();
-        Block block = optionalBlock.orElse(Block.get(this.getBlockIdAt(x, y, z), this.getBlockDataAt(x, y, z), new Position(x, y, z)));
-        this.blocks.remove(block);
-        block.setDamage(data);
-        this.blocks.add(block);
+        Block newBlock = Block.get(this.getBlockIdAt(x, y, z), data, new Position(x, y, z));
+        for (int i = 0; i < this.blocks.size(); i++) {
+            Block block = this.blocks.get(i);
+            if (block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z) {
+                this.blocks.set(i, newBlock);
+                return;
+            }
+        }
+        this.blocks.add(newBlock);
     }
 
     @Override

@@ -11,11 +11,11 @@ import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import cn.nukkit.utils.*;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * author: MagicDroidX
@@ -184,10 +184,12 @@ public class EntityHuman extends EntityHumanType {
                 if (skinTag.contains("PieceTintColors")) {
                     ListTag<CompoundTag> tintColors = skinTag.getList("PieceTintColors", CompoundTag.class);
                     for (CompoundTag tintColor : tintColors.getAll()) {
+                        List<String> colors = new ObjectArrayList<>();
+                        for (StringTag stringTag : tintColor.getList("Colors", StringTag.class).getAll())
+                            colors.add(stringTag.data);
                         newSkin.getTintColors().add(new PersonaPieceTint(
                                 tintColor.getString("PieceType"),
-                                tintColor.getList("Colors", StringTag.class).getAll().stream()
-                                        .map(stringTag -> stringTag.data).collect(Collectors.toList())
+                                colors
                         ));
                     }
                 }
@@ -262,7 +264,8 @@ public class EntityHuman extends EntityHumanType {
                 ListTag<CompoundTag> tintsTag = new ListTag<>("PieceTintColors");
                 for (PersonaPieceTint tint : tints) {
                     ListTag<StringTag> colors = new ListTag<>("Colors");
-                    colors.setAll(tint.colors.stream().map(s -> new StringTag("", s)).collect(Collectors.toList()));
+                    for (String color : tint.colors)
+                        colors.add(new StringTag("", color));
                     tintsTag.add(new CompoundTag()
                             .putString("PieceType", tint.pieceType)
                             .putList(colors));

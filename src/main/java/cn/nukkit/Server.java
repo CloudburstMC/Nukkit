@@ -80,6 +80,7 @@ import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import io.netty.buffer.ByteBuf;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
@@ -1014,10 +1015,12 @@ public class Server {
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Collection<Player> players) {
-        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId,
-                players.stream()
-                        .filter(p -> !p.getUniqueId().equals(uuid))
-                        .toArray(Player[]::new));
+        List<Player> ps = new ObjectArrayList<>();
+        for (Player p : players) {
+            if (!p.getUniqueId().equals(uuid))
+                ps.add(p);
+        }
+        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId, ps.toArray(new Player[0]));
     }
 
     public void removePlayerListData(UUID uuid) {
@@ -1045,14 +1048,15 @@ public class Server {
     public void sendFullPlayerListData(Player player) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = this.playerList.values().stream()
-                .map(p -> new PlayerListPacket.Entry(
-                p.getUniqueId(),
-                p.getId(),
-                p.getDisplayName(),
-                p.getSkin(),
-                p.getLoginChainData().getXUID()))
-                .toArray(PlayerListPacket.Entry[]::new);
+        List<PlayerListPacket.Entry> entries = new ObjectArrayList<>();
+        for (Player p : this.playerList.values())
+            entries.add(new PlayerListPacket.Entry(
+                    p.getUniqueId(),
+                    p.getId(),
+                    p.getDisplayName(),
+                    p.getSkin(),
+                    p.getLoginChainData().getXUID()));
+        pk.entries = entries.toArray(new PlayerListPacket.Entry[0]);
 
         player.dataPacket(pk);
     }

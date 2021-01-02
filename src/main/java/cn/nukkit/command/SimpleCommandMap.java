@@ -12,7 +12,6 @@ import cn.nukkit.utils.Utils;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 /**
  * author: MagicDroidX
@@ -142,12 +141,14 @@ public class SimpleCommandMap implements CommandMap {
 
                 CommandParameters commandParameters = method.getAnnotation(CommandParameters.class);
                 if (commandParameters != null) {
-                    Map<String, CommandParameter[]> map = Arrays.stream(commandParameters.parameters())
-                            .collect(Collectors.toMap(Parameters::name, parameters -> Arrays.stream(parameters.parameters())
-                                    .map(parameter -> CommandParameter.newType(parameter.name(), parameter.optional(), parameter.type()))
-                                    .distinct()
-                                    .toArray(CommandParameter[]::new)));
-
+                    Map<String, CommandParameter[]> map = new HashMap<>();
+                    for (Parameters ps0 : commandParameters.parameters()) {
+                        Parameter[] ps1 = ps0.parameters();
+                        CommandParameter[] p = new CommandParameter[ps1.length];
+                        for (int i = 0; i < ps1.length; i++)
+                            p[i] = CommandParameter.newType(ps1[i].name(), ps1[i].optional(), ps1[i].type());
+                        map.put(ps0.name(), p);
+                    }
                     sc.commandParameters.putAll(map);
                 }
 
