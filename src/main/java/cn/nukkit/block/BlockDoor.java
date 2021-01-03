@@ -194,11 +194,11 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         Location down;
         Location up;
         if (this.isTop()) {
-            down = down().getLocation().clone();
-            up = getLocation().clone();
+            down = down().getLocation();
+            up = getLocation();
         } else {
-            down = getLocation().clone();
-            up = up().getLocation().clone();
+            down = getLocation();
+            up = up().getLocation();
         }
 
         if (val) {
@@ -216,11 +216,11 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         Location down;
         Location up;
         if (this.isTop()) {
-            down = down().getLocation().clone();
-            up = getLocation().clone();
+            down = down().getLocation();
+            up = getLocation();
         } else {
-            down = getLocation().clone();
-            up = up().getLocation().clone();
+            down = getLocation();
+            up = up().getLocation();
         }
 
         return manualOverrides.contains(up) || manualOverrides.contains(down);
