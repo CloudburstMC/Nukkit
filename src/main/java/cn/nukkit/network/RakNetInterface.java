@@ -24,6 +24,7 @@ import io.netty.util.internal.PlatformDependent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.message.FormattedMessage;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -118,7 +119,12 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             }
             DataPacket packet;
             while ((packet = nukkitSession.inbound.poll()) != null) {
-                nukkitSession.player.handleDataPacket(packet);
+                try {
+                    nukkitSession.player.handleDataPacket(packet);
+                } catch (Exception e) {
+                    log.error(new FormattedMessage("An error occurred whilst handling {} for {}",
+                            new Object[]{packet.getClass().getSimpleName(), nukkitSession.player.getName()}, e));
+                }
             }
         }
         return true;
