@@ -2153,6 +2153,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return 64;
     }
 
+    /**
+     * Check if a block is getting powered threw a block or directly.
+     * @return if the gets powered.
+     */
     @PowerNukkitOnly
     @PowerNukkitDifference(info = "Used so often, why not create own method here?", since = "1.4.0.0-PN")
     public boolean isGettingPower() {

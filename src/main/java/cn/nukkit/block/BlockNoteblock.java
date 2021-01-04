@@ -14,6 +14,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,8 +23,9 @@ import javax.annotation.Nullable;
  * @author Snake1999
  * @since 2016/1/17
  */
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<BlockEntityMusic> {
+public class BlockNoteblock extends BlockSolid implements RedstoneComponent, BlockEntityHolder<BlockEntityMusic> {
 
     public BlockNoteblock() {
         // Does nothing

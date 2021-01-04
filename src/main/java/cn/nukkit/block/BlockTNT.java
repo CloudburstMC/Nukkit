@@ -5,12 +5,10 @@ import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -18,6 +16,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -26,7 +25,8 @@ import javax.annotation.Nullable;
  * @author xtypr
  * @since 2015/12/8
  */
-public class BlockTNT extends BlockSolid {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockTNT extends BlockSolid implements RedstoneComponent {
 
     public BlockTNT() {
     }

@@ -7,6 +7,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.utils.RedstoneComponent;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityMoveByPistonEvent;
 import cn.nukkit.level.Level;
@@ -210,7 +211,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
                     if (this.level.setBlock(movingBlock, moved)) {
                         moved.onUpdate(Level.BLOCK_UPDATE_MOVED);
-                        moved.level.updateAroundRedstone(moved.getLocation(), null);
+                        RedstoneComponent.updateAroundRedstone(moved);
                     }
                 }
             }

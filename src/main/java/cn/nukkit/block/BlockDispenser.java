@@ -26,6 +26,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import java.util.Map;
@@ -38,7 +39,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * @since 15.4.2017
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityEjectable> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockDispenser extends BlockSolidMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityEjectable> {
 
     public BlockDispenser() {
         this(0);

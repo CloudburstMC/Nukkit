@@ -5,12 +5,14 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Rail;
+import cn.nukkit.utils.RedstoneComponent;
 
 /**
  * @author Snake1999, larryTheCoder (Nukkit Project, Minecart and Riding Project)
  * @since 2016/1/11
  */
-public class BlockRailPowered extends BlockRail {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockRailPowered extends BlockRail implements RedstoneComponent {
 
     public BlockRailPowered() {
         this(0);

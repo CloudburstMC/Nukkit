@@ -19,12 +19,14 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolder<BlockEntitySkull> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockSkull extends BlockTransparentMeta implements RedstoneComponent, BlockEntityHolder<BlockEntitySkull> {
 
     public BlockSkull() {
         this(0);

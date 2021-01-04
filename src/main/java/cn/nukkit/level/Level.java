@@ -1328,15 +1328,11 @@ public class Level implements ChunkManager, Metadatable {
         requireProvider().saveChunks();
     }
 
-    @PowerNukkitDifference(info = "The check if the block is a piston was moved to #getStrongPower().", since = "1.4.0.0-PN")
+    @Deprecated @DeprecationDetails(reason = "Was moved to RedstoneComponent", since = "1.4.0.0-PN",
+            replaceWith = "RedstoneComponent#updateAroundRedstone", by = "PowerNukkit")
     public void updateAroundRedstone(Vector3 pos, BlockFace face) {
-        for (BlockFace side : BlockFace.values()) {
-            if (face != null && side == face) {
-                continue;
-            }
-
-            this.getBlock(temporalVector.setComponentsAdding(pos, side)).onUpdate(BLOCK_UPDATE_REDSTONE);
-        }
+        Location loc = new Location(pos.x, pos.y, pos.z, this);
+        RedstoneComponent.updateAroundRedstone(loc, face);
     }
 
     public void updateComparatorOutputLevel(Vector3 v) {

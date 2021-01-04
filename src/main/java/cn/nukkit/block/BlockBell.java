@@ -21,12 +21,14 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @PowerNukkitOnly
-public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBell> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockBell extends BlockTransparentMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityBell> {
     public static final int TYPE_ATTACHMENT_STANDING = 0;
     public static final int TYPE_ATTACHMENT_HANGING = 1;
     public static final int TYPE_ATTACHMENT_SIDE = 2;

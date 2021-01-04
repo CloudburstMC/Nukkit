@@ -5,11 +5,13 @@ import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.utils.RedstoneComponent;
 
 /**
  * @author Pub4Game
  */
-public class BlockRedstoneLampLit extends BlockRedstoneLamp {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockRedstoneLampLit extends BlockRedstoneLamp implements RedstoneComponent {
 
     public BlockRedstoneLampLit() {
     }

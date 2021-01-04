@@ -16,6 +16,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 
@@ -29,7 +30,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
  * @author xtypr
  * @since 2015/11/23
  */
-public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockFenceGate extends BlockTransparentMeta implements RedstoneComponent, Faceable {
     // Contains a list of positions of fence gates, which have been opened by hand (by a player).
     // It is used to detect on redstone update, if the gate should be closed if redstone is off on the update,
     // previously the gate always closed, when placing an unpowered redstone at the gate, this fixes it

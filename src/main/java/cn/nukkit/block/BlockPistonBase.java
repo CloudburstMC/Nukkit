@@ -21,6 +21,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.RedstoneComponent;
 import com.google.common.collect.Lists;
 
 import javax.annotation.Nonnull;
@@ -33,8 +34,9 @@ import java.util.stream.Collectors;
 /**
  * @author CreeperFace
  */
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityPistonArm> {
+public abstract class BlockPistonBase extends BlockSolidMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityPistonArm> {
 
     public boolean sticky;
 

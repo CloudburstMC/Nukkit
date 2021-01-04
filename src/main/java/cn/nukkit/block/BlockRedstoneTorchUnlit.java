@@ -8,13 +8,14 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.RedstoneComponent;
 
 /**
  * @author CreeperFace
  * @since 10.4.2017
  */
-public class BlockRedstoneTorchUnlit extends BlockTorch {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public class BlockRedstoneTorchUnlit extends BlockTorch implements RedstoneComponent {
 
     public BlockRedstoneTorchUnlit() {
         this(0);
@@ -79,23 +80,11 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
         return 0;
     }
 
-    @PowerNukkitDifference(info = "Add missing update around redstone and use own #isPoweredFromSide() method.",
-            since = "1.4.0.0-PN")
     private boolean checkState() {
         if (!this.isPoweredFromSide()) {
-            BlockFace face = getBlockFace().getOpposite();
-            Vector3 pos = getLocation();
+            this.level.setBlock(getLocation(), Block.get(BlockID.REDSTONE_TORCH, getDamage()), false, true);
 
-            this.level.setBlock(pos, Block.get(BlockID.REDSTONE_TORCH, getDamage()), false, true);
-
-            this.level.updateAroundRedstone(pos, face);
-            for (BlockFace side : BlockFace.values()) {
-                if (side == face) {
-                    continue;
-                }
-
-                this.level.updateAroundRedstone(pos.getSide(side), null);
-            }
+            updateAllAroundRedstone(getBlockFace().getOpposite());
             return true;
         }
 

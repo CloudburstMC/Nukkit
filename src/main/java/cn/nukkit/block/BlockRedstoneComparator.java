@@ -15,6 +15,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 
@@ -22,7 +23,8 @@ import javax.annotation.Nonnull;
  * @author CreeperFace
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public abstract class BlockRedstoneComparator extends BlockRedstoneDiode implements BlockEntityHolder<BlockEntityComparator> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public abstract class BlockRedstoneComparator extends BlockRedstoneDiode implements RedstoneComponent, BlockEntityHolder<BlockEntityComparator> {
 
     public BlockRedstoneComparator() {
         this(0);
@@ -184,7 +186,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode impleme
 
             Block side = this.getSide(getFacing().getOpposite());
             side.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
-            this.level.updateAroundRedstone(side, null);
+            RedstoneComponent.updateAroundRedstone(side);
         }
     }
 

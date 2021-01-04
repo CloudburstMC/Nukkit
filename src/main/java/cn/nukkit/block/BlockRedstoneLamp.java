@@ -9,6 +9,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -16,7 +17,8 @@ import javax.annotation.Nullable;
 /**
  * @author Nukkit Project Team
  */
-public class BlockRedstoneLamp extends BlockSolid {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockRedstoneLamp extends BlockSolid implements RedstoneComponent {
 
     public BlockRedstoneLamp() {
     }

@@ -21,6 +21,7 @@ import cn.nukkit.math.BlockFace.AxisDirection;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -35,7 +36,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
  * @author Pub4Game
  * @since 26.12.2015
  */
-public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockTrapdoor extends BlockTransparentMeta implements RedstoneComponent, Faceable {
     private static final double THICKNESS = 0.1875;
 
     // Contains a list of positions of trap doors, which have been opened by hand (by a player).
