@@ -1,5 +1,6 @@
 package cn.nukkit;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
@@ -766,26 +767,31 @@ public class Server {
     }
 
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
-        broadcastPacket(players.toArray(new Player[0]), packet);
-    }
+        packet.tryEncode();
 
-    public static void broadcastPacket(Player[] players, DataPacket packet) {
-        packet.encode();
-        packet.isEncoded = true;
-
-        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-            for (Player player : players) {
-                player.dataPacket(packet);
-            }
-        } else {
-            getInstance().batchPackets(players, new DataPacket[]{packet}, true);
+        for (Player player : players) {
+            player.dataPacket(packet);
         }
     }
 
+    public static void broadcastPacket(Player[] players, DataPacket packet) {
+        packet.tryEncode();
+
+        for (Player player : players) {
+            player.dataPacket(packet);
+        }
+    }
+
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", 
+            reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
+    @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
 
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit",
+            reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
+    @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
         if (players == null || packets == null || players.length == 0 || packets.length == 0) {
             return;
@@ -2222,8 +2228,8 @@ public class Server {
         return this.getPropertyString(variable, null);
     }
 
-    public String getPropertyString(String variable, String defaultValue) {
-        return this.properties.exists(variable) ? (String) this.properties.get(variable) : defaultValue;
+    public String getPropertyString(String key, String defaultValue) {
+        return this.properties.exists(key) ? this.properties.get(key).toString() : defaultValue;
     }
 
     public int getPropertyInt(String variable) {
