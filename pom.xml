@@ -112,7 +112,7 @@
         <dependency>
             <groupId>org.powernukkit.bedrock.network</groupId>
             <artifactId>raknet</artifactId>
-            <version>1.6.25-PN</version>
+            <version>1.6.25-PN.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
