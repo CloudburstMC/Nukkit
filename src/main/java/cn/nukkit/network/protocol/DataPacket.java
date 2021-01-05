@@ -13,7 +13,7 @@ import com.nukkitx.network.raknet.RakNetReliability;
  */
 public abstract class DataPacket extends BinaryStream implements Cloneable {
 
-    public boolean isEncoded = false;
+    public volatile boolean isEncoded = false;
     private int channel = 0;
 
     public RakNetReliability reliability = RakNetReliability.RELIABLE_ORDERED;
@@ -23,6 +23,13 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     public abstract void decode();
 
     public abstract void encode();
+
+    public final void tryEncode() {
+        if (!this.isEncoded) {
+            this.encode();
+            this.isEncoded = true;
+        }
+    }
 
     @Override
     public DataPacket reset() {
@@ -65,9 +72,8 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
         byte[] buf = getBuffer();
         batchPayload[0] = Binary.writeUnsignedVarInt(buf.length);
         batchPayload[1] = buf;
-        byte[] data = Binary.appendBytes(batchPayload);
         try {
-            batch.payload = Network.deflateRaw(data, level);
+            batch.payload = Network.deflateRaw(batchPayload, level);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
