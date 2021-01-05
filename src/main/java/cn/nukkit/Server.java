@@ -1,5 +1,6 @@
 package cn.nukkit;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
@@ -781,11 +782,15 @@ public class Server {
         }
     }
 
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", 
+            reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
     @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
 
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit",
+            reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
     @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
         if (players == null || packets == null || players.length == 0 || packets.length == 0) {
