@@ -508,8 +508,8 @@ public class Server {
         log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
             {
-                put("motd", "A Nukkit Powered Server");
-                put("sub-motd", "https://nukkitx.com");
+                put("motd", "PowerNukkit Server");
+                put("sub-motd", "https://powernukkit.org");
                 put("server-port", 19132);
                 put("server-ip", "0.0.0.0");
                 put("view-distance", 10);
