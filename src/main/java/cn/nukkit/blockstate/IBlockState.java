@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.api.Unsigned;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
@@ -22,6 +23,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.utils.HumanStringComparator;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -36,11 +38,13 @@ import static cn.nukkit.blockstate.Loggers.logIBlockState;
 @Since("1.4.0.0-PN")
 @ParametersAreNonnullByDefault
 public interface IBlockState {
+    @Nonnegative
     int getBlockId();
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
+    @Nonnegative
     Number getDataStorage();
 
     @PowerNukkitOnly
@@ -56,17 +60,29 @@ public interface IBlockState {
     @Since("1.4.0.0-PN")
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Nonnegative
     int getLegacyDamage();
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Unsigned
     int getBigDamage();
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Nonnegative
+    default int getSignedBigDamage() {
+        return getBigDamage();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
+    @Nonnegative
     BigInteger getHugeDamage();
 
     /**
@@ -454,6 +470,7 @@ public interface IBlockState {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    @Nonnegative
     int getExactIntStorage();
 
     @PowerNukkitOnly

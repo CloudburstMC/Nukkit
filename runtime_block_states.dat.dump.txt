@@ -2814,9 +2814,14 @@ minecraft:cauldron;fill_level=6;cauldron_liquid=lava
 minecraft:cauldron;fill_level=6;cauldron_liquid=water
 [118:6, 118:7]
 
-minecraft:chain
+minecraft:chain;pillar_axis=x
 []
-[541:0]
+
+minecraft:chain;pillar_axis=y
+[]
+
+minecraft:chain;pillar_axis=z
+[]
 
 minecraft:chain_command_block;conditional_bit=0;facing_direction=0
 [189:0, 189:6, 189:7]
@@ -21322,6 +21327,9 @@ minecraft:underwater_torch;torch_facing_direction=west
 
 minecraft:undyed_shulker_box
 [205:0]
+
+minecraft:unknown
+[]
 
 minecraft:unlit_redstone_torch;torch_facing_direction=east
 [75:2]

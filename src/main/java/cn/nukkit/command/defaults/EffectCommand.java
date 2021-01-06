@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
@@ -10,6 +11,11 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.InstantEffect;
 import cn.nukkit.utils.ServerException;
 import cn.nukkit.utils.TextFormat;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Snake1999 and Pub4Game
@@ -20,16 +26,24 @@ public class EffectCommand extends Command {
         super(name, "%nukkit.command.effect.description", "%commands.effect.usage");
         this.setPermission("nukkit.command.effect");
         this.commandParameters.clear();
+
+        List<String> effects = new ArrayList<>();
+        for (Field field : Effect.class.getDeclaredFields()) {
+            if (field.getType() == int.class && field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL)) {
+                effects.add(field.getName().toLowerCase());
+            }
+        }
+
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("effect", CommandParamType.STRING, false), //Do not use Enum here because of buggy behavior
-                new CommandParameter("seconds", CommandParamType.INT, true),
-                new CommandParameter("amplifier", true),
-                new CommandParameter("hideParticle", true, new String[]{"true", "false"})
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("effect", new CommandEnum("Effect", effects)),
+                CommandParameter.newType("seconds", true, CommandParamType.INT),
+                CommandParameter.newType("amplifier", true, CommandParamType.INT),
+                CommandParameter.newEnum("hideParticle", true, CommandEnum.ENUM_BOOLEAN)
         });
         this.commandParameters.put("clear", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("clear", new String[]{"clear"})
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newEnum("clear", new CommandEnum("ClearEffects", "clear"))
         });
     }
 

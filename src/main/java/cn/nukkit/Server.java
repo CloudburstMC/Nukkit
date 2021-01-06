@@ -1,5 +1,6 @@
 package cn.nukkit;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
@@ -254,7 +255,7 @@ public class Server {
 
     private DB nameLookup;
 
-    private PlayerDataSerializer playerDataSerializer = new DefaultPlayerDataSerializer(this);
+    private PlayerDataSerializer playerDataSerializer;
 
     private final Set<String> ignoredPackets = new HashSet<>();
 
@@ -332,6 +333,8 @@ public class Server {
         this.console = new NukkitConsole(this);
         this.consoleThread = new ConsoleThread();
         this.consoleThread.start();
+
+        this.playerDataSerializer = new DefaultPlayerDataSerializer(this);
 
         //todo: VersionString 现在不必要
 
@@ -505,8 +508,8 @@ public class Server {
         log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
             {
-                put("motd", "A Nukkit Powered Server");
-                put("sub-motd", "https://nukkitx.com");
+                put("motd", "PowerNukkit Server");
+                put("sub-motd", "https://powernukkit.org");
                 put("server-port", 19132);
                 put("server-ip", "0.0.0.0");
                 put("view-distance", 10);
@@ -829,26 +832,31 @@ public class Server {
     }
 
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
-        broadcastPacket(players.toArray(Player.EMPTY_ARRAY), packet);
-    }
+        packet.tryEncode();
 
-    public static void broadcastPacket(Player[] players, DataPacket packet) {
-        packet.encode();
-        packet.isEncoded = true;
-
-        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-            for (Player player : players) {
-                player.dataPacket(packet);
-            }
-        } else {
-            getInstance().batchPackets(players, new DataPacket[]{packet}, true);
+        for (Player player : players) {
+            player.dataPacket(packet);
         }
     }
 
+    public static void broadcastPacket(Player[] players, DataPacket packet) {
+        packet.tryEncode();
+
+        for (Player player : players) {
+            player.dataPacket(packet);
+        }
+    }
+
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", 
+            reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
+    @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
 
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit",
+            reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
+    @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
         if (players == null || packets == null || players.length == 0 || packets.length == 0) {
             return;
@@ -862,18 +870,14 @@ public class Server {
 
         Timings.playerNetworkSendTimer.startTiming();
         byte[][] payload = new byte[packets.length * 2][];
-        int size = 0;
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
-            if (!p.isEncoded) {
-                p.encode();
-            }
+            int idx = i * 2;
+            if (!p.isEncoded) p.encode();
             byte[] buf = p.getBuffer();
-            payload[i * 2] = Binary.writeUnsignedVarInt(buf.length);
-            payload[i * 2 + 1] = buf;
+            payload[idx] = Binary.writeUnsignedVarInt(buf.length);
+            payload[idx + 1] = buf;
             packets[i] = null;
-            size += payload[i * 2].length;
-            size += payload[i * 2 + 1].length;
         }
 
         List<InetSocketAddress> targets = new ArrayList<>();
@@ -888,7 +892,7 @@ public class Server {
         } else {
             try {
                 byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Network.deflateRaw(data, this.networkCompressionLevel), targets, forceSync);
+                this.broadcastPacketsCallback(Network.deflateRaw(data, this.networkCompressionLevel), targets);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -897,29 +901,12 @@ public class Server {
     }
 
     public void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets) {
-        broadcastPacketsCallback(data, targets, false);
-    }
-
-    /**
-     * @since 1.2.0.2-PN
-     * @apiNote Only in PowerNukkit
-     */
-    private void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets, boolean immediate) {
         BatchPacket pk = new BatchPacket();
         pk.payload = data;
 
-        // The duplicated for is a micro-optimization
-        if (immediate) {
-            for (InetSocketAddress i : targets) {
-                if (this.players.containsKey(i)) {
-                    this.players.get(i).directDataPacket(pk);
-                }
-            }
-        } else {
-            for (InetSocketAddress i : targets) {
-                if (this.players.containsKey(i)) {
-                    this.players.get(i).dataPacket(pk);
-                }
+        for (InetSocketAddress i : targets) {
+            if (this.players.containsKey(i)) {
+                this.players.get(i).dataPacket(pk);
             }
         }
     }
@@ -1242,6 +1229,14 @@ public class Server {
         Server.broadcastPacket(players, pk);
     }
 
+    @Since("1.3.2.0-PN")
+    public void removePlayerListData(UUID uuid, Player player) {
+        PlayerListPacket pk = new PlayerListPacket();
+        pk.type = PlayerListPacket.TYPE_REMOVE;
+        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid)};
+        player.dataPacket(pk);
+    }
+
     public void removePlayerListData(UUID uuid, Collection<Player> players) {
         this.removePlayerListData(uuid, players.toArray(Player.EMPTY_ARRAY));
     }
@@ -1262,7 +1257,7 @@ public class Server {
     }
 
     public void sendRecipeList(Player player) {
-        player.dataPacket(CraftingManager.packet);
+        player.dataPacket(CraftingManager.getCraftingPacket());
     }
 
     private void checkTickUpdates(int currentTick, long tickTime) {
@@ -1643,7 +1638,7 @@ public class Server {
 
     public int getDifficulty() {
         if (this.difficulty == Integer.MAX_VALUE) {
-            this.difficulty = this.getPropertyInt("difficulty", 1);
+            this.difficulty = getDifficultyFromString(this.getPropertyString("difficulty", "1"));
         }
         return this.difficulty;
     }
@@ -2312,7 +2307,7 @@ public class Server {
     }
 
     public String getPropertyString(String variable, String defaultValue) {
-        return this.properties.exists(variable) ? (String) this.properties.get(variable) : defaultValue;
+        return this.properties.exists(variable) ? this.properties.get(variable).toString() : defaultValue;
     }
 
     public int getPropertyInt(String variable) {
@@ -2551,6 +2546,7 @@ public class Server {
         Entity.registerEntity("WanderingTrader", EntityWanderingTrader.class);
         Entity.registerEntity("Wolf", EntityWolf.class);
         Entity.registerEntity("ZombieHorse", EntityZombieHorse.class);
+        Entity.registerEntity("NPC", EntityNPCEntity.class);
         //Projectile
         Entity.registerEntity("AreaEffectCloud", EntityAreaEffectCloud.class);
         Entity.registerEntity("Egg", EntityEgg.class);
