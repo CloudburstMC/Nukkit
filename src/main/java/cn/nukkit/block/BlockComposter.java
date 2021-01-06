@@ -8,11 +8,7 @@ import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.event.block.ComposterEmptyEvent;
 import cn.nukkit.event.block.ComposterFillEvent;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemID;
-import cn.nukkit.item.ItemTool;
-import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.*;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.DyeColor;
@@ -24,10 +20,9 @@ import java.util.Random;
 
 public class BlockComposter extends BlockSolidMeta implements ItemID {
 
-    private static final Int2IntOpenHashMap compostableItems = new Int2IntOpenHashMap();
+    private static Int2IntOpenHashMap compostableItems = new Int2IntOpenHashMap();
     private static final IntBlockProperty COMPOSTER_FILL_LEVEL = new IntBlockProperty("composter_fill_level", false, 8);
     public static final BlockProperties PROPERTIES = new BlockProperties(COMPOSTER_FILL_LEVEL);
-
     static {
         registerDefaults();
     }
@@ -122,7 +117,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         }
 
         if (isFull()) {
-            ComposterEmptyEvent event = new ComposterEmptyEvent(this, player, item, Item.get(ItemID.BONE_MEAL), 0);
+            ComposterEmptyEvent event = new ComposterEmptyEvent(this, player, item, MinecraftItemID.BONE_MEAL.get(1), 0);
             this.level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
                 setDamage(event.getNewLevel());

@@ -25,6 +25,11 @@ public class BlockNetherPortal extends BlockFlowable implements Faceable {
     }
 
     @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
     public String getName() {
         return "Nether Portal Block";
     }

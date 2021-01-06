@@ -61,6 +61,7 @@ public abstract class ItemBookWritable extends Item {
      */
     public boolean setPageText(int pageId, String pageText) {
         Preconditions.checkArgument(pageId >= 0 && pageId < 50, "Page number " + pageId + " is out of range");
+        Preconditions.checkArgument(pageText.length() <= 256, "Text length " + pageText.length() + " is out of range");
         CompoundTag tag;
         if (this.hasCompoundTag()) {
             tag = this.getNamedTag();
@@ -143,6 +144,7 @@ public abstract class ItemBookWritable extends Item {
      */
     public boolean insertPage(int pageId, String pageText) {
         Preconditions.checkArgument(pageId >= 0 && pageId < 50, "Page number " + pageId + " is out of range");
+        Preconditions.checkArgument(pageText.length() <= 256, "Text length " + pageText.length() + " is out of range");
         CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
         ListTag<CompoundTag> pages;
         if (!tag.contains("pages") || !(tag.get("pages") instanceof ListTag)) {
