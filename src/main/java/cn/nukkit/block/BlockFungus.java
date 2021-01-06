@@ -6,11 +6,9 @@ import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.utils.DyeColor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -49,7 +47,7 @@ public abstract class BlockFungus extends BlockFlowable {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (item.isNull() || item.getId() != ItemID.DYE || item.getDamage() != DyeColor.WHITE.getDyeData()) {
+        if (item.isNull() || !item.isFertilizer()) {
             return false;
         }
 

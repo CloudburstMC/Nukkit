@@ -159,7 +159,7 @@ public class BlockKelp extends BlockFlowable {
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
         //Bone meal
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.isFertilizer()) {
             int x = (int) this.x;
             int z = (int) this.z;
             for (int y = (int) this.y + 1; y < 255; y++) {

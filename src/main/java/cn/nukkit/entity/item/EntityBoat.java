@@ -2,6 +2,8 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
@@ -34,8 +36,8 @@ import java.util.ArrayList;
 public class EntityBoat extends EntityVehicle {
 
     public static final int NETWORK_ID = 90;
-    
-    protected int variant;
+
+    public static final int DATA_WOOD_ID = 20;
 
     public static final Vector3f RIDER_PLAYER_OFFSET = new Vector3f(0, 1.02001f, 0);
     public static final Vector3f RIDER_OFFSET = new Vector3f(0, -0.2f, 0);
@@ -50,6 +52,7 @@ public class EntityBoat extends EntityVehicle {
     public static final double SINKING_SPEED = 0.0005;
     public static final double SINKING_MAX_SPEED = 0.005;
 
+    @PowerNukkitOnly @Since("1.3.2.0-PN") protected int variant;
     protected boolean sinking = true;
 
     public EntityBoat(FullChunk chunk, CompoundTag nbt) {
@@ -62,11 +65,8 @@ public class EntityBoat extends EntityVehicle {
     @Override
     protected void initEntity() {
         super.initEntity();
-        
-        if (this.namedTag.contains("Variant")) {
-            this.variant = this.namedTag.getInt("Variant");
-        }
-        this.dataProperties.putInt(DATA_VARIANT, this.variant);
+
+        this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
     }
 
     @Override
@@ -427,17 +427,21 @@ public class EntityBoat extends EntityVehicle {
             this.level.dropItem(this, Item.get(ItemID.BOAT, this.variant));
         }
     }
-    
+
     @Override
     public void saveNBT() {
         super.saveNBT();
         this.namedTag.putInt("Variant", this.variant);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
     public int getVariant() {
         return this.variant;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
     public void setVariant(int variant) {
         this.variant = variant;
         this.dataProperties.putInt(DATA_VARIANT, variant);

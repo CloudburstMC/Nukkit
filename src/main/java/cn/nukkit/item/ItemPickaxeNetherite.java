@@ -1,14 +1,21 @@
 package cn.nukkit.item;
 
-public class ItemPickaxeNetherite extends ItemTool{
+import cn.nukkit.api.Since;
+
+@Since("1.3.2.0-PN")
+public class ItemPickaxeNetherite extends ItemTool {
+
+    @Since("1.3.2.0-PN")
     public ItemPickaxeNetherite() {
         this(0, 1);
     }
 
+    @Since("1.3.2.0-PN")
     public ItemPickaxeNetherite(Integer meta) {
         this(meta, 1);
     }
 
+    @Since("1.3.2.0-PN")
     public ItemPickaxeNetherite(Integer meta, int count) {
         super(NETHERITE_PICKAXE, meta, count, "Netherite Pickaxe");
     }

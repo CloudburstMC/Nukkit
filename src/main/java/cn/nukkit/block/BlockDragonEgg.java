@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.event.block.BlockFromToEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
@@ -62,12 +63,18 @@ public class BlockDragonEgg extends BlockFallable {
     }
 
     public void teleport() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int i = 0; i < 1000; ++i) {
-            Block t = this.getLevel().getBlock(this.add(ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16), ThreadLocalRandom.current().nextInt(-16, 16)));
-            if (t.getId() == AIR) {
-                int diffX = this.getFloorX() - t.getFloorX();
-                int diffY = this.getFloorY() - t.getFloorY();
-                int diffZ = this.getFloorZ() - t.getFloorZ();
+            Block to = this.getLevel().getBlock(this.add(random.nextInt(-16, 16), random.nextInt(-16, 16), random.nextInt(-16, 16)));
+            if (to.getId() == AIR) {
+                BlockFromToEvent event = new BlockFromToEvent(this, to);
+                this.level.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) return;
+                to = event.getTo();
+
+                int diffX = this.getFloorX() - to.getFloorX();
+                int diffY = this.getFloorY() - to.getFloorY();
+                int diffZ = this.getFloorZ() - to.getFloorZ();
                 LevelEventPacket pk = new LevelEventPacket();
                 pk.evid = LevelEventPacket.EVENT_PARTICLE_DRAGON_EGG_TELEPORT;
                 pk.data = (((((Math.abs(diffX) << 16) | (Math.abs(diffY) << 8)) | Math.abs(diffZ)) | ((diffX < 0 ? 1 : 0) << 24)) | ((diffY < 0 ? 1 : 0) << 25)) | ((diffZ < 0 ? 1 : 0) << 26);
@@ -76,7 +83,7 @@ public class BlockDragonEgg extends BlockFallable {
                 pk.z = this.getFloorZ();
                 this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
                 this.getLevel().setBlock(this, get(AIR), true);
-                this.getLevel().setBlock(t, this, true);
+                this.getLevel().setBlock(to, this, true);
                 return;
             }
         }

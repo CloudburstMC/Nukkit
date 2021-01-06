@@ -2,6 +2,9 @@ package cn.nukkit.event.player;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.HandlerList;
 
 import java.util.ArrayList;
@@ -24,6 +27,7 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     private final String name;
     private final UUID uuid;
+    private final String xuid;
     private final String address;
     private final int port;
 
@@ -32,9 +36,18 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     private final List<Consumer<Server>> scheduledActions = new ArrayList<>();
 
+    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "xuid was added by refactoring this constructor", 
+            replaceWith = "PlayerAsyncPreLoginEvent(String name, UUID uuid, String xuid, String address, int port)")
+    @PowerNukkitOnly("The signature was changed in Cloudburst Nukkit and we re-added this constructor for backward-compatibility")
     public PlayerAsyncPreLoginEvent(String name, UUID uuid, String address, int port) {
+        this(name, uuid, null, address, port);
+    }
+    
+    @Since("1.3.2.0-PN")
+    public PlayerAsyncPreLoginEvent(String name, UUID uuid, String xuid, String address, int port) {
         this.name = name;
         this.uuid = uuid;
+        this.xuid = xuid;
         this.address = address;
         this.port = port;
     }
@@ -50,6 +63,11 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     public UUID getUuid() {
         return uuid;
+    }
+
+    @Since("1.3.2.0-PN")
+    public String getXuid() {
+        return xuid;
     }
 
     public String getAddress() {
