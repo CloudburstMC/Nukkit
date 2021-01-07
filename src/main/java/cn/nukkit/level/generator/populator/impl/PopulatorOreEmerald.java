@@ -1,35 +1,32 @@
 package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
-import static cn.nukkit.block.BlockID.STONE;
-
 /**
  * @author GoodLucky777
  */
 public class PopulatorOreEmerald extends Populator {
 
+    private static final BlockState STATE_STONE = BlockState.of(STONE);
+    private static final BlockState STATE_EMERALD_ORE = BlockState.of(EMERALD_ORE);
+    
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
-        int sourceX = chunkX << 4;
-        int sourceZ = chunkZ << 4;
-        int endX = sourceX + 15;
-        int endZ = sourceZ + 15;
-        
         for (int i = 0; i < 11; i++) {
-            int x = NukkitMath.randomRange(random, sourceX, endX);
-            int z = NukkitMath.randomRange(random, sourceZ, endZ);
+            int x = random.nextBoundedInt(16);
+            int z = random.nextBoundedInt(16);
             int y = NukkitMath.randomRange(random, 4, 31);
             
-            if (level.getBlockIdAt(x, y, z) != STONE) {
+            if (chunk.getBlockState(x, y, z) != STATE_STONE) {
                 continue;
             }
-            level.setBlockAt(x, y, z, Block.EMERALD_ORE);
+            chunk.setBlockState(x, y, z, STATE_EMERALD_ORE);
         }
     }
 }
