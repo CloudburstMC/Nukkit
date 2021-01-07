@@ -17,7 +17,8 @@ import cn.nukkit.nbt.tag.ListTag;
 import java.util.OptionalInt;
 
 /**
- * Created by yescallop on 2016/2/13.
+ * @author yescallop
+ * @since 2016/2/13
  */
 public class ItemBoat extends Item {
 
@@ -75,14 +76,14 @@ public class ItemBoat extends Item {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (float) ((player.yaw + 90f) % 360)))
                         .add(new FloatTag("", 0)))
-                .putByte("woodID", getLegacyBoatDamage().orElse(0))
+                .putInt("Variant", getLegacyBoatDamage().orElse(0))
         );
 
         if (boat == null) {
             return false;
         }
 
-        if (player.isSurvival()) {
+        if (player.isSurvival() || player.isAdventure()) {
             Item item = player.getInventory().getItemInHand();
             item.setCount(item.getCount() - 1);
             player.getInventory().setItemInHand(item);

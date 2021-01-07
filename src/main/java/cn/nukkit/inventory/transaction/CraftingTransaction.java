@@ -1,6 +1,8 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.inventory.*;
@@ -9,13 +11,9 @@ import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.inventory.transaction.action.TakeLevelAction;
 import cn.nukkit.item.Item;
-import cn.nukkit.network.protocol.ContainerClosePacket;
-import cn.nukkit.network.protocol.types.ContainerIds;
-import cn.nukkit.scheduler.Task;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -34,6 +32,8 @@ public class CraftingTransaction extends InventoryTransaction {
     protected Recipe recipe;
 
     protected int craftingType;
+    
+    private boolean readyToExecute;
 
     public CraftingTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions, false);
@@ -110,6 +110,7 @@ public class CraftingTransaction extends InventoryTransaction {
                 AnvilInventory anvil = (AnvilInventory) inventory;
                 addInventory(anvil);
                 if (this.primaryOutput.equalsIgnoringEnchantmentOrder(anvil.getResult(), true)) {
+                    actions.removeIf(action-> action instanceof TakeLevelAction);
                     TakeLevelAction takeLevel = new TakeLevelAction(anvil.getLevelCost());
                     addAction(takeLevel);
                     if (takeLevel.isValid(source)) {
@@ -130,13 +131,16 @@ public class CraftingTransaction extends InventoryTransaction {
                     }
                 }
             }
+            if (recipe == null) {
+                source.sendExperienceLevel();
+            }
             source.getUIInventory().setItem(AnvilInventory.RESULT, Item.get(0), false);
         } else if (craftingType == Player.CRAFTING_GRINDSTONE) {
             Inventory inventory = source.getWindowById(Player.GRINDSTONE_WINDOW_ID);
             if (inventory instanceof GrindstoneInventory) {
                 GrindstoneInventory grindstone = (GrindstoneInventory) inventory;
                 addInventory(grindstone);
-                if (this.primaryOutput.equals(grindstone.getResult(), true, true)) {
+                if (grindstone.updateResult(false) && this.primaryOutput.equals(grindstone.getResult(), true, true)) {
                     recipe = new RepairRecipe(InventoryType.GRINDSTONE, this.primaryOutput, this.inputs);
                     grindstone.setResult(Item.get(0), false);
                 }
@@ -155,32 +159,9 @@ public class CraftingTransaction extends InventoryTransaction {
         return !ev.isCancelled();
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "No longer closes the inventory")
     protected void sendInventories() {
         super.sendInventories();
-        
-        Optional<Inventory> topWindow = source.getTopWindow();
-        if (topWindow.isPresent()) {
-            //source.removeWindow(topWindow.get());
-            return;
-        }
-        
-		/*
-         * TODO: HACK!
-		 * we can't resend the contents of the crafting window, so we force the client to close it instead.
-		 * So people don't whine about messy desync issues when someone cancels CraftItemEvent, or when a crafting
-		 * transaction goes wrong.
-		 */
-        ContainerClosePacket pk = new ContainerClosePacket();
-        pk.windowId = ContainerIds.NONE;
-        //TODO This hack causes PowerNukkit#223
-        source.getServer().getScheduler().scheduleDelayedTask(new Task() {
-            @Override
-            public void onRun(int currentTick) {
-                source.dataPacket(pk);
-            }
-        }, 20);
-        
-        this.source.resetCraftingGridType();
     }
 
     public boolean execute() {
@@ -236,5 +217,17 @@ public class CraftingTransaction extends InventoryTransaction {
             }
         }
         return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setReadyToExecute(boolean readyToExecute) {
+        this.readyToExecute = readyToExecute;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isReadyToExecute() {
+        return readyToExecute;
     }
 }

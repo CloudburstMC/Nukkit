@@ -9,8 +9,8 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/12/1 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/1
  */
 public class BlockOreEmerald extends BlockSolid {
 
@@ -33,6 +33,11 @@ public class BlockOreEmerald extends BlockSolid {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_IRON;
+    }
+
+    @Override
     public double getHardness() {
         return 3;
     }
@@ -44,7 +49,7 @@ public class BlockOreEmerald extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
+        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             int count = 1;
             Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
             if (fortune != null && fortune.getLevel() >= 1) {
@@ -61,7 +66,7 @@ public class BlockOreEmerald extends BlockSolid {
                     new ItemEmerald(0, count)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

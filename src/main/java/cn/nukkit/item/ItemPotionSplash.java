@@ -3,8 +3,8 @@ package cn.nukkit.item;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created on 2015/12/27 by xtypr.
- * Package cn.nukkit.item in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/27
  */
 public class ItemPotionSplash extends ProjectileItem {
 

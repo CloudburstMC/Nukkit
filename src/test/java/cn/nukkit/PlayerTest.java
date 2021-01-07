@@ -1,96 +1,117 @@
 package cn.nukkit;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
-import cn.nukkit.dispenser.DispenseBehaviorRegister;
-import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
-import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.lang.BaseLang;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.format.LevelProvider;
-import cn.nukkit.level.format.anvil.Chunk;
-import cn.nukkit.network.Network;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
 import cn.nukkit.network.protocol.LoginPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
-import cn.nukkit.permission.BanList;
-import cn.nukkit.plugin.PluginManager;
-import cn.nukkit.potion.Effect;
-import cn.nukkit.potion.Potion;
-import cn.nukkit.resourcepacks.ResourcePackManager;
-import cn.nukkit.scheduler.ServerScheduler;
-import cn.nukkit.utils.Config;
-import cn.nukkit.utils.PlayerDataSerializer;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import org.apache.logging.log4j.core.util.ReflectionUtil;
-import org.iq80.leveldb.util.FileUtils;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.powernukkit.tests.api.MockLevel;
+import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
-import java.io.File;
-import java.util.*;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.doReturn;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith(PowerNukkitExtension.class)
 class PlayerTest {
     private final Long clientId = 32L;
     private final String clientIp = "1.2.3.4";
     private final int clientPort = 3232;
     
-    @Mock
-    SourceInterface sourceInterface;
-    
-    @Mock
-    Server server;
-    
-    @Mock
-    PluginManager pluginManager;
-    
-    @Mock
-    Skin skin;
-    
-    @Mock
-    ServerScheduler scheduler;
-    
-    @Mock
-    BanList banList;
-    
-    @Mock
-    PlayerDataSerializer playerDataSerializer;
-    
-    @Mock
-    LevelProvider levelProvider;
-    
-    @Mock
+    @MockLevel
     Level level;
     
     @Mock
-    ResourcePackManager resourcePackManager;
+    SourceInterface sourceInterface;
+
+    Skin skin;
     
-    @Mock
-    Network network;
-    
-    File dataPath;
-            
     Player player;
+    
+    @Test
+    void armorDamage() {
+        player.attack(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.FALL, 1));
+        PlayerInventory inventory = player.getInventory();
+        
+        ////// Block in armor content ////////
+        inventory.setArmorContents(new Item[]{
+                Item.getBlock(BlockID.WOOL),
+                Item.getBlock(BlockID.WOOL, 1),
+                Item.getBlock(BlockID.WOOL, 2),
+                Item.getBlock(BlockID.WOOL, 3)
+        });
+        for (int i = 0; i < 100; i++) {
+            player.setHealth(20);
+            player.attack(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.FALL, 1));
+            player.entityBaseTick(20);
+        }
+        assertEquals(Arrays.asList(
+                Item.getBlock(BlockID.WOOL),
+                Item.getBlock(BlockID.WOOL, 1),
+                Item.getBlock(BlockID.WOOL, 2),
+                Item.getBlock(BlockID.WOOL, 3)
+        ), Arrays.asList(inventory.getArmorContents()));
+
+        ////// Valid armor in armor content ///////
+        inventory.setArmorContents(new Item[]{
+                Item.get(ItemID.LEATHER_CAP),
+                Item.get(ItemID.LEATHER_TUNIC),
+                Item.get(ItemID.LEATHER_PANTS),
+                Item.get(ItemID.LEATHER_BOOTS)
+        });
+        for (int i = 0; i < 100; i++) {
+            player.setHealth(20);
+            player.attack(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.FALL, 1));
+            player.entityBaseTick(20);
+        }
+        assertEquals(Arrays.asList(
+                Item.getBlock(BlockID.AIR),
+                Item.getBlock(BlockID.AIR),
+                Item.getBlock(BlockID.AIR),
+                Item.getBlock(BlockID.AIR)
+        ), Arrays.asList(inventory.getArmorContents()));
+
+        ////// Unbreakable armor in armor content ///////
+        List<Item> items = Arrays.asList(
+                Item.get(ItemID.LEATHER_CAP),
+                Item.get(ItemID.LEATHER_TUNIC),
+                Item.get(ItemID.LEATHER_PANTS),
+                Item.get(ItemID.LEATHER_BOOTS)
+        );
+        items.forEach(item -> item.setNamedTag(new CompoundTag().putBoolean("Unbreakable", true)));
+        Item[] array = new Item[items.size()];
+        for (int i = 0; i < items.size(); i++) {
+            array[i] = items.get(i).clone();
+        }
+        inventory.setArmorContents(array);
+        for (int i = 0; i < 100; i++) {
+            player.setHealth(20);
+            player.attack(new EntityDamageEvent(player, EntityDamageEvent.DamageCause.FALL, 1));
+            player.entityBaseTick(20);
+        }
+        assertEquals(ItemID.LEATHER_CAP, items.get(0).getId());
+        assertTrue(items.get(2).isUnbreakable());
+        assertEquals(items, Arrays.asList(inventory.getArmorContents()));
+    }
 
     @Test
     void dupeCommand() {
@@ -125,7 +146,7 @@ class PlayerTest {
         }
 
         InventoryTransactionPacket packet = new InventoryTransactionPacket();
-        packet.actions = actions.toArray(new NetworkInventoryAction[0]);
+        packet.actions = actions.toArray(NetworkInventoryAction.EMPTY_ARRAY);
         
         player.handleDataPacket(packet);
 
@@ -145,47 +166,20 @@ class PlayerTest {
     }
 
     @BeforeEach
-    void setUp() throws NoSuchFieldException {
-        ServerTest.setInstance(server);
-        ServerTest.setPluginManager(server, pluginManager);
-        ServerTest.setConfig(server, new Config());
-        ServerTest.setLanguage(server, new BaseLang(BaseLang.FALLBACK_LANGUAGE));
+    void setUp() {
+        /// Setup Level ///
+        doReturn(new Position(100,64,200, level)).when(level).getSafeSpawn();
         
-        ReflectionUtil.setFieldValue(Level.class.getDeclaredField("updateEntities"), level, new Long2ObjectOpenHashMap<>());
+        /// Setup Server ///
+        doReturn(level).when(Server.getInstance()).getDefaultLevel();
         
-        dataPath = FileUtils.createTempDir("powernukkit-player-test-data");
-        dataPath.deleteOnExit();
-
-        when(server.getDataPath()).thenReturn(dataPath.getAbsolutePath());
-        when(server.getMaxPlayers()).thenReturn(10);
-        when(server.isWhitelisted(anyString())).thenReturn(true);
-        when(server.getOfflinePlayerData(any(UUID.class), anyBoolean())).thenCallRealMethod();
+        /// Setup skin ///
+        skin = new Skin();
+        skin.setSkinId("test");
+        skin.setSkinData(new BufferedImage(64, 32, BufferedImage.TYPE_INT_BGR));
+        assertTrue(skin.isValid());
         
-        when(server.getPluginManager()).thenReturn(pluginManager);
-        when(server.getScheduler()).thenReturn(scheduler);
-        when(server.getNameBans()).thenReturn(banList);
-        when(server.getIPBans()).thenReturn(banList);
-        when(server.getDefaultLevel()).thenReturn(level);
-        when(server.getResourcePackManager()).thenReturn(resourcePackManager);
-        when(server.getNetwork()).thenReturn(network);
-        
-        when(level.getSafeSpawn()).thenReturn(new Position(100,64,200,level));
-        when(level.getName()).thenReturn("DefaultLevel");
-        when(level.getChunk(anyInt(), anyInt(), anyBoolean())).thenReturn(new Chunk(levelProvider));
-        
-        when(levelProvider.getLevel()).thenReturn(level);
-        when(level.getServer()).thenReturn(server);
-        
-        doCallRealMethod().when(server).setPlayerDataSerializer(any());
-        server.setPlayerDataSerializer(playerDataSerializer);
-
-        when(server.getConfig()).thenCallRealMethod();
-        when(server.getConfig(anyString(), any())).thenCallRealMethod();
-        when(server.getLogger()).thenCallRealMethod();
-        when(server.getLanguage()).thenCallRealMethod();
-        
-        when(skin.isValid()).thenReturn(true);
-        
+        /// Make player login ///
         player = new Player(sourceInterface, clientId, clientIp, clientPort);
         LoginPacket loginPacket = new LoginPacket();
         loginPacket.username = "TestPlayer";
@@ -200,23 +194,7 @@ class PlayerTest {
         player.completeLoginSequence();
         
         assertTrue(player.isOnline(), "Failed to make the fake player login");
-    }
-
-    @AfterEach
-    void tearDown() {
-        FileUtils.deleteRecursively(dataPath);
-    }
-
-    @BeforeAll
-    static void beforeAll() {
-        Block.init();
-        Enchantment.init();
-        Item.init();
-        EnumBiome.values(); //load class, this also registers biomes
-        Effect.init();
-        Potion.init();
-        Attribute.init();
-        DispenseBehaviorRegister.init();
-        GlobalBlockPalette.getOrCreateRuntimeId(0, 0); //Force it to load
+        
+        player.doFirstSpawn();
     }
 }

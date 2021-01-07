@@ -6,8 +6,7 @@ import io.netty.util.collection.CharObjectHashMap;
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ShapedRecipe implements CraftingRecipe {
 
@@ -58,8 +57,8 @@ public class ShapedRecipe implements CraftingRecipe {
         }
 
 
-        //for($shape as $y => $row) {
-        for (String row : shape) {
+        for (int i = 0, shapeLength = shape.length; i < shapeLength; i++) {
+            String row = shape[i];
             if (row.length() != columnCount) {
                 throw new RuntimeException("Shaped recipe rows must all have the same length (expected " + columnCount + ", got " + row.length() + ")");
             }
@@ -71,6 +70,7 @@ public class ShapedRecipe implements CraftingRecipe {
                     throw new RuntimeException("No item specified for symbol '" + c + "'");
                 }
             }
+            shape[i] = row.intern();
         }
 
         this.primaryResult = primaryResult.clone();

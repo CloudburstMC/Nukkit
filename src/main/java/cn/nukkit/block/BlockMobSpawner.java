@@ -1,10 +1,12 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * Created by Pub4Game on 27.12.2015.
+ * @author Pub4Game
+ * @since 27.12.2015
  */
 public class BlockMobSpawner extends BlockSolid {
 
@@ -27,6 +29,11 @@ public class BlockMobSpawner extends BlockSolid {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public double getHardness() {
         return 5;
     }
@@ -38,7 +45,7 @@ public class BlockMobSpawner extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override
@@ -46,6 +53,7 @@ public class BlockMobSpawner extends BlockSolid {
         return false;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;

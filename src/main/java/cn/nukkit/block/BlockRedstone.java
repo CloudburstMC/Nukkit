@@ -1,13 +1,12 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /*
- * Created on 2015/12/11 by Pub4Game.
- * Package cn.nukkit.block in project Nukkit .
+ * @author Pub4Game
+ * @since 2015/12/11
  */
 public class BlockRedstone extends BlockSolidMeta {
 
@@ -47,14 +46,8 @@ public class BlockRedstone extends BlockSolidMeta {
     //TODO: redstone
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

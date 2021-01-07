@@ -1,21 +1,18 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockBell;
-import cn.nukkit.block.BlockCampfire;
-import cn.nukkit.block.BlockFire;
-import cn.nukkit.block.BlockID;
-import cn.nukkit.block.BlockTNT;
+import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.EntityEventPacket;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityArrow extends EntityProjectile {
     public static final int NETWORK_ID = 80;
@@ -58,6 +55,25 @@ public class EntityArrow extends EntityProjectile {
         return 0.01f;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    protected void updateMotion() {
+        if (!isInsideOfWater()) {
+            super.updateMotion();
+            return;
+        }
+
+        float drag = 1 - this.getDrag() * 20;
+        
+        motionY -= getGravity() * 2;
+        if (motionY < 0) {
+            motionY *= drag / 1.5;
+        }
+        motionX *= drag;
+        motionZ *= drag;
+    }
+
     public EntityArrow(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
@@ -68,6 +84,7 @@ public class EntityArrow extends EntityProjectile {
 
     public EntityArrow(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
         super(chunk, nbt, shootingEntity);
+        closeOnCollide = false;
         this.setCritical(critical);
     }
 
@@ -132,34 +149,31 @@ public class EntityArrow extends EntityProjectile {
     }
 
     @Override
-    protected void addHitEffect() {
-        this.level.addSound(this, Sound.RANDOM_BOWHIT);
+    public boolean canBeMovedByCurrents() {
+        return !hadCollision;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    protected void afterCollisionWithEntity(Entity entity) {
+        if (hadCollision) {
+            close();
+        } else {
+            setMotion(getMotion().divide(-4));
+        }
     }
 
     @Override
-    protected boolean onCollideWithBlock(Block collisionBlock) {
-        if (super.onCollideWithBlock(collisionBlock)) {
-            if (collisionBlock instanceof BlockBell && isOnFire() && level.getBlock(this).getId() == BlockID.AIR) {
-                level.setBlock(this, new BlockFire(), true, true);
-            }
-            return true;
-        }
-
-        if (isOnFire()) {
-            if (collisionBlock instanceof BlockCampfire) {
-                BlockCampfire campfire = (BlockCampfire) collisionBlock;
-                if (campfire.isExtinguished()) {
-                    campfire.setExtinguished(false);
-                    level.setBlock(collisionBlock, collisionBlock, true, true);
-                }
-                return true;
-            } else if (collisionBlock instanceof BlockTNT) {
-                ((BlockTNT) collisionBlock).prime(80, this);
-                return true;
-            }
-        }
-
-        return false;
+    protected void addHitEffect() {
+        this.level.addSound(this, Sound.RANDOM_BOWHIT);
+        EntityEventPacket packet = new EntityEventPacket();
+        packet.eid = getId();
+        packet.event = EntityEventPacket.ARROW_SHAKE;
+        packet.data = 7; // TODO Magic value. I have no idea why we have to set it to 7 here...
+        Server.broadcastPacket(this.hasSpawned.values(), packet);
+        
+        onGround = true;
     }
 
     @Override

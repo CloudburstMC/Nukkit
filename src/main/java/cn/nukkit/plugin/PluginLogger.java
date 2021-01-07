@@ -5,8 +5,7 @@ import cn.nukkit.utils.LogLevel;
 import cn.nukkit.utils.Logger;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class PluginLogger implements Logger {
 

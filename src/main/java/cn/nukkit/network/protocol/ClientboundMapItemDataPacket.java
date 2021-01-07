@@ -1,18 +1,22 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.utils.Utils;
+import io.netty.util.internal.EmptyArrays;
 import lombok.ToString;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
 /**
- * Created by CreeperFace on 5.3.2017.
+ * @author CreeperFace
+ * @since 5.3.2017
  */
 @ToString
 public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to 1.2
 
-    public int[] eids = new int[0];
+    public int[] eids = EmptyArrays.EMPTY_INTS;
 
     public long mapId;
     public int update;
@@ -25,8 +29,8 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
 
     public byte dimensionId;
 
-    public MapDecorator[] decorators = new MapDecorator[0];
-    public int[] colors = new int[0];
+    public MapDecorator[] decorators = MapDecorator.EMPTY_ARRAY;
+    public int[] colors = EmptyArrays.EMPTY_INTS;
     public BufferedImage image = null;
 
     //update
@@ -113,6 +117,10 @@ public class ClientboundMapItemDataPacket extends DataPacket { //TODO: update to
     }
 
     public static class MapDecorator {
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        public static final MapDecorator[] EMPTY_ARRAY = new MapDecorator[0];
+        
         public byte rotation;
         public byte icon;
         public byte offsetX;

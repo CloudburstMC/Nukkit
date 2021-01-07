@@ -1,8 +1,13 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.MovingObjectPosition;
 
 public interface AxisAlignedBB extends Cloneable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    AxisAlignedBB[] EMPTY_ARRAY = new AxisAlignedBB[0];
 
     default AxisAlignedBB setBounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
         this.setMinX(minX);
@@ -258,23 +263,23 @@ public interface AxisAlignedBB extends Cloneable {
             return null;
         }
 
-        int face = -1;
+        BlockFace f = null;
 
         if (vector == v1) {
-            face = 4;
+            f = BlockFace.WEST;
         } else if (vector == v2) {
-            face = 5;
+            f = BlockFace.EAST;
         } else if (vector == v3) {
-            face = 0;
+            f = BlockFace.DOWN;
         } else if (vector == v4) {
-            face = 1;
+            f = BlockFace.UP;
         } else if (vector == v5) {
-            face = 2;
+            f = BlockFace.NORTH;
         } else if (vector == v6) {
-            face = 3;
+            f = BlockFace.SOUTH;
         }
 
-        return MovingObjectPosition.fromBlock(0, 0, 0, face, vector);
+        return MovingObjectPosition.fromBlock(0, 0, 0, f, vector);
     }
 
     default void setMinX(double minX) {

@@ -3,7 +3,8 @@ package cn.nukkit.inventory;
 import cn.nukkit.blockentity.BlockEntityHopper;
 
 /**
- * Created by CreeperFace on 8.5.2017.
+ * @author CreeperFace
+ * @since 8.5.2017
  */
 public class HopperInventory extends ContainerInventory {
 

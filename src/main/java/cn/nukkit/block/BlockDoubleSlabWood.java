@@ -1,15 +1,22 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
- * Created on 2015/12/2 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/2
  */
-public class BlockDoubleSlabWood extends BlockSolidMeta {
+@PowerNukkitDifference(info = "Extends BlockDoubleSlabBase only in PowerNukkit")
+public class BlockDoubleSlabWood extends BlockDoubleSlabBase {
 
     public BlockDoubleSlabWood() {
         this(0);
@@ -22,6 +29,32 @@ public class BlockDoubleSlabWood extends BlockSolidMeta {
     @Override
     public int getId() {
         return DOUBLE_WOOD_SLAB;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return BlockSlabWood.PROPERTIES;
+    }
+
+    public WoodType getWoodType() {
+        return getPropertyValue(WoodType.PROPERTY);
+    }
+
+    public void setWoodType(WoodType type) {
+        setPropertyValue(WoodType.PROPERTY, type);
+    }
+
+    @Override
+    public String getSlabName() {
+        return getWoodType().getEnglishName();
+    }
+
+    @Override
+    public String getName() {
+        return "Double "+getSlabName()+" Wood Slab";
     }
 
     @Override
@@ -40,47 +73,18 @@ public class BlockDoubleSlabWood extends BlockSolidMeta {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Oak",
-                "Spruce",
-                "Birch",
-                "Jungle",
-                "Acacia",
-                "Dark Oak",
-                "",
-                ""
-        };
-        return "Double " + names[this.getDamage() & 0x07] + " Slab";
+    public int getSingleSlabId() {
+        return WOOD_SLAB;
     }
 
+    //TODO Adjust or remove this when merging https://github.com/PowerNukkit/PowerNukkit/pull/370
     @Override
-    public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.WOODEN_SLAB), this.getDamage() & 0x07);
-    }
-
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                Item.get(Item.WOOD_SLAB, this.getDamage() & 0x07, 2)
-        };
+    protected boolean isCorrectTool(Item item) {
+        return true;
     }
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            default:
-            case 0: //OAK
-                return BlockColor.WOOD_BLOCK_COLOR;
-            case 1: //SPRUCE
-                return BlockColor.SPRUCE_BLOCK_COLOR;
-            case 2: //BIRCH
-                return BlockColor.SAND_BLOCK_COLOR;
-            case 3: //JUNGLE
-                return BlockColor.DIRT_BLOCK_COLOR;
-            case 4: //Acacia
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            case 5: //DARK OAK
-                return BlockColor.BROWN_BLOCK_COLOR;
-        }
+        return getWoodType().getColor();
     }
 }

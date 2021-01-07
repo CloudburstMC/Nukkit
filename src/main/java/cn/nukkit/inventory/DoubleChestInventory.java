@@ -1,19 +1,19 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.blockentity.BlockEntityChest;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class DoubleChestInventory extends ContainerInventory implements InventoryHolder {
 
@@ -68,8 +68,8 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
     }
 
     @Override
-    public boolean clear(int index) {
-        return index < this.left.getSize() ? this.left.clear(index) : this.right.clear(index - this.right.getSize());
+    public boolean clear(int index, boolean send) {
+        return index < this.left.getSize() ? this.left.clear(index, send) : this.right.clear(index - this.right.getSize(), send);
     }
 
     @Override
@@ -108,6 +108,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
         }
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public void onOpen(Player who) {
         super.onOpen(who);
@@ -123,7 +124,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
             pk1.case2 = 2;
             Level level = this.left.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.left.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_OPEN);
+                level.addSound(this.left.getHolder().add(0.5, 0.5, 0.5), Sound.RANDOM_CHESTOPEN);
                 level.addChunkPacket((int) this.left.getHolder().getX() >> 4, (int) this.left.getHolder().getZ() >> 4, pk1);
             }
 
@@ -136,12 +137,13 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
 
             level = this.right.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.right.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_OPEN);
+                level.addSound(this.right.getHolder().add(0.5, 0.5, 0.5), Sound.RANDOM_CHESTOPEN);
                 level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk2);
             }
         }
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public void onClose(Player who) {
         if (this.getViewers().size() == 1) {
@@ -154,7 +156,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
 
             Level level = this.right.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.right.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_CLOSED);
+                level.addSound(this.right.getHolder().add(0.5, 0.5, 0.5), Sound.RANDOM_CHESTCLOSED);
                 level.addChunkPacket((int) this.right.getHolder().getX() >> 4, (int) this.right.getHolder().getZ() >> 4, pk1);
             }
 
@@ -167,7 +169,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
 
             level = this.left.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.left.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_CLOSED);
+                level.addSound(this.left.getHolder().add(0.5, 0.5, 0.5), Sound.RANDOM_CHESTCLOSED);
                 level.addChunkPacket((int) this.left.getHolder().getX() >> 4, (int) this.left.getHolder().getZ() >> 4, pk2);
             }
         }

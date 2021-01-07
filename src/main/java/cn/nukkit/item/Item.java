@@ -2,10 +2,16 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.blockproperty.UnknownRuntimeIdException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.BlockStateRegistry;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -21,20 +27,31 @@ import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.lang.reflect.Modifier;
 import java.nio.ByteOrder;
 import java.util.*;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public class Item implements Cloneable, BlockID, ItemID {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Item[] EMPTY_ARRAY = new Item[0];
+    
     /**
      * Groups:
      * <ol>
@@ -51,13 +68,47 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     protected static String UNKNOWN_STR = "Unknown";
     public static Class[] list = null;
+    
+    private static Map<String, Integer> itemIds = Arrays.stream(ItemID.class.getDeclaredFields())
+            .filter(field-> field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL))
+            .filter(field -> field.getType().equals(int.class))
+            .collect(Collectors.toMap(
+                    field -> field.getName().toLowerCase(),
+                    field -> {
+                        try {
+                            return field.getInt(null);
+                        } catch (IllegalAccessException e) {
+                            throw new InternalError(e);
+                        }
+                    },
+                    (e1, e2) -> e1, LinkedHashMap::new
+            ));
+
+    private static Map<String, Integer> blockIds = Arrays.stream(BlockID.class.getDeclaredFields())
+            .filter(field-> field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL))
+            .filter(field -> field.getType().equals(int.class))
+            .collect(Collectors.toMap(
+                    field -> field.getName().toLowerCase(),
+                    field -> {
+                        try {
+                            int blockId = field.getInt(null);
+                            if (blockId > 255) {
+                                return 255 - blockId;
+                            }
+                            return blockId;
+                        } catch (IllegalAccessException e) {
+                            throw new InternalError(e);
+                        }
+                    },
+                    (e1, e2) -> e1, LinkedHashMap::new
+            ));
 
     protected Block block = null;
     protected final int id;
     protected int meta;
     protected boolean hasMeta = true;
-    private byte[] tags = new byte[0];
-    private CompoundTag cachedNBT = null;
+    private byte[] tags = EmptyArrays.EMPTY_BYTES;
+    private transient CompoundTag cachedNBT = null;
     public int count;
     protected int durability = 0;
     protected String name;
@@ -83,7 +134,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             this.hasMeta = false;
         }
         this.count = count;
-        this.name = name;
+        this.name = name != null? name.intern() : null;
         /*f (this.block != null && this.id <= 0xff && Block.list[id] != null) { //probably useless
             this.block = Block.get(this.id, this.meta);
             this.name = this.block.getName();
@@ -171,7 +222,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[SIGN] = ItemSign.class; //323
             list[WOODEN_DOOR] = ItemDoorWood.class; //324
             list[BUCKET] = ItemBucket.class; //325
-
+            
             list[MINECART] = ItemMinecart.class; //328
             list[SADDLE] = ItemSaddle.class; //329
             list[IRON_DOOR] = ItemDoorIron.class; //330
@@ -260,17 +311,17 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[COOKED_RABBIT] = ItemRabbitCooked.class; //412
             list[RABBIT_STEW] = ItemRabbitStew.class; //413
             list[RABBIT_FOOT] = ItemRabbitFoot.class; //414
-            //TODO: list[RABBIT_HIDE] = ItemRabbitHide.class; //415
+            list[RABBIT_HIDE] = ItemRabbitHide.class; //415
             list[LEATHER_HORSE_ARMOR] = ItemHorseArmorLeather.class; //416
             list[IRON_HORSE_ARMOR] = ItemHorseArmorIron.class; //417
             list[GOLD_HORSE_ARMOR] = ItemHorseArmorGold.class; //418
             list[DIAMOND_HORSE_ARMOR] = ItemHorseArmorDiamond.class; //419
-            //TODO: list[LEAD] = ItemLead.class; //420
+            list[LEAD] = ItemLead.class; //420
             list[NAME_TAG] = ItemNameTag.class; //421
             list[PRISMARINE_CRYSTALS] = ItemPrismarineCrystals.class; //422
             list[RAW_MUTTON] = ItemMuttonRaw.class; //423
             list[COOKED_MUTTON] = ItemMuttonCooked.class; //424
-
+            list[Item.ARMOR_STAND] = ItemArmorStand.class; //425
             list[END_CRYSTAL] = ItemEndCrystal.class; //426
             list[SPRUCE_DOOR] = ItemDoorSpruce.class; //427
             list[BIRCH_DOOR] = ItemDoorBirch.class; //428
@@ -278,10 +329,10 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[ACACIA_DOOR] = ItemDoorAcacia.class; //430
             list[DARK_OAK_DOOR] = ItemDoorDarkOak.class; //431
             list[CHORUS_FRUIT] = ItemChorusFruit.class; //432
-            //TODO: list[POPPED_CHORUS_FRUIT] = ItemChorusFruitPopped.class; //433
+            list[POPPED_CHORUS_FRUIT] = ItemChorusFruitPopped.class; //433
             list[BANNER_PATTERN] = ItemBannerPattern.class; //434
 
-            //TODO: list[DRAGON_BREATH] = ItemDragonBreath.class; //437
+            list[DRAGON_BREATH] = ItemDragonBreath.class; //437
             list[SPLASH_POTION] = ItemPotionSplash.class; //438
 
             list[LINGERING_POTION] = ItemPotionLingering.class; //441
@@ -292,7 +343,9 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[BANNER] = ItemBanner.class; //446
 
             list[TOTEM] = ItemTotem.class; //450
-
+            
+            list[IRON_NUGGET] = ItemNuggetIron.class; //452
+            
             list[TRIDENT] = ItemTrident.class; //455
 
             list[BEETROOT] = ItemBeetroot.class; //457
@@ -315,18 +368,18 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[DARKOAK_SIGN] = ItemDarkOakSign.class; //476
             list[SWEET_BERRIES] = ItemSweetBerries.class; //477
 
-            list[RECORD_11] = ItemRecord11.class;
-            list[RECORD_CAT] = ItemRecordCat.class;
-            list[RECORD_13] = ItemRecord13.class;
-            list[RECORD_BLOCKS] = ItemRecordBlocks.class;
-            list[RECORD_CHIRP] = ItemRecordChirp.class;
-            list[RECORD_FAR] = ItemRecordFar.class;
-            list[RECORD_WARD] = ItemRecordWard.class;
-            list[RECORD_MALL] = ItemRecordMall.class;
-            list[RECORD_MELLOHI] = ItemRecordMellohi.class;
-            list[RECORD_STAL] = ItemRecordStal.class;
-            list[RECORD_STRAD] = ItemRecordStrad.class;
-            list[RECORD_WAIT] = ItemRecordWait.class;
+            list[RECORD_13] = ItemRecord13.class; //500
+            list[RECORD_CAT] = ItemRecordCat.class; //501
+            list[RECORD_BLOCKS] = ItemRecordBlocks.class; //502
+            list[RECORD_CHIRP] = ItemRecordChirp.class; //503
+            list[RECORD_FAR] = ItemRecordFar.class; //504
+            list[RECORD_MALL] = ItemRecordMall.class; //505
+            list[RECORD_MELLOHI] = ItemRecordMellohi.class; //506
+            list[RECORD_STAL] = ItemRecordStal.class; //507
+            list[RECORD_STRAD] = ItemRecordStrad.class; //508
+            list[RECORD_WARD] = ItemRecordWard.class; //509
+            list[RECORD_11] = ItemRecord11.class; //510
+            list[RECORD_WAIT] = ItemRecordWait.class; //511
 
             list[SHIELD] = ItemShield.class; //513
 
@@ -336,7 +389,8 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             list[HONEYCOMB] = ItemHoneycomb.class; //736
             list[HONEY_BOTTLE] = ItemHoneyBottle.class; //737
-
+                        
+            list[LODESTONECOMPASS] = ItemCompassLodestone.class; //741;
             list[NETHERITE_INGOT] = ItemIngotNetherite.class; //742
             list[NETHERITE_SWORD] = ItemSwordNetherite.class; //743
             list[NETHERITE_SHOVEL] = ItemShovelNetherite.class; //744
@@ -348,8 +402,16 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[NETHERITE_LEGGINGS] = ItemLeggingsNetherite.class; //750
             list[NETHERITE_BOOTS] = ItemBootsNetherite.class; //751
             list[NETHERITE_SCRAP] = ItemScrapNetherite.class; //752
-
+            list[CRIMSON_SIGN] = ItemCrimsonSign.class; //753
+            list[WARPED_SIGN] = ItemWarpedSign.class; //754
+            list[CRIMSON_DOOR] = ItemDoorCrimson.class; //755
+            list[WARPED_DOOR] = ItemDoorWarped.class; //756
+            list[WARPED_FUNGUS_ON_A_STICK] = ItemWarpedFungusOnAStick.class; //757
+            list[CHAIN] = ItemChain.class; //758
             list[RECORD_PIGSTEP] = ItemRecordPigstep.class; //759
+            list[NETHER_SPROUTS] = ItemNetherSprouts.class; //760
+
+            list[SOUL_CAMPFIRE] = ItemCampfireSoul.class; //801
             
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
@@ -359,6 +421,28 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         initCreativeItems();
+    }
+
+    private static List<String> itemList;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static List<String> rebuildItemList() {
+        return itemList = Collections.unmodifiableList(Stream.of(
+                BlockStateRegistry.getPersistenceNames().stream()
+                        .map(name-> name.substring(name.indexOf(':') + 1)),
+                itemIds.keySet().stream()
+        ).flatMap(Function.identity()).distinct().collect(Collectors.toList()));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static List<String> getItemList() {
+        List<String> itemList = Item.itemList;
+        if (itemList == null) {
+            return rebuildItemList();
+        }
+        return itemList;
     }
 
     private static final ArrayList<Item> creative = new ArrayList<>();
@@ -373,7 +457,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         for (Map map : list) {
             try {
-                addCreativeItem(fromJson(map));
+                addCreativeItem(fromJsonNetworkId(map));
             } catch (Exception e) {
                 MainLogger.getLogger().logException(e);
             }
@@ -430,7 +514,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static Item getBlock(int id, Integer meta, int count) {
-        return getBlock(id, meta, count, new byte[0]);
+        return getBlock(id, meta, count, EmptyArrays.EMPTY_BYTES);
     }
 
     public static Item getBlock(int id, Integer meta, int count, byte[] tags) {
@@ -449,9 +533,12 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static Item get(int id, Integer meta, int count) {
-        return get(id, meta, count, new byte[0]);
+        return get(id, meta, count, EmptyArrays.EMPTY_BYTES);
     }
 
+    @PowerNukkitDifference(
+            info = "Prevents players from getting invalid items by limiting the return to the maximum damage defined in Block.getMaxItemDamage()",
+            since = "1.4.0.0-PN")
     public static Item get(int id, Integer meta, int count, byte[] tags) {
         try {
             Class c = null;
@@ -463,16 +550,36 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
             Item item;
 
-            if (c == null) {
-                item = new Item(id, meta, count);
-            } else if (id < 256) {
-                if (meta >= 0) {
-                    item = new ItemBlock(Block.get(id, meta), meta, count);
+            if (id < 256) {
+                int blockId = id < 0? 255 - id : id;
+                if (meta == 0) {
+                    item = new ItemBlock(Block.get(blockId), 0, count);
+                } else if (meta == -1) {
+                    // Special case for item instances used in fuzzy recipes
+                    item = new ItemBlock(Block.get(blockId), -1);
                 } else {
-                    item = new ItemBlock(Block.get(id), meta, count);
+                    BlockState state = BlockState.of(blockId, meta);
+                    try {
+                        state.validate();
+                        item = state.asItemBlock(count);
+                    } catch (InvalidBlockPropertyMetaException | InvalidBlockStateException e) {
+                        log.warn("Attempted to get an ItemBlock with invalid block state in memory: "+state+", trying to repair the block state...");
+                        Block repaired = state.getBlockRepairing(null, 0, 0, 0);
+                        item = repaired.asItemBlock(count);
+                        log.error("Attempted to get an illegal item block " + id + ":" + meta + " ("+blockId+"), the meta was changed to " + item.getDamage());
+                    } catch (UnknownRuntimeIdException e) {
+                        log.warn("Attempted to get an illegal item block "+id+":"+meta+ " ("+blockId+"), the runtime id was unknown and the meta was changed to 0");
+                        item = BlockState.of(id).asItemBlock(count);
+                    }
                 }
+            } else if (c == null) {
+                item = new Item(id, meta, count);
             } else {
-                item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
+                if (meta == -1) {
+                    item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(0, count)).createFuzzyCraftingRecipe();
+                } else {
+                    item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
+                }
             }
 
             if (tags.length != 0) {
@@ -481,10 +588,12 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             return item;
         } catch (Exception e) {
+            log.error("Error getting the item " + id + ":" + meta + (id < 0? " ("+(255 - id)+")":"") + "! Returning an unsafe item stack!", e);
             return new Item(id, meta, count).setCompoundTag(tags);
         }
     }
 
+    @PowerNukkitDifference(since = "1.3.2.0-PN", info = "Improve namespaced name handling and allows to get custom blocks by name")
     public static Item fromString(String str) {
         String normalized = str.trim().replace(' ', '_').toLowerCase();
         Matcher matcher = ITEM_STRING_PATTERN.matcher(normalized);
@@ -556,13 +665,51 @@ public class Item implements Cloneable, BlockID, ItemID {
         } else { // Support old format for backwards compat
             nbt = (String) data.getOrDefault("nbt_hex", null);
             if (nbt == null) {
-                nbtBytes = new byte[0];
+                nbtBytes = EmptyArrays.EMPTY_BYTES;
             } else {
                 nbtBytes = Utils.parseHexBinary(nbt);
             }
         }
 
         return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static Item fromJsonNetworkId(Map<String, Object> data) {
+        String nbt = (String) data.get("nbt_b64");
+        byte[] nbtBytes;
+        if (nbt != null) {
+            nbtBytes = Base64.getDecoder().decode(nbt);
+        } else { // Support old format for backwards compat
+            nbt = (String) data.getOrDefault("nbt_hex", null);
+            if (nbt == null) {
+                nbtBytes = EmptyArrays.EMPTY_BYTES;
+            } else {
+                nbtBytes = Utils.parseHexBinary(nbt);
+            }
+        }
+
+        int networkId = Utils.toInt(data.get("id"));
+        RuntimeItemMapping mapping = RuntimeItems.getRuntimeMapping();
+        int legacyFullId = mapping.getLegacyFullId(networkId);
+        int id = RuntimeItems.getId(legacyFullId);
+        OptionalInt meta = RuntimeItems.hasData(legacyFullId)? OptionalInt.of(RuntimeItems.getData(legacyFullId)) : OptionalInt.empty();
+        if (data.containsKey("damage")) {
+            int jsonMeta = Utils.toInt(data.get("damage"));
+            if (jsonMeta != Short.MAX_VALUE) {
+                if (meta.isPresent() && jsonMeta != meta.getAsInt()) {
+                    throw new IllegalArgumentException(
+                            "Conflicting damage value for " + mapping.getNamespacedIdByNetworkId(networkId) + ". " +
+                                    "From json: " + jsonMeta + ", from mapping: " + meta.getAsInt()
+                    );
+                }
+                meta = OptionalInt.of(jsonMeta);
+            } else if (!meta.isPresent()) {
+                meta = OptionalInt.of(-1);
+            }
+        }
+        return get(id, meta.orElse(0), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
 
     public static Item[] fromStringMultiple(String str) {
@@ -666,6 +813,37 @@ public class Item implements Cloneable, BlockID, ItemID {
         return false;
     }
 
+    /**
+     * Convenience method to check if the item stack has positive level on a specific enchantment by it's id.
+     * @param id The enchantment ID from {@link Enchantment} constants.
+     */
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public boolean hasEnchantment(int id) {
+        return getEnchantmentLevel(id) > 0;
+    }
+
+    /**
+     * Find the enchantment level by the enchantment id.
+     * @param id The enchantment ID from {@link Enchantment} constants.
+     * @return {@code 0} if the item don't have that enchantment or the current level of the given enchantment.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getEnchantmentLevel(int id) {
+        if (!this.hasEnchantments()) {
+            return 0;
+        }
+
+        for (CompoundTag entry : this.getNamedTag().getList("ench", CompoundTag.class).getAll()) {
+            if (entry.getShort("id") == id) {
+                return entry.getShort("lvl");
+            }
+        }
+        
+        return 0;
+    }
+
     public Enchantment getEnchantment(int id) {
         return getEnchantment((short) (id & 0xffff));
     }
@@ -732,7 +910,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     public Enchantment[] getEnchantments() {
         if (!this.hasEnchantments()) {
-            return new Enchantment[0];
+            return Enchantment.EMPTY_ARRAY;
         }
 
         List<Enchantment> enchantments = new ArrayList<>();
@@ -746,12 +924,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
         }
 
-        return enchantments.toArray(new Enchantment[0]);
-    }
-
-    @Since("1.3.2.0-PN")
-    public boolean hasEnchantment(int id) {
-        return this.getEnchantment(id) != null;
+        return enchantments.toArray(Enchantment.EMPTY_ARRAY);
     }
 
     public boolean hasCustomName() {
@@ -840,7 +1013,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
         }
 
-        return lines.toArray(new String[0]);
+        return lines.toArray(EmptyArrays.EMPTY_STRINGS);
     }
 
     public Item setLore(String... lines) {
@@ -904,14 +1077,14 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public Item clearNamedTag() {
-        return this.setCompoundTag(new byte[0]);
+        return this.setCompoundTag(EmptyArrays.EMPTY_BYTES);
     }
 
     public static CompoundTag parseCompoundTag(byte[] tag) {
         try {
             return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -920,7 +1093,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             tag.setName("");
             return NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new UncheckedIOException(e);
         }
     }
 
@@ -963,6 +1136,16 @@ public class Item implements Cloneable, BlockID, ItemID {
                 RuntimeItems.getRuntimeMapping().getNetworkFullId(this)
         );
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getBlockId() {
+        if (block != null) {
+            return block.getId();
+        } else {
+            return -1;
+        }
+    }
 
     public int getDamage() {
         return meta;
@@ -975,9 +1158,18 @@ public class Item implements Cloneable, BlockID, ItemID {
             this.hasMeta = false;
         }
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public Item createFuzzyCraftingRecipe() {
+        Item item = clone();
+        item.meta = 0;
+        item.hasMeta = false;
+        return item;
+    }
 
     public int getMaxStackSize() {
-        return 64;
+        return block == null? 64 : block.getItemMaxStackSize();
     }
 
     final public Short getFuelTime() {
@@ -1074,6 +1266,16 @@ public class Item implements Cloneable, BlockID, ItemID {
         return false;
     }
 
+    /**
+     * If the item is resistant to lava and fire and can float on lava like if it was on water.
+     * @since 1.4.0.0-PN
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isLavaResistant() {
+        return false;
+    }
+    
     public boolean onUse(Player player, int ticksUsed) {
         return false;
     }
@@ -1081,6 +1283,8 @@ public class Item implements Cloneable, BlockID, ItemID {
     public boolean onRelease(Player player, int ticksUsed) {
         return false;
     }
+
+    public boolean damageWhenBreaking() { return true; }
 
     @Override
     final public String toString() {
@@ -1224,9 +1428,11 @@ public class Item implements Cloneable, BlockID, ItemID {
         try {
             Item item = (Item) super.clone();
             item.tags = this.tags.clone();
+            item.cachedNBT = null;
             return item;
         } catch (CloneNotSupportedException e) {
             return null;
         }
     }
+
 }

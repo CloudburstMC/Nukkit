@@ -5,7 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 
 /**
- * author: Rover656
+ * @author Rover656
  */
 public class BeaconInventory extends FakeBlockUIComponent {
 

@@ -21,18 +21,13 @@ public class ItemChestplateNetherite extends ItemArmor {
     }
 
     @Override
-    public boolean isChestplate() {
-        return true;
-    }
-
-    @Override
     public int getTier() {
         return ItemArmor.TIER_NETHERITE;
     }
 
     @Override
-    public int getMaxDurability() {
-        return 592;
+    public boolean isChestplate() {
+        return true;
     }
 
     @Override
@@ -41,7 +36,17 @@ public class ItemChestplateNetherite extends ItemArmor {
     }
 
     @Override
+    public int getMaxDurability() {
+        return 592;
+    }
+
+    @Override
     public int getToughness() {
-        return 2;
+        return 3;
+    }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
     }
 }

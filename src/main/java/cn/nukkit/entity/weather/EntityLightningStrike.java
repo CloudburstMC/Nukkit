@@ -1,7 +1,8 @@
 package cn.nukkit.entity.weather;
 
 /**
- * Created by funcraft on 2016/2/27.
+ * @author funcraft
+ * @since 2016/2/27
  */
 public interface EntityLightningStrike extends EntityWeather {
 

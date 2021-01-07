@@ -2,49 +2,71 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.Faceable;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.ints.IntList;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockStairs extends BlockTransparentMeta implements Faceable {
-    private static final IntList FACES = new IntArrayList(new int[]{2, 1, 3, 0});
+    public static final BooleanBlockProperty UPSIDE_DOWN = new BooleanBlockProperty("upside_down_bit", false);
+    public static final BlockProperty<BlockFace> STAIRS_DIRECTION = new ArrayBlockProperty<>("weirdo_direction", false, new BlockFace[]{
+            BlockFace.EAST, BlockFace.WEST,
+            BlockFace.SOUTH, BlockFace.NORTH
+    }).ordinal(true);
+    
+    public static final BlockProperties PROPERTIES = new BlockProperties(STAIRS_DIRECTION, UPSIDE_DOWN);
     
 
     protected BlockStairs(int meta) {
         super(meta);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
     @Override
     public double getMinY() {
-        // TODO: this seems wrong
-        return this.y + ((getDamage() & 0x04) > 0 ? 0.5 : 0);
+        return this.y + (isUpsideDown() ? 0.5 : 0);
     }
 
     @Override
     public double getMaxY() {
-        // TODO: this seems wrong
-        return this.y + ((getDamage() & 0x04) > 0 ? 1 : 0.5);
+        return this.y + (isUpsideDown() ? 1 : 0.5);
     }
 
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
-        return side == BlockFace.UP && (getDamage() & 0x04) == 0x04 || side == BlockFace.DOWN && (getDamage() & 0x04) != 0x04;
+        return side == BlockFace.UP && isUpsideDown() || side == BlockFace.DOWN && !isUpsideDown();
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(FACES.getInt(player != null ? player.getDirection().getHorizontalIndex() : 0));
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        if (player != null) {
+            setBlockFace(player.getDirection());
+        }
+        
         if ((fy > 0.5 && face != BlockFace.UP) || face == BlockFace.DOWN) {
-            this.setDamage(this.getDamage() | 0x04); //Upside-down stairs
+            setUpsideDown(true);
         }
         this.getLevel().setBlock(block, this, true, true);
 
@@ -52,109 +74,100 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
-    }
-
-    @Override
-    public Item toItem() {
-        Item item = super.toItem();
-        item.setDamage(0);
-        return item;
-    }
-
-    @Override
     public boolean collidesWithBB(AxisAlignedBB bb) {
-        int damage = this.getDamage();
-        int side = damage & 0x03;
-        double f = 0;
-        double f1 = 0.5;
-        double f2 = 0.5;
-        double f3 = 1;
-        if ((damage & 0x04) > 0) {
-            f = 0.5;
-            f1 = 1;
-            f2 = 0;
-            f3 = 0.5;
+        BlockFace face = getBlockFace();
+        double minSlabY = 0;
+        double maxSlabY = 0.5;
+        double minHalfSlabY = 0.5;
+        double maxHalfSlabY = 1;
+        
+        if (isUpsideDown()) {
+            minSlabY = 0.5;
+            maxSlabY = 1;
+            minHalfSlabY = 0;
+            maxHalfSlabY = 0.5;
         }
 
         if (bb.intersectsWith(new SimpleAxisAlignedBB(
                 this.x,
-                this.y + f,
+                this.y + minSlabY,
                 this.z,
                 this.x + 1,
-                this.y + f1,
+                this.y + maxSlabY,
                 this.z + 1
         ))) {
             return true;
         }
 
 
-        if (side == 0) {
-            if (bb.intersectsWith(new SimpleAxisAlignedBB(
-                    this.x + 0.5,
-                    this.y + f2,
-                    this.z,
-                    this.x + 1,
-                    this.y + f3,
-                    this.z + 1
-            ))) {
-                return true;
-            }
-        } else if (side == 1) {
-            if (bb.intersectsWith(new SimpleAxisAlignedBB(
-                    this.x,
-                    this.y + f2,
-                    this.z,
-                    this.x + 0.5,
-                    this.y + f3,
-                    this.z + 1
-            ))) {
-                return true;
-            }
-        } else if (side == 2) {
-            if (bb.intersectsWith(new SimpleAxisAlignedBB(
-                    this.x,
-                    this.y + f2,
-                    this.z + 0.5,
-                    this.x + 1,
-                    this.y + f3,
-                    this.z + 1
-            ))) {
-                return true;
-            }
-        } else if (side == 3) {
-            if (bb.intersectsWith(new SimpleAxisAlignedBB(
-                    this.x,
-                    this.y + f2,
-                    this.z,
-                    this.x + 1,
-                    this.y + f3,
-                    this.z + 0.5
-            ))) {
-                return true;
-            }
+        switch (face) {
+            case EAST:
+                return bb.intersectsWith(new SimpleAxisAlignedBB(
+                        this.x + 0.5,
+                        this.y + minHalfSlabY,
+                        this.z,
+                        this.x + 1,
+                        this.y + maxHalfSlabY,
+                        this.z + 1
+                ));
+            case WEST:
+                return bb.intersectsWith(new SimpleAxisAlignedBB(
+                        this.x,
+                        this.y + minHalfSlabY,
+                        this.z,
+                        this.x + 0.5,
+                        this.y + maxHalfSlabY,
+                        this.z + 1
+                ));
+            case SOUTH:
+                return bb.intersectsWith(new SimpleAxisAlignedBB(
+                        this.x,
+                        this.y + minHalfSlabY,
+                        this.z + 0.5,
+                        this.x + 1,
+                        this.y + maxHalfSlabY,
+                        this.z + 1
+                ));
+            case NORTH:
+                return bb.intersectsWith(new SimpleAxisAlignedBB(
+                        this.x,
+                        this.y + minHalfSlabY,
+                        this.z,
+                        this.x + 1,
+                        this.y + maxHalfSlabY,
+                        this.z + 0.5
+                ));
+            default:
+                return false;
         }
-
-        return false;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
+    }
+    
+    public void setUpsideDown(boolean upsideDown) {
+        setBooleanValue(UPSIDE_DOWN, upsideDown);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isUpsideDown() {
+        return getBooleanValue(UPSIDE_DOWN);
     }
 
     @PowerNukkitDifference(info = "Was returning the wrong face", since = "1.3.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
-        int stairFace = this.getDamage() & 0x3;
-        int horizontalIndex = FACES.indexOf(stairFace);
-        return BlockFace.fromHorizontalIndex(horizontalIndex).getOpposite();
+        return getPropertyValue(STAIRS_DIRECTION);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(STAIRS_DIRECTION, face);
     }
 }

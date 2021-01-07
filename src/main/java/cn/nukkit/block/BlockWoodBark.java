@@ -1,11 +1,23 @@
 package cn.nukkit.block;
 
-import cn.nukkit.Player;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.math.BlockFace;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
+import cn.nukkit.blockproperty.value.WoodType;
+
+import javax.annotation.Nonnull;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
 
 public class BlockWoodBark extends BlockWood {
+    private static final String STRIPPED_BIT = "stripped_bit";
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+            WoodType.PROPERTY,
+            new BooleanBlockProperty(STRIPPED_BIT, true),
+            PILLAR_AXIS
+    );
+    
     public BlockWoodBark() {
         this(0);
     }
@@ -15,57 +27,38 @@ public class BlockWoodBark extends BlockWood {
     }
     
     @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
-    }
-    
-    @Override
     public int getId() {
         return WOOD_BARK;
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Oak Wood",
-                "Spruce Wood",
-                "Birch Wood",
-                "Jungle Wood",
-                "Acacia Wood",
-                "Dark Oak Wood",
-                // illegal
-                "Oak Wood",
-                "Oak Wood"
-        };
-        return names[getDamage() & 0x7];
+        return (isStripped()? "Stripped ": "") + super.getName();
+    }
+
+    @Override
+    public WoodType getWoodType() {
+        return getPropertyValue(WoodType.PROPERTY);
+    }
+
+    @Override
+    public void setWoodType(WoodType woodType) {
+        setPropertyValue(WoodType.PROPERTY, woodType);
     }
     
-    @Override
-    protected int getStrippedId() {
-        return getId();
+    public boolean isStripped() {
+        return getBooleanValue(STRIPPED_BIT);
     }
     
-    @Override
-    protected int getStrippedDamage() {
-        return getDamage() | 0x8;
-    }
-    
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (face.getAxis().isHorizontal()) {
-            if (face.getAxis() == BlockFace.Axis.X) {
-                setDamage(getDamage() | 0x10);
-            } else {
-                setDamage(getDamage() | 0x20);
-            }
-        }
-        this.getLevel().setBlock(block, this, true, true);
-        
-        return true;
-    }
-    
-    @Override
-    public Item toItem() {
-        return new ItemBlock(new BlockWoodBark(), getDamage() & 0xF);
+    public void setStripped(boolean stripped) {
+        setBooleanValue(STRIPPED_BIT, stripped);
     }
 }

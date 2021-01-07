@@ -4,8 +4,7 @@ import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.HandlerList;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemSpawnEvent extends EntityEvent {
     private static final HandlerList handlers = new HandlerList();

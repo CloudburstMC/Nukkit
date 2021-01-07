@@ -9,8 +9,8 @@ import cn.nukkit.utils.BlockColor;
 import java.util.Random;
 
 /**
- * Created on 2015/12/11 by Pub4Game.
- * Package cn.nukkit.block in project Nukkit .
+ * @author Pub4Game
+ * @since 2015/12/11
  */
 
 public class BlockMelon extends BlockSolid {
@@ -64,5 +64,15 @@ public class BlockMelon extends BlockSolid {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
     }
 }

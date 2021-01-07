@@ -5,7 +5,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class EntityDolphin extends EntityAnimal {
 

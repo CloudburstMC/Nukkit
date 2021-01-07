@@ -21,18 +21,13 @@ public class ItemHelmetNetherite extends ItemArmor {
     }
 
     @Override
-    public boolean isHelmet() {
-        return true;
-    }
-
-    @Override
     public int getTier() {
         return ItemArmor.TIER_NETHERITE;
     }
 
     @Override
-    public int getMaxDurability() {
-        return 407;
+    public boolean isHelmet() {
+        return true;
     }
 
     @Override
@@ -41,7 +36,17 @@ public class ItemHelmetNetherite extends ItemArmor {
     }
 
     @Override
+    public int getMaxDurability() {
+        return 407;
+    }
+
+    @Override
     public int getToughness() {
-        return 2;
+        return 3;
+    }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
     }
 }

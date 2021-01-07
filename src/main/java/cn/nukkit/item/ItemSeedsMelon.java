@@ -4,8 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemSeedsMelon extends Item {
 

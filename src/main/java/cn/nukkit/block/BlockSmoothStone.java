@@ -32,18 +32,15 @@ public class BlockSmoothStone extends BlockSolid {
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
     
     @Override
     public boolean canHarvestWithHand() {
         return false;
     }
-    
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe()) {
-            return new Item[]{toItem()};
-        } else {
-            return new Item[0];
-        }
-    }
+
 }

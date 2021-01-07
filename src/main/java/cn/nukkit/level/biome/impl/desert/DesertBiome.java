@@ -1,12 +1,13 @@
 package cn.nukkit.level.biome.impl.desert;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.biome.type.SandyBiome;
 import cn.nukkit.level.generator.populator.impl.PopulatorCactus;
 import cn.nukkit.level.generator.populator.impl.PopulatorDeadBush;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class DesertBiome extends SandyBiome {
     public DesertBiome() {
@@ -30,5 +31,12 @@ public class DesertBiome extends SandyBiome {
     @Override
     public boolean canRain() {
         return false;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isDry() {
+        return true;
     }
 }

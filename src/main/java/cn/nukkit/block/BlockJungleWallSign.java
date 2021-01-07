@@ -1,8 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemJungleSign;
 
+@PowerNukkitOnly
 public class BlockJungleWallSign extends BlockWallSign {
     public BlockJungleWallSign() {
         this(0);

@@ -1,6 +1,7 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
@@ -13,14 +14,14 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BanIpCommand extends VanillaCommand {
 
@@ -39,6 +40,7 @@ public class BanIpCommand extends VanillaCommand {
         });
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed resource leak")
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
@@ -77,10 +79,10 @@ public class BanIpCommand extends VanillaCommand {
                 File file = new File(path + name + ".dat");
                 CompoundTag nbt = null;
                 if (file.exists()) {
-                    try {
-                        nbt = NBTIO.readCompressed(new FileInputStream(file));
+                    try (FileInputStream inputStream = new FileInputStream(file)) {
+                        nbt = NBTIO.readCompressed(inputStream);
                     } catch (IOException e) {
-                        throw new RuntimeException(e);
+                        throw new UncheckedIOException(e);
                     }
                 }
 

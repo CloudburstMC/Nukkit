@@ -21,18 +21,13 @@ public class ItemBootsNetherite extends ItemArmor {
     }
 
     @Override
-    public boolean isBoots() {
-        return true;
-    }
-
-    @Override
     public int getTier() {
         return ItemArmor.TIER_NETHERITE;
     }
 
     @Override
-    public int getMaxDurability() {
-        return 481;
+    public boolean isBoots() {
+        return true;
     }
 
     @Override
@@ -41,7 +36,17 @@ public class ItemBootsNetherite extends ItemArmor {
     }
 
     @Override
+    public int getMaxDurability() {
+        return 481;
+    }
+
+    @Override
     public int getToughness() {
-        return 2;
+        return 3;
+    }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
     }
 }

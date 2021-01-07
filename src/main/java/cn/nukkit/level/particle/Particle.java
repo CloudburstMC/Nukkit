@@ -7,8 +7,7 @@ import cn.nukkit.network.protocol.DataPacket;
 import java.lang.reflect.Field;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class Particle extends Vector3 {
 

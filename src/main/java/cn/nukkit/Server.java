@@ -1,5 +1,7 @@
 package cn.nukkit;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
@@ -37,8 +39,6 @@ import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.LevelProviderManager;
 import cn.nukkit.level.format.anvil.Anvil;
-import cn.nukkit.level.format.leveldb.LevelDB;
-import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Flat;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.Nether;
@@ -72,6 +72,7 @@ import cn.nukkit.plugin.PluginLoadOrder;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.plugin.service.NKServiceManager;
 import cn.nukkit.plugin.service.ServiceManager;
+import cn.nukkit.positiontracking.PositionTrackingService;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
@@ -82,13 +83,16 @@ import cn.nukkit.utils.bugreport.ExceptionHandler;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Files;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.internal.EmptyArrays;
 import lombok.extern.log4j.Log4j2;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 
+import javax.annotation.Nonnull;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -214,28 +218,30 @@ public class Server {
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
 
     private final Map<UUID, Player> playerList = new HashMap<>();
+    
+    private PositionTrackingService positionTrackingService;
 
     private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
         public Level put(Integer key, Level value) {
             Level result = super.put(key, value);
-            levelArray = levels.values().toArray(new Level[0]);
+            levelArray = levels.values().toArray(Level.EMPTY_ARRAY);
             return result;
         }
 
         public boolean remove(Object key, Object value) {
             boolean result = super.remove(key, value);
-            levelArray = levels.values().toArray(new Level[0]);
+            levelArray = levels.values().toArray(Level.EMPTY_ARRAY);
             return result;
         }
 
         public Level remove(Object key) {
             Level result = super.remove(key);
-            levelArray = levels.values().toArray(new Level[0]);
+            levelArray = levels.values().toArray(Level.EMPTY_ARRAY);
             return result;
         }
     };
 
-    private Level[] levelArray = new Level[0];
+    private Level[] levelArray = Level.EMPTY_ARRAY;
 
     private final ServiceManager serviceManager = new NKServiceManager();
 
@@ -252,6 +258,56 @@ public class Server {
     private PlayerDataSerializer playerDataSerializer;
 
     private final Set<String> ignoredPackets = new HashSet<>();
+
+    private boolean safeSpawn;
+
+    private boolean forceSkinTrusted = false;
+
+    private boolean checkMovement = true;
+
+    /**
+     * Minimal initializer for testing
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    Server(File tempDir) throws IOException {
+        if (tempDir.isFile() && !tempDir.delete()) {
+            throw new IOException("Failed to delete " + tempDir);
+        }
+        instance = this;
+        CraftingManager.packet = new BatchPacket();
+        CraftingManager.packet.payload = EmptyArrays.EMPTY_BYTES;
+        
+        currentThread = Thread.currentThread();
+        File abs = tempDir.getAbsoluteFile();
+        filePath = abs.getPath();
+        dataPath = filePath;
+        
+        File dir = new File(tempDir, "plugins");
+        pluginPath = dir.getPath();
+        
+        Files.createParentDirs(dir);
+        Files.createParentDirs(new File(tempDir, "worlds"));
+        Files.createParentDirs(new File(tempDir, "players"));
+        
+        baseLang = new BaseLang(BaseLang.FALLBACK_LANGUAGE);
+        
+        console = new NukkitConsole(this);
+        consoleThread = new ConsoleThread();
+        config = new Config();
+        properties = new Config();
+        banByName = new BanList(dataPath + "banned-players.json");
+        banByIP = new BanList(dataPath + "banned-ips.json");
+        operators = new Config();
+        whitelist = new Config();
+        commandMap = new SimpleCommandMap(this);
+        
+        setMaxPlayers(10);
+
+        this.registerEntities();
+        this.registerBlockEntities();
+    }
 
     Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
@@ -452,8 +508,8 @@ public class Server {
         log.info("Loading {} ...", TextFormat.GREEN + "server.properties" + TextFormat.WHITE);
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ConfigSection() {
             {
-                put("motd", "A Nukkit Powered Server");
-                put("sub-motd", "https://nukkitx.com");
+                put("motd", "PowerNukkit Server");
+                put("sub-motd", "https://powernukkit.org");
                 put("server-port", 19132);
                 put("server-ip", "0.0.0.0");
                 put("view-distance", 10);
@@ -514,6 +570,9 @@ public class Server {
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
         this.baseTickRate = this.getConfig("level-settings.base-tick-rate", 1);
         this.redstoneEnabled = this.getConfig("level-settings.tick-redstone", true);
+        this.safeSpawn = this.getConfig().getBoolean("settings.safe-spawn", true);
+        this.forceSkinTrusted = this.getConfig().getBoolean("player.force-skin-trusted", false);
+        this.checkMovement = this.getConfig().getBoolean("player.check-movement", true);
 
         this.scheduler = new ServerScheduler();
 
@@ -602,15 +661,21 @@ public class Server {
         this.queryRegenerateEvent = new QueryRegenerateEvent(this, 5);
 
         this.network.registerInterface(new RakNetInterface(this));
-
+        
+        try {
+            getLogger().debug("Loading position tracking service");
+            this.positionTrackingService = new PositionTrackingService(new File(Nukkit.DATA_PATH, "services/position_tracking_db"));
+            //getScheduler().scheduleRepeatingTask(null, positionTrackingService::forceRecheckAllPlayers, 20 * 5);
+        } catch (IOException e) {
+            getLogger().emergency("Failed to start the Position Tracking DB service!", e);
+        }
+        
         this.pluginManager.loadPowerNukkitPlugins();
         this.pluginManager.loadPlugins(this.pluginPath);
 
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
         LevelProviderManager.addProvider(this, Anvil.class);
-        LevelProviderManager.addProvider(this, McRegion.class);
-        LevelProviderManager.addProvider(this, LevelDB.class);
 
         Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
         Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
@@ -689,11 +754,12 @@ public class Server {
 
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
 
-        if (Nukkit.DEBUG < 2 && !Boolean.parseBoolean(System.getProperty("disableWatchdog", "false"))) {
+        if (/*Nukkit.DEBUG < 2 && */!Boolean.parseBoolean(System.getProperty("disableWatchdog", "false"))) {
             this.watchdog = new Watchdog(this, 60000);
             this.watchdog.start();
         }
-
+        
+        System.runFinalization();
         this.start();
     }
 
@@ -766,26 +832,31 @@ public class Server {
     }
 
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
-        broadcastPacket(players.toArray(new Player[0]), packet);
-    }
+        packet.tryEncode();
 
-    public static void broadcastPacket(Player[] players, DataPacket packet) {
-        packet.encode();
-        packet.isEncoded = true;
-
-        if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-            for (Player player : players) {
-                player.dataPacket(packet);
-            }
-        } else {
-            getInstance().batchPackets(players, new DataPacket[]{packet}, true);
+        for (Player player : players) {
+            player.dataPacket(packet);
         }
     }
 
+    public static void broadcastPacket(Player[] players, DataPacket packet) {
+        packet.tryEncode();
+
+        for (Player player : players) {
+            player.dataPacket(packet);
+        }
+    }
+
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", 
+            reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
+    @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
 
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit",
+            reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
+    @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
         if (players == null || packets == null || players.length == 0 || packets.length == 0) {
             return;
@@ -970,6 +1041,11 @@ public class Server {
                 this.unloadLevel(level, true);
             }
 
+            if (positionTrackingService != null) {
+                this.getLogger().debug("Closing position tracking service");
+                positionTrackingService.close();
+            }
+
             this.getLogger().debug("Closing console");
             this.consoleThread.interrupt();
 
@@ -1040,6 +1116,14 @@ public class Server {
     private int lastLevelGC;
 
     public void tickProcessor() {
+        getScheduler().scheduleDelayedTask(new Task() {
+            @Override
+            public void onRun(int currentTick) {
+                System.runFinalization();
+                System.gc();
+            }
+        }, 60);
+        
         this.nextTick = System.currentTimeMillis();
         try {
             while (this.isRunning.get()) {
@@ -1131,7 +1215,7 @@ public class Server {
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Collection<Player> players) {
-        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId, players.toArray(new Player[0]));
+        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId, players.toArray(Player.EMPTY_ARRAY));
     }
 
     public void removePlayerListData(UUID uuid) {
@@ -1154,7 +1238,7 @@ public class Server {
     }
 
     public void removePlayerListData(UUID uuid, Collection<Player> players) {
-        this.removePlayerListData(uuid, players.toArray(new Player[0]));
+        this.removePlayerListData(uuid, players.toArray(Player.EMPTY_ARRAY));
     }
 
     public void sendFullPlayerListData(Player player) {
@@ -1209,21 +1293,21 @@ public class Server {
                         if (r > this.baseTickRate) {
                             level.tickRateCounter = level.getTickRate();
                         }
-                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + level.getTickRate() + " ticks");
+                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + (19 -level.getTickRate()) + " ticks");
                     } else if (tickMs >= 50) {
                         if (level.getTickRate() == this.baseTickRate) {
                             level.setTickRate(Math.max(this.baseTickRate + 1, Math.min(this.autoTickRateLimit, tickMs / 50)));
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + (19 - level.getTickRate()) + " ticks");
                         } else if ((tickMs / level.getTickRate()) >= 50 && level.getTickRate() < this.autoTickRateLimit) {
                             level.setTickRate(level.getTickRate() + 1);
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + (19 - level.getTickRate()) + " ticks");
                         }
                         level.tickRateCounter = level.getTickRate();
                     }
                 }
             } catch (Exception e) {
                 log.error(this.getLanguage().translateString("nukkit.level.tickError",
-                        new String[]{level.getFolderName(), Utils.getExceptionMessage(e)}));
+                        level.getFolderName(), Utils.getExceptionMessage(e)), e);
             }
         }
     }
@@ -1948,7 +2032,7 @@ public class Server {
             }
         }
 
-        return matchedPlayer.toArray(new Player[0]);
+        return matchedPlayer.toArray(Player.EMPTY_ARRAY);
     }
 
     public void removePlayer(Player player) {
@@ -2046,7 +2130,7 @@ public class Server {
         try {
             level = new Level(this, name, path, provider);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
+            log.error(this.getLanguage().translateString("nukkit.level.loadError", name, e.getMessage()), e);
             return false;
         }
 
@@ -2223,7 +2307,7 @@ public class Server {
     }
 
     public String getPropertyString(String variable, String defaultValue) {
-        return this.properties.exists(variable) ? (String) this.properties.get(variable) : defaultValue;
+        return this.properties.exists(variable) ? this.properties.get(variable).toString() : defaultValue;
     }
 
     public int getPropertyInt(String variable) {
@@ -2409,6 +2493,7 @@ public class Server {
         Entity.registerEntity("MagmaCube", EntityMagmaCube.class);
         Entity.registerEntity("Phantom", EntityPhantom.class);
         Entity.registerEntity("Piglin", EntityPiglin.class);
+        Entity.registerEntity("PiglinBrute", EntityPiglinBrute.class);
         Entity.registerEntity("Pillager", EntityPillager.class);
         Entity.registerEntity("Ravager", EntityRavager.class);
         Entity.registerEntity("Shulker", EntityShulker.class);
@@ -2515,6 +2600,9 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.DISPENSER, BlockEntityDispenser.class);
         BlockEntity.registerBlockEntity(BlockEntity.DROPPER, BlockEntityDropper.class);
         BlockEntity.registerBlockEntity(BlockEntity.MOVING_BLOCK, BlockEntityMovingBlock.class);
+        BlockEntity.registerBlockEntity(BlockEntity.NETHER_REACTOR, BlockEntityNetherReactor.class);
+        BlockEntity.registerBlockEntity(BlockEntity.LODESTONE, BlockEntityLodestone.class);
+        BlockEntity.registerBlockEntity(BlockEntity.TARGET, BlockEntityTarget.class);
     }
 
     public boolean isNetherAllowed() {
@@ -2534,8 +2622,33 @@ public class Server {
         return this.ignoredPackets.contains(clazz.getSimpleName());
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isSafeSpawn(){
+        return safeSpawn;
+    }
+
     public static Server getInstance() {
         return instance;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public PositionTrackingService getPositionTrackingService() {
+        return positionTrackingService;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isForceSkinTrusted(){
+        return forceSkinTrusted;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isCheckMovement(){
+        return checkMovement;
     }
 
     private class ConsoleThread extends Thread implements InterruptibleThread {

@@ -7,8 +7,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Nukkit Project
- * Author: MagicDroidX
+ * @author MagicDroidX (Nukkit Project)
  */
 public class AdventureSettings implements Cloneable {
 

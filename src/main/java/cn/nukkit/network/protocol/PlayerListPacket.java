@@ -17,7 +17,7 @@ public class PlayerListPacket extends DataPacket {
     public static final byte TYPE_REMOVE = 1;
 
     public byte type;
-    public Entry[] entries = new Entry[0];
+    public Entry[] entries = Entry.EMPTY_ARRAY;
 
     @Override
     public void decode() {
@@ -44,8 +44,8 @@ public class PlayerListPacket extends DataPacket {
         }
 
         if (type == TYPE_ADD) {
-            for (Entry entry : this.entries) { // Biggest wtf
-                this.putBoolean(entry.skin.isTrusted());
+            for (Entry entry : this.entries) {
+                this.putBoolean(true);
             }
         }
     }
@@ -57,6 +57,7 @@ public class PlayerListPacket extends DataPacket {
 
     @ToString
     public static class Entry {
+        public static final Entry[] EMPTY_ARRAY = new Entry[0];
 
         public final UUID uuid;
         public long entityId = 0;

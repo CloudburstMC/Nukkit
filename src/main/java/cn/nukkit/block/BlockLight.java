@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.AxisAlignedBB;
 
@@ -9,7 +10,7 @@ public class BlockLight extends BlockTransparentMeta {
     }
 
     public BlockLight(int meta) {
-        super(meta & 0xF);
+        super(meta);
     }
 
     @Override
@@ -23,11 +24,6 @@ public class BlockLight extends BlockTransparentMeta {
     }
 
     @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta & 0xF);
-    }
-
-    @Override
     public int getLightLevel() {
         return getDamage() & 0xF;
     }
@@ -37,6 +33,7 @@ public class BlockLight extends BlockTransparentMeta {
         return null;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;

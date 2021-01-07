@@ -3,6 +3,8 @@ package cn.nukkit.blockentity;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.Position;
@@ -16,6 +18,7 @@ import co.aikar.timings.Timings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 
 /**
@@ -55,6 +58,15 @@ public abstract class BlockEntity extends Position {
     public static final String BELL = "Bell";
     public static final String DISPENSER = "Dispenser";
     public static final String DROPPER = "Dropper";
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final String NETHER_REACTOR = "NetherReactor";
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final String LODESTONE = "Lodestone";
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final String TARGET = "Target";
 
 
     public static long count = 1;
@@ -99,7 +111,11 @@ public abstract class BlockEntity extends Position {
         }
 
         this.initBlockEntity();
-
+        
+        if (closed) {
+            throw new IllegalStateException("Could not create the entity "+getClass().getName()+", the initializer closed it on construction.");
+        }
+        
         this.chunk.addBlockEntity(this);
         this.getLevel().addBlockEntity(this);
     }
@@ -233,8 +249,17 @@ public abstract class BlockEntity extends Position {
         chunk.setChanged();
 
         if (this.getLevelBlock().getId() != BlockID.AIR) {
-            this.level.updateComparatorOutputLevel(this);
+            this.level.updateComparatorOutputLevelSelective(this, isObservable());
         }
+    }
+
+    /**
+     * Indicates if an observer blocks that are looking at this block should blink when {@link #setDirty()} is called.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isObservable() {
+        return true;
     }
 
     public String getName() {
@@ -251,5 +276,11 @@ public abstract class BlockEntity extends Position {
                 .putInt("x", pos.getFloorX())
                 .putInt("y", pos.getFloorY())
                 .putInt("z", pos.getFloorZ());
+    }
+
+    @Nullable
+    @Override
+    public final BlockEntity getLevelBlockEntity() {
+        return super.getLevelBlockEntity();
     }
 }

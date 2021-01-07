@@ -1,14 +1,25 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.StoneSlab1Type;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
- * Created by CreeperFace on 26. 11. 2016.
+ * @author CreeperFace
+ * @since 26. 11. 2016
  */
 public class BlockSlabStone extends BlockSlab {
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+            StoneSlab1Type.PROPERTY,
+            TOP_SLOT_PROPERTY
+    );
+    
     public static final int STONE = 0;
     public static final int SANDSTONE = 1;
     public static final int WOODEN = 2;
@@ -31,61 +42,45 @@ public class BlockSlabStone extends BlockSlab {
         return STONE_SLAB;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Smooth Stone",
-                "Sandstone",
-                "Wooden",
-                "Cobblestone",
-                "Brick",
-                "Stone Brick",
-                "Quartz",
-                "Nether Brick"
-        };
-
-        return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
+    public String getSlabName() {
+        return getSlabType().getEnglishName();
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
+    public boolean isSameType(BlockSlab slab) {
+        return slab.getId() == getId() && getSlabType().equals(slab.getPropertyValue(StoneSlab1Type.PROPERTY));
+    }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
-
+    
+    public StoneSlab1Type getSlabType() {
+        return getPropertyValue(StoneSlab1Type.PROPERTY);
+    }
+    
+    public void setSlabType(StoneSlab1Type type) {
+        setPropertyValue(StoneSlab1Type.PROPERTY, type);
+    }
+    
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            case NETHER_BRICK:
-                return BlockColor.NETHERRACK_BLOCK_COLOR;
-            default:
-            case STONE:
-            case COBBLESTONE:
-            case BRICK:
-            case STONE_BRICK:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case SANDSTONE:
-                return BlockColor.SAND_BLOCK_COLOR;
-            case WOODEN:
-                return BlockColor.WOOD_BLOCK_COLOR;
-            case QUARTZ:
-                return BlockColor.QUARTZ_BLOCK_COLOR;
-        }
+        return getSlabType().getColor();
     }
 
     @Override

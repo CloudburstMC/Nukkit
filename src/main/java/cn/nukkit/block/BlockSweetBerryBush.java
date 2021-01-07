@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.event.block.BlockHarvestEvent;
@@ -18,14 +20,18 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockSweetBerryBush extends BlockFlowable {
 
+    @PowerNukkitOnly
     public BlockSweetBerryBush() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockSweetBerryBush(int meta) {
         super(meta);
     }
@@ -66,7 +72,7 @@ public class BlockSweetBerryBush extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
 
         int age = MathHelper.clamp(getDamage(), 0, 3);
 
@@ -127,7 +133,7 @@ public class BlockSweetBerryBush extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            if (!isSupportValid(down())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -145,16 +151,28 @@ public class BlockSweetBerryBush extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (target.getId() == SWEET_BERRY_BUSH || block.getId() != AIR) {
             return false;
         }
-        Block down = this.down();
-        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.PODZOL) {
+        if (isSupportValid(down())) {
             this.getLevel().setBlock(block, this, true);
             return true;
         }
         return false;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static boolean isSupportValid(Block block) {
+        switch (block.getId()) {
+            case GRASS:
+            case DIRT:
+            case PODZOL:
+                return true;
+            default:
+                return false;
+        }
     }
 
     @Override
@@ -181,9 +199,13 @@ public class BlockSweetBerryBush extends BlockFlowable {
     @Override
     public Item[] getDrops(Item item) {
         int age = MathHelper.clamp(getDamage(), 0, 3);
-        int amount = 1 + ThreadLocalRandom.current().nextInt(2);
-        if (age == 3) {
-            amount++;
+        
+        int amount = 1;
+        if (age > 1) {
+            amount = 1 + ThreadLocalRandom.current().nextInt(2);
+            if (age == 3) {
+                amount++;
+            }
         }
 
         return new Item[]{ new ItemSweetBerries(0, amount) };

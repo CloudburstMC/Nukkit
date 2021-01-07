@@ -8,8 +8,7 @@ import java.util.*;
 import java.util.function.ObjIntConsumer;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString
 public class AvailableCommandsPacket extends DataPacket {

@@ -10,10 +10,7 @@ import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * @author Niall Lindsay (Niall7459)
- * <p>
- * Nukkit Project
- * </p>
+ * @author Niall Lindsay (Niall7459, Nukkit Project)
  */
 public class PopulatorSugarcane extends PopulatorSurfaceBlock {
 

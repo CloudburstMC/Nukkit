@@ -6,8 +6,7 @@ import java.util.OptionalLong;
 import java.util.UUID;
 
 /**
- * @author SupremeMortal
- * Nukkit project
+ * @author SupremeMortal (Nukkit project)
  */
 @ToString
 public final class CommandOriginData {

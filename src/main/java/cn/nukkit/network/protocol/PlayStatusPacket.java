@@ -3,7 +3,7 @@ package cn.nukkit.network.protocol;
 import lombok.ToString;
 
 /**
- * Created on 15-10-13.
+ * @since 15-10-13
  */
 @ToString
 public class PlayStatusPacket extends DataPacket {
