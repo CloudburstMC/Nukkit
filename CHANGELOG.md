@@ -15,6 +15,9 @@ This changelog is still being worked on.
 ## 1.4.0.0-PN-ALPHA.1 - 2020-11-21
 This changelog is still being worked on.
 
+## 1.3.2.0-PN-ALPHA.4 - Future
+- [#882] _Alpha Bug_: Fixes random disconnection issues
+
 ## 1.3.2.0-PN-ALPHA.3 - 2020-12-12
 
 ### Fixes
@@ -661,3 +664,4 @@ Fixes several anvil issues.
 [#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
 [#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
+[#882]: https://github.com/PowerNukkit/PowerNukkit/issues/882
