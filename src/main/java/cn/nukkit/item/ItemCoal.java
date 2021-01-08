@@ -53,14 +53,4 @@ public class ItemCoal extends Item {
     public boolean isCharcoal() {
         return getId() == COAL && super.getDamage() == 1; 
     }
-
-    @Since("1.3.2.0-PN")
-    @PowerNukkitOnly
-    @Override
-    public Item selfUpgrade() {
-        if (getId() == COAL && super.getDamage() == 1) {
-            return Item.get(CHARCOAL, 0, getCount(), getCompoundTag());
-        }
-        return this;
-    }
 }

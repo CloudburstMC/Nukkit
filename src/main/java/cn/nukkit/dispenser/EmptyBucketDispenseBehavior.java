@@ -2,7 +2,7 @@ package cn.nukkit.dispenser;
 
 import cn.nukkit.block.*;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
+import cn.nukkit.item.MinecraftItemID;
 import cn.nukkit.math.BlockFace;
 
 /**
@@ -16,10 +16,10 @@ public class EmptyBucketDispenseBehavior extends DefaultDispenseBehavior {
 
         if (target instanceof BlockWater && target.getDamage() == 0) {
             target.level.setBlock(target, new BlockAir());
-            return Item.get(ItemID.WATER_BUCKET);
+            return MinecraftItemID.WATER_BUCKET.get(1, item.getCompoundTag());
         } else if (target instanceof BlockLava && target.getDamage() == 0) {
             target.level.setBlock(target, new BlockAir());
-            return Item.get(ItemID.LAVA_BUCKET);
+            return MinecraftItemID.LAVA_BUCKET.get(1, item.getCompoundTag());
         }
 
         super.dispense(block, face, item);

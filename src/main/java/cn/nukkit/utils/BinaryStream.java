@@ -369,15 +369,21 @@ public class BinaryStream {
     }
 
     public Item getSlot() {
-        int id = this.getVarInt();
-
-        if (id == 0) {
+        int networkId = this.getVarInt();
+        if (networkId == 0) {
             return Item.get(0, 0, 0);
         }
 
+        int legacyFullId = RuntimeItems.getRuntimeMapping().getLegacyFullId(networkId);
+        int id = RuntimeItems.getId(legacyFullId);
+        boolean hasData = RuntimeItems.hasData(legacyFullId);
+
         int auxValue = this.getVarInt();
         int data = auxValue >> 8;
-        if (data == Short.MAX_VALUE) {
+        if (hasData) {
+            // Swap data using legacy full id
+            data = RuntimeItems.getData(legacyFullId);
+        } else if (data == Short.MAX_VALUE) {
             data = -1;
         }
         int cnt = auxValue & 0xff;
@@ -463,17 +469,15 @@ public class BinaryStream {
             return;
         }
 
-        boolean isDurable = item instanceof ItemDurable;
-
-//        int networkFullId = RuntimeItems.getNetworkFullId(item);
-//        boolean clearData = RuntimeItems.hasData(networkFullId);
-//        int networkId = RuntimeItems.getNetworkId(networkFullId);
-
-        this.putVarInt(item.getId());
+        int networkFullId = RuntimeItems.getRuntimeMapping().getNetworkFullId(item);
+        int networkId = RuntimeItems.getNetworkId(networkFullId);
+        boolean clearData = RuntimeItems.hasData(networkFullId);
+        this.putVarInt(networkId);
 
         int auxValue = item.getCount();
+        boolean isDurable = item instanceof ItemDurable;
         if (!isDurable) {
-            int meta = item.hasMeta() ? item.getDamage() : -1;
+            int meta = clearData ? 0 : item.hasMeta() ? item.getDamage() : -1;;
             auxValue |= ((meta & 0x7fff) << 8);
         }
         this.putVarInt(auxValue);
@@ -521,16 +525,23 @@ public class BinaryStream {
     }
 
     public Item getRecipeIngredient() {
-        int id = this.getVarInt();
-
-        if (id == 0) {
+        int networkId = this.getVarInt();
+        if (networkId == 0) {
             return Item.get(0, 0, 0);
         }
 
-        int damage = this.getVarInt();
-        if (damage == 0x7fff) damage = -1;
-        int count = this.getVarInt();
+        int legacyFullId = RuntimeItems.getRuntimeMapping().getLegacyFullId(networkId);
+        int id = RuntimeItems.getId(legacyFullId);
+        boolean hasData = RuntimeItems.hasData(legacyFullId);
 
+        int damage = this.getVarInt();
+        if (hasData) {
+            damage = RuntimeItems.getData(legacyFullId);
+        } else if (damage == 0x7fff) {
+            damage = -1;
+        }
+
+        int count = this.getVarInt();
         return Item.get(id, damage, count);
     }
 
@@ -539,13 +550,15 @@ public class BinaryStream {
             this.putVarInt(0);
             return;
         }
-        this.putVarInt(ingredient.getId());
-        int damage;
-        if (ingredient.hasMeta()) {
-            damage = ingredient.getDamage();
-        } else {
-            damage = 0x7fff;
+
+        int networkFullId = RuntimeItems.getRuntimeMapping().getNetworkFullId(ingredient);
+        int networkId = RuntimeItems.getNetworkId(networkFullId);
+        int damage = ingredient.hasMeta() ? ingredient.getDamage() : 0x7fff;
+        if (RuntimeItems.hasData(networkFullId)) {
+            damage = 0;
         }
+
+        this.putVarInt(networkId);
         this.putVarInt(damage);
         this.putVarInt(ingredient.getCount());
     }

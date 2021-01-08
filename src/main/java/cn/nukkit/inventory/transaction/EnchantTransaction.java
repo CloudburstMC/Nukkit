@@ -41,7 +41,7 @@ public class EnchantTransaction extends InventoryTransaction {
     }
     
     private boolean isLapisLazuli(Item item) {
-        return (item instanceof ItemDye) && ((ItemDye) item).isLapisLazuli(); 
+        return (item instanceof ItemDye) && ((ItemDye) item).isLapisLazuli();
     }
 
     @Override

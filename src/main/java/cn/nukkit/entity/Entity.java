@@ -540,7 +540,7 @@ public abstract class Entity extends Location implements Metadatable {
                     continue;
                 }
 
-                effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("showParticles"));
+                effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("ShowParticles"));
 
                 this.addEffect(effect);
             }
@@ -1842,6 +1842,9 @@ public abstract class Entity extends Location implements Metadatable {
         Location floorLocation = this.floor();
         Block down = this.level.getBlock(floorLocation.down());
         if (damage > 0) {
+            if(down instanceof BlockHayBale) {
+                damage -= (damage * 0.8f);
+            }
             if (down.getId() == BlockID.HONEY_BLOCK) {
                 damage *= 0.2F;
             }
