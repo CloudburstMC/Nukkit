@@ -21,10 +21,14 @@ public class BucketDispenseBehavior extends DefaultDispenseBehavior {
         Block target = block.getSide(face);
         
         if (!bucket.isEmpty()) {
-            if (target.canBeFlowedInto()) {
+            if (target.canBeFlowedInto() || target.getId() == BlockID.NETHER_PORTAL) {
                 Block replace = bucket.getTargetBlock();
 
                 if (replace instanceof BlockLiquid) {
+                    if (target.getId() == BlockID.NETHER_PORTAL) {
+                        target.onBreak(null);
+                    }
+
                     block.level.setBlock(target, replace);
                     return MinecraftItemID.BUCKET.get(1, bucket.getCompoundTag());
                 }
