@@ -178,7 +178,8 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                             testBlockId != Block.IRON_BLOCK &&
                                     testBlockId != Block.GOLD_BLOCK &&
                                     testBlockId != Block.EMERALD_BLOCK &&
-                                    testBlockId != Block.DIAMOND_BLOCK
+                                    testBlockId != Block.DIAMOND_BLOCK &&
+                                    testBlockId != Block.NETHERITE_BLOCK
                     ) {
                         return powerLevel - 1;
                     }
