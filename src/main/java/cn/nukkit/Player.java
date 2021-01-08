@@ -1588,7 +1588,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.entries = new Attribute[]{
                 Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0),
                 Attribute.getAttribute(Attribute.MAX_HUNGER).setValue(this.getFoodData().getLevel()),
-                Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(this.getMovementSpeed()),
+                Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(this.getMovementSpeed()).setDefaultValue(this.getMovementSpeed()),
                 Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setValue(this.getExperienceLevel()),
                 Attribute.getAttribute(Attribute.EXPERIENCE).setValue(((float) this.getExperience()) / calculateRequireExperience(this.getExperienceLevel()))
         };
@@ -4105,7 +4105,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setMovementSpeed(float speed, boolean send) {
         super.setMovementSpeed(speed);
         if (this.spawned && send) {
-            Attribute attribute = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
+            Attribute attribute = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed).setDefaultValue(speed);
             this.setAttribute(attribute);
         }
     }
