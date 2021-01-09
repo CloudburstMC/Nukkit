@@ -13,7 +13,9 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
+import java.util.EnumSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -164,18 +166,19 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            int meta = this.getDamage();
             Block up = this.up();
+            Set<BlockFace> upFaces = up instanceof BlockVine ? ((BlockVine) up).getFaces() : null;
+            Set<BlockFace> faces = this.getFaces();
             for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
-                int faceMeta = getMetaFromFace(face);
-                if (!this.getSide(face).isSolid() && (up.getId() != VINE || (up.getDamage() & faceMeta) != faceMeta)) {
-                    meta &= ~faceMeta;
+                if (!this.getSide(face).isSolid() && (upFaces == null || !upFaces.contains(face))) {
+                    faces.remove(face);
                 }
             }
-            if (meta == 0 && !this.up().isSolid()) {
+            if (faces.isEmpty() && !up.isSolid()) {
                 this.getLevel().useBreakOn(this, null, null, true);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
+            int meta = getMetaFromFaces(faces);
             if (meta != this.getDamage()) {
                 this.level.setBlock(this, Block.get(VINE, meta), true);
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -289,6 +292,37 @@ public class BlockVine extends BlockTransparentMeta {
         if (isOnHorizontalFace) {
             putVine(block, meta, source);
         }
+    }
+
+    private Set<BlockFace> getFaces() {
+        Set<BlockFace> faces = EnumSet.noneOf(BlockFace.class);
+
+        int meta = this.getDamage();
+        if ((meta & 1) > 0) {
+            faces.add(BlockFace.SOUTH);
+        }
+        if ((meta & 2) > 0) {
+            faces.add(BlockFace.WEST);
+        }
+        if ((meta & 4) > 0) {
+            faces.add(BlockFace.NORTH);
+        }
+        if ((meta & 8) > 0) {
+            faces.add(BlockFace.EAST);
+        }
+
+        return faces;
+    }
+
+    private static int getMetaFromFaces(Set<BlockFace> faces) {
+        int meta = 0;
+
+        for (BlockFace face : faces) {
+            meta |= getMetaFromFace(face);
+
+        }
+
+        return meta;
     }
 
     private static int getMetaFromFace(BlockFace face) {
