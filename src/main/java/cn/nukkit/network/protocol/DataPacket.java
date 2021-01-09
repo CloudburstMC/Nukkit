@@ -25,8 +25,8 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     public final void tryEncode() {
         if (!this.isEncoded) {
-            this.encode();
             this.isEncoded = true;
+            this.encode();
         }
     }
 

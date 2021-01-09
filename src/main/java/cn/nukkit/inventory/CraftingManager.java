@@ -2,7 +2,6 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
-import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.utils.BinaryStream;
@@ -16,7 +15,6 @@ import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
-import java.util.zip.Deflater;
 
 /**
  * author: MagicDroidX
@@ -209,7 +207,7 @@ public class CraftingManager {
             pk.addContainerRecipe(recipe);
         }
 
-        pk.encode();
+        pk.tryEncode();
         // TODO: find out whats wrong with compression
         // packet = pk.compress(Deflater.BEST_COMPRESSION);
         packet = pk;
