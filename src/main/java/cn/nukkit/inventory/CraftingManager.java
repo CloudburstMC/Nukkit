@@ -283,7 +283,7 @@ public class CraftingManager {
             pk.addStonecutterRecipe(recipe);
         }
 
-        pk.encode();
+        pk.tryEncode();
         // TODO: find out whats wrong with compression
         packet = pk.compress(Deflater.BEST_COMPRESSION);
         packet0 = pk;
