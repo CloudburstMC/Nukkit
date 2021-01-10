@@ -35,6 +35,11 @@ public class BlockNetherPortal extends BlockFlowable implements Faceable {
     }
 
     @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
     public boolean canPassThrough() {
         return true;
     }
