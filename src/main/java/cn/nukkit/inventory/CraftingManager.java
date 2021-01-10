@@ -21,6 +21,7 @@ import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
+import java.util.zip.Deflater;
 
 /**
  * author: MagicDroidX
