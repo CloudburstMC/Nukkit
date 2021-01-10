@@ -16,7 +16,12 @@ This changelog is still being worked on.
 This changelog is still being worked on.
 
 ## 1.3.2.0-PN-ALPHA.4 - Future
+
+### Fixes
 - [#882] _Alpha Bug_: Fixes random disconnection issues
+- [#902] _Alpha Bug_: Packets being encoded in netty threads causing random network issues
+- [#902] NetherPortal block can't be destroyed by liquid flow
+- [#902] Lava doesn't turn concrete powder into concrete
 
 ## 1.3.2.0-PN-ALPHA.3 - 2020-12-12
 
@@ -665,3 +670,4 @@ Fixes several anvil issues.
 [#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
 [#882]: https://github.com/PowerNukkit/PowerNukkit/issues/882
+[#902]: https://github.com/PowerNukkit/PowerNukkit/issues/902
