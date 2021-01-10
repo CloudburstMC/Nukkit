@@ -486,7 +486,11 @@ public abstract class Entity extends Location implements Metadatable {
     protected boolean isPlayer = false;
 
     private volatile boolean initialized;
-
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean noClip = false;
+    
     public float getHeight() {
         return 0;
     }
@@ -540,7 +544,7 @@ public abstract class Entity extends Location implements Metadatable {
                     continue;
                 }
 
-                effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("showParticles"));
+                effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("ShowParticles"));
 
                 this.addEffect(effect);
             }
@@ -1310,7 +1314,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     protected boolean checkObstruction(double x, double y, double z) {
-        if (this.level.getCollisionCubes(this, this.getBoundingBox(), false).length == 0) {
+        if (this.level.getCollisionCubes(this, this.getBoundingBox(), false).length == 0 || this.noClip) {
             return false;
         }
 
@@ -2097,7 +2101,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         this.checkChunks();
 
-        if (!this.onGround || dy != 0) {
+        if ((!this.onGround || dy != 0) && !this.noClip) {
             AxisAlignedBB bb = this.boundingBox.clone();
             bb.setMinY(bb.getMinY() - 0.75);
 
@@ -2131,7 +2135,7 @@ public abstract class Entity extends Location implements Metadatable {
 
             AxisAlignedBB axisalignedbb = this.boundingBox.clone();
 
-            AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.boundingBox.addCoord(dx, dy, dz), false);
+            AxisAlignedBB[] list = this.noClip ? AxisAlignedBB.EMPTY_ARRAY : this.level.getCollisionCubes(this, this.boundingBox.addCoord(dx, dy, dz), false);
 
             for (AxisAlignedBB bb : list) {
                 dy = bb.calculateYOffset(this.boundingBox, dy);
@@ -2230,10 +2234,18 @@ public abstract class Entity extends Location implements Metadatable {
         if (onGround && movX == 0 && movY == 0 && movZ == 0 && dx == 0 && dy == 0 && dz == 0) {
             return;
         }
-        this.isCollidedVertically = movY != dy;
-        this.isCollidedHorizontally = (movX != dx || movZ != dz);
-        this.isCollided = (this.isCollidedHorizontally || this.isCollidedVertically);
-        this.onGround = (movY != dy && movY < 0);
+        
+        if (this.noClip) {
+            this.isCollidedVertically = false;
+            this.isCollidedHorizontally = false;
+            this.isCollided = false;
+            this.onGround = false;
+        } else {
+            this.isCollidedVertically = movY != dy;
+            this.isCollidedHorizontally = (movX != dx || movZ != dz);
+            this.isCollided = (this.isCollidedHorizontally || this.isCollidedVertically);
+            this.onGround = (movY != dy && movY < 0);
+        }
     }
 
     public List<Block> getBlocksAround() {
@@ -2284,6 +2296,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     protected void checkBlockCollision() {
+        if (this.noClip) {
+            return;
+        }
+        
         Vector3 vector = new Vector3(0, 0, 0);
         boolean portal = false;
         boolean scaffolding = false;
@@ -2504,7 +2520,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (this.setPositionAndRotation(to, yaw, pitch)) {
             this.resetFallDistance();
-            this.onGround = true;
+            this.onGround = this.noClip ? false : true;
 
             this.updateMovement();
 
@@ -2705,5 +2721,36 @@ public abstract class Entity extends Location implements Metadatable {
         int hash = 7;
         hash = (int) (29 * hash + this.getId());
         return hash;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isSpinAttacking() {
+        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SPIN_ATTACK);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setSpinAttacking() {
+        this.setSpinAttacking(true);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setSpinAttacking(boolean value) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SPIN_ATTACK, value);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isNoClip() {
+        return noClip;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setNoClip(boolean noClip) {
+        this.noClip = noClip;
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, noClip);
     }
 }

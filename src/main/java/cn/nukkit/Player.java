@@ -17,6 +17,7 @@ import cn.nukkit.entity.*;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.block.LecternPageChangeEvent;
@@ -2804,6 +2805,52 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.setSwimming(false);
                             }
                             break;
+                        case PlayerActionPacket.ACTION_START_SPIN_ATTACK:
+                            if (this.inventory.getItemInHand().getId() != ItemID.TRIDENT) {
+                                this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+                                break;
+                            }
+                            
+                            int riptideLevel = this.inventory.getItemInHand().getEnchantmentLevel(Enchantment.ID_TRIDENT_RIPTIDE);
+                            if (riptideLevel < 1) {
+                                this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+                                break;
+                            }
+                            
+                            if (!(this.isTouchingWater() || (this.getLevel().isRaining() && this.getLevel().canBlockSeeSky(this)))) {
+                                this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+                                break;
+                            }
+                            
+                            PlayerToggleSpinAttackEvent playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, true);
+                            this.server.getPluginManager().callEvent(playerToggleSpinAttackEvent);
+
+                            if (playerToggleSpinAttackEvent.isCancelled()) {
+                                this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+                            } else {
+                                this.setSpinAttacking(true);
+                                
+                                Sound riptideSound;
+                                if (riptideLevel >= 3) {
+                                    riptideSound = Sound.ITEM_TRIDENT_RIPTIDE_3;
+                                } else if (riptideLevel == 2) {
+                                    riptideSound = Sound.ITEM_TRIDENT_RIPTIDE_2;
+                                } else {
+                                    riptideSound = Sound.ITEM_TRIDENT_RIPTIDE_1;
+                                }
+                                this.level.addSound(this, riptideSound);
+                            }
+                            break packetswitch;
+                        case PlayerActionPacket.ACTION_STOP_SPIN_ATTACK:
+                            playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, false);
+                            this.server.getPluginManager().callEvent(playerToggleSpinAttackEvent);
+
+                            if (playerToggleSpinAttackEvent.isCancelled()) {
+                                this.sendData(this);
+                            } else {
+                                this.setSpinAttacking(false);
+                            }
+                            break;
                     }
 
                     this.setUsingItem(false);
@@ -3877,6 +3924,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendPopup(message, "");
     }
 
+    // TODO: Support Translation Parameters
     public void sendPopup(String message, String subtitle) {
         TextPacket pk = new TextPacket();
         pk.type = TextPacket.TYPE_POPUP;
@@ -5249,6 +5297,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setSprinting(boolean value) {
         if (isSprinting() != value) {
             super.setSprinting(value);
+            this.setMovementSpeed(value ? getMovementSpeed() * 1.3f : getMovementSpeed() / 1.3f);
         }
     }
 
@@ -5306,7 +5355,22 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
                 entity.close();
                 return true;
-            } else if (entity instanceof EntityThrownTrident && ((EntityThrownTrident) entity).hadCollision) {
+            } else if (entity instanceof EntityThrownTrident) {
+                // Check Trident is returning to shooter
+                if (!((EntityThrownTrident) entity).hadCollision) {
+                    if (entity.isNoClip()) {
+                        if (!((EntityProjectile) entity).shootingEntity.equals(this)) {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+                
+                if (!((EntityThrownTrident) entity).isPlayer()) {
+                    return false;
+                }
+                
                 Item item = ((EntityThrownTrident) entity).getItem();
                 if (this.isSurvival() && !inventory.canAddItem(item)) {
                     return false;
@@ -5324,8 +5388,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 Server.broadcastPacket(entity.getViewers().values(), pk);
                 this.dataPacket(pk);
 
-                if (!this.isCreative()) {
-                    inventory.addItem(item.clone());
+                if (!((EntityThrownTrident) entity).isCreative()) {
+                    if (inventory.getItem(((EntityThrownTrident) entity).getFavoredSlot()).getId() == Item.AIR) {
+                        inventory.setItem(((EntityThrownTrident) entity).getFavoredSlot(), item.clone());
+                    } else {
+                        inventory.addItem(item.clone());
+                    }
                 }
                 entity.close();
                 return true;
@@ -5549,5 +5617,56 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Since("1.3.2.0-PN")
     public void setTimeSinceRest(int timeSinceRest) {
         this.timeSinceRest = timeSinceRest;
+    }
+
+    // TODO: Support Translation Parameters
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void sendPopupJukebox(String message) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_JUKEBOX_POPUP;
+        pk.message = message;
+        this.dataPacket(pk);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void sendSystem(String message) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_SYSTEM;
+        pk.message = message;
+        this.dataPacket(pk);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void sendWhisper(String message) {
+        this.sendWhisper("", message);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void sendWhisper(String source, String message) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_WHISPER;
+        pk.source = source;
+        pk.message = message;
+        this.dataPacket(pk);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void sendAnnouncement(String message) {
+        this.sendAnnouncement("", message);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void sendAnnouncement(String source, String message) {
+        TextPacket pk = new TextPacket();
+        pk.type = TextPacket.TYPE_ANNOUNCEMENT;
+        pk.source = source;
+        pk.message = message;
+        this.dataPacket(pk);
     }
 }
