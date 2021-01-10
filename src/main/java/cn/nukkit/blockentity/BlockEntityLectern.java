@@ -1,7 +1,9 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.utils.RedstoneComponent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
@@ -113,6 +115,7 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
         return totalPages;
     }
 
+    @PowerNukkitDifference(info = "Use RedstoneComponent for redstone update.", since = "1.4.0.0-PN")
     private void updateTotalPages() {
         Item book = getBook();
         if (book.getId() == Item.AIR || !book.hasCompoundTag()) {
@@ -120,6 +123,6 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
         } else {
             totalPages = book.getNamedTag().getList("pages", CompoundTag.class).size();
         }
-        this.getLevel().updateAroundRedstone(this, null);
+        RedstoneComponent.updateAroundRedstone(this);
     }
 }
