@@ -17,45 +17,44 @@ public class ListChunkManager implements ChunkManager {
         this.blocks = new ArrayList<>();
     }
 
+    private Optional<Block> findBlock(int x, int y, int z) {
+        return this.blocks.stream().filter(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z).findAny();
+    }
+
     @Override
     public int getBlockIdAt(int x, int y, int z) {
-        Optional<Block> optionalBlock = this.blocks.stream().filter(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z).findAny();
-        return optionalBlock.map(Block::getId).orElseGet(() -> this.parent.getBlockIdAt(x, y, z));
+        return this.findBlock(x, y, z).map(Block::getId).orElseGet(() -> this.parent.getBlockIdAt(x, y, z));
     }
 
     @Override
     public void setBlockFullIdAt(int x, int y, int z, int fullId) {
-        this.blocks.removeIf(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z);
+        this.findBlock(x, y, z).ifPresent(this.blocks::remove);
         this.blocks.add(Block.get(fullId, null, x, y, z));
     }
 
     @Override
     public void setBlockIdAt(int x, int y, int z, int id) {
-        Optional<Block> optionalBlock = this.blocks.stream().filter(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z).findAny();
-        Block block = optionalBlock.orElse(Block.get(this.getBlockIdAt(x, y, z), this.getBlockDataAt(x, y, z), new Position(x, y, z)));
-        this.blocks.remove(block);
-        this.blocks.add(Block.get(this.getBlockIdAt(x, y, z), this.getBlockDataAt(x, y, z), new Position(x, y, z)));
+        int blockData = this.getBlockDataAt(x, y, z);
+        this.findBlock(x, y, z).ifPresent(this.blocks::remove);
+        this.blocks.add(Block.get(id, blockData, new Position(x, y, z)));
     }
 
     @Override
     public void setBlockAt(int x, int y, int z, int id, int data) {
-        this.blocks.removeIf(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z);
+        this.findBlock(x, y, z).ifPresent(this.blocks::remove);
         this.blocks.add(Block.get(id, data, new Position(x, y, z)));
     }
 
     @Override
     public int getBlockDataAt(int x, int y, int z) {
-        Optional<Block> optionalBlock = this.blocks.stream().filter(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z).findAny();
-        return optionalBlock.map(Block::getDamage).orElseGet(() -> this.parent.getBlockDataAt(x, y, z));
+        return this.findBlock(x, y, z).map(Block::getDamage).orElseGet(() -> this.parent.getBlockDataAt(x, y, z));
     }
 
     @Override
     public void setBlockDataAt(int x, int y, int z, int data) {
-        Optional<Block> optionalBlock = this.blocks.stream().filter(block -> block.getFloorX() == x && block.getFloorY() == y && block.getFloorZ() == z).findAny();
-        Block block = optionalBlock.orElse(Block.get(this.getBlockIdAt(x, y, z), this.getBlockDataAt(x, y, z), new Position(x, y, z)));
-        this.blocks.remove(block);
-        block.setDamage(data);
-        this.blocks.add(block);
+        int blockId = this.getBlockIdAt(x, y, z);
+        this.findBlock(x, y, z).ifPresent(this.blocks::remove);
+        this.blocks.add(Block.get(blockId, data, new Position(x, y, z)));
     }
 
     @Override
