@@ -64,12 +64,12 @@ public class BlockGrassPath extends BlockGrass {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.up().isSolid()) {
                 this.level.setBlock(this, Block.get(BlockID.DIRT), false, true);
             }
             
-            return Level.BLOCK_UPDATE_RANDOM;
+            return Level.BLOCK_UPDATE_NORMAL;
         }
         return 0;
     }
