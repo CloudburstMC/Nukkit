@@ -12,13 +12,15 @@ import cn.nukkit.utils.VarInt;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.extern.log4j.Log4j2;
 
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.ProtocolException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,62 +71,70 @@ public class Network {
 
     public static byte[] inflateRaw(byte[] data) throws IOException, DataFormatException {
         Inflater inflater = INFLATER_RAW.get();
-        inflater.reset();
-        inflater.setInput(data);
-        inflater.finished();
+        try {
+            inflater.setInput(data);
+            inflater.finished();
 
-        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
-        bos.reset();
-        byte[] buf = BUFFER.get();
-        while (!inflater.finished()) {
-            int i = inflater.inflate(buf);
-            if (i == 0) {
-                throw new IOException("Could not decompress the data. Needs input: "+inflater.needsInput()+", Needs Dictionary: "+inflater.needsDictionary());
+            FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+            bos.reset();
+            byte[] buf = BUFFER.get();
+            while (!inflater.finished()) {
+                int i = inflater.inflate(buf);
+                if (i == 0) {
+                    throw new IOException("Could not decompress the data. Needs input: " + inflater.needsInput() + ", Needs Dictionary: " + inflater.needsDictionary());
+                }
+                bos.write(buf, 0, i);
             }
-            bos.write(buf, 0, i);
+            return bos.toByteArray();
+        } finally {
+            inflater.reset();
         }
-        return bos.toByteArray();
     }
 
     public static byte[] deflateRaw(byte[] data, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
-        deflater.reset();
-        deflater.setLevel(level);
-        deflater.setInput(data);
-        deflater.finish();
-        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
-        bos.reset();
-        byte[] buffer = BUFFER.get();
-        while (!deflater.finished()) {
-            int i = deflater.deflate(buffer);
-            bos.write(buffer, 0, i);
-        }
+        try {
+            deflater.setLevel(level);
+            deflater.setInput(data);
+            deflater.finish();
+            FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+            bos.reset();
+            byte[] buffer = BUFFER.get();
+            while (!deflater.finished()) {
+                int i = deflater.deflate(buffer);
+                bos.write(buffer, 0, i);
+            }
 
-        return bos.toByteArray();
+            return bos.toByteArray();
+        } finally {
+            deflater.reset();
+        }
     }
 
     public static byte[] deflateRaw(byte[][] datas, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
-        deflater.reset();
-        deflater.setLevel(level);
-        FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
-        bos.reset();
-        byte[] buffer = BUFFER.get();
+        try {
+            deflater.setLevel(level);
+            FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
+            bos.reset();
+            byte[] buffer = BUFFER.get();
 
-        for (byte[] data : datas) {
-            deflater.setInput(data);
-            while (!deflater.needsInput()) {
+            for (byte[] data : datas) {
+                deflater.setInput(data);
+                while (!deflater.needsInput()) {
+                    int i = deflater.deflate(buffer);
+                    bos.write(buffer, 0, i);
+                }
+            }
+            deflater.finish();
+            while (!deflater.finished()) {
                 int i = deflater.deflate(buffer);
                 bos.write(buffer, 0, i);
             }
+            return bos.toByteArray();
+        } finally {
+            deflater.reset();
         }
-        deflater.finish();
-        while (!deflater.finished()) {
-            int i = deflater.deflate(buffer);
-            bos.write(buffer, 0, i);
-        }
-        //Deflater::end is called the time when the process exits.
-        return bos.toByteArray();
     }
 
     public void addStatistics(double upload, double download) {
@@ -213,48 +223,61 @@ public class Network {
     }
 
     public void processBatch(BatchPacket packet, Player player) {
+        List<DataPacket> packets = new ObjectArrayList<>();
+        try {
+            processBatch(packet.payload, packets);
+        } catch (ProtocolException e) {
+            player.close("", e.getMessage());
+            log.error("Unable to process player packets ", e);
+        }
+    }
+
+    public void processBatch(byte[] payload, Collection<DataPacket> packets) throws ProtocolException {
         byte[] data;
         try {
-            data = Network.inflateRaw(packet.payload);
+            data = Network.inflateRaw(payload);
             //data = Zlib.inflate(packet.payload, 2 * 1024 * 1024); // Max 2MB
         } catch (Exception e) {
             log.debug("Exception while inflating batch packet", e);
             return;
         }
 
-        int len = data.length;
         BinaryStream stream = new BinaryStream(data);
         try {
-            List<DataPacket> packets = new ArrayList<>();
             int count = 0;
-            while (stream.offset < len) {
+            while (!stream.feof()) {
                 count++;
                 if (count >= 1000) {
-                    player.close("", "Illegal Batch Packet");
-                    return;
+                    throw new ProtocolException("Illegal batch with " + count + " packets");
                 }
                 byte[] buf = stream.getByteArray();
 
-                DataPacket pk = this.getPacketFromBuffer(buf);
+                ByteArrayInputStream bais = new ByteArrayInputStream(buf);
+                int header = (int) VarInt.readUnsignedVarInt(bais);
+
+                // | Client ID | Sender ID | Packet ID |
+                // |   2 bits  |   2 bits  |  10 bits  |
+                int packetId = header & 0x3ff;
+
+                DataPacket pk = this.getPacket(packetId);
 
                 if (pk != null) {
+                    pk.setBuffer(buf, buf.length - bais.available());
                     try {
                         pk.decode();
                     } catch (Exception e) {
-                        log.warn("Unable to decode {} from {}", pk.getClass().getSimpleName(), player.getName());
-                        log.throwing(e);
                         if (log.isTraceEnabled()) {
-                            log.trace("Dumping Packet\n{}", ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(packet.payload)));
+                            log.trace("Dumping Packet\n{}", ByteBufUtil.prettyHexDump(Unpooled.wrappedBuffer(buf)));
                         }
-                        throw e;
+                        log.error("Unable to decode packet", e);
+                        throw new IllegalStateException("Unable to decode " + pk.getClass().getSimpleName());
                     }
 
                     packets.add(pk);
+                } else {
+                    log.debug("Received unknown packet with ID: {}", Integer.toHexString(packetId));
                 }
             }
-
-            processPackets(player, packets);
-
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
                 log.debug("Error whilst decoding batch packet", e);
@@ -273,17 +296,8 @@ public class Network {
         packets.forEach(player::handleDataPacket);
     }
 
-    private DataPacket getPacketFromBuffer(byte[] buffer) throws IOException {
-        ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
-        DataPacket pk = this.getPacket((byte) VarInt.readUnsignedVarInt(stream));
-        if (pk != null) {
-            pk.setBuffer(buffer, buffer.length - stream.available());
-        }
-        return pk;
-    }
-
-    public DataPacket getPacket(byte id) {
-        Class<? extends DataPacket> clazz = this.packetPool[id & 0xff];
+    public DataPacket getPacket(int id) {
+        Class<? extends DataPacket> clazz = this.packetPool[id];
         if (clazz != null) {
             try {
                 return clazz.newInstance();

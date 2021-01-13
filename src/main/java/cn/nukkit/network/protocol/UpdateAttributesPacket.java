@@ -13,6 +13,7 @@ public class UpdateAttributesPacket extends DataPacket {
 
     public Attribute[] entries;
     public long entityId;
+    public long frame;
 
     @Override
     public byte pid() {
@@ -40,6 +41,7 @@ public class UpdateAttributesPacket extends DataPacket {
                 this.putString(entry.getName());
             }
         }
+        this.putUnsignedVarInt(this.frame);
     }
 
 }
