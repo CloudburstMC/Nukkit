@@ -3,6 +3,7 @@ package cn.nukkit.blockproperty;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyPersistenceValueException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.math.NukkitMath;
 import com.google.common.base.Preconditions;
@@ -55,6 +56,10 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     private static long removeSign(int value) {
         return (long)value & 0xFFFFFFFFL;
     }
+    
+    private static int addSign(long value) {
+        return (int)(value & 0xFFFFFFFFL);
+    }
 
     @Override
     public int getMetaForValue(@Nullable Integer value) {
@@ -88,7 +93,18 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
 
     @Override
     public String getPersistenceValueForMeta(int meta) {
-        return String.valueOf(getIntValueForMeta(meta));
+        return String.valueOf(removeSign(getIntValueForMeta(meta)));
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getMetaForPersistenceValue(@Nonnull String persistenceValue) {
+        try {
+            return getMetaForValue(addSign(Long.parseLong(persistenceValue)));
+        } catch (NumberFormatException | InvalidBlockPropertyValueException e) {
+            throw new InvalidBlockPropertyPersistenceValueException(this, null, persistenceValue, e);
+        }
     }
 
     @Override
