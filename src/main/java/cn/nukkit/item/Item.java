@@ -19,10 +19,10 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class Item implements Cloneable, BlockID, ItemID {
     /**
      * Groups:
@@ -375,7 +376,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             try {
                 addCreativeItem(fromJson(map));
             } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
+                log.error("Error while registering a creative item", e);
             }
         }
     }

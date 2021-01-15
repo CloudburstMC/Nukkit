@@ -295,8 +295,7 @@ public class ServerScheduler {
                     try {
                         taskHandler.run(currentTick);
                     } catch (Throwable e) {
-                        Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskId() + ": " + e.getMessage());
-                        Server.getInstance().getLogger().logException(e instanceof Exception ? (Exception) e : new RuntimeException(e));
+                        Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskId(), e);
                     }
                     taskHandler.timing.stopTiming();
                 }

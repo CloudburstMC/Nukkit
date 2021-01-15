@@ -32,11 +32,11 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
 import com.google.common.collect.Iterables;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
@@ -49,6 +49,7 @@ import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
 /**
  * @author MagicDroidX
  */
+@Log4j2
 public abstract class Entity extends Location implements Metadatable {
 
     public static final int NETWORK_ID = -1;
@@ -910,12 +911,9 @@ public abstract class Entity extends Location implements Metadatable {
     public static Entity createEntity(String name, FullChunk chunk, CompoundTag nbt, Object... args) {
         Entity entity = null;
 
-        if (knownEntities.containsKey(name)) {
-            Class<? extends Entity> clazz = knownEntities.get(name);
-
-            if (clazz == null) {
-                return null;
-            }
+        Class<? extends Entity> clazz = knownEntities.get(name);
+        if (clazz != null) {
+            List<Exception> exceptions = null;
 
             for (Constructor constructor : clazz.getConstructors()) {
                 if (entity != null) {
@@ -939,10 +937,26 @@ public abstract class Entity extends Location implements Metadatable {
 
                     }
                 } catch (Exception e) {
-                    MainLogger.getLogger().logException(e);
+                    log.catching(e);
+                    if (exceptions == null) {
+                        exceptions = new ArrayList<>();
+                    }
+                    exceptions.add(e);
                 }
 
             }
+
+            if (entity == null) {
+                Exception cause = new IllegalArgumentException("Could not create an entity of type "+name, exceptions != null && exceptions.size() > 0? exceptions.get(0) : null);
+                if (exceptions != null && exceptions.size() > 1) {
+                    for (int i = 1; i < exceptions.size(); i++) {
+                        cause.addSuppressed(exceptions.get(i));
+                    }
+                }
+                log.error("Could not create an entity of type {} with {} args", name, args == null? 0 : args.length, cause);
+            }
+        } else {
+            log.debug("Entity type {} is unknown", name);
         }
 
         return entity;
