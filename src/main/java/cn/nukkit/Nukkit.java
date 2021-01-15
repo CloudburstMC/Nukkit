@@ -76,9 +76,9 @@ public class Nukkit {
                     event.setExtra("players", sv.getOnlinePlayers().size());
                     Map<Integer, cn.nukkit.level.Level> levels = sv.getLevels();
                     event.setExtra("levels", levels.size());
-                    event.setExtra("chunks", levels.values().stream().mapToInt(l -> l.getChunks().size()).count());
-                    event.setExtra("tiles", levels.values().stream().mapToInt(l -> l.getBlockEntities().size()).count());
-                    event.setExtra("entities", levels.values().stream().mapToInt(l -> l.getEntities().length).count());
+                    event.setExtra("chunks", levels.values().stream().mapToInt(l -> l.getChunks().size()).sum());
+                    event.setExtra("tiles", levels.values().stream().mapToInt(l -> l.getBlockEntities().size()).sum());
+                    event.setExtra("entities", levels.values().stream().mapToInt(l -> l.getEntities().length).sum());
                 } catch (Exception e) {
                     log.debug("Failed to add player/level/chunk/tiles/entities information", e);
                 }
