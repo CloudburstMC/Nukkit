@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
+import io.sentry.Sentry;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -16,7 +17,10 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Properties;
 
 /*
@@ -59,6 +63,8 @@ public class Nukkit {
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
+        Sentry.init(options -> options.setDsn("https://a99f9e0c50424fff9f96feb2fd94c22f:6891b003c5874fa4bf407fe45035e3f1@o505263.ingest.sentry.io/5593371"));
+        
         // Force IPv4 since Nukkit is not compatible with IPv6
         System.setProperty("java.net.preferIPv4Stack" , "true");
         System.setProperty("log4j.skipJansi", "false");
