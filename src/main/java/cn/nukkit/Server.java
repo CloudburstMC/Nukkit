@@ -537,6 +537,7 @@ public class Server {
                 put("auto-save", true);
                 put("force-resources", false);
                 put("xbox-auth", true);
+                put("disable-auto-bug-report", false);
             }
         });
 
