@@ -482,6 +482,7 @@ public class Server {
                 put("auto-save", true);
                 put("force-resources", false);
                 put("xbox-auth", true);
+                put("disable-auto-bug-report", false);
             }
         });
 
@@ -808,7 +809,7 @@ public class Server {
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
             int idx = i * 2;
-            if (!p.isEncoded) p.encode();
+            p.tryEncode();
             byte[] buf = p.getBuffer();
             payload[idx] = Binary.writeUnsignedVarInt(buf.length);
             payload[idx + 1] = buf;
