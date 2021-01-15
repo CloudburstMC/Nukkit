@@ -14,6 +14,7 @@ import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -24,6 +25,7 @@ import java.util.regex.Pattern;
 /**
  * @author MagicDroidX
  */
+@Log4j2
 public class PluginManager {
 
     private final Server server;
@@ -575,8 +577,7 @@ public class PluginManager {
                 try {
                     registration.callEvent(event);
                 } catch (Exception e) {
-                    this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.eventError", event.getEventName(), registration.getPlugin().getDescription().getFullName(), e.getMessage(), registration.getListener().getClass().getName()));
-                    this.server.getLogger().logException(e);
+                    log.error(this.server.getLanguage().translateString("nukkit.plugin.eventError", event.getEventName(), registration.getPlugin().getDescription().getFullName(), e.getMessage(), registration.getListener().getClass().getName()), e);
                 }
             }
         } catch (IllegalAccessException e) {
