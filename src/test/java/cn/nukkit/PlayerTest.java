@@ -181,7 +181,6 @@ class PlayerTest {
 
         when(server.getConfig()).thenCallRealMethod();
         when(server.getConfig(anyString(), any())).thenCallRealMethod();
-        when(server.getLogger()).thenCallRealMethod();
         when(server.getLanguage()).thenCallRealMethod();
         
         when(skin.isValid()).thenReturn(true);
