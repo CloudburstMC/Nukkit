@@ -18,13 +18,14 @@ import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /*
@@ -67,10 +68,15 @@ public class Nukkit {
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
+        AtomicBoolean disableSentry = new AtomicBoolean(false);
         Sentry.init(options -> {
             options.setDsn("https://a99f9e0c50424fff9f96feb2fd94c22f:6891b003c5874fa4bf407fe45035e3f1@o505263.ingest.sentry.io/5593371");
             options.setRelease(getVersion()+"-"+getGitCommit());
             options.setBeforeSend((event, hint)-> {
+                if (disableSentry.get()) {
+                    return null;
+                }
+                
                 try {
                     Server sv = Server.getInstance();
                     event.setExtra("players", sv.getOnlinePlayers().size());
@@ -112,6 +118,18 @@ public class Nukkit {
                 return event;
             });
         });
+        
+        disableSentry.set(Boolean.parseBoolean(System.getProperty("disableSentry", "false")));
+        Path propertiesPath = Paths.get(DATA_PATH, "server.properties");
+        if (!disableSentry.get() && Files.isRegularFile(propertiesPath)) {
+            Properties properties = new Properties();
+            try (FileReader reader = new FileReader(propertiesPath.toFile())) {
+                properties.load(reader);
+                disableSentry.set(Boolean.parseBoolean(properties.getProperty("disable-auto-bug-report", "false")));
+            } catch (IOException e) {
+                log.error("Failed to load server.properties to check disable-auto-bug-report.", e);
+            }
+        }
         
         // Force IPv4 since Nukkit is not compatible with IPv6
         System.setProperty("java.net.preferIPv4Stack" , "true");
