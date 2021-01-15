@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -23,6 +22,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.InvalidBlockDamageException;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +35,7 @@ import java.util.function.Predicate;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
     public static final int MAX_BLOCK_ID = 600;
     public static final int DATA_BITS = 6;
@@ -464,7 +465,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                                 } catch (InvocationTargetException wrapper) {
                                     Throwable uncaught = wrapper.getTargetException();
                                     if (!(uncaught instanceof InvalidBlockDamageException)) {
-                                        Server.getInstance().getLogger().error("Error while registering " + c.getName()+" with meta "+data, uncaught);
+                                        log.error("Error while registering {} with meta {}", c.getName(), data, uncaught);
                                     }
                                     b = new BlockUnknown(id, data);
                                 }
@@ -480,7 +481,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             }
                         }
                     } catch (Exception e) {
-                        Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
+                        log.error("Error while registering {}", c.getName(), e);
                         for (int data = 0; data < DATA_SIZE; ++data) {
                             fullList[(id << DATA_BITS) | data] = new BlockUnknown(id, data);
                         }

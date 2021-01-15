@@ -156,7 +156,7 @@ public class Config {
                 try {
                     content = Utils.readFile(this.file);
                 } catch (IOException e) {
-                    Server.getInstance().getLogger().logException(e);
+                    log.error("An error occurred while loading the file {}", file, e);
                 }
                 this.parseContent(content);
                 if (!this.correct) return false;
@@ -177,7 +177,7 @@ public class Config {
             try {
                 content = Utils.readFile(inputStream);
             } catch (IOException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.error("An error occurred while loading a config from an input stream, input: {}", inputStream, e);
                 return false;
             }
             this.parseContent(content);

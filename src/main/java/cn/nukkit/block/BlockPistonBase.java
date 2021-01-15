@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMovingBlock;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
@@ -17,6 +16,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
 import com.google.common.collect.Lists;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 /**
  * @author CreeperFace
  */
+@Log4j2
 public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable {
 
     public boolean sticky;
@@ -70,7 +71,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         }
         if(this.level.getBlockEntity(this) != null) {
             BlockEntity blockEntity = this.level.getBlockEntity(this);
-            Server.getInstance().getLogger().warning("Found unused BlockEntity at world=" + blockEntity.getLevel().getName() + " x=" + blockEntity.getX() + " y=" + blockEntity.getY() + " z=" + blockEntity.getZ() + " whilst attempting to place piston, closing it.");
+            log.warn("Found unused BlockEntity at world={} x={} y={} z={} whilst attempting to place piston, closing it.", blockEntity.getLevel().getName(), blockEntity.getX(), blockEntity.getY(), blockEntity.getZ());
             blockEntity.saveNBT();
             blockEntity.close();
         }

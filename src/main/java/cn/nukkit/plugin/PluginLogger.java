@@ -1,8 +1,9 @@
 package cn.nukkit.plugin;
 
-import cn.nukkit.Server;
 import cn.nukkit.utils.LogLevel;
 import cn.nukkit.utils.Logger;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 
 /**
  * author: MagicDroidX
@@ -11,9 +12,11 @@ import cn.nukkit.utils.Logger;
 public class PluginLogger implements Logger {
 
     private final String pluginName;
+    private final org.apache.logging.log4j.Logger log;
 
     public PluginLogger(Plugin context) {
         String prefix = context.getDescription().getPrefix();
+        log = LogManager.getLogger(context.getDescription().getMain());
         this.pluginName = prefix != null ? "[" + prefix + "] " : "[" + context.getDescription().getName() + "] ";
     }
 
@@ -57,9 +60,29 @@ public class PluginLogger implements Logger {
         this.log(LogLevel.DEBUG, message);
     }
 
+    private Level toApacheLevel(LogLevel level) {
+        switch (level) {
+            case NONE:
+                return Level.OFF;
+            case EMERGENCY:
+            case CRITICAL:
+                return Level.FATAL;
+            case ALERT:
+            case WARNING:
+            case NOTICE:
+                return Level.WARN;
+            case ERROR:
+                return Level.ERROR;
+            case DEBUG:
+                return Level.DEBUG;
+            default:
+                return Level.INFO;
+        }
+    }
+    
     @Override
     public void log(LogLevel level, String message) {
-        Server.getInstance().getLogger().log(level, this.pluginName + message);
+        log.log(toApacheLevel(level), this.pluginName + message);
     }
 
     @Override
@@ -104,7 +127,7 @@ public class PluginLogger implements Logger {
 
     @Override
     public void log(LogLevel level, String message, Throwable t) {
-        Server.getInstance().getLogger().log(level, this.pluginName + message, t);
+        log.log(toApacheLevel(level), this.pluginName + message, t);
     }
 
 }

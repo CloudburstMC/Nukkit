@@ -1,6 +1,5 @@
 package cn.nukkit.level.format.generic;
 
-import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -17,6 +16,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Faceable;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -27,7 +27,7 @@ import java.util.Arrays;
  * author: MagicDroidX
  * Nukkit Project
  */
-
+@Log4j2
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @PowerNukkitOnly("Needed for level backward compatibility")
     @Since("1.3.0.0-PN")
@@ -64,7 +64,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                         int x = getX() << 4 | 0x6;
                         int y = section.getY() << 4 | 0x6;
                         int z = getZ() << 4 | 0x6;
-                        Server.getInstance().getLogger().warning("The chunk section at x:"+x+", y:"+y+", z:"+z+" failed to complete the backward compatibility update 1 after "+attempts+" attempts");
+                        log.error("The chunk section at x:{}, y:{}, z:{} failed to complete the backward compatibility update 1 after {} attempts", x, y, z, attempts);
                         break;
                     }
                     sectionUpdated = walk(section, wallUpdater);
@@ -148,7 +148,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                Server.getInstance().getLogger().logException(e1);
+                log.error("Could not update the block at cx:{}, cz:{}, x:{}, y:{}, z:{}, layer:{} to {}", getX(), getZ(), x, y, z, layer, block, e);
             }
             return this.sections[Y].getAndSetBlock(x, y & 0x0f, z, layer, block);
         } finally {
@@ -175,7 +175,7 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                Server.getInstance().getLogger().logException(e1);
+                log.error("Could not update the block-full-id at cx:{}, cz:{}, x:{}, y:{}, z:{}, layer:{} to {}", getX(), getZ(), x, y, z, layer, fullId, e);
             }
             return this.sections[Y].setFullBlockId(x, y & 0x0f, z, layer, fullId);
         } finally {
@@ -198,7 +198,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                Server.getInstance().getLogger().logException(e1);
+                e1.addSuppressed(e);;
+                log.error("Could not update the block id and meta at cx:{}, cz:{}, x:{}, y:{}, z:{}, layer:{} to {}:{}", getX(), getZ(), x, y, z, layer, blockId, meta, e1);
             }
             return this.sections[Y].setBlockAtLayer(x, y & 0x0f, z, layer, blockId, meta);
         } finally {
@@ -221,7 +222,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                Server.getInstance().getLogger().logException(e1);
+                e1.addSuppressed(e);
+                log.error("Could not update the block it at cx:{}, cz:{}, x:{}, y:{}, z:{}, layer:{} to {}", getX(), getZ(), x, y, z, layer, id, e1);
             }
             this.sections[Y].setBlockId(x, y & 0x0f, z, layer, id);
         } finally {
@@ -264,7 +266,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                Server.getInstance().getLogger().logException(e1);
+                e1.addSuppressed(e);
+                log.error("Could not update the block data at cx:{}, cz:{}, x:{}, y:{}, z:{}, layer:{} to {}", getX(), getZ(), x, y, z, layer, data, e1);
             }
             this.sections[Y].setBlockData(x, y & 0x0f, z, layer, data);
         } finally {
@@ -287,7 +290,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                Server.getInstance().getLogger().logException(e1);
+                e1.addSuppressed(e);
+                log.error("Could not update the block sky light at cx:{}, cz:{}, x:{}, y:{}, z:{}, to {}", getX(), getZ(), x, y, z, level, e1);
             }
             this.sections[Y].setBlockSkyLight(x, y & 0x0f, z, level);
         }
@@ -308,7 +312,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
             try {
                 this.setInternalSection(Y, (ChunkSection) this.providerClass.getMethod("createChunkSection", int.class).invoke(this.providerClass, Y));
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e1) {
-                Server.getInstance().getLogger().logException(e1);
+                e1.addSuppressed(e);
+                log.error("Could not update the block light at cx:{}, cz:{}, x:{}, y:{}, z:{}, to {}", getX(), getZ(), x, y, z, level, e);
             }
             this.sections[Y].setBlockLight(x, y & 0x0f, z, level);
         }
@@ -444,9 +449,8 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
                 // Block was on an invalid state, clearing the state but keeping the material type
                 block = Block.get(blockId, meta & 0xF, level, levelX, levelY, levelZ, 0);
                 if (block instanceof BlockUnknown) {
-                    Server.getInstance().getLogger()
-                            .warning("Failed to update the block X:"+levelX+", Y:"+levelY+", Z:"+levelZ+" at "+level
-                                    +", could not cast it to BlockWall.");
+                    log.warn("Failed to update the block X:{}, Y:{}, Z:{} at {}, could not cast it to BlockWall.", 
+                            levelX, levelY, levelZ, level);
                     return false;
                 }
             }

@@ -284,7 +284,7 @@ public class Server {
         //todo: VersionString 现在不必要
 
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
-            this.getLogger().info(TextFormat.GREEN + "Welcome! Please choose a language first!");
+            log.info(TextFormat.GREEN + "Welcome! Please choose a language first!");
             String languagesCommaList;
             try {
                 InputStream languageList = this.getClass().getClassLoader().getResourceAsStream("lang/language.list");
@@ -293,7 +293,7 @@ public class Server {
                 }
                 String[] lines = Utils.readFile(languageList).split("\n");
                 for (String line : lines) {
-                    this.getLogger().info(line);
+                    log.info(line);
                 }
                 languagesCommaList = Stream.of(lines)
                         .filter(line-> !line.isEmpty())
@@ -655,7 +655,7 @@ public class Server {
         if (this.getDefaultLevel() == null) {
             String defaultName = this.getPropertyString("level-name", "world");
             if (defaultName == null || defaultName.trim().isEmpty()) {
-                this.getLogger().warning("level-name cannot be null, using default");
+                log.warn("level-name cannot be null, using default");
                 defaultName = "world";
                 this.setPropertyString("level-name", defaultName);
             }
@@ -677,7 +677,7 @@ public class Server {
         this.properties.save(true);
 
         if (this.getDefaultLevel() == null) {
-            this.getLogger().emergency(this.getLanguage().translateString("nukkit.level.defaultError"));
+            log.fatal(this.getLanguage().translateString("nukkit.level.defaultError"));
             this.forceShutdown();
 
             return;
@@ -871,8 +871,8 @@ public class Server {
     public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
         // First we need to check if this command is on the main thread or not, if not, warn the user
         if (!this.isPrimaryThread()) {
-            getLogger().warning("Command Dispatched Async: " + commandLine);
-            getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
+            log.warn("Command Dispatched Async: {}\nPlease notify author of plugin causing this execution to fix this bug!", commandLine, 
+                    new ConcurrentModificationException("Command Dispatched Async: "+commandLine));
 
             this.scheduler.scheduleTask(null, () -> dispatchCommand(sender, commandLine));
             return true;
@@ -962,25 +962,25 @@ public class Server {
                 player.close(player.getLeaveMessage(), this.getConfig("settings.shutdown-message", "Server closed"));
             }
 
-            this.getLogger().debug("Disabling all plugins");
+            log.debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
-            this.getLogger().debug("Removing event handlers");
+            log.debug("Removing event handlers");
             HandlerList.unregisterAll();
 
-            this.getLogger().debug("Stopping all tasks");
+            log.debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
             this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
 
-            this.getLogger().debug("Unloading all levels");
+            log.debug("Unloading all levels");
             for (Level level : this.levelArray) {
                 this.unloadLevel(level, true);
             }
 
-            this.getLogger().debug("Closing console");
+            log.debug("Closing console");
             this.consoleThread.interrupt();
 
-            this.getLogger().debug("Stopping network interfaces");
+            log.debug("Stopping network interfaces");
             for (SourceInterface interfaz : this.network.getInterfaces()) {
                 interfaz.shutdown();
                 this.network.unregisterInterface(interfaz);
@@ -990,7 +990,7 @@ public class Server {
                 nameLookup.close();
             }
 
-            this.getLogger().debug("Disabling timings");
+            log.debug("Disabling timings");
             Timings.stopServer();
             //todo other things
         } catch (Exception e) {
@@ -1078,12 +1078,11 @@ public class Server {
                         }
                     }
                 } catch (RuntimeException e) {
-                    this.getLogger().logException(e);
+                    log.error("A RuntimeException happened while ticking the server", e);
                 }
             }
         } catch (Throwable e) {
-            log.fatal("Exception happened while ticking server", e);
-            log.fatal(Utils.getAllThreadDumps());
+            log.fatal("Exception happened while ticking server\n{}", Utils.getAllThreadDumps(), e);
         }
     }
 
@@ -1216,21 +1215,21 @@ public class Server {
                         if (r > this.baseTickRate) {
                             level.tickRateCounter = level.getTickRate();
                         }
-                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + level.getTickRate() + " ticks");
+                        log.debug("Raising level \"{}\" tick rate to {} ticks", level.getName(), level.getTickRate());
                     } else if (tickMs >= 50) {
                         if (level.getTickRate() == this.baseTickRate) {
                             level.setTickRate(Math.max(this.baseTickRate + 1, Math.min(this.autoTickRateLimit, tickMs / 50)));
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            log.debug("Level \"{}\" took {}ms, setting tick rate to {} ticks", level.getName(), NukkitMath.round(tickMs, 2), level.getTickRate());
                         } else if ((tickMs / level.getTickRate()) >= 50 && level.getTickRate() < this.autoTickRateLimit) {
                             level.setTickRate(level.getTickRate() + 1);
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + level.getTickRate() + " ticks");
+                            log.debug("Level \"{}\" took {}ms, setting tick rate to {} ticks", level.getName(), NukkitMath.round(tickMs, 2), level.getTickRate());
                         }
                         level.tickRateCounter = level.getTickRate();
                     }
                 }
             } catch (Exception e) {
                 log.error(this.getLanguage().translateString("nukkit.level.tickError",
-                        new String[]{level.getFolderName(), Utils.getExceptionMessage(e)}));
+                        new String[]{level.getFolderName(), Utils.getExceptionMessage(e)}), e);
             }
         }
     }
@@ -1262,7 +1261,7 @@ public class Server {
             try {
                 Thread.sleep(Math.max(5, -time - 25));
             } catch (InterruptedException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.debug("The thread {} got interrupted", Thread.currentThread().getName(), e);
             }
         }
 
@@ -1604,6 +1603,11 @@ public class Server {
         return this.getPropertyBoolean("force-resources", false);
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "PowerNukkit", reason = "Use your own logger, sharing loggers makes bug analyses harder.",
+            replaceWith = "@Log4j2 annotation in the class and use the `log` static field that is generated by lombok, " +
+                    "also make sure to log the exception as the last argument, don't concatenate it or use it as parameter replacement. " +
+                    "Just put it as last argument and SLF4J will understand that the log message was caused by that exception/throwable.")
     public MainLogger getLogger() {
         return MainLogger.getLogger();
     }
@@ -2119,7 +2123,7 @@ public class Server {
             level.initLevel();
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, Utils.getExceptionMessage(e)}));
+            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, Utils.getExceptionMessage(e)}), e);
             return false;
         }
 

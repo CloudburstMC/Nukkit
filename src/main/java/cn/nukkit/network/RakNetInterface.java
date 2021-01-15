@@ -104,7 +104,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                 session.player = player;
                 this.sessions.put(address, session);
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.error("Error while creating the player class {}", clazz, e);
             }
         }
 

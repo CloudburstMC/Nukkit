@@ -1,7 +1,6 @@
 package cn.nukkit.level.format.leveldb;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
@@ -17,6 +16,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,6 +28,7 @@ import java.util.*;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class Chunk extends BaseFullChunk {
 
     public static final int DATA_LENGTH = 16384 * (2 + 1 + 1 + 1) + 256 + 1024;
@@ -474,7 +475,7 @@ public class Chunk extends BaseFullChunk {
                 return chunk;
             }
         } catch (Exception e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("Failed to load the chunk from level {}", provider.getName(), e);
         }
         return null;
     }
