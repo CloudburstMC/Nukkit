@@ -1,5 +1,6 @@
 package cn.nukkit;
 
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.utils.ServerKiller;
 import com.google.common.base.Preconditions;
@@ -21,7 +22,10 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Map;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 /*
  * `_   _       _    _    _ _
@@ -63,7 +67,51 @@ public class Nukkit {
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
-        Sentry.init(options -> options.setDsn("https://a99f9e0c50424fff9f96feb2fd94c22f:6891b003c5874fa4bf407fe45035e3f1@o505263.ingest.sentry.io/5593371"));
+        Sentry.init(options -> {
+            options.setDsn("https://a99f9e0c50424fff9f96feb2fd94c22f:6891b003c5874fa4bf407fe45035e3f1@o505263.ingest.sentry.io/5593371");
+            options.setRelease(getVersion()+"-"+getGitCommit());
+            options.setBeforeSend((event, hint)-> {
+                try {
+                    Server sv = Server.getInstance();
+                    event.setExtra("players", sv.getOnlinePlayers().size());
+                    Map<Integer, cn.nukkit.level.Level> levels = sv.getLevels();
+                    event.setExtra("levels", levels.size());
+                    event.setExtra("chunks", levels.values().stream().mapToInt(l -> l.getChunks().size()).count());
+                    event.setExtra("tiles", levels.values().stream().mapToInt(l -> l.getBlockEntities().size()).count());
+                    event.setExtra("entities", levels.values().stream().mapToInt(l -> l.getEntities().length).count());
+                } catch (Exception e) {
+                    log.debug("Failed to add player/level/chunk/tiles/entities information", e);
+                }
+
+                try {
+                    Runtime runtime = Runtime.getRuntime();
+                    double totalMB = NukkitMath.round(((double) runtime.totalMemory()) / 1024 / 1024, 2);
+                    double usedMB = NukkitMath.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024, 2);
+                    double maxMB = NukkitMath.round(((double) runtime.maxMemory()) / 1024 / 1024, 2);
+                    double usage = usedMB / maxMB * 100;
+                    
+                    event.setExtra("memTotal", totalMB);
+                    event.setExtra("memUsed", usedMB);
+                    event.setExtra("memMax", maxMB);
+                    event.setExtra("memUsage", usage);
+                } catch (Exception e) {
+                    log.debug("Failed to add memory information", e);
+                }
+                
+                try {
+                    event.setModules(
+                            Server.getInstance().getPluginManager().getPlugins().entrySet().stream()
+                                    .map(entry -> new SimpleEntry<>(
+                                            entry.getKey(), 
+                                            entry.getValue().getDescription().getVersion()
+                                    )).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+                    );
+                } catch (Exception e) {
+                    log.debug("Failed to grab the list of enabled plugins", e);
+                }
+                return event;
+            });
+        });
         
         // Force IPv4 since Nukkit is not compatible with IPv6
         System.setProperty("java.net.preferIPv4Stack" , "true");
