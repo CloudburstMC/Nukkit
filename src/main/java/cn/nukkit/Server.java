@@ -664,11 +664,11 @@ public class Server {
         this.network.registerInterface(new RakNetInterface(this));
         
         try {
-            getLogger().debug("Loading position tracking service");
+            log.debug("Loading position tracking service");
             this.positionTrackingService = new PositionTrackingService(new File(Nukkit.DATA_PATH, "services/position_tracking_db"));
             //getScheduler().scheduleRepeatingTask(null, positionTrackingService::forceRecheckAllPlayers, 20 * 5);
         } catch (IOException e) {
-            getLogger().emergency("Failed to start the Position Tracking DB service!", e);
+            log.fatal("Failed to start the Position Tracking DB service!", e);
         }
         
         this.pluginManager.loadPowerNukkitPlugins();

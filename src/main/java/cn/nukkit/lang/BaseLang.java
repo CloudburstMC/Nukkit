@@ -1,9 +1,7 @@
 package cn.nukkit.lang;
 
-import cn.nukkit.Server;
-import cn.nukkit.utils.Utils;
-import lombok.extern.log4j.Log4j2;
 import io.netty.util.internal.EmptyArrays;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -84,7 +82,7 @@ public class BaseLang {
         try {
             return parseLang(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("Failed to parse the language input stream", e);
             return null;
         }
     }
