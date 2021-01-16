@@ -32,13 +32,14 @@ public class Watchdog extends Thread {
     
     private void checkFinalizer() {
         if (forcedFinalizer != null && forcedFinalizer.isAlive()) {
-            log.fatal("--------- The finalizer thread didn't complete in time! ---------");
-            log.fatal("This detection means that the finalizer thread may be stuck and");
-            log.fatal("RAM memory might be leaking!");
-            log.fatal(" - https://github.com/PowerNukkit/PowerNukkit/issues/new");
-            log.fatal("---------------- ForcedFinalizer ----------------");
-            dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(forcedFinalizer.getId(), Integer.MAX_VALUE));
-            log.fatal("-------------------------------------------------");
+            StringBuilder sb = new StringBuilder("--------- The finalizer thread didn't complete in time! ---------").append('\n')
+                .append("This detection means that the finalizer thread may be stuck and").append('\n')
+                .append("RAM memory might be leaking!").append('\n')
+                .append(" - https://github.com/PowerNukkit/PowerNukkit/issues/new").append('\n')
+                .append("---------------- ForcedFinalizer ----------------").append('\n');
+            dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(forcedFinalizer.getId(), Integer.MAX_VALUE), sb);
+            sb.append("-------------------------------------------------");
+            log.fatal(sb.toString());
             warnedAboutFinalizer = true;
         } else {
             if (warnedAboutFinalizer) {
@@ -70,11 +71,11 @@ public class Watchdog extends Thread {
                 if (diff <= time) {
                     responding = true;
                 } else if (responding) {
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)").append('\n');
-                    builder.append("Please report this to PowerNukkit:").append('\n');
-                    builder.append(" - https://github.com/PowerNukkit/PowerNukkit/issues/new").append('\n');
-                    builder.append("---------------- Main thread ----------------").append('\n');
+                    StringBuilder builder = new StringBuilder(
+                            "--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)").append('\n')
+                        .append("Please report this to PowerNukkit:").append('\n')
+                        .append(" - https://github.com/PowerNukkit/PowerNukkit/issues/new").append('\n')
+                        .append("---------------- Main thread ----------------").append('\n');
 
                     dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(this.server.getPrimaryThread().getId(), Integer.MAX_VALUE), builder);
 
