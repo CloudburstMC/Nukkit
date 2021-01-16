@@ -25,21 +25,6 @@ jobs:
         server-id: powernukkit-snapshots
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
-    - name: Get version
-      run: |
-        SHA=$(echo $GITHUB_SHA | cut -c1-7)
-        PN_VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)-git-$SHA
-        echo "Version: $PN_VERSION"
-        echo "PN_VERSION=$PN_VERSION-git" >> $GITHUB_ENV
-    - name: Create Sentry release
-      uses: getsentry/action-release@v1
-      env:
-        SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-        SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
-        SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
-      with:
-        environment: production
-        version: $PN_VERSION
     - name: Publish snapshot
       run: mvn -B deploy
       env:
