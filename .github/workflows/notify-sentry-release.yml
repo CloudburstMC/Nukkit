@@ -32,4 +32,4 @@ jobs:
         SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       with:
         environment: production
-        version: $PN_VERSION
+        version: ${{ PN_VERSION }}
