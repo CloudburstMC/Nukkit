@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ template "nukkit.name" . }}-conf
+  labels:
+    app: {{ template "nukkit.name" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+data:
+  nukkit.yml: |-
+{{- if .Values.config }}
+{{ .Values.config | indent 4 }}
+{{- end -}}
