@@ -17,7 +17,7 @@ public class PluginLogger implements Logger {
     public PluginLogger(Plugin context) {
         String prefix = context.getDescription().getPrefix();
         log = LogManager.getLogger(context.getDescription().getMain());
-        this.pluginName = prefix != null ? "[" + prefix + "] " : "[" + context.getDescription().getName() + "] ";
+        this.pluginName = prefix != null ? prefix : context.getDescription().getName();
     }
 
     @Override
@@ -127,7 +127,7 @@ public class PluginLogger implements Logger {
 
     @Override
     public void log(LogLevel level, String message, Throwable t) {
-        log.log(toApacheLevel(level), this.pluginName + message, t);
+        log.log(toApacheLevel(level), "[{}]: {}", this.pluginName, message, t);
     }
 
 }
