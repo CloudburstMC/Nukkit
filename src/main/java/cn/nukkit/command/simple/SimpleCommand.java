@@ -1,16 +1,17 @@
 package cn.nukkit.command.simple;
 
-import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.lang.TranslationContainer;
+import lombok.extern.log4j.Log4j2;
 
 import java.lang.reflect.Method;
 
 /**
  * @author Tee7even
  */
+@Log4j2
 public class SimpleCommand extends Command {
     private Object object;
     private Method method;
@@ -66,7 +67,7 @@ public class SimpleCommand extends Command {
         try {
             success = (Boolean) this.method.invoke(this.object, sender, commandLabel, args);
         } catch (Exception exception) {
-            Server.getInstance().getLogger().logException(exception);
+            log.error("Failed to execute {} by {}", commandLabel, sender.getName(), exception);
         }
 
         if (!success) {
