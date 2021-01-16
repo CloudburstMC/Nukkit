@@ -234,3 +234,6 @@ data/
 data/*
 /src/main/resources/rebel.xml
 /run
+
+# a file that can be used for your helm chart values
+/helm-values.local.yaml

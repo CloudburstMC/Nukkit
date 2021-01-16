@@ -2262,33 +2262,33 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     Player playerInstance = this;
                     this.preLoginEventTask = new AsyncTask() {
-
-                        private PlayerAsyncPreLoginEvent e;
+                        private PlayerAsyncPreLoginEvent event;
 
                         @Override
                         public void onRun() {
-                            e = new PlayerAsyncPreLoginEvent(username, uuid, loginChainData.getXUID(), Player.this.getAddress(), Player.this.getPort());
-                            server.getPluginManager().callEvent(e);
+                            this.event = new PlayerAsyncPreLoginEvent(username, uuid, loginChainData, playerInstance.getSkin(), playerInstance.getAddress(), playerInstance.getPort());
+                            server.getPluginManager().callEvent(this.event);
                         }
 
                         @Override
                         public void onCompletion(Server server) {
-                            if (!playerInstance.closed) {
-                                if (e.getLoginResult() == LoginResult.KICK) {
-                                    playerInstance.close(e.getKickMessage(), e.getKickMessage());
-                                } else if (playerInstance.shouldLogin) {
-                                    playerInstance.completeLoginSequence();
+                            if (playerInstance.closed) {
+                                return;
+                            }
 
-                                    for (Consumer<Server> action : e.getScheduledActions()) {
-                                        action.accept(server);
-                                    }
+                            if (this.event.getLoginResult() == LoginResult.KICK) {
+                                playerInstance.close(this.event.getKickMessage(), this.event.getKickMessage());
+                            } else if (playerInstance.shouldLogin) {
+                                playerInstance.setSkin(this.event.getSkin());
+                                playerInstance.completeLoginSequence();
+                                for (Consumer<Server> action : this.event.getScheduledActions()) {
+                                    action.accept(server);
                                 }
                             }
                         }
                     };
 
                     this.server.getScheduler().scheduleAsyncTask(this.preLoginEventTask);
-
                     this.processLogin();
                     break;
                 case ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
