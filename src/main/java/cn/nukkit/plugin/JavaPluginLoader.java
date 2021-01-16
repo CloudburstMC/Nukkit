@@ -39,7 +39,7 @@ public class JavaPluginLoader implements PluginLoader {
             log.info(this.server.getLanguage().translateString("nukkit.plugin.load", description.getFullName()));
             File dataFolder = new File(file.getParentFile(), description.getName());
             if (dataFolder.exists() && !dataFolder.isDirectory()) {
-                throw log.throwing(new IllegalStateException("Projected dataFolder '" + dataFolder.toString() + "' for " + description.getName() + " exists and is not a directory"));
+                throw new IllegalStateException("Projected dataFolder '" + dataFolder.toString() + "' for " + description.getName() + " exists and is not a directory");
             }
 
             String className = description.getMain();
@@ -50,7 +50,7 @@ public class JavaPluginLoader implements PluginLoader {
                 Class javaClass = classLoader.loadClass(className);
 
                 if (!PluginBase.class.isAssignableFrom(javaClass)) {
-                    throw log.throwing(new PluginException("Main class `" + description.getMain() + "' does not extend PluginBase"));
+                    throw new PluginException("Main class `" + description.getMain() + "' does not extend PluginBase");
                 }
 
                 try {
@@ -61,13 +61,13 @@ public class JavaPluginLoader implements PluginLoader {
 
                     return plugin;
                 } catch (ClassCastException e) {
-                    throw log.throwing(new PluginException("Error whilst initializing main class `" + description.getMain() + "'", e));
+                    throw new PluginException("Error whilst initializing main class `" + description.getMain() + "'", e);
                 } catch (InstantiationException | IllegalAccessException e) {
                     log.error("An exception happened while initializing the plgin {}, {}, {}, {}", file, className, description.getName(), description.getVersion(), e);
                 }
 
             } catch (ClassNotFoundException e) {
-                throw log.throwing(new PluginException("Couldn't load plugin " + description.getName() + ": main class not found"));
+                throw new PluginException("Couldn't load plugin " + description.getName() + ": main class not found");
             }
         }
 

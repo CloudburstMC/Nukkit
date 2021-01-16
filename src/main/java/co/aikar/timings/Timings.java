@@ -95,10 +95,11 @@ public final class Timings {
         ignoredConfigSections.addAll(Server.getInstance().getConfig().getStringList("timings.ignore"));
 
         log.debug("Timings: \n" +
-                "Enabled - " + isTimingsEnabled() + "\n" +
-                "Verbose - " + isVerboseEnabled() + "\n" +
-                "History Interval - " + getHistoryInterval() + "\n" +
-                "History Length - " + getHistoryLength());
+                "Enabled - {}\n" +
+                "Verbose - {}\n" +
+                "History Interval - {}\n" +
+                "History Length - {}",
+                isTimingsEnabled(), isVerboseEnabled(), getHistoryInterval(), getHistoryLength());
 
         fullServerTickTimer = new FullServerTickTiming();
         timingsTickTimer = TimingsManager.getTiming(DEFAULT_GROUP.name, "Timings Tick", fullServerTickTimer);

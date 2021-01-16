@@ -205,7 +205,7 @@ public class PluginManager {
                                 try {
                                     //Check the format: majorVersion.minorVersion.patch
                                     if (!Pattern.matches("^[0-9]+\\.[0-9]+\\.[0-9]+$", version)) {
-                                        throw log.throwing(new IllegalArgumentException("The getCompatibleAPI version don't match the format majorVersion.minorVersion.patch"));
+                                        throw new IllegalArgumentException("The getCompatibleAPI version don't match the format majorVersion.minorVersion.patch");
                                     }
                                 } catch (NullPointerException | IllegalArgumentException e) {
                                     log.error(this.server.getLanguage().translateString("nukkit.plugin.loadError", new String[]{name, "Wrong API format"}), e);

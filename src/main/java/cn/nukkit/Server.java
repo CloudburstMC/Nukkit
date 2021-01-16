@@ -363,7 +363,7 @@ public class Server {
             while (language == null) {
                 String lang;
                 if (predefinedLanguage != null) {
-                    log.info("Trying to load language from predefined language: " + predefinedLanguage);
+                    log.info("Trying to load language from predefined language: {}", predefinedLanguage);
                     lang = predefinedLanguage;
                 } else {
                     lang = this.console.readLine();
@@ -373,7 +373,7 @@ public class Server {
                 if (conf != null) {
                     language = lang;
                 } else if(predefinedLanguage != null) {
-                    log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
+                    log.warn("No language found for predefined language: {}, please choose a valid language", predefinedLanguage);
                     predefinedLanguage = null;
                 }
             }
@@ -695,7 +695,7 @@ public class Server {
                     } catch (Exception e2) {
                         seed = System.currentTimeMillis();
                         e2.addSuppressed(e);
-                        log.warn("Failed to load the world seed for \""+name+"\". Generating a random seed", e2);
+                        log.warn("Failed to load the world seed for \"{}\". Generating a random seed", name, e2);
                     }
                 }
 
@@ -1847,14 +1847,13 @@ public class Server {
                 return NBTIO.readCompressed(dataStream.get());
             }
         } catch (IOException e) {
-            log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
-            log.throwing(e);
+            log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name), e);
         } finally {
             if (dataStream.isPresent()) {
                 try {
                     dataStream.get().close();
                 } catch (IOException e) {
-                    log.throwing(e);
+                    log.catching(e);
                 }
             }
         }

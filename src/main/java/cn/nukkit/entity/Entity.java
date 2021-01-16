@@ -953,7 +953,6 @@ public abstract class Entity extends Location implements Metadatable {
 
                     }
                 } catch (Exception e) {
-                    log.catching(e);
                     if (exceptions == null) {
                         exceptions = new ArrayList<>();
                     }

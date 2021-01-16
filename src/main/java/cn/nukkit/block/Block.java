@@ -24,8 +24,8 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.InvalidBlockDamageException;
-import lombok.extern.log4j.Log4j2;
 import com.google.common.base.Preconditions;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
@@ -879,7 +879,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                         if (exception != null) {
                             exception.addSuppressed(e);
                         } else {
-                            log.error("Error while registering " + blockClass.getName()+" with meta "+data, exception);
+                            log.error("Error while registering {} with meta {}", blockClass.getName(), data, exception);
                         }
                     }
                 }

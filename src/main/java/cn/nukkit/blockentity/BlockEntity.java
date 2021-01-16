@@ -165,7 +165,6 @@ public abstract class BlockEntity extends Position {
 
                     }
                 } catch (Exception e) {
-                    log.catching(e);
                     if (exceptions == null) {
                         exceptions = new ArrayList<>();
                     }

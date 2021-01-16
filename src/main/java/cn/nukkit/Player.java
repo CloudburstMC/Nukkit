@@ -2504,7 +2504,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     return false;
                                 }
                             }).map(Field::getName).findFirst();
-                    log.warn("Violation warning from " + this.getName() + packetName.map(name-> " for packet "+name).orElse("")+": " + packet.toString());
+                    log.warn("Violation warning from {}{}", this.getName(), packetName.map(name-> " for packet "+name).orElse("")+": " + packet.toString());
                     break;
                 case ProtocolInfo.EMOTE_PACKET:
                     for (Player viewer : this.getViewers().values()) {
@@ -2952,7 +2952,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     PlayerBlockPickEvent pickEvent = new PlayerBlockPickEvent(this, block, item);
                     if (this.isSpectator()) {
-                        log.debug("Got block-pick request from " + this.getName() + " when in spectator mode");
+                        log.debug("Got block-pick request from {} when in spectator mode", this.getName());
                         pickEvent.setCancelled();
                     }
 
@@ -3761,7 +3761,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                         }
                     } catch (IOException e) {
-                        log.warn("Failed to track the trackingHandler "+posTrackReq.getTrackingId(), e);
+                        log.warn("Failed to track the trackingHandler {}", posTrackReq.getTrackingId(), e);
                     }
                     PositionTrackingDBServerBroadcastPacket notFound = new PositionTrackingDBServerBroadcastPacket();
                     notFound.setAction(PositionTrackingDBServerBroadcastPacket.Action.NOT_FOUND);

@@ -427,7 +427,7 @@ public class CraftingManager {
 
         int potionHash = getPotionHash(input, potion);
         if (this.brewingRecipes.containsKey(potionHash)) {
-            log.warn("The brewing recipe "+brewingRecipes.get(potionHash)+" is being replaced by "+recipe);
+            log.warn("The brewing recipe {} is being replaced by {}", brewingRecipes.get(potionHash), recipe);
         }
         this.brewingRecipes.put(potionHash, recipe);
     }
