@@ -32,13 +32,14 @@ public class Watchdog extends Thread {
     
     private void checkFinalizer() {
         if (forcedFinalizer != null && forcedFinalizer.isAlive()) {
-            log.fatal("--------- The finalizer thread didn't complete in time! ---------");
-            log.fatal("This detection means that the finalizer thread may be stuck and");
-            log.fatal("RAM memory might be leaking!");
-            log.fatal(" - https://github.com/PowerNukkit/PowerNukkit/issues/new");
-            log.fatal("---------------- ForcedFinalizer ----------------");
-            dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(forcedFinalizer.getId(), Integer.MAX_VALUE));
-            log.fatal("-------------------------------------------------");
+            StringBuilder sb = new StringBuilder("--------- The finalizer thread didn't complete in time! ---------").append('\n')
+                .append("This detection means that the finalizer thread may be stuck and").append('\n')
+                .append("RAM memory might be leaking!").append('\n')
+                .append(" - https://github.com/PowerNukkit/PowerNukkit/issues/new").append('\n')
+                .append("---------------- ForcedFinalizer ----------------").append('\n');
+            dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(forcedFinalizer.getId(), Integer.MAX_VALUE), sb);
+            sb.append("-------------------------------------------------");
+            log.fatal(sb.toString());
             warnedAboutFinalizer = true;
         } else {
             if (warnedAboutFinalizer) {
@@ -70,20 +71,22 @@ public class Watchdog extends Thread {
                 if (diff <= time) {
                     responding = true;
                 } else if (responding) {
-                    log.fatal("--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)");
-                    log.fatal("Please report this to PowerNukkit:");
-                    log.fatal(" - https://github.com/PowerNukkit/PowerNukkit/issues/new");
-                    log.fatal("---------------- Main thread ----------------");
+                    StringBuilder builder = new StringBuilder(
+                            "--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)").append('\n')
+                        .append("Please report this to PowerNukkit:").append('\n')
+                        .append(" - https://github.com/PowerNukkit/PowerNukkit/issues/new").append('\n')
+                        .append("---------------- Main thread ----------------").append('\n');
 
-                    dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(this.server.getPrimaryThread().getId(), Integer.MAX_VALUE));
+                    dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(this.server.getPrimaryThread().getId(), Integer.MAX_VALUE), builder);
 
-                    log.fatal("---------------- All threads ----------------");
+                    builder.append("---------------- All threads ----------------").append('\n');
                     ThreadInfo[] threads = ManagementFactory.getThreadMXBean().dumpAllThreads(true, true);
                     for (int i = 0; i < threads.length; i++) {
-                        if (i != 0) log.fatal("------------------------------");
-                        dumpThread(threads[i]);
+                        if (i != 0) builder.append("------------------------------").append('\n');
+                        dumpThread(threads[i], builder);
                     }
-                    log.fatal("---------------------------------------------");
+                    builder.append("---------------------------------------------").append('\n');
+                    log.fatal(builder.toString());
                     responding = false;
                     this.server.forceShutdown();
                 }
@@ -91,32 +94,32 @@ public class Watchdog extends Thread {
             try {
                 sleep(Math.max(time / 4, 1000));
             } catch (InterruptedException interruption) {
-                server.getLogger().emergency("The Watchdog Thread has been interrupted and is no longer monitoring the server state");
+                log.fatal("The Watchdog Thread has been interrupted and is no longer monitoring the server state", interruption);
                 running = false;
                 return;
             }
         }
-        server.getLogger().warning("Watchdog was stopped");
+        log.warn("Watchdog was stopped");
     }
 
-    private static void dumpThread(ThreadInfo thread) {
+    private static void dumpThread(ThreadInfo thread, StringBuilder builder) {
         if (thread == null) {
-            log.fatal("Attempted to dump a null thread!");
+            builder.append("Attempted to dump a null thread!").append('\n');
             return;
         }
-        log.fatal("Current Thread: " + thread.getThreadName());
-        log.fatal("\tPID: " + thread.getThreadId() + " | Suspended: " + thread.isSuspended() + " | Native: " + thread.isInNative() + " | State: " + thread.getThreadState());
+        builder.append("Current Thread: " + thread.getThreadName()).append('\n');
+        builder.append("\tPID: " + thread.getThreadId() + " | Suspended: " + thread.isSuspended() + " | Native: " + thread.isInNative() + " | State: " + thread.getThreadState()).append('\n');
         // Monitors
         if (thread.getLockedMonitors().length != 0) {
-            log.fatal("\tThread is waiting on monitor(s):");
+            builder.append("\tThread is waiting on monitor(s):").append('\n');
             for (MonitorInfo monitor : thread.getLockedMonitors()) {
-                log.fatal("\t\tLocked on:" + monitor.getLockedStackFrame());
+                builder.append("\t\tLocked on:" + monitor.getLockedStackFrame()).append('\n');
             }
         }
 
-        log.fatal("\tStack:");
+        builder.append("\tStack:").append('\n');
         for (StackTraceElement stack : thread.getStackTrace()) {
-            log.fatal("\t\t" + stack);
+            builder.append("\t\t" + stack).append('\n');
         }
     }
 }

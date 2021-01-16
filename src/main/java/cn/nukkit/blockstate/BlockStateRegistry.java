@@ -316,16 +316,19 @@ public class BlockStateRegistry {
             }
         } catch (Exception e) {
             try {
-                log.fatal("An error has occurred while trying to get the stateId of state: " +
-                        state.getBlockId() + ":" + state.getDataStorage()
-                        + " - " + state.getProperties()
-                        + " - " + blockIdToPersistenceName.get(state.getBlockId()),
+                log.fatal("An error has occurred while trying to get the stateId of state: "
+                        + "{}:{}"
+                        + " - {}"
+                        + " - {}",
+                        state.getBlockId(),
+                        state.getDataStorage(),
+                        state.getProperties(),
+                        blockIdToPersistenceName.get(state.getBlockId()),
                         e);
             } catch (Exception e2) {
                 e.addSuppressed(e2);
-                log.fatal("An error has occurred while trying to get the stateId of state: " +
-                        state.getBlockId() + ":" + state.getDataStorage(), 
-                        e);
+                log.fatal("An error has occurred while trying to get the stateId of state: {}:{}",
+                        state.getBlockId(), state.getDataStorage(), e);
             }
         }
         
@@ -337,7 +340,7 @@ public class BlockStateRegistry {
                 return registration;
             }
         } catch (Exception e) {
-            log.fatal("An error has occurred while trying to parse the legacyStateId of "+state.getBlockId()+":"+state.getDataStorage(), e);
+            log.fatal("An error has occurred while trying to parse the legacyStateId of {}:{}", state.getBlockId(), state.getDataStorage(), e);
         }
 
         return logDiscoveryError(state);
@@ -350,11 +353,14 @@ public class BlockStateRegistry {
     }
 
     private Registration logDiscoveryError(BlockState state) {
-        log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()
-                + " - " + state.getStateId()
-                + " - " + state.getProperties()
-                + " - " + blockIdToPersistenceName.get(state.getBlockId())
-                + ", trying to repair or replacing with an \"UPDATE!\" block.");
+        log.error("Found an unknown BlockId:Meta combination: {}:{}"
+                + " - {}"
+                + " - {}"
+                + " - {}"
+                + ", trying to repair or replacing with an \"UPDATE!\" block.",
+                state.getBlockId(), state.getDataStorage(), state.getStateId(), state.getProperties(),
+                blockIdToPersistenceName.get(state.getBlockId())
+                );
         return updateBlockRegistration;
     }
     
@@ -369,7 +375,7 @@ public class BlockStateRegistry {
         String persistenceName = blockIdToPersistenceName.get(blockId);
         if (persistenceName == null) {
             String fallback = "blockid:"+ blockId;
-            log.warn("The persistence name of the block id "+ blockId +" is unknown! Using "+fallback+" as an alternative!");
+            log.warn("The persistence name of the block id {} is unknown! Using {} as an alternative!", blockId, fallback);
             registerPersistenceName(blockId, fallback);
             return fallback;
         }

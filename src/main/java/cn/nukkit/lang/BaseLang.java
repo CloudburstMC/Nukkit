@@ -1,7 +1,7 @@
 package cn.nukkit.lang;
 
-import cn.nukkit.Server;
 import io.netty.util.internal.EmptyArrays;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +12,7 @@ import java.util.Objects;
 /**
  * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public class BaseLang {
     public static final String FALLBACK_LANGUAGE = "eng";
 
@@ -72,7 +73,7 @@ public class BaseLang {
                 return parseLang(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
             }
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.fatal("Failed to load language at {}", path, e);
             return null;
         }
     }
@@ -81,7 +82,7 @@ public class BaseLang {
         try {
             return parseLang(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("Failed to parse the language input stream", e);
             return null;
         }
     }

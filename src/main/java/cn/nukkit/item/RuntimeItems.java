@@ -12,6 +12,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -24,6 +25,7 @@ import java.util.Map;
 
 @Since("1.3.2.0-PN")
 @UtilityClass
+@Log4j2
 public class RuntimeItems {
 
     private static final Gson GSON = new Gson();
@@ -32,7 +34,7 @@ public class RuntimeItems {
     private static final RuntimeItemMapping itemPalette;
 
     static {
-        Server.getInstance().getLogger().debug("Loading runtime items...");
+        log.debug("Loading runtime items...");
         InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_item_ids.json");
         if (stream == null) {
             throw new AssertionError("Unable to load runtime_item_ids.json");

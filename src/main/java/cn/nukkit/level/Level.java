@@ -335,7 +335,7 @@ public class Level implements ChunkManager, Metadatable {
         this.timings = new LevelTimings(this);
         levelProvider.updateLevelName(name);
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.preparing",
+        log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
                 TextFormat.GREEN + levelProvider.getName() + TextFormat.WHITE));
 
         this.generatorClass = Generator.getGenerator(levelProvider.getGenerator());
@@ -446,7 +446,7 @@ public class Level implements ChunkManager, Metadatable {
         this.dimension = generator.getDimension();
         this.gameRules = this.requireProvider().getGamerules();
 
-        this.server.getLogger().info("Preparing start region for level \"" + this.getFolderName() + "\"");
+        log.info("Preparing start region for level \"{}\"", this.getFolderName());
         Position spawn = this.getSpawnLocation();
         this.populateChunk(spawn.getChunkX(), spawn.getChunkZ(), true);
     }
@@ -722,7 +722,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading",
+        log.info(this.server.getLanguage().translateString("nukkit.level.unloading",
                 TextFormat.GREEN + this.getName() + TextFormat.WHITE));
         Level defaultLevel = this.server.getDefaultLevel();
 
@@ -3350,9 +3350,7 @@ public class Level implements ChunkManager, Metadatable {
             }
             levelProvider.unloadChunk(x, z, safe);
         } catch (Exception e) {
-            MainLogger logger = this.server.getLogger();
-            logger.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.toString()));
-            logger.logException(e);
+            log.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.toString()), e);
         }
 
         this.timings.doChunkUnload.stopTiming();

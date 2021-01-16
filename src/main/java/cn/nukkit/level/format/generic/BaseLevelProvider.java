@@ -65,17 +65,20 @@ public abstract class BaseLevelProvider implements LevelProvider {
         try (FileInputStream fos = new FileInputStream(levelDatFile); BufferedInputStream input = new BufferedInputStream(fos)) {
             levelData = NBTIO.readCompressed(input, ByteOrder.BIG_ENDIAN);;
         } catch (Exception e) {
-            log.fatal("Failed to load the level.dat file at "+levelDatFile.getAbsolutePath()+", attempting to load level.dat_old instead!");
+            log.fatal("Failed to load the level.dat file at {}, attempting to load level.dat_old instead!", levelDatFile.getAbsolutePath(), e);
             try {
                 File old = new File(getPath(), "level.dat_old");
                 if (!old.isFile()) {
-                    log.fatal("The file "+old.getAbsolutePath()+" does not exists!");
-                    throw new FileNotFoundException("The file "+old.getAbsolutePath()+" does not exists!");
+                    log.fatal("The file {} does not exists!", old.getAbsolutePath());
+                    FileNotFoundException ex = new FileNotFoundException("The file " + old.getAbsolutePath() + " does not exists!");
+                    ex.addSuppressed(e);
+                    throw ex;
                 }
                 try (FileInputStream fos = new FileInputStream(old); BufferedInputStream input = new BufferedInputStream(fos)) {
                     levelData = NBTIO.readCompressed(input, ByteOrder.BIG_ENDIAN);
                 } catch (Exception e2) {
-                    log.fatal("Failed to load the level.dat_old file at "+levelDatFile.getAbsolutePath());
+                    log.fatal("Failed to load the level.dat_old file at {}", levelDatFile.getAbsolutePath());
+                    e2.addSuppressed(e);
                     throw e2;
                 }
             } catch (Exception e2) {
@@ -356,7 +359,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
                 }
             });
         } catch (IOException e) {
-            log.fatal("Failed to save the level.dat file at "+levelDataFile.getAbsolutePath());
+            log.fatal("Failed to save the level.dat file at {}", levelDataFile.getAbsolutePath(), e);
             throw new UncheckedIOException(e);
         }
     }

@@ -21,7 +21,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.MainLogger;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 
@@ -32,6 +32,7 @@ import static cn.nukkit.math.CompassRoseDirection.*;
  * @author Nukkit Project Team
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+@Log4j2
 public class BlockSignPost extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntitySign> {
     public static final BlockProperty<CompassRoseDirection> GROUND_SIGN_DIRECTION = new ArrayBlockProperty<>("ground_sign_direction", false, new CompassRoseDirection[] {
             SOUTH, SOUTH_SOUTH_WEST, SOUTH_WEST, WEST_SOUTH_WEST, 
@@ -166,7 +167,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable, Blo
             createBlockEntity(nbt);
             return true;
         } catch (Exception e) {
-            MainLogger.getLogger().warning("Failed to create block entity "+getBlockEntityType()+" at "+getLocation(), e);
+            log.warn("Failed to create block entity {} at {}", getBlockEntityType(), getLocation(), e);
             level.setBlock(layer0, 0, layer0, true);
             level.setBlock(layer1, 0, layer1, true);
             return false;
