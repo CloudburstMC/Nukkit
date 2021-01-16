@@ -81,7 +81,7 @@ public class PluginLogger implements Logger {
     
     @Override
     public void log(LogLevel level, String message) {
-        log.log(toApacheLevel(level), this.pluginName + message);
+        log.log(toApacheLevel(level), "[{}]: {}", this.pluginName, message);
     }
 
     @Override
