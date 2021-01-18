@@ -216,7 +216,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                     isBreathing = true;
                     turtleTicks--;
                 }
-            } else {
+            } else if(isBreathing) {
                 turtleTicks = 200;
             }
         }
