@@ -48,7 +48,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
 
     @Override
     public double getResistance() {
-        return 10;
+        return 6;
     }
 
     @Override

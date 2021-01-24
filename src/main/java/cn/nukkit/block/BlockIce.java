@@ -27,7 +27,7 @@ public class BlockIce extends BlockTransparent {
 
     @Override
     public double getResistance() {
-        return 2.5;
+        return 0.5;
     }
 
     @Override
