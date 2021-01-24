@@ -34,8 +34,6 @@ public class EntityBoat extends EntityVehicle {
 
     public static final int NETWORK_ID = 90;
 
-    public static final int DATA_WOOD_ID = 20;
-
     public static final Vector3f RIDER_PLAYER_OFFSET = new Vector3f(0, 1.02001f, 0);
     public static final Vector3f RIDER_OFFSET = new Vector3f(0, -0.2f, 0);
 
@@ -50,6 +48,7 @@ public class EntityBoat extends EntityVehicle {
     public static final double SINKING_MAX_SPEED = 0.005;
 
     protected boolean sinking = true;
+    public int woodID;
 
     public EntityBoat(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -62,7 +61,7 @@ public class EntityBoat extends EntityVehicle {
     protected void initEntity() {
         super.initEntity();
 
-        this.dataProperties.putByte(DATA_WOOD_ID, this.namedTag.getByte("woodID"));
+        this.dataProperties.putInt(DATA_VARIANT, woodID = this.namedTag.getByte("woodID"));
     }
 
     @Override
@@ -414,7 +413,14 @@ public class EntityBoat extends EntityVehicle {
         super.kill();
 
         if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-            this.level.dropItem(this, new ItemBoat());
+            this.level.dropItem(this, new ItemBoat(this.woodID));
         }
+    }
+
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+
+        this.namedTag.putByte("woodID", this.woodID);
     }
 }
