@@ -261,9 +261,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 entity.riding = null;
             }
         }
-
-        SmokeParticle particle = new SmokeParticle(this);
-        level.addParticle(particle);
     }
 
     @Override

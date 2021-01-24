@@ -119,9 +119,6 @@ public class EntityBoat extends EntityVehicle {
         for (Entity linkedEntity : this.passengers) {
             linkedEntity.riding = null;
         }
-
-        SmokeParticle particle = new SmokeParticle(this);
-        this.level.addParticle(particle);
     }
 
     @Override
