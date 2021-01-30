@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
@@ -23,15 +24,19 @@ public class TimeCommand extends VanillaCommand {
                 "nukkit.command.time.stop");
         this.commandParameters.clear();
         this.commandParameters.put("1arg", new CommandParameter[]{
-                new CommandParameter("start|stop", CommandParamType.STRING, false)
+                CommandParameter.newEnum("mode", new CommandEnum("TimeMode", "query", "start", "stop"))
         });
-        this.commandParameters.put("2args", new CommandParameter[]{
-                new CommandParameter("add|set", CommandParamType.STRING, false),
-                new CommandParameter("value", CommandParamType.INT, false)
+        this.commandParameters.put("add", new CommandParameter[]{
+                CommandParameter.newEnum("mode", new CommandEnum("TimeModeAdd", "add")),
+                CommandParameter.newType("amount", CommandParamType.INT)
         });
-        this.commandParameters.put("2args_", new CommandParameter[]{
-                new CommandParameter("add|set", CommandParamType.STRING, false),
-                new CommandParameter("value", CommandParamType.STRING, false)
+        this.commandParameters.put("setAmount", new CommandParameter[]{
+                CommandParameter.newEnum("mode", false, new CommandEnum("TimeModeSet", "set")),
+                CommandParameter.newType("amount", CommandParamType.INT)
+        });
+        this.commandParameters.put("setTime", new CommandParameter[]{
+                CommandParameter.newEnum("mode", new CommandEnum("TimeModeSet", "set")),
+                CommandParameter.newEnum("time", new CommandEnum("TimeSpec", "day", "night", "midnight", "noon", "sunrise", "sunset"))
         });
     }
 

@@ -2,7 +2,9 @@ package cn.nukkit.event.player;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.utils.LoginChainData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +26,8 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     private final String name;
     private final UUID uuid;
+    private final LoginChainData chainData;
+    private Skin skin;
     private final String address;
     private final int port;
 
@@ -32,9 +36,11 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     private final List<Consumer<Server>> scheduledActions = new ArrayList<>();
 
-    public PlayerAsyncPreLoginEvent(String name, UUID uuid, String address, int port) {
+    public PlayerAsyncPreLoginEvent(String name, UUID uuid, LoginChainData chainData, Skin skin, String address, int port) {
         this.name = name;
         this.uuid = uuid;
+        this.chainData = chainData;
+        this.skin = skin;
         this.address = address;
         this.port = port;
     }
@@ -45,23 +51,35 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public UUID getUuid() {
-        return uuid;
+        return this.uuid;
+    }
+
+    public String getXuid() {
+        return this.chainData.getXUID();
+    }
+
+    public Skin getSkin() {
+        return this.skin;
+    }
+
+    public void setSkin(Skin skin) {
+        this.skin = skin;
     }
 
     public String getAddress() {
-        return address;
+        return this.address;
     }
 
     public int getPort() {
-        return port;
+        return this.port;
     }
 
     public LoginResult getLoginResult() {
-        return loginResult;
+        return this.loginResult;
     }
 
     public void setLoginResult(LoginResult loginResult) {

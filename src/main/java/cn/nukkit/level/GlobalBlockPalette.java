@@ -28,7 +28,6 @@ public class GlobalBlockPalette {
     private static final Int2ObjectMap<String> legacyIdToString = new Int2ObjectOpenHashMap<>();
     private static final Map<String, Integer> stringToLegacyId = new HashMap<>();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
-    public static final byte[] BLOCK_PALETTE;
 
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
@@ -63,13 +62,6 @@ public class GlobalBlockPalette {
                 int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
                 legacyToRuntimeId.put(legacyId, runtimeId);
             }
-            state.remove("meta"); // No point in sending this since the client doesn't use it.
-        }
-
-        try {
-            BLOCK_PALETTE = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
-        } catch (IOException e) {
-            throw new AssertionError("Unable to write block palette", e);
         }
     }
 

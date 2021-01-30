@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -17,7 +18,8 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     public static final int TIER_CHAIN = 3;
     public static final int TIER_GOLD = 4;
     public static final int TIER_DIAMOND = 5;
-    public static final int TIER_OTHER = 6;
+    public static final int TIER_NETHERITE = 6;
+    public static final int TIER_OTHER = 7;
 
     public ItemArmor(int id) {
         super(id);
@@ -83,6 +85,8 @@ abstract public class ItemArmor extends Item implements ItemDurable {
                 case TIER_LEATHER:
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_LEATHER);
                     break;
+                case TIER_NETHERITE:
+                    player.getLevel().addSound(player, Sound.ARMOR_EQUIP_NETHERITE);
                 case TIER_OTHER:
                 default:
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ARMOR_EQUIP_GENERIC);
