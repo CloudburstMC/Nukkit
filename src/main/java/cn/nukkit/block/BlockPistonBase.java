@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMovingBlock;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
@@ -213,7 +214,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
                 BlockEntity blockEntity = this.level.getBlockEntity(oldPos);
 
-                this.level.setBlock(newBlock, Block.get(BlockID.MOVING_BLOCK), true);
+                this.level.setBlock(newBlock, Block.get(newBlock.getId()), true);
 
                 CompoundTag nbt = BlockEntity.getDefaultCompound(newBlock, BlockEntity.MOVING_BLOCK)
                         .putInt("pistonPosX", this.getFloorX())
