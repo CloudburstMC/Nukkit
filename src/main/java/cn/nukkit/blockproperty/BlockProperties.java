@@ -287,6 +287,42 @@ public final class BlockProperties {
         return unchecked.setValue(currentMeta, registry.offset, value);
     }
 
+    @SuppressWarnings("unchecked")
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int setPersistenceValue(int currentMeta, String propertyName, String persistenceValue) {
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
+        @SuppressWarnings("rawtypes") 
+        BlockProperty property = registry.property;
+        int meta = property.getMetaForPersistenceValue(persistenceValue);
+        Serializable value = property.getValueForMeta(meta);
+        return property.setValue(currentMeta, registry.offset, value);
+    }
+
+    @SuppressWarnings("unchecked")
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public long setPersistenceValue(long currentMeta, String propertyName, String persistenceValue) {
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
+        @SuppressWarnings("rawtypes")
+        BlockProperty property = registry.property;
+        int meta = property.getMetaForPersistenceValue(persistenceValue);
+        Serializable value = property.getValueForMeta(meta);
+        return property.setValue(currentMeta, registry.offset, value);
+    }
+
+    @SuppressWarnings("unchecked")
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BigInteger setPersistenceValue(BigInteger currentMeta, String propertyName, String persistenceValue) {
+        RegisteredBlockProperty registry = requireRegisteredProperty(propertyName);
+        @SuppressWarnings("rawtypes")
+        BlockProperty property = registry.property;
+        int meta = property.getMetaForPersistenceValue(persistenceValue);
+        Serializable value = property.getValueForMeta(meta);
+        return property.setValue(currentMeta, registry.offset, value);
+    }
+
     /**
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
@@ -508,7 +544,7 @@ public final class BlockProperties {
 
         return (Boolean) registry.property.getValue(currentMeta, registry.offset);
     }
-    
+
     /**
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyMetaException If the meta contains invalid data
@@ -534,7 +570,7 @@ public final class BlockProperties {
             consumer.accept(registry.property, registry.offset);
         }
     }
-    
+
     public void forEach(Consumer<BlockProperty<?>> consumer) {
         for (RegisteredBlockProperty registry : byName.values()) {
             consumer.accept(registry.property);

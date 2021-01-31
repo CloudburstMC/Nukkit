@@ -3,6 +3,7 @@ package cn.nukkit.blockproperty;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyPersistenceValueException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import com.google.common.base.Preconditions;
 
@@ -383,6 +384,13 @@ public abstract class BlockProperty<T extends Serializable> implements Serializa
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public abstract String getPersistenceValueForMeta(int meta);
+
+    /**
+     * @throws InvalidBlockPropertyPersistenceValueException IF the persistence value is not valid for this property
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract int getMetaForPersistenceValue(String persistenceValue);
 
     /**
      * @throws RuntimeException Any runtime exception to indicate an invalid value

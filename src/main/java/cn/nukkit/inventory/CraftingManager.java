@@ -11,7 +11,6 @@ import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Config;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import io.netty.util.collection.CharObjectHashMap;
 import io.netty.util.internal.EmptyArrays;
@@ -90,13 +89,13 @@ public class CraftingManager {
         }
         this.rebuildPacket();
 
-        MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes.");
+        log.info("Loaded {} recipes.", this.recipes.size());
     }
 
     @SuppressWarnings("unchecked")
     private void loadRecipes(Config config) {
         List<Map> recipes = config.getMapList("recipes");
-        MainLogger.getLogger().info("Loading recipes...");
+        log.info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
@@ -200,7 +199,7 @@ public class CraftingManager {
                         break;
                 }
             } catch (Exception e) {
-                MainLogger.getLogger().error("Exception during registering recipe", e);
+                log.error("Exception during registering recipe", e);
             }
         }
 
@@ -283,7 +282,7 @@ public class CraftingManager {
             pk.addStonecutterRecipe(recipe);
         }
 
-        pk.encode();
+        pk.tryEncode();
         // TODO: find out whats wrong with compression
         packet = pk.compress(Deflater.BEST_COMPRESSION);
         packet0 = pk;
@@ -428,7 +427,7 @@ public class CraftingManager {
 
         int potionHash = getPotionHash(input, potion);
         if (this.brewingRecipes.containsKey(potionHash)) {
-            log.warn("The brewing recipe "+brewingRecipes.get(potionHash)+" is being replaced by "+recipe);
+            log.warn("The brewing recipe {} is being replaced by {}", brewingRecipes.get(potionHash), recipe);
         }
         this.brewingRecipes.put(potionHash, recipe);
     }

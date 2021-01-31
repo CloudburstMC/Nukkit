@@ -28,7 +28,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.MainLogger;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -37,6 +37,7 @@ import java.util.Map;
 import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 
 @PowerNukkitOnly
+@Log4j2
 public class BlockCampfire extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityCampfire> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -153,7 +154,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
             
             createBlockEntity(nbt);
         } catch (Exception e) {
-            MainLogger.getLogger().warning("Failed to create the block entity "+getBlockEntityType()+" at "+getLocation(), e);
+            log.warn("Failed to create the block entity {} at {}", getBlockEntityType(), getLocation(), e);
             level.setBlock(layer0, 0, layer0, true);
             level.setBlock(layer1, 0, layer1, true);
             return false;

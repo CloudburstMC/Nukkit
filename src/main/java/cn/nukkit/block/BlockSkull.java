@@ -19,12 +19,14 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolder<BlockEntitySkull> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockSkull extends BlockTransparentMeta implements RedstoneComponent, BlockEntityHolder<BlockEntitySkull> {
 
     public BlockSkull() {
         this(0);
@@ -129,6 +131,7 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if ((type != Level.BLOCK_UPDATE_REDSTONE && type != Level.BLOCK_UPDATE_NORMAL) || !level.getServer().isRedstoneEnabled()) {
             return 0;
@@ -145,7 +148,7 @@ public class BlockSkull extends BlockTransparentMeta implements BlockEntityHolde
             return 0;
         }
         
-        entity.setMouthMoving(this.level.isBlockPowered(this.getLocation()));
+        entity.setMouthMoving(this.isGettingPower());
         return Level.BLOCK_UPDATE_REDSTONE;
     }
 

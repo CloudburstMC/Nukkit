@@ -12,18 +12,21 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author MagicDroidX
  */
+@Log4j2
 public abstract class BlockEntity extends Position {
     //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
     public static final String CHEST = "Chest";
@@ -136,12 +139,9 @@ public abstract class BlockEntity extends Position {
         type = type.replaceFirst("BlockEntity", ""); //TODO: Remove this after the first release
         BlockEntity blockEntity = null;
 
-        if (knownBlockEntities.containsKey(type)) {
-            Class<? extends BlockEntity> clazz = knownBlockEntities.get(type);
-
-            if (clazz == null) {
-                return null;
-            }
+        Class<? extends BlockEntity> clazz = knownBlockEntities.get(type);
+        if (clazz != null) {
+            List<Exception> exceptions = null;
 
             for (Constructor constructor : clazz.getConstructors()) {
                 if (blockEntity != null) {
@@ -165,11 +165,26 @@ public abstract class BlockEntity extends Position {
 
                     }
                 } catch (Exception e) {
-                    MainLogger.getLogger().logException(e);
+                    if (exceptions == null) {
+                        exceptions = new ArrayList<>();
+                    }
+                    exceptions.add(e);
                 }
 
             }
+            if (blockEntity == null) {
+                Exception cause = new IllegalArgumentException("Could not create a block entity of type "+type, exceptions != null && exceptions.size() > 0? exceptions.get(0) : null);
+                if (exceptions != null && exceptions.size() > 1) {
+                    for (int i = 1; i < exceptions.size(); i++) {
+                        cause.addSuppressed(exceptions.get(i));
+                    }
+                }
+                log.error("Could not create a block entity of type {} with {} args", type, args == null? 0 : args.length, cause);
+            }
+        } else {
+            log.debug("Block entity type {} is unknown", type);
         }
+
 
         return blockEntity;
     }

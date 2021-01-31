@@ -51,6 +51,7 @@ public class BlockStateRegistry {
 
     private final Map<BlockState, Registration> blockStateRegistration = new ConcurrentHashMap<>();
     private final Map<String, Registration> stateIdRegistration = new ConcurrentHashMap<>();
+    private final Int2ObjectMap<Registration> runtimeIdRegistration = new Int2ObjectOpenHashMap<>();
 
     private final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     private final Int2ObjectMap<String> blockIdToPersistenceName = new Int2ObjectOpenHashMap<>();
@@ -132,14 +133,14 @@ public class BlockStateRegistry {
 
         //</editor-fold>
 
-        Registration infoUpdateRuntimeId = null;
+        Integer infoUpdateRuntimeId = null;
         
         for (CompoundTag state : tag.getAll()) {
             int runtimeId = runtimeIdAllocator.getAndIncrement();
             String name = state.getCompound("block").getString("name").toLowerCase();
             
             if (name.equals("minecraft:unknown")) {
-                infoUpdateRuntimeId = new Registration(BlockState.of(600), runtimeId);
+                infoUpdateRuntimeId = runtimeId;
             }
             
             List<CompoundTag> legacyStates = metaOverrides.get(state.getCompound("block").copy().remove("version"));
@@ -191,7 +192,7 @@ public class BlockStateRegistry {
             throw new IllegalStateException("Could not find the minecraft:info_update runtime id!");
         }
         
-        updateBlockRegistration = infoUpdateRuntimeId;
+        updateBlockRegistration = findRegistrationByRuntimeId(infoUpdateRuntimeId);
         
         try {
             blockPaletteBytes = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
@@ -220,6 +221,53 @@ public class BlockStateRegistry {
         return stateId.toString();
     }
 
+    @Nullable
+    private static Registration findRegistrationByRuntimeId(int runtimeId) {
+        return runtimeIdRegistration.get(runtimeId);
+    }
+
+    /**
+     * @return {@code null} if the runtime id does not matches any known block state.
+     */
+    @Nullable
+    public BlockState getBlockStateByRuntimeId(int runtimeId) {
+        Registration registration = findRegistrationByRuntimeId(runtimeId);
+        if (registration == null) {
+            return null;
+        }
+        BlockState state = registration.state;
+        if (state != null) {
+            return state;
+        }
+        CompoundTag originalBlock = registration.originalBlock;
+        if (originalBlock != null) {
+            state = buildStateFromCompound(originalBlock);
+            if (state != null) {
+                registration.state = state;
+                registration.originalBlock = null;
+            }
+        }
+        return state;
+    }
+    
+    @Nullable
+    private BlockState buildStateFromCompound(CompoundTag block) {
+        String name = block.getString("name");
+        Integer id = getBlockId(name);
+        if (id == null) {
+            return null;
+        }
+
+        BlockState state = BlockState.of(id);
+
+        CompoundTag properties = block.getCompound("states");
+        for (Tag tag : properties.getAllTags()) {
+            state = state.withProperty(tag.getName(), tag.parseValue().toString());
+        }
+        
+        return state;
+    }
+
     public int getRuntimeId(BlockState state) {
         return getRegistration(state).runtimeId;
     }
@@ -243,7 +291,7 @@ public class BlockStateRegistry {
         if (state.getBlockId() == BlockID.AIR) {
             Registration airRegistration = blockStateRegistration.get(BlockState.AIR);
             if (airRegistration != null) {
-                return new Registration(state, airRegistration.runtimeId);
+                return new Registration(state, airRegistration.runtimeId, null);
             }
         }
         
@@ -263,20 +311,24 @@ public class BlockStateRegistry {
             registration = stateIdRegistration.remove(state.getStateId());
             if (registration != null) {
                 registration.state = state;
+                registration.originalBlock = null;
                 return registration;
             }
         } catch (Exception e) {
             try {
-                log.fatal("An error has occurred while trying to get the stateId of state: " +
-                        state.getBlockId() + ":" + state.getDataStorage()
-                        + " - " + state.getProperties()
-                        + " - " + blockIdToPersistenceName.get(state.getBlockId()),
+                log.fatal("An error has occurred while trying to get the stateId of state: "
+                        + "{}:{}"
+                        + " - {}"
+                        + " - {}",
+                        state.getBlockId(),
+                        state.getDataStorage(),
+                        state.getProperties(),
+                        blockIdToPersistenceName.get(state.getBlockId()),
                         e);
             } catch (Exception e2) {
                 e.addSuppressed(e2);
-                log.fatal("An error has occurred while trying to get the stateId of state: " +
-                        state.getBlockId() + ":" + state.getDataStorage(), 
-                        e);
+                log.fatal("An error has occurred while trying to get the stateId of state: {}:{}",
+                        state.getBlockId(), state.getDataStorage(), e);
             }
         }
         
@@ -284,10 +336,11 @@ public class BlockStateRegistry {
             registration = stateIdRegistration.remove(state.getLegacyStateId());
             if (registration != null) {
                 registration.state = state;
+                registration.originalBlock = null;
                 return registration;
             }
         } catch (Exception e) {
-            log.fatal("An error has occurred while trying to parse the legacyStateId of "+state.getBlockId()+":"+state.getDataStorage(), e);
+            log.fatal("An error has occurred while trying to parse the legacyStateId of {}:{}", state.getBlockId(), state.getDataStorage(), e);
         }
 
         return logDiscoveryError(state);
@@ -300,11 +353,14 @@ public class BlockStateRegistry {
     }
 
     private Registration logDiscoveryError(BlockState state) {
-        log.error("Found an unknown BlockId:Meta combination: "+state.getBlockId()+":"+state.getDataStorage()
-                + " - " + state.getStateId()
-                + " - " + state.getProperties()
-                + " - " + blockIdToPersistenceName.get(state.getBlockId())
-                + ", trying to repair or replacing with an \"UPDATE!\" block.");
+        log.error("Found an unknown BlockId:Meta combination: {}:{}"
+                + " - {}"
+                + " - {}"
+                + " - {}"
+                + ", trying to repair or replacing with an \"UPDATE!\" block.",
+                state.getBlockId(), state.getDataStorage(), state.getStateId(), state.getProperties(),
+                blockIdToPersistenceName.get(state.getBlockId())
+                );
         return updateBlockRegistration;
     }
     
@@ -319,7 +375,7 @@ public class BlockStateRegistry {
         String persistenceName = blockIdToPersistenceName.get(blockId);
         if (persistenceName == null) {
             String fallback = "blockid:"+ blockId;
-            log.warn("The persistence name of the block id "+ blockId +" is unknown! Using "+fallback+" as an alternative!");
+            log.warn("The persistence name of the block id {} is unknown! Using {} as an alternative!", blockId, fallback);
             registerPersistenceName(blockId, fallback);
             return fallback;
         }
@@ -342,24 +398,28 @@ public class BlockStateRegistry {
     }
 
     private void registerStateId(CompoundTag state, int runtimeId) {
-        String stateId = getStateId(state.getCompound("block"));
-        Registration registration = new Registration(null, runtimeId);
+        CompoundTag block = state.getCompound("block");
+        String stateId = getStateId(block);
+        Registration registration = new Registration(null, runtimeId, block);
         
         Registration old = stateIdRegistration.putIfAbsent(stateId, registration);
         if (old != null && !old.equals(registration)) {
             throw new UnsupportedOperationException("The persistence NBT registration tried to replaced a runtime id. Old:"+old+", New:"+runtimeId+", State:"+stateId);
         }
+        
+        runtimeIdRegistration.put(runtimeId, registration);
     }
     
     private void registerState(int blockId, int meta, CompoundTag originalState, int runtimeId) {
         BlockState state = BlockState.of(blockId, meta);
-        Registration registration = new Registration(state, runtimeId);
+        Registration registration = new Registration(state, runtimeId, null);
 
         Registration old = blockStateRegistration.putIfAbsent(state, registration);
         if (old != null && !registration.equals(old)) {
             throw new UnsupportedOperationException("The persistence NBT registration tried to replaced a runtime id. Old:"+old+", New:"+runtimeId+", State:"+state);
         }
-
+        runtimeIdRegistration.put(runtimeId, registration);
+        
         CompoundTag block = originalState.getCompound("block");
         stateIdRegistration.remove(getStateId(block));
         stateIdRegistration.remove(state.getLegacyStateId());
@@ -462,5 +522,8 @@ public class BlockStateRegistry {
         private BlockState state;
         
         private final int runtimeId;
+        
+        @Nullable
+        private CompoundTag originalBlock;
     }
 }

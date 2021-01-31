@@ -60,7 +60,7 @@ public class BlockGrass extends BlockDirt {
 
     @Override
     public double getResistance() {
-        return 3;
+        return 0.6;
     }
 
     @Override

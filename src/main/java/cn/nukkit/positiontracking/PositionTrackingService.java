@@ -227,7 +227,7 @@ public class PositionTrackingService implements Closeable {
                             toRemove.computeIfAbsent(player, p -> new IntArrayList(2)).add(trackingHandler);
                         }
                     } catch (IOException e) {
-                        log.error("Failed to update the tracking handler "+trackingHandler+" for player "+player.getName(), e);
+                        log.error("Failed to update the tracking handler {} for player {}", trackingHandler, player.getName(), e);
                     }
                 });
             }
@@ -281,7 +281,7 @@ public class PositionTrackingService implements Closeable {
                                 startTracking(player, trackingHandle, false);
                             }
                         } catch (IOException e) {
-                            log.error("Failed to get the position of the tracking handler "+trackingHandle, e);
+                            log.error("Failed to get the position of the tracking handler {}", trackingHandle, e);
                         }
                     }
                 }
@@ -302,7 +302,7 @@ public class PositionTrackingService implements Closeable {
                             toRemove.add(trackingHandler);
                         }
                     } catch (IOException e) {
-                        log.error("Failed to update the tracking handler "+trackingHandler+" for player "+player.getName(), e);
+                        log.error("Failed to update the tracking handler {} for player {}", trackingHandler, player.getName(), e);
                     }
                 });
             }

@@ -1,6 +1,7 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
@@ -222,6 +223,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         return false;
     }
 
+    @PowerNukkitDifference(info = "Check if the hopper above is locked, then don't pull items.", since = "1.4.0.0-PN")
     public boolean pullItems() {
         if (this.inventory.isFull()) {
             return false;
@@ -229,6 +231,12 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
         Block blockSide = this.getBlock().getSide(BlockFace.UP);
         BlockEntity blockEntity = this.level.getBlockEntity(temporalVector.setComponentsAdding(this, BlockFace.UP));
+
+        if (blockEntity instanceof BlockEntityHopper) {
+            BlockEntityHopper hopper = (BlockEntityHopper) blockEntity;
+            if (hopper.disabled)
+                return false;
+        }
 
         //Fix for furnace outputs
         if (blockEntity instanceof BlockEntityFurnace) {

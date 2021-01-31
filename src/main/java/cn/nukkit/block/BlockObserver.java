@@ -14,6 +14,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.plugin.PluginManager;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +26,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
  * @author Leonidius20, joserobjr
  * @since 18.08.18
  */
-public class BlockObserver extends BlockSolidMeta implements Faceable {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public class BlockObserver extends BlockSolidMeta implements RedstoneComponent, Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(FACING_DIRECTION, POWERED);
@@ -72,7 +74,7 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
                 setBlockFace(player.getHorizontalFacing());
             }
         }
-        
+
         this.getLevel().setBlock(block, this, true, true);
         return true;
     }
@@ -105,20 +107,23 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
             if (ev.isCancelled()) {
                 return 0;
             }
-            
+
             if (!isPowered()) {
                 level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
                 setPowered(true);
+
                 if (level.setBlock(this, this)) {
-                    level.scheduleUpdate(this, 3);
                     getSide(getBlockFace().getOpposite()).onUpdate(Level.BLOCK_UPDATE_REDSTONE);
-                    level.scheduleUpdate(this, 3);
+                    RedstoneComponent.updateAroundRedstone(getSide(getBlockFace().getOpposite()));
+                    level.scheduleUpdate(this, 2);
                 }
             } else {
                 pluginManager.callEvent(new BlockRedstoneEvent(this, 15, 0));
                 setPowered(false);
+
                 level.setBlock(this, this);
                 getSide(getBlockFace().getOpposite()).onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+                RedstoneComponent.updateAroundRedstone(getSide(getBlockFace().getOpposite()));
             }
             return Level.BLOCK_UPDATE_SCHEDULED;
         } else if (type == Level.BLOCK_UPDATE_MOVED) {
@@ -137,13 +142,14 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
         if (!server.isRedstoneEnabled() || isPowered() || side != blockFace || level.isUpdateScheduled(this, this)) {
             return;
         }
+
         RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
         server.getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
             return;
         }
-        
-        level.scheduleUpdate(this, 3);
+
+        level.scheduleUpdate(this, 5);
     }
 
     @Override

@@ -337,8 +337,7 @@ public class PlayerInventory extends BaseInventory {
         MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
         pk.eid = this.getHolder().getId();
         pk.slots = armor;
-        pk.encode();
-        pk.isEncoded = true;
+        pk.tryEncode();
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
@@ -386,8 +385,7 @@ public class PlayerInventory extends BaseInventory {
         MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
         pk.eid = this.getHolder().getId();
         pk.slots = armor;
-        pk.encode();
-        pk.isEncoded = true;
+        pk.tryEncode();
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {

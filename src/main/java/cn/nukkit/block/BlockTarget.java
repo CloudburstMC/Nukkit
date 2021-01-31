@@ -16,6 +16,7 @@ import cn.nukkit.math.BlockFace.Axis;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ import java.util.List;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-public class BlockTarget extends BlockTransparent implements BlockEntityHolder<BlockEntityTarget> {
+public class BlockTarget extends BlockTransparent implements RedstoneComponent, BlockEntityHolder<BlockEntityTarget> {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -96,7 +97,7 @@ public class BlockTarget extends BlockTransparent implements BlockEntityHolder<B
         level.scheduleUpdate(this, ticks);
         target.setActivePower(power);
         if (previous != power) {
-            level.updateAroundRedstone(this, null);
+            updateAroundRedstone();
         }
         return true;
     }
@@ -110,7 +111,7 @@ public class BlockTarget extends BlockTransparent implements BlockEntityHolder<B
             target.setActivePower(0);
             target.close();
             if (currentPower != 0 && level.getServer().isRedstoneEnabled()) {
-                level.updateAroundRedstone(this, null);
+                updateAroundRedstone();
             }
             return true;
         }

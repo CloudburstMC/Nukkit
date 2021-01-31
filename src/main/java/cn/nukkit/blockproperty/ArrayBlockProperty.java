@@ -3,6 +3,7 @@ package cn.nukkit.blockproperty;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyPersistenceValueException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.math.NukkitMath;
 import com.google.common.base.Preconditions;
@@ -147,6 +148,32 @@ public final class ArrayBlockProperty<E extends Serializable> extends BlockPrope
             return Integer.toString(meta);
         }
         return persistenceNames[meta];
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getMetaForPersistenceValue(String persistenceValue) {
+        int meta;
+        if (isOrdinal()) {
+            try {
+                meta = Integer.parseInt(persistenceValue);
+                validateMetaDirectly(meta);
+            } catch (IndexOutOfBoundsException|IllegalArgumentException e) {
+                throw new InvalidBlockPropertyPersistenceValueException(this, null, persistenceValue, 
+                        "Expected a number from 0 to " + persistenceNames.length, e);
+            }
+            return meta;
+        }
+        for (int index = 0; index < persistenceNames.length; index++) {
+            if (persistenceNames[index].equals(persistenceValue)) {
+                return index;
+            }
+        }
+        throw new InvalidBlockPropertyPersistenceValueException(
+                this, null, persistenceValue,
+                "The value does not exists in this property."
+        );
     }
 
     @Override

@@ -12,9 +12,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 
@@ -24,7 +24,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
  * @author CreeperFace
  * @since 27. 11. 2016
  */
-public abstract class BlockButton extends BlockFlowable implements Faceable {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public abstract class BlockButton extends BlockFlowable implements RedstoneComponent, Faceable {
     protected static final BooleanBlockProperty BUTTON_PRESSED = new BooleanBlockProperty("button_pressed_bit", false);
     public static final BlockProperties PROPERTIES = new BlockProperties(
             FACING_DIRECTION,
@@ -102,10 +103,8 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         if (this.level.getServer().isRedstoneEnabled()) {
             this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
 
-            Vector3 pos = getLocation();
-
-            level.updateAroundRedstone(pos, null);
-            level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+            updateAroundRedstone();
+            RedstoneComponent.updateAroundRedstone(getSide(getFacing().getOpposite()), getFacing());
         }
 
         return true;
@@ -131,9 +130,8 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
                 if (this.level.getServer().isRedstoneEnabled()) {
                     this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
 
-                    Vector3 pos = getLocation();
-                    level.updateAroundRedstone(pos, null);
-                    level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+                    updateAroundRedstone();
+                    RedstoneComponent.updateAroundRedstone(getSide(getFacing().getOpposite()), getFacing());
                 }
             }
             return Level.BLOCK_UPDATE_SCHEDULED;

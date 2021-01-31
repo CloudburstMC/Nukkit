@@ -3,6 +3,7 @@ package cn.nukkit.resourcepacks;
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
 import com.google.gson.JsonParser;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,6 +15,7 @@ import java.security.MessageDigest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+@Log4j2
 public class ZippedResourcePack extends AbstractResourcePack {
     private File file;
     private byte[] sha256 = null;
@@ -48,7 +50,7 @@ public class ZippedResourcePack extends AbstractResourcePack {
                     .parse(new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8))
                     .getAsJsonObject();
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("An error occurred while loading the zipped resource pack {}", file, e);
         }
 
         if (!this.verifyManifest()) {
@@ -68,7 +70,7 @@ public class ZippedResourcePack extends AbstractResourcePack {
             try {
                 this.sha256 = MessageDigest.getInstance("SHA-256").digest(Files.readAllBytes(this.file.toPath()));
             } catch (Exception e) {
-                Server.getInstance().getLogger().logException(e);
+                log.error("Failed to parse the SHA-256 of the resource pack {}", file, e);
             }
         }
 
@@ -88,7 +90,7 @@ public class ZippedResourcePack extends AbstractResourcePack {
             fis.skip(off);
             fis.read(chunk);
         } catch (Exception e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("An error occurred while processing the resource pack {} at offset:{} and length:{}", file, off, len, e);
         }
 
         return chunk;
