@@ -10,12 +10,12 @@ public class EnchantmentTridentImpaling extends EnchantmentTrident {
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return 1 + (level - 1) * 10;
+        return 1 + (level - 1) * 8;
     }
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 15;
+        return this.getMinEnchantAbility(level) + 20;
     }
 
     @Override
