@@ -76,7 +76,7 @@ public class Effect implements Cloneable {
 
         effects[Effect.ABSORPTION] = new Effect(Effect.ABSORPTION, "%potion.absorption", 36, 107, 251);
         effects[Effect.SATURATION] = new Effect(Effect.SATURATION, "%potion.saturation", 255, 0, 255);
-        effects[Effect.LEVITATION] = new Effect(Effect.LEVITATION, "%potion.levitation", 206, 255, 255);
+        effects[Effect.LEVITATION] = new Effect(Effect.LEVITATION, "%potion.levitation", 206, 255, 255, true);
         effects[Effect.FATAL_POISON] = new Effect(Effect.FATAL_POISON, "%potion.poison", 78, 147, 49, true);
         effects[Effect.CONDUIT_POWER] = new Effect(Effect.CONDUIT_POWER, "%potion.conduitPower", 29, 194, 209);
         effects[Effect.SLOW_FALLING] = new Effect(Effect.SLOW_FALLING, "%potion.slowFalling", 206, 255, 255);
