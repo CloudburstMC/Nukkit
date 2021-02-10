@@ -14,6 +14,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NukkitMetrics {
+    private static boolean metricsStarted = false;
+
     private final Server server;
 
     private boolean enabled;
@@ -22,6 +24,10 @@ public class NukkitMetrics {
 
     public NukkitMetrics(Server server) {
         this.server = server;
+
+        if (metricsStarted) {
+            return;
+        }
 
         try {
             this.loadConfig();
@@ -96,6 +102,8 @@ public class NukkitMetrics {
                 map.put(release, entry);
                 return map;
             }));
+
+            metricsStarted = true;
         }
     }
 
