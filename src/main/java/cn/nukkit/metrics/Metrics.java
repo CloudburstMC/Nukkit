@@ -81,7 +81,7 @@ public class Metrics {
         long initialDelay = (long) (1000 * 60 * (3 + Math.random() * 3));
         long secondDelay = (long) (1000 * 60 * (Math.random() * 30));
         scheduler.schedule(submitTask, initialDelay, TimeUnit.MILLISECONDS);
-        scheduler.scheduleAtFixedRate(submitTask, initialDelay + secondDelay, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(submitTask, initialDelay + secondDelay, (1000L * 60) * 30, TimeUnit.MILLISECONDS);
     }
 
     /**
