@@ -35,7 +35,6 @@ public abstract class EntityCreature extends EntityLiving {
             if(!player.isCreative()) {
                 player.getInventory().removeItem(item);
             }
-            player.getInventory().removeItem(item);
             // Set entity as persistent.
             return true;
         }
