@@ -25,7 +25,6 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -459,7 +458,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             try {
                 addCreativeItem(fromJsonNetworkId(map));
             } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
+                log.error("Error while registering a creative item", e);
             }
         }
     }
@@ -563,12 +562,15 @@ public class Item implements Cloneable, BlockID, ItemID {
                         state.validate();
                         item = state.asItemBlock(count);
                     } catch (InvalidBlockPropertyMetaException | InvalidBlockStateException e) {
-                        log.warn("Attempted to get an ItemBlock with invalid block state in memory: "+state+", trying to repair the block state...");
+                        log.warn("Attempted to get an ItemBlock with invalid block state in memory: {}, trying to repair the block state...", state);
+                        log.catching(org.apache.logging.log4j.Level.DEBUG, e);
                         Block repaired = state.getBlockRepairing(null, 0, 0, 0);
                         item = repaired.asItemBlock(count);
-                        log.error("Attempted to get an illegal item block " + id + ":" + meta + " ("+blockId+"), the meta was changed to " + item.getDamage());
+                        log.error("Attempted to get an illegal item block {}:{} ({}), the meta was changed to {}",
+                                id, meta, blockId, item.getDamage(), e);
                     } catch (UnknownRuntimeIdException e) {
-                        log.warn("Attempted to get an illegal item block "+id+":"+meta+ " ("+blockId+"), the runtime id was unknown and the meta was changed to 0");
+                        log.warn("Attempted to get an illegal item block {}:{} ({}), the runtime id was unknown and the meta was changed to 0",
+                                id, meta, blockId, e);
                         item = BlockState.of(id).asItemBlock(count);
                     }
                 }
@@ -588,7 +590,8 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             return item;
         } catch (Exception e) {
-            log.error("Error getting the item " + id + ":" + meta + (id < 0? " ("+(255 - id)+")":"") + "! Returning an unsafe item stack!", e);
+            log.error("Error getting the item {}:{}{}! Returning an unsafe item stack!", 
+                    id, meta, id < 0? " ("+(255 - id)+")":"", e);
             return new Item(id, meta, count).setCompoundTag(tags);
         }
     }

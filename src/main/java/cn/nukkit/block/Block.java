@@ -23,6 +23,7 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.InvalidBlockDamageException;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
@@ -625,8 +626,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                                     }
                                 } catch (InvocationTargetException wrapper) {
                                     Throwable uncaught = wrapper.getTargetException();
-                                    if (!(uncaught instanceof InvalidBlockStateException)) {
-                                        log.error("Error while registering " + c.getName()+" with meta "+data, uncaught);
+                                    if (!(uncaught instanceof InvalidBlockDamageException)) {
+                                        log.error("Error while registering {} with meta {}", c.getName(), data, uncaught);
                                     }
                                     b = new BlockUnknown(id, data);
                                 }
@@ -640,7 +641,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             }
                         }
                     } catch (Exception e) {
-                        log.error("Error while registering " + c.getName(), e);
+                        log.error("Error while registering {}", c.getName(), e);
                         for (int data = 0; data < DATA_SIZE; ++data) {
                             fullList[(id << DATA_BITS) | data] = new BlockUnknown(id, data);
                         }
@@ -878,7 +879,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                         if (exception != null) {
                             exception.addSuppressed(e);
                         } else {
-                            log.error("Error while registering " + blockClass.getName()+" with meta "+data, exception);
+                            log.error("Error while registering {} with meta {}", blockClass.getName(), data, exception);
                         }
                     }
                 }

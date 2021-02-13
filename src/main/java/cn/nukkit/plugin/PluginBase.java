@@ -11,6 +11,7 @@ import cn.nukkit.command.PluginIdentifiableCommand;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 import com.google.common.base.Preconditions;
+import lombok.extern.log4j.Log4j2;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -30,6 +31,7 @@ import java.util.LinkedHashMap;
  * @see cn.nukkit.plugin.PluginDescription
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
+@Log4j2
 abstract public class PluginBase implements Plugin {
 
     private PluginLoader loader;
@@ -228,7 +230,7 @@ abstract public class PluginBase implements Plugin {
                     return true;
                 }
             } catch (IOException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.error("Error while saving resource {}, to {} (replace: {}, plugin:{})", filename, outputName, replace, getDescription().getName(), e);
             }
         }
         return false;
@@ -267,7 +269,7 @@ abstract public class PluginBase implements Plugin {
             try {
                 this.config.setDefault(yaml.loadAs(Utils.readFile(this.configFile), LinkedHashMap.class));
             } catch (IOException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.error("Error while reloading configs for the plugin {}", getDescription().getName(), e);
             }
         }
     }

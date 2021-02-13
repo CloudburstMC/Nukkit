@@ -141,8 +141,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
         if (getContentVersion() > ChunkUpdater.getCurrentContentVersion()) {
             log.warn(
-                "Loading a chunk section with content version ("+getContentVersion()+") higher than the current version ("+ChunkUpdater.getCurrentContentVersion()+"), " +
-                "Errors may occur and the chunk may get corrupted blocks!"
+                "Loading a chunk section with content version ({}) higher than the current version ({}), " +
+                "Errors may occur and the chunk may get corrupted blocks!",
+                    getContentVersion(), ChunkUpdater.getCurrentContentVersion()
             );
         }
         

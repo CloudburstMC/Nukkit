@@ -1,6 +1,5 @@
 package cn.nukkit.level.format.updater;
 
-import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
@@ -9,10 +8,12 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.generic.BaseChunk;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 
 @PowerNukkitOnly
 @Since("1.3.0.0-PN")
 @UtilityClass
+@Log4j2
 public class ChunkUpdater {
     /**
      * Version history:
@@ -108,7 +109,7 @@ public class ChunkUpdater {
                 int x = chunk.getX() << 4 | 0x6;
                 int y = section.getY() << 4 | 0x6;
                 int z = chunk.getZ() << 4 | 0x6;
-                Server.getInstance().getLogger().warning("The chunk section at x:"+x+", y:"+y+", z:"+z+" failed to complete the backward compatibility update 1 after "+attempts+" attempts");
+                log.error("The chunk section at x:{}, y:{}, z:{} failed to complete the backward compatibility update 1 after {} attempts", x, y, z, attempts);
                 break;
             }
             sectionUpdated = walk(chunk, section, wallUpdater);

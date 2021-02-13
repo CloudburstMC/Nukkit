@@ -14,8 +14,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.RedstoneComponent;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 
@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 @PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+@Log4j2
 public abstract class BlockRedstoneComparator extends BlockRedstoneDiode implements RedstoneComponent, BlockEntityHolder<BlockEntityComparator> {
 
     public BlockRedstoneComparator() {
@@ -201,7 +202,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode impleme
         try {
             createBlockEntity(new CompoundTag().putList(new ListTag<>("Items")));
         } catch (Exception e) {
-            MainLogger.getLogger().warning("Failed to create the block entity "+getBlockEntityType()+" at "+getLocation(), e);
+            log.warn("Failed to create the block entity {} at {}", getBlockEntityType(), getLocation(), e);
             level.setBlock(layer0, 0, layer0, true);
             level.setBlock(layer1, 1, layer1, true);
             return false;

@@ -9,8 +9,8 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.positiontracking.PositionTracking;
 import cn.nukkit.positiontracking.PositionTrackingService;
-import cn.nukkit.utils.MainLogger;
 import it.unimi.dsi.fastutil.ints.IntList;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import java.io.IOException;
@@ -21,6 +21,7 @@ import java.util.OptionalInt;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
+@Log4j2
 public class BlockEntityLodestone extends BlockEntitySpawnable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -80,7 +81,7 @@ public class BlockEntityLodestone extends BlockEntitySpawnable {
                 return;
             }
         } catch (IOException e) {
-            MainLogger.getLogger().error("Failed to remove the tracking position handler for "+getLocation());
+            log.error("Failed to remove the tracking position handler for {}", getLocation());
             return;
         }
         
@@ -90,7 +91,7 @@ public class BlockEntityLodestone extends BlockEntitySpawnable {
             try {
                 positionTrackingService.invalidateHandler(handler);
             } catch (IOException e) {
-                MainLogger.getLogger().error("Failed to remove the tracking handler "+handler+" for position "+getLocation(), e);
+                log.error("Failed to remove the tracking handler {} for position {}", handler, getLocation(), e);
             }
         }
     }

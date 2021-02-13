@@ -1,6 +1,5 @@
 package cn.nukkit.network;
 
-import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
@@ -169,13 +168,9 @@ public class Network {
             try {
                 interfaz.process();
             } catch (Exception e) {
-                if (Nukkit.DEBUG > 1) {
-                    this.server.getLogger().logException(e);
-                }
-
+                log.fatal(this.server.getLanguage().translateString("nukkit.server.networkError", interfaz.getClass().getName(), Utils.getExceptionMessage(e)), e);
                 interfaz.emergencyShutdown();
                 this.unregisterInterface(interfaz);
-                log.fatal(this.server.getLanguage().translateString("nukkit.server.networkError", new String[]{interfaz.getClass().getName(), Utils.getExceptionMessage(e)}));
             }
         }
     }
@@ -327,7 +322,7 @@ public class Network {
             try {
                 return clazz.newInstance();
             } catch (Exception e) {
-                Server.getInstance().getLogger().logException(e);
+                log.error("Error while creating a class for the packet id {}", id, e);
             }
         }
         return null;

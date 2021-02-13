@@ -23,6 +23,9 @@ This changelog is still being worked on.
 - [#902] NetherPortal block can't be destroyed by liquid flow
 - [#902] Lava doesn't turn concrete powder into concrete
 
+### Added
+- [#917] Adds automatic bug reports using Sentry, can be opted out in `server.properties`
+
 ## 1.3.2.0-PN-ALPHA.3 - 2020-12-12
 
 ### Fixes
@@ -671,3 +674,4 @@ Fixes several anvil issues.
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
 [#882]: https://github.com/PowerNukkit/PowerNukkit/issues/882
 [#902]: https://github.com/PowerNukkit/PowerNukkit/issues/902
+[#917]: https://github.com/PowerNukkit/PowerNukkit/issues/917

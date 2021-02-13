@@ -13,7 +13,7 @@ It has a few key advantages over other server software:
 * Written in Java, Nukkit is faster and more stable.
 * Having a friendly structure, it's easy to contribute to Nukkit's development and rewrite plugins from other platforms into Nukkit plugins.
 
-Nukkit is **under improvement** yet, we welcome contributions. 
+Nukkit is **under improvement** yet, we welcome contributions.
 
 **PowerNukkit** is a modified version of Nukkit that adds support to a huge amount of features like water-logging, all new blocks, more plugin events, offhand slot, bug fixes and many more.
 
@@ -137,6 +137,51 @@ Check the [docker-compose.yml](docker-compose.yml) file for more details.
 * 1.2.0.2, 1.2.0
 * 1.1.1.1, 1.1.1, 1.1
 * 1.1.1.0
+
+Kubernetes & Helm
+-------------
+
+Validate the chart:
+
+`helm lint charts/nukkit`
+
+Dry run and print out rendered YAML:
+
+`helm install --dry-run --debug nukkit charts/nukkit`
+
+Install the chart:
+
+`helm install nukkit charts/nukkit`
+
+Or, with some different values:
+
+```
+helm install nukkit \
+  --set image.tag="arm64" \
+  --set service.type="LoadBalancer" \
+    charts/nukkit
+```
+
+Or, the same but with a custom values from a file:
+
+```
+helm install nukkit \
+  -f helm-values.local.yaml \
+    charts/nukkit
+```
+
+Upgrade the chart:
+
+`helm upgrade nukkit charts/nukkit`
+
+Testing after deployment:
+
+`helm test nukkit`
+
+Completely remove the chart:
+
+`helm uninstall nukkit`
+
 
 Contributing
 ------------
