@@ -31,9 +31,8 @@ public abstract class EntityCreature extends EntityLiving {
         if (item.hasCustomName()) {
             this.setNameTag(item.getCustomName());
             this.setNameTagVisible(true);
-            int g = player.getGamemode();
 
-            if(g == Player.ADVENTURE || g == Player.SURVIVAL) {
+            if(!player.isCreative()) {
                 player.getInventory().removeItem(item);
             }
             player.getInventory().removeItem(item);
