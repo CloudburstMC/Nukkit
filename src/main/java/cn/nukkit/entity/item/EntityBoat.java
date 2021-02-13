@@ -38,6 +38,11 @@ public class EntityBoat extends EntityVehicle {
 
     public static final int NETWORK_ID = 90;
 
+    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", 
+            reason = "Was removed because it is already defined in Entity.DATA_VARIANT",
+            replaceWith = "Entity.DATA_VARIANT")
+    @PowerNukkitOnly public static final int DATA_WOOD_ID = 20;
+    
     public static final Vector3f RIDER_PLAYER_OFFSET = new Vector3f(0, 1.02001f, 0);
     public static final Vector3f RIDER_OFFSET = new Vector3f(0, -0.2f, 0);
 
