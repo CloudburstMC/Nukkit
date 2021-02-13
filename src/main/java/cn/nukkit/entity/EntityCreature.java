@@ -31,6 +31,11 @@ public abstract class EntityCreature extends EntityLiving {
         if (item.hasCustomName()) {
             this.setNameTag(item.getCustomName());
             this.setNameTagVisible(true);
+            int g = player.getGamemode();
+
+            if(g == Player.ADVENTURE || g == Player.SURVIVAL) {
+                player.getInventory().removeItem(item);
+            }
             player.getInventory().removeItem(item);
             // Set entity as persistent.
             return true;
