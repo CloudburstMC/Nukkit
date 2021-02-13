@@ -45,7 +45,7 @@ public abstract class ItemEdible extends Item {
         }
 
         Food food = Food.getByRelative(this);
-        if (player.isSurvival() && food != null && food.eatenBy(player)) {
+        if ((player.isAdventure() || player.isSurvival()) && food != null && food.eatenBy(player)) {
             --this.count;
             player.getInventory().setItemInHand(this);
         }
