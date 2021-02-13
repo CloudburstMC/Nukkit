@@ -4,9 +4,11 @@
 name: Publish GitHub
 
 on:
+  release:
+    types:
+      - edited
   push:
     branches:
-      - master
       - bleeding
       - bleeding-1.3
 
