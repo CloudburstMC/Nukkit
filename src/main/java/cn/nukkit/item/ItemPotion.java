@@ -78,7 +78,7 @@ public class ItemPotion extends Item {
         }
         Potion potion = Potion.getPotion(this.getDamage()).setSplash(false);
 
-        if (player.getGamemode() == SURVIVAL) {
+        if (player.isAdventure() || player.isSurvival()) {
             --this.count;
             player.getInventory().setItemInHand(this);
             player.getInventory().addItem(new ItemGlassBottle());
