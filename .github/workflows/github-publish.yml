@@ -6,7 +6,7 @@ name: Publish GitHub
 on:
   release:
     types:
-      - edited
+      - published
   push:
     branches:
       - bleeding
