@@ -20,12 +20,14 @@ public class ItemNameTag extends Item {
 
     @Override
     public boolean useOn(Entity entity) {
-        if(!(entity instanceof EntityHuman || entity instanceof EntityEnderDragon)){
-            entity.setNameTag(this.getName());
-            entity.setNameTagVisible(true);
+        if(this.hasCustomName()) {
+            if (!(entity instanceof EntityHuman || entity instanceof EntityEnderDragon)) {
+                entity.setNameTag(this.getCustomName());
+                entity.setNameTagVisible(true);
 
-            // Set entity as persistent? Correct me if that's already implemented.
-            return true;
+                // Set entity as persistent? Correct me if that's already implemented.
+                return true;
+            }
         }
         return false;
     }
