@@ -6,6 +6,9 @@ name: Publish GitHub
 on:
   release:
     types: [created]
+  push:
+    branches: 
+      - github-actions/fix/github-publish
 
 jobs:
   publish-github:
