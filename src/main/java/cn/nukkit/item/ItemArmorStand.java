@@ -3,15 +3,15 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityArmorStand;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.CompassRoseDirection;
+import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.entity.item.EntityArmorStand;
 
 public class ItemArmorStand extends Item {
 
@@ -39,52 +39,38 @@ public class ItemArmorStand extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
-
+        if (player.isAdventure()) {
+            return false;
+        }
+        
+        FullChunk chunk = block.getChunk();
         if (chunk == null) {
             return false;
         }
-
-        for (Entity e : chunk.getEntities().values()) {
-            if (e instanceof EntityArmorStand) {
-                if (e.getY() == block.getY() && e.getX() == (block.getX() + 0.5) && e.getZ() == (block.getZ() + 0.5)) {
-                    return false;
-                }
+        
+        for (Entity collidingEntity : level.getCollidingEntities(new SimpleAxisAlignedBB(block.x, block.y, block.z, block.x + 1, block.y + 1, block.z + 1))) {
+            if (collidingEntity instanceof EntityArmorStand) {
+                return false;
             }
         }
 
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<DoubleTag>("Pos")
-                        .add(new DoubleTag("", block.getX() + 0.5))
-                        .add(new DoubleTag("", block.getY()))
-                        .add(new DoubleTag("", block.getZ() + 0.5)))
-                .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0))
-                        .add(new DoubleTag("", 0)))
-                .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", this.getDirection((float) player.getYaw())))
-                        .add(new FloatTag("", 0)));
-
+        CompassRoseDirection direction = CompassRoseDirection.getClosestFromYaw(player.yaw).getOppositeFace();
+        CompoundTag nbt = Entity.getDefaultNBT(block.add(0.5, 0, 0.5), new Vector3(), direction.getYaw(), 0f);
         if (this.hasCustomName()) {
             nbt.putString("CustomName", this.getCustomName());
         }
 
-        Entity entity = Entity.createEntity("ArmorStand", chunk, nbt);
-
-        if (entity != null) {
-            if (!player.isCreative()) {
-                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
-            }
-            entity.spawnToAll();
-            player.getLevel().addSound(entity, Sound.MOB_ARMOR_STAND_PLACE);
-            return true;
+        Entity entity = Entity.createEntity(EntityArmorStand.NETWORK_ID, chunk, nbt);
+        if (entity == null) {
+            return false;
         }
-        return false;
-    }
-
-
-    public float getDirection(float yaw) {
-        return (Math.round(yaw / 22.5f / 2) * 45) - 180;
+        
+        if (!player.isCreative()) {
+            player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
+        }
+        
+        entity.spawnToAll();
+        player.getLevel().addSound(entity, Sound.MOB_ARMOR_STAND_PLACE);
+        return true;
     }
 }
