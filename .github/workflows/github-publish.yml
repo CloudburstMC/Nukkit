@@ -4,11 +4,11 @@
 name: Publish GitHub
 
 on:
-  release:
-    types: [created]
   push:
-    branches: 
-      - github-actions/fix/github-publish
+    branches:
+      - master
+      - bleeding
+      - bleeding-1.3
 
 jobs:
   publish-github:
