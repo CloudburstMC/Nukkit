@@ -9,10 +9,24 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+## 1.4.0.0-PN-ALPHA.2 - 2020-11-22
+This changelog is still being worked on.
+
 ## 1.4.0.0-PN-ALPHA.1 - 2020-11-21
 This changelog is still being worked on.
 
-## 1.3.2.0-PN-ALPHA.3 - Future
+## 1.3.2.0-PN-ALPHA.4 - Future
+
+### Fixes
+- [#882] _Alpha Bug_: Fixes random disconnection issues
+- [#902] _Alpha Bug_: Packets being encoded in netty threads causing random network issues
+- [#902] NetherPortal block can't be destroyed by liquid flow
+- [#902] Lava doesn't turn concrete powder into concrete
+
+### Added
+- [#917] Adds automatic bug reports using Sentry, can be opted out in `server.properties`
+
+## 1.3.2.0-PN-ALPHA.3 - 2020-12-12
 
 ### Fixes
 - _Alpha Bug_: Fixes entities from the MobPlugin going into the ground (compatibility issue)
@@ -23,10 +37,27 @@ This changelog is still being worked on.
 - [#777] Falling block falling though scaffolds
 - [#778] _Alpha Bug_: Compatibility fix: Unable to change MobPlugin spawner with eggs
 - [#778] Unable to get `minecraft:mob_spawner` with `/give Nick mob_spawner`
+- Snowballs not damaging blazes
+- Issues with the geometry of player and human entities
+- Hay bale not reducing fall damage
+- Lapis ore drops with enchanted pickaxes
+
+### Added
+- API to get how long the player has been awake
+- New APIs to detect the type of bucket, dye, spawn egg, coal, and a few others
+- A `MinecraftItemID` API for simpler version independent vanilla item creation
 
 ### Changed
+- Changed the protocol version to support Minecraft Bedrock Edition 1.16.201
 - [#765] The `ServerBrand` tag in the `level.dat` file will be set to `PowerNukkit` now 
 - [#776] Grindstone won't reset the repair cost anymore
+- Packet batching is now handled near the RakNet layer
+- Removed extra data from chunk encoding
+- The sound enum has been updated
+- _Alpha Bug_: Reversed the addition of new item ids for every item, the "new ids" should revert to the old id on load
+- Bucket with fish can no longer interact with cauldrons
+- The /give command now support all current vanilla namespaced ids
+- Updated the raknet dependency from 1.6.15-PN2 to 1.6.25-PN
 
 ## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
 
@@ -641,3 +672,6 @@ Fixes several anvil issues.
 [#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
 [#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
+[#882]: https://github.com/PowerNukkit/PowerNukkit/issues/882
+[#902]: https://github.com/PowerNukkit/PowerNukkit/issues/902
+[#917]: https://github.com/PowerNukkit/PowerNukkit/issues/917

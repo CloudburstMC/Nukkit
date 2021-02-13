@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import lombok.extern.log4j.Log4j2;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -18,6 +19,7 @@ import java.util.concurrent.ThreadLocalRandom;
 /**
  * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public class QueryHandler {
 
     public static final byte HANDSHAKE = 0x09;
@@ -32,16 +34,16 @@ public class QueryHandler {
 
     public QueryHandler() {
         this.server = Server.getInstance();
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.start"));
+        log.info(this.server.getLanguage().translateString("nukkit.server.query.start"));
         String ip = this.server.getIp();
         String addr = (!ip.isEmpty()) ? ip : "0.0.0.0";
         int port = this.server.getPort();
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.info", String.valueOf(port)));
+        log.info(this.server.getLanguage().translateString("nukkit.server.query.info", String.valueOf(port)));
 
         this.regenerateToken();
         this.lastToken = this.token;
         this.regenerateInfo();
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.running", new String[]{addr, String.valueOf(port)}));
+        log.info(this.server.getLanguage().translateString("nukkit.server.query.running", new String[]{addr, String.valueOf(port)}));
     }
 
     public void regenerateInfo() {

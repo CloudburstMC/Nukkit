@@ -44,6 +44,10 @@ public class ItemPainting extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+        if (player.isAdventure()) {
+            return false;
+        }
+
         FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
 
         if (chunk == null || target.isTransparent() || face.getHorizontalIndex() == -1 || block.isSolid()) {

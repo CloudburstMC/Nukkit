@@ -7,52 +7,96 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Since("1.3.2.0-PN")
 @UtilityClass
+@Log4j2
 public class RuntimeItems {
 
     private static final Gson GSON = new Gson();
     private static final Type ENTRY_TYPE = new TypeToken<ArrayList<Entry>>(){}.getType();
 
-    @Since("1.3.2.0-PN") public static final byte[] ITEM_DATA_PALETTE;
-
-    private static final Int2IntMap LEGACY_NETWORK_MAP = new Int2IntOpenHashMap();
-    private static final Int2IntMap NETWORK_LEGACY_MAP = new Int2IntOpenHashMap();
+    private static final RuntimeItemMapping itemPalette;
 
     static {
-        List<Entry> entries;
-        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_item_ids.json");
-             InputStreamReader reader = new InputStreamReader(stream)) {
-            entries = GSON.fromJson(reader, ENTRY_TYPE);
-        } catch (NullPointerException | IOException e) {
-            throw new AssertionError("Unable to load runtime_item_ids.json", e);
+        log.debug("Loading runtime items...");
+        InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_item_ids.json");
+        if (stream == null) {
+            throw new AssertionError("Unable to load runtime_item_ids.json");
         }
+
+        InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8);
+        Collection<Entry> entries = GSON.fromJson(reader, ENTRY_TYPE);
 
         BinaryStream paletteBuffer = new BinaryStream();
         paletteBuffer.putUnsignedVarInt(entries.size());
 
-        LEGACY_NETWORK_MAP.defaultReturnValue(-1);
-        NETWORK_LEGACY_MAP.defaultReturnValue(-1);
-
+        Int2IntMap legacyNetworkMap = new Int2IntOpenHashMap();
+        Int2IntMap networkLegacyMap = new Int2IntOpenHashMap();
+        Map<String, Integer> namespaceNetworkMap = new LinkedHashMap<>();
+        Int2ObjectMap<String> networkNamespaceMap = new Int2ObjectOpenHashMap<>();
         for (Entry entry : entries) {
-
             paletteBuffer.putString(entry.name);
             paletteBuffer.putLShort(entry.id);
             paletteBuffer.putBoolean(false); // Component item
+            namespaceNetworkMap.put(entry.name, entry.id);
+            networkNamespaceMap.put(entry.id, entry.name);
+            if (entry.oldId != null) {
+                boolean hasData = entry.oldData != null;
+                int fullId = getFullId(entry.oldId, hasData ? entry.oldData : 0);
+                legacyNetworkMap.put(fullId, (entry.id << 1) | (hasData ? 1 : 0));
+                networkLegacyMap.put(entry.id, fullId | (hasData ? 1 : 0));
+            }
         }
 
-        ITEM_DATA_PALETTE = paletteBuffer.getBuffer();
+        byte[] itemDataPalette = paletteBuffer.getBuffer();
+        itemPalette = new RuntimeItemMapping(itemDataPalette, legacyNetworkMap, networkLegacyMap, 
+                namespaceNetworkMap, networkNamespaceMap);
+    }
+
+    @Since("1.3.2.0-PN")
+    public static RuntimeItemMapping getRuntimeMapping() {
+        return itemPalette;
+    }
+
+    @Since("1.3.2.0-PN")
+    public static int getId(int fullId) {
+        return (short) (fullId >> 16);
+    }
+
+    @Since("1.3.2.0-PN")
+    public static int getData(int fullId) {
+        return ((fullId >> 1) & 0x7fff);
+    }
+
+    @Since("1.3.2.0-PN")
+    public static int getFullId(int id, int data) {
+        return (((short) id) << 16) | ((data & 0x7fff) << 1);
+    }
+
+    @Since("1.3.2.0-PN")
+    public static int getNetworkId(int networkFullId) {
+        return networkFullId >> 1;
+    }
+
+    @Since("1.3.2.0-PN")
+    public static boolean hasData(int id) {
+        return (id & 0x1) != 0;
     }
 
     @ToString
@@ -60,5 +104,7 @@ public class RuntimeItems {
     static class Entry {
         String name;
         int id;
+        Integer oldId;
+        Integer oldData;
     }
 }
