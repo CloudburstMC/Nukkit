@@ -1,6 +1,7 @@
 package cn.nukkit.metrics;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.Since;
 import cn.nukkit.utils.Config;
 
 import java.io.BufferedWriter;
@@ -13,6 +14,7 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Since("1.3.2.0-PN")
 public class NukkitMetrics {
     private static boolean metricsStarted = false;
 
@@ -22,7 +24,7 @@ public class NukkitMetrics {
     private String serverUUID;
     private boolean logFailedRequests;
 
-    public NukkitMetrics(Server server) {
+    @Since("1.3.2.0-PN") public NukkitMetrics(Server server) {
         this.server = server;
 
         if (metricsStarted) {

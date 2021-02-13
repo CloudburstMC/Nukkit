@@ -1,5 +1,6 @@
 package cn.nukkit.metrics;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.utils.MainLogger;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -23,8 +24,9 @@ import java.util.zip.GZIPOutputStream;
  *
  * Check out https://bStats.org/ to learn more about bStats!
  */
+@Since("1.3.2.0-PN")
 public class Metrics {
-    public static final int B_STATS_VERSION = 1;
+    @Since("1.3.2.0-PN") public static final int B_STATS_VERSION = 1;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -46,7 +48,7 @@ public class Metrics {
     // The logger for the failed requests
     private static MainLogger logger;
 
-    public Metrics(String name, String serverUUID, boolean logFailedRequests, MainLogger logger) {
+    @Since("1.3.2.0-PN") public Metrics(String name, String serverUUID, boolean logFailedRequests, MainLogger logger) {
         this.name = name;
         this.serverUUID = serverUUID;
         Metrics.logFailedRequests = logFailedRequests;
@@ -61,7 +63,7 @@ public class Metrics {
      *
      * @param chart The chart to add.
      */
-    public void addCustomChart(CustomChart chart) {
+    @Since("1.3.2.0-PN") public void addCustomChart(CustomChart chart) {
         if (chart == null) {
             throw new IllegalArgumentException("Chart cannot be null!");
         }
@@ -205,7 +207,7 @@ public class Metrics {
     /**
      * Represents a custom chart.
      */
-    public static abstract class CustomChart {
+    @Since("1.3.2.0-PN") public static abstract class CustomChart {
 
         // The id of the chart
         final String chartId;
@@ -238,14 +240,14 @@ public class Metrics {
             return chart;
         }
 
-        protected abstract JSONObject getChartData() throws Exception;
+        @Since("1.3.2.0-PN") protected abstract JSONObject getChartData() throws Exception;
 
     }
 
     /**
      * Represents a custom simple pie.
      */
-    public static class SimplePie extends CustomChart {
+    @Since("1.3.2.0-PN") public static class SimplePie extends CustomChart {
 
         private final Callable<String> callable;
 
@@ -255,7 +257,7 @@ public class Metrics {
          * @param chartId The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
-        public SimplePie(String chartId, Callable<String> callable) {
+        @Since("1.3.2.0-PN") public SimplePie(String chartId, Callable<String> callable) {
             super(chartId);
             this.callable = callable;
         }
@@ -276,7 +278,7 @@ public class Metrics {
     /**
      * Represents a custom advanced pie.
      */
-    public static class AdvancedPie extends CustomChart {
+    @Since("1.3.2.0-PN") public static class AdvancedPie extends CustomChart {
 
         private final Callable<Map<String, Integer>> callable;
 
@@ -286,7 +288,7 @@ public class Metrics {
          * @param chartId The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
-        public AdvancedPie(String chartId, Callable<Map<String, Integer>> callable) {
+        @Since("1.3.2.0-PN") public AdvancedPie(String chartId, Callable<Map<String, Integer>> callable) {
             super(chartId);
             this.callable = callable;
         }
@@ -320,7 +322,7 @@ public class Metrics {
     /**
      * Represents a custom drilldown pie.
      */
-    public static class DrilldownPie extends CustomChart {
+    @Since("1.3.2.0-PN") public static class DrilldownPie extends CustomChart {
 
         private final Callable<Map<String, Map<String, Integer>>> callable;
 
@@ -330,7 +332,7 @@ public class Metrics {
          * @param chartId The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
-        public DrilldownPie(String chartId, Callable<Map<String, Map<String, Integer>>> callable) {
+        @Since("1.3.2.0-PN") public DrilldownPie(String chartId, Callable<Map<String, Map<String, Integer>>> callable) {
             super(chartId);
             this.callable = callable;
         }
@@ -369,7 +371,7 @@ public class Metrics {
     /**
      * Represents a custom single line chart.
      */
-    public static class SingleLineChart extends CustomChart {
+    @Since("1.3.2.0-PN") public static class SingleLineChart extends CustomChart {
 
         private final Callable<Integer> callable;
 
@@ -379,7 +381,7 @@ public class Metrics {
          * @param chartId The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
-        public SingleLineChart(String chartId, Callable<Integer> callable) {
+        @Since("1.3.2.0-PN") public SingleLineChart(String chartId, Callable<Integer> callable) {
             super(chartId);
             this.callable = callable;
         }
@@ -401,7 +403,7 @@ public class Metrics {
     /**
      * Represents a custom multi line chart.
      */
-    public static class MultiLineChart extends CustomChart {
+    @Since("1.3.2.0-PN") public static class MultiLineChart extends CustomChart {
 
         private final Callable<Map<String, Integer>> callable;
 
@@ -411,7 +413,7 @@ public class Metrics {
          * @param chartId The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
-        public MultiLineChart(String chartId, Callable<Map<String, Integer>> callable) {
+        @Since("1.3.2.0-PN") public MultiLineChart(String chartId, Callable<Map<String, Integer>> callable) {
             super(chartId);
             this.callable = callable;
         }
@@ -446,7 +448,7 @@ public class Metrics {
     /**
      * Represents a custom simple bar chart.
      */
-    public static class SimpleBarChart extends CustomChart {
+    @Since("1.3.2.0-PN") public static class SimpleBarChart extends CustomChart {
 
         private final Callable<Map<String, Integer>> callable;
 
@@ -456,7 +458,7 @@ public class Metrics {
          * @param chartId The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
-        public SimpleBarChart(String chartId, Callable<Map<String, Integer>> callable) {
+        @Since("1.3.2.0-PN") public SimpleBarChart(String chartId, Callable<Map<String, Integer>> callable) {
             super(chartId);
             this.callable = callable;
         }
@@ -484,7 +486,7 @@ public class Metrics {
     /**
      * Represents a custom advanced bar chart.
      */
-    public static class AdvancedBarChart extends CustomChart {
+    @Since("1.3.2.0-PN") public static class AdvancedBarChart extends CustomChart {
 
         private final Callable<Map<String, int[]>> callable;
 
@@ -494,7 +496,7 @@ public class Metrics {
          * @param chartId The id of the chart.
          * @param callable The callable which is used to request the chart data.
          */
-        public AdvancedBarChart(String chartId, Callable<Map<String, int[]>> callable) {
+        @Since("1.3.2.0-PN") public AdvancedBarChart(String chartId, Callable<Map<String, int[]>> callable) {
             super(chartId);
             this.callable = callable;
         }
