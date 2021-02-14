@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
@@ -8,15 +9,14 @@ import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -25,7 +25,8 @@ import javax.annotation.Nullable;
  * @author xtypr
  * @since 2015/12/8
  */
-public class BlockTNT extends BlockSolid {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockTNT extends BlockSolid implements RedstoneComponent {
 
     public BlockTNT() {
     }
@@ -73,6 +74,7 @@ public class BlockTNT extends BlockSolid {
         prime(fuse, null);
     }
 
+    @PowerNukkitDifference(info = "TNT Sound handled by EntityPrimedTNT", since = "1.4.0.0-PN")
     public void prime(int fuse, Entity source) {
         this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
         double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
@@ -97,16 +99,16 @@ public class BlockTNT extends BlockSolid {
             return;
         }
         tnt.spawnToAll();
-        this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TNT);
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (!this.level.getServer().isRedstoneEnabled()) {
             return 0;
         }
 
-        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && this.level.isBlockPowered(this.getLocation())) {
+        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && this.isGettingPower()) {
             this.prime();
         }
 

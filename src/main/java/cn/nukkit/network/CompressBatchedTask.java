@@ -2,7 +2,6 @@ package cn.nukkit.network;
 
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.utils.Binary;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -36,7 +35,7 @@ public class CompressBatchedTask extends AsyncTask {
     @Override
     public void onRun() {
         try {
-            this.finalData = Network.deflateRaw(Binary.appendBytes(this.data), this.level);
+            this.finalData = Network.deflateRaw(this.data, this.level);
             this.data = null;
         } catch (Exception e) {
             //ignore

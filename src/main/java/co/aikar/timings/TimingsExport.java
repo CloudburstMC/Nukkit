@@ -34,6 +34,7 @@ import cn.nukkit.utils.TextFormat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -48,6 +49,7 @@ import java.util.zip.Deflater;
 
 import static co.aikar.timings.TimingsManager.HISTORY;
 
+@Log4j2
 public class TimingsExport extends Thread {
     private final CommandSender sender;
     private final JsonObject out;
@@ -218,7 +220,7 @@ public class TimingsExport extends Thread {
             if (con.getResponseCode() != 302) {
                 this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.uploadError", String.valueOf(con.getResponseCode()), con.getResponseMessage()));
                 if (response != null) {
-                    Server.getInstance().getLogger().alert(response);
+                    log.warn(response);
                 }
                 return;
             }
@@ -226,11 +228,11 @@ public class TimingsExport extends Thread {
             String location = con.getHeaderField("Location");
             this.sender.sendMessage(new TranslationContainer("nukkit.command.timings.timingsLocation", location));
             if (!(this.sender instanceof ConsoleCommandSender)) {
-                Server.getInstance().getLogger().info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsLocation", location));
+                log.info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsLocation", location));
             }
 
             if (response != null && !response.isEmpty()) {
-                Server.getInstance().getLogger().info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsResponse", response));
+                log.info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsResponse", response));
             }
 
             File timingFolder = new File(Server.getInstance().getDataPath() + File.separator + "timings");
@@ -242,13 +244,13 @@ public class TimingsExport extends Thread {
             writer.write(new GsonBuilder().setPrettyPrinting().create().toJson(this.out));
             writer.close();
 
-            Server.getInstance().getLogger().info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsWrite", fileName));
+            log.info(Server.getInstance().getLanguage().translateString("nukkit.command.timings.timingsWrite", fileName));
         } catch (IOException exception) {
             this.sender.sendMessage(TextFormat.RED + "" + new TranslationContainer("nukkit.command.timings.reportError"));
             if (response != null) {
-                Server.getInstance().getLogger().alert(response);
+                log.warn(response);
             }
-            Server.getInstance().getLogger().logException(exception);
+            log.error("An error has occurred while exporting the timings report", exception);
         }
     }
 
@@ -265,7 +267,7 @@ public class TimingsExport extends Thread {
 
         } catch (IOException exception) {
             this.sender.sendMessage(TextFormat.RED + "" + new TranslationContainer("nukkit.command.timings.reportError"));
-            Server.getInstance().getLogger().warning(con.getResponseMessage(), exception);
+            log.error("An error has occurred while getting the timings response", exception);
             return null;
         }
     }

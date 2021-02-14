@@ -14,7 +14,7 @@
     Upstream is the NukkitX major version
     PN is a indicator that software is running PowerNukkit, it must be present both in releases and snapshot versions
     -->
-    <version>1.4.0.0-PN-ALPHA.2-SNAPSHOT</version>
+    <version>1.4.0.0-PN-SNAPSHOT</version>
 
     <inceptionYear>2020</inceptionYear>
     <organization>
@@ -112,7 +112,7 @@
         <dependency>
             <groupId>org.powernukkit.bedrock.network</groupId>
             <artifactId>raknet</artifactId>
-            <version>1.6.15-PN2</version>
+            <version>1.6.25-PN.2</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -142,7 +142,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.4</version>
+            <version>2.8.5</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -162,6 +162,16 @@
                     <artifactId>guava</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry</artifactId>
+            <version>4.0.0-alpha.2</version>
+        </dependency>
+        <dependency>
+            <groupId>io.sentry</groupId>
+            <artifactId>sentry-log4j2</artifactId>
+            <version>4.0.0-alpha.2</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>

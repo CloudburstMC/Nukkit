@@ -38,11 +38,11 @@ public class Utils {
         File olderFile = new File(parent, currentFile.getName()+"_older");
 
         if (olderFile.isFile() && !olderFile.delete()) {
-            log.fatal("Could not delete the file "+olderFile.getAbsolutePath());
+            log.fatal("Could not delete the file {}", olderFile.getAbsolutePath());
         }
 
         if (newFile.isFile() && !newFile.delete()) {
-            log.fatal("Could not delete the file "+newFile.getAbsolutePath());
+            log.fatal("Could not delete the file {}", newFile.getAbsolutePath());
         }
         
         try {

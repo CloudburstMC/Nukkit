@@ -157,7 +157,8 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
                 try {
                     connect(blockFace, above, false);
                 } catch (RuntimeException e) {
-                    log.error("Failed to connect the block "+this+" at "+getLocation()+" to "+blockFace+" which is "+side+" at "+side.getLocation());
+                    log.error("Failed to connect the block {} at {} to {} which is {} at {}", 
+                            this, getLocation(), blockFace, side, side.getLocation(), e);
                     throw e;
                 }
             } else {

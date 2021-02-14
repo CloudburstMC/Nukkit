@@ -22,6 +22,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.*;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,6 +33,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
  * @author MagicDroidX (Nukkit Project)
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+@Log4j2
 public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBed> {
     
     @PowerNukkitOnly
@@ -253,7 +255,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
             BlockEntityHolder<?> nextBlock = (BlockEntityHolder<?>) next.getLevelBlock();
             nextBlock.createBlockEntity(new CompoundTag().putByte("color", item.getDamage()));
         } catch (Exception e) {
-            MainLogger.getLogger().warning("Failed to create the block entity "+getBlockEntityType()+" at "+getLocation()+" and "+next.getLocation(), e);
+            log.warn("Failed to create the block entity {} at {} and {}", getBlockEntityType(), getLocation(), next.getLocation(), e);
             if (thisBed != null) {
                 thisBed.close();
             }

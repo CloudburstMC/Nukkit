@@ -17,6 +17,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -28,7 +29,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.TOGGLE;
  * @author CreeperFace
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockHopper extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityHopper> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockHopper extends BlockTransparentMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityHopper> {
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -92,6 +94,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         return 1;
     }
 
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         BlockFace facing = face.getOpposite();
@@ -103,7 +106,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable, Block
         setBlockFace(facing);
 
         if (this.level.getServer().isRedstoneEnabled()) {
-            boolean powered = this.level.isBlockPowered(this);
+            boolean powered = this.isGettingPower();
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);

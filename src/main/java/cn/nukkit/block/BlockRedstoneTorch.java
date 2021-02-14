@@ -1,19 +1,21 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author Angelic47 (Nukkit Project)
  */
-public class BlockRedstoneTorch extends BlockTorch {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public class BlockRedstoneTorch extends BlockTorch implements RedstoneComponent {
 
     public BlockRedstoneTorch() {
         this(0);
@@ -46,16 +48,7 @@ public class BlockRedstoneTorch extends BlockTorch {
 
         if (this.level.getServer().isRedstoneEnabled()) {
             if (!checkState()) {
-                BlockFace facing = getBlockFace().getOpposite();
-                Vector3 pos = getLocation();
-
-                for (BlockFace side : BlockFace.values()) {
-                    if (facing == side) {
-                        continue;
-                    }
-
-                    this.level.updateAroundRedstone(pos.getSide(side), null);
-                }
+                updateAllAroundRedstone(getBlockFace().getOpposite());
             }
 
             checkState();
@@ -76,20 +69,12 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     @Override
     public boolean onBreak(Item item) {
-        super.onBreak(item);
-
-        Vector3 pos = getLocation();
-
-        BlockFace face = getBlockFace().getOpposite();
+        if (!super.onBreak(item)) {
+            return false;
+        }
 
         if (this.level.getServer().isRedstoneEnabled()) {
-            for (BlockFace side : BlockFace.values()) {
-                if (side == face) {
-                    continue;
-                }
-
-                this.level.updateAroundRedstone(pos.getSide(side), null);
-            }
+            updateAllAroundRedstone(getBlockFace().getOpposite());
         }
         return true;
     }
@@ -122,27 +107,23 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     private boolean checkState() {
         if (isPoweredFromSide()) {
-            BlockFace face = getBlockFace().getOpposite();
-            Vector3 pos = getLocation();
+            this.level.setBlock(getLocation(), Block.get(BlockID.UNLIT_REDSTONE_TORCH, getDamage()), false, true);
 
-            this.level.setBlock(pos, Block.get(BlockID.UNLIT_REDSTONE_TORCH, getDamage()), false, true);
-
-            for (BlockFace side : BlockFace.values()) {
-                if (side == face) {
-                    continue;
-                }
-
-                this.level.updateAroundRedstone(pos.getSide(side), null);
-            }
-
+            updateAllAroundRedstone(getBlockFace().getOpposite());
             return true;
         }
 
         return false;
     }
 
+    @PowerNukkitDifference(info = "Check if the side block is piston and if piston is getting power.",
+            since = "1.4.0.0-PN")
     protected boolean isPoweredFromSide() {
         BlockFace face = getBlockFace().getOpposite();
+        if (this.getSide(face) instanceof BlockPistonBase && this.getSide(face).isGettingPower()) {
+            return true;
+        }
+
         return this.level.isSidePowered(this.getLocation().getSide(face), face);
     }
 

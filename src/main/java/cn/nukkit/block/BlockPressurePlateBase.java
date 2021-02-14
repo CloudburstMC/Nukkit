@@ -19,6 +19,7 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 
@@ -28,7 +29,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.REDSTONE_SIGNAL;
  * @author Snake1999
  * @since 2016/1/11
  */
-public abstract class BlockPressurePlateBase extends BlockFlowable {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public abstract class BlockPressurePlateBase extends BlockFlowable implements RedstoneComponent {
     public static final BlockProperties PROPERTIES = new BlockProperties(REDSTONE_SIGNAL);
 
     protected float onPitch;
@@ -175,8 +177,8 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
             this.setRedstonePower(strength);
             this.level.setBlock(this, this, false, false);
 
-            this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().down(), null);
+            updateAroundRedstone();
+            RedstoneComponent.updateAroundRedstone(this.getSide(BlockFace.DOWN));
 
             if (!isPowered && wasPowered) {
                 this.playOffSound();
@@ -197,8 +199,8 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
         this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
 
         if (this.getRedstonePower() > 0) {
-            this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().down(), null);
+            updateAroundRedstone();
+            RedstoneComponent.updateAroundRedstone(this.getSide(BlockFace.DOWN));
         }
 
         return true;

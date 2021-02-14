@@ -23,6 +23,7 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.InvalidBlockDamageException;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
@@ -625,8 +626,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                                     }
                                 } catch (InvocationTargetException wrapper) {
                                     Throwable uncaught = wrapper.getTargetException();
-                                    if (!(uncaught instanceof InvalidBlockStateException)) {
-                                        log.error("Error while registering " + c.getName()+" with meta "+data, uncaught);
+                                    if (!(uncaught instanceof InvalidBlockDamageException)) {
+                                        log.error("Error while registering {} with meta {}", c.getName(), data, uncaught);
                                     }
                                     b = new BlockUnknown(id, data);
                                 }
@@ -640,7 +641,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             }
                         }
                     } catch (Exception e) {
-                        log.error("Error while registering " + c.getName(), e);
+                        log.error("Error while registering {}", c.getName(), e);
                         for (int data = 0; data < DATA_SIZE; ++data) {
                             fullList[(id << DATA_BITS) | data] = new BlockUnknown(id, data);
                         }
@@ -798,10 +799,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static void registerBlockImplementation(int blockId, @Nonnull Class<? extends Block> blockClass, @Nonnull String persistenceName, boolean receivesRandomTick) {
-        Preconditions.checkArgument(blockId >= 0, "Negative block id {}", blockId);
+        Preconditions.checkArgument(blockId >= 0, "Negative block id %s", blockId);
         Preconditions.checkNotNull(blockClass, "blockClass was null");
         Preconditions.checkNotNull(persistenceName, "persistenceName was null");
-        Preconditions.checkArgument(blockId < MAX_BLOCK_ID, "blockId {} must be less than {}", blockId, MAX_BLOCK_ID);
+        Preconditions.checkArgument(blockId < MAX_BLOCK_ID, "blockId %s must be less than %s", blockId, MAX_BLOCK_ID);
         Block mainBlock;
         BlockProperties properties;
         try {
@@ -878,7 +879,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                         if (exception != null) {
                             exception.addSuppressed(e);
                         } else {
-                            log.error("Error while registering " + blockClass.getName()+" with meta "+data, exception);
+                            log.error("Error while registering {} with meta {}", blockClass.getName(), data, exception);
                         }
                     }
                 }
@@ -2151,5 +2152,24 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     public int getItemMaxStackSize() {
         return 64;
+    }
+
+    /**
+     * Check if a block is getting powered threw a block or directly.
+     * @return if the gets powered.
+     */
+    @PowerNukkitOnly
+    @PowerNukkitDifference(info = "Used so often, why not create own method here?", since = "1.4.0.0-PN")
+    public boolean isGettingPower() {
+        if (!this.level.getServer().isRedstoneEnabled()) return false;
+
+        for (BlockFace side : BlockFace.values()) {
+            Block b = this.getSide(side).getLevelBlock();
+
+            if (this.level.isSidePowered(b.getLocation(), side)) {
+                return true;
+            }
+        }
+        return this.level.isBlockPowered(this.getLocation());
     }
 }

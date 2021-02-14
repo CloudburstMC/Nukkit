@@ -62,7 +62,7 @@ public class ItemMinecart extends Item {
                 return false;
             }
 
-            if (player.isSurvival()) {
+            if (player.isAdventure() || player.isSurvival()) {
                 Item item = player.getInventory().getItemInHand();
                 item.setCount(item.getCount() - 1);
                 player.getInventory().setItemInHand(item);
