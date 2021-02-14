@@ -28,10 +28,4 @@ public abstract class EntityAnimal extends EntityCreature implements EntityAgeab
         return item.getId() == Item.WHEAT; //default
     }
 
-
-    @Override
-    public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        return EntityNameable.super.onInteract(player, item, clickedPos)
-                || EntityAnimal.super.onInteract(player, item, clickedPos);
-    }
 }

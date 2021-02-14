@@ -10,6 +10,8 @@ public class ItemNameTag extends Item {
         this(meta, 1);
     }
 
-    public ItemNameTag(Integer meta, int count) { super(NAME_TAG, meta, count, "Name Tag"); }
+    public ItemNameTag(Integer meta, int count) {
+        super(NAME_TAG, meta, count, "Name Tag");
+    }
 
 }

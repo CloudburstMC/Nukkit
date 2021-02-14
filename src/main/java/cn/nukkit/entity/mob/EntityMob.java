@@ -17,9 +17,4 @@ public abstract class EntityMob extends EntityCreature implements EntityNameable
         super(chunk, nbt);
     }
 
-    @Override
-    public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        return EntityNameable.super.onInteract(player, item, clickedPos)
-                || EntityMob.super.onInteract(player, item, clickedPos);
-    }
 }
