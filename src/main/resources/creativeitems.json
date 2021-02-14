@@ -3465,8 +3465,7 @@
     },
     {
       "id" : "minecraft:target"
-    }
-    /*
+    },
     {
       "id" : "minecraft:leather_helmet"
     },
@@ -4420,10 +4419,6 @@
     {
       "id" : "minecraft:lingering_potion",
       "damage" : 42
-    },
-    {
-      "id" : "minecraft:lodestone_compass"
     }
-    */
   ]
 }

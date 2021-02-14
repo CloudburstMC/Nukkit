@@ -694,6 +694,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             meta = Utils.toInt(data.get("damage"));
         }
         Item item = fromString(id+":"+meta);
+        item = new Item(item.getId(), item.getDamage(), item.getCount());
         item.setCompoundTag(nbtBytes);
         return item;
     }
