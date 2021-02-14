@@ -2116,961 +2116,6 @@
       "id" : "minecraft:coral_block",
       "damage" : 12
     },
-    /*
-    {
-      "id" : "minecraft:leather_helmet"
-    },
-    {
-      "id" : "minecraft:chainmail_helmet"
-    },
-    {
-      "id" : "minecraft:iron_helmet"
-    },
-    {
-      "id" : "minecraft:golden_helmet"
-    },
-    {
-      "id" : "minecraft:diamond_helmet"
-    },
-    {
-      "id" : "minecraft:netherite_helmet"
-    },
-    {
-      "id" : "minecraft:leather_chestplate"
-    },
-    {
-      "id" : "minecraft:chainmail_chestplate"
-    },
-    {
-      "id" : "minecraft:iron_chestplate"
-    },
-    {
-      "id" : "minecraft:golden_chestplate"
-    },
-    {
-      "id" : "minecraft:diamond_chestplate"
-    },
-    {
-      "id" : "minecraft:netherite_chestplate"
-    },
-    {
-      "id" : "minecraft:leather_leggings"
-    },
-    {
-      "id" : "minecraft:chainmail_leggings"
-    },
-    {
-      "id" : "minecraft:iron_leggings"
-    },
-    {
-      "id" : "minecraft:golden_leggings"
-    },
-    {
-      "id" : "minecraft:diamond_leggings"
-    },
-    {
-      "id" : "minecraft:netherite_leggings"
-    },
-    {
-      "id" : "minecraft:leather_boots"
-    },
-    {
-      "id" : "minecraft:chainmail_boots"
-    },
-    {
-      "id" : "minecraft:iron_boots"
-    },
-    {
-      "id" : "minecraft:golden_boots"
-    },
-    {
-      "id" : "minecraft:diamond_boots"
-    },
-    {
-      "id" : "minecraft:netherite_boots"
-    },
-    {
-      "id" : "minecraft:wooden_sword"
-    },
-    {
-      "id" : "minecraft:stone_sword"
-    },
-    {
-      "id" : "minecraft:iron_sword"
-    },
-    {
-      "id" : "minecraft:golden_sword"
-    },
-    {
-      "id" : "minecraft:diamond_sword"
-    },
-    {
-      "id" : "minecraft:netherite_sword"
-    },
-    {
-      "id" : "minecraft:wooden_axe"
-    },
-    {
-      "id" : "minecraft:stone_axe"
-    },
-    {
-      "id" : "minecraft:iron_axe"
-    },
-    {
-      "id" : "minecraft:golden_axe"
-    },
-    {
-      "id" : "minecraft:diamond_axe"
-    },
-    {
-      "id" : "minecraft:netherite_axe"
-    },
-    {
-      "id" : "minecraft:wooden_pickaxe"
-    },
-    {
-      "id" : "minecraft:stone_pickaxe"
-    },
-    {
-      "id" : "minecraft:iron_pickaxe"
-    },
-    {
-      "id" : "minecraft:golden_pickaxe"
-    },
-    {
-      "id" : "minecraft:diamond_pickaxe"
-    },
-    {
-      "id" : "minecraft:netherite_pickaxe"
-    },
-    {
-      "id" : "minecraft:wooden_shovel"
-    },
-    {
-      "id" : "minecraft:stone_shovel"
-    },
-    {
-      "id" : "minecraft:iron_shovel"
-    },
-    {
-      "id" : "minecraft:golden_shovel"
-    },
-    {
-      "id" : "minecraft:diamond_shovel"
-    },
-    {
-      "id" : "minecraft:netherite_shovel"
-    },
-    {
-      "id" : "minecraft:wooden_hoe"
-    },
-    {
-      "id" : "minecraft:stone_hoe"
-    },
-    {
-      "id" : "minecraft:iron_hoe"
-    },
-    {
-      "id" : "minecraft:golden_hoe"
-    },
-    {
-      "id" : "minecraft:diamond_hoe"
-    },
-    {
-      "id" : "minecraft:netherite_hoe"
-    },
-    {
-      "id" : "minecraft:bow"
-    },
-    {
-      "id" : "minecraft:crossbow"
-    },
-    {
-      "id" : "minecraft:arrow"
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 6
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 7
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 8
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 9
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 10
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 11
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 12
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 13
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 14
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 15
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 16
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 17
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 18
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 19
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 20
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 21
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 22
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 23
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 24
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 25
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 26
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 27
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 28
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 29
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 30
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 31
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 32
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 33
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 34
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 35
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 36
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 37
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 38
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 39
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 40
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 41
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 42
-    },
-    {
-      "id" : "minecraft:arrow",
-      "damage" : 43
-    },
-    {
-      "id" : "minecraft:shield"
-    },
-    {
-      "id" : "minecraft:cooked_chicken"
-    },
-    {
-      "id" : "minecraft:cooked_porkchop"
-    },
-    {
-      "id" : "minecraft:cooked_beef"
-    },
-    {
-      "id" : "minecraft:cooked_mutton"
-    },
-    {
-      "id" : "minecraft:cooked_rabbit"
-    },
-    {
-      "id" : "minecraft:cooked_cod"
-    },
-    {
-      "id" : "minecraft:cooked_salmon"
-    },
-    {
-      "id" : "minecraft:bread"
-    },
-    {
-      "id" : "minecraft:mushroom_stew"
-    },
-    {
-      "id" : "minecraft:beetroot_soup"
-    },
-    {
-      "id" : "minecraft:rabbit_stew"
-    },
-    {
-      "id" : "minecraft:baked_potato"
-    },
-    {
-      "id" : "minecraft:cookie"
-    },
-    {
-      "id" : "minecraft:pumpkin_pie"
-    },
-    {
-      "id" : "minecraft:cake"
-    },
-    {
-      "id" : "minecraft:dried_kelp"
-    },
-    {
-      "id" : "minecraft:fishing_rod"
-    },
-    {
-      "id" : "minecraft:carrot_on_a_stick"
-    },
-    {
-      "id" : "minecraft:warped_fungus_on_a_stick"
-    },
-    {
-      "id" : "minecraft:snowball"
-    },
-    {
-      "id" : "minecraft:shears"
-    },
-    {
-      "id" : "minecraft:flint_and_steel"
-    },
-    {
-      "id" : "minecraft:lead"
-    },
-    {
-      "id" : "minecraft:clock"
-    },
-    {
-      "id" : "minecraft:compass"
-    },
-    {
-      "id" : "minecraft:empty_map"
-    },
-    {
-      "id" : "minecraft:empty_map",
-      "damage" : 2
-    },
-    {
-      "id" : "minecraft:saddle"
-    },
-    {
-      "id" : "minecraft:leather_horse_armor"
-    },
-    {
-      "id" : "minecraft:iron_horse_armor"
-    },
-    {
-      "id" : "minecraft:golden_horse_armor"
-    },
-    {
-      "id" : "minecraft:diamond_horse_armor"
-    },
-    {
-      "id" : "minecraft:trident"
-    },
-    {
-      "id" : "minecraft:turtle_helmet"
-    },
-    {
-      "id" : "minecraft:elytra"
-    },
-    {
-      "id" : "minecraft:totem_of_undying"
-    },
-    {
-      "id" : "minecraft:glass_bottle"
-    },
-    {
-      "id" : "minecraft:experience_bottle"
-    },
-    {
-      "id" : "minecraft:potion"
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 1
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 2
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 3
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 4
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 5
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 6
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 7
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 8
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 9
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 10
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 11
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 12
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 13
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 14
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 15
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 16
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 17
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 18
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 19
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 20
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 21
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 22
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 23
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 24
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 25
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 26
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 27
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 28
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 29
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 30
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 31
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 32
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 33
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 34
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 35
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 36
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 37
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 38
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 39
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 40
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 41
-    },
-    {
-      "id" : "minecraft:potion",
-      "damage" : 42
-    },
-    {
-      "id" : "minecraft:splash_potion"
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 1
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 2
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 3
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 4
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 5
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 6
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 7
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 8
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 9
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 10
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 11
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 12
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 13
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 14
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 15
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 16
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 17
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 18
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 19
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 20
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 21
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 22
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 23
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 24
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 25
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 26
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 27
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 28
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 29
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 30
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 31
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 32
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 33
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 34
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 35
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 36
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 37
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 38
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 39
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 40
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 41
-    },
-    {
-      "id" : "minecraft:splash_potion",
-      "damage" : 42
-    },
-    {
-      "id" : "minecraft:lingering_potion"
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 1
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 2
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 3
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 4
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 5
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 6
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 7
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 8
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 9
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 10
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 11
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 12
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 13
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 14
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 15
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 16
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 17
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 18
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 19
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 20
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 21
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 22
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 23
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 24
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 25
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 26
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 27
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 28
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 29
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 30
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 31
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 32
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 33
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 34
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 35
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 36
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 37
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 38
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 39
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 40
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 41
-    },
-    {
-      "id" : "minecraft:lingering_potion",
-      "damage" : 42
-    },
     {
       "id" : "minecraft:stick"
     },
@@ -4420,6 +3465,961 @@
     },
     {
       "id" : "minecraft:target"
+    }
+    /*
+    {
+      "id" : "minecraft:leather_helmet"
+    },
+    {
+      "id" : "minecraft:chainmail_helmet"
+    },
+    {
+      "id" : "minecraft:iron_helmet"
+    },
+    {
+      "id" : "minecraft:golden_helmet"
+    },
+    {
+      "id" : "minecraft:diamond_helmet"
+    },
+    {
+      "id" : "minecraft:netherite_helmet"
+    },
+    {
+      "id" : "minecraft:leather_chestplate"
+    },
+    {
+      "id" : "minecraft:chainmail_chestplate"
+    },
+    {
+      "id" : "minecraft:iron_chestplate"
+    },
+    {
+      "id" : "minecraft:golden_chestplate"
+    },
+    {
+      "id" : "minecraft:diamond_chestplate"
+    },
+    {
+      "id" : "minecraft:netherite_chestplate"
+    },
+    {
+      "id" : "minecraft:leather_leggings"
+    },
+    {
+      "id" : "minecraft:chainmail_leggings"
+    },
+    {
+      "id" : "minecraft:iron_leggings"
+    },
+    {
+      "id" : "minecraft:golden_leggings"
+    },
+    {
+      "id" : "minecraft:diamond_leggings"
+    },
+    {
+      "id" : "minecraft:netherite_leggings"
+    },
+    {
+      "id" : "minecraft:leather_boots"
+    },
+    {
+      "id" : "minecraft:chainmail_boots"
+    },
+    {
+      "id" : "minecraft:iron_boots"
+    },
+    {
+      "id" : "minecraft:golden_boots"
+    },
+    {
+      "id" : "minecraft:diamond_boots"
+    },
+    {
+      "id" : "minecraft:netherite_boots"
+    },
+    {
+      "id" : "minecraft:wooden_sword"
+    },
+    {
+      "id" : "minecraft:stone_sword"
+    },
+    {
+      "id" : "minecraft:iron_sword"
+    },
+    {
+      "id" : "minecraft:golden_sword"
+    },
+    {
+      "id" : "minecraft:diamond_sword"
+    },
+    {
+      "id" : "minecraft:netherite_sword"
+    },
+    {
+      "id" : "minecraft:wooden_axe"
+    },
+    {
+      "id" : "minecraft:stone_axe"
+    },
+    {
+      "id" : "minecraft:iron_axe"
+    },
+    {
+      "id" : "minecraft:golden_axe"
+    },
+    {
+      "id" : "minecraft:diamond_axe"
+    },
+    {
+      "id" : "minecraft:netherite_axe"
+    },
+    {
+      "id" : "minecraft:wooden_pickaxe"
+    },
+    {
+      "id" : "minecraft:stone_pickaxe"
+    },
+    {
+      "id" : "minecraft:iron_pickaxe"
+    },
+    {
+      "id" : "minecraft:golden_pickaxe"
+    },
+    {
+      "id" : "minecraft:diamond_pickaxe"
+    },
+    {
+      "id" : "minecraft:netherite_pickaxe"
+    },
+    {
+      "id" : "minecraft:wooden_shovel"
+    },
+    {
+      "id" : "minecraft:stone_shovel"
+    },
+    {
+      "id" : "minecraft:iron_shovel"
+    },
+    {
+      "id" : "minecraft:golden_shovel"
+    },
+    {
+      "id" : "minecraft:diamond_shovel"
+    },
+    {
+      "id" : "minecraft:netherite_shovel"
+    },
+    {
+      "id" : "minecraft:wooden_hoe"
+    },
+    {
+      "id" : "minecraft:stone_hoe"
+    },
+    {
+      "id" : "minecraft:iron_hoe"
+    },
+    {
+      "id" : "minecraft:golden_hoe"
+    },
+    {
+      "id" : "minecraft:diamond_hoe"
+    },
+    {
+      "id" : "minecraft:netherite_hoe"
+    },
+    {
+      "id" : "minecraft:bow"
+    },
+    {
+      "id" : "minecraft:crossbow"
+    },
+    {
+      "id" : "minecraft:arrow"
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 6
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 7
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 8
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 9
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 10
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 11
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 12
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 13
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 14
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 15
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 16
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 17
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 18
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 19
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 20
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 21
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 22
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 23
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 24
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 25
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 26
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 27
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 28
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 29
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 30
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 31
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 32
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 33
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 34
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 35
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 36
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 37
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 38
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 39
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 40
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 41
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 42
+    },
+    {
+      "id" : "minecraft:arrow",
+      "damage" : 43
+    },
+    {
+      "id" : "minecraft:shield"
+    },
+    {
+      "id" : "minecraft:cooked_chicken"
+    },
+    {
+      "id" : "minecraft:cooked_porkchop"
+    },
+    {
+      "id" : "minecraft:cooked_beef"
+    },
+    {
+      "id" : "minecraft:cooked_mutton"
+    },
+    {
+      "id" : "minecraft:cooked_rabbit"
+    },
+    {
+      "id" : "minecraft:cooked_cod"
+    },
+    {
+      "id" : "minecraft:cooked_salmon"
+    },
+    {
+      "id" : "minecraft:bread"
+    },
+    {
+      "id" : "minecraft:mushroom_stew"
+    },
+    {
+      "id" : "minecraft:beetroot_soup"
+    },
+    {
+      "id" : "minecraft:rabbit_stew"
+    },
+    {
+      "id" : "minecraft:baked_potato"
+    },
+    {
+      "id" : "minecraft:cookie"
+    },
+    {
+      "id" : "minecraft:pumpkin_pie"
+    },
+    {
+      "id" : "minecraft:cake"
+    },
+    {
+      "id" : "minecraft:dried_kelp"
+    },
+    {
+      "id" : "minecraft:fishing_rod"
+    },
+    {
+      "id" : "minecraft:carrot_on_a_stick"
+    },
+    {
+      "id" : "minecraft:warped_fungus_on_a_stick"
+    },
+    {
+      "id" : "minecraft:snowball"
+    },
+    {
+      "id" : "minecraft:shears"
+    },
+    {
+      "id" : "minecraft:flint_and_steel"
+    },
+    {
+      "id" : "minecraft:lead"
+    },
+    {
+      "id" : "minecraft:clock"
+    },
+    {
+      "id" : "minecraft:compass"
+    },
+    {
+      "id" : "minecraft:empty_map"
+    },
+    {
+      "id" : "minecraft:empty_map",
+      "damage" : 2
+    },
+    {
+      "id" : "minecraft:saddle"
+    },
+    {
+      "id" : "minecraft:leather_horse_armor"
+    },
+    {
+      "id" : "minecraft:iron_horse_armor"
+    },
+    {
+      "id" : "minecraft:golden_horse_armor"
+    },
+    {
+      "id" : "minecraft:diamond_horse_armor"
+    },
+    {
+      "id" : "minecraft:trident"
+    },
+    {
+      "id" : "minecraft:turtle_helmet"
+    },
+    {
+      "id" : "minecraft:elytra"
+    },
+    {
+      "id" : "minecraft:totem_of_undying"
+    },
+    {
+      "id" : "minecraft:glass_bottle"
+    },
+    {
+      "id" : "minecraft:experience_bottle"
+    },
+    {
+      "id" : "minecraft:potion"
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 1
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 2
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 3
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 4
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 5
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 6
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 7
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 8
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 9
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 10
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 11
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 12
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 13
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 14
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 15
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 16
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 17
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 18
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 19
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 20
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 21
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 22
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 23
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 24
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 25
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 26
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 27
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 28
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 29
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 30
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 31
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 32
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 33
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 34
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 35
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 36
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 37
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 38
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 39
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 40
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 41
+    },
+    {
+      "id" : "minecraft:potion",
+      "damage" : 42
+    },
+    {
+      "id" : "minecraft:splash_potion"
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 1
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 2
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 3
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 4
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 5
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 6
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 7
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 8
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 9
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 10
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 11
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 12
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 13
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 14
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 15
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 16
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 17
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 18
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 19
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 20
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 21
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 22
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 23
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 24
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 25
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 26
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 27
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 28
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 29
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 30
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 31
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 32
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 33
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 34
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 35
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 36
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 37
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 38
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 39
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 40
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 41
+    },
+    {
+      "id" : "minecraft:splash_potion",
+      "damage" : 42
+    },
+    {
+      "id" : "minecraft:lingering_potion"
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 1
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 2
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 3
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 4
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 5
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 6
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 7
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 8
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 9
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 10
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 11
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 12
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 13
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 14
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 15
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 16
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 17
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 18
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 19
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 20
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 21
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 22
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 23
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 24
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 25
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 26
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 27
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 28
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 29
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 30
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 31
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 32
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 33
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 34
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 35
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 36
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 37
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 38
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 39
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 40
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 41
+    },
+    {
+      "id" : "minecraft:lingering_potion",
+      "damage" : 42
     },
     {
       "id" : "minecraft:lodestone_compass"
