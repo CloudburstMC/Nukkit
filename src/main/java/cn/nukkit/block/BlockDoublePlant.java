@@ -49,7 +49,8 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean canBeReplaced() {
-        return this.getDamage() == TALL_GRASS || this.getDamage() == LARGE_FERN;
+        int damage = this.getDamage() & 0x7;
+        return damage == TALL_GRASS || damage == LARGE_FERN;
     }
 
     @Override

@@ -3557,7 +3557,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     if (playerInteractEntityEvent.isCancelled()) {
                                         break;
                                     }
-                                    if (target.onInteract(this, item, useItemOnEntityData.clickPos) && this.isSurvival()) {
+                                    if (target.onInteract(this, item, useItemOnEntityData.clickPos) && (this.isSurvival() || this.isAdventure())) {
                                         if (item.isTool()) {
                                             if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
                                                 level.addSound(this, Sound.RANDOM_BREAK);
