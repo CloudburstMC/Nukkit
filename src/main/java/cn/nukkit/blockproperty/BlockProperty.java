@@ -526,4 +526,12 @@ public abstract class BlockProperty<T extends Serializable> implements Serializa
     public boolean getDefaultBooleanValue() {
         return false;
     }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract BlockProperty<T> copy();
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract BlockProperty<T> exportingToItems(boolean exportedToItem);
 }

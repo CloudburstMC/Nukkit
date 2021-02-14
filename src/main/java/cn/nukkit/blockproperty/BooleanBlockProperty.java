@@ -27,6 +27,20 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
         super(name, exportedToItem, 1, name);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public BooleanBlockProperty copy() {
+        return new BooleanBlockProperty(getName(), isExportedToItem(), getPersistenceName());
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public BooleanBlockProperty exportingToItems(boolean exportedToItem) {
+        return new BooleanBlockProperty(getName(), exportedToItem, getPersistenceName());
+    }
+
     @Override
     public int setValue(int currentMeta, int bitOffset, @Nullable Boolean newValue) {
         boolean value = newValue != null && newValue;

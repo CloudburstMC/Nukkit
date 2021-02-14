@@ -66,6 +66,11 @@ public class GiveCommand extends VanillaCommand {
             return true;
         }
         
+        if (item.getDamage() < 0) {
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            return true;
+        }
+        
         if (item instanceof ItemBlock && item.getBlock() instanceof BlockUnknown) {
             sender.sendMessage(new TranslationContainer("commands.give.block.notFound", args[1]));
             return true;

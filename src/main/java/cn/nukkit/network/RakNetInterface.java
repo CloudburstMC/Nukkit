@@ -255,7 +255,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     private class NukkitRakNetSession implements RakNetSessionListener {
         private final RakNetServerSession raknet;
         private final Queue<DataPacket> inbound = PlatformDependent.newSpscQueue();
-        private final Queue<DataPacket> outbound = PlatformDependent.newSpscQueue();
+        private final Queue<DataPacket> outbound = PlatformDependent.newMpscQueue();
         private String disconnectReason = null;
         private Player player;
 
