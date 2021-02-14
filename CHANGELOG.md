@@ -9,6 +9,10 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+### Fixes
+- [#857] Items in wrong tabs of the creative inventory and at the side of crafting grid screens
+- [#959] Give command not working correctly when using a namespace, like in `/give minecraft:dirt`
+
 ## 1.4.0.0-PN-ALPHA.2 - 2020-11-22
 This changelog is still being worked on.
 
@@ -672,6 +676,8 @@ Fixes several anvil issues.
 [#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
 [#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
+[#857]: https://github.com/PowerNukkit/PowerNukkit/issues/857
 [#882]: https://github.com/PowerNukkit/PowerNukkit/issues/882
 [#902]: https://github.com/PowerNukkit/PowerNukkit/issues/902
 [#917]: https://github.com/PowerNukkit/PowerNukkit/issues/917
+[#959]: https://github.com/PowerNukkit/PowerNukkit/issues/959
