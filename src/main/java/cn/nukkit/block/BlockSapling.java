@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
-import cn.nukkit.event.level.StructureGrowEvent;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.ArrayBlockProperty;
@@ -11,8 +10,8 @@ import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.blockproperty.value.WoodType;
+import cn.nukkit.event.level.StructureGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.ListChunkManager;
 import cn.nukkit.level.generator.object.BasicGenerator;
@@ -23,7 +22,6 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
@@ -197,10 +195,10 @@ public class BlockSapling extends BlockFlowable {
 
         Vector3 vector3 = new Vector3();
 
-        switch (this.getDamage() & 0x07) {
+        switch (getWoodType()) {
             case JUNGLE:
                 Vector2 vector2;
-                if ((vector2 = this.findSaplings(JUNGLE)) != null) {
+                if ((vector2 = this.findSaplings(WoodType.JUNGLE)) != null) {
                     vector3 = this.add(vector2.getFloorX(), 0, vector2.getFloorY());
                     generator = new ObjectJungleBigTree(10, 20, Block.get(BlockID.WOOD, BlockWood.JUNGLE), Block.get(BlockID.LEAVES, BlockLeaves.JUNGLE));
                     bigTree = true;
@@ -214,7 +212,7 @@ public class BlockSapling extends BlockFlowable {
                 generator = new ObjectSavannaTree();
                 break;
             case DARK_OAK:
-                if ((vector2 = this.findSaplings(DARK_OAK)) != null) {
+                if ((vector2 = this.findSaplings(WoodType.DARK_OAK)) != null) {
                     vector3 = this.add(vector2.getFloorX(), 0, vector2.getFloorY());
                     generator = new ObjectDarkOakTree();
                     bigTree = true;
@@ -227,14 +225,14 @@ public class BlockSapling extends BlockFlowable {
             //TODO: big spruce
             default:
                 ListChunkManager chunkManager = new ListChunkManager(this.level);
-                ObjectTree.growTree(chunkManager, this.getFloorX(), this.getFloorY(), this.getFloorZ(), new NukkitRandom(), this.getDamage() & 0x07);
+                ObjectTree.growTree(chunkManager, this.getFloorX(), this.getFloorY(), this.getFloorZ(), new NukkitRandom(), getWoodType(), false);
                 StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
                 this.level.getServer().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {
                     return;
                 }
                 for(Block block : ev.getBlockList()) {
-                    this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
+                    this.level.setBlock(block, block);
                 }
                 return;
         }
@@ -264,11 +262,11 @@ public class BlockSapling extends BlockFlowable {
             return;
         }
         for(Block block : ev.getBlockList()) {
-            this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
+            this.level.setBlock(block, block);
         }
     }
 
-    private Vector2 findSaplings(int type) {
+    private Vector2 findSaplings(WoodType type) {
         List<List<Vector2>> validVectorsList = new ArrayList<>();
         validVectorsList.add(Arrays.asList(new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1)));
         validVectorsList.add(Arrays.asList(new Vector2(0, 0), new Vector2(-1, 0), new Vector2(0, -1), new Vector2(-1, -1)));
