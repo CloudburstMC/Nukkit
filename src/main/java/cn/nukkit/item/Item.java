@@ -631,7 +631,7 @@ public class Item implements Cloneable, BlockID, ItemID {
                 if (meta.isPresent()) {
                     int damage = meta.getAsInt();
                     if (damage < 0) {
-                        item.createFuzzyCraftingRecipe();
+                        item = item.createFuzzyCraftingRecipe();
                     } else {
                         item.setDamage(damage);
                     }
@@ -689,11 +689,13 @@ public class Item implements Cloneable, BlockID, ItemID {
         byte[] nbtBytes = nbt != null ? Base64.getDecoder().decode(nbt) : EmptyArrays.EMPTY_BYTES;
 
         String id = data.get("id").toString();
-        int meta = -1;
+        Item item;
         if (data.containsKey("damage")) {
-            meta = Utils.toInt(data.get("damage"));
+            int meta = Utils.toInt(data.get("damage"));
+            item = fromString(id+":"+meta);
+        } else {
+            item = fromString(id);
         }
-        Item item = fromString(id+":"+meta);
         item = new Item(item.getId(), item.getDamage(), item.getCount());
         item.setCompoundTag(nbtBytes);
         return item;
