@@ -2,10 +2,16 @@ package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.OptionalBoolean;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.RedstoneComponent;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author Snake1999, larryTheCoder (Nukkit Project, Minecart and Riding Project)
@@ -26,6 +32,14 @@ public class BlockRailPowered extends BlockRail implements RedstoneComponent {
     @Override
     public int getId() {
         return POWERED_RAIL;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return ACTIVABLE_PROPERTIES;
     }
 
     @Override
@@ -160,7 +174,7 @@ public class BlockRailPowered extends BlockRail implements RedstoneComponent {
         }
         // Next check the if rail is on power state
         return canPowered(new Vector3(dx, dy, dz), base, power, relative)
-                || onStraight && canPowered(new Vector3(dx, dy - 1, dz), base, power, relative);
+                || onStraight && canPowered(new Vector3(dx, dy - 1., dz), base, power, relative);
     }
 
     @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
@@ -188,9 +202,21 @@ public class BlockRailPowered extends BlockRail implements RedstoneComponent {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                Item.get(Item.POWERED_RAIL, 0, 1)
-        };
+    public boolean isActive() {
+        return getBooleanValue(ACTIVE);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public OptionalBoolean isRailActive() {
+        return OptionalBoolean.of(getBooleanValue(ACTIVE));
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setRailActive(boolean active) {
+        setBooleanValue(ACTIVE, active);
     }
 }

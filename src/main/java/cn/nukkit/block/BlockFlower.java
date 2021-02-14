@@ -1,15 +1,23 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
+import cn.nukkit.blockproperty.value.SmallFlowerType;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,14 +27,60 @@ import java.util.concurrent.ThreadLocalRandom;
  * @since 2015/11/23
  */
 public class BlockFlower extends BlockFlowable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperty<SmallFlowerType> RED_FLOWER_TYPE = new ArrayBlockProperty<>("flower_type", true, new SmallFlowerType[]{
+            SmallFlowerType.POPPY,
+            SmallFlowerType.ORCHID,
+            SmallFlowerType.ALLIUM,
+            SmallFlowerType.HOUSTONIA,
+            SmallFlowerType.TULIP_RED,
+            SmallFlowerType.TULIP_ORANGE,
+            SmallFlowerType.TULIP_WHITE,
+            SmallFlowerType.TULIP_PINK,
+            SmallFlowerType.OXEYE,
+            SmallFlowerType.CORNFLOWER,
+            SmallFlowerType.LILY_OF_THE_VALLEY
+    });
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(RED_FLOWER_TYPE);
+    
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value. Use FlowerType instead")
     public static final int TYPE_POPPY = 0;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value. Use FlowerType instead")
     public static final int TYPE_BLUE_ORCHID = 1;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value. Use FlowerType instead")
     public static final int TYPE_ALLIUM = 2;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value. Use FlowerType instead")
     public static final int TYPE_AZURE_BLUET = 3;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value. Use FlowerType instead")
     public static final int TYPE_RED_TULIP = 4;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value. Use FlowerType instead")
     public static final int TYPE_ORANGE_TULIP = 5;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value. Use FlowerType instead")
     public static final int TYPE_WHITE_TULIP = 6;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value. Use FlowerType instead")
     public static final int TYPE_PINK_TULIP = 7;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value. Use FlowerType instead")
     public static final int TYPE_OXEYE_DAISY = 8;
 
     public BlockFlower() {
@@ -42,27 +96,42 @@ public class BlockFlower extends BlockFlowable {
         return FLOWER;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Poppy",
-                "Blue Orchid",
-                "Allium",
-                "Azure Bluet",
-                "Red Tulip",
-                "Orange Tulip",
-                "White Tulip",
-                "Pink Tulip",
-                "Oxeye Daisy",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown",
-                "Unknown"
-        };
-        return names[this.getDamage() & 0x0f];
+        return getFlowerType().getEnglishName();
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public SmallFlowerType getFlowerType() {
+        return getPropertyValue(RED_FLOWER_TYPE);
+    }
+    
+    protected void setOnSingleFlowerType(SmallFlowerType acceptsOnly, SmallFlowerType attemptedToSet) {
+        if (attemptedToSet == null || attemptedToSet == acceptsOnly) {
+            return;
+        }
+        String persistenceName = getPersistenceName();
+        throw new InvalidBlockPropertyValueException(
+                new ArrayBlockProperty<>(persistenceName +"_type", false, new SmallFlowerType[]{acceptsOnly}),
+                acceptsOnly,
+                attemptedToSet,
+                persistenceName+" only accepts "+acceptsOnly.name().toLowerCase()
+        );
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setFlowerType(SmallFlowerType flowerType) {
+        setPropertyValue(RED_FLOWER_TYPE, flowerType);
     }
     
     @PowerNukkitOnly

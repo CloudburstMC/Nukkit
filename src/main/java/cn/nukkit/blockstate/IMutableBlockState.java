@@ -134,6 +134,25 @@ public interface IMutableBlockState extends IBlockState {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    default void setDataStorageFromItemBlockMeta(int itemBlockMeta) {
+        BlockProperties allProperties = getProperties();
+        BlockProperties itemBlockProperties = allProperties.getItemBlockProperties();
+        if (allProperties.equals(itemBlockProperties)) {
+            setDataStorageFromInt(itemBlockMeta);
+            return;
+        }
+        
+        MutableBlockState item = itemBlockProperties.createMutableState(getBlockId());
+        item.setDataStorageFromInt(itemBlockMeta);
+
+        MutableBlockState converted = allProperties.createMutableState(getBlockId());
+        itemBlockProperties.getItemPropertyNames().forEach(property ->
+                converted.setPropertyValue(property, item.getPropertyValue(property)));
+        setDataStorage(converted.getDataStorage());
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     void setPropertyValue(String propertyName, @Nullable Serializable value);
 
     @PowerNukkitOnly
