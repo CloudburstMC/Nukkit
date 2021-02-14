@@ -4484,7 +4484,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (charge > 0) {
                         respawnAnchor.setCharge(charge-1);
                         respawnAnchor.getLevel().setBlock(respawnAnchor, respawnBlock);
-                        respawnAnchor.getLevel().addSound(respawnAnchor, Sound.RESPAWN_ANCHOR_DEPLETE);
+                        respawnAnchor.getLevel().scheduleUpdate(respawnAnchor, 10);
                     }
                 }
             }

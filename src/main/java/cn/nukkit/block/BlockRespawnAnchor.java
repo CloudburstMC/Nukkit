@@ -180,6 +180,15 @@ public class BlockRespawnAnchor extends BlockMeta {
     }
 
     @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+            getLevel().addSound(this, Sound.RESPAWN_ANCHOR_DEPLETE);
+            return type;
+        }
+        return super.onUpdate(type);
+    }
+
+    @Override
     public boolean canSilkTouch() {
         return true;
     }
