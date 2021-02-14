@@ -1,9 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemCarrot;
+import cn.nukkit.item.ItemID;
+import cn.nukkit.item.enchantment.Enchantment;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Nukkit Project Team
@@ -30,18 +31,28 @@ public class BlockCarrot extends BlockCrops {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (getDamage() >= 0x07) {
+        if (!isFullyGrown()) {
             return new Item[]{
-                    new ItemCarrot(0, new Random().nextInt(3) + 1)
+                    Item.get(ItemID.CARROT)
             };
         }
+
+        int drops = 2;
+        int attempts = 3 + Math.min(0, item.getEnchantmentLevel(Enchantment.ID_FORTUNE_DIGGING));
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        for (int i = 0; i < attempts; i++) {
+            if (random.nextInt(7) < 4) { // 4/7, 0.57142857142857142857142857142857
+                drops++;
+            }
+        }
+
         return new Item[]{
-                new ItemCarrot()
+                Item.get(ItemID.CARROT, 0, drops)
         };
     }
 
     @Override
     public Item toItem() {
-        return new ItemCarrot();
+        return Item.get(ItemID.CARROT);
     }
 }
