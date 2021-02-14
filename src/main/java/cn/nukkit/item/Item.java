@@ -1437,5 +1437,12 @@ public class Item implements Cloneable, BlockID, ItemID {
             return null;
         }
     }
-
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getNetworkId() {
+        return RuntimeItems.getNetworkId(
+            RuntimeItems.getRuntimeMapping().getNetworkFullId(this)
+        );
+    }
 }
