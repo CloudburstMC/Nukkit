@@ -414,7 +414,7 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
 
         boolean hasUpdate = entityBaseTick(tickDiff);
 
-        if (isAlive() && !onGround) {
+        if (isAlive()) {
             motionY -= getGravity();
             
             double highestPosition = this.highestPosition;
