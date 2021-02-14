@@ -2677,14 +2677,6 @@ public abstract class Entity extends Location implements Metadatable {
         return (((propertyId == EntityHuman.DATA_PLAYER_FLAGS ? this.getDataPropertyByte(propertyId) & 0xff : this.getDataPropertyLong(propertyId))) & (1L << id)) > 0;
     }
 
-    public void setGenericFlag(int propertyId, boolean value) {
-        this.setDataFlag(propertyId >= 64 ? DATA_FLAGS2 : DATA_FLAGS, propertyId % 64, value);
-    }
-
-    public boolean getGenericFlag(int propertyId) {
-        return this.getDataFlag(propertyId >= 64 ? DATA_FLAGS2 : DATA_FLAGS, propertyId % 64);
-    }
-
     @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) {
         this.server.getEntityMetadata().setMetadata(this, metadataKey, newMetadataValue);

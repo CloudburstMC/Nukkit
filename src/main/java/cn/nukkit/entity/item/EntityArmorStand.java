@@ -7,6 +7,8 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityInteractable;
+import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.BaseInventory;
@@ -15,9 +17,7 @@ import cn.nukkit.inventory.EntityEquipmentInventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemArmor;
-import cn.nukkit.item.ItemArmorStand;
 import cn.nukkit.item.ItemID;
-import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.DestroyBlockParticle;
@@ -27,11 +27,12 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-public class EntityArmorStand extends Entity implements InventoryHolder {
+public class EntityArmorStand extends Entity implements InventoryHolder, EntityInteractable {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -45,12 +46,12 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
     private EntityEquipmentInventory equipmentInventory;
     private EntityArmorInventory armorInventory;
 
-    private int vibrateTimer = 0;
-
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public EntityArmorStand(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+        setMaxHealth(6);
+        setHealth(6);
 
         if (nbt.contains(TAG_POSE_INDEX)) {
             this.setPose(nbt.getInt(TAG_POSE_INDEX));
@@ -327,6 +328,30 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
     }
 
     @Override
+    public void kill() {
+        super.kill();
+        Vector3 pos = getPosition();
+        
+        pos.y += 0.2;
+        level.dropItem(pos, armorInventory.getBoots());
+        
+        pos.y = y + 0.6;
+        level.dropItem(pos, armorInventory.getLeggings());
+        
+        pos.y = y + 1.4;
+        level.dropItem(pos, Item.get(ItemID.ARMOR_STAND));
+        level.dropItem(pos, armorInventory.getChestplate());
+        equipmentInventory.getContents().values().forEach(items -> this.level.dropItem(this, items));
+        equipmentInventory.clearAll();
+        
+        pos.y = y + 1.8;
+        level.dropItem(pos, armorInventory.getHelmet());
+        armorInventory.clearAll();
+        
+        level.addSound(this, Sound.MOB_ARMOR_STAND_BREAK);
+    }
+
+    @Override
     public boolean attack(EntityDamageEvent source) {
 
         switch (source.getCause()) {
@@ -337,6 +362,9 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
             case CONTACT:
                 source.setCancelled(true);
                 break;
+            case VOID:
+                setHealth(0f);
+                return true;
             default:
         }
 
@@ -345,35 +373,36 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
             return false;
         }
 
-        if (!source.isCancelled()) {
-            this.level.addParticle(new DestroyBlockParticle(this, Block.get(BlockID.WOODEN_PLANKS)));
-            this.setGenericFlag(Entity.DATA_FLAG_VIBRATING, true);
-            this.vibrateTimer = 20;
-
-            if (source instanceof EntityDamageByEntityEvent) {
-                EntityDamageByEntityEvent event = (EntityDamageByEntityEvent) source;
-                if (event.getDamager() instanceof Player){
-                    Player player = (Player) event.getDamager();
-                    if (player.isCreative()) {
-                        this.level.addParticle(new DestroyBlockParticle(this, Block.get(BlockID.WOODEN_PLANKS)));
-                        this.close();
-                        return true;
-                    }
-
-                    if (this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-                        this.level.dropItem(this, new ItemArmorStand());
-                        this.equipmentInventory.getContents().values().forEach(items -> this.level.dropItem(this, items));
-                        this.equipmentInventory.clearAll();
-                        this.armorInventory.getContents().values().forEach(items -> this.level.dropItem(this, items));
-                        this.armorInventory.clearAll();
-                    }
+        getServer().getPluginManager().callEvent(source);
+        if (source.isCancelled()) {
+            return false;
+        }
+        setLastDamageCause(source);
+        
+        if (getDataPropertyInt(DATA_HURT_TIME) > 0) {
+            setHealth(0);
+            return true;
+        }
+        
+        if (source instanceof EntityDamageByEntityEvent) {
+            EntityDamageByEntityEvent event = (EntityDamageByEntityEvent) source;
+            if (event.getDamager() instanceof Player){
+                Player player = (Player) event.getDamager();
+                if (player.isCreative()) {
+                    this.level.addParticle(new DestroyBlockParticle(this, Block.get(BlockID.WOODEN_PLANKS)));
+                    this.close();
+                    return true;
                 }
             }
-            this.close();
         }
+
+        setDataProperty(new IntEntityData(DATA_HURT_TIME, 9), true);
+        level.addSound(this, Sound.MOB_ARMOR_STAND_HIT);
+        
         return true;
     }
 
+    @Nonnull
     @Override
     public String getName() {
         return this.hasCustomName() ? this.getNameTag() : "Armor Stand";
@@ -383,13 +412,17 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
     public boolean entityBaseTick(int tickDiff) {
         boolean hasUpdate = super.entityBaseTick(tickDiff);
 
-        if (this.getGenericFlag(Entity.DATA_FLAG_VIBRATING) && this.vibrateTimer-- <= 0) {
-            this.setGenericFlag(Entity.DATA_FLAG_VIBRATING, false);
+        int hurtTime = getDataPropertyInt(DATA_HURT_TIME);
+        if (hurtTime > 0 && age % 2 == 0) {
+            setDataProperty(new IntEntityData(DATA_HURT_TIME, hurtTime - 1), true);
+            hasUpdate = true;
         }
 
         return hasUpdate;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public EntityEquipmentInventory getEquipmentInventory() {
         return this.equipmentInventory;
     }
@@ -415,6 +448,9 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
         boolean hasUpdate = entityBaseTick(tickDiff);
 
         if (isAlive()) {
+            if (getHealth() < getMaxHealth()) {
+                setHealth(getHealth() + 1);
+            }
             motionY -= getGravity();
             
             double highestPosition = this.highestPosition;
@@ -436,5 +472,15 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
         this.timing.stopTiming();
 
         return hasUpdate || !onGround || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
+    }
+
+    @Override
+    public String getInteractButtonText() {
+        return "action.interact.armorstand.equip";
+    }
+
+    @Override
+    public boolean canDoInteraction() {
+        return true;
     }
 }
