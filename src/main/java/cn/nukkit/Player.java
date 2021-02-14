@@ -223,6 +223,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected final int spawnThreshold;
 
     protected Position spawnPosition = null;
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected Vector3 spawnBlockPosition;
 
     protected int inAirTicks = 0;
     protected int startAirTicks = 5;
@@ -798,6 +802,31 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
+    /**
+     * The block that holds the player respawn position. May be null when unknown.
+     * @return The position of a bed, respawn anchor, or null when unknown.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public Vector3 getSpawnBlock() {
+        return spawnBlockPosition;
+    }
+
+    /**
+     * Sets the position of the block that holds the player respawn position. May be null when unknown.
+     * @param spawnBlock The position of a bed or respawn anchor
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setSpawnBlock(@Nullable Vector3 spawnBlock) {
+        if (spawnBlock == null) {
+            this.spawnBlockPosition = null;
+        } else {
+            this.spawnBlockPosition = new Vector3(spawnBlock.x, spawnBlock.y, spawnBlock.z);
+        }
+    }
+
     public void sendChunk(int x, int z, DataPacket packet) {
         if (!this.connected) {
             return;
@@ -1221,7 +1250,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.x = (int) this.spawnPosition.x;
         pk.y = (int) this.spawnPosition.y;
         pk.z = (int) this.spawnPosition.z;
-        pk.dimension = this.getLevel().getDimension();
+        pk.dimension = this.spawnPosition.level.getDimension();
         this.dataPacket(pk);
     }
 
@@ -2189,8 +2218,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Level level = this.server.getLevelByName(this.namedTag.getString("SpawnLevel"));
         if(level != null){
             this.spawnPosition = new Position(this.namedTag.getInt("SpawnX"), this.namedTag.getInt("SpawnY"), this.namedTag.getInt("SpawnZ"), level);
+            if (this.namedTag.containsInt("SpawnBlockPositionX") && this.namedTag.containsInt("SpawnBlockPositionY") && this.namedTag.containsInt("SpawnBlockPositionZ")) {
+                this.spawnBlockPosition = new Vector3(namedTag.getInt("SpawnBlockPositionX"), namedTag.getInt("SpawnBlockPositionY"), namedTag.getInt("SpawnBlockPositionZ"));
+            } else {
+                this.spawnBlockPosition = null;
+            }
         }else{
             this.spawnPosition = this.level.getSafeSpawn();
+            this.spawnBlockPosition = null;
         }
 
         spawnPosition = this.getSpawn();
@@ -4133,20 +4168,34 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.save(false);
     }
 
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+        
+        if (spawnBlockPosition == null) {
+            namedTag.remove("SpawnBlockPositionX").remove("SpawnBlockPositionY").remove("SpawnBlockPositionZ");
+        } else {
+            namedTag.putInt("SpawnBlockPositionX", spawnBlockPosition.getFloorX())
+                    .putInt("SpawnBlockPositionY", spawnBlockPosition.getFloorY())
+                    .putInt("SpawnBlockPositionZ", spawnBlockPosition.getFloorZ());
+        }
+    }
+
     public void save(boolean async) {
         if (this.closed) {
             throw new IllegalStateException("Tried to save closed player");
         }
 
-        super.saveNBT();
+        saveNBT();
 
         if (this.level != null) {
             this.namedTag.putString("Level", this.level.getFolderName());
             if (this.spawnPosition != null && this.spawnPosition.getLevel() != null) {
                 this.namedTag.putString("SpawnLevel", this.spawnPosition.getLevel().getFolderName());
-                this.namedTag.putInt("SpawnX", (int) this.spawnPosition.x);
-                this.namedTag.putInt("SpawnY", (int) this.spawnPosition.y);
-                this.namedTag.putInt("SpawnZ", (int) this.spawnPosition.z);
+                this.namedTag.putInt("SpawnX", this.spawnPosition.getFloorX());
+                this.namedTag.putInt("SpawnY", this.spawnPosition.getFloorY());
+                this.namedTag.putInt("SpawnZ", this.spawnPosition.getFloorZ());
+                this.namedTag.putInt("SpawnDimension", this.spawnPosition.getLevel().getDimension());
             }
 
             CompoundTag achievements = new CompoundTag();
@@ -4361,6 +4410,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.dataPacket(pk);
         }
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected boolean isValidRespawnBlock(Block block) {
+        if (block.getId() == BlockID.RESPAWN_ANCHOR && block.getLevel().getDimension() == Level.DIMENSION_NETHER) {
+            BlockRespawnAnchor anchor = (BlockRespawnAnchor) block;
+            return anchor.getCharge() > 0;
+        }
+        if (block.getId() == BlockID.BED_BLOCK && block.getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
+            BlockBed bed = (BlockBed) block;
+            return bed.isBedValid();
+        }
+        
+        return false;
+    }
 
     protected void respawn() {
         if (this.server.isHardcore()) {
@@ -4371,8 +4435,60 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.craftingType = CRAFTING_SMALL;
         this.resetCraftingGridType();
 
+        Vector3 spawnBlock = getSpawnBlock();
+        if (spawnBlock == null) {
+            spawnBlock = spawnPosition;
+        }
+        
         PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
+        Block respawnBlock;
+        int respawnBlockDim = Level.DIMENSION_OVERWORLD;
+        if (spawnBlock != null) {
+            Position spawnBlockPos = new Position(spawnBlock.x, spawnBlock.y, spawnBlock.z, playerRespawnEvent.getRespawnPosition().getLevel());
+            respawnBlockDim = spawnBlockPos.level.getDimension();
+            playerRespawnEvent.setRespawnBlockPosition(spawnBlockPos);
+            respawnBlock = spawnBlockPos.getLevelBlock();
+            if (isValidRespawnBlock(respawnBlock)) {
+                playerRespawnEvent.setRespawnBlockAvailable(true);
+                playerRespawnEvent.setConsumeCharge(respawnBlock.getId() == BlockID.RESPAWN_ANCHOR);
+            } else {
+                playerRespawnEvent.setRespawnBlockAvailable(false);
+                playerRespawnEvent.setConsumeCharge(false);
+                playerRespawnEvent.setOriginalRespawnPosition(playerRespawnEvent.getRespawnPosition());
+                playerRespawnEvent.setRespawnPosition(this.server.getDefaultLevel().getSafeSpawn());
+            }
+        }
+        
         this.server.getPluginManager().callEvent(playerRespawnEvent);
+        
+        if (!playerRespawnEvent.isRespawnBlockAvailable()) {
+            if (!playerRespawnEvent.isKeepRespawnBlockPosition()) {
+                this.spawnBlockPosition = null;
+            }
+            if (!playerRespawnEvent.isKeepRespawnPosition()) {
+                this.spawnPosition = null;
+                if (playerRespawnEvent.isSendInvalidRespawnBlockMessage()) {
+                    sendMessage(new TranslationContainer(TextFormat.GRAY + 
+                            "%tile."+(respawnBlockDim==Level.DIMENSION_OVERWORLD?"bed":"respawn_anchor")+".notValid"));
+                }
+            }
+        }
+
+        if (playerRespawnEvent.isConsumeCharge()) {
+            Position pos = playerRespawnEvent.getRespawnBlockPosition();
+            if (pos != null && pos.isValid()) {
+                respawnBlock = pos.getLevelBlock();
+                if (respawnBlock.getId() == BlockID.RESPAWN_ANCHOR) {
+                    BlockRespawnAnchor respawnAnchor = (BlockRespawnAnchor) respawnBlock;
+                    int charge = respawnAnchor.getCharge();
+                    if (charge > 0) {
+                        respawnAnchor.setCharge(charge-1);
+                        respawnAnchor.getLevel().setBlock(respawnAnchor, respawnBlock);
+                        respawnAnchor.getLevel().scheduleUpdate(respawnAnchor, 10);
+                    }
+                }
+            }
+        }
 
         Position respawnPos = playerRespawnEvent.getRespawnPosition();
 
@@ -4402,6 +4518,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.teleport(respawnPos, null);
         this.spawnToAll();
         this.scheduleUpdate();
+
+        if (playerRespawnEvent.isConsumeCharge()) {
+            getLevel().addSound(this, Sound.RESPAWN_ANCHOR_DEPLETE, 1, 1, this);
+        }
     }
 
     @Override
