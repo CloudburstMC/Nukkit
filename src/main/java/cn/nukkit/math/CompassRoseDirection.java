@@ -3,6 +3,9 @@ package cn.nukkit.math;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockSignPost;
+import lombok.RequiredArgsConstructor;
+
+import javax.annotation.Nonnull;
 
 /**
  * Represents a 16 direction compass rose.
@@ -87,10 +90,22 @@ public enum CompassRoseDirection {
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public static CompassRoseDirection getClosestFromYaw(double yaw) {
+    public static CompassRoseDirection getClosestFromYaw(double yaw, @Nonnull Precision precision) {
         return BlockSignPost.GROUND_SIGN_DIRECTION.getValueForMeta(
-                (int) Math.floor(((yaw + 180) * 16 / 360) + 0.5) & 0x0f
+                (int) Math.round(Math.round((yaw + 180.0) * precision.directions / 360.0) * (16.0 / precision.directions)) & 0x0f
         );
+    }
+
+    /**
+     * Gets the closes direction based on the given {@link cn.nukkit.entity.Entity} yaw.
+     * @param yaw An entity yaw
+     * @return The closest direction
+     * @since 1.4.0.0-PN
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static CompassRoseDirection getClosestFromYaw(double yaw) {
+        return getClosestFromYaw(yaw, Precision.SECONDARY_INTER_CARDINAL);
     }
 
     @PowerNukkitOnly
@@ -160,5 +175,25 @@ public enum CompassRoseDirection {
     public float getYaw() {
         return yaw;
     }
-}
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @RequiredArgsConstructor
+    public enum Precision {
+        /**
+         * North, South, East, West.
+         */
+        @PowerNukkitOnly @Since("1.4.0.0-PN") CARDINAL(4),
+
+        /**
+         * N, E, S, W, NE, NW, SE, SW.
+         */
+        @PowerNukkitOnly @Since("1.4.0.0-PN") PRIMARY_INTER_CARDINAL(8),
+
+        /**
+         * N, E, S, W, NE, NW, SE, SW, WNW, NNW, NNE, ENE, ESE, SSE, SSW, WSW.
+         */
+        @PowerNukkitOnly @Since("1.4.0.0-PN") SECONDARY_INTER_CARDINAL(16);
+        protected final int directions;
+    }
+}

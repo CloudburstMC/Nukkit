@@ -13,6 +13,8 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import static cn.nukkit.math.CompassRoseDirection.Precision.PRIMARY_INTER_CARDINAL;
+
 public class ItemArmorStand extends Item {
 
     public ItemArmorStand() {
@@ -54,7 +56,7 @@ public class ItemArmorStand extends Item {
             }
         }
 
-        CompassRoseDirection direction = CompassRoseDirection.getClosestFromYaw(player.yaw).getOppositeFace();
+        CompassRoseDirection direction = CompassRoseDirection.getClosestFromYaw(player.yaw, PRIMARY_INTER_CARDINAL).getOppositeFace();
         CompoundTag nbt = Entity.getDefaultNBT(block.add(0.5, 0, 0.5), new Vector3(), direction.getYaw(), 0f);
         if (this.hasCustomName()) {
             nbt.putString("CustomName", this.getCustomName());

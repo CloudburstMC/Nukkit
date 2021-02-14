@@ -2,11 +2,14 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.inventory.BaseInventory;
 import cn.nukkit.inventory.EntityArmorInventory;
 import cn.nukkit.inventory.EntityEquipmentInventory;
 import cn.nukkit.inventory.InventoryHolder;
@@ -23,12 +26,15 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
-import cn.nukkit.scheduler.Task;
 
 import java.util.Collection;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class EntityArmorStand extends Entity implements InventoryHolder {
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final int NETWORK_ID = 61;
 
     private static final String TAG_MAINHAND = "Mainhand";
@@ -41,6 +47,8 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
 
     private int vibrateTimer = 0;
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public EntityArmorStand(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
 
@@ -51,13 +59,13 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
 
     private static int getArmorSlot(ItemArmor armorItem) {
         if (armorItem.isHelmet()) {
-            return 0;
+            return EntityArmorInventory.SLOT_HEAD;
         } else if (armorItem.isChestplate()) {
-            return 1;
+            return EntityArmorInventory.SLOT_CHEST;
         } else if (armorItem.isLeggings()) {
-            return 2;
+            return EntityArmorInventory.SLOT_LEGS;
         } else {
-            return 3;
+            return EntityArmorInventory.SLOT_FEET;
         }
     }
 
@@ -98,7 +106,7 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
         }
 
         if (this.namedTag.contains(TAG_OFFHAND)) {
-            this.equipmentInventory.setOffhandItem(NBTIO.getItemHelper(this.namedTag.getCompound(TAG_OFFHAND)), true);
+            this.equipmentInventory.setItemInOffhand(NBTIO.getItemHelper(this.namedTag.getCompound(TAG_OFFHAND)), true);
         }
 
         if (this.namedTag.contains(TAG_ARMOR)) {
@@ -115,6 +123,10 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
 
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
+        if (player.isSpectator() || !isValid()) {
+            return false;
+        }
+        
         //Pose
         if (player.isSneaking()) {
             if (this.getPose() >= 12) {
@@ -122,86 +134,141 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
             } else {
                 this.setPose(this.getPose() + 1);
             }
-            return true;
+            return false; // Returning true would consume the item
         }
+        
         //Inventory
-        if (this.isValid() && !player.isSpectator()) {
-            int i = 0;
-            boolean flag = !item.isNull();
-            boolean isArmorSlot = false;
-
-            if (flag && item instanceof ItemArmor) {
-                ItemArmor itemArmor = (ItemArmor) item;
-                i = getArmorSlot(itemArmor);
-                isArmorSlot = true;
-            }
-
-            if (flag && (item.getId() == ItemID.SKULL) || item.getBlockId() == BlockID.PUMPKIN) {
-                i = 0;
-            }
-
-            int j = 0;
-            double d3 = clickedPos.y - this.y;
-            boolean flag2 = false;
-
-            if (d3 >= 0.1 && d3 < 0.55 && !this.armorInventory.getItem(EntityArmorInventory.SLOT_FEET).isNull()) {
-                j = 3;
-                flag2 = isArmorSlot = true;
-            } else if (d3 >= 0.9 && d3 < 1.6 && !this.armorInventory.getItem(EntityArmorInventory.SLOT_CHEST).isNull()) {
-                j = 1;
-                flag2 = isArmorSlot = true;
-            } else if (d3 >= 0.4 && d3 < 1.2 && !this.armorInventory.getItem(EntityArmorInventory.SLOT_LEGS).isNull()) {
-                j = 2;
-                flag2 = isArmorSlot = true;
-            } else if (d3 >= 1.6 && !this.armorInventory.getItem(EntityArmorInventory.SLOT_HEAD).isNull()) {
-                flag2 = isArmorSlot = true;
-            } else if (!this.equipmentInventory.getItem(j).isNull()) {
-                flag2 = true;
-            }
-
-            if (flag) {
-                this.tryChangeEquipment(player, item, i, isArmorSlot);
-            } else if (flag2) {
-                this.tryChangeEquipment(player, item, j, isArmorSlot);
-            }
-
-            this.equipmentInventory.sendContents(player);
-            this.armorInventory.sendContents(player);
-            return flag || flag2;
-        }
-        return false;
-    }
-
-    private void tryChangeEquipment(Player player, Item handItem, int slot, boolean isArmorSlot) {
-        Item item = isArmorSlot ? this.armorInventory.getItem(slot) : this.equipmentInventory.getItem(slot);
-
-        if (player.isCreative() && item.isNull() && !handItem.isNull()) {
-            Item itemClone = handItem.clone();
-            itemClone.setCount(1);
-            if (isArmorSlot) {
-                this.armorInventory.setItem(slot, itemClone);
+        boolean isArmor;
+        
+        boolean hasItemInHand = !item.isNull();
+        int slot;
+        
+        if (hasItemInHand && item instanceof ItemArmor) {
+            ItemArmor itemArmor = (ItemArmor) item;
+            isArmor = true;
+            slot = getArmorSlot(itemArmor);
+        } else if (hasItemInHand && (item.getId() == ItemID.SKULL) || item.getBlockId() == BlockID.PUMPKIN) {
+            isArmor = true;
+            slot = EntityArmorInventory.SLOT_HEAD;
+        } else if (hasItemInHand) {
+            isArmor = false;
+            if (item.getId() == ItemID.SHIELD) {
+                slot = EntityEquipmentInventory.OFFHAND;
             } else {
-                this.equipmentInventory.setItem(slot, itemClone);
-            }
-        } else if (!handItem.isNull() && handItem.getCount() > 1) {
-            if (item.isNull()) {
-                Item itemClone = handItem.clone();
-                itemClone.setCount(1);
-                if (isArmorSlot) {
-                    this.armorInventory.setItem(slot, itemClone);
-                } else {
-                    this.equipmentInventory.setItem(slot, itemClone);
-                }
-                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
+                slot = EntityEquipmentInventory.MAIN_HAND;
             }
         } else {
-            if (isArmorSlot) {
-                this.armorInventory.setItem(slot, handItem);
+            double clickHeight = clickedPos.y - this.y;
+            if (clickHeight >= 0.1 && clickHeight < 0.55 && !armorInventory.getBoots().isNull()) {
+                isArmor = true;
+                slot = EntityArmorInventory.SLOT_FEET;
+            } else if (clickHeight >= 0.9 && clickHeight < 1.6) {
+                if (!equipmentInventory.getItemInOffhand().isNull()) {
+                    isArmor = false;
+                    slot = EntityEquipmentInventory.OFFHAND;
+                } else if (!equipmentInventory.getItemInHand().isNull()) {
+                    isArmor = false;
+                    slot = EntityEquipmentInventory.MAIN_HAND;
+                } else if (!armorInventory.getChestplate().isNull()) {
+                    isArmor = true;
+                    slot = EntityArmorInventory.SLOT_CHEST;
+                } else {
+                    return false;
+                }
+            } else if (clickHeight >= 0.4 && clickHeight < 1.2 && !armorInventory.getLeggings().isNull()) {
+                isArmor = true;
+                slot = EntityArmorInventory.SLOT_LEGS;
+            } else if (clickHeight >= 1.6 && !armorInventory.getHelmet().isNull()) {
+                isArmor = true;
+                slot = EntityArmorInventory.SLOT_HEAD;
+            } else if (!equipmentInventory.getItemInOffhand().isNull()) {
+                isArmor = false;
+                slot = EntityEquipmentInventory.OFFHAND;
+            } else if (!equipmentInventory.getItemInHand().isNull()) {
+                isArmor = false;
+                slot = EntityEquipmentInventory.MAIN_HAND;
             } else {
-                this.equipmentInventory.setItem(slot, handItem);
+                return false;
             }
-            Server.getInstance().getScheduler().scheduleDelayedTask(new Hack(player, item, player.getInventory().getHeldItemIndex()), 1);
         }
+
+        boolean changed = false;
+        if (isArmor) {
+            changed = this.tryChangeEquipment(player, item, slot, true);
+            slot = EntityEquipmentInventory.MAIN_HAND;
+        }
+        
+        if (!changed) {
+            changed = this.tryChangeEquipment(player, item, slot, false);
+        }
+        
+        if (changed) {
+            level.addSound(this, Sound.MOB_ARMOR_STAND_PLACE);
+        }
+
+        return false; // Returning true would consume the item but tryChangeEquipment already manages the inventory
+    }
+
+    private boolean tryChangeEquipment(Player player, Item handItem, int slot, boolean isArmorSlot) {
+        BaseInventory inventory = isArmorSlot? armorInventory : equipmentInventory;
+        Item item = inventory.getItem(slot);
+        
+        if (item.isNull() && !handItem.isNull()) {
+            // Adding item to the armor stand
+            Item itemClone = handItem.clone();
+            itemClone.setCount(1);
+            inventory.setItem(slot, itemClone);
+            if (!player.isCreative()) {
+                handItem.count--;
+                player.getInventory().setItem(player.getInventory().getHeldItemIndex(), handItem);
+            }
+            return true;
+        } else if (!item.isNull()) {
+            Item itemtoAddToArmorStand = Item.getBlock(BlockID.AIR);
+            if (!handItem.isNull()) {
+                if (handItem.equals(item, true, true)) {
+                    // Attempted to replace with the same item type
+                    return false;
+                }
+                
+                if (item.count > 1) {
+                    // The armor stand have more items than 1, item swapping is not supported in this situation
+                    return false;
+                }
+                
+                Item itemToSetToPlayerInv;
+                if (handItem.count > 1) {
+                    itemtoAddToArmorStand = handItem.clone();
+                    itemtoAddToArmorStand.setCount(1);
+                    
+                    itemToSetToPlayerInv = handItem.clone();
+                    itemToSetToPlayerInv.count--;
+                } else {
+                    itemtoAddToArmorStand = handItem.clone();
+                    itemToSetToPlayerInv = Item.getBlock(BlockID.AIR);
+                }
+                player.getInventory().setItem(player.getInventory().getHeldItemIndex(), itemToSetToPlayerInv);
+            }
+            
+            // Removing item from the armor stand
+            Item[] notAdded = player.getInventory().addItem(item);
+            if (notAdded.length > 0) {
+                if (notAdded[0].count == item.count) {
+                    if (!handItem.isNull()) {
+                        player.getInventory().setItem(player.getInventory().getHeldItemIndex(), handItem);
+                    }
+                    return false;
+                }
+                
+                Item itemClone = item.clone();
+                itemClone.count -= notAdded[0].count;
+                inventory.setItem(slot, itemClone);
+            } else {
+                inventory.setItem(slot, itemtoAddToArmorStand);
+            }
+            return true;
+        }
+        return false;
     }
 
 
@@ -222,7 +289,7 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
         super.saveNBT();
 
         this.namedTag.put(TAG_MAINHAND, NBTIO.putItemHelper(this.equipmentInventory.getItemInHand()));
-        this.namedTag.put(TAG_OFFHAND, NBTIO.putItemHelper(this.equipmentInventory.getOffHandItem()));
+        this.namedTag.put(TAG_OFFHAND, NBTIO.putItemHelper(this.equipmentInventory.getItemInOffhand()));
 
         if (this.armorInventory != null) {
             ListTag<CompoundTag> armorTag = new ListTag<>(TAG_ARMOR);
@@ -362,24 +429,5 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
         this.timing.stopTiming();
 
         return hasUpdate || !onGround || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
-    }
-
-    private static class Hack extends Task {
-
-        private final Player player;
-        private final Item item;
-        private final int index;
-
-        public Hack(Player player, Item item, int index) {
-            this.player = player;
-            this.item = item;
-            this.index = index;
-        }
-
-        @Override
-        public void onRun(int i) {
-            player.getInventory().decreaseCount(index);
-            player.getInventory().addItem(item);
-        }
     }
 }
