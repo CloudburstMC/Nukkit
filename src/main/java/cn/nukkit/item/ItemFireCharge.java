@@ -38,6 +38,10 @@ public class ItemFireCharge extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+        if (player.isAdventure()) {
+            return false;
+        }
+
         if (block.getId() == AIR && (target.isSolid() || target.getBurnChance() > 0)) {
             if (target.getId() == OBSIDIAN) {
                 if (level.createPortal(target)) {

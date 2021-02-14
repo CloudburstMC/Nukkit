@@ -316,7 +316,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_LAYING_EGG = 59;
     
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_FLAG_RIDEN_CAN_PIXK", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
+            replaceWith = "DATA_FLAG_RIDER_CAN_PICK", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_FLAG_RIDER_CAN_PICKUP = 60; // PowerNukkit
 
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_RIDER_CAN_PICK = 60; // NukkitX
@@ -1469,7 +1469,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (this.y <= -16 && this.isAlive()) {
             if (this instanceof Player) {
                 Player player = (Player) this;
-                if (player.getGamemode() != 1) this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+                if (!player.isCreative()) this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
             } else {
                 this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
                 hasUpdate = true;
