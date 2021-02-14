@@ -37,6 +37,11 @@ public abstract class ItemEdible extends Item {
 
     @Override
     public boolean onUse(Player player, int ticksUsed) {
+        if (player.isSpectator()) {
+            player.getInventory().sendContents(player);
+            return false;
+        }
+        
         Food food = Food.getByRelative(this);
         
         if (food == null || ticksUsed < food.getEatingTick()) {
