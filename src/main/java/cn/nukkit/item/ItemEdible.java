@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.CompletedUsingItemPacket;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -38,7 +39,7 @@ public abstract class ItemEdible extends Item {
     public boolean onUse(Player player, int ticksUsed) {
         Food food = Food.getByRelative(this);
         
-        if (food == null || tickUsed < food.getEatingTick()) {
+        if (food == null || ticksUsed < food.getEatingTick()) {
             return false;
         }
         
@@ -51,7 +52,7 @@ public abstract class ItemEdible extends Item {
         }
         
         if (food.eatenBy(player)) {
-            player.completeUsingItem(item.getNetworkId(), CompletedUsingItemPacket.ACTION_EAT);
+            player.completeUsingItem(this.getNetworkId(), CompletedUsingItemPacket.ACTION_EAT);
             
             if (player.isAdventure() || player.isSurvival()) {
                 --this.count;
