@@ -21,7 +21,10 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.TextFormat;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
@@ -126,7 +129,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
 
         BlockFace dir = getBlockFace();
 
-        boolean shouldExplode = this.level.getDimension() == Level.DIMENSION_OVERWORLD;
+        boolean shouldExplode = this.level.getDimension() != Level.DIMENSION_OVERWORLD;
         boolean willExplode = shouldExplode && this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES);
         
         Block head;

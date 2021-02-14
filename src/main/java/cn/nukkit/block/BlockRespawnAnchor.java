@@ -94,7 +94,7 @@ public class BlockRespawnAnchor extends BlockMeta {
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     protected boolean attemptToSetSpawn(@Nonnull Player player) {
-        if (this.level.getDimension() != Level.DIMENSION_OVERWORLD) {
+        if (this.level.getDimension() != Level.DIMENSION_NETHER) {
             if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
                 explode();
             }

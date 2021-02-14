@@ -4444,7 +4444,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Block respawnBlock;
         int respawnBlockDim = Level.DIMENSION_OVERWORLD;
         if (spawnBlock != null) {
-            Position spawnBlockPos = new Position(spawnBlock.x, spawnBlock.y, spawnBlock.z, playerRespawnEvent.getRespawnBlockPosition().getLevel());
+            Position spawnBlockPos = new Position(spawnBlock.x, spawnBlock.y, spawnBlock.z, playerRespawnEvent.getRespawnPosition().getLevel());
             respawnBlockDim = spawnBlockPos.level.getDimension();
             playerRespawnEvent.setRespawnBlockPosition(spawnBlockPos);
             respawnBlock = spawnBlockPos.getLevelBlock();
