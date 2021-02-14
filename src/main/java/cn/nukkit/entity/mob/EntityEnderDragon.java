@@ -1,10 +1,12 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author PikyCZ
@@ -39,7 +41,14 @@ public class EntityEnderDragon extends EntityMob {
     }
 
     @Override
-    protected boolean applyNameTag(Player player, Item item) {
+    protected boolean applyNameTag(@Nonnull Player player, @Nonnull Item item) {
+        return false;
+    }
+
+    @PowerNukkitOnly
+    @Deprecated
+    @Override
+    public boolean applyNameTag(Item item) {
         return false;
     }
 

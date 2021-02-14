@@ -1,6 +1,7 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -20,6 +21,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -246,7 +248,14 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     }
 
     @Override
-    protected boolean applyNameTag(Player player, Item item) {
+    protected boolean applyNameTag(@Nonnull Player player, @Nonnull Item item) {
+        return false;
+    }
+
+    @PowerNukkitOnly
+    @Deprecated
+    @Override
+    public boolean applyNameTag(Item item) {
         return false;
     }
 }
