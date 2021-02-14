@@ -80,6 +80,7 @@ public class BlockRespawnAnchor extends BlockMeta {
             }
 
             setCharge(charge + 1);
+            getLevel().setBlock(this, this);
             getLevel().addSound(this, Sound.RESPAWN_ANCHOR_CHARGE);
             return true;
         }
