@@ -89,7 +89,11 @@ public class BlockRespawnAnchor extends BlockMeta {
             return false;
         }
         
-        return attemptToSetSpawn(player);
+        if (charge > 0) {
+            return attemptToSetSpawn(player);
+        } else {
+            return false;
+        }
     }
 
     @Since("1.4.0.0-PN")
