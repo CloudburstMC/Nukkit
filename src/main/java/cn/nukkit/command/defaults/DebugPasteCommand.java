@@ -4,6 +4,8 @@ import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.command.CapturingCommandSender;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
@@ -26,8 +28,12 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Log4j2
@@ -40,6 +46,21 @@ public class DebugPasteCommand extends VanillaCommand {
         super(name, "%nukkit.command.debug.description", "%nukkit.command.debug.usage");
         this.setPermission("nukkit.command.debug.perform");
         this.commandParameters.clear();
+        this.commandParameters.put("clear", new CommandParameter[]{
+                CommandParameter.newEnum("clear", new String[]{"clear"})
+        });
+        
+        this.commandParameters.put("upload", new CommandParameter[]{
+                CommandParameter.newEnum("upload", new String[]{"upload"}),
+                CommandParameter.newEnum("last", true, new String[]{"last"})
+        });
+        
+        this.commandParameters.put("default", CommandParameter.EMPTY_ARRAY);
+    }
+
+    private static boolean filterValidPastes(Path file) {
+        String name = file.getFileName().toString();
+        return name.startsWith("debugpaste-") && name.endsWith(".zip");
     }
 
     @Override
@@ -49,9 +70,23 @@ public class DebugPasteCommand extends VanillaCommand {
         }
         sender.sendMessage("The /debugpaste is executing, please wait...");
         Server server = Server.getInstance();
+        if ((args.length != 1 || !"clear".equalsIgnoreCase(args[0])) &&
+                TimeUnit.MILLISECONDS.toMinutes(System.currentTimeMillis() - server.getLaunchTime()) < 15) {
+            sender.sendMessage("Tip: This command works better if you use it right after you experience an issue");
+        }
         server.getScheduler().scheduleAsyncTask(new AsyncTask() {
             @Override
             public void onRun() {
+                if (args.length == 1 && "clear".equalsIgnoreCase(args[0])) {
+                    clear(sender);
+                    return;
+                }
+                
+                if (args.length == 2 && "upload".equalsIgnoreCase(args[0]) && "last".equalsIgnoreCase(args[1])) {
+                    uploadLast(sender);
+                    return;
+                }
+                
                 String now = new SimpleDateFormat("yyyy-MM-dd'T'HH.mm.ss.SSSZ").format(new Date());
                 Path zipPath;
                 try {
@@ -164,10 +199,93 @@ public class DebugPasteCommand extends VanillaCommand {
 
                 if (args.length == 1 && "upload".equalsIgnoreCase(args[0])) {
                     upload(sender, zipPath);
+                } else {
+                    sender.sendMessage("Review the file and scrub the files as you wish, and run \"/debugpaste upload last\" to make it available online");
                 }
             }
         });
         return true;
+    }
+    
+    private static void clear(CommandSender sender) {
+        Path dataPath = Paths.get(sender.getServer().getDataPath()).toAbsolutePath();
+        Path pastesFolder = dataPath.resolve("debugpastes");
+        try {
+            AtomicInteger count = new AtomicInteger();
+            if (Files.isDirectory(pastesFolder)) {
+                try (Stream<Path> listing = Files.list(pastesFolder)) {
+                    listing.filter(DebugPasteCommand::filterValidPastes)
+                            .forEach(file -> {
+                                try {
+                                    Files.delete(file);
+                                    count.incrementAndGet();
+                                } catch (IOException e) {
+                                    log.error("Could not delete {}", file, e);
+                                }
+                            });
+                }
+            }
+            if (count.get() == 0) {
+                sender.sendMessage("The debug pastes folder is already clean");
+                return;
+            }
+            log.info("{} debug pastes were deleted by {}", count.get(), sender.getName());
+            sender.sendMessage("All " + count.get() + " debug pastes were deleted");
+        } catch (Exception e) {
+            sender.sendMessage("Oh no! An error has occurred! " + e);
+            log.error("Failed to delete {}", dataPath, e);
+        }
+    }
+    
+    private static void uploadLast(CommandSender sender) {
+        Path dataPath = Paths.get(sender.getServer().getDataPath()).toAbsolutePath();
+        Path pastesFolder = dataPath.resolve("debugpastes");
+        Optional<Path> last = Optional.empty();
+        try {
+            try (Stream<Path> listing = Files.list(pastesFolder)) {
+                last = listing.filter(Files::isRegularFile)
+                        .filter(DebugPasteCommand::filterValidPastes)
+                        .max(Comparator.comparing(file -> {
+                            try {
+                                BasicFileAttributes attributes = Files.readAttributes(file, BasicFileAttributes.class);
+                                return attributes.creationTime().toMillis();
+                            } catch (IOException e) {
+                                throw new UncheckedIOException(e);
+                            }
+                        }));
+            } catch (UncheckedIOException e) {
+                throw e.getCause();
+            }
+
+            if (!last.isPresent()) {
+                sender.sendMessage("No debug pastes was found. Try to run \"/debugpaste upload\" to create a new one and send right away.");
+                return;
+            }
+
+            Path lastPath = last.get();
+            Path urlPath = lastPath.resolveSibling(lastPath.getFileName() + ".url");
+            if (Files.isRegularFile(urlPath)) {
+                Optional<String> url = Files.lines(urlPath).filter(line -> line.startsWith("URL=http") && line.length() > 8).findFirst();
+                if (url.isPresent()) {
+                    sender.sendMessage("The last debug paste " + lastPath.getFileName() + " was already uploaded to:");
+                    String directUrl = url.get().substring(4);
+                    sender.sendMessage(directUrl);
+                    
+                    if (!(sender instanceof ConsoleCommandSender)) {
+                        sender.sendMessage("The url is also being logged in the console for convenience, so you can do CTRL+C, CTRL+V if you have console access.");
+                        log.info("The last debug paste {} was already uploaded to: {}", lastPath.getFileName(), directUrl);
+                    }
+                    return;
+                }
+                String fileName = urlPath.getFileName().toString();
+                Files.move(urlPath, urlPath.resolveSibling(fileName.substring(0, fileName.length() - 4) + System.currentTimeMillis() + ".url"));
+            }
+            
+            upload(sender, lastPath);
+        } catch (IOException e) {
+            log.error("Failed to find the last debug paste", e);
+            sender.sendMessage("Sorry, an error has occurred. Check the logs for details. "+ e);
+        }
     }
     
     private static void upload(CommandSender sender, Path zipPath) {
