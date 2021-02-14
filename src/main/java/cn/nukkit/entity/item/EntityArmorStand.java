@@ -330,8 +330,11 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
     public boolean attack(EntityDamageEvent source) {
 
         switch (source.getCause()) {
-            case CONTACT:
             case FALL:
+                source.setCancelled(true);
+                level.addSound(this, Sound.MOB_ARMOR_STAND_LAND);
+                break;
+            case CONTACT:
                 source.setCancelled(true);
                 break;
             default:
@@ -413,7 +416,8 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
 
         if (isAlive() && !onGround) {
             motionY -= getGravity();
-
+            
+            double highestPosition = this.highestPosition;
             move(motionX, motionY, motionZ);
 
             float friction = 1 - getDrag();
@@ -424,6 +428,9 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
 
             updateMovement();
             hasUpdate = true;
+            if (onGround && (highestPosition - y) >= 3) {
+                level.addSound(this, Sound.MOB_ARMOR_STAND_LAND);
+            }
         }
 
         this.timing.stopTiming();
