@@ -1,7 +1,10 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityArmorStand;
 import cn.nukkit.level.Level;
@@ -50,6 +53,10 @@ public class ItemArmorStand extends Item {
             return false;
         }
         
+        if (!block.canBeReplaced() || !block.up().canBeReplaced()) {
+            return false;
+        }
+        
         for (Entity collidingEntity : level.getCollidingEntities(new SimpleAxisAlignedBB(block.x, block.y, block.z, block.x + 1, block.y + 1, block.z + 1))) {
             if (collidingEntity instanceof EntityArmorStand) {
                 return false;
@@ -60,6 +67,10 @@ public class ItemArmorStand extends Item {
         CompoundTag nbt = Entity.getDefaultNBT(block.add(0.5, 0, 0.5), new Vector3(), direction.getYaw(), 0f);
         if (this.hasCustomName()) {
             nbt.putString("CustomName", this.getCustomName());
+        }
+        
+        if (!removeForPlacement(block) || !removeForPlacement(block.up())) {
+            return false;
         }
 
         Entity entity = Entity.createEntity(EntityArmorStand.NETWORK_ID, chunk, nbt);
@@ -74,5 +85,23 @@ public class ItemArmorStand extends Item {
         entity.spawnToAll();
         player.getLevel().addSound(entity, Sound.MOB_ARMOR_STAND_PLACE);
         return true;
+    }
+
+    /**
+     * @param block The block which is in the same space as the armor stand.
+     * @return {@code true} if the armor stand entity can be placed
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected boolean removeForPlacement(Block block) {
+        switch (block.getId()) {
+            case AIR:
+                return true;
+            case SNOW_LAYER:
+                return block.canBeReplaced();
+            default:
+        }
+        
+        return block.getLevel().setBlock(block, Block.get(BlockID.AIR));
     }
 }
