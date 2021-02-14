@@ -67,6 +67,13 @@ public abstract class Fuel {
         addItem(ItemID.ACACIA_DOOR, (short) 200);
         addItem(ItemID.DARK_OAK_DOOR, (short) 200);
         addItem(ItemID.BANNER, (short) 300);
+        addBlock(BlockID.DEAD_BUSH, (short) 100);
+        addItem(ItemID.SIGN, (short) 200);
+        addItem(ItemID.ACACIA_SIGN, (short) 200);
+        addItem(ItemID.BIRCH_SIGN, (short) 200);
+        addItem(ItemID.SPRUCE_SIGN, (short) 200);
+        addItem(ItemID.DARK_OAK_SIGN, (short) 200);
+        addItem(ItemID.JUNGLE_SIGN, (short) 200);
         addBlock(BlockID.DRIED_KELP_BLOCK, (short) 4000);
     }
 

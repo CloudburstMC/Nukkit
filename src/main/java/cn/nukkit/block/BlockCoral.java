@@ -145,7 +145,7 @@ public class BlockCoral extends BlockFlowable {
         if (item.getEnchantment(Enchantment.ID_SILK_TOUCH) != null) {
             return super.getDrops(item);
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 }

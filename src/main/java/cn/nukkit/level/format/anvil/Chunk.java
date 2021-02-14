@@ -1,10 +1,10 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.anvil.palette.BiomePalette;
 import cn.nukkit.level.format.generic.BaseChunk;
@@ -15,6 +15,7 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.BlockUpdateEntry;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Zlib;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -27,6 +28,7 @@ import java.util.*;
 /**
  * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public class Chunk extends BaseChunk {
 
     protected long inhabitedTime;
@@ -62,6 +64,9 @@ public class Chunk extends BaseChunk {
         System.arraycopy(EmptyChunkSection.EMPTY, 0, this.sections, 0, 16);
         if (nbt == null) {
             this.biomes = new byte[16 * 16];
+            this.heightMap = new byte[256];
+            this.NBTentities = new ArrayList<>(0);
+            this.NBTtiles = new ArrayList<>(0);
             return;
         }
 
@@ -69,7 +74,12 @@ public class Chunk extends BaseChunk {
             if (section instanceof CompoundTag) {
                 int y = ((CompoundTag) section).getByte("Y");
                 if (y < 16) {
-                    sections[y] = new ChunkSection((CompoundTag) section);
+                    ChunkSection chunkSection = new ChunkSection((CompoundTag) section);
+                    if (chunkSection.hasBlocks()) {
+                        sections[y] = chunkSection;
+                    } else {
+                        sections[y] = EmptyChunkSection.EMPTY[y];
+                    }
                 }
             }
         }
@@ -226,7 +236,7 @@ public class Chunk extends BaseChunk {
 
             return new Chunk(provider, chunk.getCompound("Level"));
         } catch (Exception e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("An error has occurred while parsing a chunk from {}", provider.getName(), e);
             return null;
         }
     }
@@ -348,6 +358,9 @@ public class Chunk extends BaseChunk {
                 continue;
             }
             CompoundTag s = section.toNBT();
+            if (!section.hasBlocks()) {
+                continue;
+            }
             sectionList.add(s);
         }
         nbt.putList(sectionList);
@@ -380,7 +393,13 @@ public class Chunk extends BaseChunk {
         tileListTag.setAll(tiles);
         nbt.putList(tileListTag);
 
-        Set<BlockUpdateEntry> entries = this.provider.getLevel().getPendingBlockUpdates(this);
+        Set<BlockUpdateEntry> entries = null;
+        if (this.provider != null) {
+            Level level = provider.getLevel();
+            if (level != null) {
+                entries = level.getPendingBlockUpdates(this);
+            }
+        }
 
         if (entries != null) {
             ListTag<CompoundTag> tileTickTag = new ListTag<>("TileTicks");

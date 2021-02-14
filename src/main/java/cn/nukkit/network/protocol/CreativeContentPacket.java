@@ -9,7 +9,7 @@ import lombok.ToString;
 public class CreativeContentPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.CREATIVE_CONTENT_PACKET;
 
-    @Since("1.3.0.0-PN") public Item[] entries = new Item[0];
+    @Since("1.3.0.0-PN") public Item[] entries = Item.EMPTY_ARRAY;
 
     @Override
     public byte pid() {
@@ -24,7 +24,7 @@ public class CreativeContentPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(entries.length);
+        this.putUnsignedVarInt(entries.length);
         for (int i = 0; i < entries.length; i++) {
             this.putUnsignedVarInt(i + 1);
             this.putSlot(entries[i]);

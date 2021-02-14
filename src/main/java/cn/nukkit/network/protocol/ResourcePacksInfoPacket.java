@@ -10,8 +10,8 @@ public class ResourcePacksInfoPacket extends DataPacket {
 
     public boolean mustAccept;
     public boolean scripting;
-    public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
-    public ResourcePack[] resourcePackEntries = new ResourcePack[0];
+    public ResourcePack[] behaviourPackEntries = ResourcePack.EMPTY_ARRAY;
+    public ResourcePack[] resourcePackEntries = ResourcePack.EMPTY_ARRAY;
 
     @Override
     public void decode() {
@@ -24,8 +24,8 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.putBoolean(this.mustAccept);
         this.putBoolean(this.scripting);
 
-        encodePacks(this.resourcePackEntries);
         encodePacks(this.behaviourPackEntries);
+        encodePacks(this.resourcePackEntries);
     }
 
     private void encodePacks(ResourcePack[] packs) {
@@ -38,6 +38,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
             this.putString(""); // sub-pack name
             this.putString(""); // content identity
             this.putBoolean(false); // scripting
+            this.putBoolean(false); // raytracing capable
         }
     }
 

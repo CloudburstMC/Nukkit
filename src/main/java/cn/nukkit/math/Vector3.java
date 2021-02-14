@@ -365,10 +365,28 @@ public class Vector3 implements Cloneable {
         this.z = z;
         return this;
     }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public Vector3 setComponentsAdding(double x, double y, double z, double ax, double ay, double az) {
+        this.x = x + ax;
+        this.y = y + ay;
+        this.z = z + az;
+        return this;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public Vector3 setComponentsAdding(@Nonnull Vector3 pos, @Nonnull BlockFace face) {
+        return setComponentsAdding(pos.x, pos.y, pos.z, face.getXOffset(), face.getYOffset(), face.getZOffset());
+    }
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public Vector3 setComponents(Vector3 pos) {
+    @Nonnull
+    public Vector3 setComponents(@Nonnull Vector3 pos) {
         this.x = pos.x;
         this.y = pos.y;
         this.z = pos.z;

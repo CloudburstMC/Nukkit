@@ -23,11 +23,11 @@ public class InventoryContentPacket extends DataPacket {
     public static final int SPECIAL_FIXED_INVENTORY = 0x7b;
 
     public int inventoryId;
-    public Item[] slots = new Item[0];
+    public Item[] slots = Item.EMPTY_ARRAY;
 
     @Override
     public DataPacket clean() {
-        this.slots = new Item[0];
+        this.slots = Item.EMPTY_ARRAY;
         return super.clean();
     }
 

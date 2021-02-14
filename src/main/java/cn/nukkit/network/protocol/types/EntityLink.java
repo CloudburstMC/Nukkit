@@ -5,6 +5,9 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 public class EntityLink {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final EntityLink[] EMPTY_ARRAY = new EntityLink[0];
 
     public static final byte TYPE_REMOVE = 0;
     public static final byte TYPE_RIDER = 1;

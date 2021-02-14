@@ -66,7 +66,7 @@ public class BlockOreCoal extends BlockSolid {
                     new ItemCoal(0, count)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

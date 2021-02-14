@@ -15,12 +15,12 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.ThreadCache;
+import cn.nukkit.utils.Utils;
+import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,9 +71,9 @@ public class Anvil extends BaseLevelProvider {
 
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed resource leak")
     public static void generate(String path, String name, long seed, Class<? extends Generator> generator, Map<String, String> options) throws IOException {
-        File regions = new File(path + "/region");
-        if (!regions.exists() && !regions.mkdirs()) {
-           log.warn("Failed to create the directory: {}", regions);
+        File regionDir = new File(path + "/region");
+        if (!regionDir.exists() && !regionDir.mkdirs()) {
+            throw new IOException("Could not create the directory "+regionDir);
         }
 
         CompoundTag levelData = new CompoundTag("Data")
@@ -99,10 +99,14 @@ public class Anvil extends BaseLevelProvider {
                 .putInt("version", VERSION)
                 .putLong("Time", 0)
                 .putLong("SizeOnDisk", 0);
-        
-        try (FileOutputStream stream = new FileOutputStream(path + "level.dat")) {
-            NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), stream, ByteOrder.BIG_ENDIAN);
-        }
+
+        Utils.safeWrite(new File(path, "level.dat"), file -> {
+            try(FileOutputStream fos = new FileOutputStream(file); BufferedOutputStream out = new BufferedOutputStream(fos)) {
+                NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), out, ByteOrder.BIG_ENDIAN);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
     }
 
     @Override
@@ -119,7 +123,7 @@ public class Anvil extends BaseLevelProvider {
 
         long timestamp = chunk.getChanges();
 
-        byte[] blockEntities = new byte[0];
+        byte[] blockEntities = EmptyArrays.EMPTY_BYTES;
 
         if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
@@ -137,19 +141,6 @@ public class Anvil extends BaseLevelProvider {
             }
         }
 
-        Map<Integer, Integer> extra = chunk.getBlockExtraDataArray();
-        BinaryStream extraData;
-        if (!extra.isEmpty()) {
-            extraData = new BinaryStream();
-            extraData.putVarInt(extra.size());
-            for (Map.Entry<Integer, Integer> entry : extra.entrySet()) {
-                extraData.putVarInt(entry.getKey());
-                extraData.putLShort(entry.getValue());
-            }
-        } else {
-            extraData = null;
-        }
-
         BinaryStream stream = ThreadCache.binaryStream.get().reset();
         int count = 0;
         cn.nukkit.level.format.ChunkSection[] sections = chunk.getSections();
@@ -159,20 +150,13 @@ public class Anvil extends BaseLevelProvider {
                 break;
             }
         }
-//        stream.putByte((byte) count);  count is now sent in packet
+
         for (int i = 0; i < count; i++) {
             sections[i].writeTo(stream);
         }
-//        for (byte height : chunk.getHeightMapArray()) {
-//            stream.putByte(height);
-//        } computed client side?
+
         stream.put(chunk.getBiomeIdArray());
-        stream.putByte((byte) 0);
-        if (extraData != null) {
-            stream.put(extraData.getBuffer());
-        } else {
-            stream.putVarInt(0);
-        }
+        stream.putByte((byte) 0); // Border blocks
         stream.put(blockEntities);
 
         this.getLevel().chunkRequestCallback(timestamp, x, z, count, stream.getBuffer());

@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
@@ -12,6 +13,7 @@ import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author xtypr
@@ -27,10 +29,10 @@ public class ParticleCommand extends VanillaCommand {
         this.setPermission("nukkit.command.particle");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("name", false, ENUM_VALUES),
-                new CommandParameter("position", CommandParamType.POSITION, false),
-                new CommandParameter("count", CommandParamType.INT, true),
-                new CommandParameter("data", true)
+                CommandParameter.newEnum("effect", new CommandEnum("Particle", ENUM_VALUES)),
+                CommandParameter.newType("position", CommandParamType.POSITION),
+                CommandParameter.newType("count", true, CommandParamType.INT),
+                CommandParameter.newType("data", true, CommandParamType.INT)
         });
     }
 
@@ -98,7 +100,7 @@ public class ParticleCommand extends VanillaCommand {
 
         sender.sendMessage(new TranslationContainer("commands.particle.success", name, String.valueOf(count)));
 
-        Random random = new Random(System.currentTimeMillis());
+        Random random = ThreadLocalRandom.current();
 
         for (int i = 0; i < count; i++) {
             particle.setComponents(

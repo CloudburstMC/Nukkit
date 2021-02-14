@@ -3,6 +3,7 @@ package cn.nukkit.blockproperty;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyPersistenceValueException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import com.google.common.base.Preconditions;
 
@@ -385,6 +386,13 @@ public abstract class BlockProperty<T extends Serializable> implements Serializa
     public abstract String getPersistenceValueForMeta(int meta);
 
     /**
+     * @throws InvalidBlockPropertyPersistenceValueException IF the persistence value is not valid for this property
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract int getMetaForPersistenceValue(String persistenceValue);
+
+    /**
      * @throws RuntimeException Any runtime exception to indicate an invalid value
      */
     @PowerNukkitOnly
@@ -485,4 +493,45 @@ public abstract class BlockProperty<T extends Serializable> implements Serializa
                 ", persistenceName='" + persistenceName + '\'' +
                 '}';
     }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract boolean isDefaultValue(@Nullable T value);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public abstract T getDefaultValue();
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isDefaultIntValue(int value) {
+        return value == getDefaultIntValue();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isDefaultBooleanValue(boolean value) {
+        return value == getDefaultBooleanValue();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getDefaultIntValue() {
+        return 0;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean getDefaultBooleanValue() {
+        return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract BlockProperty<T> copy();
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public abstract BlockProperty<T> exportingToItems(boolean exportedToItem);
 }

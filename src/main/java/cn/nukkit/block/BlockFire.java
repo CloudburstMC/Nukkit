@@ -108,7 +108,7 @@ public class BlockFire extends BlockFlowable {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @PowerNukkitDifference(info = "Soul Fire Implementation", since = "1.4.0.0-PN")
@@ -141,7 +141,8 @@ public class BlockFire extends BlockFlowable {
             Block down = down();
             int downId = down.getId();
 
-            boolean forever = downId == Block.NETHERRACK || downId == Block.MAGMA;
+            boolean forever = downId == BlockID.NETHERRACK || downId == BlockID.MAGMA 
+                    || downId == BlockID.BEDROCK && ((BlockBedrock)down).getBurnIndefinitely();
             
             ThreadLocalRandom random = ThreadLocalRandom.current();
 

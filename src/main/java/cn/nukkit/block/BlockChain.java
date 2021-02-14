@@ -1,16 +1,24 @@
 package cn.nukkit.block;
 
 
+import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemChain;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockChain extends BlockTransparent {
-
+    
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockChain() {
@@ -25,6 +33,32 @@ public class BlockChain extends BlockTransparent {
     @Override
     public int getId() {
         return CHAIN_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return BlockLog.PILLAR_PROPERTIES;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockFace.Axis getPillarAxis() {
+        return getPropertyValue(PILLAR_AXIS);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setPillarAxis(BlockFace.Axis axis) {
+        setPropertyValue(PILLAR_AXIS, axis);
+    }
+
+    @Override
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        setPillarAxis(face.getAxis());
+        return super.place(item, block, target, face, fx, fy, fz, player);
     }
 
     @Override

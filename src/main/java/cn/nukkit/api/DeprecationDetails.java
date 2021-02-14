@@ -29,4 +29,9 @@ public @interface DeprecationDetails {
      * When the annotated element will be removed or have it's signature changed.
      */
     String toBeRemovedAt() default "";
+
+    /**
+     * The maintainer party that has added this depreciation. For example: PowerNukkit, Cloudburst Nukkit, and Nukkit
+     */
+    String by() default "";
 }

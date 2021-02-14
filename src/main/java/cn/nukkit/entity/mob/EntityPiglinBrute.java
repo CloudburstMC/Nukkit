@@ -1,10 +1,21 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+/**
+ * @author joserobjr
+ * @since 2020-11-20
+ */
+@Since("1.3.2.0-PN")
+@PowerNukkitOnly
 public class EntityPiglinBrute extends EntityMob {
 
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
     public final static int NETWORK_ID = 127;
 
     @Override
@@ -12,6 +23,8 @@ public class EntityPiglinBrute extends EntityMob {
         return NETWORK_ID;
     }
 
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
     public EntityPiglinBrute(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -30,6 +43,11 @@ public class EntityPiglinBrute extends EntityMob {
     @Override
     public float getHeight() {
         return 1.95f;
+    }
+
+    @Override
+    public boolean isPreventingSleep(Player player) {
+        return true;
     }
 
     @Override

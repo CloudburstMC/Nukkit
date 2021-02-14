@@ -38,4 +38,9 @@ public class BlockSoulSoil extends BlockSolid {
     public BlockColor getColor() {
         return BlockColor.BROWN_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean isSoulSpeedCompatible() {
+        return true;
+    }
 }

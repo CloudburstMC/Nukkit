@@ -1,13 +1,14 @@
 package cn.nukkit.level.format.anvil.palette;
 
+import io.netty.util.internal.EmptyArrays;
+
 import java.util.Arrays;
 
 /**
  * @author https://github.com/boy0001/
  */
 public class IntPalette {
-    private static int[] INT0 = new int[0];
-    private int[] keys = INT0;
+    private int[] keys = EmptyArrays.EMPTY_INTS;
     private int lastIndex = Integer.MIN_VALUE;
 
     public void add(int key) {
@@ -97,7 +98,7 @@ public class IntPalette {
 
     public IntPalette clone() {
         IntPalette p = new IntPalette();
-        p.keys = this.keys != INT0 ? this.keys.clone() : INT0;
+        p.keys = this.keys != EmptyArrays.EMPTY_INTS ? this.keys.clone() : EmptyArrays.EMPTY_INTS;
         p.lastIndex = this.lastIndex;
         return p;
     }

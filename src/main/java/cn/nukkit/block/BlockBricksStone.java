@@ -54,7 +54,7 @@ public class BlockBricksStone extends BlockSolidMeta {
                     Item.get(Item.STONE_BRICKS, this.getDamage() & 0x03, 1)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

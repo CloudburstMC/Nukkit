@@ -1,0 +1,4 @@
+settings:
+ # Multi-language setting
+ # Available: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu
+ language: "eng"

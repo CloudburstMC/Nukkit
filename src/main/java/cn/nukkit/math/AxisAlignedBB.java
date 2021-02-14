@@ -1,8 +1,13 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.MovingObjectPosition;
 
 public interface AxisAlignedBB extends Cloneable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    AxisAlignedBB[] EMPTY_ARRAY = new AxisAlignedBB[0];
 
     default AxisAlignedBB setBounds(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
         this.setMinX(minX);

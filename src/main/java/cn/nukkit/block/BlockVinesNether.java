@@ -9,13 +9,11 @@ import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.OptionalBoolean;
 
 import javax.annotation.Nonnull;
@@ -316,7 +314,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
 
     @Override
     public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
-        if (item.getId() != ItemID.DYE || item.getDamage() != DyeColor.WHITE.getDyeData()) {
+        if (!item.isFertilizer()) {
             return false;
         }
 
@@ -349,7 +347,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
             return new Item[]{ toItem() };
         }
         
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @PowerNukkitOnly

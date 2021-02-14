@@ -60,6 +60,10 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
+        if (isClosed()) {
+            return false;
+        }
+        
         if (source.getCause() == EntityDamageEvent.DamageCause.FIRE || source.getCause() == EntityDamageEvent.DamageCause.FIRE_TICK || source.getCause() == EntityDamageEvent.DamageCause.LAVA) {
             return false;
         }

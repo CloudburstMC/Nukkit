@@ -5,7 +5,12 @@ name: Publish GitHub
 
 on:
   release:
-    types: [created]
+    types:
+      - published
+  push:
+    branches:
+      - bleeding
+      - bleeding-1.3
 
 jobs:
   publish-github:
@@ -23,9 +28,15 @@ jobs:
         server-id: powernukkit-releases # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+    - name: Remove the custom suffix from the version
+      run: sed -i 's@-CUSTOM</version>@</version>@' pom.xml
+    
     - name: Build with Maven
       run: mvn -B package --file pom.xml
-
+    
+    - name: Adjust the repository url
+      run: sed -i 's@https://api.bintray.com/maven/powernukkit/powernukkit/PowerNukkit@https://maven.pkg.github.com/PowerNukkit/PowerNukkit@' pom.xml
+    
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:

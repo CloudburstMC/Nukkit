@@ -61,7 +61,7 @@ public class BlockOreRedstone extends BlockSolid {
                     new ItemRedstone(0, count)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

@@ -6,27 +6,23 @@ import lombok.ToString;
 @ToString
 public class NPCRequestPacket extends DataPacket {
 
-    @Since("1.4.0.0-PN")
-    public long entityRuntimeId;
+    @Since("1.3.2.0-PN") public long entityRuntimeId;
 
-    @Since("1.4.0.0-PN")
-    public RequestType requestType;
+    @Since("1.3.2.0-PN") public RequestType requestType;
 
-    @Since("1.4.0.0-PN")
-    public String commandString;
+    @Since("1.3.2.0-PN") public String commandString;
 
-    @Since("1.4.0.0-PN")
-    public int actionType;
+    @Since("1.3.2.0-PN") public int actionType;
 
-    @Since("1.4.0.0-PN")
+    @Since("1.3.2.0-PN")
     public enum RequestType {
 
-        SET_ACTIONS,
-        EXECUTE_ACTION,
-        EXECUTE_CLOSING_COMMANDS,
-        SET_NAME,
-        SET_SKIN,
-        SET_INTERACTION_TEXT
+        @Since("1.3.2.0-PN") SET_ACTIONS,
+        @Since("1.3.2.0-PN") EXECUTE_ACTION,
+        @Since("1.3.2.0-PN") EXECUTE_CLOSING_COMMANDS,
+        @Since("1.3.2.0-PN") SET_NAME,
+        @Since("1.3.2.0-PN") SET_SKIN,
+        @Since("1.3.2.0-PN") SET_INTERACTION_TEXT
 
     }
 

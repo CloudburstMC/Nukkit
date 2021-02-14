@@ -1,14 +1,23 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /*
  * @author Pub4Game
  * @since 2015/12/11
  */
-public class BlockRedstone extends BlockSolidMeta {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public class BlockRedstone extends BlockSolidMeta implements RedstoneComponent {
 
     public BlockRedstone() {
         this(0);
@@ -43,8 +52,6 @@ public class BlockRedstone extends BlockSolidMeta {
         return "Redstone Block";
     }
 
-    //TODO: redstone
-
     @Override
     public int getToolTier() {
         return ItemTool.TIER_WOODEN;
@@ -53,6 +60,30 @@ public class BlockRedstone extends BlockSolidMeta {
     @Override
     public BlockColor getColor() {
         return BlockColor.REDSTONE_BLOCK_COLOR;
+    }
+
+    @Override
+    @PowerNukkitOnly
+    @PowerNukkitDifference(info = "Update around redstone", since = "1.4.0.0-PN")
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        if (super.place(item, block, target, face, fx, fy, fz, player)) {
+            updateAroundRedstone();
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    @PowerNukkitOnly
+    @PowerNukkitDifference(info = "Update around redstone", since = "1.4.0.0-PN")
+    public boolean onBreak(Item item) {
+        if (!super.onBreak(item)) {
+            return false;
+        }
+
+        updateAroundRedstone();
+        return true;
     }
 
     @Override

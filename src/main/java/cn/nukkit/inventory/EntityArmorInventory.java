@@ -1,31 +1,43 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.EntityLiving;
-
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
-import cn.nukkit.entity.item.EntityArmorStand;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class EntityArmorInventory extends BaseInventory {
 
-    private EntityLiving entityLiving;
+    private final Entity entity;
 
-    private final Set<Player> viewers = new HashSet<>();
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int SLOT_HEAD = 0;
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int SLOT_CHEST = 1;
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int SLOT_LEGS = 2;
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int SLOT_FEET = 3;
 
-    public static final int SLOT_HEAD = 0;
-    public static final int  SLOT_CHEST = 1;
-    public static final int  SLOT_LEGS = 2;
-    public static final int  SLOT_FEET = 3;
+    /**
+     * @param entity an Entity which implements {@link InventoryHolder}.
+     * @throws ClassCastException if the entity does not implements {@link InventoryHolder}
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public EntityArmorInventory(Entity entity) {
+        super((InventoryHolder) entity, InventoryType.ENTITY_ARMOR);
+        this.entity = entity;
+    }
 
-    public EntityArmorInventory(EntityArmorStand entityArmorStand) {
-        super(entityArmorStand, InventoryType.PLAYER);
-        this.entityLiving = entityArmorStand;
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public Entity getEntity() {
+        return entity;
     }
 
     @Override
@@ -35,7 +47,7 @@ public class EntityArmorInventory extends BaseInventory {
 
     @Override
     public String getName() {
-        return "Armor";
+        return "Entity Armor";
     }
 
     @Override
@@ -43,34 +55,50 @@ public class EntityArmorInventory extends BaseInventory {
         return 4;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public Item getHelmet(){
         return this.getItem(SLOT_HEAD);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public Item getChestplate(){
         return this.getItem(SLOT_CHEST);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public Item getLeggings(){
         return this.getItem(SLOT_LEGS);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public Item getBoots(){
         return this.getItem(SLOT_FEET);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setHelmet(Item item) {
         this.setItem(SLOT_CHEST, item);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setChestplate(Item item) {
         this.setItem(SLOT_CHEST, item);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setLeggings(Item item) {
         this.setItem(SLOT_LEGS, item);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setBoots(Item item) {
         this.setItem(SLOT_FEET, item);
     }
@@ -85,16 +113,16 @@ public class EntityArmorInventory extends BaseInventory {
     @Override
     public void sendSlot(int index, Player player) {
         MobArmorEquipmentPacket mobArmorEquipmentPacket = new MobArmorEquipmentPacket();
-        mobArmorEquipmentPacket.eid = this.entityLiving.getId();
+        mobArmorEquipmentPacket.eid = this.entity.getId();
         mobArmorEquipmentPacket.slots = new Item[]{this.getHelmet(), this.getChestplate(), this.getLeggings(), this.getBoots()};
 
-        if(player == this.getHolder()){
+        if (player == this.holder) {
             InventorySlotPacket inventorySlotPacket = new InventorySlotPacket();
             inventorySlotPacket.inventoryId = player.getWindowId(this);
             inventorySlotPacket.slot = index;
             inventorySlotPacket.item = this.getItem(index);
             player.dataPacket(inventorySlotPacket);
-        }else{
+        } else {
             player.dataPacket(mobArmorEquipmentPacket);
         }
     }
@@ -109,15 +137,15 @@ public class EntityArmorInventory extends BaseInventory {
     @Override
     public void sendContents(Player player) {
         MobArmorEquipmentPacket mobArmorEquipmentPacket = new MobArmorEquipmentPacket();
-        mobArmorEquipmentPacket.eid = this.entityLiving.getId();
+        mobArmorEquipmentPacket.eid = this.entity.getId();
         mobArmorEquipmentPacket.slots = new Item[]{this.getHelmet(), this.getChestplate(), this.getLeggings(), this.getBoots()};
 
-        if(player == this.getHolder()){
+        if (player == this.holder) {
             InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
             inventoryContentPacket.inventoryId = player.getWindowId(this);
             inventoryContentPacket.slots = new Item[]{this.getHelmet(), this.getChestplate(), this.getLeggings(), this.getBoots()};
             player.dataPacket(inventoryContentPacket);
-        }else{
+        } else {
             player.dataPacket(mobArmorEquipmentPacket);
         }
     }
@@ -134,6 +162,8 @@ public class EntityArmorInventory extends BaseInventory {
 
     @Override
     public Set<Player> getViewers() {
-        return this.viewers;
+        Set<Player> viewers = new HashSet<>(this.viewers);
+        viewers.addAll(entity.getViewers().values());
+        return viewers;
     }
 }

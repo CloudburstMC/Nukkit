@@ -12,13 +12,15 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 
 /**
  * @author CreeperFace
  */
-public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceable {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public abstract class BlockRedstoneDiode extends BlockFlowable implements RedstoneComponent, Faceable {
 
     protected boolean isPowered = false;
 
@@ -47,9 +49,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
 
         if (this.level.getServer().isRedstoneEnabled()) {
-            for (BlockFace face : BlockFace.values()) {
-                this.level.updateAroundRedstone(pos.getSide(face), null);
-            }
+            updateAllAroundRedstone();
         }
         return true;
     }
@@ -75,7 +75,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         return true;
     }
     
-    private boolean isSupportValid(Block support) {
+    protected boolean isSupportValid(Block support) {
         return BlockLever.isSupportValid(support, BlockFace.UP) || support instanceof BlockCauldron;
     }
 
@@ -97,12 +97,12 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
 
                     Block side = this.getSide(getFacing().getOpposite());
                     side.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
-                    this.level.updateAroundRedstone(side, null);
+                    RedstoneComponent.updateAroundRedstone(side);
                 } else if (!this.isPowered) {
                     this.level.setBlock(pos, this.getPowered(), true, true);
                     Block side = this.getSide(getFacing().getOpposite());
                     side.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
-                    this.level.updateAroundRedstone(side, null);
+                    RedstoneComponent.updateAroundRedstone(side);
 
                     if (!shouldBePowered) {
                         level.scheduleUpdate(getPowered(), this, this.getDelay());

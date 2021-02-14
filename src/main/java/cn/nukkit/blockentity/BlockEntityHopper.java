@@ -1,10 +1,15 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockComposter;
+import cn.nukkit.block.BlockHopper;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.inventory.InventoryMoveItemEvent;
@@ -14,6 +19,7 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -29,9 +35,13 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     protected HopperInventory inventory;
 
-    public int transferCooldown = 8;
+    public int transferCooldown;
 
     private AxisAlignedBB pickupArea;
+    
+    private boolean disabled;
+    
+    private final BlockVector3 temporalVector = new BlockVector3();
 
     public BlockEntityHopper(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -41,6 +51,8 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     protected void initBlockEntity() {
         if (this.namedTag.contains("TransferCooldown")) {
             this.transferCooldown = this.namedTag.getInt("TransferCooldown");
+        } else {
+            this.transferCooldown = 8;
         }
 
         this.inventory = new HopperInventory(this);
@@ -54,10 +66,15 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         }
 
         this.pickupArea = new SimpleAxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 2, this.z + 1);
-
+        
         this.scheduleUpdate();
 
         super.initBlockEntity();
+
+        Block block = getBlock();
+        if (block instanceof BlockHopper) {
+            disabled = !((BlockHopper)block).isEnabled();
+        }
     }
 
     @Override
@@ -152,37 +169,47 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         return inventory;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
     @Override
     public boolean onUpdate() {
         if (this.closed) {
             return false;
         }
-
-        this.transferCooldown--;
         
-        if (this.level.isBlockPowered(getBlock())) {
-        	return true;
+        if (isOnTransferCooldown()) {
+            this.transferCooldown--;
+            return true;
+        }
+        
+        if (disabled) {
+        	return false;
         }
 
-        if (!this.isOnTransferCooldown()) {
-            if ((this.level.getBlockDataAt(getFloorX(), getFloorY(), getFloorZ()) & 0x08) == 8) { //is hopper disabled?
-                return false;
-            }
+        Block blockSide = this.getBlock().getSide(BlockFace.UP);
+        BlockEntity blockEntity = this.level.getBlockEntity(temporalVector.setComponentsAdding(this, BlockFace.UP));
 
-            BlockEntity blockEntity = this.level.getBlockEntity(this.up());
+        boolean changed = pushItems();
 
-            boolean changed = pushItems();
+        if (blockEntity instanceof InventoryHolder || blockSide instanceof BlockComposter)  {
+            changed = pullItems() || changed;
+        } else {
+            changed = pickupItems() || changed;
+        }
 
-            if (blockEntity instanceof InventoryHolder) {
-                changed = pullItems() || changed;
-            } else {
-                changed = pickupItems() || changed;
-            }
-
-            if (changed) {
-                this.setTransferCooldown(8);
-                setDirty();
-            }
+        if (changed) {
+            this.setTransferCooldown(8);
+            setDirty();
         }
 
 
@@ -196,12 +223,21 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
         return false;
     }
 
+    @PowerNukkitDifference(info = "Check if the hopper above is locked, then don't pull items.", since = "1.4.0.0-PN")
     public boolean pullItems() {
         if (this.inventory.isFull()) {
             return false;
         }
 
-        BlockEntity blockEntity = this.level.getBlockEntity(this.up());
+        Block blockSide = this.getBlock().getSide(BlockFace.UP);
+        BlockEntity blockEntity = this.level.getBlockEntity(temporalVector.setComponentsAdding(this, BlockFace.UP));
+
+        if (blockEntity instanceof BlockEntityHopper) {
+            BlockEntityHopper hopper = (BlockEntityHopper) blockEntity;
+            if (hopper.disabled)
+                return false;
+        }
+
         //Fix for furnace outputs
         if (blockEntity instanceof BlockEntityFurnace) {
             FurnaceInventory inv = ((BlockEntityFurnace) blockEntity).getInventory();
@@ -262,6 +298,26 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
                     inv.setItem(i, item);
                     return true;
                 }
+            }
+        } else if (blockSide instanceof BlockComposter) {
+            BlockComposter blockComposter = (BlockComposter)blockSide;
+            if (blockComposter.isFull()) {
+                Item item = blockComposter.empty();
+
+                if (item == null || item.isNull()) {
+                    return false;
+                }
+
+                Item itemToAdd = item.clone();
+                itemToAdd.count = 1;
+
+                if (!this.inventory.canAddItem(itemToAdd)) {
+                    return false;
+                }
+
+                Item[] items = this.inventory.addItem(itemToAdd);
+
+                return items.length < 1;
             }
         }
         return false;
@@ -340,10 +396,18 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             return false;
         }
 
-        BlockEntity be = this.level.getBlockEntity(this.getSide(BlockFace.fromIndex(this.level.getBlockDataAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()))));
-
-        if (be instanceof BlockEntityHopper && this.getBlock().getDamage() == 0 || !(be instanceof InventoryHolder))
+        BlockState levelBlockState = getLevelBlockState();
+        if (levelBlockState.getBlockId() != BlockID.HOPPER_BLOCK) {
             return false;
+        }
+        
+        BlockFace side = levelBlockState.getPropertyValue(CommonBlockProperties.FACING_DIRECTION);
+        Block blockSide = this.getBlock().getSide(side);
+        BlockEntity be = this.level.getBlockEntity(temporalVector.setComponentsAdding(this, side));
+
+        if (be instanceof BlockEntityHopper && levelBlockState.isDefaultState() || !(be instanceof InventoryHolder) && !(blockSide instanceof BlockComposter)) {
+            return false;
+        }
 
         InventoryMoveItemEvent event;
 
@@ -417,7 +481,31 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             }
 
             return pushedItem;
-        } else {
+        } else if (blockSide instanceof BlockComposter) {
+            BlockComposter composter = (BlockComposter)blockSide;
+            if (composter.isFull()) {
+                return false;
+            }
+
+            for (int i = 0; i < this.inventory.getSize(); i++) {
+                Item item = this.inventory.getItem(i);
+
+                if (item.isNull()) {
+                    continue;
+                }
+
+                Item itemToAdd = item.clone();
+                itemToAdd.setCount(1);
+
+                if (!composter.onActivate(item)) {
+                    return false;
+                }
+                item.count--;
+                this.inventory.setItem(i, item);
+                return true;
+            }
+        }
+        else {
             Inventory inventory = ((InventoryHolder) be).getInventory();
 
             if (inventory.isFull()) {

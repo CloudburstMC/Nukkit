@@ -13,6 +13,7 @@ import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.math.AxisAlignedBB;
@@ -52,7 +53,7 @@ public class BlockSnowLayer extends BlockFallableMeta {
 
     @Override
     public String getName() {
-        return "Snow Layer";
+        return "Top Snow";
     }
 
     @Override
@@ -213,13 +214,13 @@ public class BlockSnowLayer extends BlockFallableMeta {
         level.setBlock(this, 1, get(AIR), true, false);
         level.setBlock(this, 0, newBlock, true, false);
         Server.getInstance().getScheduler().scheduleDelayedTask(()-> {
-            Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(new Player[0]);
+            Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(Player.EMPTY_ARRAY);
             Vector3[] blocks = {getLocation()};
             level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 0, false);
             level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1, false);
         }, 10);
         
-        Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(new Player[0]);
+        Player[] target = level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(Player.EMPTY_ARRAY);
         Vector3[] blocks = {getLocation()};
         level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 0, false);
         level.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1, false);
@@ -287,7 +288,7 @@ public class BlockSnowLayer extends BlockFallableMeta {
     @Override
     public Item[] getDrops(Item item) {
         if (!item.isShovel() || item.getTier() < ItemTool.TIER_WOODEN) {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
         
         int amount;
@@ -345,5 +346,3 @@ public class BlockSnowLayer extends BlockFallableMeta {
         return side == BlockFace.UP && getSnowHeight() == SNOW_HEIGHT.getMaxValue();
     }
 }
-
-

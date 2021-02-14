@@ -1,5 +1,8 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 /**
  * @author MagicDroidX (Nukkit Project)
  */
@@ -43,6 +46,8 @@ public enum InventoryType {
     CARTOGRAPHY(3, "Cartography Table", 30),
     BARREL(27, "Barrel", 0),
     CAMPFIRE(4, "Campfire", -9), // -9 = NONE
+    @PowerNukkitOnly @Since("1.4.0.0-PN") ENTITY_EQUIPMENT(36, "Entity Equipment", -1), //36 CONTAINER
+    @PowerNukkitOnly @Since("1.4.0.0-PN") ENTITY_ARMOR(4, "Entity Armor", -1), //4 ARMOR
     MINECART_CHEST(27, "Minecart with Chest", 0), // Should be 10
     MINECART_HOPPER(5, "Minecart with Hopper", 8), // Should be 11
     OFFHAND(1, "Offhand", -1),

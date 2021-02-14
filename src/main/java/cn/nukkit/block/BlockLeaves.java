@@ -86,7 +86,7 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public int getToolType() {
-        return ItemTool.TYPE_SHEARS;
+        return ItemTool.TYPE_HOE;
     }
     
     @PowerNukkitOnly @Since("1.4.0.0-PN")
@@ -175,7 +175,7 @@ public class BlockLeaves extends BlockTransparentMeta {
             drops.add(getSapling());
         }
         
-        return drops.toArray(new Item[0]);
+        return drops.toArray(Item.EMPTY_ARRAY);
     }
 
     @Override

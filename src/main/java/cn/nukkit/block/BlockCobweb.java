@@ -58,12 +58,16 @@ public class BlockCobweb extends BlockFlowable {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isShears() || item.isSword()) {
+        if (item.isShears()) {
+            return new Item[]{
+                    this.toItem()
+            };
+        } else if (item.isSword()) {
             return new Item[]{
                     new ItemString()
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

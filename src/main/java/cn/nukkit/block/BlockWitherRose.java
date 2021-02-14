@@ -1,6 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.blockproperty.value.SmallFlowerType;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.item.Item;
@@ -19,18 +24,21 @@ public class BlockWitherRose extends BlockFlower {
     }
 
     @Override
-    public String getName() {
-        return "Wither Rose";
-    }
-
-    @Override
     public int getId() {
         return WITHER_ROSE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.EMPTY_PROPERTIES;
+    }
+
     @Override
     public boolean canPlantOn(Block block) {
-        return super.canPlantOn(block) || block.getId() == Block.NETHERRACK || block.getId() == Block.SOUL_SAND;
+        return super.canPlantOn(block) || block.getId() == BlockID.NETHERRACK || block.getId() == BlockID.SOUL_SAND;
     }
 
     @Override
@@ -60,5 +68,20 @@ public class BlockWitherRose extends BlockFlower {
     @Override
     public boolean hasEntityCollision() {
         return true;
+    }
+
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setFlowerType(SmallFlowerType flowerType) {
+        setOnSingleFlowerType(SmallFlowerType.WITHER_ROSE, flowerType);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public SmallFlowerType getFlowerType() {
+        return SmallFlowerType.WITHER_ROSE;
     }
 }

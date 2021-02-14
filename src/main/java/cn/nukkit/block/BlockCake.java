@@ -47,7 +47,7 @@ public class BlockCake extends BlockTransparentMeta {
 
     @Override
     public double getResistance() {
-        return 2.5;
+        return 0.5;
     }
 
     @PowerNukkitOnly
@@ -111,7 +111,7 @@ public class BlockCake extends BlockTransparentMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

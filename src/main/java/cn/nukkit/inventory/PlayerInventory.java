@@ -164,7 +164,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public void sendHeldItem(Collection<Player> players) {
-        this.sendHeldItem(players.toArray(new Player[0]));
+        this.sendHeldItem(players.toArray(Player.EMPTY_ARRAY));
     }
 
     @Override
@@ -337,8 +337,7 @@ public class PlayerInventory extends BaseInventory {
         MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
         pk.eid = this.getHolder().getId();
         pk.slots = armor;
-        pk.encode();
-        pk.isEncoded = true;
+        pk.tryEncode();
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
@@ -373,7 +372,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public void sendArmorContents(Collection<Player> players) {
-        this.sendArmorContents(players.toArray(new Player[0]));
+        this.sendArmorContents(players.toArray(Player.EMPTY_ARRAY));
     }
 
     public void sendArmorSlot(int index, Player player) {
@@ -386,8 +385,7 @@ public class PlayerInventory extends BaseInventory {
         MobArmorEquipmentPacket pk = new MobArmorEquipmentPacket();
         pk.eid = this.getHolder().getId();
         pk.slots = armor;
-        pk.encode();
-        pk.isEncoded = true;
+        pk.tryEncode();
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
@@ -403,7 +401,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public void sendArmorSlot(int index, Collection<Player> players) {
-        this.sendArmorSlot(index, players.toArray(new Player[0]));
+        this.sendArmorSlot(index, players.toArray(Player.EMPTY_ARRAY));
     }
 
     @Override
@@ -413,7 +411,7 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public void sendContents(Collection<Player> players) {
-        this.sendContents(players.toArray(new Player[0]));
+        this.sendContents(players.toArray(Player.EMPTY_ARRAY));
     }
 
     @Override
@@ -450,7 +448,7 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public void sendSlot(int index, Collection<Player> players) {
-        this.sendSlot(index, players.toArray(new Player[0]));
+        this.sendSlot(index, players.toArray(Player.EMPTY_ARRAY));
     }
 
     @Override
@@ -481,11 +479,10 @@ public class PlayerInventory extends BaseInventory {
         }
         Player p = (Player) this.getHolder();
 
-        //InventoryContentPacket pk = new InventoryContentPacket();
         CreativeContentPacket pk = new CreativeContentPacket();
 
         if (!p.isSpectator()) { //fill it for all gamemodes except spectator
-            pk.entries = Item.getCreativeItems().toArray(new Item[0]);
+            pk.entries = Item.getCreativeItems().toArray(Item.EMPTY_ARRAY);
         }
 
         p.dataPacket(pk);
@@ -515,6 +512,7 @@ public class PlayerInventory extends BaseInventory {
     public void onClose(Player who) {
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = who.getWindowId(this);
+        pk.wasServerInitiated = who.getClosingWindowId() != pk.windowId;
         who.dataPacket(pk);
         // player can never stop viewing their own inventory
         if (who != holder) {

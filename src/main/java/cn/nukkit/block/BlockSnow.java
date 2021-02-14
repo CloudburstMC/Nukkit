@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSnowball;
 import cn.nukkit.item.ItemTool;
@@ -12,7 +13,7 @@ public class BlockSnow extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Snow Block";
+        return "Snow";
     }
 
     @Override
@@ -42,7 +43,7 @@ public class BlockSnow extends BlockSolid {
                     new ItemSnowball(0, 4)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 
@@ -60,5 +61,20 @@ public class BlockSnow extends BlockSolid {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (item.isShovel()) {
+            item.useOn(this);
+            this.level.useBreakOn(this, item.clone().clearNamedTag(), null, true);
+            return true;
+        }
+        return false;
     }
 }

@@ -13,7 +13,7 @@ It has a few key advantages over other server software:
 * Written in Java, Nukkit is faster and more stable.
 * Having a friendly structure, it's easy to contribute to Nukkit's development and rewrite plugins from other platforms into Nukkit plugins.
 
-Nukkit is **under improvement** yet, we welcome contributions. 
+Nukkit is **under improvement** yet, we welcome contributions.
 
 **PowerNukkit** is a modified version of Nukkit that adds support to a huge amount of features like water-logging, all new blocks, more plugin events, offhand slot, bug fixes and many more.
 
@@ -44,7 +44,7 @@ repositories {
 }
 
 dependencies {
-    compile group: 'org.powernukkit', name: 'powernukkit', version: '1.3.1.5-PN'
+    compile group: 'org.powernukkit', name: 'powernukkit', version: '1.4.0.0-PN-ALPHA.2'
 }
 ```
 
@@ -54,7 +54,7 @@ dependencies {
     <dependency>
         <groupId>org.powernukkit</groupId>
         <artifactId>powernukkit</artifactId>
-        <version>1.3.1.5-PN</version>
+        <version>1.4.0.0-PN-ALPHA.2</version>
     </dependency>
 </dependencies>
 ```
@@ -73,6 +73,15 @@ Use the JAR that ends with `-shaded` to run your server.
 Running
 -------------
 Simply run `java -jar powernukkit-<version>-shaded.jar` **in an empty folder**.
+
+But to get the best performance on larger public servers, this longer command will be better:
+```sh
+java -Xms10G -Xmx10G -XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch -XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M -XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 -XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 -XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem -XX:MaxTenuringThreshold=1 -Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true -jar powernukkit-<version>-shaded.jar
+```
+
+Adjust the -Xmx and -Xms settings and the jar name in the end of the command as needed.
+
+Check [this page](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/) for information about the arguments above.
 
 Docker
 -------------
@@ -128,6 +137,51 @@ Check the [docker-compose.yml](docker-compose.yml) file for more details.
 * 1.2.0.2, 1.2.0
 * 1.1.1.1, 1.1.1, 1.1
 * 1.1.1.0
+
+Kubernetes & Helm
+-------------
+
+Validate the chart:
+
+`helm lint charts/nukkit`
+
+Dry run and print out rendered YAML:
+
+`helm install --dry-run --debug nukkit charts/nukkit`
+
+Install the chart:
+
+`helm install nukkit charts/nukkit`
+
+Or, with some different values:
+
+```
+helm install nukkit \
+  --set image.tag="arm64" \
+  --set service.type="LoadBalancer" \
+    charts/nukkit
+```
+
+Or, the same but with a custom values from a file:
+
+```
+helm install nukkit \
+  -f helm-values.local.yaml \
+    charts/nukkit
+```
+
+Upgrade the chart:
+
+`helm upgrade nukkit charts/nukkit`
+
+Testing after deployment:
+
+`helm test nukkit`
+
+Completely remove the chart:
+
+`helm uninstall nukkit`
+
 
 Contributing
 ------------

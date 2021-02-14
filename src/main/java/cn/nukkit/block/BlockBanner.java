@@ -6,13 +6,14 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBanner;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.CompassRoseDirection;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -20,17 +21,19 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.MainLogger;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import static cn.nukkit.block.BlockSignPost.GROUND_SIGN_DIRECTION;
 
 /**
  * @author PetteriM1
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+@Log4j2
 public class BlockBanner extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBanner> {
-
     public BlockBanner() {
         this(0);
     }
@@ -42,6 +45,14 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable, Block
     @Override
     public int getId() {
         return STANDING_BANNER;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return BlockSignPost.PROPERTIES;
     }
 
     @PowerNukkitOnly
@@ -106,13 +117,17 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable, Block
         Block layer1 = level.getBlock(this, 1);
 
         if (face == BlockFace.UP) {
-            this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
+            CompassRoseDirection direction = GROUND_SIGN_DIRECTION.getValueForMeta(
+                    (int) Math.floor((((player != null? player.yaw : 0) + 180) * 16 / 360) + 0.5) & 0x0f
+            );
+            setDirection(direction);
             if (!this.getLevel().setBlock(block, this, true)) {
                 return false;
             }
         } else {
-            this.setDamage(face.getIndex());
-            if (!this.getLevel().setBlock(block, Block.get(BlockID.WALL_BANNER, this.getDamage()), true)) {
+            BlockBanner wall = (BlockBanner) Block.get(BlockID.WALL_BANNER);
+            wall.setBlockFace(face);
+            if (!this.getLevel().setBlock(block, wall, true)) {
                 return false;
             }
         }
@@ -133,7 +148,7 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable, Block
             createBlockEntity(nbt);
             return true;
         } catch (Exception e) {
-            MainLogger.getLogger().warning("Failed to create the block entity "+getBlockEntityType()+" at "+getLocation(), e);
+            log.error("Failed to create the block entity {} at {}", getBlockEntityType(), getLocation(), e);
             level.setBlock(layer0, 0, layer0, true);
             level.setBlock(layer0, 1, layer1, true);
             return false;
@@ -143,7 +158,7 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable, Block
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().getId() == Block.AIR) {
+            if (this.down().getId() == BlockID.AIR) {
                 this.getLevel().useBreakOn(this);
 
                 return Level.BLOCK_UPDATE_NORMAL;
@@ -173,9 +188,29 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable, Block
         return item;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public CompassRoseDirection getDirection() {
+        return getPropertyValue(GROUND_SIGN_DIRECTION);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setDirection(CompassRoseDirection direction) {
+        setPropertyValue(GROUND_SIGN_DIRECTION, direction);
+    }
+
+    @PowerNukkitDifference(info = "Was returning the wrong face, it now return the closest face, or the left face if even", since = "1.4.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return getDirection().getClosestBlockFace();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setDirection(face.getCompassRoseDirection());
     }
 
     @Override
