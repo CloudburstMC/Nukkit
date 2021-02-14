@@ -227,8 +227,9 @@ public abstract class Food {
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public void setEatingTick(int eatingTick) {
+    public Food setEatingTick(int eatingTick) {
         this.eatingTick = eatingTick;
+        return this;
     }
     
     static class NodeIDMeta {
