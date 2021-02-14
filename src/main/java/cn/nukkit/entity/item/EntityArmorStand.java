@@ -26,6 +26,7 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
+import cn.nukkit.potion.Effect;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
@@ -330,6 +331,9 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
     @Override
     public void kill() {
         super.kill();
+        EntityDamageEvent lastDamageCause = this.lastDamageCause;
+        boolean byAttack = lastDamageCause != null && lastDamageCause.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK;
+        
         Vector3 pos = getPosition();
         
         pos.y += 0.2;
@@ -339,7 +343,7 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
         level.dropItem(pos, armorInventory.getLeggings());
         
         pos.y = y + 1.4;
-        level.dropItem(pos, Item.get(ItemID.ARMOR_STAND));
+        level.dropItem(byAttack? pos : this, Item.get(ItemID.ARMOR_STAND));
         level.dropItem(pos, armorInventory.getChestplate());
         equipmentInventory.getContents().values().forEach(items -> this.level.dropItem(this, items));
         equipmentInventory.clearAll();
@@ -347,7 +351,7 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
         pos.y = y + 1.8;
         level.dropItem(pos, armorInventory.getHelmet());
         armorInventory.clearAll();
-        
+
         level.addSound(this, Sound.MOB_ARMOR_STAND_BREAK);
     }
 
@@ -360,25 +364,39 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
                 level.addSound(this, Sound.MOB_ARMOR_STAND_LAND);
                 break;
             case CONTACT:
+            case HUNGER:
+            case MAGIC:
+            case DROWNING:
+            case SUFFOCATION:
+            case PROJECTILE:
                 source.setCancelled(true);
                 break;
-            case VOID:
-                setHealth(0f);
-                return true;
+            case FIRE:
+            case FIRE_TICK:
+            case LAVA:
+                if (hasEffect(Effect.FIRE_RESISTANCE)) {
+                    return false;
+                }
             default:
         }
-
-        boolean hasUpdate = super.attack(source);
-        if (!hasUpdate){
+        
+        if (source.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK) {
+            if (namedTag.getByte("InvulnerableTimer") > 0) {
+                source.setCancelled(true);
+            }
+            if (super.attack(source)) {
+                namedTag.putByte("InvulnerableTimer", 9);
+                return true;
+            }
             return false;
         }
-
+        
         getServer().getPluginManager().callEvent(source);
         if (source.isCancelled()) {
             return false;
         }
         setLastDamageCause(source);
-        
+
         if (getDataPropertyInt(DATA_HURT_TIME) > 0) {
             setHealth(0);
             return true;
@@ -417,6 +435,10 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
             setDataProperty(new IntEntityData(DATA_HURT_TIME, hurtTime - 1), true);
             hasUpdate = true;
         }
+        hurtTime = namedTag.getByte("InvulnerableTimer");
+        if (hurtTime > 0 && age % 2 == 0) {
+            namedTag.putByte("InvulnerableTimer", hurtTime - 1);
+        }
 
         return hasUpdate;
     }
@@ -449,7 +471,7 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
 
         if (isAlive()) {
             if (getHealth() < getMaxHealth()) {
-                setHealth(getHealth() + 1);
+                setHealth(getHealth() + 0.001f);
             }
             motionY -= getGravity();
             
