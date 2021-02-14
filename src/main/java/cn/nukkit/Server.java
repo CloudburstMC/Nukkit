@@ -251,6 +251,8 @@ public class Server {
     private boolean allowNether;
 
     private final Thread currentThread;
+    
+    private final long launchTime;
 
     private Watchdog watchdog;
 
@@ -277,6 +279,7 @@ public class Server {
             throw new IOException("Failed to delete " + tempDir);
         }
         instance = this;
+        launchTime = System.currentTimeMillis();
         CraftingManager.packet = new BatchPacket();
         CraftingManager.packet.payload = EmptyArrays.EMPTY_BYTES;
         
@@ -312,6 +315,7 @@ public class Server {
 
     Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
+        launchTime = System.currentTimeMillis();
         currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
         instance = this;
 
@@ -2659,6 +2663,12 @@ public class Server {
     @Since("1.4.0.0-PN")
     public boolean isCheckMovement(){
         return checkMovement;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public long getLaunchTime() {
+        return launchTime;
     }
 
     private class ConsoleThread extends Thread implements InterruptibleThread {
