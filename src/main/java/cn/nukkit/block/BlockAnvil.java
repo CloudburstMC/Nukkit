@@ -36,8 +36,7 @@ public class BlockAnvil extends BlockFallableMeta implements Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(
-            new BlockProperties(DAMAGE.exportingToItems(true)),
-            DIRECTION, DAMAGE
+        DIRECTION.exportingToItems(true), DAMAGE.exportingToItems(true)
     );
 
     public BlockAnvil() {
