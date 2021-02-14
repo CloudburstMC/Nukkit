@@ -36,19 +36,29 @@ public abstract class ItemEdible extends Item {
 
     @Override
     public boolean onUse(Player player, int ticksUsed) {
+        Food food = Food.getByRelative(this);
+        
+        if (food == null || tickUsed < food.getEatingTick()) {
+            return false;
+        }
+        
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
-
+        
         player.getServer().getPluginManager().callEvent(consumeEvent);
         if (consumeEvent.isCancelled()) {
             player.getInventory().sendContents(player);
             return false;
         }
-
-        Food food = Food.getByRelative(this);
-        if ((player.isAdventure() || player.isSurvival()) && food != null && food.eatenBy(player)) {
-            --this.count;
-            player.getInventory().setItemInHand(this);
+        
+        if (food.eatenBy(player)) {
+            player.completeUsingItem(item.getNetworkId(), CompletedUsingItemPacket.ACTION_EAT);
+            
+            if (player.isAdventure() || player.isSurvival()) {
+                --this.count;
+                player.getInventory().setItemInHand(this);
+            }
         }
+        
         return true;
     }
 }
