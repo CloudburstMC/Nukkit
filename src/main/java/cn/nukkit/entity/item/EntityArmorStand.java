@@ -147,7 +147,7 @@ public class EntityArmorStand extends Entity implements InventoryHolder {
             ItemArmor itemArmor = (ItemArmor) item;
             isArmor = true;
             slot = getArmorSlot(itemArmor);
-        } else if (hasItemInHand && (item.getId() == ItemID.SKULL) || item.getBlockId() == BlockID.PUMPKIN) {
+        } else if (hasItemInHand && (item.getId() == ItemID.SKULL) || item.getBlockId() == BlockID.CARVED_PUMPKIN) {
             isArmor = true;
             slot = EntityArmorInventory.SLOT_HEAD;
         } else if (hasItemInHand) {
