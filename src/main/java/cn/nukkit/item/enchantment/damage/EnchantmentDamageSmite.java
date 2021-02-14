@@ -10,7 +10,7 @@ import cn.nukkit.entity.EntitySmite;
 public class EnchantmentDamageSmite extends EnchantmentDamage {
 
     public EnchantmentDamageSmite() {
-        super(ID_DAMAGE_SMITE, "undead", 5, TYPE.SMITE);
+        super(ID_DAMAGE_SMITE, "undead", Rarity.UNCOMMON, TYPE.SMITE);
     }
 
     @Override

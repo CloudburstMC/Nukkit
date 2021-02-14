@@ -1,10 +1,9 @@
 package cn.nukkit.item.enchantment;
 
-import cn.nukkit.block.BlockPumpkin;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemArmor;
 import cn.nukkit.item.ItemBow;
-import cn.nukkit.item.ItemElytra;
+import cn.nukkit.item.ItemCrossbow;
 import cn.nukkit.item.ItemFishingRod;
 import cn.nukkit.item.ItemSkull;
 import cn.nukkit.item.ItemTrident;
@@ -26,7 +25,8 @@ public enum EnchantmentType {
     BREAKABLE,
     BOW,
     WEARABLE,
-    TRIDENT;
+    TRIDENT,
+    CROSSBOW;
 
     public boolean canEnchantItem(Item item) {
         if (this == ALL) {
@@ -36,7 +36,7 @@ public enum EnchantmentType {
             return true;
 
         } else if (item instanceof ItemArmor) {
-            if (this == ARMOR) {
+            if (this == ARMOR || this == WEARABLE) {
                 return true;
             }
 
@@ -58,15 +58,17 @@ public enum EnchantmentType {
                 case SWORD:
                     return item.isSword();
                 case DIGGER:
-                    return item.isPickaxe() || item.isShovel() || item.isAxe();
+                    return item.isPickaxe() || item.isShovel() || item.isAxe() || item.isHoe();
                 case BOW:
                     return item instanceof ItemBow;
                 case FISHING_ROD:
                     return item instanceof ItemFishingRod;
                 case WEARABLE:
-                    return item instanceof ItemArmor || item instanceof ItemElytra || item instanceof ItemSkull || item.getBlock() instanceof BlockPumpkin;
+                    return item instanceof ItemSkull;
                 case TRIDENT:
                     return item instanceof ItemTrident;
+                case CROSSBOW:
+                    return item instanceof ItemCrossbow;
                 default:
                     return false;
             }

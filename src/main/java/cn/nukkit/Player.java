@@ -36,6 +36,7 @@ import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.inventory.transaction.EnchantTransaction;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
+import cn.nukkit.inventory.transaction.RepairItemTransaction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
@@ -157,6 +158,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected CraftingGrid craftingGrid;
     protected CraftingTransaction craftingTransaction;
     protected EnchantTransaction enchantTransaction;
+    protected RepairItemTransaction repairItemTransaction;
 
     public long creationTime = 0;
 
@@ -2745,6 +2747,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         this.dataPacket(entityEventPacket);
                         Server.broadcastPacket(this.getViewers().values(), entityEventPacket);
+                    } else if (entityEventPacket.event == EntityEventPacket.ENCHANT) {
+                        if (entityEventPacket.eid != this.id) {
+                            break;
+                        }
+
+                        Inventory inventory = this.getWindowById(ANVIL_WINDOW_ID);
+                        if (inventory instanceof AnvilInventory) {
+                            ((AnvilInventory) inventory).setCost(-entityEventPacket.data);
+                        }
                     }
                     break;
                 case ProtocolInfo.COMMAND_REQUEST_PACKET:
@@ -2968,6 +2979,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.enchantTransaction = null;
                         }
                         return;
+                    } else if (transactionPacket.isRepairItemPart) {
+                        if (this.repairItemTransaction == null) {
+                            this.repairItemTransaction = new RepairItemTransaction(this, actions);
+                        } else {
+                            for (InventoryAction action : actions) {
+                                this.repairItemTransaction.addAction(action);
+                            }
+                        }
+                        if (this.repairItemTransaction.canExecute()) {
+                            this.repairItemTransaction.execute();
+                            this.repairItemTransaction = null;
+                        }
+                        return;
                     } else if (this.craftingTransaction != null) {
                         if (craftingTransaction.checkForCraftingPart(actions)) {
                             for (InventoryAction action : actions) {
@@ -2991,6 +3015,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.removeAllWindows(false);
                             this.sendAllInventories();
                             this.enchantTransaction = null;
+                        }
+                    } else if (this.repairItemTransaction != null) {
+                        if (RepairItemTransaction.checkForRepairItemPart(actions)) {
+                            for (InventoryAction action : actions) {
+                                this.repairItemTransaction.addAction(action);
+                            }
+                            return;
+                        } else {
+                            this.server.getLogger().debug("Got unexpected normal inventory action with incomplete repair item transaction from " + this.getName() + ", refusing to execute repair item " + transactionPacket.toString());
+                            this.removeAllWindows(false);
+                            this.sendAllInventories();
+                            this.repairItemTransaction = null;
                         }
                     }
 

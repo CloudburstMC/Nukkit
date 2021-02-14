@@ -39,6 +39,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_BOW = 385;
     public static final int DURABILITY_TRIDENT = 251;
     public static final int DURABILITY_FISHING_ROD = 65;
+    public static final int DURABILITY_CROSSBOW = 465;
 
     public ItemTool(int id) {
         this(id, 0, 1, UNKNOWN_STR);
@@ -149,7 +150,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean isTool() {
-        return (this.id == FLINT_STEEL || this.id == SHEARS || this.id == BOW || this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe());
+        return (this.id == FLINT_STEEL || this.id == SHEARS || this.id == BOW || this.id == CROSSBOW || this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe());
     }
 
     @Override

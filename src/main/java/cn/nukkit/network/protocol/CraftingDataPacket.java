@@ -41,6 +41,10 @@ public class CraftingDataPacket extends DataPacket {
         Collections.addAll(entries, recipe);
     }
 
+    public void addMultiRecipe(MultiRecipe... recipe) {
+        Collections.addAll(entries, recipe);
+    }
+
     public void addBrewingRecipe(BrewingRecipe... recipe) {
         Collections.addAll(brewingEntries, recipe);
     }
@@ -116,6 +120,10 @@ public class CraftingDataPacket extends DataPacket {
                     }
                     this.putSlot(furnace.getResult());
                     this.putString(CRAFTING_TAG_FURNACE);
+                    break;
+                case MULTI:
+                    this.putUUID(((MultiRecipe) recipe).getId());
+                    this.putUnsignedVarInt(0);
                     break;
             }
         }
