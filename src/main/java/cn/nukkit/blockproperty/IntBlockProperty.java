@@ -3,6 +3,7 @@ package cn.nukkit.blockproperty;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyPersistenceValueException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.math.NukkitMath;
 import com.google.common.base.Preconditions;
@@ -50,11 +51,31 @@ public class IntBlockProperty extends BlockProperty<Integer> {
         this(name, exportedToItem, maxValue, 0);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public IntBlockProperty copy() {
+        return new IntBlockProperty(getName(), isExportedToItem(), getMaxValue(), getMinValue(), getBitSize(), getPersistenceName());
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public IntBlockProperty exportingToItems(boolean exportedToItem) {
+        return new IntBlockProperty(getName(), exportedToItem, getMaxValue(), getMinValue(), getBitSize(), getPersistenceName());
+    }
+
     @Override
     public int getMetaForValue(@Nullable Integer value) {
         if (value == null) {
             return 0;
         }
+        return getMetaForValue(value.intValue());
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getMetaForValue(int value) {
         try {
             validateDirectly(value);
         } catch (IllegalArgumentException e) {
@@ -84,12 +105,26 @@ public class IntBlockProperty extends BlockProperty<Integer> {
         return String.valueOf(getIntValueForMeta(meta));
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getMetaForPersistenceValue(@Nonnull String persistenceValue) {
+        try {
+            return getMetaForValue(Integer.parseInt(persistenceValue));
+        } catch (NumberFormatException | InvalidBlockPropertyValueException e) {
+            throw new InvalidBlockPropertyPersistenceValueException(this, null, persistenceValue, e);
+        }
+    }
+
     @Override
     protected void validateDirectly(@Nullable Integer value) {
         if (value == null) {
             return;
         }
-        int newValue = value;
+        validateDirectly(value.intValue());
+    }
+    
+    private void validateDirectly(int newValue) {
         Preconditions.checkArgument(newValue >= minValue, "New value (%s) must be higher or equals to %s", newValue, minValue);
         Preconditions.checkArgument(maxValue >= newValue, "New value (%s) must be less or equals to %s", newValue, maxValue);
     }

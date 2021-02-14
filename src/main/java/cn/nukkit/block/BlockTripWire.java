@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
@@ -101,6 +102,7 @@ public class BlockTripWire extends BlockTransparentMeta {
         }
     }
 
+    @PowerNukkitDifference(info = "Trigger observer.", since = "1.4.0.0-PN")
     @Override
     public void onEntityCollide(Entity entity) {
         if (!this.level.getServer().isRedstoneEnabled()) {
@@ -119,6 +121,7 @@ public class BlockTripWire extends BlockTransparentMeta {
             this.updateHook(false);
 
             this.level.scheduleUpdate(this, 10);
+            this.level.updateComparatorOutputLevelSelective(this, true);
         }
     }
 
@@ -151,6 +154,7 @@ public class BlockTripWire extends BlockTransparentMeta {
         }
     }
 
+    @PowerNukkitDifference(info = "Trigger observer.", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (!this.level.getServer().isRedstoneEnabled()) {
@@ -177,6 +181,8 @@ public class BlockTripWire extends BlockTransparentMeta {
                 this.setPowered(false);
                 this.level.setBlock(this, this, true, false);
                 this.updateHook(false);
+
+                this.level.updateComparatorOutputLevelSelective(this, true);
             }
             return type;
         }

@@ -1,5 +1,7 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.HashMap;
@@ -66,7 +68,8 @@ public class BannerPattern {
         PATTERN_CREEPER("cre"),
         PATTERN_SKULL("sku"),
         PATTERN_FLOWER("flo"),
-        PATTERN_MOJANG("moj");
+        PATTERN_MOJANG("moj"),
+        @Since("1.3.2.0-PN") @PowerNukkitOnly PATTERN_SNOUT("pig");
 
         private final static Map<String, Type> BY_NAME = new HashMap<>();
 

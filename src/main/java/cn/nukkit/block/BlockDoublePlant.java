@@ -49,7 +49,8 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean canBeReplaced() {
-        return this.getDamage() == TALL_GRASS || this.getDamage() == LARGE_FERN;
+        int damage = this.getDamage() & 0x7;
+        return damage == TALL_GRASS || damage == LARGE_FERN;
     }
 
     @Override
@@ -162,7 +163,7 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) { //Bone meal
+        if (item.isFertilizer()) { //Bone meal
             switch (this.getDamage() & 0x07) {
                 case SUNFLOWER:
                 case LILAC:

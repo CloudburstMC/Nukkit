@@ -1,6 +1,8 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
@@ -11,6 +13,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+
+import java.util.OptionalInt;
 
 /**
  * @author yescallop
@@ -28,6 +32,27 @@ public class ItemBoat extends Item {
 
     public ItemBoat(Integer meta, int count) {
         super(BOAT, meta, count, "Boat");
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    protected ItemBoat(int id, Integer meta, int count, String name) {
+        super(id, meta, count, name);
+    }
+
+    @Override
+    public int getDamage() {
+        return super.getDamage();
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public OptionalInt getLegacyBoatDamage() {
+        if (getId() == BOAT) {
+            return OptionalInt.of(super.getDamage());
+        } else {
+            return OptionalInt.empty();
+        }
     }
 
     @Override
@@ -51,14 +76,14 @@ public class ItemBoat extends Item {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (float) ((player.yaw + 90f) % 360)))
                         .add(new FloatTag("", 0)))
-                .putByte("woodID", this.getDamage())
+                .putInt("Variant", getLegacyBoatDamage().orElse(0))
         );
 
         if (boat == null) {
             return false;
         }
 
-        if (player.isSurvival()) {
+        if (player.isSurvival() || player.isAdventure()) {
             Item item = player.getInventory().getItemInHand();
             item.setCount(item.getCount() - 1);
             player.getInventory().setItemInHand(item);

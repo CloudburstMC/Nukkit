@@ -14,6 +14,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -22,8 +23,9 @@ import javax.annotation.Nullable;
  * @author Snake1999
  * @since 2016/1/17
  */
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<BlockEntityMusic> {
+public class BlockNoteblock extends BlockSolid implements RedstoneComponent, BlockEntityHolder<BlockEntityMusic> {
 
     public BlockNoteblock() {
         // Does nothing
@@ -261,10 +263,17 @@ public class BlockNoteblock extends BlockSolid implements BlockEntityHolder<Bloc
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            BlockEntityMusic music = getOrCreateBlockEntity();
-            if (this.getLevel().isBlockPowered(this)) {
+            // We can't use getOrCreateBlockEntity(), because the update method is called on block place,
+            // before the "real" BlockEntity is set. That means, if we'd use the other method here,
+            // it would create two BlockEntities.
+            BlockEntityMusic music = getBlockEntity();
+            if (music == null)
+                return 0;
+
+            if (this.isGettingPower()) {
                 if (!music.isPowered()) {
                     this.emitSound();
                 }

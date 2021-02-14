@@ -1,7 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemSeedsBeetroot;
+import cn.nukkit.item.enchantment.Enchantment;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author xtypr
@@ -33,15 +37,22 @@ public class BlockBeetroot extends BlockCrops {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (this.getDamage() >= 0x07) {
-            return new Item[]{
-                    Item.get(Item.BEETROOT, 0, 1),
-                    Item.get(Item.BEETROOT_SEEDS, 0, (int) (4d * Math.random()))
-            };
-        } else {
-            return new Item[]{
-                    Item.get(Item.BEETROOT_SEEDS, 0, 1)
-            };
+        if (!isFullyGrown()) {
+            return new Item[]{Item.get(ItemID.BEETROOT_SEEDS)};
         }
+        
+        int seeds = 1;
+        int attempts = 3 + Math.min(0, item.getEnchantmentLevel(Enchantment.ID_FORTUNE_DIGGING));
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        for (int i = 0; i < attempts; i++) {
+            if (random.nextInt(7) < 4) { // 4/7, 0.57142857142857142857142857142857
+                seeds++;
+            }
+        }
+
+        return new Item[]{
+                Item.get(ItemID.BEETROOT),
+                Item.get(ItemID.BEETROOT_SEEDS, 0, seeds)
+        };
     }
 }

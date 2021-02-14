@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -268,7 +267,7 @@ public class BlockBamboo extends BlockTransparentMeta {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        boolean itemIsBoneMeal = item.getId() == ItemID.DYE && item.getDamage() == 0x0F; //Bonemeal
+        boolean itemIsBoneMeal = item.isFertilizer(); //Bonemeal
         if (itemIsBoneMeal || item.getBlock() != null && item.getBlockId() == BlockID.BAMBOO) {
             int top = (int) y;
             int count = 1;
