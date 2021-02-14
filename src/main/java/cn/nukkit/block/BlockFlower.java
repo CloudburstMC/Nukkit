@@ -190,7 +190,7 @@ public class BlockFlower extends BlockFlowable {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (item.getId() == ItemID.DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) { //Bone meal
+        if (item.isFertilizer()) { //Bone meal
             if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;
             }

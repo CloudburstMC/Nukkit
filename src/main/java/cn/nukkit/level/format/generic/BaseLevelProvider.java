@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.generic;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
@@ -12,12 +13,16 @@ import cn.nukkit.level.generator.Generator;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.LevelException;
+import cn.nukkit.utils.Utils;
 import com.google.common.collect.ImmutableMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.*;
 import java.nio.ByteOrder;
@@ -28,6 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
 /**
  * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public abstract class BaseLevelProvider implements LevelProvider {
     protected Level level;
 
@@ -49,14 +55,39 @@ public abstract class BaseLevelProvider implements LevelProvider {
     public BaseLevelProvider(Level level, String path) throws IOException {
         this.level = level;
         this.path = path;
-        File file_path = new File(this.path);
-        if (!file_path.exists()) {
-            file_path.mkdirs();
+        File filePath = new File(this.path);
+        if (!filePath.exists() && !filePath.mkdirs()) {
+            throw new LevelException("Could not create the directory "+filePath);
         }
+
         CompoundTag levelData;
-        try (FileInputStream stream = new FileInputStream(new File(this.getPath() + "level.dat"))) {
-            levelData = NBTIO.readCompressed(stream, ByteOrder.BIG_ENDIAN);
+        File levelDatFile = new File(getPath(), "level.dat");
+        try (FileInputStream fos = new FileInputStream(levelDatFile); BufferedInputStream input = new BufferedInputStream(fos)) {
+            levelData = NBTIO.readCompressed(input, ByteOrder.BIG_ENDIAN);;
+        } catch (Exception e) {
+            log.fatal("Failed to load the level.dat file at {}, attempting to load level.dat_old instead!", levelDatFile.getAbsolutePath(), e);
+            try {
+                File old = new File(getPath(), "level.dat_old");
+                if (!old.isFile()) {
+                    log.fatal("The file {} does not exists!", old.getAbsolutePath());
+                    FileNotFoundException ex = new FileNotFoundException("The file " + old.getAbsolutePath() + " does not exists!");
+                    ex.addSuppressed(e);
+                    throw ex;
+                }
+                try (FileInputStream fos = new FileInputStream(old); BufferedInputStream input = new BufferedInputStream(fos)) {
+                    levelData = NBTIO.readCompressed(input, ByteOrder.BIG_ENDIAN);
+                } catch (Exception e2) {
+                    log.fatal("Failed to load the level.dat_old file at {}", levelDatFile.getAbsolutePath());
+                    e2.addSuppressed(e);
+                    throw e2;
+                }
+            } catch (Exception e2) {
+                LevelException ex = new LevelException("Could not load the level.dat and the level.dat_old files. You might need to restore them from a backup!", e);
+                ex.addSuppressed(e2);
+                throw ex;
+            }
         }
+        
         if (levelData.get("Data") instanceof CompoundTag) {
             this.levelData = levelData.getCompound("Data");
         } else {
@@ -70,6 +101,8 @@ public abstract class BaseLevelProvider implements LevelProvider {
         if (!this.levelData.contains("generatorOptions")) {
             this.levelData.putString("generatorOptions", "");
         }
+        
+        this.levelData.putList(new ListTag<>("ServerBrand").add(new StringTag("", Nukkit.CODENAME)));
 
         this.spawn = new Vector3(this.levelData.getInt("SpawnX"), this.levelData.getInt("SpawnY"), this.levelData.getInt("SpawnZ"));
     }
@@ -316,9 +349,17 @@ public abstract class BaseLevelProvider implements LevelProvider {
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed resource leak")
     @Override
     public void saveLevelData() {
-        try (FileOutputStream outputStream = new FileOutputStream(this.getPath() + "level.dat")) {
-            NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", this.levelData), outputStream);
+        File levelDataFile = new File(getPath(), "level.dat");
+        try {
+            Utils.safeWrite(levelDataFile, file -> {
+                try(FileOutputStream fos = new FileOutputStream(file); BufferedOutputStream out = new BufferedOutputStream(fos)) {
+                    NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", this.levelData), out);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            });
         } catch (IOException e) {
+            log.fatal("Failed to save the level.dat file at {}", levelDataFile.getAbsolutePath(), e);
             throw new UncheckedIOException(e);
         }
     }

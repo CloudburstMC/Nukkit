@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.block.BlockGrowEvent;
+import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -12,6 +14,11 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+
+import java.util.EnumSet;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -155,7 +162,7 @@ public class BlockVine extends BlockTransparentMeta {
 
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
-        if (target.isSolid() && face.getHorizontalIndex() != -1) {
+        if (block.getId() != VINE && target.isSolid() && face.getHorizontalIndex() != -1) {
             this.setDamage(getMetaFromFace(face.getOpposite()));
             this.getLevel().setBlock(block, this, true, true);
             return true;
@@ -183,33 +190,166 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!this.getSide(getFace()).isSolid()) {
-                Block up = this.up();
-                if (up.getId() != this.getId() || up.getDamage() != this.getDamage()) {
-                    this.getLevel().useBreakOn(this, null, null, true);
-                    return Level.BLOCK_UPDATE_NORMAL;
+            Block up = this.up();
+            Set<BlockFace> upFaces = up instanceof BlockVine ? ((BlockVine) up).getFaces() : null;
+            Set<BlockFace> faces = this.getFaces();
+            for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
+                if (!this.getSide(face).isSolid() && (upFaces == null || !upFaces.contains(face))) {
+                    faces.remove(face);
                 }
+            }
+            if (faces.isEmpty() && !up.isSolid()) {
+                this.getLevel().useBreakOn(this, null, null, true);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
+            int meta = getMetaFromFaces(faces);
+            if (meta != this.getDamage()) {
+                this.level.setBlock(this, Block.get(VINE, meta), true);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
+        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+            Random random = ThreadLocalRandom.current();
+            if (random.nextInt(4) == 0) {
+                BlockFace face = BlockFace.random(random);
+                Block block = this.getSide(face);
+                int faceMeta = getMetaFromFace(face);
+                int meta = this.getDamage();
+
+                if (this.y < 255 && face == BlockFace.UP && block.getId() == AIR) {
+                    if (this.canSpread()) {
+                        for (BlockFace horizontalFace : BlockFace.Plane.HORIZONTAL) {
+                            if (random.nextBoolean() || !this.getSide(horizontalFace).getSide(face).isSolid()) {
+                                meta &= ~getMetaFromFace(horizontalFace);
+                            }
+                        }
+                        putVineOnHorizontalFace(block, meta, this);
+                    }
+                } else if (face.getHorizontalIndex() != -1 && (meta & faceMeta) != faceMeta) {
+                    if (this.canSpread()) {
+                        if (block.getId() == AIR) {
+                            BlockFace cwFace = face.rotateY();
+                            BlockFace ccwFace = face.rotateYCCW();
+                            Block cwBlock = block.getSide(cwFace);
+                            Block ccwBlock = block.getSide(ccwFace);
+                            int cwMeta = getMetaFromFace(cwFace);
+                            int ccwMeta = getMetaFromFace(ccwFace);
+                            boolean onCw = (meta & cwMeta) == cwMeta;
+                            boolean onCcw = (meta & ccwMeta) == ccwMeta;
+
+                            if (onCw && cwBlock.isSolid()) {
+                                putVine(block, getMetaFromFace(cwFace), this);
+                            } else if (onCcw && ccwBlock.isSolid()) {
+                                putVine(block, getMetaFromFace(ccwFace), this);
+                            } else if (onCw && cwBlock.getId() == AIR && this.getSide(cwFace).isSolid()) {
+                                putVine(cwBlock, getMetaFromFace(face.getOpposite()), this);
+                            } else if (onCcw && ccwBlock.getId() == AIR && this.getSide(ccwFace).isSolid()) {
+                                putVine(ccwBlock, getMetaFromFace(face.getOpposite()), this);
+                            } else if (block.up().isSolid()) {
+                                putVine(block, 0, this);
+                            }
+                        } else if (!block.isTransparent()) {
+                            meta |= getMetaFromFace(face);
+                            putVine(this, meta, null);
+                        }
+                    }
+                } else if (this.y > 0) {
+                    Block below = this.down();
+                    int id = below.getId();
+                    if (id == AIR || id == VINE) {
+                        for (BlockFace horizontalFace : BlockFace.Plane.HORIZONTAL) {
+                            if (random.nextBoolean()) {
+                                meta &= ~getMetaFromFace(horizontalFace);
+                            }
+                        }
+                        putVineOnHorizontalFace(below, below.getDamage() | meta, id == AIR ? this : null);
+                    }
+                }
+                return Level.BLOCK_UPDATE_RANDOM;
             }
         }
         return 0;
     }
 
-    private BlockFace getFace() {
-        int meta = this.getDamage();
-        if ((meta & 1) > 0) {
-            return BlockFace.SOUTH;
-        } else if ((meta & 2) > 0) {
-            return BlockFace.WEST;
-        } else if ((meta & 4) > 0) {
-            return BlockFace.NORTH;
-        } else if ((meta & 8) > 0) {
-            return BlockFace.EAST;
-        }
+    private boolean canSpread() {
+        int blockX = this.getFloorX();
+        int blockY = this.getFloorY();
+        int blockZ = this.getFloorZ();
 
-        return BlockFace.SOUTH;
+        int count = 0;
+        for (int x = blockX - 4; x <= blockX + 4; x++) {
+            for (int z = blockZ - 4; z <= blockZ + 4; z++) {
+                for (int y = blockY - 1; y <= blockY + 1; y++) {
+                    if (this.level.getBlock(x, y, z).getId() == VINE) {
+                        if (++count >= 5) return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
-    private int getMetaFromFace(BlockFace face) {
+    private void putVine(Block block, int meta, Block source) {
+        if (block.getId() == VINE && block.getDamage() == meta) return;
+        Block vine = get(VINE, meta);
+        BlockGrowEvent event;
+        if (source != null) {
+            event = new BlockSpreadEvent(block, source, vine);
+        } else {
+            event = new BlockGrowEvent(block, vine);
+        }
+        this.level.getServer().getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            this.level.setBlock(block, vine, true);
+        }
+    }
+
+    private void putVineOnHorizontalFace(Block block, int meta, Block source) {
+        if (block.getId() == VINE && block.getDamage() == meta) return;
+        boolean isOnHorizontalFace = false;
+        for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
+            int faceMeta = getMetaFromFace(face);
+            if ((meta & faceMeta) == faceMeta) {
+                isOnHorizontalFace = true;
+                break;
+            }
+        }
+        if (isOnHorizontalFace) {
+            putVine(block, meta, source);
+        }
+    }
+
+    private Set<BlockFace> getFaces() {
+        Set<BlockFace> faces = EnumSet.noneOf(BlockFace.class);
+
+        int meta = this.getDamage();
+        if ((meta & 1) > 0) {
+            faces.add(BlockFace.SOUTH);
+        }
+        if ((meta & 2) > 0) {
+            faces.add(BlockFace.WEST);
+        }
+        if ((meta & 4) > 0) {
+            faces.add(BlockFace.NORTH);
+        }
+        if ((meta & 8) > 0) {
+            faces.add(BlockFace.EAST);
+        }
+
+        return faces;
+    }
+
+    private static int getMetaFromFaces(Set<BlockFace> faces) {
+        int meta = 0;
+
+        for (BlockFace face : faces) {
+            meta |= getMetaFromFace(face);
+
+        }
+
+        return meta;
+    }
+
+    private static int getMetaFromFace(BlockFace face) {
         switch (face) {
             case SOUTH:
             default:
@@ -241,5 +381,10 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public boolean sticksToPiston() {
         return false;
+    }
+
+    @Override
+    public boolean canSilkTouch() {
+        return true;
     }
 }

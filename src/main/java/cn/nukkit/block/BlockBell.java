@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
@@ -25,6 +26,7 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,7 +35,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 import static cn.nukkit.blockproperty.CommonBlockProperties.TOGGLE;
 
 @PowerNukkitOnly
-public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityBell> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockBell extends BlockTransparentMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityBell> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final BlockProperty<BellAttachmentType> ATTACHMENT_TYPE = new ArrayBlockProperty<>("attachment", false, BellAttachmentType.class);
@@ -335,14 +338,15 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (!checkSupport()) {
                 this.level.useBreakOn(this);
             }
             return type;
-        } else if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if (level.isBlockPowered(this)) {
+        } else if (type == Level.BLOCK_UPDATE_REDSTONE && this.level.getServer().isRedstoneEnabled()) {
+            if (this.isGettingPower()) {
                 if (!isToggled()) {
                     setToggled(true);
                     this.level.setBlock(this, this, true, true);
@@ -355,6 +359,25 @@ public class BlockBell extends BlockTransparentMeta implements Faceable, BlockEn
             return type;
         }
         return 0;
+    }
+
+    @Override
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isGettingPower() {
+        for (BlockFace side : BlockFace.values()) {
+            Block b = this.getSide(side);
+
+            if (b.getId() == Block.REDSTONE_WIRE && b.getDamage() > 0 && b.y >= this.getY()) {
+                return true;
+            }
+
+            if (this.level.isSidePowered(b, side)) {
+                return true;
+            }
+        }
+
+        return this.level.isBlockPowered(this.getLocation());
     }
 
     @Override

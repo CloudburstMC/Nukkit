@@ -31,8 +31,12 @@ public class BanIpCommand extends VanillaCommand {
         this.setAliases(new String[]{"banip"});
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("reason", CommandParamType.STRING, true)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newType("reason", true, CommandParamType.STRING)
+        });
+        this.commandParameters.put("byIp", new CommandParameter[]{
+                CommandParameter.newType("ip", CommandParamType.STRING),
+                CommandParameter.newType("reason", true, CommandParamType.STRING)
         });
     }
 

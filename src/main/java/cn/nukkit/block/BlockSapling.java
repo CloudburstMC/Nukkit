@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.event.level.StructureGrowEvent;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.ArrayBlockProperty;
@@ -13,16 +14,21 @@ import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.ListChunkManager;
 import cn.nukkit.level.generator.object.BasicGenerator;
 import cn.nukkit.level.generator.object.tree.*;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -144,7 +150,7 @@ public class BlockSapling extends BlockFlowable {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (item.getId() == ItemID.DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) { // BoneMeal
+        if (item.isFertilizer()) { // BoneMeal
             if (player != null && !player.isCreative()) {
                 item.count--;
             }
@@ -189,25 +195,18 @@ public class BlockSapling extends BlockFlowable {
         BasicGenerator generator = null;
         boolean bigTree = false;
 
-        int x = 0;
-        int z = 0;
+        Vector3 vector3 = new Vector3();
 
-        switch (getWoodType()) {
+        switch (this.getDamage() & 0x07) {
             case JUNGLE:
-                loop:
-                for (; x >= -1; --x) {
-                    for (; z >= -1; --z) {
-                        if (this.findSaplings(x, z, WoodType.JUNGLE)) {
-                            generator = new ObjectJungleBigTree(10, 20, Block.get(BlockID.WOOD, BlockWood.JUNGLE), Block.get(BlockID.LEAVES, BlockLeaves.JUNGLE));
-                            bigTree = true;
-                            break loop;
-                        }
-                    }
+                Vector2 vector2;
+                if ((vector2 = this.findSaplings(JUNGLE)) != null) {
+                    vector3 = this.add(vector2.getFloorX(), 0, vector2.getFloorY());
+                    generator = new ObjectJungleBigTree(10, 20, Block.get(BlockID.WOOD, BlockWood.JUNGLE), Block.get(BlockID.LEAVES, BlockLeaves.JUNGLE));
+                    bigTree = true;
                 }
 
                 if (!bigTree) {
-                    x = 0;
-                    z = 0;
                     generator = new NewJungleTree(4, 7);
                 }
                 break;
@@ -215,15 +214,10 @@ public class BlockSapling extends BlockFlowable {
                 generator = new ObjectSavannaTree();
                 break;
             case DARK_OAK:
-                loop:
-                for (; x >= -1; --x) {
-                    for (; z >= -1; --z) {
-                        if (this.findSaplings(x, z, WoodType.DARK_OAK)) {
-                            generator = new ObjectDarkOakTree();
-                            bigTree = true;
-                            break loop;
-                        }
-                    }
+                if ((vector2 = this.findSaplings(DARK_OAK)) != null) {
+                    vector3 = this.add(vector2.getFloorX(), 0, vector2.getFloorY());
+                    generator = new ObjectDarkOakTree();
+                    bigTree = true;
                 }
 
                 if (!bigTree) {
@@ -232,36 +226,73 @@ public class BlockSapling extends BlockFlowable {
                 break;
             //TODO: big spruce
             default:
-                ObjectTree.growTree(this.level, this.getFloorX(), this.getFloorY(), this.getFloorZ(), new NukkitRandom(), getWoodType(), false);
+                ListChunkManager chunkManager = new ListChunkManager(this.level);
+                ObjectTree.growTree(chunkManager, this.getFloorX(), this.getFloorY(), this.getFloorZ(), new NukkitRandom(), this.getDamage() & 0x07);
+                StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
+                this.level.getServer().getPluginManager().callEvent(ev);
+                if (ev.isCancelled()) {
+                    return;
+                }
+                for(Block block : ev.getBlockList()) {
+                    this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
+                }
                 return;
         }
 
         if (bigTree) {
-            this.level.setBlock(this.add(x, 0, z), get(AIR), true, false);
-            this.level.setBlock(this.add(x + 1., 0, z), get(AIR), true, false);
-            this.level.setBlock(this.add(x, 0, z + 1.), get(AIR), true, false);
-            this.level.setBlock(this.add(x + 1., 0, z + 1.), get(AIR), true, false);
+            this.level.setBlock(vector3, get(AIR), true, false);
+            this.level.setBlock(vector3.add(1, 0, 0), get(AIR), true, false);
+            this.level.setBlock(vector3.add(0, 0, 1), get(AIR), true, false);
+            this.level.setBlock(vector3.add(1, 0, 1), get(AIR), true, false);
         } else {
             this.level.setBlock(this, get(AIR), true, false);
         }
 
-        if (!generator.generate(this.level, new NukkitRandom(), this.add(x, 0, z))) {
+        ListChunkManager chunkManager = new ListChunkManager(this.level);
+        boolean success = generator.generate(chunkManager, new NukkitRandom(), vector3);
+        StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
+        this.level.getServer().getPluginManager().callEvent(ev);
+        if (ev.isCancelled() || !success) {
             if (bigTree) {
-                this.level.setBlock(this.add(x, 0, z), this, true, false);
-                this.level.setBlock(this.add(x + 1., 0, z), this, true, false);
-                this.level.setBlock(this.add(x, 0, z + 1.), this, true, false);
-                this.level.setBlock(this.add(x + 1., 0, z + 1.), this, true, false);
+                this.level.setBlock(vector3, this, true, false);
+                this.level.setBlock(vector3.add(1, 0, 0), this, true, false);
+                this.level.setBlock(vector3.add(0, 0, 1), this, true, false);
+                this.level.setBlock(vector3.add(1, 0, 1), this, true, false);
             } else {
                 this.level.setBlock(this, this, true, false);
             }
+            return;
+        }
+        for(Block block : ev.getBlockList()) {
+            this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
         }
     }
 
-    private boolean findSaplings(int x, int z, WoodType type) {
-        return this.isSameType(this.add(x, 0, z), type) && 
-                this.isSameType(this.add(x + 1., 0, z), type) && 
-                this.isSameType(this.add(x, 0, z + 1.), type) && 
-                this.isSameType(this.add(x + 1., 0, z + 1.), type);
+    private Vector2 findSaplings(int type) {
+        List<List<Vector2>> validVectorsList = new ArrayList<>();
+        validVectorsList.add(Arrays.asList(new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, 1), new Vector2(1, 1)));
+        validVectorsList.add(Arrays.asList(new Vector2(0, 0), new Vector2(-1, 0), new Vector2(0, -1), new Vector2(-1, -1)));
+        validVectorsList.add(Arrays.asList(new Vector2(0, 0), new Vector2(1, 0), new Vector2(0, -1), new Vector2(1, -1)));
+        validVectorsList.add(Arrays.asList(new Vector2(0, 0), new Vector2(-1, 0), new Vector2(0, 1), new Vector2(-1, 1)));
+        for(List<Vector2> validVectors : validVectorsList) {
+            boolean correct = true;
+            for(Vector2 vector2 : validVectors) {
+                if(!this.isSameType(this.add(vector2.x, 0, vector2.y), type))
+                    correct = false;
+            }
+            if(correct) {
+                int lowestX = 0;
+                int lowestZ = 0;
+                for(Vector2 vector2 : validVectors) {
+                    if(vector2.getFloorX() < lowestX)
+                        lowestX = vector2.getFloorX();
+                    if(vector2.getFloorY() < lowestZ)
+                        lowestZ = vector2.getFloorY();
+                }
+                return new Vector2(lowestX, lowestZ);
+            }
+        }
+        return null;
     }
 
     @Deprecated

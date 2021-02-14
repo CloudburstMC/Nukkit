@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.item.Item;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
@@ -7,6 +9,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.OptionalBoolean;
 import cn.nukkit.utils.Rail;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 
@@ -14,7 +17,8 @@ import javax.annotation.Nonnull;
  * @author Snake1999, larryTheCoder (Nukkit Project, Minecart and Riding Project)
  * @since 2016/1/11
  */
-public class BlockRailPowered extends BlockRail {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockRailPowered extends BlockRail implements RedstoneComponent {
 
     public BlockRailPowered() {
         this(0);
@@ -44,6 +48,7 @@ public class BlockRailPowered extends BlockRail {
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         // Warning: I din't recommended this on slow networks server or slow client
         //          Network below 86Kb/s. This will became unresponsive to clients 
@@ -58,11 +63,11 @@ public class BlockRailPowered extends BlockRail {
                 return 0;
             }
             boolean wasPowered = isActive();
-            boolean isPowered = level.isBlockPowered(this.getLocation())
+            boolean isPowered = this.isGettingPower()
                     || checkSurrounding(this, true, 0)
                     || checkSurrounding(this, false, 0);
 
-            // Avoid Block minstake
+            // Avoid Block mistake
             if (wasPowered != isPowered) {
                 setActive(isPowered);
                 level.updateAround(down());
@@ -172,6 +177,7 @@ public class BlockRailPowered extends BlockRail {
                 || onStraight && canPowered(new Vector3(dx, dy - 1., dz), base, power, relative);
     }
 
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     protected boolean canPowered(Vector3 pos, Rail.Orientation state, int power, boolean relative) {
         Block block = level.getBlock(pos);
         // What! My block is air??!! Impossible! XD
@@ -192,7 +198,7 @@ public class BlockRailPowered extends BlockRail {
                 || base != Rail.Orientation.STRAIGHT_EAST_WEST
                 && base != Rail.Orientation.ASCENDING_EAST
                 && base != Rail.Orientation.ASCENDING_WEST)
-                && (level.isBlockPowered(pos) || checkSurrounding(pos, relative, power + 1));
+                && (this.isGettingPower() || checkSurrounding(pos, relative, power + 1));
     }
 
     @Override

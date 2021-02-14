@@ -1,17 +1,21 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.RedstoneComponent;
 
 /**
  * @author CreeperFace
  * @since 10.4.2017
  */
-public class BlockRedstoneTorchUnlit extends BlockTorch {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public class BlockRedstoneTorchUnlit extends BlockTorch implements RedstoneComponent {
 
     public BlockRedstoneTorchUnlit() {
         this(0);
@@ -77,23 +81,25 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
     }
 
     private boolean checkState() {
-        BlockFace face = getBlockFace().getOpposite();
-        Vector3 pos = getLocation();
+        if (!this.isPoweredFromSide()) {
+            this.level.setBlock(getLocation(), Block.get(BlockID.REDSTONE_TORCH, getDamage()), false, true);
 
-        if (!this.level.isSidePowered(pos.getSide(face), face)) {
-            this.level.setBlock(pos, Block.get(BlockID.REDSTONE_TORCH, getDamage()), false, true);
-
-            for (BlockFace side : BlockFace.values()) {
-                if (side == face) {
-                    continue;
-                }
-
-                this.level.updateAroundRedstone(pos.getSide(side), null);
-            }
+            updateAllAroundRedstone(getBlockFace().getOpposite());
             return true;
         }
 
         return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected boolean isPoweredFromSide() {
+        BlockFace face = getBlockFace().getOpposite();
+        if (this.getSide(face) instanceof BlockPistonBase && this.getSide(face).isGettingPower()) {
+            return true;
+        }
+
+        return this.level.isSidePowered(this.getLocation().getSide(face), face);
     }
 
     @Override

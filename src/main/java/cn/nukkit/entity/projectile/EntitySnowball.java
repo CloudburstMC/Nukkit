@@ -1,7 +1,9 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.mob.EntityBlaze;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.GenericParticle;
@@ -9,6 +11,7 @@ import cn.nukkit.level.particle.Particle;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.DataPacket;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -89,6 +92,12 @@ public class EntitySnowball extends EntityProjectile {
         this.timing.stopTiming();
 
         return hasUpdate;
+    }
+
+    @PowerNukkitOnly
+    @Override
+    public int getResultDamage(@Nullable Entity entity) {
+        return entity instanceof EntityBlaze ? 3 : super.getResultDamage(entity);
     }
 
     @Override

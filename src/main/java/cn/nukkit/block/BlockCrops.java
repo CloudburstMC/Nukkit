@@ -93,7 +93,7 @@ public abstract class BlockCrops extends BlockFlowable {
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
         //Bone meal
-        if (item.getId() == ItemID.DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) {
+        if (item.isFertilizer()) {
             int max = getMaxGrowth();
             int growth = getGrowth();
             if (growth < max) {

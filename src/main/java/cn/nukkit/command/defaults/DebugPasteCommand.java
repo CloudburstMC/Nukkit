@@ -8,18 +8,20 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.HastebinUtility;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
+@Log4j2
 public class DebugPasteCommand extends VanillaCommand {
 
     public DebugPasteCommand(String name) {
         super(name, "%nukkit.command.debug.description", "%nukkit.command.debug.usage");
         this.setPermission("nukkit.command.debug.perform");
+        this.commandParameters.clear();
     }
 
     @Override
@@ -89,7 +91,7 @@ public class DebugPasteCommand extends VanillaCommand {
                     String link = HastebinUtility.upload(b.toString());
                     sender.sendMessage(link);
                 } catch (IOException e) {
-                    MainLogger.getLogger().logException(e);
+                    log.error("Failed to upload debug paste, hastebin might be down", e);
                 }
             }
         });

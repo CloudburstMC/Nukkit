@@ -77,7 +77,7 @@ public class NukkitMath {
         return value < min ? min : (value > max ? max : value);
     }
 
-    @Since("1.4.0.0-PN")
+    @Since("1.3.2.0-PN")
     public static float clamp(float value, float min, float max) {
         return value < min ? min : (value > max ? max : value);
     }

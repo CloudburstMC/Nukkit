@@ -261,31 +261,34 @@ public interface ItemID {
     @PowerNukkitOnly int CAMPFIRE = 720;
 
     @PowerNukkitOnly int SUSPICIOUS_STEW = 734;
-
+    
     int HONEYCOMB = 736;
     int HONEY_BOTTLE = 737;
 
-    @Since("1.4.0.0-PN") int LODESTONECOMPASS = 741;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int LODESTONE_COMPASS = 741;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_INGOT = 742;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_SWORD = 743;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_SHOVEL = 744;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_PICKAXE = 745;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_AXE = 746;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_HOE = 747;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_HELMET = 748;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_CHESTPLATE = 749;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_LEGGINGS = 750;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_BOOTS = 751;
-    @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERITE_SCRAP = 752;
+    @Since("1.3.2.0-PN") int LODESTONECOMPASS = 741;
+    @Since("1.4.0.0-PN") @PowerNukkitOnly int LODESTONE_COMPASS = LODESTONECOMPASS;
+    @Since("1.3.2.0-PN") int NETHERITE_INGOT = 742;
+    @Since("1.3.2.0-PN") int NETHERITE_SWORD = 743;
+    @Since("1.3.2.0-PN") int NETHERITE_SHOVEL = 744;
+    @Since("1.3.2.0-PN") int NETHERITE_PICKAXE = 745;
+    @Since("1.3.2.0-PN") int NETHERITE_AXE = 746;
+    @Since("1.3.2.0-PN") int NETHERITE_HOE = 747;
+    @Since("1.3.2.0-PN") int NETHERITE_HELMET = 748;
+    @Since("1.3.2.0-PN") int NETHERITE_CHESTPLATE = 749;
+    @Since("1.3.2.0-PN") int NETHERITE_LEGGINGS = 750;
+    @Since("1.3.2.0-PN") int NETHERITE_BOOTS = 751;
+    @Since("1.3.2.0-PN") int NETHERITE_SCRAP = 752;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int CRIMSON_SIGN = 753;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int WARPED_SIGN = 754;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int CRIMSON_DOOR = 755;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int WARPED_DOOR = 756;
-    @Since("1.4.0.0-PN") int WARPED_FUNGUS_ON_A_STICK = 757;
+    @Since("1.3.2.0-PN") int WARPED_FUNGUS_ON_A_STICK = 757;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int CHAIN = 758;
-    @Since("1.4.0.0-PN") int RECORD_PIGSTEP = 759;
+    @Since("1.3.2.0-PN") int RECORD_PIGSTEP = 759;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHER_SPROUTS = 760;
 
     @Since("1.4.0.0-PN") @PowerNukkitOnly int SOUL_CAMPFIRE = 801;
+
+    //@PowerNukkitOnly int DEBUG_STICK = <Possible:> 802+;
+    
 }

@@ -60,8 +60,8 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                 .putInt("z", (int) this.z)
                 .putString("Lock", this.namedTag.getString("Lock"))
                 .putInt("Levels", this.namedTag.getInt("Levels"))
-                .putInt("Primary", this.namedTag.getInt("Primary"))
-                .putInt("Secondary", this.namedTag.getInt("Secondary"));
+                .putInt("primary", this.namedTag.getInt("Primary"))
+                .putInt("secondary", this.namedTag.getInt("Secondary"));
     }
 
     private long currentTick = 0;
@@ -98,6 +98,10 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         int range = 10 + getPowerLevel() * 10;
         int duration = 9 + getPowerLevel() * 2;
 
+        if (!isPrimaryAllowed(getPrimaryPower(), getPowerLevel())) {
+            return true;
+        }
+
         for(Map.Entry<Long, Player> entry : players.entrySet()) {
             Player p = entry.getValue();
 
@@ -113,32 +117,21 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                     e.setDuration(duration * 20);
 
                     //If secondary is selected as the primary too, apply 2 amplification
-                    if (getSecondaryPower() == getPrimaryPower()) {
-                        e.setAmplifier(2);
-                    } else {
+                    if (getPowerLevel() == POWER_LEVEL_MAX && getSecondaryPower() == getPrimaryPower()) {
                         e.setAmplifier(1);
                     }
-
-                    //Hide particles
-                    e.setVisible(false);
 
                     //Add the effect
                     p.addEffect(e);
                 }
 
                 //If we have a secondary power as regen, apply it
-                if (getSecondaryPower() == Effect.REGENERATION) {
+                if (getPowerLevel() == POWER_LEVEL_MAX && getSecondaryPower() == Effect.REGENERATION) {
                     //Get the regen effect
                     e = Effect.getEffect(Effect.REGENERATION);
 
                     //Set duration
                     e.setDuration(duration * 20);
-
-                    //Regen I
-                    e.setAmplifier(1);
-
-                    //Hide particles
-                    e.setVisible(false);
 
                     //Add effect
                     p.addEffect(e);
@@ -185,8 +178,9 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                             testBlockId != Block.IRON_BLOCK &&
                                     testBlockId != Block.GOLD_BLOCK &&
                                     testBlockId != Block.EMERALD_BLOCK &&
-                                    testBlockId != Block.DIAMOND_BLOCK
-                            ) {
+                                    testBlockId != Block.DIAMOND_BLOCK &&
+                                    testBlockId != Block.NETHERITE_BLOCK
+                    ) {
                         return powerLevel - 1;
                     }
 
@@ -198,13 +192,13 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     }
 
     public int getPowerLevel() {
-        return namedTag.getInt("Level");
+        return namedTag.getInt("Levels");
     }
 
     public void setPowerLevel(int level) {
         int currentLevel = getPowerLevel();
         if (level != currentLevel) {
-            namedTag.putInt("Level", level);
+            namedTag.putInt("Levels", level);
             setDirty();
             this.spawnToAll();
         }
@@ -243,8 +237,18 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
             return false;
         }
 
-        this.setPrimaryPower(nbt.getInt("primary"));
-        this.setSecondaryPower(nbt.getInt("secondary"));
+        int primary = nbt.getInt("primary");
+        if (!isPrimaryAllowed(primary, this.getPowerLevel())) {
+            return false;
+        }
+
+        int secondary = nbt.getInt("secondary");
+        if (secondary != 0 && secondary != primary && secondary != Effect.REGENERATION) {
+            return false;
+        }
+
+        this.setPrimaryPower(primary);
+        this.setSecondaryPower(secondary);
 
         this.getLevel().addSound(this, Sound.BEACON_POWER);
 
@@ -252,5 +256,11 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
         inv.setItem(0, new ItemBlock(Block.get(BlockID.AIR), 0, 0));
         return true;
+    }
+
+    private static boolean isPrimaryAllowed(int primary, int powerLevel) {
+        return ((primary == Effect.SPEED || primary == Effect.HASTE) && powerLevel >= 1) ||
+                ((primary == Effect.DAMAGE_RESISTANCE || primary == Effect.JUMP) && powerLevel >= 2) ||
+                (primary == Effect.STRENGTH && powerLevel >= 3);
     }
 }
