@@ -22,12 +22,16 @@ public class Effect implements Cloneable {
     public static final int MINING_FATIGUE = 4;
     public static final int STRENGTH = 5;
     public static final int HEALING = 6;
+    public static final int INSTANT_HEALTH = 6;
     public static final int HARMING = 7;
+    public static final int INSTANT_DAMAGE = 7;
     public static final int JUMP = 8;
+    public static final int JUMP_BOOST = 8;
     public static final int NAUSEA = 9;
     public static final int CONFUSION = 9;
     public static final int REGENERATION = 10;
     public static final int DAMAGE_RESISTANCE = 11;
+    public static final int RESISTANCE = 11;
     public static final int FIRE_RESISTANCE = 12;
     public static final int WATER_BREATHING = 13;
     public static final int INVISIBILITY = 14;
@@ -44,6 +48,8 @@ public class Effect implements Cloneable {
     public static final int FATAL_POISON = 25;
     public static final int CONDUIT_POWER = 26;
     public static final int SLOW_FALLING = 27;
+    public static final int BAD_OMEN = 28;
+    public static final int VILLAGE_HERO = 29;
 
     protected static Effect[] effects;
 
@@ -80,6 +86,8 @@ public class Effect implements Cloneable {
         effects[Effect.FATAL_POISON] = new Effect(Effect.FATAL_POISON, "%potion.poison", 78, 147, 49, true);
         effects[Effect.CONDUIT_POWER] = new Effect(Effect.CONDUIT_POWER, "%potion.conduitPower", 29, 194, 209);
         effects[Effect.SLOW_FALLING] = new Effect(Effect.SLOW_FALLING, "%potion.slowFalling", 206, 255, 255);
+        effects[Effect.BAD_OMEN] = new Effect(Effect.BAD_OMEN, "%effect.badOmen", 11, 97, 56, true);
+        effects[Effect.VILLAGE_HERO] = new Effect(Effect.VILLAGE_HERO, "%effect.villageHero", 68, 255, 68);
     }
 
     public static Effect getEffect(int id) {
@@ -145,7 +153,7 @@ public class Effect implements Cloneable {
     }
 
     public boolean isVisible() {
-        return show;
+        return show && this.id != VILLAGE_HERO;
     }
 
     public Effect setVisible(boolean visible) {
