@@ -2,6 +2,9 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
@@ -20,22 +23,23 @@ import java.util.stream.Stream;
  * Nukkit Project
  */
 public class AnvilInventory extends FakeBlockUIComponent {
-    
-    public static final int OFFSET = 1;
+
+    @Since("1.3.2.0-PN") public static final int ANVIL_INPUT_UI_SLOT = 1;
+    @Since("1.3.2.0-PN") public static final int ANVIL_MATERIAL_UI_SLOT = 2;
+    @Since("1.3.2.0-PN") public static final int ANVIL_OUTPUT_UI_SLOT = CREATED_ITEM_OUTPUT_UI_SLOT;
+
+    @PowerNukkitOnly public static final int OFFSET = 1;
     public static final int TARGET = 0;
     public static final int SACRIFICE = 1;
-    public static final int RESULT = 50;
-    
-    private int levelCost;
-    private String newItemName;
-    
-    @NonNull
-    private Item currentResult = Item.get(0);
+    public static final int RESULT = ANVIL_OUTPUT_UI_SLOT - 1; //1: offset
+
+    private int cost;
 
     public AnvilInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.ANVIL, OFFSET, position);
     }
     
+    /*
     @Override
     public void onSlotChange(int index, Item before, boolean send) {
         try {
@@ -46,7 +50,10 @@ public class AnvilInventory extends FakeBlockUIComponent {
             super.onSlotChange(index, before, send);
         }
     }
+     */
     
+    @Deprecated
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "PowerNukkit", reason = "Experimenting the new implementation by Nukkit")
     public void updateResult() {
         Item target = getFirstItem();
         Item sacrifice = getSecondItem();
@@ -258,6 +265,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
         who.craftingType = Player.CRAFTING_ANVIL;
     }
     
+    /*
     @Override
     public Item getItem(int index) {
         if (index < 0 || index > 3) {
@@ -282,19 +290,58 @@ public class AnvilInventory extends FakeBlockUIComponent {
         
         return super.setItem(index, item, send);
     }
-    
+     */
+
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "getInputSlot()"
+    )
+    @PowerNukkitOnly
     public Item getFirstItem() {
         return getItem(TARGET);
     }
-    
+
+    @Since("1.3.2.0-PN")
+    public Item getInputSlot() {
+        return this.getItem(TARGET);
+    }
+
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "getMaterialSlot()"
+    )
+    @PowerNukkitOnly
     public Item getSecondItem() {
         return getItem(SACRIFICE);
     }
-    
-    public Item getResult() {
-        return currentResult.clone();
+
+    @Since("1.3.2.0-PN")
+    public Item getMaterialSlot() {
+        return this.getItem(SACRIFICE);
     }
 
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "getOutputSlot()"
+    )
+    @PowerNukkitOnly
+    public Item getResult() {
+        //return currentResult.clone();
+        return getOutputSlot();
+    }
+
+    @Since("1.3.2.0-PN")
+    public Item getOutputSlot() {
+        return this.getItem(RESULT);
+    }
+
+    /*
     @Override
     public void sendContents(Player... players) {
         super.sendContents(players);
@@ -303,35 +350,36 @@ public class AnvilInventory extends FakeBlockUIComponent {
             player.sendExperienceLevel();
         }
     }
+     */
 
+    @PowerNukkitOnly
     public boolean setFirstItem(Item item, boolean send) {
         return setItem(SACRIFICE, item, send);
     }
-    
+
+    @PowerNukkitOnly
     public boolean setFirstItem(Item item) {
         return setFirstItem(item, true);
     }
-    
+
+    @PowerNukkitOnly
     public boolean setSecondItem(Item item, boolean send) {
         return setItem(SACRIFICE, item, send);
     }
-    
+
+    @PowerNukkitOnly
     public boolean setSecondItem(Item item) {
         return setSecondItem(item, true);
     }
 
-    /**
-     * @deprecated send parameter is deprecated. This method will be removed in 1.3.0.0-PN.
-     */
-    @Deprecated
+    @Deprecated @DeprecationDetails(reason = "send parameter is deprecated", toBeRemovedAt = "1.4.0.0-PN")
+    @PowerNukkitOnly
     public boolean setResult(Item item, boolean send) {
         return setItem(2, item, send);
     }
 
-    /**
-     * @deprecated the client won't see this change, and the transaction might fail. This method will be removed from public in 1.3.0.0-PN.
-     */
-    @Deprecated
+    @Deprecated @DeprecationDetails(reason = "the client won't see this change, and the transaction might fail.", toBeRemovedAt = "1.4.0.0-PN")
+    @PowerNukkitOnly
     public boolean setResult(Item item) {
         if (item == null || item.isNull()) {
             this.currentResult = Item.get(0);
@@ -344,19 +392,43 @@ public class AnvilInventory extends FakeBlockUIComponent {
     private static int getRepairCost(Item item) {
         return item.hasCompoundTag() && item.getNamedTag().contains("RepairCost") ? item.getNamedTag().getInt("RepairCost") : 0;
     }
-    
+
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "getCost()"
+    )
     public int getLevelCost() {
         return levelCost;
     }
-    
+
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "setCost(int)"
+    )
     protected void setLevelCost(int levelCost) {
         this.levelCost = levelCost;
     }
-    
+
+    @Since("1.3.2.0-PN")
+    public int getCost() {
+        return this.cost;
+    }
+
+    @Since("1.3.2.0-PN")
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    @PowerNukkitOnly
     public String getNewItemName() {
         return newItemName;
     }
-    
+
+    @PowerNukkitOnly
     public void setNewItemName(String newItemName) {
         this.newItemName = newItemName;
     }

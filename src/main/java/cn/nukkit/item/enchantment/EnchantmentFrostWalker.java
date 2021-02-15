@@ -2,12 +2,7 @@ package cn.nukkit.item.enchantment;
 
 public class EnchantmentFrostWalker extends Enchantment {
     protected EnchantmentFrostWalker() {
-        super(ID_FROST_WALKER, "frostWalker", 2, EnchantmentType.ARMOR_FEET);
-    }
-
-    @Override
-    public int getMinEnchantAbility(int level) {
-        return level * 10;
+        super(ID_FROST_WALKER, "frostwalker", Rarity.RARE, EnchantmentType.ARMOR_FEET);
     }
 
     @Override
