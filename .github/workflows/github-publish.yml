@@ -34,8 +34,10 @@ jobs:
     - name: Build with Maven
       run: mvn -B package --file pom.xml
     
-    - name: Adjust the repository url
+    - name: Adjust the release repository url
       run: sed -i 's@https://api.bintray.com/maven/powernukkit/powernukkit/PowerNukkit@https://maven.pkg.github.com/PowerNukkit/PowerNukkit@' pom.xml
+    - name: Adjust the snapshot repository url
+      run: sed -i 's@https://oss.sonatype.org/content/repositories/snapshots@https://maven.pkg.github.com/PowerNukkit/PowerNukkit@' pom.xml
     
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
