@@ -1,6 +1,7 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.block.AnvilDamageEvent;
 import cn.nukkit.event.block.AnvilDamageEvent.DamageCause;
@@ -8,8 +9,8 @@ import cn.nukkit.event.inventory.RepairItemEvent;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.inventory.FakeBlockMenu;
 import cn.nukkit.inventory.Inventory;
-import cn.nukkit.inventory.transaction.action.RepairItemAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.transaction.action.RepairItemAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.network.protocol.LevelEventPacket;
@@ -20,6 +21,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Since("1.3.2.0-PN")
 public class RepairItemTransaction extends InventoryTransaction {
 
     private Item inputItem;
@@ -28,6 +30,7 @@ public class RepairItemTransaction extends InventoryTransaction {
 
     private int cost;
 
+    @Since("1.3.2.0-PN")
     public RepairItemTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
     }
@@ -369,22 +372,27 @@ public class RepairItemTransaction extends InventoryTransaction {
         return false;
     }
 
+    @Since("1.3.2.0-PN")
     public Item getInputItem() {
         return this.inputItem;
     }
 
+    @Since("1.3.2.0-PN")
     public Item getMaterialItem() {
         return this.materialItem;
     }
 
+    @Since("1.3.2.0-PN")
     public Item getOutputItem() {
         return this.outputItem;
     }
 
+    @Since("1.3.2.0-PN")
     public int getCost() {
         return this.cost;
     }
 
+    @Since("1.3.2.0-PN")
     public static boolean checkForRepairItemPart(List<InventoryAction> actions) {
         for (InventoryAction action : actions) {
             if (action instanceof RepairItemAction) {

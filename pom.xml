@@ -99,6 +99,18 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.powernukkit</groupId>
+            <artifactId>powernukkit-tests-junit5</artifactId>
+            <version>0.1.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.powernukkit.fastutil</groupId>
             <artifactId>fastutil-lite</artifactId>
             <version>8.1.1</version>

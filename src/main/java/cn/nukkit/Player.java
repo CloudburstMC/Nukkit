@@ -5,7 +5,6 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
@@ -26,10 +25,7 @@ import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
 import cn.nukkit.event.entity.EntityPortalEnterEvent.PortalType;
-import cn.nukkit.event.inventory.InventoryCloseEvent;
-import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
-import cn.nukkit.event.inventory.InventoryPickupItemEvent;
-import cn.nukkit.event.inventory.InventoryPickupTridentEvent;
+import cn.nukkit.event.inventory.*;
 import cn.nukkit.event.player.*;
 import cn.nukkit.event.player.PlayerAsyncPreLoginEvent.LoginResult;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
@@ -3586,6 +3582,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
+                    case ProtocolInfo.FILTER_TEXT_PACKET: {
+                        FilterTextPacket filterTextPacket = (FilterTextPacket) packet;
+                        if (craftingType == CRAFTING_ANVIL) {
+                            AnvilInventory anvilInventory = (AnvilInventory) getWindowById(ANVIL_WINDOW_ID);
+                            if (anvilInventory != null) {
+                                PlayerTypingAnvilInventoryEvent playerTypingAnvilInventoryEvent = new PlayerTypingAnvilInventoryEvent(
+                                        this, anvilInventory, anvilInventory.getNewItemName(), filterTextPacket.getText()
+                                );
+                                getServer().getPluginManager().callEvent(playerTypingAnvilInventoryEvent);
+                                anvilInventory.setNewItemName(playerTypingAnvilInventoryEvent.getTypedName());
+                            }
+                        }
+                        break;
+                    }
                 default:
                     break;
             }
