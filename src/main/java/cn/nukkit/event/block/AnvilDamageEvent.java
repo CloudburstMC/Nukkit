@@ -69,7 +69,7 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public DamageCause getDamageCause() {
-        return cause
+        return cause;
     }
 
 
@@ -149,7 +149,6 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
                 return DamageCause.USE;
             case IMPACT:
                 return DamageCause.FALL;
-            break;
             default:
                 return null;
         }
@@ -161,7 +160,6 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
                 return Cause.USE;
             case FALL:
                 return Cause.IMPACT;
-            break;
             default:
                 return null;
         }

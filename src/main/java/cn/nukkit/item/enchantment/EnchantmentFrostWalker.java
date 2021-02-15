@@ -16,7 +16,7 @@ public class EnchantmentFrostWalker extends Enchantment {
     }
 
     @Override
-    public boolean isCompatibleWith(Enchantment enchantment) {
-        return super.isCompatibleWith(enchantment) && enchantment.id != ID_WATER_WALKER;
+    protected boolean checkCompatibility(Enchantment enchantment) {
+        return super.checkCompatibility(enchantment) && enchantment.id != ID_WATER_WALKER;
     }
 }

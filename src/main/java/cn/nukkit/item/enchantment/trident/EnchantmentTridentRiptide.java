@@ -18,8 +18,8 @@ public class EnchantmentTridentRiptide extends EnchantmentTrident {
     }
 
     @Override
-    public boolean isCompatibleWith(Enchantment enchantment) {
-        return super.isCompatibleWith(enchantment) 
+    public boolean checkCompatibility(Enchantment enchantment) {
+        return super.checkCompatibility(enchantment) 
                 && enchantment.id != Enchantment.ID_TRIDENT_LOYALTY
                 && enchantment.id != Enchantment.ID_TRIDENT_CHANNELING;
     }

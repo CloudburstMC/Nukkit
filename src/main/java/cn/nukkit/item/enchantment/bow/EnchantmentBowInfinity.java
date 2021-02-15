@@ -12,8 +12,8 @@ public class EnchantmentBowInfinity extends EnchantmentBow {
     }
 
     @Override
-    public boolean isCompatibleWith(Enchantment enchantment) {
-        return super.isCompatibleWith(enchantment) && enchantment.id != Enchantment.ID_MENDING;
+    protected boolean checkCompatibility(Enchantment enchantment) {
+        return super.checkCompatibility(enchantment) && enchantment.id != Enchantment.ID_MENDING;
     }
 
     @Override

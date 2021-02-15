@@ -263,7 +263,7 @@ public class NetworkInventoryAction {
                             case SOURCE_TYPE_ANVIL_RESULT:
                                 return new RepairItemAction(this.oldItem, this.newItem, this.windowId);
                             default:
-                                return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
+                                return new SlotChangeAction(inv, this.inventorySlot, this.oldItem, this.newItem);
                         }
                     } else {
                         log.debug("Player {} has no open anvil or grindstone inventory", player.getName());

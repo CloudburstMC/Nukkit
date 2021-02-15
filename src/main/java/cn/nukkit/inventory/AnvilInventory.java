@@ -1,10 +1,10 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.block.Block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
@@ -34,6 +34,10 @@ public class AnvilInventory extends FakeBlockUIComponent {
     public static final int RESULT = ANVIL_OUTPUT_UI_SLOT - 1; //1: offset
 
     private int cost;
+    private String newItemName;
+
+    @NonNull
+    private Item currentResult = Item.get(0);
 
     public AnvilInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.ANVIL, OFFSET, position);
@@ -298,7 +302,6 @@ public class AnvilInventory extends FakeBlockUIComponent {
             by = "PowerNukkit", since = "1.3.2.0-PN",
             replaceWith = "getInputSlot()"
     )
-    @PowerNukkitOnly
     public Item getFirstItem() {
         return getItem(TARGET);
     }
@@ -314,7 +317,6 @@ public class AnvilInventory extends FakeBlockUIComponent {
             by = "PowerNukkit", since = "1.3.2.0-PN",
             replaceWith = "getMaterialSlot()"
     )
-    @PowerNukkitOnly
     public Item getSecondItem() {
         return getItem(SACRIFICE);
     }
@@ -330,7 +332,6 @@ public class AnvilInventory extends FakeBlockUIComponent {
             by = "PowerNukkit", since = "1.3.2.0-PN",
             replaceWith = "getOutputSlot()"
     )
-    @PowerNukkitOnly
     public Item getResult() {
         //return currentResult.clone();
         return getOutputSlot();
@@ -372,13 +373,13 @@ public class AnvilInventory extends FakeBlockUIComponent {
         return setSecondItem(item, true);
     }
 
-    @Deprecated @DeprecationDetails(reason = "send parameter is deprecated", toBeRemovedAt = "1.4.0.0-PN")
+    @Deprecated @DeprecationDetails(since = "TBD", reason = "send parameter is deprecated", toBeRemovedAt = "1.4.0.0-PN")
     @PowerNukkitOnly
     public boolean setResult(Item item, boolean send) {
         return setItem(2, item, send);
     }
 
-    @Deprecated @DeprecationDetails(reason = "the client won't see this change, and the transaction might fail.", toBeRemovedAt = "1.4.0.0-PN")
+    @Deprecated @DeprecationDetails(since = "TBD", reason = "the client won't see this change, and the transaction might fail.", toBeRemovedAt = "1.4.0.0-PN")
     @PowerNukkitOnly
     public boolean setResult(Item item) {
         if (item == null || item.isNull()) {
@@ -400,7 +401,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
             replaceWith = "getCost()"
     )
     public int getLevelCost() {
-        return levelCost;
+        return getCost();
     }
 
     @PowerNukkitOnly
@@ -410,7 +411,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
             replaceWith = "setCost(int)"
     )
     protected void setLevelCost(int levelCost) {
-        this.levelCost = levelCost;
+        setCost(levelCost);
     }
 
     @Since("1.3.2.0-PN")
