@@ -12,6 +12,6 @@ public class EnchantmentBindingCurse extends Enchantment {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return 30;
+        return 50;
     }
 }

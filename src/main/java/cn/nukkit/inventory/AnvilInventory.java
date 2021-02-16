@@ -169,7 +169,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                             resultLevel = sacrificeEnchantment.getMaxLevel();
                         }
                         
-                        enchantmentMap.put(sacrificeEnchantment.getId(), Enchantment.get(sacrificeEnchantment.getId()).setLevel(resultLevel));
+                        enchantmentMap.put(sacrificeEnchantment.getId(), Enchantment.getEnchantment(sacrificeEnchantment.getId()).setLevel(resultLevel));
                         int rarity = 0;
                         int weight = sacrificeEnchantment.getWeight();
                         if (weight >= 10) {

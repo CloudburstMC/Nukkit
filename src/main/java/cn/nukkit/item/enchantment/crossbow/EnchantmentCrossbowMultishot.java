@@ -14,11 +14,6 @@ public class EnchantmentCrossbowMultishot extends EnchantmentCrossbow {
     }
 
     @Override
-    public int getMaxEnchantAbility(int level) {
-        return 50 + this.getMinEnchantAbility(level);
-    }
-
-    @Override
     public int getMaxLevel() {
         return 1;
     }

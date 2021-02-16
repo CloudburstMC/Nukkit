@@ -20,7 +20,7 @@ public class EnchantmentProtectionProjectile extends EnchantmentProtection {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 15;
+        return this.getMinEnchantAbility(level) + 6;
     }
 
     @Override

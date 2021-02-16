@@ -15,6 +15,11 @@ public class EnchantmentLure extends Enchantment {
     }
 
     @Override
+    public int getMaxEnchantAbility(int level) {
+        return getMinEnchantAbility(level) + 45 + level;
+    }
+
+    @Override
     public int getMaxLevel() {
         return 3;
     }

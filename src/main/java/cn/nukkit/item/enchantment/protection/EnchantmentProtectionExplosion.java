@@ -20,7 +20,7 @@ public class EnchantmentProtectionExplosion extends EnchantmentProtection {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 12;
+        return this.getMinEnchantAbility(level) + 8;
     }
 
     @Override

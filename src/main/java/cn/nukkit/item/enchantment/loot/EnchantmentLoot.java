@@ -20,7 +20,7 @@ public abstract class EnchantmentLoot extends Enchantment {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 50;
+        return getMinEnchantAbility(level) + 45 + level;
     }
 
     @Override

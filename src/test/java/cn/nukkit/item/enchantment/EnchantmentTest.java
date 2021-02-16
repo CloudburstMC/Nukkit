@@ -22,6 +22,7 @@ import cn.nukkit.block.BlockID;
 import com.google.gson.Gson;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Value;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,11 +39,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static cn.nukkit.item.ItemID.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author joserobjr
@@ -67,10 +68,51 @@ class EnchantmentTest {
         assertEquals(data.getWeight(), enchantment.getWeight());
     }
 
+    @ParameterizedTest
+    @MethodSource("getEnchantmentData")
+    void testMaxLevels(EnchantmentData data, Enchantment enchantment) {
+        assertEquals(data.getLevels().length, enchantment.getMaxLevel());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getEnchantmentData")
+    void testMinLevels(EnchantmentData data, Enchantment enchantment) {
+        assertNotNull(data);
+        assertEquals(1, enchantment.getMinLevel());
+    }
+
+    @ParameterizedTest
+    @MethodSource("getEnchantmentDataWithLevels")
+    void testMinEnchantability(EnchantmentData data, Enchantment enchantment, int level) {
+        int minEnchantAbility = enchantment.getMinEnchantAbility(level);
+        int[] levelData = data.getLevelData(level);
+        assertEquals(levelData[0], minEnchantAbility);
+    }
+
+    @ParameterizedTest
+    @MethodSource("getEnchantmentDataWithLevels")
+    void testMaxEnchantability(EnchantmentData data, Enchantment enchantment, int level) {
+        int maxEnchantAbility = enchantment.getMaxEnchantAbility(level);
+        int[] levelData = data.getLevelData(level);
+        assertEquals(levelData[1], maxEnchantAbility);
+    }
+    
+    static Stream<Arguments> getEnchantmentDataWithLevels() {
+        return enchantmentDataList.stream()
+                .flatMap(data -> IntStream.range(0, data.levels.length)
+                        .mapToObj(index -> new EnchantmentDataLevel(data, index + 1)))
+                .map(data-> Arguments.of(data.data, Enchantment.getEnchantment(data.data.nid), data.level));
+    }
+    
     static Stream<Arguments> getEnchantmentData() {
         return enchantmentDataList.stream().map( data ->
                 Arguments.of(data, Enchantment.getEnchantment(data.getNid()))
         );
+    }
+    
+    static @Value class EnchantmentDataLevel {
+        EnchantmentData data;
+        int level;
     }
 
     @BeforeAll
@@ -101,6 +143,10 @@ class EnchantmentTest {
         List<ItemType> primary;
         List<ItemType> secondary;
         int[][] levels;
+        
+        int[] getLevelData(int level) {
+            return levels[level - 1];
+        }
     }
     
     enum ItemType {
@@ -127,7 +173,7 @@ class EnchantmentTest {
         shield(SHIELD),
         any,
         ;
-        private int[] itemIds;
+        final private int[] itemIds;
         ItemType(int... ids) {
             this.itemIds = ids;
         }

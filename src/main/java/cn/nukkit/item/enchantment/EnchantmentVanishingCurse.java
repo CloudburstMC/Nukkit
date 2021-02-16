@@ -8,6 +8,16 @@ public class EnchantmentVanishingCurse extends Enchantment {
     }
 
     @Override
+    public int getMinEnchantAbility(int level) {
+        return 25;
+    }
+
+    @Override
+    public int getMaxEnchantAbility(int level) {
+        return 50;
+    }
+
+    @Override
     public boolean canEnchant(Item item) {
         return item.getId() == Item.SKULL || item.getId() == Item.COMPASS || super.canEnchant(item);
     }

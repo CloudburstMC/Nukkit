@@ -16,7 +16,7 @@ public class EnchantmentWaterWalker extends Enchantment {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 10;
+        return this.getMinEnchantAbility(level) + 15;
     }
 
     @Override
