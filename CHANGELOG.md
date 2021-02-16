@@ -9,6 +9,11 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
 Click the link above to see the future.
 
+### Fixes
+- [#857] Items in wrong tabs of the creative inventory and at the side of crafting grid screens
+- [#959] Give command not working correctly when using a namespace, like in `/give minecraft:dirt`
+- [#960] _Alpha Bug_: Error when a player that have a bad item created from a bad alpha version attempt to join 
+
 ## 1.4.0.0-PN-ALPHA.2 - 2020-11-22
 This changelog is still being worked on.
 
@@ -16,7 +21,15 @@ This changelog is still being worked on.
 This changelog is still being worked on.
 
 ## 1.3.2.0-PN-ALPHA.4 - Future
+
+### Fixes
 - [#882] _Alpha Bug_: Fixes random disconnection issues
+- [#902] _Alpha Bug_: Packets being encoded in netty threads causing random network issues
+- [#902] NetherPortal block can't be destroyed by liquid flow
+- [#902] Lava doesn't turn concrete powder into concrete
+
+### Added
+- [#917] Adds automatic bug reports using Sentry, can be opted out in `server.properties`
 
 ## 1.3.2.0-PN-ALPHA.3 - 2020-12-12
 
@@ -664,4 +677,9 @@ Fixes several anvil issues.
 [#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
 [#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
+[#857]: https://github.com/PowerNukkit/PowerNukkit/issues/857
 [#882]: https://github.com/PowerNukkit/PowerNukkit/issues/882
+[#902]: https://github.com/PowerNukkit/PowerNukkit/issues/902
+[#917]: https://github.com/PowerNukkit/PowerNukkit/issues/917
+[#959]: https://github.com/PowerNukkit/PowerNukkit/issues/959
+[#960]: https://github.com/PowerNukkit/PowerNukkit/issues/960

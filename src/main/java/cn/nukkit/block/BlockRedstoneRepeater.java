@@ -84,7 +84,7 @@ public abstract class BlockRedstoneRepeater extends BlockRedstoneDiode {
 
     @Override
     protected int getDelay() {
-        return (1 + (getPropertyValue(REPEATER_DELAY) >> 2)) * 2;
+        return (1 + getIntValue(REPEATER_DELAY)) * 2;
     }
 
     @Override

@@ -1,13 +1,14 @@
 package cn.nukkit.scheduler;
 
-import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * @author MagicDroidX
  */
+@Log4j2
 public class TaskHandler {
     private final int taskId;
     private final boolean asynchronous;
@@ -98,7 +99,7 @@ public class TaskHandler {
             setLastRunTick(currentTick);
             getTask().run();
         } catch (RuntimeException ex) {
-            Server.getInstance().getLogger().critical("Exception while invoking run", ex);
+            log.fatal("Exception while invoking run", ex);
         }
     }
 

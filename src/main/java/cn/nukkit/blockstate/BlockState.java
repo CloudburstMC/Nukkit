@@ -8,9 +8,11 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.UnknownRuntimeIdException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateDataTypeException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.OptionalBoolean;
@@ -253,6 +255,13 @@ public final class BlockState implements Serializable, IBlockState {
         return storage.withProperty(blockId, getProperties(), propertyName, value);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public BlockState withProperty(String propertyName, String persistenceValue) {
+        return storage.withPropertyString(blockId, getProperties(), propertyName, persistenceValue);
+    }
+
     /**
      * @throws NoSuchElementException If any of the property is not registered
      */
@@ -309,14 +318,52 @@ public final class BlockState implements Serializable, IBlockState {
         return onlyWithProperty(property.getName(), value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockState forItem() {
-        BlockProperties properties = getProperties();
-        Set<String> allNames = properties.getNames();
-        List<String> itemNames = properties.getItemPropertyNames();
+        BlockProperties allProperties = getProperties();
+        Set<String> allNames = allProperties.getNames();
+        
+        BlockProperties itemProperties = allProperties.getItemBlockProperties();
+        List<String> itemNames = itemProperties.getItemPropertyNames();
         if (allNames.size() == itemNames.size() && allNames.containsAll(itemNames)) {
             return this;
         }
         return storage.onlyWithProperties(this, itemNames);
+    }
+
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public ItemBlock asItemBlock(int count) {
+        BlockProperties allProperties = getProperties();
+        Set<String> allNames = allProperties.getNames();
+        
+        int itemBlockMeta;
+        BlockProperties itemProperties = allProperties.getItemBlockProperties();
+        List<String> itemNames = itemProperties.getItemPropertyNames();
+        BlockState trimmedState;
+        if (allNames.size() == itemNames.size() && allNames.containsAll(itemNames)) {
+            itemBlockMeta = getExactIntStorage();
+            trimmedState = this;
+        } else if (itemNames.isEmpty()) {
+            itemBlockMeta = 0; 
+            trimmedState = isDefaultState()? this : of(getBlockId());
+        } else {
+            trimmedState = storage.onlyWithProperties(this, itemNames);
+            MutableBlockState itemState = itemProperties.createMutableState(getBlockId());
+            itemProperties.forEach(property -> itemState.setPropertyValue(property.getName(), getPropertyValue(property)));
+            itemBlockMeta = itemState.getExactIntStorage();
+        }
+        
+        int runtimeId = trimmedState.getRuntimeId();
+        if (runtimeId == BlockStateRegistry.getUpdateBlockRegistration() && !"minecraft:info_update".equals(trimmedState.getPersistenceName())) {
+            throw new UnknownRuntimeIdException("The current block state can't be represented as an item. State: "+trimmedState+", Trimmed: "+trimmedState+" ItemBlockMeta: "+itemBlockMeta);
+        }
+        Block block = trimmedState.getBlock();
+        return new ItemBlock(block, itemBlockMeta, count);
     }
 
     @Nonnegative
@@ -596,6 +643,9 @@ public final class BlockState implements Serializable, IBlockState {
         void validate(BlockProperties properties);
 
         boolean isDefaultState();
+
+        @Nonnull
+        BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value);
     }
 
     @ParametersAreNonnullByDefault
@@ -656,6 +706,13 @@ public final class BlockState implements Serializable, IBlockState {
         public BlockState withProperty(int blockId, BlockProperties properties, String propertyName, @Nullable Serializable value) {
             // TODO This can cause problems when setting a property that increases the bit size
             return BlockState.of(blockId, properties.setValue(0, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            // TODO This can cause problems when setting a property that increases the bit size
+            return BlockState.of(blockId, properties.setPersistenceValue(0, propertyName, value));
         }
 
         @Nonnull
@@ -756,6 +813,13 @@ public final class BlockState implements Serializable, IBlockState {
         public BlockState withProperty(int blockId, BlockProperties properties, String propertyName, @Nullable Serializable value) {
             // TODO This can cause problems when setting a property that increases the bit size
             return BlockState.of(blockId, properties.setValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            // TODO This can cause problems when setting a property that increases the bit size
+            return BlockState.of(blockId, properties.setPersistenceValue(data, propertyName, value));
         }
 
         @Nonnull
@@ -862,6 +926,13 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            // TODO This can cause problems when setting a property that increases the bit size
+            return BlockState.of(blockId, properties.setPersistenceValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
         public BlockState onlyWithProperties(BlockState currentState, List<String> propertyNames) {
             return BlockState.of(blockId,
                 getProperties().reduceInt(data, (property, offset, current) -> 
@@ -958,6 +1029,13 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public boolean getBooleanValue(BlockProperties properties, String propertyName) {
             return properties.getBooleanValue(data, propertyName);
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            // TODO This can cause problems when setting a property that increases the bit size
+            return BlockState.of(blockId, properties.setPersistenceValue(data, propertyName, value));
         }
 
         @Nonnull
@@ -1083,6 +1161,12 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public BlockState withProperty(int blockId, BlockProperties properties, String propertyName, @Nullable Serializable value) {
             return BlockState.of(blockId, properties.setValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            return BlockState.of(blockId, properties.setPersistenceValue(data, propertyName, value));
         }
 
         @Nonnull

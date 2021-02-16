@@ -335,7 +335,7 @@ public class Level implements ChunkManager, Metadatable {
         this.timings = new LevelTimings(this);
         levelProvider.updateLevelName(name);
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.preparing",
+        log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
                 TextFormat.GREEN + levelProvider.getName() + TextFormat.WHITE));
 
         this.generatorClass = Generator.getGenerator(levelProvider.getGenerator());
@@ -446,7 +446,7 @@ public class Level implements ChunkManager, Metadatable {
         this.dimension = generator.getDimension();
         this.gameRules = this.requireProvider().getGamerules();
 
-        this.server.getLogger().info("Preparing start region for level \"" + this.getFolderName() + "\"");
+        log.info("Preparing start region for level \"{}\"", this.getFolderName());
         Position spawn = this.getSpawnLocation();
         this.populateChunk(spawn.getChunkX(), spawn.getChunkZ(), true);
     }
@@ -722,7 +722,7 @@ public class Level implements ChunkManager, Metadatable {
             return false;
         }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.unloading",
+        log.info(this.server.getLanguage().translateString("nukkit.level.unloading",
                 TextFormat.GREEN + this.getName() + TextFormat.WHITE));
         Level defaultLevel = this.server.getDefaultLevel();
 
@@ -1328,14 +1328,11 @@ public class Level implements ChunkManager, Metadatable {
         requireProvider().saveChunks();
     }
 
+    @Deprecated @DeprecationDetails(reason = "Was moved to RedstoneComponent", since = "1.4.0.0-PN",
+            replaceWith = "RedstoneComponent#updateAroundRedstone", by = "PowerNukkit")
     public void updateAroundRedstone(Vector3 pos, BlockFace face) {
-        for (BlockFace side : BlockFace.values()) {
-            if (face != null && side == face || getBlock(pos) instanceof BlockPistonBase) {
-                continue;
-            }
-
-            this.getBlock(temporalVector.setComponentsAdding(pos, side)).onUpdate(BLOCK_UPDATE_REDSTONE);
-        }
+        Location loc = new Location(pos.x, pos.y, pos.z, this);
+        RedstoneComponent.updateAroundRedstone(loc, face);
     }
 
     public void updateComparatorOutputLevel(Vector3 v) {
@@ -3353,9 +3350,7 @@ public class Level implements ChunkManager, Metadatable {
             }
             levelProvider.unloadChunk(x, z, safe);
         } catch (Exception e) {
-            MainLogger logger = this.server.getLogger();
-            logger.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.toString()));
-            logger.logException(e);
+            log.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.toString()), e);
         }
 
         this.timings.doChunkUnload.stopTiming();
@@ -3875,9 +3870,11 @@ public class Level implements ChunkManager, Metadatable {
         return this.getBlock(pos).getStrongPower(direction);
     }
 
+    @PowerNukkitDifference(info = "Check if the block to check is a piston, then return 0.", since = "1.4.0.0-PN")
     public int getStrongPower(Vector3 pos) {
-        int i = 0;
+        if (pos instanceof BlockPistonBase || this.getBlock(pos) instanceof BlockPistonBase) return 0;
 
+        int i = 0;
         for (BlockFace face : BlockFace.values()) {
             i = Math.max(i, this.getStrongPower(temporalVector.setComponentsAdding(pos, face), face));
 

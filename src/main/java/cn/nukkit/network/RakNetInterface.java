@@ -103,7 +103,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                 session.player = player;
                 this.sessions.put(address, session);
             } catch (NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.error("Error while creating the player class {}", clazz, e);
             }
         }
 
@@ -216,7 +216,8 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         NukkitRakNetSession session = this.sessions.get(player.getSocketAddress());
 
         if (session != null) {
-            session.outbound.offer(packet);
+            packet.tryEncode();
+            session.outbound.offer(packet.clone());
         }
 
         return null;
@@ -254,7 +255,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     private class NukkitRakNetSession implements RakNetSessionListener {
         private final RakNetServerSession raknet;
         private final Queue<DataPacket> inbound = PlatformDependent.newSpscQueue();
-        private final Queue<DataPacket> outbound = PlatformDependent.newSpscQueue();
+        private final Queue<DataPacket> outbound = PlatformDependent.newMpscQueue();
         private String disconnectReason = null;
         private Player player;
 
@@ -323,7 +324,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             BinaryStream batched = new BinaryStream();
             for (DataPacket packet : packets) {
                 Preconditions.checkArgument(!(packet instanceof BatchPacket), "Cannot batch BatchPacket");
-                packet.tryEncode();
+                Preconditions.checkState(packet.isEncoded, "Packet should have already been encoded");
                 byte[] buf = packet.getBuffer();
                 batched.putUnsignedVarInt(buf.length);
                 batched.put(buf);
