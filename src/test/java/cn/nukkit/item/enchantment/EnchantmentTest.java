@@ -19,10 +19,11 @@
 package cn.nukkit.item.enchantment;
 
 import cn.nukkit.block.BlockID;
+import cn.nukkit.item.Item;
 import com.google.gson.Gson;
+import io.netty.util.internal.EmptyArrays;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Value;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -37,6 +38,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.IntStream;
@@ -96,12 +98,39 @@ class EnchantmentTest {
         int[] levelData = data.getLevelData(level);
         assertEquals(levelData[1], maxEnchantAbility);
     }
+
+    @ParameterizedTest
+    @MethodSource("getEnchantmentDataWithPrimaryItems")
+    void testPrimaryItem(EnchantmentData data, Enchantment enchantment, Item item) {
+        assertTrue(enchantment.canEnchant(item));
+    }
+
+    @ParameterizedTest
+    @MethodSource("getEnchantmentDataWithSecondaryItems")
+    void testSecondaryItem(EnchantmentData data, Enchantment enchantment, Item item) {
+        assertTrue(enchantment.canEnchant(item));
+    }
+
+    static Stream<Arguments> getEnchantmentDataWithSecondaryItems() {
+        return enchantmentDataList.stream()
+                .flatMap(data ->
+                        data.secondary.stream().flatMap(type->
+                                Arrays.stream(type.itemIds).mapToObj(Item::get)
+                                        .map(item -> Arguments.of(data, Enchantment.getEnchantment(data.nid), item))));
+    }
+
+    static Stream<Arguments> getEnchantmentDataWithPrimaryItems() {
+        return enchantmentDataList.stream()
+                .flatMap(data -> 
+                        data.primary.stream().flatMap(type->
+                                Arrays.stream(type.itemIds).mapToObj(Item::get)
+                                        .map(item -> Arguments.of(data, Enchantment.getEnchantment(data.nid), item))));
+    }
     
     static Stream<Arguments> getEnchantmentDataWithLevels() {
         return enchantmentDataList.stream()
                 .flatMap(data -> IntStream.range(0, data.levels.length)
-                        .mapToObj(index -> new EnchantmentDataLevel(data, index + 1)))
-                .map(data-> Arguments.of(data.data, Enchantment.getEnchantment(data.data.nid), data.level));
+                        .mapToObj(index -> Arguments.of(data, Enchantment.getEnchantment(data.nid), index + 1)));
     }
     
     static Stream<Arguments> getEnchantmentData() {
@@ -110,11 +139,6 @@ class EnchantmentTest {
         );
     }
     
-    static @Value class EnchantmentDataLevel {
-        EnchantmentData data;
-        int level;
-    }
-
     @BeforeAll
     static void beforeAll() throws IOException {
         try (InputStream is = EnchantmentTest.class.getResourceAsStream("enchantments.json");
@@ -150,12 +174,12 @@ class EnchantmentTest {
     }
     
     enum ItemType {
-        helmet(LEATHER_CAP, IRON_HELMET, GOLD_HELMET, CHAIN_HELMET, DIAMOND_HELMET, NETHERITE_HELMET, SHULKER_SHELL),
+        helmet(LEATHER_CAP, IRON_HELMET, GOLD_HELMET, CHAIN_HELMET, DIAMOND_HELMET, NETHERITE_HELMET, TURTLE_SHELL),
         chestplate(LEATHER_TUNIC, IRON_CHESTPLATE, GOLD_CHESTPLATE, CHAIN_CHESTPLATE, DIAMOND_CHESTPLATE, NETHERITE_CHESTPLATE),
         leggings(LEATHER_PANTS, IRON_LEGGINGS, GOLD_LEGGINGS, CHAIN_LEGGINGS, DIAMOND_LEGGINGS, NETHERITE_LEGGINGS),
         boots(LEATHER_BOOTS, IRON_BOOTS, GOLD_BOOTS, CHAIN_BOOTS, DIAMOND_BOOTS, NETHERITE_BOOTS),
         elytra(ELYTRA),
-        pumpkin(BlockID.PUMPKIN, 255 - BlockID.CARVED_PUMPKIN),
+        pumpkin(new int[]{BlockID.PUMPKIN}, new int[]{255 - BlockID.CARVED_PUMPKIN}),
         skull(SKULL),
         sword(WOODEN_SWORD, GOLD_SWORD, IRON_SWORD, DIAMOND_SWORD, NETHERITE_SWORD),
         axe(WOODEN_AXE, GOLD_AXE, IRON_AXE, DIAMOND_AXE, NETHERITE_AXE),
@@ -173,9 +197,15 @@ class EnchantmentTest {
         shield(SHIELD),
         any,
         ;
-        final private int[] itemIds;
+        private final int[] itemIds;
+        private final int[] notAccepted; 
         ItemType(int... ids) {
             this.itemIds = ids;
+            this.notAccepted = EmptyArrays.EMPTY_INTS;
+        }
+        ItemType(int[] notAccepted, int[] ids) {
+            this.itemIds = ids;
+            this.notAccepted = notAccepted;
         }
     }
     

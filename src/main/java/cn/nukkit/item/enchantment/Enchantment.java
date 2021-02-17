@@ -26,6 +26,7 @@ import cn.nukkit.item.enchantment.trident.EnchantmentTridentLoyalty;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentRiptide;
 import cn.nukkit.math.NukkitMath;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -196,6 +197,7 @@ public abstract class Enchantment implements Cloneable {
     /**
      * The group of objects that this enchantment can be applied.
      */
+    @Nonnull
     public EnchantmentType type;
 
     /**
@@ -255,6 +257,8 @@ public abstract class Enchantment implements Cloneable {
      * @param level The level starting from {@code 1}.
      * @return This object so you can do chained calls
      */
+
+    @Nonnull
     public Enchantment setLevel(int level) {
         return this.setLevel(level, true);
     }
@@ -268,6 +272,7 @@ public abstract class Enchantment implements Cloneable {
      * @param safe If the level should clamped or applied directly
      * @return This object so you can do chained calls
      */
+    @Nonnull
     public Enchantment setLevel(int level, boolean safe) {
         if (!safe) {
             this.level = level;
@@ -290,6 +295,7 @@ public abstract class Enchantment implements Cloneable {
      * How rare this enchantment is.
      */
     @Since("1.3.2.0-PN")
+    @Nonnull
     public Rarity getRarity() {
         return this.rarity;
     }
@@ -327,10 +333,20 @@ public abstract class Enchantment implements Cloneable {
         return getMaxLevel();
     }
 
+    /**
+     * The minimum enchantability for the given level as described in https://minecraft.gamepedia.com/Enchanting/Levels
+     * @param level The level being checked
+     * @return The minimum value
+     */
     public int getMinEnchantAbility(int level) {
         return 1 + level * 10;
     }
 
+    /**
+     * The maximum enchantability for the given level as described in https://minecraft.gamepedia.com/Enchanting/Levels
+     * @param level The level being checked
+     * @return The maximum value
+     */
     public int getMaxEnchantAbility(int level) {
         return this.getMinEnchantAbility(level) + 5;
     }
@@ -351,7 +367,13 @@ public abstract class Enchantment implements Cloneable {
 
     }
 
-    public final boolean isCompatibleWith(Enchantment enchantment) {
+    /**
+     * Returns true if and only if this enchantment is compatible with the other and 
+     * the other is also compatible with this enchantment. 
+     * @param enchantment The enchantment which is being checked
+     * @return If both enchantments are compatible
+     */
+    public final boolean isCompatibleWith(@Nonnull Enchantment enchantment) {
         return this.checkCompatibility(enchantment) && enchantment.checkCompatibility(this);
     }
 
@@ -364,7 +386,13 @@ public abstract class Enchantment implements Cloneable {
         return "%enchantment." + this.name;
     }
 
-    public boolean canEnchant(Item item) {
+    /**
+     * Checks if the given item have a type which is compatible with this enchantment. This method does not check
+     * if the item already have incompatible enchantments.
+     * @param item The item to be checked
+     * @return If the type of the item is valid for this enchantment
+     */
+    public boolean canEnchant(@Nonnull Item item) {
         return this.type.canEnchantItem(item);
     }
 

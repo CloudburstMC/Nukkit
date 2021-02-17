@@ -18,4 +18,9 @@ public class ItemShield extends Item {
     public int getMaxStackSize() {
         return 1;
     }
+
+    @Override
+    public int getMaxDurability() {
+        return 336;
+    }
 }

@@ -1,12 +1,9 @@
 package cn.nukkit.item.enchantment;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemArmor;
-import cn.nukkit.item.ItemBow;
-import cn.nukkit.item.ItemCrossbow;
-import cn.nukkit.item.ItemFishingRod;
-import cn.nukkit.item.ItemSkull;
-import cn.nukkit.item.ItemTrident;
+import cn.nukkit.block.BlockCarvedPumpkin;
+import cn.nukkit.item.*;
+
+import javax.annotation.Nonnull;
 
 /**
  * author: MagicDroidX
@@ -28,7 +25,7 @@ public enum EnchantmentType {
     TRIDENT,
     CROSSBOW;
 
-    public boolean canEnchantItem(Item item) {
+    public boolean canEnchantItem(@Nonnull Item item) {
         if (this == ALL) {
             return true;
 
@@ -64,7 +61,7 @@ public enum EnchantmentType {
                 case FISHING_ROD:
                     return item instanceof ItemFishingRod;
                 case WEARABLE:
-                    return item instanceof ItemSkull;
+                    return item instanceof ItemSkull || item.getBlock() instanceof BlockCarvedPumpkin;
                 case TRIDENT:
                     return item instanceof ItemTrident;
                 case CROSSBOW:
