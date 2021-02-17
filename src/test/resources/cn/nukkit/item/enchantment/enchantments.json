@@ -610,7 +610,28 @@
     "weight": 1,
     "primary": [],
     "secondary": [
-      "any"
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots",
+      "pickaxe",
+      "shovel",
+      "axe",
+      "sword",
+      "hoe",
+      "fishing_rod",
+      "bow",
+      "shears",
+      "flint_and_steel",
+      "carrot_on_stick",
+      "warped_fungus_on_stick",
+      "shield",
+      "elytra",
+      "pumpkin",
+      "skull",
+      "trident",
+      "crossbow",
+      "compass"
     ],
     "levels": [
       [25,50]

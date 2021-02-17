@@ -20,12 +20,19 @@ package cn.nukkit.item.enchantment;
 
 import cn.nukkit.block.BlockID;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import com.google.gson.Gson;
 import io.netty.util.internal.EmptyArrays;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 import lombok.Data;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -36,11 +43,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Modifier;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -53,6 +62,10 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @ExtendWith(PowerNukkitExtension.class)
 class EnchantmentTest {
+    static int[] allIds = Stream.of(getAllItemIds(), 
+            IntStream.of(255 - BlockID.CARVED_PUMPKIN, BlockID.PUMPKIN, BlockID.JACK_O_LANTERN)
+    ).flatMapToInt(Function.identity()).toArray();
+    
     @Getter
     static List<EnchantmentData> enchantmentDataList;
 
@@ -101,14 +114,59 @@ class EnchantmentTest {
 
     @ParameterizedTest
     @MethodSource("getEnchantmentDataWithPrimaryItems")
-    void testPrimaryItem(EnchantmentData data, Enchantment enchantment, Item item) {
+    void testPrimaryItem(Enchantment enchantment, Item item) {
         assertTrue(enchantment.canEnchant(item));
     }
 
+    @SuppressWarnings("deprecation")
     @ParameterizedTest
     @MethodSource("getEnchantmentDataWithSecondaryItems")
-    void testSecondaryItem(EnchantmentData data, Enchantment enchantment, Item item) {
+    void testSecondaryItem(Enchantment enchantment, Item item) {
         assertTrue(enchantment.canEnchant(item));
+        assertTrue(enchantment.isItemAcceptable(item));
+    }
+
+    @SuppressWarnings("deprecation")
+    @ParameterizedTest
+    @MethodSource("getNotAcceptedItems")
+    @Execution(ExecutionMode.CONCURRENT)
+    void testNotAcceptedItems(Enchantment enchantment, Item item) {
+        assertFalse(enchantment.canEnchant(item));
+        assertFalse(enchantment.isItemAcceptable(item));
+    }
+    
+    @SneakyThrows
+    public static int unchecked(CheckedIntSupplier supplier) {
+        return supplier.getAsInt();
+    }
+    
+    static IntStream getAllItemIds() {
+        return Arrays.stream(ItemID.class.getDeclaredFields())
+                .filter(field -> field.getType().equals(int.class))
+                .filter(field -> field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL))
+                .mapToInt(field -> unchecked(()-> field.getInt(null)));
+    }
+    
+    static Stream<Arguments> getNotAcceptedItems() {
+        return enchantmentDataList.parallelStream().flatMap(data -> {
+            IntSet acceptedItems = new IntOpenHashSet();
+            IntSet notAccepted = new IntOpenHashSet(0);
+            Stream.of(data.primary.stream(), data.secondary.stream()).flatMap(Function.identity()).distinct()
+                    .forEachOrdered(type -> {
+                        acceptedItems.addAll(new IntArrayList(type.itemIds));
+                        if (type.notAccepted.length > 0) {
+                            notAccepted.addAll(new IntArrayList(type.notAccepted));
+                        }
+                    });
+            Enchantment enchantment = Enchantment.getEnchantment(data.nid);
+            IntStream allIdsStream = IntStream.of(allIds);
+            IntStream idStream = notAccepted.isEmpty()? allIdsStream : 
+                    Stream.of(IntStream.of(allIds), IntStream.of(notAccepted.toIntArray()))
+                            .flatMapToInt(Function.identity()); 
+            return idStream.parallel()
+                    .filter(id-> !acceptedItems.contains(id))
+                    .mapToObj(id-> Arguments.of(enchantment, Item.get(id)));
+        });
     }
 
     static Stream<Arguments> getEnchantmentDataWithSecondaryItems() {
@@ -116,7 +174,7 @@ class EnchantmentTest {
                 .flatMap(data ->
                         data.secondary.stream().flatMap(type->
                                 Arrays.stream(type.itemIds).mapToObj(Item::get)
-                                        .map(item -> Arguments.of(data, Enchantment.getEnchantment(data.nid), item))));
+                                        .map(item -> Arguments.of(Enchantment.getEnchantment(data.nid), item))));
     }
 
     static Stream<Arguments> getEnchantmentDataWithPrimaryItems() {
@@ -124,7 +182,7 @@ class EnchantmentTest {
                 .flatMap(data -> 
                         data.primary.stream().flatMap(type->
                                 Arrays.stream(type.itemIds).mapToObj(Item::get)
-                                        .map(item -> Arguments.of(data, Enchantment.getEnchantment(data.nid), item))));
+                                        .map(item -> Arguments.of(Enchantment.getEnchantment(data.nid), item))));
     }
     
     static Stream<Arguments> getEnchantmentDataWithLevels() {
@@ -181,11 +239,11 @@ class EnchantmentTest {
         elytra(ELYTRA),
         pumpkin(new int[]{BlockID.PUMPKIN}, new int[]{255 - BlockID.CARVED_PUMPKIN}),
         skull(SKULL),
-        sword(WOODEN_SWORD, GOLD_SWORD, IRON_SWORD, DIAMOND_SWORD, NETHERITE_SWORD),
-        axe(WOODEN_AXE, GOLD_AXE, IRON_AXE, DIAMOND_AXE, NETHERITE_AXE),
-        hoe(WOODEN_HOE, GOLD_HOE, IRON_HOE, DIAMOND_HOE, NETHERITE_HOE),
-        shovel(WOODEN_SHOVEL, GOLD_SHOVEL, DIAMOND_SHOVEL, NETHERITE_SHOVEL),
-        pickaxe(WOODEN_PICKAXE, GOLD_PICKAXE, DIAMOND_PICKAXE, NETHERITE_PICKAXE),
+        sword(WOODEN_SWORD, STONE_SWORD, GOLD_SWORD, IRON_SWORD, DIAMOND_SWORD, NETHERITE_SWORD),
+        axe(WOODEN_AXE, STONE_AXE, GOLD_AXE, IRON_AXE, DIAMOND_AXE, NETHERITE_AXE),
+        hoe(WOODEN_HOE, STONE_HOE, GOLD_HOE, IRON_HOE, DIAMOND_HOE, NETHERITE_HOE),
+        shovel(WOODEN_SHOVEL, STONE_SHOVEL, IRON_SHOVEL, GOLD_SHOVEL, DIAMOND_SHOVEL, NETHERITE_SHOVEL),
+        pickaxe(WOODEN_PICKAXE, STONE_PICKAXE, IRON_PICKAXE, GOLD_PICKAXE, DIAMOND_PICKAXE, NETHERITE_PICKAXE),
         shears(SHEARS),
         fishing_rod(FISHING_ROD),
         carrot_on_stick(CARROT_ON_A_STICK),
@@ -195,7 +253,7 @@ class EnchantmentTest {
         trident(TRIDENT),
         flint_and_steel(FLINT_AND_STEEL),
         shield(SHIELD),
-        any,
+        compass(COMPASS)
         ;
         private final int[] itemIds;
         private final int[] notAccepted; 
@@ -209,6 +267,9 @@ class EnchantmentTest {
         }
     }
     
-    static class EnchantmentTestList extends ArrayList<EnchantmentData> {
+    static class EnchantmentTestList extends ArrayList<EnchantmentData> {}
+    
+    @FunctionalInterface interface CheckedIntSupplier {
+        int getAsInt() throws Exception;
     }
 }

@@ -8,6 +8,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemArmor;
 import cn.nukkit.item.ItemElytra;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -56,6 +57,11 @@ public class EnchantmentThorns extends Enchantment {
         if (shouldHit(random, thornsLevel)) {
             attacker.attack(new EntityDamageByEntityEvent(entity, attacker, EntityDamageEvent.DamageCause.ENTITY_ATTACK, getDamage(random, level), 0f));
         }
+    }
+
+    @Override
+    public boolean canEnchant(@Nonnull Item item) {
+        return !(item instanceof ItemElytra) && super.canEnchant(item);
     }
 
     @Override

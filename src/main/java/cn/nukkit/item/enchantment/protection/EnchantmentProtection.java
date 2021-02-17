@@ -1,7 +1,11 @@
 package cn.nukkit.item.enchantment.protection;
 
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemElytra;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.enchantment.EnchantmentType;
+
+import javax.annotation.Nonnull;
 
 /**
  * author: MagicDroidX
@@ -25,6 +29,11 @@ public abstract class EnchantmentProtection extends Enchantment {
         if (protectionType == TYPE.FALL) {
             this.type = EnchantmentType.ARMOR_FEET;
         }
+    }
+
+    @Override
+    public boolean canEnchant(@Nonnull Item item) {
+        return !(item instanceof ItemElytra) && super.canEnchant(item);
     }
 
     @Override

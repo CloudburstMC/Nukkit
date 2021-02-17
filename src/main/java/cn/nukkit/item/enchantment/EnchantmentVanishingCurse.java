@@ -1,6 +1,8 @@
 package cn.nukkit.item.enchantment;
 
+import cn.nukkit.block.BlockID;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 
 public class EnchantmentVanishingCurse extends Enchantment {
     protected EnchantmentVanishingCurse() {
@@ -19,6 +21,15 @@ public class EnchantmentVanishingCurse extends Enchantment {
 
     @Override
     public boolean canEnchant(Item item) {
-        return item.getId() == Item.SKULL || item.getId() == Item.COMPASS || super.canEnchant(item);
+        switch (item.getId()) {
+            case ItemID.SKULL:
+            case ItemID.COMPASS:
+                return true;
+            default:
+                if (item.getId() < 255 && item.getBlock() != null && item.getBlock().getId() == BlockID.CARVED_PUMPKIN) {
+                    return true;
+                }
+                return super.canEnchant(item);
+        }
     }
 }

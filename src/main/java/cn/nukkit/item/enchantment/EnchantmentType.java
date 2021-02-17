@@ -53,7 +53,7 @@ public enum EnchantmentType {
         } else {
             switch (this) {
                 case SWORD:
-                    return item.isSword();
+                    return item.isSword() && !(item instanceof ItemTrident);
                 case DIGGER:
                     return item.isPickaxe() || item.isShovel() || item.isAxe() || item.isHoe();
                 case BOW:

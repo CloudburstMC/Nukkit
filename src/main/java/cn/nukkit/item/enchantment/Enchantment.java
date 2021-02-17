@@ -413,6 +413,8 @@ public abstract class Enchantment implements Cloneable {
      * Checks if an item can have this enchantment. It's not strict to the enchantment table.
      */
     @PowerNukkitOnly @Since("1.2.1.0-PN")
+    @Deprecated @DeprecationDetails(by = "PowerNukkit", since = "1.3.2.0-PN", 
+            reason = "Does the same as canEnchant(item)", replaceWith = "canEnchant(item)")
     public boolean isItemAcceptable(Item item) {
         return canEnchant(item);
     }
@@ -421,7 +423,7 @@ public abstract class Enchantment implements Cloneable {
 
     public static String getRandomName() {
         int count = ThreadLocalRandom.current().nextInt(3, 6);
-        HashSet<String> set = new HashSet<>();
+        HashSet<String> set = new LinkedHashSet<>();
         while (set.size() < count) {
             set.add(Enchantment.words[ThreadLocalRandom.current().nextInt(0, Enchantment.words.length)]);
         }
@@ -437,6 +439,9 @@ public abstract class Enchantment implements Cloneable {
         }
     }
 
+    /**
+     * How rare an enchantment is.
+     */
     @Since("1.3.2.0-PN")
     public enum Rarity {
         @Since("1.3.2.0-PN") COMMON(10),
@@ -455,6 +460,11 @@ public abstract class Enchantment implements Cloneable {
             return this.weight;
         }
 
+        /**
+         * Converts the weight to the closest rarity using floor semantic.
+         * @param weight The enchantment weight
+         * @return The closest rarity
+         */
         @Since("1.3.2.0-PN")
         public static Rarity fromWeight(int weight) {
             if (weight < 2) {
