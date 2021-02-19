@@ -51,6 +51,20 @@ public class IntBlockProperty extends BlockProperty<Integer> {
         this(name, exportedToItem, maxValue, 0);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public IntBlockProperty copy() {
+        return new IntBlockProperty(getName(), isExportedToItem(), getMaxValue(), getMinValue(), getBitSize(), getPersistenceName());
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public IntBlockProperty exportingToItems(boolean exportedToItem) {
+        return new IntBlockProperty(getName(), exportedToItem, getMaxValue(), getMinValue(), getBitSize(), getPersistenceName());
+    }
+
     @Override
     public int getMetaForValue(@Nullable Integer value) {
         if (value == null) {

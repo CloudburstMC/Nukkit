@@ -456,7 +456,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         for (Map map : list) {
             try {
-                addCreativeItem(fromJsonNetworkId(map));
+                addCreativeItem(fromJsonStringId(map));
             } catch (Exception e) {
                 log.error("Error while registering a creative item", e);
             }
@@ -613,7 +613,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             metaGroup = matcher.group(5);
         }
         if (metaGroup != null) {
-            meta = OptionalInt.of(Integer.parseInt(metaGroup) & 0xFFFF);
+            meta = OptionalInt.of(Short.parseShort(metaGroup));
         }
 
         String numericIdGroup = matcher.group(4);
@@ -621,14 +621,21 @@ public class Item implements Cloneable, BlockID, ItemID {
             String namespaceGroup = matcher.group(1);
             String namespacedId;
             if (namespaceGroup != null) {
-                namespacedId = namespaceGroup + name;
+                namespacedId = namespaceGroup + ":" + name;
             } else {
                 namespacedId = "minecraft:" + name;
             }
             MinecraftItemID minecraftItemId = MinecraftItemID.getByNamespaceId(namespacedId);
             if (minecraftItemId != null) {
                 Item item = minecraftItemId.get(1);
-                meta.ifPresent(item::setDamage);
+                if (meta.isPresent()) {
+                    int damage = meta.getAsInt();
+                    if (damage < 0) {
+                        item = item.createFuzzyCraftingRecipe();
+                    } else {
+                        item.setDamage(damage);
+                    }
+                }
                 return item;
             } else if (namespaceGroup != null && !namespaceGroup.equals("minecraft:")) {
                 return get(AIR);
@@ -675,6 +682,23 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+    }
+
+    private static Item fromJsonStringId(Map<String, Object> data) {
+        String nbt = (String) data.get("nbt_b64");
+        byte[] nbtBytes = nbt != null ? Base64.getDecoder().decode(nbt) : EmptyArrays.EMPTY_BYTES;
+
+        String id = data.get("id").toString();
+        Item item;
+        if (data.containsKey("damage")) {
+            int meta = Utils.toInt(data.get("damage"));
+            item = fromString(id+":"+meta);
+        } else {
+            item = fromString(id);
+        }
+        item = new Item(item.getId(), item.getDamage(), item.getCount());
+        item.setCompoundTag(nbtBytes);
+        return item;
     }
 
     @PowerNukkitOnly

@@ -1,6 +1,8 @@
 package cn.nukkit.event.player;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.lang.TextContainer;
@@ -18,6 +20,7 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
         LOGIN_TIMEOUT,
         SERVER_FULL,
         FLYING_DISABLED,
+        @PowerNukkitOnly @Since("1.4.0.0-PN") INVALID_PVP,
         UNKNOWN;
 
         @Override
