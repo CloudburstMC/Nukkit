@@ -106,9 +106,12 @@ public class BlockTNT extends BlockSolid {
             item.useOn(this);
             this.prime(80, player);
             return true;
-        }
-        if (item.getId() == Item.FIRE_CHARGE) {
-            if (!player.isCreative()) player.getInventory().removeItem(Item.get(Item.FIRE_CHARGE, 0, 1));
+        } else if (item.getId() == Item.FIRE_CHARGE) {
+            if (!player.isCreative()) item.count--;
+            this.prime(80, player);
+            return true;
+        } else if (item.hasEnchantment(Enchantment.ID_FIRE_ASPECT)) {
+            item.useOn(this);
             this.prime(80, player);
             return true;
         }
