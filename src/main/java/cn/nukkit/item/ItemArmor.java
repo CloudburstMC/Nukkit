@@ -1,7 +1,6 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.ByteTag;
@@ -51,7 +50,7 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
         boolean equip = false;
-        Item oldSlotItem = Block.get(Block.AIR).toItem();
+        Item oldSlotItem = Item.get(AIR);
         if (this.isHelmet()) {
             oldSlotItem = player.getInventory().getHelmet();
             if (player.getInventory().setHelmet(this)) {
