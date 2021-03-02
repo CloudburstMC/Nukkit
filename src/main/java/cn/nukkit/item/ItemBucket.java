@@ -132,20 +132,16 @@ public class ItemBucket extends Item {
                 }
             }
         } else if (targetBlock instanceof BlockLiquid) {
-            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
-                if (!player.isCreative()) {
-                    this.setDamage(0); // Empty bucket
-                    player.getInventory().setItemInHand(this);
-                }
-                player.getLevel().addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_FIZZ);
-                player.getLevel().addParticle(new ExplodeParticle(target.add(0.5, 1, 0.5)));
-                return true;
-            }
-
             Item result = Item.get(BUCKET, 0, 1);
             PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result);
             if (!block.canBeFlowedInto()) {
                 ev.setCancelled(true);
+            }
+
+            boolean nether = false;
+            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
+                ev.setCancelled(true);
+                nether = true;
             }
 
             player.getServer().getPluginManager().callEvent(ev);
@@ -193,6 +189,13 @@ public class ItemBucket extends Item {
                 }
 
                 return true;
+            } else if (nether) {
+                if (!player.isCreative()) {
+                    this.setDamage(0); // Empty bucket
+                    player.getInventory().setItemInHand(this);
+                }
+                player.getLevel().addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_FIZZ);
+                player.getLevel().addParticle(new ExplodeParticle(target.add(0.5, 1, 0.5)));
             } else {
                 player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 player.getInventory().sendContents(player);
