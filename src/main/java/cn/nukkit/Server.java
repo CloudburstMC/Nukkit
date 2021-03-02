@@ -82,6 +82,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.io.FilenameUtils;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
@@ -1914,6 +1915,11 @@ public class Server {
 
         if (name.contains("/") || name.contains("\\")) {
             path = name;
+            if (path.charAt(path.length() - 1) != '/') {
+                path += "/";
+            }
+
+            name = FilenameUtils.getName(name);
         } else {
             path = this.getDataPath() + "worlds/" + name + "/";
         }
@@ -2041,7 +2047,16 @@ public class Server {
             return false;
         }
 
-        String path = this.getDataPath() + "worlds/" + name + "/";
+        String path;
+        if (name.contains("/") || name.contains("\\")) {
+            path = name;
+
+            if (path.charAt(path.length() - 1) != '/') {
+                path += "/";
+            }
+        } else {
+            path = this.getDataPath() + "worlds/" + name + "/";
+        }
         if (this.getLevelByName(name) == null) {
 
             return LevelProviderManager.getProvider(path) != null;
