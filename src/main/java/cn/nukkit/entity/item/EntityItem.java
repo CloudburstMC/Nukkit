@@ -105,6 +105,11 @@ public class EntityItem extends Entity {
         this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY, true);
 
+        int id = this.item.getId();
+        if (id >= Item.NETHERITE_INGOT && id <= Item.NETHERITE_SCRAP) {
+            this.fireProof = true; // Netherite items are fireproof
+        }
+
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }
 
@@ -167,7 +172,7 @@ public class EntityItem extends Entity {
 
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
-        if (isInsideOfFire()) {
+        if (!this.fireProof && this.isInsideOfFire()) {
             this.kill();
         }
 
