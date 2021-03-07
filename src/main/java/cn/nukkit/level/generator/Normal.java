@@ -22,10 +22,6 @@ import java.util.*;
  * Nukkit's terrain generator
  * Originally adapted from the PocketMine-MP generator by NycuRO and CreeperFace
  * Mostly rewritten by DaPorkchop_
- * <p>
- * The following classes, and others related to terrain generation are theirs and are intended for NUKKIT USAGE and should not be copied/translated to other server software
- * such as BukkitPE, ClearSky, Genisys, PocketMine-MP, or others
- * <p>
  * Normal.java
  * MushroomPopulator.java
  * DarkOakTreePopulator.java
