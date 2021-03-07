@@ -2962,7 +2962,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                         case InteractPacket.ACTION_OPEN_INVENTORY:
                             if (targetEntity instanceof EntityRideable) {
-                                if (!(targetEntity instanceof EntityBoat || targetEntity instanceof EntityMinecart)) {
+                                if (!(targetEntity instanceof EntityBoat || targetEntity instanceof EntityMinecartEmpty)) {
                                     break;
                                 }
                             } else if (targetEntity.getId() != this.getId()) {
