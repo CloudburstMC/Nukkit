@@ -178,6 +178,7 @@ public interface ProtocolInfo {
     byte CORRECT_PLAYER_MOVE_PREDICTION_PACKET = (byte) 0xa1;
     byte ITEM_COMPONENT_PACKET = (byte) 0xa2;
     byte FILTER_TEXT_PACKET = (byte) 0xa3;
+    byte CLIENTBOUND_DEBUG_RENDERER_PACKET = (byte) 0xa4;
 
     byte BATCH_PACKET = (byte) 0xff;
 }
