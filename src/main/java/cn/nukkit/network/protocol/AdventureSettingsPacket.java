@@ -80,18 +80,17 @@ public class AdventureSettingsPacket extends DataPacket {
 
     public void setFlag(int flag, boolean value) {
         boolean flags = (flag & BITFLAG_SECOND_SET) != 0;
-
-        if (value) {
-            if (flags) {
+        if (flags) {
+            if (value) {
                 this.flags2 |= flag;
             } else {
-                this.flags |= flag;
+                this.flags2 &= flag;
             }
         } else {
-            if (flags) {
-                this.flags2 &= ~flag;
+            if (value) {
+                this.flags |= flag;
             } else {
-                this.flags &= ~flag;
+                this.flags &= flag;
             }
         }
     }
