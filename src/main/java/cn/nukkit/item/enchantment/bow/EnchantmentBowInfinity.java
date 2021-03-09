@@ -8,7 +8,7 @@ import cn.nukkit.item.enchantment.Enchantment;
  */
 public class EnchantmentBowInfinity extends EnchantmentBow {
     public EnchantmentBowInfinity() {
-        super(Enchantment.ID_BOW_INFINITY, "arrowInfinite", 1);
+        super(Enchantment.ID_BOW_INFINITY, "arrowInfinite", Rarity.VERY_RARE);
     }
 
     @Override
@@ -19,10 +19,5 @@ public class EnchantmentBowInfinity extends EnchantmentBow {
     @Override
     public int getMaxEnchantAbility(int level) {
         return 50;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 1;
     }
 }

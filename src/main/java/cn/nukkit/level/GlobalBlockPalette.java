@@ -7,6 +7,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -16,11 +17,11 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@Log4j2
 public class GlobalBlockPalette {
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
-    public static final byte[] BLOCK_PALETTE;
 
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
@@ -51,13 +52,6 @@ public class GlobalBlockPalette {
                 int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
                 legacyToRuntimeId.put(legacyId, runtimeId);
             }
-            state.remove("meta"); // No point in sending this since the client doesn't use it.
-        }
-
-        try {
-            BLOCK_PALETTE = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
-        } catch (IOException e) {
-            throw new AssertionError("Unable to write block palette", e);
         }
     }
 
@@ -67,7 +61,10 @@ public class GlobalBlockPalette {
         if (runtimeId == -1) {
             runtimeId = legacyToRuntimeId.get(id << 6);
             if (runtimeId == -1) {
-                throw new NoSuchElementException("Unmapped block registered id:" + id + " meta:" + meta);
+                log.info("Creating new runtime ID for unknown block {}", id);
+                runtimeId = runtimeIdAllocator.getAndIncrement();
+                legacyToRuntimeId.put(id << 6, runtimeId);
+                runtimeIdToLegacy.put(runtimeId, id << 6);
             }
         }
         return runtimeId;

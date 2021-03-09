@@ -3,10 +3,6 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * Created on 15-10-13.
  */
@@ -29,7 +25,8 @@ public class TextPacket extends DataPacket {
     public static final byte TYPE_SYSTEM = 6;
     public static final byte TYPE_WHISPER = 7;
     public static final byte TYPE_ANNOUNCEMENT = 8;
-    public static final byte TYPE_JSON = 9;
+    public static final byte TYPE_OBJECT = 9;
+    public static final byte TYPE_OBJECT_WHISPER = 10;
 
     public byte type;
     public String source = "";
@@ -51,7 +48,8 @@ public class TextPacket extends DataPacket {
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
-            case TYPE_JSON:
+            case TYPE_OBJECT:
+            case TYPE_OBJECT_WHISPER:
                 this.message = this.getString();
                 break;
 
@@ -78,7 +76,8 @@ public class TextPacket extends DataPacket {
             case TYPE_RAW:
             case TYPE_TIP:
             case TYPE_SYSTEM:
-            case TYPE_JSON:
+            case TYPE_OBJECT:
+            case TYPE_OBJECT_WHISPER:
                 this.putString(this.message);
                 break;
 

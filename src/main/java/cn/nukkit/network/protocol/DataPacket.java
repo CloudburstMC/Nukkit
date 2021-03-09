@@ -1,10 +1,10 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.Server;
-import cn.nukkit.raknet.protocol.EncapsulatedPacket;
+import cn.nukkit.network.Network;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
-import cn.nukkit.utils.Zlib;
+import com.nukkitx.network.raknet.RakNetReliability;
 
 /**
  * author: MagicDroidX
@@ -12,19 +12,23 @@ import cn.nukkit.utils.Zlib;
  */
 public abstract class DataPacket extends BinaryStream implements Cloneable {
 
-    public boolean isEncoded = false;
+    public volatile boolean isEncoded = false;
     private int channel = 0;
 
-    public EncapsulatedPacket encapsulatedPacket;
-    public byte reliability;
-    public Integer orderIndex = null;
-    public Integer orderChannel = null;
+    public RakNetReliability reliability = RakNetReliability.RELIABLE_ORDERED;
 
     public abstract byte pid();
 
     public abstract void decode();
 
     public abstract void encode();
+
+    public final void tryEncode() {
+        if (!this.isEncoded) {
+            this.isEncoded = true;
+            this.encode();
+        }
+    }
 
     @Override
     public DataPacket reset() {
@@ -67,9 +71,8 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
         byte[] buf = getBuffer();
         batchPayload[0] = Binary.writeUnsignedVarInt(buf.length);
         batchPayload[1] = buf;
-        byte[] data = Binary.appendBytes(batchPayload);
         try {
-            batch.payload = Zlib.deflate(data, level);
+            batch.payload = Network.deflateRaw(batchPayload, level);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

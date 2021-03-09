@@ -32,7 +32,6 @@ public class BlockFlowerPot extends BlockFlowable {
             case RED_MUSHROOM:
             case BROWN_MUSHROOM:
             case CACTUS:
-                // TODO: 2016/2/4 case NETHER_WART:
                 return true;
             default:
                 return false;
@@ -95,7 +94,25 @@ public class BlockFlowerPot extends BlockFlowable {
     public boolean onActivate(Item item, Player player) {
         BlockEntity blockEntity = getLevel().getBlockEntity(this);
         if (!(blockEntity instanceof BlockEntityFlowerPot)) return false;
-        if (blockEntity.namedTag.getShort("item") != 0 || blockEntity.namedTag.getInt("mData") != 0) return false;
+
+        if (blockEntity.namedTag.getShort("item") != AIR || blockEntity.namedTag.getInt("mData") != AIR) {
+            if (!canPlaceIntoFlowerPot(item.getId())) {
+                int id = blockEntity.namedTag.getShort("item");
+                if (id == AIR) id = blockEntity.namedTag.getInt("mData");
+                for (Item drop : player.getInventory().addItem(Item.get(id, blockEntity.namedTag.getInt("data")))) {
+                    player.dropItem(drop);
+                }
+
+                blockEntity.namedTag.putShort("item", AIR);
+                blockEntity.namedTag.putInt("data", 0);
+                this.setDamage(0);
+                this.level.setBlock(this, this, true);
+                ((BlockEntityFlowerPot) blockEntity).spawnToAll();
+                return true;
+            }
+            return false;
+        }
+
         int itemID;
         int itemMeta;
         if (!canPlaceIntoFlowerPot(item.getId())) {

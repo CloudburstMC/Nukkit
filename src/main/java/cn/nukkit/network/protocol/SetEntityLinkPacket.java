@@ -18,6 +18,7 @@ public class SetEntityLinkPacket extends DataPacket {
     public long riderUniqueId; //to
     public byte type;
     public byte immediate;
+    public boolean riderInitiated = false;
 
     @Override
     public void decode() {
@@ -31,6 +32,7 @@ public class SetEntityLinkPacket extends DataPacket {
         this.putEntityUniqueId(this.riderUniqueId);
         this.putByte(this.type);
         this.putByte(this.immediate);
+        this.putBoolean(this.riderInitiated);
     }
 
     @Override

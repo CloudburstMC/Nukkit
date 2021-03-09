@@ -19,6 +19,7 @@ public class SetEntityDataPacket extends DataPacket {
 
     public long eid;
     public EntityMetadata metadata;
+    public long frame;
 
     @Override
     public void decode() {
@@ -30,5 +31,6 @@ public class SetEntityDataPacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.eid);
         this.put(Binary.writeMetadata(this.metadata));
+        this.putUnsignedVarLong(this.frame);
     }
 }

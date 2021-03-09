@@ -2,9 +2,8 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
-import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
+import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
@@ -16,7 +15,6 @@ import lombok.extern.log4j.Log4j2;
 import java.io.File;
 import java.io.InputStream;
 import java.util.*;
-import java.util.zip.Deflater;
 
 /**
  * author: MagicDroidX
@@ -27,10 +25,12 @@ public class CraftingManager {
 
     public final Collection<Recipe> recipes = new ArrayDeque<>();
 
-    public static BatchPacket packet = null;
+    public static DataPacket packet = null;
     protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
 
     public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
+
+    public final Map<UUID, MultiRecipe> multiRecipes = new HashMap<>();
 
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
@@ -153,6 +153,9 @@ public class CraftingManager {
                         }
                         this.registerRecipe(new FurnaceRecipe(resultItem, inputItem));
                         break;
+                    case 4:
+                        this.registerRecipe(new MultiRecipe(UUID.fromString((String) recipe.get("uuid"))));
+                        break;
                     default:
                         break;
                 }
@@ -165,19 +168,22 @@ public class CraftingManager {
         List<Map> potionMixes = config.getMapList("potionMixes");
 
         for (Map potionMix : potionMixes) {
-            int fromPotionId = ((Number) potionMix.get("fromPotionId")).intValue(); // gson returns doubles...
-            int ingredient = ((Number) potionMix.get("ingredient")).intValue();
-            int toPotionId = ((Number) potionMix.get("toPotionId")).intValue();
+            int fromPotionId = ((Number) potionMix.get("inputId")).intValue(); // gson returns doubles...
+            int fromPotionMeta = ((Number) potionMix.get("inputMeta")).intValue();
+            int ingredient = ((Number) potionMix.get("reagentId")).intValue();
+            int ingredientMeta = ((Number) potionMix.get("reagentMeta")).intValue();
+            int toPotionId = ((Number) potionMix.get("outputId")).intValue();
+            int toPotionMeta = ((Number) potionMix.get("outputMeta")).intValue();
 
-            registerBrewingRecipe(new BrewingRecipe(Item.get(ItemID.POTION, fromPotionId), Item.get(ingredient), Item.get(ItemID.POTION, toPotionId)));
+            registerBrewingRecipe(new BrewingRecipe(Item.get(fromPotionId, fromPotionMeta), Item.get(ingredient, ingredientMeta), Item.get(toPotionId, toPotionMeta)));
         }
 
         List<Map> containerMixes = config.getMapList("containerMixes");
 
         for (Map containerMix : containerMixes) {
-            int fromItemId = ((Number) containerMix.get("fromItemId")).intValue();
-            int ingredient = ((Number) containerMix.get("ingredient")).intValue();
-            int toItemId = ((Number) containerMix.get("toItemId")).intValue();
+            int fromItemId = ((Number) containerMix.get("inputId")).intValue();
+            int ingredient = ((Number) containerMix.get("reagentId")).intValue();
+            int toItemId = ((Number) containerMix.get("outputId")).intValue();
 
             registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
         }
@@ -186,7 +192,6 @@ public class CraftingManager {
     public void rebuildPacket() {
         CraftingDataPacket pk = new CraftingDataPacket();
         pk.cleanRecipes = true;
-
         for (Recipe recipe : this.getRecipes()) {
             if (recipe instanceof ShapedRecipe) {
                 pk.addShapedRecipe((ShapedRecipe) recipe);
@@ -199,6 +204,10 @@ public class CraftingManager {
             pk.addFurnaceRecipe(recipe);
         }
 
+        for (MultiRecipe recipe : this.multiRecipes.values()) {
+            pk.addMultiRecipe(recipe);
+        }
+
         for (BrewingRecipe recipe : brewingRecipes.values()) {
             pk.addBrewingRecipe(recipe);
         }
@@ -207,9 +216,10 @@ public class CraftingManager {
             pk.addContainerRecipe(recipe);
         }
 
-        pk.encode();
-
-        packet = pk.compress(Deflater.BEST_COMPRESSION);
+        pk.tryEncode();
+        // TODO: find out whats wrong with compression
+        // packet = pk.compress(Deflater.BEST_COMPRESSION);
+        packet = pk;
     }
 
     public Collection<Recipe> getRecipes() {
@@ -376,6 +386,10 @@ public class CraftingManager {
             return recipe.matchItems(inputList, extraOutputList, multiplier);
         }
         return false;
+    }
+
+    public void registerMultiRecipe(MultiRecipe recipe) {
+        this.multiRecipes.put(recipe.getId(), recipe);
     }
 
     public static class Entry {

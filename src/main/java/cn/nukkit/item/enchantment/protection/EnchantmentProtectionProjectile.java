@@ -10,7 +10,7 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 public class EnchantmentProtectionProjectile extends EnchantmentProtection {
 
     public EnchantmentProtectionProjectile() {
-        super(ID_PROTECTION_PROJECTILE, "projectile", 5, TYPE.PROJECTILE);
+        super(ID_PROTECTION_PROJECTILE, "projectile", Rarity.UNCOMMON, TYPE.PROJECTILE);
     }
 
     @Override

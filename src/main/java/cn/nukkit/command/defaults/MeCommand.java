@@ -18,7 +18,7 @@ public class MeCommand extends VanillaCommand {
         this.setPermission("nukkit.command.me");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("action ...", CommandParamType.RAWTEXT, false)
+                CommandParameter.newType("message", CommandParamType.MESSAGE)
         });
     }
 
@@ -41,16 +41,16 @@ public class MeCommand extends VanillaCommand {
             name = sender.getName();
         }
 
-        String msg = "";
+        StringBuilder msg = new StringBuilder();
         for (String arg : args) {
-            msg += arg + " ";
+            msg.append(arg).append(" ");
         }
 
         if (msg.length() > 0) {
-            msg = msg.substring(0, msg.length() - 1);
+            msg = new StringBuilder(msg.substring(0, msg.length() - 1));
         }
 
-        sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", name, TextFormat.WHITE + msg));
+        sender.getServer().broadcastMessage(new TranslationContainer("chat.type.emote", name, TextFormat.WHITE + msg.toString()));
 
         return true;
     }

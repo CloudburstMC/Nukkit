@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class EnchantmentDamageArthropods extends EnchantmentDamage {
 
     public EnchantmentDamageArthropods() {
-        super(ID_DAMAGE_ARTHROPODS, "arthropods", 5, TYPE.SMITE);
+        super(ID_DAMAGE_ARTHROPODS, "arthropods", Rarity.UNCOMMON, TYPE.SMITE);
     }
 
     @Override

@@ -2,11 +2,9 @@ package cn.nukkit.utils;
 
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-import java.util.zip.InflaterInputStream;
 
 public final class ZlibThreadLocal implements ZlibProvider {
     private static final ThreadLocal<Inflater> INFLATER = ThreadLocal.withInitial(Inflater::new);

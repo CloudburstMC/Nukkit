@@ -20,7 +20,6 @@ import cn.nukkit.item.ItemMinecart;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
@@ -41,7 +40,6 @@ import java.util.Objects;
  */
 public abstract class EntityMinecartAbstract extends EntityVehicle {
 
-    private String entityName;
     private static final int[][][] matrix = new int[][][]{
             {{0, 0, -1}, {0, 0, 1}},
             {{-1, 0, 0}, {1, 0, 0}},
@@ -93,23 +91,9 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         return 0.1F;
     }
 
-    public void setName(String name) {
-        entityName = name;
-    }
-
-    @Override
-    public String getName() {
-        return entityName;
-    }
-
     @Override
     public float getBaseOffset() {
         return 0.35F;
-    }
-
-    @Override
-    public boolean hasCustomName() {
-        return entityName != null;
     }
 
     @Override
@@ -276,9 +260,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 entity.riding = null;
             }
         }
-
-        SmokeParticle particle = new SmokeParticle(this);
-        level.addParticle(particle);
     }
 
     @Override
@@ -296,7 +277,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     @Override
     public void applyEntityCollision(cn.nukkit.entity.Entity entity) {
-        if (entity != riding) {
+        if (entity != riding && !(entity instanceof Player && ((Player) entity).isSpectator())) {
             if (entity instanceof EntityLiving
                     && !(entity instanceof EntityHuman)
                     && motionX * motionX + motionZ * motionZ > 0.01D
@@ -335,7 +316,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                     double desinityX = mine.x - x;
                     double desinityZ = mine.z - z;
                     Vector3 vector = new Vector3(desinityX, 0, desinityZ).normalize();
-                    Vector3 vec = new Vector3((double) MathHelper.cos((float) yaw * 0.017453292F), 0, (double) MathHelper.sin((float) yaw * 0.017453292F)).normalize();
+                    Vector3 vec = new Vector3(MathHelper.cos((float) yaw * 0.017453292F), 0, MathHelper.sin((float) yaw * 0.017453292F)).normalize();
                     double desinityXZ = Math.abs(vector.dot(vec));
 
                     if (desinityXZ < 0.800000011920929D) {
@@ -426,7 +407,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         fallDistance = 0.0F;
         Vector3 vector = getNextRail(x, y, z);
 
-        y = (double) dy;
+        y = dy;
         boolean isPowered = false;
         boolean isSlowed = false;
 
@@ -455,8 +436,8 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         }
 
         int[][] facing = matrix[block.getRealMeta()];
-        double facing1 = (double) (facing[1][0] - facing[0][0]);
-        double facing2 = (double) (facing[1][2] - facing[0][2]);
+        double facing1 = facing[1][0] - facing[0][0];
+        double facing2 = facing[1][2] - facing[0][2];
         double speedOnTurns = Math.sqrt(facing1 * facing1 + facing2 * facing2);
         double realFacing = motionX * facing1 + motionZ * facing2;
 

@@ -12,6 +12,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -247,7 +248,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[GOLD_HORSE_ARMOR] = ItemHorseArmorGold.class; //418
             list[DIAMOND_HORSE_ARMOR] = ItemHorseArmorDiamond.class; //419
             //TODO: list[LEAD] = ItemLead.class; //420
-            //TODO: list[NAME_TAG] = ItemNameTag.class; //421
+            list[NAME_TAG] = ItemNameTag.class; //421
             list[PRISMARINE_CRYSTALS] = ItemPrismarineCrystals.class; //422
             list[RAW_MUTTON] = ItemMuttonRaw.class; //423
             list[COOKED_MUTTON] = ItemMuttonCooked.class; //424
@@ -288,6 +289,8 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
+            list[CROSSBOW] = ItemCrossbow.class; //471
+
             list[SWEET_BERRIES] = ItemSweetBerries.class; //477
 
             list[RECORD_11] = ItemRecord11.class;
@@ -305,6 +308,23 @@ public class Item implements Cloneable, BlockID, ItemID {
 
             list[SHIELD] = ItemShield.class; //513
 
+            list[HONEYCOMB] = ItemHoneycomb.class; //736
+            list[HONEY_BOTTLE] = ItemHoneyBottle.class; //737
+
+            list[NETHERITE_INGOT] = ItemIngotNetherite.class; //742
+            list[NETHERITE_SWORD] = ItemSwordNetherite.class; //743
+            list[NETHERITE_SHOVEL] = ItemShovelNetherite.class; //744
+            list[NETHERITE_PICKAXE] = ItemPickaxeNetherite.class; //745
+            list[NETHERITE_AXE] = ItemAxeNetherite.class; //746
+            list[NETHERITE_HOE] = ItemHoeNetherite.class; //747
+            list[NETHERITE_HELMET] = ItemHelmetNetherite.class; //748
+            list[NETHERITE_CHESTPLATE] = ItemChestplateNetherite.class; //749
+            list[NETHERITE_LEGGINGS] = ItemLeggingsNetherite.class; //750
+            list[NETHERITE_BOOTS] = ItemBootsNetherite.class; //751
+            list[NETHERITE_SCRAP] = ItemScrapNetherite.class; //752
+
+            list[RECORD_PIGSTEP] = ItemRecordPigstep.class; //759
+
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
                     list[i] = Block.list[i];
@@ -321,7 +341,7 @@ public class Item implements Cloneable, BlockID, ItemID {
     private static void initCreativeItems() {
         clearCreativeItems();
 
-        Config config = new Config(Config.YAML);
+        Config config = new Config(Config.JSON);
         config.load(Server.class.getClassLoader().getResourceAsStream("creativeitems.json"));
         List<Map> list = config.getMapList("items");
 
@@ -422,7 +442,7 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         Pattern integerPattern = Pattern.compile("^[1-9]\\d*$");
         if (integerPattern.matcher(b[0]).matches()) {
-            id = Integer.valueOf(b[0]);
+            id = Integer.parseInt(b[0]);
         } else {
             try {
                 id = Item.class.getField(b[0].toUpperCase()).getInt(null);
@@ -431,7 +451,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         id = id & 0xFFFF;
-        if (b.length != 1) meta = Integer.valueOf(b[1]) & 0xFFFF;
+        if (b.length != 1) meta = Integer.parseInt(b[1]) & 0xFFFF;
 
         return get(id, meta);
     }
@@ -635,6 +655,37 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         return enchantments.toArray(new Enchantment[0]);
+    }
+
+    public boolean hasEnchantment(int id) {
+        return this.getEnchantment(id) != null;
+    }
+
+    public int getRepairCost() {
+        if (this.hasCompoundTag()) {
+            CompoundTag tag = this.getNamedTag();
+            if (tag.contains("RepairCost")) {
+                Tag repairCost = tag.get("RepairCost");
+                if (repairCost instanceof IntTag) {
+                    return ((IntTag) repairCost).data;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public Item setRepairCost(int cost) {
+        if (cost <= 0 && this.hasCompoundTag()) {
+            return this.setNamedTag(this.getNamedTag().remove("RepairCost"));
+        }
+
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+        return this.setNamedTag(tag.putInt("RepairCost", cost));
     }
 
     public boolean hasCustomName() {

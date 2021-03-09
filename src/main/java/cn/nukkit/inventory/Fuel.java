@@ -59,7 +59,7 @@ public abstract class Fuel {
         duration.put(Item.BROWN_MUSHROOM_BLOCK, (short) 300);
         duration.put(Item.RED_MUSHROOM_BLOCK, (short) 300);
         duration.put(Item.FISHING_ROD, (short) 300);
-        duration.put(Item.WOODEN_BUTTON, (short) 100);
+        duration.put(Item.WOODEN_BUTTON, (short) 300);
         duration.put(Item.WOODEN_DOOR, (short) 200);
         duration.put(Item.SPRUCE_DOOR, (short) 200);
         duration.put(Item.BIRCH_DOOR, (short) 200);
@@ -67,5 +67,7 @@ public abstract class Fuel {
         duration.put(Item.ACACIA_DOOR, (short) 200);
         duration.put(Item.DARK_OAK_DOOR, (short) 200);
         duration.put(Item.BANNER, (short) 300);
+        duration.put(Item.DEAD_BUSH, (short) 100);
+        duration.put(Item.SIGN, (short) 200);
     }
 }

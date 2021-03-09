@@ -159,7 +159,8 @@ public class EntityHuman extends EntityHumanType {
                         byte[] image = animationTag.getByteArray("Image");
                         int width = animationTag.getInt("ImageWidth");
                         int height = animationTag.getInt("ImageHeight");
-                        newSkin.getAnimations().add(new SkinAnimation(new SerializedImage(width, height, image), type, frames));
+                        int expression = animationTag.getInt("AnimationExpression");
+                        newSkin.getAnimations().add(new SkinAnimation(new SerializedImage(width, height, image), type, frames, expression));
                     }
                 }
                 if (skinTag.contains("ArmSize")) {
@@ -240,6 +241,7 @@ public class EntityHuman extends EntityHumanType {
                             .putInt("Type", animation.type)
                             .putInt("ImageWidth", animation.image.width)
                             .putInt("ImageHeight", animation.image.height)
+                            .putInt("AnimationExpression", animation.expression)
                             .putByteArray("Image", animation.image.data));
                 }
                 skinTag.putList(animationsTag);
@@ -285,7 +287,7 @@ public class EntityHuman extends EntityHumanType {
             }
 
             if (this instanceof Player)
-                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
+                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), ((Player) this).getDisplayName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
             else
                 this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, new Player[]{player});
 
@@ -320,7 +322,7 @@ public class EntityHuman extends EntityHumanType {
             }
 
             if (!(this instanceof Player)) {
-                this.server.removePlayerListData(this.getUniqueId(), new Player[]{player});
+                this.server.removePlayerListData(this.getUniqueId(), player);
             }
         }
     }
