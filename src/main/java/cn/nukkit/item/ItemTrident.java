@@ -8,6 +8,7 @@ import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -55,6 +56,10 @@ public class ItemTrident extends ItemTool {
     @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onRelease(Player player, int ticksUsed) {
+        if (this.getEnchantmentLevel(Enchantment.ID_TRIDENT_RIPTIDE) > 0) {
+            return true;
+        }
+        
         this.useOn(player);
 
         CompoundTag nbt = new CompoundTag()
@@ -80,7 +85,13 @@ public class ItemTrident extends ItemTool {
         }
 
         trident.setItem(this);
-
+        
+        if (player.isCreative()) {
+            trident.setCreative(true);
+        }
+        
+        trident.setFavoredSlot(player.getInventory().getHeldItemIndex());
+        
         EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, trident, f);
 
         if (f < 0.1 || ticksUsed < 5) {

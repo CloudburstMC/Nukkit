@@ -1,27 +1,34 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.EntityLiving;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
-import cn.nukkit.entity.item.EntityArmorStand;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class EntityEquipmentInventory extends BaseInventory {
 
-    private EntityLiving entityLiving;
-    private final Set<Player> viewers = new HashSet<>();
+    private final Entity entity;
 
-    private int MAINHAND = 0;
-    private int  OFFHAND = 1;
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int MAIN_HAND = 0;
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int OFFHAND = 1;
 
-    public EntityEquipmentInventory( EntityArmorStand entityArmorStand ) {
-        super( entityArmorStand, InventoryType.PLAYER );
-        this.entityLiving = entityArmorStand;
+    /**
+     * @param entity an Entity which implements {@link InventoryHolder}.
+     * @throws ClassCastException if the entity does not implements {@link InventoryHolder}
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public EntityEquipmentInventory(Entity entity) {
+        super((InventoryHolder) entity, InventoryType.ENTITY_EQUIPMENT);
+        this.entity = entity;
     }
-
 
     @Override
     public String getName() {
@@ -33,6 +40,12 @@ public class EntityEquipmentInventory extends BaseInventory {
         return 2;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public Entity getEntity() {
+        return entity;
+    }
+    
     @Override
     public InventoryHolder getHolder() {
         return this.holder;
@@ -48,7 +61,7 @@ public class EntityEquipmentInventory extends BaseInventory {
     @Override
     public void sendSlot( int index, Player player ) {
         MobEquipmentPacket mobEquipmentPacket = new MobEquipmentPacket();
-        mobEquipmentPacket.eid = this.entityLiving.getId();
+        mobEquipmentPacket.eid = this.entity.getId();
         mobEquipmentPacket.inventorySlot = mobEquipmentPacket.hotbarSlot = index;
         mobEquipmentPacket.item = this.getItem( index );
         player.dataPacket( mobEquipmentPacket );
@@ -56,7 +69,9 @@ public class EntityEquipmentInventory extends BaseInventory {
 
     @Override
     public Set<Player> getViewers() {
-        return this.viewers;
+        Set<Player> viewers = new HashSet<>(this.viewers);
+        viewers.addAll(entity.getViewers().values());
+        return viewers;
     }
 
     @Override
@@ -69,26 +84,34 @@ public class EntityEquipmentInventory extends BaseInventory {
         this.viewers.remove( who );
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public Item getItemInHand() {
-        return this.getItem( this.MAINHAND );
+        return this.getItem( MAIN_HAND);
     }
 
-    public Item getOffHandItem() {
-        return this.getItem( this.OFFHAND );
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public Item getItemInOffhand() {
+        return this.getItem( OFFHAND );
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean setItemInHand( Item item, boolean send ) {
-        return this.setItem( this.MAINHAND, item, send );
+        return this.setItem( MAIN_HAND, item, send );
     }
 
-    public boolean setOffhandItem( Item item, boolean send ) {
-        return this.setItem( this.OFFHAND, item, send );
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean setItemInOffhand(Item item, boolean send ) {
+        return this.setItem( OFFHAND, item, send );
     }
 
     @Override
     public void sendContents( Player target ) {
-        this.sendSlot( this.MAINHAND, target );
-        this.sendSlot( this.OFFHAND, target );
+        this.sendSlot( MAIN_HAND, target );
+        this.sendSlot( OFFHAND, target );
     }
 
     @Override

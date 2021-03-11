@@ -3,6 +3,7 @@ package cn.nukkit.blockproperty;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyPersistenceValueException;
 import com.google.common.base.Preconditions;
 
 import javax.annotation.Nonnull;
@@ -24,6 +25,20 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
     @Since("1.4.0.0-PN")
     public BooleanBlockProperty(String name, boolean exportedToItem) {
         super(name, exportedToItem, 1, name);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public BooleanBlockProperty copy() {
+        return new BooleanBlockProperty(getName(), isExportedToItem(), getPersistenceName());
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public BooleanBlockProperty exportingToItems(boolean exportedToItem) {
+        return new BooleanBlockProperty(getName(), exportedToItem, getPersistenceName());
     }
 
     @Override
@@ -163,6 +178,19 @@ public final class BooleanBlockProperty extends BlockProperty<Boolean> {
             return "0";
         } else {
             throw new InvalidBlockPropertyMetaException(this, meta, meta, "Only 1 or 0 was expected");
+        }
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getMetaForPersistenceValue(@Nonnull String persistenceValue) {
+        if ("1".equals(persistenceValue)) {
+            return 1;
+        } else if ("0".equals(persistenceValue)){
+            return 0;
+        } else {
+            throw new InvalidBlockPropertyPersistenceValueException(this, null, persistenceValue, "Only 1 or 0 was expected");
         }
     }
 }

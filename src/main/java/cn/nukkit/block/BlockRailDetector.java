@@ -1,11 +1,16 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityMinecartAbstract;
-import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.utils.OptionalBoolean;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author CreeperFace (Nukkit Project), larryTheCoder (Minecart and Riding Project)
@@ -25,6 +30,14 @@ public class BlockRailDetector extends BlockRail {
     @Override
     public int getId() {
         return DETECTOR_RAIL;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return ACTIVABLE_PROPERTIES;
     }
 
     @Override
@@ -94,9 +107,21 @@ public class BlockRailDetector extends BlockRail {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                Item.get(Item.DETECTOR_RAIL, 0, 1)
-        };
+    public boolean isActive() {
+        return getBooleanValue(ACTIVE);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public OptionalBoolean isRailActive() {
+        return OptionalBoolean.of(getBooleanValue(ACTIVE));
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setRailActive(boolean active) {
+        setBooleanValue(ACTIVE, active);
     }
 }

@@ -12,8 +12,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 
@@ -22,7 +22,8 @@ import javax.annotation.Nonnull;
  * @since 2015/11/22
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockDaylightDetector extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityDaylightDetector> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public class BlockDaylightDetector extends BlockTransparentMeta implements RedstoneComponent, BlockEntityHolder<BlockEntityDaylightDetector> {
 
     public BlockDaylightDetector() {
         // Does nothing
@@ -109,7 +110,7 @@ public class BlockDaylightDetector extends BlockTransparentMeta implements Block
     public boolean onBreak(Item item) {
         if (super.onBreak(item)) {
             if (getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
-                getLevel().updateAroundRedstone(new Vector3(x, y, z), null);
+                updateAroundRedstone();
             }
             return true;
         }
@@ -151,7 +152,7 @@ public class BlockDaylightDetector extends BlockTransparentMeta implements Block
 
         if (i != getLevel().getBlockDataAt(getFloorX(), getFloorY(), getFloorZ())) {
             getLevel().setBlockDataAt(getFloorX(), getFloorY(), getFloorZ(), i);
-            getLevel().updateAroundRedstone(this, null);
+            updateAroundRedstone();
         }
     }
 }

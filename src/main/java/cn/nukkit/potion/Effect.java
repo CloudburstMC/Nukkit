@@ -1,6 +1,8 @@
 package cn.nukkit.potion;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -45,6 +47,9 @@ public class Effect implements Cloneable {
      * @deprecated Typo. Use {@link #CONDUIT_POWER} instead.
      */
     @Deprecated
+    @DeprecationDetails(by = "PowerNukkit and removed by Cloudburst", since = "TBD",
+            reason = "Typo", replaceWith = "CONDUIT_POWER")
+    @PowerNukkitOnly("Was removed from Cloudburst Nukkit, kept on PowerNukkit for backward compatibility")
     public static final int COUNDIT_POWER = 26;
     public static final int CONDUIT_POWER = 26;
     public static final int SLOW_FALLING = 27;

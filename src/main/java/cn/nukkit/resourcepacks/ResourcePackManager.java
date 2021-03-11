@@ -32,7 +32,7 @@ public class ResourcePackManager {
                             resourcePack = new ZippedResourcePack(pack);
                             break;
                         default:
-                            Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
+                            log.warn(Server.getInstance().getLanguage()
                                     .translateString("nukkit.resources.unknown-format", pack.getName()));
                             break;
                     }
@@ -48,7 +48,7 @@ public class ResourcePackManager {
         }
 
         this.resourcePacks = loadedResourcePacks.toArray(ResourcePack.EMPTY_ARRAY);
-        Server.getInstance().getLogger().info(Server.getInstance().getLanguage()
+        log.info(Server.getInstance().getLanguage()
                 .translateString("nukkit.resources.success", String.valueOf(this.resourcePacks.length)));
     }
 

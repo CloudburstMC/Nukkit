@@ -15,44 +15,54 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.AxisDirection;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 
 /**
  * @author MagicDroidX (Nukkit Project)
  */
-public abstract class BlockDoor extends BlockTransparentMeta implements Faceable {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public abstract class BlockDoor extends BlockTransparentMeta implements RedstoneComponent, Faceable {
     private static final double THICKNESS = 3.0 /16;
-    
+
+    // Contains a list of positions of doors, which have been opened by hand (by a player).
+    // It is used to detect on redstone update, if the door should be closed if redstone is off on the update,
+    // previously the door always closed, when placing an unpowered redstone at the door, this fixes it
+    // and gives the vanilla behavior; no idea how to make this better :d
+    private static final List<Location> manualOverrides = new ArrayList<>();
+
     public static final BooleanBlockProperty UPPER_BLOCK = new BooleanBlockProperty("upper_block_bit", false);
     public static final BooleanBlockProperty DOOR_HINGE = new BooleanBlockProperty("door_hinge_bit", false);
     public static final BlockProperty<BlockFace> DOOR_DIRECTION = new ArrayBlockProperty<>("direction", false, new BlockFace[]{
             BlockFace.EAST, BlockFace.SOUTH,
             BlockFace.WEST, BlockFace.NORTH
     }).ordinal(true);
-    
+
     protected static final BlockProperties PROPERTIES = new BlockProperties(DOOR_DIRECTION, OPEN, UPPER_BLOCK, DOOR_HINGE);
-    
+
     @Deprecated @DeprecationDetails(reason = "Use the accessors or properties instead", since = "1.4.0.0-PN", replaceWith = "CommonBlockProperties.OPEN")
     public static final int DOOR_OPEN_BIT = PROPERTIES.getOffset(OPEN.getName());
-    
+
     @Deprecated @DeprecationDetails(reason = "Use the accessors or properties instead", since = "1.4.0.0-PN", replaceWith = "UPPER_BLOCK")
     public static final int DOOR_TOP_BIT = PROPERTIES.getOffset(UPPER_BLOCK.getName());
-    
+
     @Deprecated @DeprecationDetails(reason = "Use the accessors or properties instead", since = "1.4.0.0-PN", replaceWith = "DOOR_HINGE")
     public static final int DOOR_HINGE_BIT = PROPERTIES.getOffset(DOOR_HINGE.getName());
-    
-    @Deprecated @DeprecationDetails(reason = "Was removed from the game", since = "1.4.0.0-PN", replaceWith = "Level.isBlockPowered(block.getLocation())")
+
+    @Deprecated @DeprecationDetails(reason = "Was removed from the game", since = "1.4.0.0-PN", replaceWith = "#isGettingPower()")
     public static final int DOOR_POWERED_BIT = PROPERTIES.getBitSize();
 
     protected BlockDoor(int meta) {
@@ -134,12 +144,12 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            onNormalUpdate();
+            this.onNormalUpdate();
             return type;
         }
         
         if (type == Level.BLOCK_UPDATE_REDSTONE && level.getServer().isRedstoneEnabled()) {
-            onRedstoneUpdate();
+            this.onRedstoneUpdate();
             return type;
         }
 
@@ -153,27 +163,96 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
                 level.setBlock(this, Block.get(AIR), false);
             }
 
+            /* Doesn't work with redstone
             boolean downIsOpen = down.getBooleanValue(OPEN);
             if (downIsOpen != isOpen()) {
                 setOpen(downIsOpen);
                 level.setBlock(this, this, false, true);
-            }
+            }*/
             return;
         }
-        
+
         if (down.getId() == AIR) {
             level.useBreakOn(this, getToolType() == ItemTool.TYPE_PICKAXE? Item.get(ItemID.DIAMOND_PICKAXE) : null);
         }
     }
 
+    @PowerNukkitDifference(info = "Checking if the door was opened/closed manually.")
     private void onRedstoneUpdate() {
-        boolean isPowered = level.isBlockPowered(this.getLocation());
-        if (isOpen() != isPowered) {
-            level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
+        if ((this.isOpen() != this.isGettingPower()) && !this.getManualOverride()) {
+            if (this.isOpen() != this.isGettingPower()) {
+                level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, this.isOpen() ? 15 : 0, this.isOpen() ? 0 : 15));
 
-            toggle(null);
-            playOpenCloseSound();
+                this.setOpen(null, this.isGettingPower());
+            }
+        } else if (this.getManualOverride() && (this.isGettingPower() == this.isOpen())) {
+            this.setManualOverride(false);
         }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setManualOverride(boolean val) {
+        Location down;
+        Location up;
+        if (this.isTop()) {
+            down = down().getLocation();
+            up = getLocation();
+        } else {
+            down = getLocation();
+            up = up().getLocation();
+        }
+
+        if (val) {
+            manualOverrides.add(up);
+            manualOverrides.add(down);
+        } else {
+            manualOverrides.remove(up);
+            manualOverrides.remove(down);
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean getManualOverride() {
+        Location down;
+        Location up;
+        if (this.isTop()) {
+            down = down().getLocation();
+            up = getLocation();
+        } else {
+            down = getLocation();
+            up = up().getLocation();
+        }
+
+        return manualOverrides.contains(up) || manualOverrides.contains(down);
+    }
+
+    @Override
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isGettingPower() {
+        Location down;
+        Location up;
+        if (this.isTop()) {
+            down = down().getLocation();
+            up = getLocation();
+        } else {
+            down = getLocation();
+            up = up().getLocation();
+        }
+
+        for (BlockFace side : BlockFace.values()) {
+            Block blockDown = down.getSide(side).getLevelBlock();
+            Block blockUp = up.getSide(side).getLevelBlock();
+
+            if (this.level.isSidePowered(blockDown.getLocation(), side)
+                    || this.level.isSidePowered(blockUp.getLocation(), side)) {
+                return true;
+            }
+        }
+
+        return this.level.isBlockPowered(down) || this.level.isBlockPowered(up);
     }
 
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
@@ -182,13 +261,13 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         if (this.y > 254 || face != BlockFace.UP) {
             return false;
         }
-        
+
         Block blockUp = this.up();
         Block blockDown = this.down();
         if (!blockUp.canBeReplaced() || !blockDown.isSolid(BlockFace.UP) && !(blockDown instanceof BlockCauldron)) {
             return false;
         }
-        
+
         BlockFace direction = player.getDirection();
         setBlockFace(direction);
 
@@ -213,8 +292,8 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         
         level.updateAround(block);
 
-        if (level.getServer().isRedstoneEnabled() && !isOpen() && level.isBlockPowered(getLocation())) {
-            toggle(null);
+        if (level.getServer().isRedstoneEnabled() && !this.isOpen() && this.isGettingPower()) {
+            this.setOpen(null, true);
         }
 
         return true;
@@ -222,6 +301,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @Override
     public boolean onBreak(Item item) {
+        this.setManualOverride(false);
         if (isTop()) {
             Block down = this.down();
             if (down.getId() == this.getId() && !down.getBooleanValue(UPPER_BLOCK)) {
@@ -240,21 +320,24 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (!toggle(player)) {
-            return false;
-        }
-        
-        playOpenCloseSound();
-        return true;
+        return toggle(player);
     }
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void playOpenCloseSound() {
-        if (isOpen()) {
-            playOpenSound();
-        } else {
-            playCloseSound();
+        if (this.isTop() && down() instanceof BlockDoor) {
+            if (((BlockDoor) down()).isOpen()) {
+                this.playOpenSound();
+            } else {
+                this.playCloseSound();
+            }
+        } else if (up() instanceof BlockDoor) {
+            if (this.isOpen()) {
+                this.playOpenSound();
+            } else {
+                this.playCloseSound();
+            }
         }
     }
     
@@ -270,7 +353,19 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         level.addSound(this, Sound.RANDOM_DOOR_CLOSE);
     }
 
+    @PowerNukkitDifference(info = "Just call the #setOpen() method.", since = "1.4.0.0-PN")
     public boolean toggle(Player player) {
+        return this.setOpen(player, !this.isOpen());
+    }
+
+    @PowerNukkitDifference(info = "Using direct values, instead of toggling (fixes a redstone bug, that the door won't open). " +
+            "Also adding possibility to detect, whether a player or redstone recently opened/closed the door.", since = "1.4.0.0-PN")
+    @PowerNukkitOnly
+    public boolean setOpen(Player player, boolean open) {
+        if (open == this.isOpen()) {
+            return false;
+        }
+
         DoorToggleEvent event = new DoorToggleEvent(this, player);
         level.getServer().getPluginManager().callEvent(event);
 
@@ -278,36 +373,40 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
             return false;
         }
 
+        player = event.getPlayer();
+
         Block down;
         Block up;
-        if (isTop()) {
+        if (this.isTop()) {
             down = down();
             up = this;
         } else {
             down = this;
             up = up();
         }
-        
-        if( down.getId() == this.getId() && !down.getBooleanValue(UPPER_BLOCK) 
-                && up.getId() == this.getId() && up.getBooleanValue(UPPER_BLOCK) ) {
-            down.toggleBooleanProperty(OPEN);
-            level.setBlock(down, down, true, true);
-        } else {
-            toggleBooleanProperty(OPEN);
-            level.setBlock(this, this, true, true);
+
+        up.setBooleanValue(OPEN, open);
+        up.level.setBlock(up, up, true, true);
+
+        down.setBooleanValue(OPEN, open);
+        down.level.setBlock(down, down, true, true);
+
+        if (player != null) {
+            this.setManualOverride(this.isGettingPower() || isOpen());
         }
-        
+
+        playOpenCloseSound();
         return true;
     }
 
-    public boolean isOpen() {
-        return getBooleanValue(OPEN);
-    }
-    
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setOpen(boolean open) {
         setBooleanValue(OPEN, open);
+    }
+
+    public boolean isOpen() {
+        return getBooleanValue(OPEN);
     }
     
     public boolean isTop() {

@@ -236,7 +236,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         if (burnTime > 0 && ev.isBurning()) {
             fuel.setCount(fuel.getCount() - 1);
             if (fuel.getCount() == 0) {
-                if ((fuel instanceof ItemBucket) && ((ItemBucket) fuel).isLava()) {
+                if (fuel.getId() == Item.BUCKET && ((ItemBucket)fuel).isLava()) {
                     fuel.setDamage(0);
                     fuel.setCount(1);
                 } else {

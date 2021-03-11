@@ -1,13 +1,14 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.item.EntityEndCrystal;
+import cn.nukkit.event.block.BellRingEvent;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.MovingObjectPosition;
@@ -18,6 +19,7 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -29,7 +31,11 @@ public abstract class EntityProjectile extends Entity {
     public static final int DATA_SHOOTER_ID = 17;
 
     public Entity shootingEntity = null;
-
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean hasAge = true;
+    
     protected double getDamage() {
         return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
     }
@@ -56,6 +62,12 @@ public abstract class EntityProjectile extends Entity {
         }
     }
 
+    @PowerNukkitOnly("Allows to modify the damage based on the entity being damaged")
+    @Since("1.3.2.0-PN")
+    public int getResultDamage(@Nullable Entity entity) {
+        return getResultDamage();
+    }
+
     public int getResultDamage() {
         return NukkitMath.ceilDouble(Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ) * getDamage());
     }
@@ -72,7 +84,7 @@ public abstract class EntityProjectile extends Entity {
             return;
         }
 
-        float damage = this.getResultDamage();
+        float damage = this.getResultDamage(entity);
 
         EntityDamageEvent ev;
         if (this.shootingEntity == null) {
@@ -110,7 +122,7 @@ public abstract class EntityProjectile extends Entity {
 
         this.setMaxHealth(1);
         this.setHealth(1);
-        if (this.namedTag.contains("Age")) {
+        if (this.namedTag.contains("Age") && this.hasAge) {
             this.age = this.namedTag.getShort("Age");
         }
     }
@@ -123,7 +135,9 @@ public abstract class EntityProjectile extends Entity {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putShort("Age", this.age);
+        if (this.hasAge) {
+            this.namedTag.putShort("Age", this.age);
+        }
     }
 
     @PowerNukkitOnly
@@ -262,5 +276,17 @@ public abstract class EntityProjectile extends Entity {
     @PowerNukkitOnly
     protected void addHitEffect() {
 
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean hasAge() {
+        return hasAge;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setAge(boolean hasAge) {
+        this.hasAge = hasAge;
     }
 }
