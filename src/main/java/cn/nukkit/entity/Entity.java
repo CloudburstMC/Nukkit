@@ -36,6 +36,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.ChunkException;
+import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
@@ -145,12 +146,12 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_TRADING_PLAYER_EID = 67; //long
     @Since("1.2.0.0-PN") public static final int DATA_TRADING_CAREER = 68;
     @Since("1.2.0.0-PN") public static final int DATA_HAS_COMMAND_BLOCK = 69; //byte
-    
+
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(reason = "NukkitX added this constant with a different name",
             replaceWith = "DATA_HAS_COMMAND_BLOCK", since = "1.3.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_COMMAND_BLOCK_ENABLED = 69; //byte
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
     public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = 71; //string
     public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = 72; //byte
@@ -158,32 +159,32 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_STRENGTH = 74; //int
     public static final int DATA_MAX_STRENGTH = 75; //int
     @Since("1.2.0.0-PN") public static final int DATA_SPELL_CASTING_COLOR = 76; //int
-    
+
     @PowerNukkitOnly("Backward compatibility")
     @Deprecated @DeprecationDetails(reason = "NukkitX added this constant with a different name",
             replaceWith = "DATA_SPELL_CASTING_COLOR", since = "1.3.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_EVOKER_SPELL_COLOR = 76; // int
-    
+
     public static final int DATA_LIMITED_LIFE = 77; // int
     public static final int DATA_ARMOR_STAND_POSE_INDEX = 78; // int
     public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 79; // int
-    public static final int DATA_ALWAYS_SHOW_NAMETAG = 80; // byte
+    public static final int DATA_ALWAYS_SHOW_NAMETAG = 81; // byte
     public static final int DATA_COLOR_2 = 81; // byte
     @Since("1.2.0.0-PN") public static final int DATA_NAME_AUTHOR = 82;
-    public static final int DATA_SCORE_TAG = 83; //String
+    public static final int DATA_SCORE_TAG = 84; //String
     public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
     public static final int DATA_PUFFERFISH_SIZE = 85;
     @Since("1.2.0.0-PN") public static final int DATA_BUBBLE_TIME = 86;
-    
+
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_BUBBLE_TIME", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_BOAT_BUBBLE_TIME = 86;
-    
+
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_AGENT", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AGENT_ID = 87;
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_AGENT = 87;
     @Since("1.2.0.0-PN") public static final int DATA_SITTING_AMOUNT = 88;
     @Since("1.2.0.0-PN") public static final int DATA_SITTING_AMOUNT_PREVIOUS = 89;
@@ -195,37 +196,37 @@ public abstract class Entity extends Location implements Metadatable {
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_DURATION", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_DURATION = 94; // int
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_DURATION = 94;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_SPAWN_TIME", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_SPAWN_TIME = 95; // long
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_SPAWN_TIME = 95;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_CHANGE_RATE", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_PER_TICK = 96; // float
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_CHANGE_RATE = 96;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_CHANGE_ON_PICK", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP = 97; // float
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_CHANGE_ON_PICKUP = 97;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_PICKUP_COUNT", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT = 98; // int
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_PICKUP_COUNT = 98;
 
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_INTERACT_TEXT", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_INTERACTIVE_TAG = 99; // string (button text)
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_INTERACT_TEXT = 99;
     public static final int DATA_TRADE_TIER = 100; // int
     public static final int DATA_MAX_TRADE_TIER = 101; // int
@@ -233,7 +234,7 @@ public abstract class Entity extends Location implements Metadatable {
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_TRADE_EXPERIENCE", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_TRADE_XP = 102; // int
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_TRADE_EXPERIENCE = 102;
     @Since("1.1.1.0-PN") public static final int DATA_SKIN_ID = 103; // int
     @Since("1.2.0.0-PN") public static final int DATA_SPAWNING_FRAMES = 104;
@@ -314,13 +315,13 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_BRIBED = 57; //dolphins have this set when they go to find treasure for the player
     public static final int DATA_FLAG_PREGNANT = 58;
     public static final int DATA_FLAG_LAYING_EGG = 59;
-    
+
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_FLAG_RIDER_CAN_PICK", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_FLAG_RIDER_CAN_PICKUP = 60; // PowerNukkit
 
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_RIDER_CAN_PICK = 60; // NukkitX
-    
+
     //TODO Is it actually sitting? or should really be setting? Needs to investigate.
     /**
      * @deprecated This is not available in NukkitX yet, use with care.
@@ -330,7 +331,7 @@ public abstract class Entity extends Location implements Metadatable {
     @Deprecated @DeprecationDetails(reason = "Unsure if it's a typo or not, use with care", since = "1.2.0.0-PN",
             replaceWith = "DATA_FLAG_TRANSITION_SETTING", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_FLAG_TRANSITION_SITTING = 61; // PowerNukkit but without typo
-    
+
     /**
      * @deprecated This is from NukkitX but it has a typo which we can't remove unless NukkitX removes from their side.
      * @see #DATA_FLAG_TRANSITION_SITTING
@@ -338,7 +339,7 @@ public abstract class Entity extends Location implements Metadatable {
     @Deprecated @DeprecationDetails(reason = "Unsure if it's a typo or not, use with care", since = "1.2.0.0-PN",
             replaceWith = "DATA_FLAG_TRANSITION_SITTING", toBeRemovedAt = "1.4.0.0-PN")
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRANSITION_SETTING = 61; // NukkitX with the same typo
-    
+
     public static final int DATA_FLAG_EATING = 62;
     public static final int DATA_FLAG_LAYING_DOWN = 63;
     public static final int DATA_FLAG_SNEEZING = 64;
@@ -349,14 +350,14 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_OVER_SCAFFOLDING = 69;
     public static final int DATA_FLAG_FALL_THROUGH_SCAFFOLDING = 70;
     public static final int DATA_FLAG_BLOCKING = 71; //shield
-    
+
     /**
      * @deprecated Use {@link #DATA_FLAG_TRANSITION_BLOCKING} instead.
      */
     @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
             replaceWith = "DATA_FLAG_TRANSITION_BLOCKING", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
     public static final int DATA_FLAG_DISABLED_BLOCKING = 72;
-    
+
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRANSITION_BLOCKING = 72;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_BLOCKED_USING_SHIELD = 73;
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_BLOCKED_USING_DAMAGED_SHIELD = 74;
@@ -380,6 +381,7 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.2.0.0-PN") public static final int DATA_FLAG_CELEBRATING = 92;
     @Since("1.3.0.0-PN") public static final int DATA_FLAG_ADMIRING = 93;
     @Since("1.3.0.0-PN") public static final int DATA_FLAG_CELEBRATING_SPECIAL = 94;
+    @Since("1.4.0.0-PN") public static final int DATA_FLAG_RAM_ATTACK = 96;
 
     public static long entityCount = 1;
 
@@ -456,7 +458,7 @@ public abstract class Entity extends Location implements Metadatable {
     public int maxFireTicks;
     public int fireTicks = 0;
     public int inPortalTicks = 0;
-    
+
     @PowerNukkitOnly
     @Since("1.2.1.0-PN")
     protected boolean inEndPortal;
@@ -487,11 +489,11 @@ public abstract class Entity extends Location implements Metadatable {
     protected boolean isPlayer = false;
 
     private volatile boolean initialized;
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean noClip = false;
-    
+
     public float getHeight() {
         return 0;
     }
@@ -1551,7 +1553,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     private Position getNearestValidPortal(Position currentPos) {
         AxisAlignedBB axisAlignedBB = new SimpleAxisAlignedBB(
-                new Vector3(currentPos.getFloorX() - 128.0, 1.0, currentPos.getFloorZ() - 128.0), 
+                new Vector3(currentPos.getFloorX() - 128.0, 1.0, currentPos.getFloorZ() - 128.0),
                 new Vector3(currentPos.getFloorX() + 128.0, currentPos.level.getDimension() == Level.DIMENSION_NETHER? 128 : 256, currentPos.getFloorZ() + 128.0));
         BiPredicate<BlockVector3, BlockState> condition = (pos, state) -> state.getBlockId() == BlockID.NETHER_PORTAL;
         List<Block> blocks = currentPos.level.scanBlocks(axisAlignedBB, condition);
@@ -1567,16 +1569,16 @@ public abstract class Entity extends Location implements Metadatable {
             double ey = by - block.y;
             return ey * ey;
         });
-        
+
         Block nearestPortal = blocks.stream()
                 .filter(block-> block.down().getId() != BlockID.NETHER_PORTAL)
                 .min(euclideanDistance.thenComparing(heightDistance))
                 .orElse(null);
-        
+
         if (nearestPortal == null) {
             return null;
         }
-        
+
         return nearestPortal;
     }
 
@@ -2102,8 +2104,8 @@ public abstract class Entity extends Location implements Metadatable {
 
         AxisAlignedBB newBB = this.boundingBox.getOffsetBoundingBox(dx, dy, dz);
 
-        if (server.getAllowFlight() 
-                || isPlayer && ((Player) this).getAdventureSettings().get(AdventureSettings.Type.NO_CLIP) 
+        if (server.getAllowFlight()
+                || isPlayer && ((Player) this).getAdventureSettings().get(AdventureSettings.Type.NO_CLIP)
                 || !this.level.hasCollision(this, newBB, false)) {
             this.boundingBox = newBB;
         }
@@ -2247,7 +2249,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (onGround && movX == 0 && movY == 0 && movZ == 0 && dx == 0 && dy == 0 && dz == 0) {
             return;
         }
-        
+
         if (this.noClip) {
             this.isCollidedVertically = false;
             this.isCollidedHorizontally = false;
@@ -2312,7 +2314,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (this.noClip) {
             return;
         }
-        
+
         Vector3 vector = new Vector3(0, 0, 0);
         boolean portal = false;
         boolean scaffolding = false;
@@ -2355,7 +2357,7 @@ public abstract class Entity extends Location implements Metadatable {
         } else {
             inEndPortal = false;
         }
-        
+
         if (portal) {
             if (this.inPortalTicks <= 80) {
                 // 81 means the server won't try to teleport
@@ -2735,31 +2737,31 @@ public abstract class Entity extends Location implements Metadatable {
         hash = (int) (29 * hash + this.getId());
         return hash;
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean isSpinAttacking() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SPIN_ATTACK);
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setSpinAttacking() {
         this.setSpinAttacking(true);
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setSpinAttacking(boolean value) {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SPIN_ATTACK, value);
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean isNoClip() {
         return noClip;
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setNoClip(boolean noClip) {
