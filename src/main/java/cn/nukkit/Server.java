@@ -1682,7 +1682,11 @@ public class Server {
     }
 
     public String getSubMotd() {
-        return this.getPropertyString("sub-motd", "https://nukkitx.com");
+        String subMotd = this.getPropertyString("sub-motd", "https://nukkitx.com");
+        if (subMotd.isEmpty()) {
+            subMotd = "https://nukkitx.com"; // The client doesn't allow empty sub-motd in 1.16.210
+        }
+        return subMotd;
     }
 
     public boolean getForceResources() {
