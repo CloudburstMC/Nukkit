@@ -36,7 +36,6 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
