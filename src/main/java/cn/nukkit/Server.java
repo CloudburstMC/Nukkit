@@ -1678,7 +1678,7 @@ public class Server {
     }
 
     public String getMotd() {
-        return this.getPropertyString("motd", "PoweredNukkit Server");
+        return this.getPropertyString("motd", "PowerNukkit Server");
     }
 
     public String getSubMotd() {
