@@ -70,7 +70,7 @@ public class ChunkUpdater {
 
     private boolean upgradeStrippedStemsFromV10toV11(BaseChunk chunk, boolean updated, ChunkSection section) {
         updated = walk(chunk, section, new StemStrippedUpdater(section)) || updated;
-        section.setContentVersion(10);
+        section.setContentVersion(11);
         return updated;
     }
 
