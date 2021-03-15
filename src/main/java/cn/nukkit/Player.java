@@ -771,7 +771,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void setButtonText(String text) {
         this.buttonText = text;
-        this.setDataProperty(new StringEntityData(Entity.DATA_INTERACTIVE_TAG, this.buttonText));
+        this.setDataProperty(new StringEntityData(Entity.DATA_INTERACT_TEXT, this.buttonText));
     }
 
     public void unloadChunk(int x, int z) {

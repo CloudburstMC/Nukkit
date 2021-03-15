@@ -8,8 +8,7 @@ import java.util.List;
 import static cn.nukkit.utils.Utils.dynamic;
 
 /**
- * author: MagicDroidX &amp; iNevet
- * Nukkit Project
+ * @author MagicDroidX &amp; iNevet (Nukkit Project)
  */
 public interface ProtocolInfo {
 
