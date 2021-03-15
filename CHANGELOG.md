@@ -20,6 +20,7 @@ Click the link above to see the future.
 - [#990] `Entity` data with id `60` and higher were shifted up by `1` id, this means that all plugins accessing them needs to be recompiled!
 - [#990] `AvailableCommandsPacket` argument type constants were all marked as `dynamic`
 - [#990] Added support to Minecraft Bedrock Edition `1.16.210`
+- [#990] `stripped_warped_hyphae`, `stripped_warped_stem`, `stripped_crimson_hyphae`, and `stripped_crimson_stem` don't have the `deprecated` block property anymore 
 
 ## 1.4.0.0-PN-ALPHA.2 - 2020-11-22
 This changelog is still being worked on.
