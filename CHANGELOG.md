@@ -21,6 +21,7 @@ Click the link above to see the future.
 - [#990] `AvailableCommandsPacket` argument type constants were all marked as `dynamic`
 - [#990] Added support to Minecraft Bedrock Edition `1.16.210`
 - [#990] `stripped_warped_hyphae`, `stripped_warped_stem`, `stripped_crimson_hyphae`, and `stripped_crimson_stem` don't have the `deprecated` block property anymore 
+- [#990] The chunk content version was increased to `10` to update the stripped stems and hyphaes.
 
 ## 1.4.0.0-PN-ALPHA.2 - 2020-11-22
 This changelog is still being worked on.
