@@ -321,18 +321,11 @@ public class AnvilInventory extends FakeBlockUIComponent {
         return setSecondItem(item, true);
     }
 
-    /**
-     * @deprecated send parameter is deprecated. This method will be removed in 1.3.0.0-PN.
-     */
-    @Deprecated
-    public boolean setResult(Item item, boolean send) {
+    private boolean setResult(Item item, boolean send) {
         return setItem(2, item, send);
     }
 
-    @DeprecationDetails(since = "TBD", reason = "the client won't see this change, and the transaction might fail",
-        toBeRemovedAt = "1.4.0.0-PN")
-    @Deprecated
-    public boolean setResult(Item item) {
+    private boolean setResult(Item item) {
         if (item == null || item.isNull()) {
             this.currentResult = Item.get(0);
         } else {

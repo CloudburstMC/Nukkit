@@ -32,7 +32,7 @@ public class CraftingManager {
 
     @Deprecated
     @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", reason = "Field signature change from BatchPacket to DataPacket",
-        replaceWith = "getCraftingPacket() to be safer", toBeRemovedAt = "1.4.0.0-PN")
+        replaceWith = "getCraftingPacket() to be safer", toBeRemovedAt = "1.5.0.0-PN")
     public static BatchPacket packet = null;
     private static DataPacket packet0 = null;
     

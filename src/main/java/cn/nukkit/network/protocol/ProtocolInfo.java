@@ -20,8 +20,8 @@ public interface ProtocolInfo {
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.16.210";
-    String MINECRAFT_VERSION_NETWORK = "1.16.210";
+    String MINECRAFT_VERSION = dynamic("v1.16.210");
+    String MINECRAFT_VERSION_NETWORK = dynamic("1.16.210");
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
@@ -179,8 +179,8 @@ public interface ProtocolInfo {
     @Since("1.3.2.0-PN") byte PLAYER_FOG_PACKET = (byte) 0xa0;
     @Since("1.3.2.0-PN") byte CORRECT_PLAYER_MOVE_PREDICTION_PACKET = (byte) 0xa1;
     @Since("1.3.2.0-PN") byte ITEM_COMPONENT_PACKET = (byte) 0xa2;
-    byte FILTER_TEXT_PACKET = (byte) 0xa3;
-    byte CLIENTBOUND_DEBUG_RENDERER_PACKET = (byte) 0xa4;
+    @Since("1.4.0.0-PN") byte FILTER_TEXT_PACKET = (byte) 0xa3;
+    @Since("1.4.0.0-PN") byte CLIENTBOUND_DEBUG_RENDERER_PACKET = (byte) 0xa4;
 
     byte BATCH_PACKET = (byte) 0xff;
 }
