@@ -6,11 +6,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockMagma;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
-import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTurtleShell;
 import cn.nukkit.level.GameRule;
@@ -112,13 +109,21 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             }
         }
 
-        if (super.attack(source)) {
-            if (source instanceof EntityDamageByEntityEvent) {
-                Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-                if (source instanceof EntityDamageByChildEntityEvent) {
-                    damager = ((EntityDamageByChildEntityEvent) source).getChild();
-                }
+        Entity damager = null;
+        if (source instanceof EntityDamageByEntityEvent) {
+            damager = ((EntityDamageByEntityEvent) source).getDamager();
+            if (source instanceof EntityDamageByChildEntityEvent) {
+                damager = ((EntityDamageByChildEntityEvent) source).getChild();
+            }
 
+            //Critical hit damage needs to be applied before calling event
+            if (damager instanceof Player && !damager.onGround) {
+                source.setDamage(source.getDamage() * 1.5f);
+            }
+        }
+
+        if (super.attack(source)) {
+            if (damager != null) {
                 //Critical hit
                 if (damager instanceof Player && !damager.onGround) {
                     AnimatePacket animate = new AnimatePacket();
@@ -127,8 +132,6 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
                     this.getLevel().addChunkPacket(damager.getChunkX(), damager.getChunkZ(), animate);
                     this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ATTACK_STRONG);
-
-                    source.setDamage(source.getDamage() * 1.5f);
                 }
 
                 if (damager.isOnFire() && !(damager instanceof Player)) {
@@ -140,13 +143,18 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                 this.knockBack(damager, source.getDamage(), deltaX, deltaZ, ((EntityDamageByEntityEvent) source).getKnockBack());
             }
 
-            EntityEventPacket pk = new EntityEventPacket();
-            pk.eid = this.getId();
-            pk.event = this.getHealth() <= 0 ? EntityEventPacket.DEATH_ANIMATION : EntityEventPacket.HURT_ANIMATION;
-            Server.broadcastPacket(this.hasSpawned.values(), pk);
+            if(this.isAlive()) {
+                EntityAnimationEvent animationEvent = new EntityAnimationEvent(this, EntityAnimationEvent.AnimationType.HURT);
+                this.server.getPluginManager().callEvent(animationEvent);
+                if (!animationEvent.isCancelled()) {
+                    EntityEventPacket pk = new EntityEventPacket();
+                    pk.eid = this.getId();
+                    pk.event = EntityEventPacket.HURT_ANIMATION;
+                    Server.broadcastPacket(this.hasSpawned.values(), pk);
+                }
+            }
 
             this.attackTime = source.getAttackCooldown();
-
             return true;
         } else {
             return false;

@@ -1438,13 +1438,13 @@ public abstract class Entity extends Location implements Metadatable {
 
         if (!this.isAlive()) {
             ++this.deadTicks;
-            if (this.deadTicks >= 10) {
+            if (this.deadTicks >= 25) {
                 this.despawnFromAll();
                 if (!this.isPlayer) {
                     this.close();
                 }
             }
-            return this.deadTicks < 10;
+            return this.deadTicks < 25;
         }
 
         int tickDiff = currentTick - this.lastUpdate;
@@ -2171,6 +2171,15 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void kill() {
+        EntityAnimationEvent animationEvent = new EntityAnimationEvent(this, EntityAnimationEvent.AnimationType.DEATH);
+        this.server.getPluginManager().callEvent(animationEvent);
+        if (!animationEvent.isCancelled()) {
+            EntityEventPacket pk = new EntityEventPacket();
+            pk.eid = this.getId();
+            pk.event = EntityEventPacket.DEATH_ANIMATION;
+            Server.broadcastPacket(this.hasSpawned.values(), pk);
+        }
+
         this.health = 0;
         this.scheduleUpdate();
 
