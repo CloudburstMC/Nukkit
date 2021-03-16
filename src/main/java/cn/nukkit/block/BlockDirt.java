@@ -62,7 +62,7 @@ public class BlockDirt extends BlockSolidMeta {
         } else if (item.isShovel()) {
             if (this.up() instanceof BlockAir) {
                 item.useOn(this);
-                this.getLevel().setBlock(this, Block.get(GRASS_PATH));
+                this.getLevel().setBlock(this, get(GRASS_PATH));
                 return true;
             }
         }
