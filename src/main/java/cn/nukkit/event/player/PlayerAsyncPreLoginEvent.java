@@ -52,6 +52,10 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
         return this.uuid;
     }
 
+    public LoginChainData getChainData() {
+        return this.chainData;
+    }
+
     public String getXuid() {
         return this.chainData.getXUID();
     }
