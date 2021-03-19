@@ -72,7 +72,8 @@ public class BlockRail extends BlockFlowable implements Faceable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Optional<BlockFace> ascendingDirection = this.getOrientation().ascendingDirection();
-            if (this.down().isTransparent() || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
+            Block down = this.down();
+            if ((down.isTransparent() && down.getId() != HOPPER_BLOCK) || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -99,7 +100,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (down == null || down.isTransparent()) {
+        if (down == null || (down.isTransparent() && down.getId() != HOPPER_BLOCK)) {
             return false;
         }
         Map<BlockRail, BlockFace> railsAround = this.checkRailsAroundAffected();
