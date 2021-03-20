@@ -1,6 +1,7 @@
 package cn.nukkit.item.enchantment;
 
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
@@ -376,8 +377,16 @@ public abstract class Enchantment implements Cloneable {
      * the other is also compatible with this enchantment. 
      * @param enchantment The enchantment which is being checked
      * @return If both enchantments are compatible
+     * @implNote Cloudburst Nukkit added the final modifier, PowerNukkit removed it to maintain backward compatibility.
+     * The right way to implement compatibility now is to override {@link #checkCompatibility(Enchantment)}
+     *  and also make sure to keep it protected! Some overrides was incorrectly made public, let's avoid this mistake
      */
-    public final boolean isCompatibleWith(@Nonnull Enchantment enchantment) {
+    @PowerNukkitDifference(since = "1.4.0.0-PN", 
+            info = "Cloudburst Nukkit added the final modifier, we removed it to maintain backward compatibility. " +
+                    "The right way to implement compatibility now is to override checkCompatibility(Enchantment enchantment) " +
+                    "and also make sure to keep it protected! Some overrides was incorrectly made public, let's avoid this mistake."
+    )
+    public boolean isCompatibleWith(@Nonnull Enchantment enchantment) {
         return this.checkCompatibility(enchantment) && enchantment.checkCompatibility(this);
     }
 

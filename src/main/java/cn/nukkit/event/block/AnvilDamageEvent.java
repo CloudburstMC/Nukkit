@@ -11,6 +11,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import lombok.RequiredArgsConstructor;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @PowerNukkitDifference(info = "Extends BlockFadeEvent instead of BlockEvent only in PowerNukkit")
@@ -106,7 +107,7 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
             since = "1.3.2.0-PN", by = "PowerNukkit",
             reason = "NukkitX added the class but with a different enum for the damage cause",
             replaceWith = "DamageCause",
-            toBeRemovedAt = "1.5.0.0-PN"
+            toBeRemovedAt = "1.6.0.0-PN"
     )
     @RequiredArgsConstructor
     public enum Cause {
@@ -116,7 +117,7 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
                 since = "1.3.2.0-PN", by = "PowerNukkit",
                 reason = "NukkitX added the class but with a different enum for the damage cause",
                 replaceWith = "DamageCause.USE",
-                toBeRemovedAt = "1.5.0.0-PN"
+                toBeRemovedAt = "1.6.0.0-PN"
         )
         USE,
 
@@ -126,9 +127,22 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
                 since = "1.3.2.0-PN", by = "PowerNukkit",
                 reason = "NukkitX added the class but with a different enum for the damage cause",
                 replaceWith = "DamageCause.FALL",
-                toBeRemovedAt = "1.5.0.0-PN"
+                toBeRemovedAt = "1.6.0.0-PN"
         )
-        IMPACT
+        IMPACT;
+        
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        @Deprecated @DeprecationDetails(
+                since = "1.4.0.0-PN", by = "PowerNukkit",
+                reason = "This is method is only a temporary helper, it will also be removed in future",
+                replaceWith = "Direct usage of DamageCause",
+                toBeRemovedAt = "1.6.0.0-PN"
+        )
+        @Nonnull
+        public DamageCause getDamageCause() {
+            return DamageCause.valueOf(name());
+        }
     }
 
     @Since("1.3.2.0-PN")
