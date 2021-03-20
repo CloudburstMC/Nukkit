@@ -32,7 +32,7 @@ public class FilterTextPacket extends DataPacket {
     @Since("1.3.2.0-PN") public static final byte NETWORK_ID = ProtocolInfo.FILTER_TEXT_PACKET;
     
     @Since("1.4.0.0-PN") public String text;
-    @Since("1.4.0.0-PN") private boolean fromServer;
+    @Since("1.4.0.0-PN") public boolean fromServer;
 
     @Since("1.3.2.0-PN")
     public FilterTextPacket() {
