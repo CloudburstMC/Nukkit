@@ -26,16 +26,14 @@ import lombok.ToString;
  * @author joserobjr
  * @since 2021-02-14
  */
-@PowerNukkitOnly
 @Since("1.3.2.0-PN")
 @ToString
 public class FilterTextPacket extends DataPacket {
-    @PowerNukkitOnly @Since("1.3.2.0-PN") public static final byte NETWORK_ID = ProtocolInfo.FILTER_TEXT_PACKET;
+    @Since("1.3.2.0-PN") public static final byte NETWORK_ID = ProtocolInfo.FILTER_TEXT_PACKET;
     
-    private String text;
-    private boolean fromServer;
+    @Since("1.4.0.0-PN") public String text;
+    @Since("1.4.0.0-PN") private boolean fromServer;
 
-    @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public FilterTextPacket() {
     }

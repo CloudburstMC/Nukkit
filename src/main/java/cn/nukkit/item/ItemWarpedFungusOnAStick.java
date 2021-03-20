@@ -43,7 +43,7 @@ public class ItemWarpedFungusOnAStick extends ItemTool {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public ItemWarpedFungusOnAStick(Integer meta, int count) {
-        super(WARPED_FUNGUS_ON_A_STICK, meta, count, "Warped fungus on a stick");
+        super(WARPED_FUNGUS_ON_A_STICK, meta, count, "Warped Fungus on a Stick");
     }
 
     @Override

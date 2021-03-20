@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import com.google.common.primitives.Ints;
 
@@ -179,7 +178,7 @@ public interface ProtocolInfo {
     @Since("1.3.2.0-PN") byte PLAYER_FOG_PACKET = (byte) 0xa0;
     @Since("1.3.2.0-PN") byte CORRECT_PLAYER_MOVE_PREDICTION_PACKET = (byte) 0xa1;
     @Since("1.3.2.0-PN") byte ITEM_COMPONENT_PACKET = (byte) 0xa2;
-    @PowerNukkitOnly @Since("1.3.2.0-PN") byte FILTER_TEXT_PACKET = (byte) 0xa3;
+    @Since("1.3.2.0-PN") byte FILTER_TEXT_PACKET = (byte) 0xa3;
 
     byte BATCH_PACKET = (byte) 0xff;
 }

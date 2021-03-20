@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
 import lombok.ToString;
@@ -62,6 +63,7 @@ public class CraftingDataPacket extends DataPacket {
         Collections.addAll(entries, recipe);
     }
 
+    @Since("1.4.0.0-PN")
     public void addMultiRecipe(MultiRecipe... recipe) {
         Collections.addAll(entries, recipe);
     }

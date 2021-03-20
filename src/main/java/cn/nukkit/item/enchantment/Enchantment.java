@@ -381,6 +381,11 @@ public abstract class Enchantment implements Cloneable {
         return this.checkCompatibility(enchantment) && enchantment.checkCompatibility(this);
     }
 
+    /**
+     * Checks if this enchantment can be applied to an item that have the give enchantment without doing reverse check.
+     * @param enchantment The enchantment to be checked
+     * @return If this enchantment is compatible with the other enchantment.
+     */
     @Since("1.3.2.0-PN")
     protected boolean checkCompatibility(Enchantment enchantment) {
         return this != enchantment;

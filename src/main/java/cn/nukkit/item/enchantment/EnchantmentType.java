@@ -1,5 +1,6 @@
 package cn.nukkit.item.enchantment;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockCarvedPumpkin;
 import cn.nukkit.item.*;
 
@@ -22,7 +23,7 @@ public enum EnchantmentType {
     BOW,
     WEARABLE,
     TRIDENT,
-    CROSSBOW;
+    @Since("1.4.0.0-PN") CROSSBOW;
 
     public boolean canEnchantItem(@Nonnull Item item) {
         if (this == ALL) {

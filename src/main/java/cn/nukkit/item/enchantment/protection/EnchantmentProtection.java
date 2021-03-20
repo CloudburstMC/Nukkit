@@ -1,5 +1,8 @@
 package cn.nukkit.item.enchantment.protection;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemElytra;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -22,6 +25,15 @@ public abstract class EnchantmentProtection extends Enchantment {
 
     protected final TYPE protectionType;
 
+    @PowerNukkitOnly("Re-added for backward compatibility")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", by = "Cloudburst Nukkit",
+            reason = "The signature was changed and it doesn't exists anymore in Cloudburst Nukkit",
+            replaceWith = "EnchantmentProtection(int id, String name, Rarity rarity, EnchantmentProtection.TYPE type)")
+    protected EnchantmentProtection(int id, String name, int weight, EnchantmentProtection.TYPE type) {
+        this(id, name, Rarity.fromWeight(weight), type);
+    }
+
+    @Since("1.4.0.0-PN")
     protected EnchantmentProtection(int id, String name, Rarity rarity, EnchantmentProtection.TYPE type) {
         super(id, name, rarity, EnchantmentType.ARMOR);
         this.protectionType = type;

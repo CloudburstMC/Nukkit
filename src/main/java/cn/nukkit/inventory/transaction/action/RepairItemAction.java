@@ -1,12 +1,15 @@
 package cn.nukkit.inventory.transaction.action;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 
+@Since("1.4.0.0-PN")
 public class RepairItemAction extends InventoryAction {
 
     private int type;
 
+    @Since("1.4.0.0-PN")
     public RepairItemAction(Item sourceItem, Item targetItem, int type) {
         super(sourceItem, targetItem);
         this.type = type;
@@ -32,6 +35,7 @@ public class RepairItemAction extends InventoryAction {
 
     }
 
+    @Since("1.4.0.0-PN")
     public int getType() {
         return this.type;
     }

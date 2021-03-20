@@ -1,6 +1,7 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
@@ -13,6 +14,7 @@ import javax.annotation.Nonnull;
 /**
  * @author MagicDroidX (Nukkit Project)
  */
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements EntityNameable only in PowerNukkit")
 public abstract class EntityCreature extends EntityLiving implements EntityNameable {
     public EntityCreature(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);

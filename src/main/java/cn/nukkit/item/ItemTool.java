@@ -50,7 +50,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_BOW = dynamic(385);
     public static final int DURABILITY_TRIDENT = dynamic(251);
     public static final int DURABILITY_FISHING_ROD = dynamic(65);
-    public static final int DURABILITY_CROSSBOW = dynamic(465);
+    @Since("1.4.0.0-PN") public static final int DURABILITY_CROSSBOW = dynamic(465);
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
