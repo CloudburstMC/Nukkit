@@ -105,10 +105,12 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.2.0.0-PN") public static final int DATA_SWELL_DIR = dynamic(21);
     @Since("1.2.0.0-PN") public static final int DATA_CHARGE_AMOUNT = dynamic(22);
     public static final int DATA_ENDERMAN_HELD_RUNTIME_ID = dynamic(23); //short
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int DATA_CLIENT_EVENT = dynamic(24); //byte
+    
     @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit",
             reason = "Apparently this the ID 24 was reused to represent CLIENT_EVENT but Cloudburst Nukkit is still mapping it as age")
-    public static final int DATA_ENTITY_AGE = dynamic(24); //short
-    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int DATA_CLIENT_EVENT = dynamic(24); //byte
+    public static final int DATA_ENTITY_AGE = dynamic(DATA_CLIENT_EVENT); //short
+    
     @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int DATA_USING_ITEM = dynamic(25); //byte
     public static final int DATA_PLAYER_FLAGS = dynamic(26); //byte
     @Since("1.2.0.0-PN") public static final int DATA_PLAYER_INDEX = dynamic(27);
@@ -123,7 +125,16 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_AUX_VALUE = dynamic(36); //short
     public static final int DATA_LEAD_HOLDER_EID = dynamic(37); //long
     public static final int DATA_SCALE = dynamic(38); //float
-    @PowerNukkitOnly @Since("1.2.0.0-PN") public static final int DATA_HAS_NPC_COMPONENT = dynamic(39); //byte
+    @Since("1.4.0.0-PN") public static final int DATA_INTERACTIVE_TAG = dynamic(39); //string (button text)
+    
+    @PowerNukkitOnly @Since("1.2.0.0-PN")
+    @Deprecated @DeprecationDetails(
+            by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "This is not only for NPC, it's used to display any interactive button text " +
+                    "and Nukkit added this constant with a different name",
+            replaceWith = "DATA_INTERACTIVE_TAG")
+    public static final int DATA_HAS_NPC_COMPONENT = dynamic(DATA_INTERACTIVE_TAG); //byte
+    
     public static final int DATA_NPC_SKIN_ID = dynamic(40); //string
     public static final int DATA_URL_TAG = dynamic(41); //string
     public static final int DATA_MAX_AIR = dynamic(42); //short
@@ -144,7 +155,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_RIDER_ROTATION_LOCKED = dynamic(57); //byte
     public static final int DATA_RIDER_MAX_ROTATION = dynamic(58); //float
     public static final int DATA_RIDER_MIN_ROTATION = dynamic(59); //float
-    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int RIDER_ROTATION_OFFSET = dynamic(60);
+    @Since("1.4.0.0-PN") public static final int DATA_RIDER_ROTATION_OFFSET = dynamic(60);
     public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = dynamic(61); //float
     public static final int DATA_AREA_EFFECT_CLOUD_WAITING = dynamic(62); //int
     public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = dynamic(63); //int
@@ -204,7 +215,9 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.3.0.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = dynamic(117); //int
     @Since("1.3.0.0-PN") public static final int DATA_HITBOX = dynamic(118); //NBT
     @Since("1.3.0.0-PN") public static final int DATA_IS_BUOYANT = dynamic(119); //byte
+    @Since("1.4.0.0-PN") public static final int DATA_FREEZING_EFFECT_STRENGTH = 120;
     @Since("1.3.0.0-PN") public static final int DATA_BUOYANCY_DATA = dynamic(120); //string
+    @Since("1.4.0.0-PN") public static final int DATA_GOAT_HORN_COUNT = 122;
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = dynamic(0);

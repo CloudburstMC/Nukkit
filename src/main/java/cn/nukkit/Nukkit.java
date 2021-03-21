@@ -51,7 +51,7 @@ public class Nukkit {
     public final static Properties GIT_INFO = getGitInfo();
     public final static String VERSION = getVersion();
     public final static String GIT_COMMIT = getGitCommit();
-    public final static String API_VERSION = "1.0.11";
+    public final static String API_VERSION = "1.0.12";
     public final static String CODENAME = "PowerNukkit";
     @Deprecated
     public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
