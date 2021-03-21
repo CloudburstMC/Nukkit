@@ -2,7 +2,6 @@ package cn.nukkit.item;
 
 import cn.nukkit.api.PowerNukkitDifference;
 
-// TODO: PowerNukkit: Should it really be a tool? 
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Extends ItemTool instead of Item only in PowerNukkit")
 public class ItemShield extends ItemTool {
 
