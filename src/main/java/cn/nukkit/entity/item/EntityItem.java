@@ -109,6 +109,10 @@ public class EntityItem extends Entity {
         this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY, true);
 
+        if (this.item.isLavaResistant()) {
+            this.fireProof = true; // Netherite items are fireproof
+        }
+
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }
 
@@ -179,7 +183,7 @@ public class EntityItem extends Entity {
 
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
-        boolean lavaResistant = item != null && item.isLavaResistant();
+        boolean lavaResistant = fireProof || item != null && item.isLavaResistant();
 
         if (!lavaResistant && (isInsideOfFire() || isInsideOfLava())) {
             this.kill();

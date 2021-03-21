@@ -3827,6 +3827,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
+                case ProtocolInfo.FILTER_TEXT_PACKET:
+                    FilterTextPacket filterTextPacket = (FilterTextPacket) packet;
+
+                    FilterTextPacket textResponsePacket = new FilterTextPacket();
+                    textResponsePacket.text = filterTextPacket.text;
+                    textResponsePacket.fromServer = true;
+                    this.dataPacket(textResponsePacket);
+                    break;
                 case ProtocolInfo.POS_TRACKING_CLIENT_REQUEST_PACKET:
                     PositionTrackingDBClientRequestPacket posTrackReq = (PositionTrackingDBClientRequestPacket) packet;
                     try {
