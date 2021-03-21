@@ -98,7 +98,7 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
         BlockEntityItemFrame itemFrame = getOrCreateBlockEntity();
         if (itemFrame.getItem().isNull()) {
         	Item itemOnFrame = item.clone();
-        	if (player != null && player.isSurvival()) {
+        	if (player != null && !player.isCreative()) {
         		itemOnFrame.setCount(itemOnFrame.getCount() - 1);
                 player.getInventory().setItemInHand(itemOnFrame);
         	}
