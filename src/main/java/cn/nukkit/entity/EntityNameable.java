@@ -26,6 +26,14 @@ public interface EntityNameable {
     @PowerNukkitOnly("The Entity implementations are not PowerNukkit only")
     boolean isNameTagVisible();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    boolean isPersistent();
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    void setPersistent(boolean persistent);
+
     @PowerNukkitOnly("The Entity implementations are not PowerNukkit only")
     default boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         if (item.getId() == Item.NAME_TAG) {
@@ -38,7 +46,25 @@ public interface EntityNameable {
 
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
-    boolean playerApplyNameTag(@Nonnull Player player, @Nonnull Item item);
+    default boolean playerApplyNameTag(@Nonnull Player player, @Nonnull Item item) {
+        return playerApplyNameTag(player, item, true);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    default boolean playerApplyNameTag(@Nonnull Player player, @Nonnull Item item, boolean consume) {
+        if (item.hasCustomName()) {
+            this.setNameTag(item.getCustomName());
+            this.setNameTagVisible(true);
+            
+            if(consume && !player.isCreative()) {
+                player.getInventory().removeItem(item);
+            }
+            // Set entity as persistent.
+            return true;
+        }
+        return false;
+    }
 
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", 

@@ -40,17 +40,8 @@ public abstract class EntityCreature extends EntityLiving implements EntityNamea
     // without overriding onInteract.
     @Since("1.3.2.0-PN")
     protected boolean applyNameTag(@Nonnull Player player, @Nonnull Item item){
-        if (item.hasCustomName()) {
-            this.setNameTag(item.getCustomName());
-            this.setNameTagVisible(true);
-
-            if(!player.isCreative()) {
-                player.getInventory().removeItem(item);
-            }
-            // Set entity as persistent.
-            return true;
-        }
-        return false;
+        // The code was moved to the default block of that interface
+        return EntityNameable.super.playerApplyNameTag(player, item);
     }
 
 }

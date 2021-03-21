@@ -460,6 +460,18 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     public void setBlocking(boolean value) {
         this.setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING, value);
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isPersistent() {
+        return namedTag.containsByte("Persistent") && namedTag.getBoolean("Persistent");
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setPersistent(boolean persistent) {
+        namedTag.putBoolean("Persistent", persistent);
+    }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
