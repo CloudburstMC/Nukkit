@@ -3831,6 +3831,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     FilterTextPacket filterTextPacket = (FilterTextPacket) packet;
 
                     FilterTextPacket textResponsePacket = new FilterTextPacket();
+
+                    if (craftingType == CRAFTING_ANVIL) {
+                        AnvilInventory anvilInventory = (AnvilInventory) getWindowById(ANVIL_WINDOW_ID);
+                        if (anvilInventory != null) {
+                            PlayerTypingAnvilInventoryEvent playerTypingAnvilInventoryEvent = new PlayerTypingAnvilInventoryEvent(
+                                    this, anvilInventory, anvilInventory.getNewItemName(), filterTextPacket.getText()
+                            );
+                            getServer().getPluginManager().callEvent(playerTypingAnvilInventoryEvent);
+                            anvilInventory.setNewItemName(playerTypingAnvilInventoryEvent.getTypedName());
+                        }
+                    }
+                    
                     textResponsePacket.text = filterTextPacket.text;
                     textResponsePacket.fromServer = true;
                     this.dataPacket(textResponsePacket);
@@ -3850,20 +3862,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     notFound.setTrackingId(posTrackReq.getTrackingId());
                     dataPacket(notFound);
                     break;
-                    case ProtocolInfo.FILTER_TEXT_PACKET: {
-                        FilterTextPacket filterTextPacket = (FilterTextPacket) packet;
-                        if (craftingType == CRAFTING_ANVIL) {
-                            AnvilInventory anvilInventory = (AnvilInventory) getWindowById(ANVIL_WINDOW_ID);
-                            if (anvilInventory != null) {
-                                PlayerTypingAnvilInventoryEvent playerTypingAnvilInventoryEvent = new PlayerTypingAnvilInventoryEvent(
-                                        this, anvilInventory, anvilInventory.getNewItemName(), filterTextPacket.getText()
-                                );
-                                getServer().getPluginManager().callEvent(playerTypingAnvilInventoryEvent);
-                                anvilInventory.setNewItemName(playerTypingAnvilInventoryEvent.getTypedName());
-                            }
-                        }
-                        break;
-                    }
                 default:
                     break;
             }
