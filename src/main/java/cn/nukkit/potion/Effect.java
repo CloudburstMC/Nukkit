@@ -193,7 +193,7 @@ public class Effect implements Cloneable {
     @PowerNukkitDifference(since = "1.4.0.0-PN", 
             info = "Cloudburst Nukkit always returns false for VILLAGE_HERO, we made the registration register the false value as default instead of this brute-force.")
     public boolean isVisible() {
-        return show && this.id != VILLAGE_HERO;
+        return show;
     }
 
     public Effect setVisible(boolean visible) {
