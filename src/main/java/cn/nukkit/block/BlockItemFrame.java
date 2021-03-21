@@ -6,6 +6,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemItemFrame;
 import cn.nukkit.level.Level;
@@ -91,6 +92,16 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
     @Override
     public int getWaterloggingLevel() {
         return 1;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int onTouch(@Nullable Player player, Action action) {
+        if (action == Action.LEFT_CLICK_BLOCK && (player == null || (!player.isCreative() && !player.isSpectator()))) {
+            getOrCreateBlockEntity().dropItem(player);
+        }
+        return super.onTouch(player, action);
     }
 
     @Override

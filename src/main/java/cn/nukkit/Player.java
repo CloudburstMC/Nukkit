@@ -2671,27 +2671,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.inventory.sendHeldItem(this);
                                 break;
                             }
-                            switch (target.getId()) {
-                                case BlockID.NOTEBLOCK:
-                                    ((BlockNoteblock) target).emitSound();
-                                    break actionswitch;
-                                case BlockID.DRAGON_EGG:
-                                    ((BlockDragonEgg) target).teleport();
-                                    break actionswitch;
-                                case BlockID.LECTERN:
-                                    ((BlockLectern) target).dropBook(this);
-                                    break;
-                                case BlockID.ITEM_FRAME_BLOCK:
-                                    ((BlockItemFrame) target).getOrCreateBlockEntity().dropItem(this);
-                                    break;
-                            }
+                            target.onTouch(this, playerInteractEvent.getAction());
                             Block block = target.getSide(face);
-                            if (block.getId() == Block.FIRE || block.getId() == BlockID.SOUL_FIRE) {
+                            if (block.getId() == BlockID.FIRE || block.getId() == BlockID.SOUL_FIRE) {
                                 this.level.setBlock(block, Block.get(BlockID.AIR), true);
                                 this.level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_EXTINGUISH_FIRE);
                                 break;
                             }
-                            if (block.getId() == Block.SWEET_BERRY_BUSH && block.getDamage() == 0) {
+                            if (block.getId() == BlockID.SWEET_BERRY_BUSH && block.getDamage() == 0) {
                                 Item oldItem = playerInteractEvent.getItem();
                                 Item i = this.level.useBreakOn(block, oldItem, this, true);
                                 if (this.isSurvival()) {
