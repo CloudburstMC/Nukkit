@@ -184,7 +184,7 @@ public class CraftingDataPacket extends DataPacket {
                     break;
                 case MULTI:
                     this.putUUID(((MultiRecipe) recipe).getId());
-                    this.putUnsignedVarInt(0);
+                    this.putUnsignedVarInt(recipeNetworkId++);
                     break;
             }
         }
