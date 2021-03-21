@@ -6,8 +6,7 @@ import cn.nukkit.potion.Effect;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityDamageByEntityEvent extends EntityDamageEvent {
 

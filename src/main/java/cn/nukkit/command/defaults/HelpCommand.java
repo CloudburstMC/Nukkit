@@ -12,8 +12,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class HelpCommand extends VanillaCommand {
 

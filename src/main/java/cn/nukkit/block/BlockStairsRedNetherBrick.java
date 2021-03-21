@@ -33,6 +33,11 @@ public class BlockStairsRedNetherBrick extends BlockStairs {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
     public String getName() {
         return "Red Nether Brick Stairs";
     }

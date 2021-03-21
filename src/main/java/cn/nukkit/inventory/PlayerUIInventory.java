@@ -77,6 +77,7 @@ public class PlayerUIInventory extends BaseInventory {
                         inventory.onSlotChange(index == 50 ? 2 : index - GrindstoneInventory.OFFSET, before, send);
                     }
                 }
+                return;
             case Player.CRAFTING_ANVIL:
                 if (index >= AnvilInventory.OFFSET) {
                     Inventory inventory = player.getWindowById(Player.ANVIL_WINDOW_ID);
@@ -85,8 +86,9 @@ public class PlayerUIInventory extends BaseInventory {
                     }
                 }
                 return;
+            default:
+                super.onSlotChange(index, before, send);
         }
-        super.onSlotChange(index, before, send);
     }
     
     public void onSlotChangeBase(int index, Item before, boolean send) {

@@ -64,9 +64,9 @@ public enum EnumLevel {
             return null;
         } else {
             if (current.level == OVERWORLD.level) {
-                return new Position(mRound(current.getFloorX() >> 3, 128), NukkitMath.clamp(mRound(current.getFloorY(), 32), 70, 128 - 10), mRound(current.getFloorZ() >> 3, 128), NETHER.level);
+                return new Position(current.getFloorX() >> 3, NukkitMath.clamp(current.getFloorY(), 70, 118), current.getFloorZ() >> 3, NETHER.level);
             } else if (current.level == NETHER.level) {
-                return new Position(mRound(current.getFloorX() << 3, 1024), NukkitMath.clamp(mRound(current.getFloorY(), 32), 70, 256 - 10), mRound(current.getFloorZ() << 3, 1024), OVERWORLD.level);
+                return new Position(current.getFloorX() << 3, NukkitMath.clamp(current.getFloorY(), 70, 246), current.getFloorZ() << 3, OVERWORLD.level);
             } else {
                 throw new IllegalArgumentException("Neither overworld nor nether given!");
             }

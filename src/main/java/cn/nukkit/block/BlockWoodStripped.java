@@ -1,9 +1,15 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
+import cn.nukkit.blockproperty.value.WoodType;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.math.BlockFace;
+
+import javax.annotation.Nonnull;
 
 public abstract class BlockWoodStripped extends BlockWood {
     public BlockWoodStripped() {
@@ -16,38 +22,40 @@ public abstract class BlockWoodStripped extends BlockWood {
     
     @Override
     public abstract int getId();
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
     @Override
-    public abstract String getName();
-    
-    @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        short[] faces = new short[]{
-                0,
-                0,
-                0b10,
-                0b10,
-                0b01,
-                0b01
-        };
-    
-        this.setDamage(((this.getDamage() & 0x03) | faces[face.getIndex()]));
-        this.getLevel().setBlock(block, this, true, true);
-        return true;
+    public BlockProperties getProperties() {
+        return PILLAR_PROPERTIES;
     }
-    
+
     @Override
-    public Item toItem() {
-        return new ItemBlock(this, 0);
+    protected BlockState getStrippedState() {
+        return getCurrentState();
     }
-    
+
+    @Override
+    public String getName() {
+        return "Stripped " + getWoodType() + " Log";
+    }
+
+    @Override
+    public void setWoodType(WoodType woodType) {
+        if (!woodType.equals(getWoodType())) {
+            throw new InvalidBlockPropertyValueException(WoodType.PROPERTY, getWoodType(), woodType, 
+                    "Only the current value is supported for this block");
+        }
+    }
+
     @Override
     public boolean canBeActivated() {
         return false;
     }
     
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         return false;
     }
 }

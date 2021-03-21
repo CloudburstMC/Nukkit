@@ -4,8 +4,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntitySmite;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentDamageSmite extends EnchantmentDamage {
 

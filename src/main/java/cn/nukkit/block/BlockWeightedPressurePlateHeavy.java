@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.BlockColor;
@@ -47,19 +46,8 @@ public class BlockWeightedPressurePlateHeavy extends BlockPressurePlateBase {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, 0);
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

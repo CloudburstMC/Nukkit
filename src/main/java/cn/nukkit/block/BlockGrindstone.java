@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.inventory.GrindstoneInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -12,16 +14,25 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
+@PowerNukkitOnly
 public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
+    @PowerNukkitOnly
     public static final int TYPE_ATTACHMENT_STANDING = 0;
+    @PowerNukkitOnly
     public static final int TYPE_ATTACHMENT_HANGING = 1;
+    @PowerNukkitOnly
     public static final int TYPE_ATTACHMENT_SIDE = 2;
+    @PowerNukkitOnly
     public static final int TYPE_ATTACHMENT_MULTIPLE = 3;
 
+    @PowerNukkitOnly
     public BlockGrindstone() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockGrindstone(int meta) {
         super(meta);
     }
@@ -42,12 +53,8 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[] { toItem() };
-        } else {
-            return new Item[0];
-        }
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override
@@ -60,6 +67,7 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
         return new ItemBlock(new BlockGrindstone());
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -85,6 +93,9 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
         return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
     }
 
+    @Override
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     public void setBlockFace(BlockFace face) {
         if (face.getHorizontalIndex() == -1) {
             return;
@@ -92,10 +103,12 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
         setDamage(getDamage() & (DATA_MASK ^ 0b11) | face.getHorizontalIndex());
     }
 
+    @PowerNukkitOnly
     public int getAttachmentType() {
         return (getDamage() & 0b1100) >> 2 & 0b11;
     }
 
+    @PowerNukkitOnly
     public void setAttachmentType(int attachmentType) {
         attachmentType = attachmentType & 0b11;
         setDamage(getDamage() & (DATA_MASK ^ 0b1100) | (attachmentType << 2));
@@ -131,7 +144,10 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (block.getId() != AIR && block.canBeReplaced()) {
+            face = BlockFace.UP;
+        }
         switch (face) {
             case UP:
                 setAttachmentType(TYPE_ATTACHMENT_STANDING);
@@ -217,7 +233,7 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player != null) {
             player.addWindow(new GrindstoneInventory(player.getUIInventory(), this), Player.GRINDSTONE_WINDOW_ID);
         }

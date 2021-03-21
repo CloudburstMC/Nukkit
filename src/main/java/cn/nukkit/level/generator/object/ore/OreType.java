@@ -11,13 +11,16 @@ import cn.nukkit.math.NukkitRandom;
 import static cn.nukkit.block.BlockID.STONE;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 //porktodo: rewrite this, the whole class is terrible and generated ores look stupid
 public class OreType {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final OreType[] EMPTY_ARRAY = new OreType[0];
+    
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public final int fullId;
     
     @PowerNukkitOnly

@@ -8,17 +8,11 @@ import cn.nukkit.math.NukkitRandom;
 public class PopulatorMineshaft extends Populator {
 
     /**
-     * @author Niall Lindsay (Niall7459)
-     * <p>
-     * Nukkit Project
-     * </p>
-     *
-     * WIP
+     * @author Niall Lindsay (Niall7459, Nukkit Project)
      */
-
     @Override
     public void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk) {
-        // TODO Auto-generated method stub
+        // TODO Implement
 
     }
 

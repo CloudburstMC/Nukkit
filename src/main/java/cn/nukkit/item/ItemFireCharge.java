@@ -1,18 +1,21 @@
 package cn.nukkit.item;
 
+import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockID;
-import cn.nukkit.math.BlockFace;
+import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.Player;
+import cn.nukkit.math.BlockFace;
 
 import java.util.concurrent.ThreadLocalRandom;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class ItemFireCharge extends Item {
 

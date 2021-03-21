@@ -5,8 +5,8 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.lang.TranslationContainer;
 
 /**
- * Created on 2015/11/13 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/13
  */
 public class SaveOnCommand extends VanillaCommand {
 

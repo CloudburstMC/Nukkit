@@ -8,6 +8,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
@@ -29,12 +31,9 @@ import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
-import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.format.generic.EmptyChunkSection;
-import cn.nukkit.level.format.leveldb.LevelDB;
-import cn.nukkit.level.format.mcregion.McRegion;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.level.generator.PopChunkManager;
 import cn.nukkit.level.generator.task.GenerationTask;
@@ -51,7 +50,6 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.plugin.Plugin;
-import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.BlockUpdateScheduler;
 import cn.nukkit.timings.LevelTimings;
@@ -65,23 +63,34 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.io.File;
-import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Predicate;
+import java.util.function.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+import static cn.nukkit.utils.Utils.dynamic;
 
 /**
- * author: MagicDroidX Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class Level implements ChunkManager, Metadatable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Level[] EMPTY_ARRAY = new Level[0];
 
     private static int levelIdCounter = 1;
     private static int chunkLoaderCounter = 1;
+    @SuppressWarnings({"java:S1444", "java:S3008"})
     public static int COMPRESSION_LEVEL = 8;
 
     public static final int BLOCK_UPDATE_NORMAL = 1;
@@ -91,6 +100,10 @@ public class Level implements ChunkManager, Metadatable {
     public static final int BLOCK_UPDATE_TOUCH = 5;
     public static final int BLOCK_UPDATE_REDSTONE = 6;
     public static final int BLOCK_UPDATE_TICK = 7;
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final int BLOCK_UPDATE_MOVED = dynamic(1_000_000);
 
     public static final int TIME_DAY = 0;
     public static final int TIME_NOON = 6000;
@@ -112,38 +125,53 @@ public class Level implements ChunkManager, Metadatable {
     private static final boolean[] randomTickBlocks = new boolean[Block.MAX_BLOCK_ID];
 
     static {
-        randomTickBlocks[Block.GRASS] = true;
-        randomTickBlocks[Block.FARMLAND] = true;
-        randomTickBlocks[Block.MYCELIUM] = true;
-        randomTickBlocks[Block.SAPLING] = true;
-        randomTickBlocks[Block.LEAVES] = true;
-        randomTickBlocks[Block.LEAVES2] = true;
-        randomTickBlocks[Block.SNOW_LAYER] = true;
-        randomTickBlocks[Block.ICE] = true;
-        randomTickBlocks[Block.LAVA] = true;
-        randomTickBlocks[Block.STILL_LAVA] = true;
-        randomTickBlocks[Block.CACTUS] = true;
-        randomTickBlocks[Block.BEETROOT_BLOCK] = true;
-        randomTickBlocks[Block.CARROT_BLOCK] = true;
-        randomTickBlocks[Block.POTATO_BLOCK] = true;
-        randomTickBlocks[Block.MELON_STEM] = true;
-        randomTickBlocks[Block.PUMPKIN_STEM] = true;
-        randomTickBlocks[Block.WHEAT_BLOCK] = true;
-        randomTickBlocks[Block.SUGARCANE_BLOCK] = true;
-        randomTickBlocks[Block.RED_MUSHROOM] = true;
-        randomTickBlocks[Block.BROWN_MUSHROOM] = true;
-        randomTickBlocks[Block.NETHER_WART_BLOCK] = true;
-        randomTickBlocks[Block.FIRE] = true;
-        randomTickBlocks[Block.GLOWING_REDSTONE_ORE] = true;
-        randomTickBlocks[Block.COCOA_BLOCK] = true;
-        randomTickBlocks[Block.VINE] = true;
-        randomTickBlocks[Block.CORAL_FAN] = true;
-        randomTickBlocks[Block.CORAL_FAN_DEAD] = true;
-        randomTickBlocks[Block.BLOCK_KELP] = true;
-        randomTickBlocks[Block.SWEET_BERRY_BUSH] = true;
-        randomTickBlocks[Block.TURTLE_EGG] = true;
-        randomTickBlocks[Block.BAMBOO] = true;
-        randomTickBlocks[Block.BAMBOO_SAPLING] = true;
+        randomTickBlocks[BlockID.GRASS] = true;
+        randomTickBlocks[BlockID.FARMLAND] = true;
+        randomTickBlocks[BlockID.MYCELIUM] = true;
+        randomTickBlocks[BlockID.SAPLING] = true;
+        randomTickBlocks[BlockID.LEAVES] = true;
+        randomTickBlocks[BlockID.LEAVES2] = true;
+        randomTickBlocks[BlockID.SNOW_LAYER] = true;
+        randomTickBlocks[BlockID.ICE] = true;
+        randomTickBlocks[BlockID.LAVA] = true;
+        randomTickBlocks[BlockID.STILL_LAVA] = true;
+        randomTickBlocks[BlockID.CACTUS] = true;
+        randomTickBlocks[BlockID.BEETROOT_BLOCK] = true;
+        randomTickBlocks[BlockID.CARROT_BLOCK] = true;
+        randomTickBlocks[BlockID.POTATO_BLOCK] = true;
+        randomTickBlocks[BlockID.MELON_STEM] = true;
+        randomTickBlocks[BlockID.PUMPKIN_STEM] = true;
+        randomTickBlocks[BlockID.WHEAT_BLOCK] = true;
+        randomTickBlocks[BlockID.SUGARCANE_BLOCK] = true;
+        randomTickBlocks[BlockID.RED_MUSHROOM] = true;
+        randomTickBlocks[BlockID.BROWN_MUSHROOM] = true;
+        randomTickBlocks[BlockID.NETHER_WART_BLOCK] = true;
+        randomTickBlocks[BlockID.FIRE] = true;
+        randomTickBlocks[BlockID.GLOWING_REDSTONE_ORE] = true;
+        randomTickBlocks[BlockID.COCOA_BLOCK] = true;
+        randomTickBlocks[BlockID.VINE] = true;
+        randomTickBlocks[BlockID.CORAL_FAN] = true;
+        randomTickBlocks[BlockID.CORAL_FAN_DEAD] = true;
+        randomTickBlocks[BlockID.BLOCK_KELP] = true;
+        randomTickBlocks[BlockID.SWEET_BERRY_BUSH] = true;
+        randomTickBlocks[BlockID.TURTLE_EGG] = true;
+        randomTickBlocks[BlockID.BAMBOO] = true;
+        randomTickBlocks[BlockID.BAMBOO_SAPLING] = true;
+        randomTickBlocks[BlockID.CRIMSON_NYLIUM] = true;
+        randomTickBlocks[BlockID.WARPED_NYLIUM] = true;
+        randomTickBlocks[BlockID.TWISTING_VINES] = true;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static boolean canRandomTick(int blockId) {
+        return blockId < randomTickBlocks.length && randomTickBlocks[blockId];
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static void setCanRandomTick(int blockId, boolean newValue) {
+        randomTickBlocks[blockId] = newValue;
     }
 
     private final Long2ObjectOpenHashMap<BlockEntity> blockEntities = new Long2ObjectOpenHashMap<>();
@@ -199,7 +227,7 @@ public class Level implements ChunkManager, Metadatable {
 
 
     private final BlockUpdateScheduler updateQueue;
-    private final Queue<Block> normalUpdateQueue = new ConcurrentLinkedDeque<>();
+    private final Queue<QueuedUpdate> normalUpdateQueue = new ConcurrentLinkedDeque<>();
 //    private final TreeSet<BlockUpdateEntry> updateQueue = new TreeSet<>();
 //    private final List<BlockUpdateEntry> nextTickUpdates = Lists.newArrayList();
     //private final Map<BlockVector3, Integer> updateQueueIndex = new HashMap<>();
@@ -244,7 +272,7 @@ public class Level implements ChunkManager, Metadatable {
         @Override
         public Generator init() {
             try {
-                Generator generator = generatorClass.getConstructor(Map.class).newInstance(provider.getGeneratorOptions());
+                Generator generator = generatorClass.getConstructor(Map.class).newInstance(requireProvider().getGeneratorOptions());
                 NukkitRandom rand = new NukkitRandom(getSeed());
                 ChunkManager manager;
                 if (Server.getInstance().isPrimaryThread()) {
@@ -271,70 +299,65 @@ public class Level implements ChunkManager, Metadatable {
     public GameRules gameRules;
 
     public Level(Server server, String name, String path, Class<? extends LevelProvider> provider) {
+        this(server, name, path,
+                ()-> {
+                    try {
+                        return (boolean) provider.getMethod("usesChunkSection").invoke(null);
+                    } catch (ReflectiveOperationException e) {
+                        throw new LevelException("usesChunkSection of "+provider+" failed", e);
+                    }
+                },
+                (level, levelPath) -> {
+                    try {
+                        return provider.getConstructor(Level.class, String.class).newInstance(level, levelPath);
+                    } catch (ReflectiveOperationException e) {
+                        throw new LevelException("Constructor of "+provider+" failed", e);
+                    }
+                }
+        );
+    }
+
+    @PowerNukkitOnly("Makes easier to create tests")
+    @Since("1.4.0.0-PN")
+    Level(Server server, String name, File path, boolean usesChunkSection, LevelProvider provider) {
+        this(server, name, path.getAbsolutePath()+"/", ()-> usesChunkSection, (lvl, p)-> provider);
+    }
+
+    @PowerNukkitOnly("Makes easier to create tests")
+    @Since("1.4.0.0-PN")        
+    Level(Server server, String name, String path, BooleanSupplier usesChunkSection, BiFunction<Level, String, LevelProvider> provider) {
         this.levelId = levelIdCounter++;
         this.blockMetadata = new BlockMetadataStore(this);
         this.server = server;
         this.autoSave = server.getAutoSave();
-
-        boolean convert = provider == McRegion.class || provider == LevelDB.class;
-        try {
-            if (convert) {
-                String newPath = new File(path).getParent() + "/" + name + ".old/";
-                new File(path).renameTo(new File(newPath));
-                this.provider = provider.getConstructor(Level.class, String.class).newInstance(this, newPath);
-            } else {
-                this.provider = provider.getConstructor(Level.class, String.class).newInstance(this, path);
-            }
-        } catch (Exception e) {
-            throw new LevelException("Caused by " + Utils.getExceptionMessage(e), e);
-        }
-
+        this.provider = provider.apply(this, path);
+        LevelProvider levelProvider = requireProvider();
         this.timings = new LevelTimings(this);
-
-        if (convert) {
-            log.info(this.server.getLanguage().translateString("nukkit.level.updating",
-                    TextFormat.GREEN + this.provider.getName() + TextFormat.WHITE));
-            LevelProvider old = this.provider;
-            try {
-                this.provider = new LevelProviderConverter(this, path)
-                        .from(old)
-                        .to(Anvil.class)
-                        .perform();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            old.close();
-        }
-
-        this.provider.updateLevelName(name);
+        levelProvider.updateLevelName(name);
 
         log.info(this.server.getLanguage().translateString("nukkit.level.preparing",
-                TextFormat.GREEN + this.provider.getName() + TextFormat.WHITE));
+                TextFormat.GREEN + levelProvider.getName() + TextFormat.WHITE));
 
-        this.generatorClass = Generator.getGenerator(this.provider.getGenerator());
+        this.generatorClass = Generator.getGenerator(levelProvider.getGenerator());
 
-        try {
-            this.useSections = (boolean) provider.getMethod("usesChunkSection").invoke(null);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        this.useSections = usesChunkSection.getAsBoolean();
 
         this.folderName = name;
-        this.time = this.provider.getTime();
+        this.time = levelProvider.getTime();
 
-        this.raining = this.provider.isRaining();
-        this.rainTime = this.provider.getRainTime();
+        this.raining = levelProvider.isRaining();
+        this.rainTime = this.requireProvider().getRainTime();
         if (this.rainTime <= 0) {
             setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
-        this.thundering = this.provider.isThundering();
-        this.thunderTime = this.provider.getThunderTime();
+        this.thundering = levelProvider.isThundering();
+        this.thunderTime = levelProvider.getThunderTime();
         if (this.thunderTime <= 0) {
             setThunderTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
-        this.levelCurrentTick = this.provider.getCurrentTick();
+        this.levelCurrentTick = levelProvider.getCurrentTick();
         this.updateQueue = new BlockUpdateScheduler(this, levelCurrentTick);
 
         this.chunkTickRadius = Math.min(this.server.getViewDistance(),
@@ -421,7 +444,7 @@ public class Level implements ChunkManager, Metadatable {
     public void initLevel() {
         Generator generator = generators.get();
         this.dimension = generator.getDimension();
-        this.gameRules = this.provider.getGamerules();
+        this.gameRules = this.requireProvider().getGamerules();
 
         log.info("Preparing start region for level \"{}\"", this.getFolderName());
         Position spawn = this.getSpawnLocation();
@@ -440,20 +463,44 @@ public class Level implements ChunkManager, Metadatable {
         return server;
     }
 
-    final public LevelProvider getProvider() {
-        return this.provider;
+    public final LevelProvider getProvider() {
+        return provider;
     }
 
-    final public int getId() {
+    /**
+     * Returns the level provider if it exists. Tries to close and unregister the level and then throw an exception if it doesn't.
+     * @throws LevelException If the level is already closed
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public final LevelProvider requireProvider() {
+        LevelProvider levelProvider = getProvider();
+        if (levelProvider == null) {
+            LevelException levelException = new LevelException("The level \"" + getFolderName() + "\" is already closed (have no providers)");
+            try {
+                close();
+            } catch (Exception e) {
+                levelException.addSuppressed(e);
+            }
+            throw levelException;
+        }
+        return levelProvider;
+    }
+
+    public final int getId() {
         return this.levelId;
     }
 
     public void close() {
-        if (this.getAutoSave()) {
-            this.save(true);
+        LevelProvider levelProvider = this.provider;
+        if (levelProvider != null) {
+            if (this.getAutoSave()) {
+                this.save(true);
+            }
+            levelProvider.close();
         }
-
-        this.provider.close();
+        
         this.provider = null;
         this.blockMetadata = null;
         this.temporalPosition = null;
@@ -470,7 +517,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addSound(Vector3 pos, Sound sound, float volume, float pitch, Collection<Player> players) {
-        this.addSound(pos, sound, volume, pitch, players.toArray(new Player[0]));
+        this.addSound(pos, sound, volume, pitch, players.toArray(Player.EMPTY_ARRAY));
     }
 
     public void addSound(Vector3 pos, Sound sound, float volume, float pitch, Player... players) {
@@ -531,15 +578,24 @@ public class Level implements ChunkManager, Metadatable {
         addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
     }
 
+    @PowerNukkitDifference(info = "Default sound method changed to addSound", since = "1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Old method, use addSound(pos, Sound.<SOUND_VALUE>).", since = "1.4.0.0-PN")
     public void addLevelSoundEvent(Vector3 pos, int type, int data, int entityType) {
         addLevelSoundEvent(pos, type, data, entityType, false, false);
     }
 
+    @PowerNukkitDifference(info = "Default sound method changed to addSound", since = "1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Old method, use addSound(pos, Sound.<SOUND_VALUE>).", since = "1.4.0.0-PN")
     public void addLevelSoundEvent(Vector3 pos, int type, int data, int entityType, boolean isBaby, boolean isGlobal) {
         String identifier = AddEntityPacket.LEGACY_IDS.getOrDefault(entityType, ":");
         addLevelSoundEvent(pos, type, data, identifier, isBaby, isGlobal);
     }
 
+    @PowerNukkitDifference(info = "Default sound method changed to addSound", since = "1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Old method, use addSound(pos, Sound.<SOUND_VALUE>).", since = "1.4.0.0-PN")
     public void addLevelSoundEvent(Vector3 pos, int type) {
         this.addLevelSoundEvent(pos, type, -1);
     }
@@ -551,10 +607,16 @@ public class Level implements ChunkManager, Metadatable {
      * @param type ID of the sound from {@link cn.nukkit.network.protocol.LevelSoundEventPacket}
      * @param data generic data that can affect sound
      */
+    @PowerNukkitDifference(info = "Default sound method changed to addSound", since = "1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Old method, use addSound(pos, Sound.<SOUND_VALUE>).", since = "1.4.0.0-PN")
     public void addLevelSoundEvent(Vector3 pos, int type, int data) {
         this.addLevelSoundEvent(pos, type, data, ":", false, false);
     }
 
+    @PowerNukkitDifference(info = "Default sound method changed to addSound", since = "1.4.0.0-PN")
+    @Deprecated
+    @DeprecationDetails(reason = "Old method, use addSound(pos, Sound.<SOUND_VALUE>).", since = "1.4.0.0-PN")
     public void addLevelSoundEvent(Vector3 pos, int type, int data, String identifier, boolean isBaby, boolean isGlobal) {
         LevelSoundEventPacket pk = new LevelSoundEventPacket();
         pk.sound = type;
@@ -598,7 +660,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addParticle(Particle particle, Collection<Player> players) {
-        this.addParticle(particle, players.toArray(new Player[0]));
+        this.addParticle(particle, players.toArray(Player.EMPTY_ARRAY));
     }
 
     public void addParticleEffect(Vector3 pos, ParticleEffect particleEffect) {
@@ -614,7 +676,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addParticleEffect(Vector3 pos, ParticleEffect particleEffect, long uniqueEntityId, int dimensionId, Collection<Player> players) {
-        this.addParticleEffect(pos, particleEffect, uniqueEntityId, dimensionId, players.toArray(new Player[0]));
+        this.addParticleEffect(pos, particleEffect, uniqueEntityId, dimensionId, players.toArray(Player.EMPTY_ARRAY));
     }
 
     public void addParticleEffect(Vector3 pos, ParticleEffect particleEffect, long uniqueEntityId, int dimensionId, Player... players) {
@@ -693,9 +755,9 @@ public class Level implements ChunkManager, Metadatable {
     public ChunkLoader[] getChunkLoaders(int chunkX, int chunkZ) {
         long index = Level.chunkHash(chunkX, chunkZ);
         if (this.chunkLoaders.containsKey(index)) {
-            return this.chunkLoaders.get(index).values().toArray(new ChunkLoader[0]);
+            return this.chunkLoaders.get(index).values().toArray(ChunkLoader.EMPTY_ARRAY);
         } else {
-            return new ChunkLoader[0];
+            return ChunkLoader.EMPTY_ARRAY;
         }
     }
 
@@ -781,7 +843,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void sendTime() {
-        sendTime(this.players.values().toArray(new Player[0]));
+        sendTime(this.players.values().toArray(Player.EMPTY_ARRAY));
     }
 
     public GameRules getGameRules() {
@@ -790,6 +852,8 @@ public class Level implements ChunkManager, Metadatable {
 
     public void doTick(int currentTick) {
         this.timings.doTick.startTiming();
+        
+        requireProvider();
 
         updateBlockLight(lightQueue);
         this.checkTime();
@@ -852,13 +916,16 @@ public class Level implements ChunkManager, Metadatable {
         this.timings.doTickPending.stopTiming();
 
         while (!this.normalUpdateQueue.isEmpty()) {
-            Block block = this.normalUpdateQueue.poll();
-            block = getBlock(block, block.layer);
+            QueuedUpdate queuedUpdate = this.normalUpdateQueue.poll();
+            Block block = getBlock(queuedUpdate.block, queuedUpdate.block.layer);
             BlockUpdateEvent event = new BlockUpdateEvent(block);
             this.server.getPluginManager().callEvent(event);
 
             if (!event.isCancelled()) {
                 block.onUpdate(BLOCK_UPDATE_NORMAL);
+                if (queuedUpdate.neighbor != null) {
+                    block.onNeighborChange(queuedUpdate.neighbor.getOpposite());
+                }
             }
         }
 
@@ -905,7 +972,7 @@ public class Level implements ChunkManager, Metadatable {
                             }
                         } else {
                             Collection<Player> toSend = this.getChunkPlayers(chunkX, chunkZ).values();
-                            Player[] playerArray = toSend.toArray(new Player[0]);
+                            Player[] playerArray = toSend.toArray(Player.EMPTY_ARRAY);
                             Vector3[] blocksArray = new Vector3[blocks.size()];
                             int i = 0;
                             for (char blockHash : blocks.keySet()) {
@@ -931,7 +998,7 @@ public class Level implements ChunkManager, Metadatable {
             for (long index : this.chunkPackets.keySet()) {
                 int chunkX = Level.getHashX(index);
                 int chunkZ = Level.getHashZ(index);
-                Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().toArray(new Player[0]);
+                Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().toArray(Player.EMPTY_ARRAY);
                 if (chunkPlayers.length > 0) {
                     for (DataPacket pk : this.chunkPackets.get(index)) {
                         Server.broadcastPacket(chunkPlayers, pk);
@@ -944,7 +1011,7 @@ public class Level implements ChunkManager, Metadatable {
         if (gameRules.isStale()) {
             GameRulesChangedPacket packet = new GameRulesChangedPacket();
             packet.gameRules = gameRules;
-            Server.broadcastPacket(players.values().toArray(new Player[0]), packet);
+            Server.broadcastPacket(players.values().toArray(Player.EMPTY_ARRAY), packet);
             gameRules.refresh();
         }
 
@@ -1043,7 +1110,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void sendBlockExtraData(int x, int y, int z, int id, int data, Collection<Player> players) {
-        sendBlockExtraData(x, y, z, id, data, players.toArray(new Player[0]));
+        sendBlockExtraData(x, y, z, id, data, players.toArray(Player.EMPTY_ARRAY));
     }
 
     public void sendBlockExtraData(int x, int y, int z, int id, int data, Player[] players) {
@@ -1147,7 +1214,7 @@ public class Level implements ChunkManager, Metadatable {
                     int dx = random.nextInt(2 * randRange) - randRange;
                     int dz = random.nextInt(2 * randRange) - randRange;
                     long hash = Level.chunkHash(dx + chunkX, dz + chunkZ);
-                    if (!this.chunkTickList.containsKey(hash) && provider.isChunkLoaded(hash)) {
+                    if (!this.chunkTickList.containsKey(hash) && requireProvider().isChunkLoaded(hash)) {
                         this.chunkTickList.put(hash, -1);
                     }
                 }
@@ -1195,9 +1262,9 @@ public class Level implements ChunkManager, Metadatable {
                                     int y = lcg >>> 8 & 0x0f;
                                     int z = lcg >>> 16 & 0x0f;
 
-                                    int[] state = section.getBlockState(x, y, z);
-                                    if (randomTickBlocks[state[0]]) {
-                                        Block block = Block.get(state[0], state[1], this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
+                                    BlockState state = section.getBlockState(x, y, z);
+                                    if (randomTickBlocks[state.getBlockId()]) {
+                                        Block block = state.getBlockRepairing(this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
                                         block.onUpdate(BLOCK_UPDATE_RANDOM);
                                     }
                                 }
@@ -1212,11 +1279,10 @@ public class Level implements ChunkManager, Metadatable {
                                 int y = lcg >>> 8 & 0x0f;
                                 int z = lcg >>> 16 & 0x0f;
 
-                                int[] state = chunk.getBlockState(x, y + (Y << 4), z);
-                                int blockId = state[0];
-                                blockTest |= state[0] != 0 && state[1] != 0;
-                                if (Level.randomTickBlocks[blockId]) {
-                                    Block block = Block.get(state[0], state[1], this, x, y + (Y << 4), z);
+                                BlockState state = chunk.getBlockState(x, y + (Y << 4), z);
+                                blockTest = blockTest || !state.equals(BlockState.AIR);
+                                if (Level.randomTickBlocks[state.getBlockId()]) {
+                                    Block block = state.getBlockRepairing(this, x, y + (Y << 4), z);
                                     block.onUpdate(BLOCK_UPDATE_RANDOM);
                                 }
                             }
@@ -1242,52 +1308,71 @@ public class Level implements ChunkManager, Metadatable {
 
         this.server.getPluginManager().callEvent(new LevelSaveEvent(this));
 
-        this.provider.setTime((int) this.time);
-        this.provider.setRaining(this.raining);
-        this.provider.setRainTime(this.rainTime);
-        this.provider.setThundering(this.thundering);
-        this.provider.setThunderTime(this.thunderTime);
-        this.provider.setCurrentTick(this.levelCurrentTick);
-        this.provider.setGameRules(this.gameRules);
+        LevelProvider levelProvider = this.requireProvider();
+        levelProvider.setTime((int) this.time);
+        levelProvider.setRaining(this.raining);
+        levelProvider.setRainTime(this.rainTime);
+        levelProvider.setThundering(this.thundering);
+        levelProvider.setThunderTime(this.thunderTime);
+        levelProvider.setCurrentTick(this.levelCurrentTick);
+        levelProvider.setGameRules(this.gameRules);
         this.saveChunks();
-        if (this.provider instanceof BaseLevelProvider) {
-            this.provider.saveLevelData();
+        if (levelProvider instanceof BaseLevelProvider) {
+            levelProvider.saveLevelData();
         }
 
         return true;
     }
 
     public void saveChunks() {
-        provider.saveChunks();
+        requireProvider().saveChunks();
     }
 
+    @Deprecated @DeprecationDetails(reason = "Was moved to RedstoneComponent", since = "1.4.0.0-PN",
+            replaceWith = "RedstoneComponent#updateAroundRedstone", by = "PowerNukkit")
     public void updateAroundRedstone(Vector3 pos, BlockFace face) {
-        for (BlockFace side : BlockFace.values()) {
-            if (face != null && side == face || getBlock(pos) instanceof BlockPistonBase) {
-                continue;
-            }
-
-            this.getBlock(pos.getSide(side)).onUpdate(BLOCK_UPDATE_REDSTONE);
-        }
+        Location loc = new Location(pos.x, pos.y, pos.z, this);
+        RedstoneComponent.updateAroundRedstone(loc, face);
     }
 
     public void updateComparatorOutputLevel(Vector3 v) {
+        updateComparatorOutputLevelSelective(v, true);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void updateComparatorOutputLevelSelective(Vector3 v, boolean observer) {
         for (BlockFace face : Plane.HORIZONTAL) {
-            Vector3 pos = v.getSide(face);
+            temporalVector.setComponentsAdding(v, face);
 
-            if (this.isChunkLoaded((int) pos.x >> 4, (int) pos.z >> 4)) {
-                Block block1 = this.getBlock(pos);
-
-                if (BlockRedstoneDiode.isDiode(block1)) {
+            if (this.isChunkLoaded((int) temporalVector.x >> 4, (int) temporalVector.z >> 4)) {
+                Block block1 = this.getBlock(temporalVector);
+                
+                if (block1.getId() == BlockID.OBSERVER) {
+                    if (observer) {
+                        block1.onNeighborChange(face.getOpposite());
+                    }
+                } else if (BlockRedstoneDiode.isDiode(block1)) {
                     block1.onUpdate(BLOCK_UPDATE_REDSTONE);
                 } else if (block1.isNormalBlock()) {
-                    pos = pos.getSide(face);
-                    block1 = this.getBlock(pos);
+                    block1 = this.getBlock(temporalVector.setComponentsAdding(temporalVector, face));
 
                     if (BlockRedstoneDiode.isDiode(block1)) {
                         block1.onUpdate(BLOCK_UPDATE_REDSTONE);
                     }
                 }
+            }
+        }
+        
+        if (!observer) {
+            return;
+        }
+        
+        for (BlockFace face : Plane.VERTICAL) {
+            Block block1 = this.getBlock(temporalVector.setComponentsAdding(v, face));
+
+            if (block1.getId() == BlockID.OBSERVER) {
+                block1.onNeighborChange(face.getOpposite());
             }
         }
     }
@@ -1296,8 +1381,8 @@ public class Level implements ChunkManager, Metadatable {
         Block block = getBlock(pos);
         for (BlockFace face : BlockFace.values()) {
             final Block side = block.getSideAtLayer(0, face);
-            normalUpdateQueue.add(side);
-            normalUpdateQueue.add(side.getLevelBlockAtLayer(1));
+            normalUpdateQueue.add(new QueuedUpdate(side, face));
+            normalUpdateQueue.add(new QueuedUpdate(side.getLevelBlockAtLayer(1), face));
         }
     }
 
@@ -1353,6 +1438,21 @@ public class Level implements ChunkManager, Metadatable {
     public Set<BlockUpdateEntry> getPendingBlockUpdates(AxisAlignedBB boundingBox) {
         return updateQueue.getPendingBlockUpdates(boundingBox);
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public List<Block> scanBlocks(@Nonnull AxisAlignedBB bb, @Nonnull BiPredicate<BlockVector3, BlockState> condition) {
+        BlockVector3 min = new BlockVector3(NukkitMath.floorDouble(bb.getMinX()), NukkitMath.floorDouble(bb.getMinY()), NukkitMath.floorDouble(bb.getMinZ()));
+        BlockVector3 max = new BlockVector3(NukkitMath.floorDouble(bb.getMaxX()), NukkitMath.floorDouble(bb.getMaxY()), NukkitMath.floorDouble(bb.getMaxZ()));
+        ChunkVector2 minChunk = min.getChunkVector();
+        ChunkVector2 maxChunk = max.getChunkVector();
+        return IntStream.rangeClosed(minChunk.getX(), maxChunk.getX())
+                .mapToObj(x-> IntStream.rangeClosed(minChunk.getZ(), maxChunk.getZ()).mapToObj(z-> new ChunkVector2(x, z)))
+                .flatMap(Function.identity()).parallel()
+                .map(this::getChunk).filter(Objects::nonNull)
+                .flatMap(chunk-> chunk.scanBlocks(min, max, condition))
+                .collect(Collectors.toList());
+    }
 
     public Block[] getCollisionBlocks(AxisAlignedBB bb) {
         return this.getCollisionBlocks(bb, false);
@@ -1400,7 +1500,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        return collides.toArray(new Block[0]);
+        return collides.toArray(Block.EMPTY_ARRAY);
     }
 
     public boolean isFullBlock(Vector3 pos) {
@@ -1454,16 +1554,17 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        return collides.toArray(new AxisAlignedBB[0]);
+        return collides.toArray(AxisAlignedBB.EMPTY_ARRAY);
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Rounds the AABB to have precision 4 before checking for collision, fix PowerNukkit#506")
     public boolean hasCollision(Entity entity, AxisAlignedBB bb, boolean entities) {
-        int minX = NukkitMath.floorDouble(bb.getMinX());
-        int minY = NukkitMath.floorDouble(bb.getMinY());
-        int minZ = NukkitMath.floorDouble(bb.getMinZ());
-        int maxX = NukkitMath.ceilDouble(bb.getMaxX());
-        int maxY = NukkitMath.ceilDouble(bb.getMaxY());
-        int maxZ = NukkitMath.ceilDouble(bb.getMaxZ());
+        int minX = NukkitMath.floorDouble(NukkitMath.round(bb.getMinX(), 4));
+        int minY = NukkitMath.floorDouble(NukkitMath.round(bb.getMinY(), 4));
+        int minZ = NukkitMath.floorDouble(NukkitMath.round(bb.getMinZ(), 4));
+        int maxX = NukkitMath.ceilDouble(NukkitMath.round(bb.getMaxX(), 4) - 0.00001);
+        int maxY = NukkitMath.ceilDouble(NukkitMath.round(bb.getMaxY(), 4) - 0.00001);
+        int maxZ = NukkitMath.ceilDouble(NukkitMath.round(bb.getMaxZ(), 4) - 0.00001);
 
         for (int z = minZ; z <= maxZ; ++z) {
             for (int x = minX; x <= maxX; ++x) {
@@ -1543,13 +1644,13 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public int getFullBlock(int x, int y, int z) {
         return getFullBlock(x, y, z, 0);
     }
 
     @Deprecated
-    @DeprecationDetails(reason = "Does not support hyper ids", since = "1.3.0.0-PN")
+    @DeprecationDetails(reason ="The meta is limited to 32 bits", since = "1.3.0.0-PN")
     public int getFullBlock(int x, int y, int z, int layer) {
         return this.getChunk(x >> 4, z >> 4, false).getFullBlock(x & 0x0f, y & 0xff, z & 0x0f, layer);
     }
@@ -1594,8 +1695,9 @@ public class Level implements ChunkManager, Metadatable {
         return getBlock(x, y, z, 0, load);
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will automatically repair broken block states")
     public synchronized Block getBlock(int x, int y, int z, int layer, boolean load) {
-        int[] fullState;
+        BlockState fullState;
         if (y >= 0 && y < 256) {
             int cx = x >> 4;
             int cz = z >> 4;
@@ -1608,20 +1710,26 @@ public class Level implements ChunkManager, Metadatable {
             if (chunk != null) {
                 fullState = chunk.getBlockState(x & 0xF, y, z & 0xF, layer);
             } else {
-                fullState = new int[]{0,0};
+                fullState = BlockState.AIR;
             }
         } else {
-            fullState = new int[]{0,0};
+            fullState = BlockState.AIR;
         }
-        Block block = Block.get(fullState[0], fullState[1]);
-        block.x = x;
-        block.y = y;
-        block.z = z;
-        block.level = this;
-        block.layer = layer;
+        OptionalBoolean valid = fullState.getCachedValidation();
+        if (valid == OptionalBoolean.TRUE) {
+            return fullState.getBlock(this, x, y, z, layer);
+        }
+        if (valid == OptionalBoolean.EMPTY) {
+            try {
+                return fullState.getBlock(this, x, y, z, layer);
+            } catch (InvalidBlockStateException ignored) {
+            }
+        }
+        Block block = fullState.getBlockRepairing(this, x, y, z, layer);
+        setBlock(x, y, z, layer, block, false, false); // Update set to false to fix PowerNukkit#650 
         return block;
     }
-
+    
     public void updateAllLight(Vector3 pos) {
         this.updateBlockSkyLight((int) pos.x, (int) pos.y, (int) pos.z);
         this.addLightUpdate((int) pos.x, (int) pos.y, (int) pos.z);
@@ -1718,7 +1826,7 @@ public class Level implements ChunkManager, Metadatable {
                     int lcx = x & 0xF;
                     int lcz = z & 0xF;
                     int oldLevel = chunk.getBlockLight(lcx, y, lcz);
-                    int newLevel = Block.fullLight[chunk.getFullBlock(lcx, y, lcz)];
+                    int newLevel = chunk.getBlockState(lcx, y, lcz).getBlock(this, x, y, z, 0, true).getLightLevel();
                     if (oldLevel != newLevel) {
                         this.setBlockLightAt(x, y, z, newLevel);
                         if (newLevel < oldLevel) {
@@ -1826,11 +1934,15 @@ public class Level implements ChunkManager, Metadatable {
         currentMap.put(Level.localBlockHash(x, y, z), changeBlocksPresent);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized void setBlockFullIdAt(int x, int y, int z, int fullId) {
         setBlockFullIdAt(x, y, z, 0, fullId);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized void setBlockFullIdAt(int x, int y, int z, int layer, int fullId) {
         setBlock(x, y, z, layer, Block.fullList[fullId], false, false);
@@ -1865,27 +1977,28 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public synchronized boolean setBlock(int x, int y, int z, int layer, Block block, boolean direct, boolean update) {
-        if (y < 0 || y >= 256 || layer < 0 || layer > this.provider.getMaximumLayer()) {
+        if (y < 0 || y >= 256 || layer < 0 || layer > this.requireProvider().getMaximumLayer()) {
             return false;
         }
+        BlockState state = block.getCurrentState();
         BaseFullChunk chunk = this.getChunk(x >> 4, z >> 4, true);
-        Block blockPrevious;
-//        synchronized (chunk) {
-        blockPrevious = chunk.getAndSetBlock(x & 0xF, y, z & 0xF, layer, block);
-        if (Block.equals(blockPrevious, block, true)) {
+        BlockState statePrevious = chunk.getAndSetBlockState(x & 0xF, y, z & 0xF, layer, state);
+        if (state.equals(statePrevious)) {
             return false;
         }
-//        }
         block.x = x;
         block.y = y;
         block.z = z;
         block.level = this;
         block.layer = layer;
+        
+        Block blockPrevious = statePrevious.getBlockRepairing(this, x, y, z, layer);
+        
         int cx = x >> 4;
         int cz = z >> 4;
         long index = Level.chunkHash(cx, cz);
         if (direct) {
-            this.sendBlocks(this.getChunkPlayers(cx, cz).values().toArray(new Player[0]), new Block[]{block}, UpdateBlockPacket.FLAG_ALL_PRIORITY, block.layer);
+            this.sendBlocks(this.getChunkPlayers(cx, cz).values().toArray(Player.EMPTY_ARRAY), new Block[]{block}, UpdateBlockPacket.FLAG_ALL_PRIORITY, block.layer);
             //this.sendBlocks(this.getChunkPlayers(cx, cz).values().toArray(new Player[0]), new Block[]{block.getLevelBlockAtLayer(0)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 0);
             //this.sendBlocks(this.getChunkPlayers(cx, cz).values().toArray(new Player[0]), new Block[]{block.getLevelBlockAtLayer(1)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
         } else {
@@ -1968,7 +2081,10 @@ public class Level implements ChunkManager, Metadatable {
         if (item.getId() != 0 && item.getCount() > 0) {
             EntityItem itemEntity = (EntityItem) Entity.createEntity("Item",
                     this.getChunk((int) source.getX() >> 4, (int) source.getZ() >> 4, true),
-                    Entity.getDefaultNBT(source, motion, new Random().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(item)).putShort("PickupDelay", delay));
+                    Entity.getDefaultNBT(source, motion, new Random().nextFloat() * 360, 0)
+                            .putShort("Health", 5)
+                            .putCompound("Item", NBTIO.putItemHelper(item))
+                            .putShort("PickupDelay", delay));
 
             if (itemEntity != null) {
                 itemEntity.spawnToAll();
@@ -1977,22 +2093,26 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Since("1.3.2.0-PN")
-    public EntityItem dropAndGetItem(Vector3 source, Item item) {
+    @Nullable
+    public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item) {
         return this.dropAndGetItem(source, item, null);
     }
 
     @Since("1.3.2.0-PN")
-    public EntityItem dropAndGetItem(Vector3 source, Item item, Vector3 motion) {
+    @Nullable
+    public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item, @Nullable Vector3 motion) {
         return this.dropAndGetItem(source, item, motion, 10);
     }
 
     @Since("1.3.2.0-PN")
-    public EntityItem dropAndGetItem(Vector3 source, Item item, Vector3 motion, int delay) {
+    @Nullable
+    public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item, @Nullable Vector3 motion, int delay) {
         return this.dropAndGetItem(source, item, motion, false, delay);
     }
 
     @Since("1.3.2.0-PN")
-    public EntityItem dropAndGetItem(Vector3 source, Item item, Vector3 motion, boolean dropAround, int delay) {
+    @Nullable
+    public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item, @Nullable Vector3 motion, boolean dropAround, int delay) {
         EntityItem itemEntity = null;
 
         if (motion == null) {
@@ -2065,12 +2185,22 @@ public class Level implements ChunkManager, Metadatable {
         if (player != null && player.getGamemode() > 2) {
             return null;
         }
+        
         Block target = this.getBlock(vector, layer);
+
+        if (player != null && !target.isBlockChangeAllowed(player)) {
+            return null;
+        }
+        
         Item[] drops;
         int dropExp = target.getDropExp();
 
         if (item == null) {
             item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
+        }
+        
+        if (!target.isBreakable(vector, layer, face, item, player, setBlockDestroy)) {
+            return null;
         }
         
         boolean mustDrop = target.mustDrop(vector, layer, face, item, player);
@@ -2097,7 +2227,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-            double breakTime = target.getBreakTime(item, player);
+            double breakTime = target.calculateBreakTime(item, player);
             // this in
             // block
             // class
@@ -2106,25 +2236,11 @@ public class Level implements ChunkManager, Metadatable {
                 breakTime = 0.15;
             }
 
-            if (player.hasEffect(Effect.SWIFTNESS)) {
-                breakTime *= 1 - (0.2 * (player.getEffect(Effect.SWIFTNESS).getAmplifier() + 1));
-            }
-
-            if (player.hasEffect(Effect.MINING_FATIGUE)) {
-                breakTime *= 1 - (0.3 * (player.getEffect(Effect.MINING_FATIGUE).getAmplifier() + 1));
-            }
-
-            Enchantment eff = item.getEnchantment(Enchantment.ID_EFFICIENCY);
-
-            if (eff != null && eff.getLevel() > 0) {
-                breakTime *= 1 - (0.3 * eff.getLevel());
-            }
-
             breakTime -= 0.15;
 
             Item[] eventDrops;
             if (!mustDrop && !setBlockDestroy && !player.isSurvival()) {
-                eventDrops = new Item[0];
+                eventDrops = Item.EMPTY_ARRAY;
             } else if (mustSilkTouch || isSilkTouch && target.canSilkTouch()) {
                 eventDrops = new Item[]{target.toItem()};
             } else {
@@ -2132,8 +2248,9 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             if (!setBlockDestroy) {
+                boolean fastBreak = Long.sum(player.lastBreak, (long)breakTime*1000) > Long.sum(System.currentTimeMillis(), (long)1000);
                 BlockBreakEvent ev = new BlockBreakEvent(player, target, face, item, eventDrops, player.isCreative(),
-                        (Long.sum(player.lastBreak, (long)breakTime*1000)) > System.currentTimeMillis());
+                        fastBreak);
 
                 if (player.isSurvival() && !target.isBreakable(item)) {
                     ev.setCancelled();
@@ -2199,6 +2316,9 @@ public class Level implements ChunkManager, Metadatable {
 
         item.useOn(target);
         if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
+            if (player != null) {
+                addSound(player, Sound.RANDOM_BREAK);
+            }
             item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
         }
 
@@ -2229,8 +2349,28 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void dropExpOrb(Vector3 source, int exp, Vector3 motion, int delay) {
+        dropExpOrbAndGetEntities(source, exp, motion, delay);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public List<EntityXPOrb> dropExpOrbAndGetEntities(Vector3 source, int exp) {
+        return dropExpOrbAndGetEntities(source, exp, null);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public List<EntityXPOrb> dropExpOrbAndGetEntities(Vector3 source, int exp, Vector3 motion) {
+        return dropExpOrbAndGetEntities(source, exp, motion, 10);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public List<EntityXPOrb> dropExpOrbAndGetEntities(Vector3 source, int exp, Vector3 motion, int delay) {
         Random rand = ThreadLocalRandom.current();
-        for (int split : EntityXPOrb.splitIntoOrbSizes(exp)) {
+        List<Integer> drops = EntityXPOrb.splitIntoOrbSizes(exp);
+        List<EntityXPOrb> entities = new ArrayList<>(drops.size());
+        for (int split : drops) {
             CompoundTag nbt = Entity.getDefaultNBT(source, motion == null ? new Vector3(
                     (rand.nextDouble() * 0.2 - 0.1) * 2,
                     rand.nextDouble() * 0.4,
@@ -2240,11 +2380,13 @@ public class Level implements ChunkManager, Metadatable {
             nbt.putShort("Value", split);
             nbt.putShort("PickupDelay", delay);
 
-            Entity entity = Entity.createEntity("XpOrb", this.getChunk(source.getChunkX(), source.getChunkZ()), nbt);
+            EntityXPOrb entity = (EntityXPOrb) Entity.createEntity("XpOrb", this.getChunk(source.getChunkX(), source.getChunkZ()), nbt);
             if (entity != null) {
+                entities.add(entity);
                 entity.spawnToAll();
             }
         }
+        return entities;
     }
 
     public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz) {
@@ -2257,6 +2399,7 @@ public class Level implements ChunkManager, Metadatable {
 
 
     @PowerNukkitDifference(info = "PowerNukkit#403", since = "1.3.1.2-PN")
+    @PowerNukkitDifference(info = "Fixed PowerNukkit#716, block stops placing when towering up", since = "1.4.0.0-PN")
     public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz, Player player, boolean playSound) {
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
@@ -2294,8 +2437,9 @@ public class Level implements ChunkManager, Metadatable {
             this.server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
                 target.onUpdate(BLOCK_UPDATE_TOUCH);
-                if (((!player.isSneaking() && this.getBlockEntity(target) != null) || this.getBlockEntity(target) == null || player.getInventory().getItemInHand().isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
+                if ((!player.isSneaking() || player.getInventory().getItemInHand().isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
                     if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
+                        addSound(player, Sound.RANDOM_BREAK);
                         item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
                     }
                     return item;
@@ -2331,8 +2475,7 @@ public class Level implements ChunkManager, Metadatable {
             return null;
         }
 
-        //TODO WOODEN_SLABS? stone_slab2? stone_slab3? stone_slab4?
-        if (!(block.canBeReplaced() || (hand.getId() == Item.SLAB && block.getId() == Item.SLAB))) {
+        if (!(block.canBeReplaced() || (hand instanceof BlockSlab && hand.getId() == block.getId()))) {
             return null;
         }
 
@@ -2345,7 +2488,11 @@ public class Level implements ChunkManager, Metadatable {
             Entity[] entities = this.getCollidingEntities(hand.getBoundingBox());
             int realCount = 0;
             for (Entity e : entities) {
-                if (e instanceof EntityArrow || e instanceof EntityItem || (e instanceof Player && ((Player) e).isSpectator())) {
+                if (e instanceof EntityArrow 
+                        || e instanceof EntityItem
+                        || (e instanceof Player && ((Player) e).isSpectator())
+                        || player == e
+                ) {
                     continue;
                 }
                 ++realCount;
@@ -2353,12 +2500,12 @@ public class Level implements ChunkManager, Metadatable {
 
             if (player != null) {
                 Vector3 diff = player.getNextPosition().subtract(player.getPosition());
-                if (diff.lengthSquared() > 0.00001) {
+                //if (diff.lengthSquared() > 0.00001) {
                     AxisAlignedBB bb = player.getBoundingBox().getOffsetBoundingBox(diff.x, diff.y, diff.z);
                     if (hand.getBoundingBox().intersectsWith(bb)) {
                         ++realCount;
                     }
-                }
+                //}
             }
 
             if (realCount > 0) {
@@ -2367,6 +2514,10 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (player != null) {
+            if (!block.isBlockChangeAllowed(player)) {
+                return null;
+            }
+            
             BlockPlaceEvent event = new BlockPlaceEvent(player, hand, block, target, item);
             if (player.getGamemode() == 2) {
                 Tag tag = item.getNamedTagEntry("CanPlaceOn");
@@ -2447,7 +2598,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Entity[] getEntities() {
-        return entities.values().toArray(new Entity[0]);
+        return entities.values().toArray(Entity.EMPTY_ARRAY);
     }
 
     public Entity[] getCollidingEntities(AxisAlignedBB bb) {
@@ -2455,7 +2606,9 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Entity[] getCollidingEntities(AxisAlignedBB bb, Entity entity) {
-        List<Entity> nearby = new ArrayList<>();
+        int index = 0;
+
+        ArrayList<Entity> overflow = null;
 
         if (entity == null || entity.canCollide()) {
             int minX = NukkitMath.floorDouble((bb.getMinX() - 2) / 16);
@@ -2468,22 +2621,22 @@ public class Level implements ChunkManager, Metadatable {
                     for (Entity ent : this.getChunkEntities(x, z, false).values()) {
                         if ((entity == null || (ent != entity && entity.canCollideWith(ent)))
                                 && ent.boundingBox.intersectsWith(bb)) {
-                            nearby.add(ent);
+                            overflow = addEntityToBuffer(index, overflow, ent);
+                            index++;
                         }
                     }
                 }
             }
         }
 
-        return nearby.toArray(new Entity[0]);
+        return getEntitiesFromBuffer(index, overflow);
     }
 
     public Entity[] getNearbyEntities(AxisAlignedBB bb) {
         return this.getNearbyEntities(bb, null);
     }
 
-    private static Entity[] EMPTY_ENTITY_ARR = new Entity[0];
-    private static Entity[] ENTITY_BUFFER = new Entity[512];
+    private static final Entity[] ENTITY_BUFFER = new Entity[512];
 
     public Entity[] getNearbyEntities(AxisAlignedBB bb, Entity entity) {
         return getNearbyEntities(bb, entity, false);
@@ -2503,19 +2656,28 @@ public class Level implements ChunkManager, Metadatable {
             for (int z = minZ; z <= maxZ; ++z) {
                 for (Entity ent : this.getChunkEntities(x, z, loadChunks).values()) {
                     if (ent != entity && ent.boundingBox.intersectsWith(bb)) {
-                        if (index < ENTITY_BUFFER.length) {
-                            ENTITY_BUFFER[index] = ent;
-                        } else {
-                            if (overflow == null) overflow = new ArrayList<>(1024);
-                            overflow.add(ent);
-                        }
+                        overflow = addEntityToBuffer(index, overflow, ent);
                         index++;
                     }
                 }
             }
         }
 
-        if (index == 0) return EMPTY_ENTITY_ARR;
+        return getEntitiesFromBuffer(index, overflow);
+    }
+
+    private ArrayList<Entity> addEntityToBuffer(int index, ArrayList<Entity> overflow, Entity ent) {
+        if (index < ENTITY_BUFFER.length) {
+            ENTITY_BUFFER[index] = ent;
+        } else {
+            if (overflow == null) overflow = new ArrayList<>(1024);
+            overflow.add(ent);
+        }
+        return overflow;
+    }
+
+    private Entity[] getEntitiesFromBuffer(int index, ArrayList<Entity> overflow) {
+        if (index == 0) return Entity.EMPTY_ARRAY;
         Entity[] copy;
         if (overflow == null) {
             copy = Arrays.copyOfRange(ENTITY_BUFFER, 0, index);
@@ -2585,6 +2747,11 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     @Override
+    public BlockState getBlockStateAt(int x, int y, int z, int layer) {
+        return getChunk(x >> 4, z >> 4, true).getBlockStateAt(x & 0x0f, y & 0xff, z & 0x0f, layer);
+    }
+
+    @Override
     public int getBlockIdAt(int x, int y, int z) {
         return getBlockIdAt(x, y, z, 0);
     }
@@ -2609,17 +2776,25 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized void setBlockAt(int x, int y, int z, int id, int data) {
         setBlockAtLayer(x, y, z, 0, id, data);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized boolean setBlockAtLayer(int x, int y, int z, int layer, int id, int data) {
+        return setBlockStateAt(x, y, z, layer, BlockState.of(id, data));
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public synchronized boolean setBlockStateAt(int x, int y, int z, int layer, BlockState state) {
         BaseFullChunk chunk = this.getChunk(x >> 4, z >> 4, true);
-        boolean changed = chunk.setBlockAtLayer(x & 0x0f, y & 0xff, z & 0x0f, layer, id & 0xff, data & 0xf);
-        chunk.setBlockId(x & 0x0f, y & 0xff, z & 0x0f, id & 0xff);
-        chunk.setBlockData(x & 0x0f, y & 0xff, z & 0x0f, data & 0xf);
+        boolean changed = chunk.setBlockStateAtLayer(x & 0x0f, y & 0xff, z & 0x0f, layer, state);
         addBlockChange(x, y, z);
         temporalVector.setComponents(x, y, z);
         for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {
@@ -2628,6 +2803,8 @@ public class Level implements ChunkManager, Metadatable {
         return changed;
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public int getBlockDataAt(int x, int y, int z) {
         return getBlockDataAt(x, y, z, 0);
@@ -2643,19 +2820,25 @@ public class Level implements ChunkManager, Metadatable {
         this.sendBlockExtraData(x, y, z, id, data);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized int getBlockDataAt(int x, int y, int z, int layer) {
         return this.getChunk(x >> 4, z >> 4, true).getBlockData(x & 0x0f, y & 0xff, z & 0x0f, layer);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public void setBlockDataAt(int x, int y, int z, int data) {
         setBlockDataAt(x, y, z, 0, data);
     }
 
+    @Deprecated
+    @DeprecationDetails(reason = "The meta is limited to 32 bits", since = "1.4.0.0-PN")
     @Override
     public synchronized void setBlockDataAt(int x, int y, int z, int layer, int data) {
-        this.getChunk(x >> 4, z >> 4, true).setBlockData(x & 0x0f, y & 0xff, z & 0x0f, layer, data & 0x0f);
+        this.getChunk(x >> 4, z >> 4, true).setBlockData(x & 0x0f, y & 0xff, z & 0x0f, layer, data);
         addBlockChange(x, y, z);
         temporalVector.setComponents(x, y, z);
         for (ChunkLoader loader : this.getChunkLoaders(x >> 4, z >> 4)) {
@@ -2696,7 +2879,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Map<Long, ? extends FullChunk> getChunks() {
-        return provider.getLoadedChunks();
+        return requireProvider().getLoadedChunks();
     }
 
     @Override
@@ -2706,7 +2889,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public BaseFullChunk getChunk(int chunkX, int chunkZ, boolean create) {
         long index = Level.chunkHash(chunkX, chunkZ);
-        BaseFullChunk chunk = this.provider.getLoadedChunk(index);
+        BaseFullChunk chunk = this.requireProvider().getLoadedChunk(index);
         if (chunk == null) {
             chunk = this.forceLoadChunk(index, chunkX, chunkZ, create);
         }
@@ -2715,7 +2898,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public BaseFullChunk getChunkIfLoaded(int chunkX, int chunkZ) {
         long index = Level.chunkHash(chunkX, chunkZ);
-        return this.provider.getLoadedChunk(index);
+        return this.requireProvider().getLoadedChunk(index);
     }
 
     public void generateChunkCallback(int x, int z, BaseFullChunk chunk) {
@@ -2725,6 +2908,7 @@ public class Level implements ChunkManager, Metadatable {
     public void generateChunkCallback(int x, int z, BaseFullChunk chunk, boolean isPopulated) {
         Timings.generationCallbackTimer.startTiming();
         long index = Level.chunkHash(x, z);
+        LevelProvider levelProvider = this.requireProvider();
         if (this.chunkPopulationQueue.containsKey(index)) {
             FullChunk oldChunk = this.getChunk(x, z, false);
             for (int xx = -1; xx <= 1; ++xx) {
@@ -2733,7 +2917,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
             this.chunkPopulationQueue.remove(index);
-            chunk.setProvider(this.provider);
+            chunk.setProvider(levelProvider);
             this.setChunk(x, z, chunk, false);
             chunk = this.getChunk(x, z, false);
             if (chunk != null && (oldChunk == null || !isPopulated) && chunk.isPopulated()
@@ -2747,10 +2931,10 @@ public class Level implements ChunkManager, Metadatable {
         } else if (this.chunkGenerationQueue.containsKey(index) || this.chunkPopulationLock.containsKey(index)) {
             this.chunkGenerationQueue.remove(index);
             this.chunkPopulationLock.remove(index);
-            chunk.setProvider(this.provider);
+            chunk.setProvider(levelProvider);
             this.setChunk(x, z, chunk, false);
         } else {
-            chunk.setProvider(this.provider);
+            chunk.setProvider(levelProvider);
             this.setChunk(x, z, chunk, false);
         }
         Timings.generationCallbackTimer.stopTiming();
@@ -2778,7 +2962,7 @@ public class Level implements ChunkManager, Metadatable {
             if (unload && oldChunk != null) {
                 this.unloadChunk(chunkX, chunkZ, false, false);
 
-                this.provider.setChunk(chunkX, chunkZ, chunk);
+                this.requireProvider().setChunk(chunkX, chunkZ, chunk);
             } else {
                 Map<Long, Entity> oldEntities = oldChunk != null ? oldChunk.getEntities() : Collections.emptyMap();
 
@@ -2812,7 +2996,7 @@ public class Level implements ChunkManager, Metadatable {
                     }
                 }
 
-                this.provider.setChunk(chunkX, chunkZ, chunk);
+                this.requireProvider().setChunk(chunkX, chunkZ, chunk);
             }
         }
 
@@ -2846,14 +3030,15 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public boolean isChunkLoaded(int x, int z) {
-        return this.provider.isChunkLoaded(x, z);
+        return this.requireProvider().isChunkLoaded(x, z);
     }
 
     private boolean areNeighboringChunksLoaded(long hash) {
-        return this.provider.isChunkLoaded(hash + 1) &&
-                this.provider.isChunkLoaded(hash - 1) &&
-                this.provider.isChunkLoaded(hash + (1L << 32)) &&
-                this.provider.isChunkLoaded(hash - (1L << 32));
+        LevelProvider levelProvider = this.requireProvider();
+        return levelProvider.isChunkLoaded(hash + 1) &&
+                levelProvider.isChunkLoaded(hash - 1) &&
+                levelProvider.isChunkLoaded(hash + (1L << 32)) &&
+                levelProvider.isChunkLoaded(hash - (1L << 32));
     }
 
     public boolean isChunkGenerated(int x, int z) {
@@ -2867,7 +3052,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public Position getSpawnLocation() {
-        return Position.fromObject(this.provider.getSpawn(), this);
+        return Position.fromObject(this.requireProvider().getSpawn(), this);
     }
 
     public Position getFuzzySpawnLocation() {
@@ -2887,7 +3072,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void setSpawnLocation(Vector3 pos) {
         Position previousSpawn = this.getSpawnLocation();
-        this.provider.setSpawn(pos);
+        this.requireProvider().setSpawn(pos);
         this.server.getPluginManager().callEvent(new SpawnChangeEvent(this, previousSpawn));
         SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
         pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
@@ -2940,7 +3125,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
             this.timings.syncChunkSendPrepareTimer.startTiming();
-            AsyncTask task = this.provider.requestChunkTask(x, z);
+            AsyncTask task = this.requireProvider().requestChunkTask(x, z);
             if (task != null) {
                 this.server.getScheduler().scheduleAsyncTask(task);
             }
@@ -3040,7 +3225,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public boolean loadChunk(int x, int z, boolean generate) {
         long index = Level.chunkHash(x, z);
-        if (this.provider.isChunkLoaded(index)) {
+        if (this.requireProvider().isChunkLoaded(index)) {
             return true;
         }
         return forceLoadChunk(index, x, z, generate) != null;
@@ -3048,7 +3233,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private synchronized BaseFullChunk forceLoadChunk(long index, int x, int z, boolean generate) {
         this.timings.syncChunkLoadTimer.startTiming();
-        BaseFullChunk chunk = this.provider.getChunk(x, z, generate);
+        BaseFullChunk chunk = this.requireProvider().getChunk(x, z, generate);
         if (chunk == null) {
             if (generate) {
                 throw new IllegalStateException("Could not create new Chunk");
@@ -3143,6 +3328,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         try {
+            LevelProvider levelProvider = this.requireProvider();
             if (chunk != null) {
                 if (trySave && this.getAutoSave()) {
                     int entities = 0;
@@ -3154,15 +3340,15 @@ public class Level implements ChunkManager, Metadatable {
                     }
 
                     if (chunk.hasChanged() || !chunk.getBlockEntities().isEmpty() || entities > 0) {
-                        this.provider.setChunk(x, z, chunk);
-                        this.provider.saveChunk(x, z);
+                        levelProvider.setChunk(x, z, chunk);
+                        levelProvider.saveChunk(x, z);
                     }
                 }
                 for (ChunkLoader loader : this.getChunkLoaders(x, z)) {
                     loader.onChunkUnloaded(chunk);
                 }
             }
-            this.provider.unloadChunk(x, z, safe);
+            levelProvider.unloadChunk(x, z, safe);
         } catch (Exception e) {
             log.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.toString()), e);
         }
@@ -3173,7 +3359,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public boolean isSpawnChunk(int X, int Z) {
-        Vector3 spawn = this.provider.getSpawn();
+        Vector3 spawn = this.requireProvider().getSpawn();
         return Math.abs(X - (spawn.getFloorX() >> 4)) <= 1 && Math.abs(Z - (spawn.getFloorZ() >> 4)) <= 1;
     }
 
@@ -3195,8 +3381,8 @@ public class Level implements ChunkManager, Metadatable {
                 int y = (int) NukkitMath.clamp(v.y, 1, 254);
                 boolean wasAir = chunk.getBlockId(x, y - 1, z) == 0;
                 for (; y > 0; --y) {
-                    int[] b = chunk.getBlockState(x, y, z);
-                    Block block = Block.get(b[0], b[1]);
+                    BlockState state = chunk.getBlockState(x, y, z);
+                    Block block = state.getBlockRepairing(this, x, y, z);
                     if (this.isFullBlock(block)) {
                         if (wasAir) {
                             y++;
@@ -3208,11 +3394,11 @@ public class Level implements ChunkManager, Metadatable {
                 }
 
                 for (; y >= 0 && y < 255; y++) {
-                    int[] b = chunk.getBlockState(x, y + 1, z);
-                    Block block = Block.get(b[0], b[1]);
+                    BlockState state = chunk.getBlockState(x, y + 1, z);
+                    Block block = state.getBlockRepairing(this, x, y + 1, z);
                     if (!this.isFullBlock(block)) {
-                        b = chunk.getBlockState(x, y, z);
-                        block = Block.get(b[0], b[1]);
+                        state = chunk.getBlockState(x, y, z);
+                        block = state.getBlockRepairing(this, x, y, z);
                         if (!this.isFullBlock(block)) {
                             return new Position(spawn.x, y == (int) spawn.y ? spawn.y : y, spawn.z, this);
                         }
@@ -3243,7 +3429,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public String getName() {
-        return this.provider.getName();
+        return this.requireProvider().getName();
     }
 
     public String getFolderName() {
@@ -3267,11 +3453,11 @@ public class Level implements ChunkManager, Metadatable {
 
     @Override
     public long getSeed() {
-        return this.provider.getSeed();
+        return this.requireProvider().getSeed();
     }
 
     public void setSeed(int seed) {
-        this.provider.setSeed(seed);
+        this.requireProvider().setSeed(seed);
     }
 
     public boolean populateChunk(int x, int z) {
@@ -3343,8 +3529,9 @@ public class Level implements ChunkManager, Metadatable {
 
         this.cancelUnloadChunkRequest(x, z);
 
-        BaseFullChunk chunk = provider.getEmptyChunk(x, z);
-        provider.setChunk(x, z, chunk);
+        LevelProvider levelProvider = requireProvider();
+        BaseFullChunk chunk = levelProvider.getEmptyChunk(x, z);
+        levelProvider.setChunk(x, z, chunk);
 
         this.generateChunk(x, z);
     }
@@ -3367,7 +3554,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        for (Map.Entry<Long, ? extends FullChunk> entry : provider.getLoadedChunks().entrySet()) {
+        for (Map.Entry<Long, ? extends FullChunk> entry : requireProvider().getLoadedChunks().entrySet()) {
             long index = entry.getKey();
             if (!this.unloadQueue.containsKey(index)) {
                 FullChunk chunk = entry.getValue();
@@ -3379,7 +3566,7 @@ public class Level implements ChunkManager, Metadatable {
             }
         }
 
-        this.provider.doGarbageCollection();
+        this.requireProvider().doGarbageCollection();
         this.timings.doChunkGC.stopTiming();
     }
 
@@ -3387,7 +3574,7 @@ public class Level implements ChunkManager, Metadatable {
         long start = System.currentTimeMillis();
         if (unloadChunks(start, allocatedTime, false)) {
             allocatedTime = allocatedTime - (System.currentTimeMillis() - start);
-            provider.doGarbageCollection(allocatedTime);
+            requireProvider().doGarbageCollection(allocatedTime);
         }
     }
 
@@ -3634,7 +3821,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void sendWeather(Player[] players) {
         if (players == null) {
-            players = this.getPlayers().values().toArray(new Player[0]);
+            players = this.getPlayers().values().toArray(Player.EMPTY_ARRAY);
         }
 
         LevelEventPacket pk = new LevelEventPacket();
@@ -3668,7 +3855,7 @@ public class Level implements ChunkManager, Metadatable {
         if (players == null) {
             players = this.getPlayers().values();
         }
-        this.sendWeather(players.toArray(new Player[0]));
+        this.sendWeather(players.toArray(Player.EMPTY_ARRAY));
     }
 
     public int getDimension() {
@@ -3683,11 +3870,13 @@ public class Level implements ChunkManager, Metadatable {
         return this.getBlock(pos).getStrongPower(direction);
     }
 
+    @PowerNukkitDifference(info = "Check if the block to check is a piston, then return 0.", since = "1.4.0.0-PN")
     public int getStrongPower(Vector3 pos) {
-        int i = 0;
+        if (pos instanceof BlockPistonBase || this.getBlock(pos) instanceof BlockPistonBase) return 0;
 
+        int i = 0;
         for (BlockFace face : BlockFace.values()) {
-            i = Math.max(i, this.getStrongPower(pos.getSide(face), face));
+            i = Math.max(i, this.getStrongPower(temporalVector.setComponentsAdding(pos, face), face));
 
             if (i >= 15) {
                 return i;
@@ -3748,7 +3937,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public boolean isBlockPowered(Vector3 pos) {
         for (BlockFace face : BlockFace.values()) {
-            if (this.getRedstonePower(pos.getSide(face), face) > 0) {
+            if (this.getRedstonePower(temporalVector.setComponentsAdding(pos, face), face) > 0) {
                 return true;
             }
         }
@@ -3760,7 +3949,7 @@ public class Level implements ChunkManager, Metadatable {
         int power = 0;
 
         for (BlockFace face : BlockFace.values()) {
-            int blockPower = this.getRedstonePower(pos.getSide(face), face);
+            int blockPower = this.getRedstonePower(temporalVector.setComponentsAdding(pos, face), face);
 
             if (blockPower >= 15) {
                 return 15;
@@ -3798,6 +3987,7 @@ public class Level implements ChunkManager, Metadatable {
         return (this.updateLCG = (this.updateLCG * 3) ^ LCG_CONSTANT);
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     public boolean createPortal(Block target) {
         int maxPortalSize = 23;
         final int targX = target.getFloorX();
@@ -3925,7 +4115,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-            this.addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_IGNITE);
+            this.addSound(target, Sound.FIRE_IGNITE);
             return true;
         } else if (sizeZ >= 2 && sizeZ <= maxPortalSize) {
             //start scan from 1 block above base
@@ -4008,13 +4198,29 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-            this.addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_IGNITE);
+            this.addSound(target, Sound.FIRE_IGNITE);
             return true;
         }
 
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "Level{" +
+                "folderName='" + folderName + '\'' +
+                ", dimension=" + dimension +
+                '}';
+    }
+
+    @AllArgsConstructor
+    @Data
+    private static class QueuedUpdate {
+        @Nonnull
+        private Block block;
+        private BlockFace neighbor;
+    }
+    
 //    private static void orderGetRidings(Entity entity, LongSet set) {
 //        if (entity.riding != null) {
 //            if(!set.add(entity.riding.getId())) {

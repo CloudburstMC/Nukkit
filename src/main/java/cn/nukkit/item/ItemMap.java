@@ -14,7 +14,8 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Created by CreeperFace on 18.3.2017.
+ * @author CreeperFace
+ * @since 18.3.2017
  */
 @Log4j2
 public class ItemMap extends Item {

@@ -1,8 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBirchSign;
 
+@PowerNukkitOnly
 public class BlockBirchWallSign extends BlockWallSign {
     public BlockBirchWallSign() {
         this(0);

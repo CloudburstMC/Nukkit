@@ -5,8 +5,7 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class ObjectBigSpruceTree extends ObjectSpruceTree {
     private final float leafStartHeightMultiplier;

@@ -4,8 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockGlass extends BlockTransparent {
 
@@ -34,7 +33,7 @@ public class BlockGlass extends BlockTransparent {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
     }
 
     @Override

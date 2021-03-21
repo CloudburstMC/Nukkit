@@ -13,6 +13,7 @@ import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import io.netty.util.internal.EmptyArrays;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
@@ -204,7 +205,7 @@ public class PluginManager {
                                 try {
                                     //Check the format: majorVersion.minorVersion.patch
                                     if (!Pattern.matches("^[0-9]+\\.[0-9]+\\.[0-9]+$", version)) {
-                                        throw log.throwing(new IllegalArgumentException("The getCompatibleAPI version don't match the format majorVersion.minorVersion.patch"));
+                                        throw new IllegalArgumentException("The getCompatibleAPI version don't match the format majorVersion.minorVersion.patch");
                                     }
                                 } catch (NullPointerException | IllegalArgumentException e) {
                                     log.error(this.server.getLanguage().translateString("nukkit.plugin.loadError", new String[]{name, "Wrong API format"}), e);
@@ -497,7 +498,7 @@ public class PluginManager {
                             aliasList.add(alias);
                         }
 
-                        newCmd.setAliases(aliasList.toArray(new String[0]));
+                        newCmd.setAliases(aliasList.toArray(EmptyArrays.EMPTY_STRINGS));
                     }
                 }
 

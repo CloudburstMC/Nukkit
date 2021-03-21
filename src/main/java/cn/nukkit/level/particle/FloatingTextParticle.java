@@ -16,8 +16,8 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created on 2015/11/21 by xtypr.
- * Package cn.nukkit.level.particle in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/21
  */
 public class FloatingTextParticle extends Particle {
     private static final Skin EMPTY_SKIN = new Skin();
@@ -157,6 +157,6 @@ public class FloatingTextParticle extends Particle {
             packets.add(playerRemove);
         }
 
-        return packets.toArray(new DataPacket[0]);
+        return packets.toArray(DataPacket.EMPTY_ARRAY);
     }
 }

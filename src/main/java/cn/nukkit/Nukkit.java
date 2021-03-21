@@ -191,7 +191,7 @@ public class Nukkit {
             }
             new Server(PATH, DATA_PATH, PLUGIN_PATH, language);
         } catch (Throwable t) {
-            log.throwing(t);
+            log.catching(t);
         }
 
         if (TITLE) {

@@ -15,8 +15,12 @@ public class ItemIngotNetherite extends Item {
         this(meta, 1);
     }
 
-    @Since("1.3.2.0-PN")
     public ItemIngotNetherite(Integer meta, int count) {
         super(NETHERITE_INGOT, 0, count, "Netherite Ingot");
+    }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
     }
 }

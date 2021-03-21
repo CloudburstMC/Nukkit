@@ -5,7 +5,8 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 
 /**
- * Created by fromgate on 27.03.2016.
+ * @author fromgate
+ * @since 27.03.2016
  */
 abstract public class ItemColorArmor extends ItemArmor {
 

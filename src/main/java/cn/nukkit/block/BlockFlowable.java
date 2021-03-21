@@ -3,8 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.math.AxisAlignedBB;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockFlowable extends BlockTransparentMeta {
 

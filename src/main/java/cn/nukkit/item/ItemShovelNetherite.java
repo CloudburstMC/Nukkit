@@ -21,13 +21,13 @@ public class ItemShovelNetherite extends ItemTool {
     }
 
     @Override
-    public boolean isShovel() {
-        return true;
+    public int getMaxDurability() {
+        return ItemTool.DURABILITY_NETHERITE;
     }
 
     @Override
-    public int getAttackDamage() {
-        return 5;
+    public boolean isShovel() {
+        return true;
     }
 
     @Override
@@ -36,7 +36,12 @@ public class ItemShovelNetherite extends ItemTool {
     }
 
     @Override
-    public int getMaxDurability() {
-        return ItemTool.DURABILITY_NETHERITE;
+    public int getAttackDamage() {
+        return 5;
+    }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
     }
 }

@@ -5,8 +5,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
- * author: Box
- * Nukkit Project
+ * @author Box (Nukkit Project)
  * <p>
  * Called when a entity decides to explode
  */

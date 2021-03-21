@@ -5,7 +5,8 @@ import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
 /**
- * Created by CreeperFace on 15.4.2017.
+ * @author CreeperFace
+ * @since 15.4.2017
  */
 public class BoneMealParticle extends Particle {
 

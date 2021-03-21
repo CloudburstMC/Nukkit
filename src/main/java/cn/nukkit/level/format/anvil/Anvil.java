@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.anvil;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
@@ -15,6 +16,7 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.ThreadCache;
 import cn.nukkit.utils.Utils;
+import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import lombok.extern.log4j.Log4j2;
 
@@ -27,8 +29,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class Anvil extends BaseLevelProvider {
@@ -68,6 +69,7 @@ public class Anvil extends BaseLevelProvider {
         generate(path, name, seed, generator, new HashMap<>());
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed resource leak")
     public static void generate(String path, String name, long seed, Class<? extends Generator> generator, Map<String, String> options) throws IOException {
         File regionDir = new File(path + "/region");
         if (!regionDir.exists() && !regionDir.mkdirs()) {
@@ -121,7 +123,7 @@ public class Anvil extends BaseLevelProvider {
 
         long timestamp = chunk.getChanges();
 
-        byte[] blockEntities = new byte[0];
+        byte[] blockEntities = EmptyArrays.EMPTY_BYTES;
 
         if (!chunk.getBlockEntities().isEmpty()) {
             List<CompoundTag> tagList = new ArrayList<>();
@@ -150,7 +152,7 @@ public class Anvil extends BaseLevelProvider {
         }
 
         for (int i = 0; i < count; i++) {
-            stream.put(sections[i].getBytes());
+            sections[i].writeTo(stream);
         }
 
         stream.put(chunk.getBiomeIdArray());

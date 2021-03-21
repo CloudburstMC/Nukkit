@@ -5,8 +5,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.lang.TranslationContainer;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class StopCommand extends VanillaCommand {
 

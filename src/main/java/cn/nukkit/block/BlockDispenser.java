@@ -1,29 +1,46 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDispenser;
+import cn.nukkit.blockentity.BlockEntityEjectable;
 import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehaviorRegister;
+import cn.nukkit.dispenser.DropperDispenseBehavior;
+import cn.nukkit.dispenser.FlintAndSteelDispenseBehavior;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
+import javax.annotation.Nonnull;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by CreeperFace on 15.4.2017.
+ * @author CreeperFace
+ * @since 15.4.2017
  */
-public class BlockDispenser extends BlockSolidMeta implements Faceable {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockDispenser extends BlockSolidMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityEjectable> {
 
     public BlockDispenser() {
         this(0);
@@ -48,6 +65,22 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         return DISPENSER;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.DISPENSER;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityEjectable> getBlockEntityClass() {
+        return BlockEntityDispenser.class;
+    }
+
     @Override
     public Item toItem() {
         return new ItemBlock(this, 0);
@@ -55,7 +88,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
     @Override
     public int getComparatorInputOverride() {
-        InventoryHolder blockEntity = this.getBlockEntity();
+        InventoryHolder blockEntity = getBlockEntity();
 
         if (blockEntity != null) {
             return ContainerInventory.calculateRedstone(blockEntity.getInventory());
@@ -85,7 +118,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (player == null) {
             return false;
         }
@@ -100,8 +133,9 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         return true;
     }
 
+    @PowerNukkitDifference(info = "BlockData is implemented.", since = "1.4.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (player != null) {
             if (Math.abs(player.x - this.x) < 2 && Math.abs(player.z - this.z) < 2) {
                 double y = player.y + player.getEyeHeight();
@@ -118,26 +152,23 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
             }
         }
 
-        this.getLevel().setBlock(block, this, true);
+        CompoundTag nbt = new CompoundTag().putList(new ListTag<>("Items"));
 
-        createBlockEntity();
-        return true;
-    }
-
-    protected void createBlockEntity() {
-        BlockEntity.createBlockEntity(BlockEntity.DISPENSER, this);
-    }
-
-    protected InventoryHolder getBlockEntity() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
-
-        if (!(blockEntity instanceof BlockEntityDispenser)) {
-            return null;
+        if (item.hasCustomName()) {
+            nbt.putString("CustomName", item.getCustomName());
         }
 
-        return (InventoryHolder) blockEntity;
+        if (item.hasCustomBlockData()) {
+            Map<String, Tag> customData = item.getCustomBlockData().getTags();
+            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
+                nbt.put(tag.getKey(), tag.getValue());
+            }
+        }
+        
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
+    @PowerNukkitDifference(info = "Disables the triggered state, when the block is no longer powered + use #isGettingPower() method.", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (!this.level.getServer().isRedstoneEnabled()) {
@@ -145,21 +176,19 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         }
 
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
-            this.setTriggered(false);
-            this.level.setBlock(this, this, false, false);
+            this.dispense();
 
-            dispense();
             return type;
-        } else if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            Vector3 pos = this.add(0);
+        } else if (type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_NORMAL) {
+            boolean triggered = this.isTriggered();
 
-            boolean powered = level.isBlockPowered(pos) || level.isBlockPowered(pos.up());
-            boolean triggered = isTriggered();
-
-            if (powered && !triggered) {
+            if (this.isGettingPower() && !triggered) {
                 this.setTriggered(true);
                 this.level.setBlock(this, this, false, false);
                 level.scheduleUpdate(this, this, 4);
+            } else if (!this.isGettingPower() && triggered) {
+                this.setTriggered(false);
+                this.level.setBlock(this, this, false, false);
             }
 
             return type;
@@ -168,6 +197,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         return 0;
     }
 
+    @PowerNukkitDifference(info = "Trigger observer on dispense fail (with #setDirty()).", since = "1.4.0.0-PN")
     public void dispense() {
         InventoryHolder blockEntity = getBlockEntity();
 
@@ -199,16 +229,13 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         pk.z = 0.5f + facing.getZOffset() * 0.7f;
 
         if (target == null) {
-            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK_FAIL;
-            pk.data = 1200;
-
-            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
+            this.level.addSound(this, Sound.RANDOM_CLICK, 1.0f, 1.2f);
+            getBlockEntity().setDirty();
             return;
         } else {
-            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
-            pk.data = 1000;
-
-            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
+            if (!(getDispenseBehavior(target) instanceof DropperDispenseBehavior)
+                    && !(getDispenseBehavior(target) instanceof FlintAndSteelDispenseBehavior))
+                this.level.addSound(this, Sound.RANDOM_CLICK, 1.0f, 1.0f);
         }
 
         pk.evid = LevelEventPacket.EVENT_PARTICLE_SHOOT;
@@ -220,9 +247,6 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
         DispenseBehavior behavior = getDispenseBehavior(target);
         Item result = behavior.dispense(this, facing, target);
-
-
-        pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
 
         target.count--;
         inv.setItem(slot, target);
@@ -249,6 +273,16 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_PICKAXE;
+    }
+
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     public Vector3 getDispensePosition() {

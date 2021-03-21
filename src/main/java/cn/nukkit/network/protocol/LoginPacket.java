@@ -1,7 +1,10 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.utils.*;
+import cn.nukkit.utils.PersonaPiece;
+import cn.nukkit.utils.PersonaPieceTint;
+import cn.nukkit.utils.SerializedImage;
+import cn.nukkit.utils.SkinAnimation;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,7 +17,7 @@ import java.util.*;
 
 
 /**
- * Created by on 15-10-13.
+ * @since on 15-10-13
  */
 @ToString
 public class LoginPacket extends DataPacket {

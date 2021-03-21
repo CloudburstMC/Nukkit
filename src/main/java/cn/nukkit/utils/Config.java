@@ -17,8 +17,7 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit
+ * @author MagicDroidX (Nukkit)
  */
 @Log4j2
 public class Config {
@@ -245,7 +244,7 @@ public class Config {
                 try {
                     Utils.writeFile(this.file, content.toString());
                 } catch (IOException e) {
-                    Server.getInstance().getLogger().logException(e);
+                    log.error("Failed to save the config file {}", file, e);
                 }
             }
             return true;

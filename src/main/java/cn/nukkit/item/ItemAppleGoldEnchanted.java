@@ -4,8 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
 
 /**
- * Created by Snake1999 on 2016/1/14.
- * Package cn.nukkit.item in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/14
  */
 public class ItemAppleGoldEnchanted extends ItemEdible {
     public ItemAppleGoldEnchanted() {

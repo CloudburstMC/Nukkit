@@ -13,8 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class BanList {

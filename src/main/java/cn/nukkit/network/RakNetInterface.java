@@ -37,8 +37,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class RakNetInterface implements RakNetServerListener, AdvancedSourceInterface {

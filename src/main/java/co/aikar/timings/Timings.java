@@ -95,10 +95,11 @@ public final class Timings {
         ignoredConfigSections.addAll(Server.getInstance().getConfig().getStringList("timings.ignore"));
 
         log.debug("Timings: \n" +
-                "Enabled - " + isTimingsEnabled() + "\n" +
-                "Verbose - " + isVerboseEnabled() + "\n" +
-                "History Interval - " + getHistoryInterval() + "\n" +
-                "History Length - " + getHistoryLength());
+                "Enabled - {}\n" +
+                "Verbose - {}\n" +
+                "History Interval - {}\n" +
+                "History Length - {}",
+                isTimingsEnabled(), isVerboseEnabled(), getHistoryInterval(), getHistoryLength());
 
         fullServerTickTimer = new FullServerTickTiming();
         timingsTickTimer = TimingsManager.getTiming(DEFAULT_GROUP.name, "Timings Tick", fullServerTickTimer);
@@ -189,11 +190,11 @@ public final class Timings {
         Queue<TimingsHistory> oldQueue = TimingsManager.HISTORY;
         int frames = (getHistoryLength() / getHistoryInterval());
         if (length > maxLength) {
-            Server.getInstance().getLogger().warning(
-                    "Timings Length too high. Requested " + length + ", max is " + maxLength
-                            + ". To get longer history, you must increase your interval. Set Interval to "
-                            + Math.ceil((float) length / MAX_HISTORY_FRAMES)
-                            + " to achieve this length.");
+            log.warn(
+                    "Timings Length too high. Requested {}, max is {}"
+                            + ". To get longer history, you must increase your interval. Set Interval to {}"
+                            + " to achieve this length.", 
+                    length, maxLength, Math.ceil((float) length / MAX_HISTORY_FRAMES));
         }
 
         TimingsManager.HISTORY = new TimingsManager.BoundedQueue<>(frames);

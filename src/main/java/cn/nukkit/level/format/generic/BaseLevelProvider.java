@@ -2,6 +2,9 @@ package cn.nukkit.level.format.generic;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
@@ -28,8 +31,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public abstract class BaseLevelProvider implements LevelProvider {
@@ -49,6 +51,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     private final AtomicReference<BaseFullChunk> lastChunk = new AtomicReference<>();
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed resource leak")
     public BaseLevelProvider(Level level, String path) throws IOException {
         this.level = level;
         this.path = path;
@@ -62,17 +65,20 @@ public abstract class BaseLevelProvider implements LevelProvider {
         try (FileInputStream fos = new FileInputStream(levelDatFile); BufferedInputStream input = new BufferedInputStream(fos)) {
             levelData = NBTIO.readCompressed(input, ByteOrder.BIG_ENDIAN);;
         } catch (Exception e) {
-            log.fatal("Failed to load the level.dat file at "+levelDatFile.getAbsolutePath()+", attempting to load level.dat_old instead!");
+            log.fatal("Failed to load the level.dat file at {}, attempting to load level.dat_old instead!", levelDatFile.getAbsolutePath(), e);
             try {
                 File old = new File(getPath(), "level.dat_old");
                 if (!old.isFile()) {
-                    log.fatal("The file "+old.getAbsolutePath()+" does not exists!");
-                    throw new FileNotFoundException("The file "+old.getAbsolutePath()+" does not exists!");
+                    log.fatal("The file {} does not exists!", old.getAbsolutePath());
+                    FileNotFoundException ex = new FileNotFoundException("The file " + old.getAbsolutePath() + " does not exists!");
+                    ex.addSuppressed(e);
+                    throw ex;
                 }
                 try (FileInputStream fos = new FileInputStream(old); BufferedInputStream input = new BufferedInputStream(fos)) {
                     levelData = NBTIO.readCompressed(input, ByteOrder.BIG_ENDIAN);
                 } catch (Exception e2) {
-                    log.fatal("Failed to load the level.dat_old file at "+levelDatFile.getAbsolutePath());
+                    log.fatal("Failed to load the level.dat_old file at {}", levelDatFile.getAbsolutePath());
+                    e2.addSuppressed(e);
                     throw e2;
                 }
             } catch (Exception e2) {
@@ -99,6 +105,15 @@ public abstract class BaseLevelProvider implements LevelProvider {
         this.levelData.putList(new ListTag<>("ServerBrand").add(new StringTag("", Nukkit.CODENAME)));
 
         this.spawn = new Vector3(this.levelData.getInt("SpawnX"), this.levelData.getInt("SpawnY"), this.levelData.getInt("SpawnZ"));
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BaseLevelProvider(Level level, String path, CompoundTag levelData, Vector3 spawn) {
+        this.level = level;
+        this.path = path;
+        this.levelData = levelData;
+        this.spawn = spawn;
     }
 
     public abstract BaseFullChunk loadChunk(long index, int chunkX, int chunkZ, boolean create);
@@ -331,6 +346,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
         return levelData;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed resource leak")
     @Override
     public void saveLevelData() {
         File levelDataFile = new File(getPath(), "level.dat");
@@ -343,7 +359,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
                 }
             });
         } catch (IOException e) {
-            log.fatal("Failed to save the level.dat file at "+levelDataFile.getAbsolutePath());
+            log.fatal("Failed to save the level.dat file at {}", levelDataFile.getAbsolutePath(), e);
             throw new UncheckedIOException(e);
         }
     }

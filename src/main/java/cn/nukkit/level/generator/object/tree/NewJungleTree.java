@@ -8,7 +8,8 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 /**
- * Created by CreeperFace on 26. 10. 2016.
+ * @author CreeperFace
+ * @since 26. 10. 2016
  */
 public class NewJungleTree extends TreeGenerator {
 

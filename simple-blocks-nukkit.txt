@@ -1,3 +1,5 @@
+# WARNING! Don't edit this file! It's automatically regenerated!
+
 minecraft:acacia_button
 minecraft:acacia_door
 minecraft:acacia_fence_gate

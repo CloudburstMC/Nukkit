@@ -3,8 +3,7 @@ package cn.nukkit.lang;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class TextContainer implements Cloneable {

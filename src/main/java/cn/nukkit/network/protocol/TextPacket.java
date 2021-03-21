@@ -4,10 +4,11 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.utils.BinaryStream;
+import io.netty.util.internal.EmptyArrays;
 import lombok.ToString;
 
 /**
- * Created on 15-10-13.
+ * @since 15-10-13
  */
 @ToString
 public class TextPacket extends DataPacket {
@@ -39,7 +40,7 @@ public class TextPacket extends DataPacket {
     public byte type;
     public String source = "";
     public String message = "";
-    public String[] parameters = new String[0];
+    public String[] parameters = EmptyArrays.EMPTY_STRINGS;
     public boolean isLocalized = false;
     public String xboxUserId = "";
     public String platformChatId = "";

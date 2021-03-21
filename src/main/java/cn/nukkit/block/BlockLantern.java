@@ -1,20 +1,34 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockLantern extends BlockFlowable {
+import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
+public class BlockLantern extends BlockFlowable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BooleanBlockProperty HANGING = new BooleanBlockProperty("hanging", false);
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(HANGING);
+
+    @PowerNukkitOnly
     public BlockLantern() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockLantern(int meta) {
         super(meta);
     }
@@ -24,47 +38,53 @@ public class BlockLantern extends BlockFlowable {
         return LANTERN;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
     @Override
     public String getName() {
         return "Lantern";
     }
 
     private boolean isBlockAboveValid() {
-        Block up = up();
-        if (up instanceof BlockLeaves) {
-            return false;
-        } else if (up instanceof BlockFence || up instanceof BlockWall) {
-            return true;
-        } else if (up instanceof BlockSlab) {
-            return (up.getDamage() & 0x08) == 0x00;
-        } else if (up instanceof BlockStairs) {
-            return (up.getDamage() & 0x04) == 0x00;
-        } else if (up.isSolid()) {
-            return true;
-        } else {
-            return false;
+        Block support = up();
+        switch (support.getId()) {
+            case CHAIN_BLOCK:
+            case IRON_BARS:
+            case HOPPER_BLOCK:
+                return true;
+            default:
+                if (support instanceof BlockWallBase || support instanceof BlockFence) {
+                    return true;
+                }
+                if (support instanceof BlockSlab && !((BlockSlab) support).isOnTop()) {
+                    return true;
+                }
+                if (support instanceof BlockStairs && !((BlockStairs) support).isUpsideDown()) {
+                    return true;
+                }
+                return BlockLever.isSupportValid(support, BlockFace.DOWN);
         }
     }
 
     private boolean isBlockUnderValid() {
-        Block down = down();
-        if (down instanceof BlockLeaves) {
-            return false;
-        } else if (down instanceof BlockFence || down instanceof BlockWall) {
+        Block support = down();
+        if (support.getId() == HOPPER_BLOCK) {
             return true;
-        } else if (down instanceof BlockSlab) {
-            return (down.getDamage() & 0x08) == 0x08;
-        } else if (down instanceof BlockStairs) {
-            return (down.getDamage() & 0x04) == 0x04;
-        } else if (down.isSolid()) {
-            return true;
-        } else {
-            return false;
         }
+        if (support instanceof BlockWallBase || support instanceof BlockFence) {
+            return true;
+        }
+        return BlockLever.isSupportValid(support, BlockFace.UP);
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if(this.getLevelBlock() instanceof BlockLiquid || this.getLevelBlockAtLayer(1) instanceof BlockLiquid) {
             return false;
         }
@@ -73,12 +93,8 @@ public class BlockLantern extends BlockFlowable {
         if (!isBlockUnderValid() && !hanging) {
             return false;
         }
-
-        if (hanging) {
-            setDamage(1);
-        } else {
-            setDamage(0);
-        }
+        
+        setHanging(hanging);
 
         this.getLevel().setBlock(this, this, true, true);
         return true;
@@ -87,12 +103,12 @@ public class BlockLantern extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (getDamage() == 0) {
+            if (!isHanging()) {
                 if (!isBlockUnderValid()) {
-                    level.useBreakOn(this);
+                    level.useBreakOn(this, ItemTool.getBestTool(getToolType()));
                 }
             } else if (!isBlockAboveValid()) {
-                level.useBreakOn(this);
+                level.useBreakOn(this, ItemTool.getBestTool(getToolType()));
             }
             return type;
         }
@@ -106,12 +122,12 @@ public class BlockLantern extends BlockFlowable {
 
     @Override
     public double getResistance() {
-        return 17.5;
+        return 3.5;
     }
 
     @Override
     public double getHardness() {
-        return 5.0;
+        return 3.5;
     }
 
     @Override
@@ -131,7 +147,7 @@ public class BlockLantern extends BlockFlowable {
 
     @Override
     public double getMinY() {
-        return y + (getDamage()==0?0: 1./16);
+        return y + (!isHanging()?0: 1./16);
     }
 
     @Override
@@ -146,17 +162,12 @@ public class BlockLantern extends BlockFlowable {
 
     @Override
     public double getMaxY() {
-        return y + (getDamage()==0? 7.0/16 : 8.0/16);
+        return y + (!isHanging()? 7.0/16 : 8.0/16);
     }
 
     @Override
     public double getMaxZ() {
         return z + (11.0/16);
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(new BlockLantern());
     }
 
     @Override
@@ -174,4 +185,27 @@ public class BlockLantern extends BlockFlowable {
         return BlockColor.IRON_BLOCK_COLOR;
     }
 
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isHanging() {
+        return getBooleanValue(HANGING);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setHanging(boolean hanging) {
+        setBooleanValue(HANGING, hanging);
+    }
+    
+    @PowerNukkitOnly
+    @Override
+    public int getWaterloggingLevel() {
+        return 1;
+    }
 }

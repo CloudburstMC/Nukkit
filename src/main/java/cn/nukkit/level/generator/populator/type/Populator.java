@@ -6,8 +6,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class Populator implements BlockID {
     public abstract void populate(ChunkManager level, int chunkX, int chunkZ, NukkitRandom random, FullChunk chunk);

@@ -12,8 +12,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockEntitySign extends BlockEntitySpawnable {
 

@@ -3,8 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockTransparent extends Block {
 

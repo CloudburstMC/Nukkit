@@ -1,8 +1,7 @@
 package cn.nukkit.math;
 
 /**
- * auth||: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class SimpleAxisAlignedBB implements AxisAlignedBB {
 

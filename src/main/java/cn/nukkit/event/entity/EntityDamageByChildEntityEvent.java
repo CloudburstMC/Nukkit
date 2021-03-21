@@ -3,8 +3,7 @@ package cn.nukkit.event.entity;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityDamageByChildEntityEvent extends EntityDamageByEntityEvent {
 

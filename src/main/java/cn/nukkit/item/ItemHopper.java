@@ -4,7 +4,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 
 /**
- * Created by CreeperFace on 13.5.2017.
+ * @author CreeperFace
+ * @since 13.5.2017
  */
 public class ItemHopper extends Item {
 

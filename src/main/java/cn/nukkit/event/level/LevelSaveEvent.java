@@ -4,8 +4,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class LevelSaveEvent extends LevelEvent {
 

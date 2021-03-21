@@ -12,8 +12,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @Log4j2
 public class BanEntry {

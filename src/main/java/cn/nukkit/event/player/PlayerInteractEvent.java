@@ -10,8 +10,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class PlayerInteractEvent extends PlayerEvent implements Cancellable {
 

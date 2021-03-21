@@ -4,6 +4,7 @@ import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDurable;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
@@ -15,9 +16,11 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.protocol.types.EntityLink;
+import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -25,8 +28,7 @@ import java.util.*;
 import java.util.function.Function;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BinaryStream {
 
@@ -91,7 +93,7 @@ public class BinaryStream {
     public byte[] get(int len) {
         if (len < 0) {
             this.offset = this.count - 1;
-            return new byte[0];
+            return EmptyArrays.EMPTY_BYTES;
         }
         len = Math.min(len, this.getCount() - this.offset);
         this.offset += len;
@@ -235,7 +237,7 @@ public class BinaryStream {
             }
         }
 
-        return list.toArray(new Attribute[0]);
+        return list.toArray(Attribute.EMPTY_ARRAY);
     }
 
     /**
@@ -388,7 +390,7 @@ public class BinaryStream {
         int cnt = auxValue & 0xff;
 
         int nbtLen = this.getLShort();
-        byte[] nbt = new byte[0];
+        byte[] nbt = EmptyArrays.EMPTY_BYTES;
         if (nbtLen < Short.MAX_VALUE) {
             nbt = this.get(nbtLen);
         } else if (nbtLen == 65535) {
@@ -407,11 +409,11 @@ public class BinaryStream {
                     if (tag.contains("__DamageConflict__")) {
                         tag.put("Damage", tag.removeAndGet("__DamageConflict__"));
                     }
-                    if (tag.getAllTags().size() > 0) {
+                    if (!tag.getAllTags().isEmpty()) {
                         nbt = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, false);
                     }
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new UncheckedIOException(e);
                 }
             }
             setOffset(offset + (int) stream.position());
@@ -502,7 +504,7 @@ public class BinaryStream {
                 this.putByte((byte) 1);
                 this.put(NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true));
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new UncheckedIOException(e);
             }
         } else {
             this.putLShort(0);
@@ -518,7 +520,7 @@ public class BinaryStream {
             this.putString(block);
         }
 
-        if (item.getId() == 513) { // TODO: Shields
+        if (item.getId() == ItemID.SHIELD) { // TODO: Shields
             this.putVarLong(0);
         }
     }

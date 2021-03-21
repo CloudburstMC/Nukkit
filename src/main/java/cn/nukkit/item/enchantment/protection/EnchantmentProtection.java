@@ -8,8 +8,7 @@ import cn.nukkit.item.enchantment.EnchantmentType;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class EnchantmentProtection extends Enchantment {
 

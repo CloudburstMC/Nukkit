@@ -25,6 +25,7 @@ import cn.nukkit.item.enchantment.trident.EnchantmentTridentImpaling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentLoyalty;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentRiptide;
 import cn.nukkit.math.NukkitMath;
+import io.netty.util.internal.EmptyArrays;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -32,11 +33,14 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 /**
- * An enchantmant that can be to applied to an item.
+ * An enchantment that can be to applied to an item.
  * 
  * @author MagicDroidX (Nukkit Project)
  */
 public abstract class Enchantment implements Cloneable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final Enchantment[] EMPTY_ARRAY = new Enchantment[0];
 
     protected static Enchantment[] enchantments;
 
@@ -78,7 +82,7 @@ public abstract class Enchantment implements Cloneable {
     @Since("1.3.2.0-PN") public static final int ID_CROSSBOW_MULTISHOT = 33;
     @Since("1.3.2.0-PN") public static final int ID_CROSSBOW_PIERCING = 34;
     @Since("1.3.2.0-PN") public static final int ID_CROSSBOW_QUICK_CHARGE = 35;
-    public static final int ID_SOUL_SPEED = 36;
+    @Since("1.4.0.0-PN") public static final int ID_SOUL_SPEED = 36;
 
     public static void init() {
         enchantments = new Enchantment[256];
@@ -172,7 +176,7 @@ public abstract class Enchantment implements Cloneable {
             list.add(enchantment);
         }
 
-        return list.toArray(new Enchantment[0]);
+        return list.toArray(Enchantment.EMPTY_ARRAY);
     }
 
     /**
@@ -428,7 +432,7 @@ public abstract class Enchantment implements Cloneable {
             set.add(Enchantment.words[ThreadLocalRandom.current().nextInt(0, Enchantment.words.length)]);
         }
 
-        String[] words = set.toArray(new String[0]);
+        String[] words = set.toArray(EmptyArrays.EMPTY_STRINGS);
         return String.join(" ", words);
     }
 

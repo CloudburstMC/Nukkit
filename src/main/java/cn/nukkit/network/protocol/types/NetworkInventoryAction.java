@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol.types;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.*;
@@ -17,6 +18,10 @@ import java.util.Optional;
 @ToString
 @Log4j2
 public class NetworkInventoryAction {
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final NetworkInventoryAction[] EMPTY_ARRAY = new NetworkInventoryAction[0];
 
     public static final int SOURCE_CONTAINER = 0;
 
@@ -261,6 +266,7 @@ public class NetworkInventoryAction {
                             case SOURCE_TYPE_ANVIL_INPUT:
                             case SOURCE_TYPE_ANVIL_MATERIAL:
                             case SOURCE_TYPE_ANVIL_RESULT:
+                                //return new CraftingTakeResultExperienceAction(this.oldItem, this.newItem, ((GrindstoneInventory) inv).getResultExperience());
                                 return new RepairItemAction(this.oldItem, this.newItem, this.windowId);
                             default:
                                 return new SlotChangeAction(inv, this.inventorySlot, this.oldItem, this.newItem);

@@ -9,8 +9,7 @@ import cn.nukkit.scheduler.AsyncTask;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public interface LevelProvider {
     byte ORDER_YZX = 0;

@@ -9,8 +9,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityEgg extends EntityProjectile {
     public static final int NETWORK_ID = 82;

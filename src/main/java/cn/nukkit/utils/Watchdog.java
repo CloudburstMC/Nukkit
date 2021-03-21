@@ -14,6 +14,8 @@ public class Watchdog extends Thread {
     private final long time;
     public volatile boolean running;
     private boolean responding = true;
+    private Thread forcedFinalizer;
+    private boolean warnedAboutFinalizer;
 
     public Watchdog(Server server, long time) {
         this.server = server;
@@ -27,10 +29,38 @@ public class Watchdog extends Thread {
         running = false;
         interrupt();
     }
+    
+    private void checkFinalizer() {
+        if (forcedFinalizer != null && forcedFinalizer.isAlive()) {
+            StringBuilder sb = new StringBuilder("--------- The finalizer thread didn't complete in time! ---------").append('\n')
+                .append("This detection means that the finalizer thread may be stuck and").append('\n')
+                .append("RAM memory might be leaking!").append('\n')
+                .append(" - https://github.com/PowerNukkit/PowerNukkit/issues/new").append('\n')
+                .append("---------------- ForcedFinalizer ----------------").append('\n');
+            dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(forcedFinalizer.getId(), Integer.MAX_VALUE), sb);
+            sb.append("-------------------------------------------------");
+            log.fatal(sb.toString());
+            warnedAboutFinalizer = true;
+        } else {
+            if (warnedAboutFinalizer) {
+                log.warn("The ForcedFinalizer has finished");
+                warnedAboutFinalizer = false;
+            }
+            forcedFinalizer = new Thread(()-> {
+                log.trace("Forcing finalization");
+                System.runFinalization();
+                log.trace("Forced finalization completed");
+            });
+            forcedFinalizer.setName("ForcedFinalizer");
+            forcedFinalizer.setDaemon(true);
+            forcedFinalizer.start();
+        }
+    }
 
     @Override
     public void run() {
         while (this.running) {
+            checkFinalizer();
             long current = server.getNextTick();
             if (current != 0) {
                 long diff = System.currentTimeMillis() - current;
@@ -41,11 +71,11 @@ public class Watchdog extends Thread {
                 if (diff <= time) {
                     responding = true;
                 } else if (responding) {
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)").append('\n');
-                    builder.append("Please report this to PowerNukkit:").append('\n');
-                    builder.append(" - https://github.com/PowerNukkit/PowerNukkit/issues/new").append('\n');
-                    builder.append("---------------- Main thread ----------------").append('\n');
+                    StringBuilder builder = new StringBuilder(
+                            "--------- Server stopped responding --------- (" + Math.round(diff / 1000d) + "s)").append('\n')
+                        .append("Please report this to PowerNukkit:").append('\n')
+                        .append(" - https://github.com/PowerNukkit/PowerNukkit/issues/new").append('\n')
+                        .append("---------------- Main thread ----------------").append('\n');
 
                     dumpThread(ManagementFactory.getThreadMXBean().getThreadInfo(this.server.getPrimaryThread().getId(), Integer.MAX_VALUE), builder);
 
@@ -73,6 +103,10 @@ public class Watchdog extends Thread {
     }
 
     private static void dumpThread(ThreadInfo thread, StringBuilder builder) {
+        if (thread == null) {
+            builder.append("Attempted to dump a null thread!").append('\n');
+            return;
+        }
         builder.append("Current Thread: " + thread.getThreadName()).append('\n');
         builder.append("\tPID: " + thread.getThreadId() + " | Suspended: " + thread.isSuspended() + " | Native: " + thread.isInNative() + " | State: " + thread.getThreadState()).append('\n');
         // Monitors

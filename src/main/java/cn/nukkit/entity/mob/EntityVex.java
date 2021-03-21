@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -38,5 +39,10 @@ public class EntityVex extends EntityMob {
     @Override
     public String getName() {
         return "Vex";
+    }
+
+    @Override
+    public boolean isPreventingSleep(Player player) {
+        return true;
     }
 }

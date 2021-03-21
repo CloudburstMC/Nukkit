@@ -11,8 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import javax.annotation.Nonnull;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class EntityCreature extends EntityLiving implements EntityNameable {
     public EntityCreature(FullChunk chunk, CompoundTag nbt) {

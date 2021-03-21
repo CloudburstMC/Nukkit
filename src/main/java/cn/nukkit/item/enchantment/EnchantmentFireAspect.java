@@ -4,8 +4,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityCombustByEntityEvent;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentFireAspect extends Enchantment {
     protected EnchantmentFireAspect() {

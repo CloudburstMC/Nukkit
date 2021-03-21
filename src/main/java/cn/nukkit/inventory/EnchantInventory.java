@@ -7,8 +7,7 @@ import cn.nukkit.level.Position;
 
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantInventory extends FakeBlockUIComponent {
 

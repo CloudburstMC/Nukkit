@@ -4,8 +4,7 @@ import cn.nukkit.block.BlockDoublePlant;
 import cn.nukkit.level.generator.populator.impl.PopulatorDoublePlant;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  */
 public class SunflowerPlainsBiome extends PlainsBiome {
 

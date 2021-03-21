@@ -1,8 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityHopper;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemHopper;
@@ -12,11 +17,24 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
+import static cn.nukkit.blockproperty.CommonBlockProperties.TOGGLE;
 
 /**
  * @author CreeperFace
  */
-public class BlockHopper extends BlockTransparentMeta implements Faceable {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockHopper extends BlockTransparentMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityHopper> {
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(FACING_DIRECTION, TOGGLE);
 
     public BlockHopper() {
         this(0);
@@ -29,6 +47,30 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return HOPPER_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityHopper> getBlockEntityClass() {
+        return BlockEntityHopper.class;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.HOPPER;
     }
 
     @Override
@@ -46,51 +88,44 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
         return 24;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
     }
 
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         BlockFace facing = face.getOpposite();
 
         if (facing == BlockFace.UP) {
             facing = BlockFace.DOWN;
         }
-
-        this.setDamage(facing.getIndex());
+        
+        setBlockFace(facing);
 
         if (this.level.getServer().isRedstoneEnabled()) {
-            boolean powered = this.level.isBlockPowered(this.getLocation());
+            boolean powered = this.isGettingPower();
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);
             }
         }
 
-        this.level.setBlock(this, this);
-
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.HOPPER)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z);
-
-        BlockEntityHopper hopper = (BlockEntityHopper) BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
-        return hopper != null;
+        CompoundTag nbt = new CompoundTag().putList(new ListTag<>("Items"));
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
-
-        if (blockEntity instanceof BlockEntityHopper) {
-            return player.addWindow(((BlockEntityHopper) blockEntity).getInventory()) != -1;
+    public boolean onActivate(@Nonnull Item item, Player player) {
+        if (player == null) {
+            return false;
         }
+        
+        BlockEntityHopper blockEntity = getOrCreateBlockEntity();
 
-        return false;
+        return player.addWindow(blockEntity.getInventory()) != -1;
     }
 
     @Override
@@ -98,33 +133,34 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
         return true;
     }
 
+    @Override
     public boolean hasComparatorInputOverride() {
         return true;
     }
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntityHopper blockEntity = getBlockEntity();
 
-        if (blockEntity instanceof BlockEntityHopper) {
-            return ContainerInventory.calculateRedstone(((BlockEntityHopper) blockEntity).getInventory());
+        if (blockEntity != null) {
+            return ContainerInventory.calculateRedstone(blockEntity.getInventory());
         }
 
         return super.getComparatorInputOverride();
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", replaceWith = "getBlockFace()", reason = "Duplicated")
     public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.getDamage() & 7);
+        return getBlockFace();
     }
 
     public boolean isEnabled() {
-        return (this.getDamage() & 0x08) != 8;
+        return !getBooleanValue(TOGGLE);
     }
 
     public void setEnabled(boolean enabled) {
-        if (isEnabled() != enabled) {
-            this.setDamage(this.getDamage() ^ 0x08);
-        }
+        setBooleanValue(TOGGLE, !enabled);
     }
 
     @Override
@@ -134,16 +170,15 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
         }
 
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
-            boolean powered = this.level.isBlockPowered(this.getLocation());
+            boolean disabled = this.level.isBlockPowered(this.getLocation());
 
-            if (powered == this.isEnabled()) {
-                this.setEnabled(!powered);
-                this.level.setBlock(this, this, false, false);
-
-                if (!powered) {
-                    BlockEntity be = this.level.getBlockEntity(this);
-
-                    if (be != null) {
+            if (disabled == this.isEnabled()) {
+                this.setEnabled(!disabled);
+                this.level.setBlock(this, this, false, true);
+                BlockEntityHopper be = getBlockEntity();
+                if (be != null) {
+                    be.setDisabled(disabled);
+                    if (!disabled) {
                         be.scheduleUpdate();
                     }
                 }
@@ -161,12 +196,8 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{toItem()};
-        }
-
-        return new Item[0];
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override
@@ -179,8 +210,22 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
         return false;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(FACING_DIRECTION, face);
+    }
+
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return getPropertyValue(FACING_DIRECTION);
+    }
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public boolean isSolid(BlockFace side) {
+        return side == BlockFace.UP;
     }
 }
