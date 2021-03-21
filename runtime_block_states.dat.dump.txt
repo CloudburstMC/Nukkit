@@ -20756,76 +20756,22 @@ minecraft:stripped_birch_log;pillar_axis=y
 minecraft:stripped_birch_log;pillar_axis=z
 [261:2]
 
-minecraft:stripped_crimson_hyphae;deprecated=0;pillar_axis=x
+minecraft:stripped_crimson_hyphae;pillar_axis=x
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=0;pillar_axis=y
+minecraft:stripped_crimson_hyphae;pillar_axis=y
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=0;pillar_axis=z
+minecraft:stripped_crimson_hyphae;pillar_axis=z
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=1;pillar_axis=x
+minecraft:stripped_crimson_stem;pillar_axis=x
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=1;pillar_axis=y
+minecraft:stripped_crimson_stem;pillar_axis=y
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=1;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=2;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=2;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=2;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=3;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=3;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=3;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_stem;deprecated=0;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_stem;deprecated=0;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_stem;deprecated=0;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_stem;deprecated=1;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_stem;deprecated=1;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_stem;deprecated=1;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_stem;deprecated=2;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_stem;deprecated=2;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_stem;deprecated=2;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_stem;deprecated=3;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_stem;deprecated=3;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_stem;deprecated=3;pillar_axis=z
+minecraft:stripped_crimson_stem;pillar_axis=z
 []
 
 minecraft:stripped_dark_oak_log;pillar_axis=x
@@ -20864,76 +20810,22 @@ minecraft:stripped_spruce_log;pillar_axis=y
 minecraft:stripped_spruce_log;pillar_axis=z
 [260:2]
 
-minecraft:stripped_warped_hyphae;deprecated=0;pillar_axis=x
+minecraft:stripped_warped_hyphae;pillar_axis=x
 []
 
-minecraft:stripped_warped_hyphae;deprecated=0;pillar_axis=y
+minecraft:stripped_warped_hyphae;pillar_axis=y
 []
 
-minecraft:stripped_warped_hyphae;deprecated=0;pillar_axis=z
+minecraft:stripped_warped_hyphae;pillar_axis=z
 []
 
-minecraft:stripped_warped_hyphae;deprecated=1;pillar_axis=x
+minecraft:stripped_warped_stem;pillar_axis=x
 []
 
-minecraft:stripped_warped_hyphae;deprecated=1;pillar_axis=y
+minecraft:stripped_warped_stem;pillar_axis=y
 []
 
-minecraft:stripped_warped_hyphae;deprecated=1;pillar_axis=z
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=2;pillar_axis=x
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=2;pillar_axis=y
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=2;pillar_axis=z
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=3;pillar_axis=x
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=3;pillar_axis=y
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=3;pillar_axis=z
-[]
-
-minecraft:stripped_warped_stem;deprecated=0;pillar_axis=x
-[]
-
-minecraft:stripped_warped_stem;deprecated=0;pillar_axis=y
-[]
-
-minecraft:stripped_warped_stem;deprecated=0;pillar_axis=z
-[]
-
-minecraft:stripped_warped_stem;deprecated=1;pillar_axis=x
-[]
-
-minecraft:stripped_warped_stem;deprecated=1;pillar_axis=y
-[]
-
-minecraft:stripped_warped_stem;deprecated=1;pillar_axis=z
-[]
-
-minecraft:stripped_warped_stem;deprecated=2;pillar_axis=x
-[]
-
-minecraft:stripped_warped_stem;deprecated=2;pillar_axis=y
-[]
-
-minecraft:stripped_warped_stem;deprecated=2;pillar_axis=z
-[]
-
-minecraft:stripped_warped_stem;deprecated=3;pillar_axis=x
-[]
-
-minecraft:stripped_warped_stem;deprecated=3;pillar_axis=y
-[]
-
-minecraft:stripped_warped_stem;deprecated=3;pillar_axis=z
+minecraft:stripped_warped_stem;pillar_axis=z
 []
 
 minecraft:structure_block;structure_block_type=corner

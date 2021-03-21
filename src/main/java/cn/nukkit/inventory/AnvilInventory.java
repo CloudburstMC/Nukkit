@@ -374,15 +374,11 @@ public class AnvilInventory extends FakeBlockUIComponent {
         return setSecondItem(item, true);
     }
 
-    @Deprecated @DeprecationDetails(since = "TBD", reason = "send parameter is deprecated", toBeRemovedAt = "1.4.0.0-PN")
-    @PowerNukkitOnly
-    public boolean setResult(Item item, boolean send) {
+    private boolean setResult(Item item, boolean send) {
         return setItem(2, item, send);
     }
 
-    @Deprecated @DeprecationDetails(since = "TBD", reason = "the client won't see this change, and the transaction might fail.", toBeRemovedAt = "1.4.0.0-PN")
-    @PowerNukkitOnly
-    public boolean setResult(Item item) {
+    private boolean setResult(Item item) {
         if (item == null || item.isNull()) {
             this.currentResult = Item.get(0);
         } else {

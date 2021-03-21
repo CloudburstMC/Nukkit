@@ -42,7 +42,7 @@ public class CraftingDataPacket extends DataPacket {
     public void addShapedRecipe(ShapedRecipe... recipe) {
         Collections.addAll(entries, recipe);
     }
-    
+
     public void addCartographyRecipe(CartographyRecipe... recipe) {
         Stream.of(recipe).filter(r -> r.getRecipeId() != null).forEachOrdered(r -> entries.add(r));
     }
@@ -92,6 +92,8 @@ public class CraftingDataPacket extends DataPacket {
         this.reset();
         this.putUnsignedVarInt(entries.size());
 
+        int recipeNetworkId = 1;
+
         for (Recipe recipe : entries) {
             this.putVarInt(recipe.getType().networkType);
             switch (recipe.getType()) {
@@ -121,7 +123,7 @@ public class CraftingDataPacket extends DataPacket {
                     this.putUUID(shapeless.getId());
                     this.putString(recipe.getType() == RecipeType.CARTOGRAPHY ? CRAFTING_TAG_CARTOGRAPHY_TABLE : CRAFTING_TAG_CRAFTING_TABLE);
                     this.putVarInt(shapeless.getPriority());
-                    this.putUnsignedVarInt(0);
+                    this.putUnsignedVarInt(recipeNetworkId++);
                     break;
                 case SHAPED:
                     ShapedRecipe shaped = (ShapedRecipe) recipe;
@@ -144,7 +146,7 @@ public class CraftingDataPacket extends DataPacket {
                     this.putUUID(shaped.getId());
                     this.putString(CRAFTING_TAG_CRAFTING_TABLE);
                     this.putVarInt(shaped.getPriority());
-                    this.putUnsignedVarInt(0);
+                    this.putUnsignedVarInt(recipeNetworkId++);
                     break;
                 case FURNACE:
                 case FURNACE_DATA:

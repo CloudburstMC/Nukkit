@@ -770,7 +770,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void setButtonText(String text) {
         this.buttonText = text;
-        this.setDataProperty(new StringEntityData(Entity.DATA_INTERACTIVE_TAG, this.buttonText));
+        this.setDataProperty(new StringEntityData(Entity.DATA_INTERACT_TEXT, this.buttonText));
     }
 
     public void unloadChunk(int x, int z) {
@@ -2672,14 +2672,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 break;
                             }
                             switch (target.getId()) {
-                                case Block.NOTEBLOCK:
+                                case BlockID.NOTEBLOCK:
                                     ((BlockNoteblock) target).emitSound();
                                     break actionswitch;
-                                case Block.DRAGON_EGG:
+                                case BlockID.DRAGON_EGG:
                                     ((BlockDragonEgg) target).teleport();
                                     break actionswitch;
-                                case Block.LECTERN:
+                                case BlockID.LECTERN:
                                     ((BlockLectern) target).dropBook(this);
+                                    break;
+                                case BlockID.ITEM_FRAME_BLOCK:
+                                    ((BlockItemFrame) target).getOrCreateBlockEntity().dropItem(this);
                                     break;
                             }
                             Block block = target.getSide(face);
@@ -3224,6 +3227,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Command.broadcastCommandMessage(this, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(this.gamemode)));
                     }
                     break;
+                    
+                // PowerNukkit Note: This packed is not being sent anymore since 1.16.210
                 case ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET:
                     ItemFrameDropItemPacket itemFrameDropItemPacket = (ItemFrameDropItemPacket) packet;
                     Vector3 vector3 = this.temporalVector.setComponents(itemFrameDropItemPacket.x, itemFrameDropItemPacket.y, itemFrameDropItemPacket.z);
@@ -3247,6 +3252,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
+                    
+                    
                 case ProtocolInfo.LECTERN_UPDATE_PACKET:
                     LecternUpdatePacket lecternUpdatePacket = (LecternUpdatePacket) packet;
                     BlockVector3 blockPosition = lecternUpdatePacket.blockPosition;
