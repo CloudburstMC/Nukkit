@@ -24,12 +24,6 @@ public class SetSpawnPositionPacket extends DataPacket {
     @Since("1.3.0.0-PN")
     public int dimension = 0;
     
-    @PowerNukkitOnly("Backward compatibility")
-    @Deprecated @DeprecationDetails(
-            since = "1.3.0.0-PN", toBeRemovedAt = "1.4.0.0-PN",
-            reason = "Removed from the Bedrock protocol since 1.16.0")
-    public boolean spawnForced = false;
-
     @Override
     public void decode() {
 

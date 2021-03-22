@@ -4,17 +4,12 @@ import cn.nukkit.item.enchantment.Enchantment;
 
 public class EnchantmentTridentRiptide extends EnchantmentTrident {
     public EnchantmentTridentRiptide() {
-        super(Enchantment.ID_TRIDENT_RIPTIDE, "riptide", 2);
+        super(Enchantment.ID_TRIDENT_RIPTIDE, "tridentRiptide", Rarity.RARE);
     }
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return level * 10;
-    }
-
-    @Override
-    public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 15;
+        return 7 * level + 10;
     }
 
     @Override
@@ -23,8 +18,8 @@ public class EnchantmentTridentRiptide extends EnchantmentTrident {
     }
 
     @Override
-    public boolean isCompatibleWith(Enchantment enchantment) {
-        return super.isCompatibleWith(enchantment) 
+    public boolean checkCompatibility(Enchantment enchantment) {
+        return super.checkCompatibility(enchantment) 
                 && enchantment.id != Enchantment.ID_TRIDENT_LOYALTY
                 && enchantment.id != Enchantment.ID_TRIDENT_CHANNELING;
     }

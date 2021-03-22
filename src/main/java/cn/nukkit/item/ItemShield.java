@@ -1,5 +1,8 @@
 package cn.nukkit.item;
 
+import cn.nukkit.api.PowerNukkitDifference;
+
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Extends ItemTool instead of Item only in PowerNukkit")
 public class ItemShield extends ItemTool {
 
     public ItemShield() {
@@ -21,6 +24,6 @@ public class ItemShield extends ItemTool {
 
     @Override
     public int getMaxDurability() {
-        return 337;
+        return 336;
     }
 }

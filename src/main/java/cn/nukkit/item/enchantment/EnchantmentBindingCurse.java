@@ -2,7 +2,7 @@ package cn.nukkit.item.enchantment;
 
 public class EnchantmentBindingCurse extends Enchantment {
     protected EnchantmentBindingCurse() {
-        super(ID_BINDING_CURSE, "bindingCurse", 1, EnchantmentType.WEARABLE);
+        super(ID_BINDING_CURSE, "curse.binding", Rarity.VERY_RARE, EnchantmentType.WEARABLE);
     }
 
     @Override
@@ -13,10 +13,5 @@ public class EnchantmentBindingCurse extends Enchantment {
     @Override
     public int getMaxEnchantAbility(int level) {
         return 50;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 1;
     }
 }

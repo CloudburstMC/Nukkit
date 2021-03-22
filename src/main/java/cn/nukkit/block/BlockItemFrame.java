@@ -6,6 +6,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemItemFrame;
 import cn.nukkit.level.Level;
@@ -93,12 +94,22 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
         return 1;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int onTouch(@Nullable Player player, Action action) {
+        if (action == Action.LEFT_CLICK_BLOCK && (player == null || (!player.isCreative() && !player.isSpectator()))) {
+            getOrCreateBlockEntity().dropItem(player);
+        }
+        return super.onTouch(player, action);
+    }
+
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
         BlockEntityItemFrame itemFrame = getOrCreateBlockEntity();
         if (itemFrame.getItem().isNull()) {
         	Item itemOnFrame = item.clone();
-        	if (player != null && player.isSurvival()) {
+        	if (player != null && !player.isCreative()) {
         		itemOnFrame.setCount(itemOnFrame.getCount() - 1);
                 player.getInventory().setItemInHand(itemOnFrame);
         	}

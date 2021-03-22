@@ -19,10 +19,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.nbt.tag.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
@@ -360,6 +357,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
+            list[CROSSBOW] = ItemCrossbow.class; //471
             list[SPRUCE_SIGN] = ItemSpruceSign.class; //472
             list[BIRCH_SIGN] = ItemBirchSign.class; //473
             list[JUNGLE_SIGN] = ItemJungleSign.class; //474
@@ -952,6 +950,35 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         return enchantments.toArray(Enchantment.EMPTY_ARRAY);
+    }
+
+    @Since("1.3.2.0-PN")
+    public int getRepairCost() {
+        if (this.hasCompoundTag()) {
+            CompoundTag tag = this.getNamedTag();
+            if (tag.contains("RepairCost")) {
+                Tag repairCost = tag.get("RepairCost");
+                if (repairCost instanceof IntTag) {
+                    return ((IntTag) repairCost).data;
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Since("1.3.2.0-PN")
+    public Item setRepairCost(int cost) {
+        if (cost <= 0 && this.hasCompoundTag()) {
+            return this.setNamedTag(this.getNamedTag().remove("RepairCost"));
+        }
+
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+        return this.setNamedTag(tag.putInt("RepairCost", cost));
     }
 
     public boolean hasCustomName() {

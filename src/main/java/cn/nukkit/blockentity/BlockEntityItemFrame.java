@@ -1,12 +1,22 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.MinecraftItemID;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.LevelEventPacket;
+
+import javax.annotation.Nullable;
 
 /**
  * @author Pub4Game
@@ -108,5 +118,43 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     public int getAnalogOutput() {
         return this.getItem() == null || this.getItem().getId() == 0 ? 0 : this.getItemRotation() % 8 + 1;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public EntityItem dropItem(@Nullable Player player) {
+        Level level = getValidLevel();
+        Item drop = getItem();
+        if (drop.isNull()) {
+            if (player != null) {
+                spawnTo(player);
+            }
+            return null;
+        }
+
+        ItemFrameDropItemEvent event = new ItemFrameDropItemEvent(player, getLevelBlock(), this, drop);
+        level.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) {
+            if (player != null) {
+                spawnTo(player);
+            }
+            return null;
+        }
+        
+        EntityItem itemEntity = level.dropAndGetItem(add(0.5, 0.25, 0.5), drop);
+        if (itemEntity == null) {
+            if (player != null) {
+                spawnTo(player);
+            }
+            return null;
+        }
+        
+        setItem(MinecraftItemID.AIR.get(0), true);
+        setItemRotation(0);
+        spawnToAll();
+        level.addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_REMOVED);
+        
+        return itemEntity;
     }
 }
