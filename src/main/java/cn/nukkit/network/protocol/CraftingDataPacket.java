@@ -107,7 +107,7 @@ public class CraftingDataPacket extends DataPacket {
                     this.putUUID(stonecutter.getId());
                     this.putString(CRAFTING_TAG_STONECUTTER);
                     this.putVarInt(stonecutter.getPriority());
-                    this.putUnsignedVarInt(0);
+                    this.putUnsignedVarInt(recipeNetworkId++);
                     break;
                 case SHAPELESS:
                 case CARTOGRAPHY:

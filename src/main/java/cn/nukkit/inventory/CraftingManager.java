@@ -130,7 +130,7 @@ public class CraftingManager {
                                 this.registerRecipe(new ShapelessRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted));
                                 break;
                             case "stonecutter":
-                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted.get(0)));
+                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, Item.fromJson(first), sorted.get(0)));
                                 break;
                             case "cartography_table":
                                 this.registerRecipe(new CartographyRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted));

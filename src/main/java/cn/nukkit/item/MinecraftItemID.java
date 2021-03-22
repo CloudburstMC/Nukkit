@@ -583,7 +583,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.3.2.0-PN") CAMERA_BLOCK_FORM(true, true, true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") PODZOL,
     @PowerNukkitOnly @Since("1.3.2.0-PN") BEETROOT_BLOCK_FORM(true, true),
-    @PowerNukkitOnly @Since("1.3.2.0-PN") STONECUTTER,
+    @PowerNukkitOnly @Since("1.3.2.0-PN") STONECUTTER(false, true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") GLOWINGOBSIDIAN(false, true),
     @PowerNukkitOnly @Since("1.3.2.0-PN") NETHERREACTOR,
     @PowerNukkitOnly @Since("1.3.2.0-PN") INFO_UPDATE(false, true),
