@@ -29,13 +29,13 @@ public class ItemComponentPacket extends DataPacket {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setEntries(Entry[] entries) {
-        this.entries = entries == null? null : entries.length == 0? Entries.EMPTY_ARRAY : entries.clone();
+        this.entries = entries == null? null : entries.length == 0? Entry.EMPTY_ARRAY : entries.clone();
     }
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public Entry[] getEntries() {
-        return entries == null? null : entries.length == 0? Entries.EMPTY_ARRAY : entries.clone();
+        return entries == null? null : entries.length == 0? Entry.EMPTY_ARRAY : entries.clone();
     }
     
     @Override
