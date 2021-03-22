@@ -4,10 +4,10 @@ import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.block.Block;
-import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.item.RuntimeItemMapping;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.network.protocol.DataPacket;
@@ -213,6 +213,7 @@ public class CraftingManager {
         // Load brewing recipes
         List<Map> potionMixes = config.getMapList("potionMixes");
 
+        RuntimeItemMapping runtimeMapping = RuntimeItems.getRuntimeMapping();
         for (Map potionMix : potionMixes) {
             int fromPotionId = ((Number) potionMix.get("inputId")).intValue(); // gson returns doubles...
             int fromPotionMeta = ((Number) potionMix.get("inputMeta")).intValue();
@@ -220,6 +221,10 @@ public class CraftingManager {
             int ingredientMeta = ((Number) potionMix.get("reagentMeta")).intValue();
             int toPotionId = ((Number) potionMix.get("outputId")).intValue();
             int toPotionMeta = ((Number) potionMix.get("outputMeta")).intValue();
+
+            fromPotionId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(fromPotionId));
+            ingredient = RuntimeItems.getId(runtimeMapping.getLegacyFullId(ingredient));
+            toPotionId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(toPotionId));
 
             registerBrewingRecipe(new BrewingRecipe(Item.get(fromPotionId, fromPotionMeta), Item.get(ingredient, ingredientMeta), Item.get(toPotionId, toPotionMeta)));
         }
@@ -230,6 +235,10 @@ public class CraftingManager {
             int fromItemId = ((Number) containerMix.get("inputId")).intValue();
             int ingredient = ((Number) containerMix.get("reagentId")).intValue();
             int toItemId = ((Number) containerMix.get("outputId")).intValue();
+
+            fromItemId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(fromItemId));
+            ingredient = RuntimeItems.getId(runtimeMapping.getLegacyFullId(ingredient));
+            toItemId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(toItemId));
 
             registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
         }
