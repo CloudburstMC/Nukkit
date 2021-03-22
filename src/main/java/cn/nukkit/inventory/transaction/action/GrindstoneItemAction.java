@@ -1,6 +1,6 @@
 /*
  * https://PowerNukkit.org - The Nukkit you know but Powerful!
- * Copyright (C) 2020  José Roberto de Araújo Júnior
+ * Copyright (C) 2021  José Roberto de Araújo Júnior
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,21 +25,45 @@ import cn.nukkit.item.Item;
 
 /**
  * @author joserobjr
- * @since 2020-09-13
+ * @since 2021-03-21
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-public class CraftingTakeResultExperienceAction extends CraftingTakeResultAction {
+public class GrindstoneItemAction extends InventoryAction {
+
+    private final int type;
+    private final int experience;
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    protected int experience;
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public CraftingTakeResultExperienceAction(Item sourceItem, Item targetItem, int experience) {
+    public GrindstoneItemAction(Item sourceItem, Item targetItem, int type, int experience) {
         super(sourceItem, targetItem);
+        this.type = type;
         this.experience = experience;
+    }
+
+    @Override
+    public boolean isValid(Player source) {
+        return source.getWindowById(Player.GRINDSTONE_WINDOW_ID) != null;
+    }
+
+    @Override
+    public boolean execute(Player source) {
+        int exp = getExperience();
+        if (exp > 0) {
+            source.getLevel().dropExpOrb(source, exp, null, 3);
+        }
+        return true;
+    }
+
+    @Override
+    public void onExecuteSuccess(Player source) {
+        // Does nothing
+    }
+
+    @Override
+    public void onExecuteFail(Player source) {
+        // Does nothing
     }
 
     @PowerNukkitOnly
@@ -48,15 +72,9 @@ public class CraftingTakeResultExperienceAction extends CraftingTakeResultAction
         return experience;
     }
 
-    @Override
-    public boolean execute(Player source) {
-        if (super.execute(source)) {
-            int exp = getExperience();
-            if (exp > 0) {
-                source.getLevel().dropExpOrb(source, exp, null, 3);
-            }
-            return true;
-        }
-        return false;
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getType() {
+        return type;
     }
 }

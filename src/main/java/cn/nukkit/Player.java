@@ -36,10 +36,7 @@ import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
-import cn.nukkit.inventory.transaction.CraftingTransaction;
-import cn.nukkit.inventory.transaction.EnchantTransaction;
-import cn.nukkit.inventory.transaction.InventoryTransaction;
-import cn.nukkit.inventory.transaction.RepairItemTransaction;
+import cn.nukkit.inventory.transaction.*;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
@@ -180,6 +177,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected CraftingTransaction craftingTransaction;
     @Since("1.3.1.0-PN") protected EnchantTransaction enchantTransaction;
     @Since("1.3.2.0-PN") protected RepairItemTransaction repairItemTransaction;
+    @Since("1.4.0.0-PN") @PowerNukkitOnly protected GrindstoneTransaction grindstoneTransaction;
 
     public long creationTime = 0;
 
@@ -3393,16 +3391,30 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                         return;
                     } else if (transactionPacket.isRepairItemPart) {
-                        if (this.repairItemTransaction == null) {
-                            this.repairItemTransaction = new RepairItemTransaction(this, actions);
-                        } else {
-                            for (InventoryAction action : actions) {
-                                this.repairItemTransaction.addAction(action);
+                        if (GrindstoneTransaction.checkForItemPart(actions)) {
+                            if (this.grindstoneTransaction == null) {
+                                this.grindstoneTransaction = new GrindstoneTransaction(this, actions);
+                            } else {
+                                for (InventoryAction action : actions) {
+                                    this.grindstoneTransaction.addAction(action);
+                                }
                             }
-                        }
-                        if (this.repairItemTransaction.canExecute()) {
-                            this.repairItemTransaction.execute();
-                            this.repairItemTransaction = null;
+                            if (this.grindstoneTransaction.canExecute()) {
+                                this.grindstoneTransaction.execute();
+                                this.grindstoneTransaction = null;
+                            }
+                        } else {
+                            if (this.repairItemTransaction == null) {
+                                this.repairItemTransaction = new RepairItemTransaction(this, actions);
+                            } else {
+                                for (InventoryAction action : actions) {
+                                    this.repairItemTransaction.addAction(action);
+                                }
+                            }
+                            if (this.repairItemTransaction.canExecute()) {
+                                this.repairItemTransaction.execute();
+                                this.repairItemTransaction = null;
+                            }
                         }
                         return;
                     } else if (this.craftingTransaction != null) {
@@ -3430,7 +3442,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.enchantTransaction = null;
                         }
                     } else if (this.repairItemTransaction != null) {
-                        if (RepairItemTransaction.checkForRepairItemPart(actions)) {
+                        if (GrindstoneTransaction.checkForItemPart(actions)) {
+                            for (InventoryAction action : actions) {
+                                this.grindstoneTransaction.addAction(action);
+                            }
+                            return;
+                        } else if (RepairItemTransaction.checkForRepairItemPart(actions)) {
                             for (InventoryAction action : actions) {
                                 this.repairItemTransaction.addAction(action);
                             }

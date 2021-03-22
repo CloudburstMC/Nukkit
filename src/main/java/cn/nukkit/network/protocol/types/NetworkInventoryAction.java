@@ -262,12 +262,12 @@ public class NetworkInventoryAction {
                                 return new SlotChangeAction(anvil, this.inventorySlot, this.oldItem, this.newItem);
                         }
                     } else if (inv instanceof GrindstoneInventory) {
+                        
                         switch (this.windowId) {
                             case SOURCE_TYPE_ANVIL_INPUT:
                             case SOURCE_TYPE_ANVIL_MATERIAL:
                             case SOURCE_TYPE_ANVIL_RESULT:
-                                //return new CraftingTakeResultExperienceAction(this.oldItem, this.newItem, ((GrindstoneInventory) inv).getResultExperience());
-                                return new RepairItemAction(this.oldItem, this.newItem, this.windowId);
+                                return new GrindstoneItemAction(this.oldItem, this.newItem, this.windowId, ((GrindstoneInventory) inv).getResultExperience());
                             default:
                                 return new SlotChangeAction(inv, this.inventorySlot, this.oldItem, this.newItem);
                         }
