@@ -1,7 +1,9 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -21,6 +23,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Utils;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -226,6 +229,18 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         seconds = (int) (seconds * (1 - level * 0.15));
 
         super.setOnFire(seconds);
+    }
+
+    @Override
+    protected boolean applyNameTag(@Nonnull Player player, @Nonnull Item item) {
+        return false;
+    }
+
+    @PowerNukkitOnly
+    @Deprecated
+    @Override
+    public boolean applyNameTag(Item item) {
+        return false;
     }
 
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Won't damage items that has negative max durability (not damageable)")

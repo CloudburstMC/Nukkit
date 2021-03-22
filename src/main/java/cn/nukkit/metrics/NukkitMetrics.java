@@ -41,6 +41,7 @@ public class NukkitMetrics {
             Metrics metrics = new Metrics("Nukkit", serverUUID, logFailedRequests, server.getLogger());
 
             metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> server.getOnlinePlayers().size()));
+            metrics.addCustomChart(new Metrics.SimplePie("codename", server::getCodename));
             metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", server::getVersion));
             metrics.addCustomChart(new Metrics.SimplePie("nukkit_version", server::getNukkitVersion));
             metrics.addCustomChart(new Metrics.SimplePie("xbox_auth", () -> server.getPropertyBoolean("xbox-auth") ? "Required" : "Not required"));

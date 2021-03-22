@@ -8,6 +8,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityInteractable;
+import cn.nukkit.entity.EntityNameable;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -33,7 +34,7 @@ import java.util.Collection;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-public class EntityArmorStand extends Entity implements InventoryHolder, EntityInteractable {
+public class EntityArmorStand extends Entity implements InventoryHolder, EntityInteractable, EntityNameable {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -123,10 +124,27 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
         }
     }
 
+    @PowerNukkitOnly
+    @Override
+    public boolean isPersistent() {
+        return true;
+    }
+
+    @PowerNukkitOnly
+    @Override
+    public void setPersistent(boolean persistent) {
+        // Armor stands are always persistent
+    }
+
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         if (player.isSpectator() || !isValid()) {
             return false;
+        }
+        
+        // Name tag
+        if (!item.isNull() && item.getId() == ItemID.NAME_TAG && playerApplyNameTag(player, item, false)) {
+            return true;
         }
         
         //Pose

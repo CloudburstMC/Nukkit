@@ -4,6 +4,7 @@ import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDurable;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
@@ -262,6 +263,7 @@ public class BinaryStream {
 
     public void putSkin(Skin skin) {
         this.putString(skin.getSkinId());
+        this.putString(skin.getPlayFabId());
         this.putString(skin.getSkinResourcePatch());
         this.putImage(skin.getSkinData());
 
@@ -309,6 +311,7 @@ public class BinaryStream {
     public Skin getSkin() {
         Skin skin = new Skin();
         skin.setSkinId(this.getString());
+        skin.setPlayFabId(this.getString());
         skin.setSkinResourcePatch(this.getString());
         skin.setSkinData(this.getImage());
 
@@ -519,7 +522,7 @@ public class BinaryStream {
             this.putString(block);
         }
 
-        if (item.getId() == 513) { // TODO: Shields
+        if (item.getId() == ItemID.SHIELD) { // TODO: Shields
             this.putVarLong(0);
         }
     }

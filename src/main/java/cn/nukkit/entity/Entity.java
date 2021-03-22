@@ -51,11 +51,16 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.BiPredicate;
 
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
+import static cn.nukkit.utils.Utils.dynamic;
 
 /**
  * @author MagicDroidX
  */
 @Log4j2
+@PowerNukkitDifference(since = "1.4.0.0-PN",
+        info = "All DATA constants were made dynamic because they have tendency to change on Minecraft updates, " +
+                "these dynamic calls will avoid the need of plugin recompilations after Minecraft updates that " +
+                "shifts the data values")
 public abstract class Entity extends Location implements Metadatable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -75,311 +80,254 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_TYPE_LONG = 7;
     public static final int DATA_TYPE_VECTOR3F = 8;
 
-    public static final int DATA_FLAGS = 0;
-    public static final int DATA_HEALTH = 1; //int (minecart/boat)
-    public static final int DATA_VARIANT = 2; //int
-    public static final int DATA_COLOR = 3, DATA_COLOUR = 3; //byte
-    public static final int DATA_NAMETAG = 4; //string
-    public static final int DATA_OWNER_EID = 5; //long
-    public static final int DATA_TARGET_EID = 6; //long
-    public static final int DATA_AIR = 7; //short
-    public static final int DATA_POTION_COLOR = 8; //int (ARGB!)
-    public static final int DATA_POTION_AMBIENT = 9; //byte
-    public static final int DATA_JUMP_DURATION = 10; //long
-    public static final int DATA_HURT_TIME = 11; //int (minecart/boat)
-    public static final int DATA_HURT_DIRECTION = 12; //int (minecart/boat)
-    public static final int DATA_PADDLE_TIME_LEFT = 13; //float
-    public static final int DATA_PADDLE_TIME_RIGHT = 14; //float
-    public static final int DATA_EXPERIENCE_VALUE = 15; //int (xp orb)
-    public static final int DATA_DISPLAY_ITEM = 16; //int (id | (data << 16))
-    public static final int DATA_DISPLAY_OFFSET = 17; //int
-    public static final int DATA_HAS_DISPLAY = 18; //byte (must be 1 for minecart to show block inside)
-    @Since("1.2.0.0-PN") public static final int DATA_SWELL = 19;
-    @Since("1.2.0.0-PN") public static final int DATA_OLD_SWELL = 20;
-    @Since("1.2.0.0-PN") public static final int DATA_SWELL_DIR = 21;
-    @Since("1.2.0.0-PN") public static final int DATA_CHARGE_AMOUNT = 22;
-    public static final int DATA_ENDERMAN_HELD_RUNTIME_ID = 23; //short
-    public static final int DATA_ENTITY_AGE = 24; //short
-    public static final int DATA_PLAYER_FLAGS = 26; //byte
-    @Since("1.2.0.0-PN") public static final int DATA_PLAYER_INDEX = 27;
-    public static final int DATA_PLAYER_BED_POSITION = 28; //block coords
-    public static final int DATA_FIREBALL_POWER_X = 29; //float
-    public static final int DATA_FIREBALL_POWER_Y = 30; //float
-    public static final int DATA_FIREBALL_POWER_Z = 31; //float
-    @Since("1.2.0.0-PN") public static final int DATA_AUX_POWER = 32;
-    @Since("1.2.0.0-PN") public static final int DATA_FISH_X = 33;
-    @Since("1.2.0.0-PN") public static final int DATA_FISH_Z = 34;
-    @Since("1.2.0.0-PN") public static final int DATA_FISH_ANGLE = 35;
-    public static final int DATA_POTION_AUX_VALUE = 36; //short
-    public static final int DATA_LEAD_HOLDER_EID = 37; //long
-    public static final int DATA_SCALE = 38; //float
-    @PowerNukkitOnly
-    @Since("1.2.0.0-PN") public static final int DATA_HAS_NPC_COMPONENT = 39; //byte
-    public static final int DATA_NPC_SKIN_ID = 40; //string
-    public static final int DATA_URL_TAG = 41; //string
-    public static final int DATA_MAX_AIR = 42; //short
-    public static final int DATA_MARK_VARIANT = 43; //int
-    public static final int DATA_CONTAINER_TYPE = 44; //byte
-    public static final int DATA_CONTAINER_BASE_SIZE = 45; //int
-    public static final int DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH = 46; //int
-    public static final int DATA_BLOCK_TARGET = 47; //block coords (ender crystal)
-    public static final int DATA_WITHER_INVULNERABLE_TICKS = 48; //int
-    public static final int DATA_WITHER_TARGET_1 = 49; //long
-    public static final int DATA_WITHER_TARGET_2 = 50; //long
-    public static final int DATA_WITHER_TARGET_3 = 51; //long
-    @Since("1.2.0.0-PN") public static final int DATA_AERIAL_ATTACK = 52;
-    public static final int DATA_BOUNDING_BOX_WIDTH = 53; //float
-    public static final int DATA_BOUNDING_BOX_HEIGHT = 54; //float
-    public static final int DATA_FUSE_LENGTH = 55; //int
-    public static final int DATA_RIDER_SEAT_POSITION = 56; //vector3f
-    public static final int DATA_RIDER_ROTATION_LOCKED = 57; //byte
-    public static final int DATA_RIDER_MAX_ROTATION = 58; //float
-    public static final int DATA_RIDER_MIN_ROTATION = 59; //float
-    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = 60; //float
-    public static final int DATA_AREA_EFFECT_CLOUD_WAITING = 61; //int
-    public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = 62; //int
-    @Since("1.2.0.0-PN") public static final int DATA_SHULKER_PEEK_ID = 63; //int
-    public static final int DATA_SHULKER_ATTACH_FACE = 64; //byte
-    @Since("1.2.0.0-PN") public static final int DATA_SHULKER_ATTACHED = 65; //short
-    public static final int DATA_SHULKER_ATTACH_POS = 66; //block coords
-    public static final int DATA_TRADING_PLAYER_EID = 67; //long
-    @Since("1.2.0.0-PN") public static final int DATA_TRADING_CAREER = 68;
-    @Since("1.2.0.0-PN") public static final int DATA_HAS_COMMAND_BLOCK = 69; //byte
+    public static final int DATA_FLAGS = dynamic(0);
+    public static final int DATA_HEALTH = dynamic(1); //int (minecart/boat)
+    public static final int DATA_VARIANT = dynamic(2); //int
+    public static final int DATA_COLOR = dynamic(3); //byte
+    public static final int DATA_COLOUR = DATA_COLOR;
+    public static final int DATA_NAMETAG = dynamic(4); //string
+    public static final int DATA_OWNER_EID = dynamic(5); //long
+    public static final int DATA_TARGET_EID = dynamic(6); //long
+    public static final int DATA_AIR = dynamic(7); //short
+    public static final int DATA_POTION_COLOR = dynamic(8); //int (ARGB!)
+    public static final int DATA_POTION_AMBIENT = dynamic(9); //byte
+    public static final int DATA_JUMP_DURATION = dynamic(10); //long
+    public static final int DATA_HURT_TIME = dynamic(11); //int (minecart/boat)
+    public static final int DATA_HURT_DIRECTION = dynamic(12); //int (minecart/boat)
+    public static final int DATA_PADDLE_TIME_LEFT = dynamic(13); //float
+    public static final int DATA_PADDLE_TIME_RIGHT = dynamic(14); //float
+    public static final int DATA_EXPERIENCE_VALUE = dynamic(15); //int (xp orb)
+    public static final int DATA_DISPLAY_ITEM = dynamic(16); //int (id | (data << 16))
+    public static final int DATA_DISPLAY_OFFSET = dynamic(17); //int
+    public static final int DATA_HAS_DISPLAY = dynamic(18); //byte (must be 1 for minecart to show block inside)
+    @Since("1.2.0.0-PN") public static final int DATA_SWELL = dynamic(19);
+    @Since("1.2.0.0-PN") public static final int DATA_OLD_SWELL = dynamic(20);
+    @Since("1.2.0.0-PN") public static final int DATA_SWELL_DIR = dynamic(21);
+    @Since("1.2.0.0-PN") public static final int DATA_CHARGE_AMOUNT = dynamic(22);
+    public static final int DATA_ENDERMAN_HELD_RUNTIME_ID = dynamic(23); //short
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int DATA_CLIENT_EVENT = dynamic(24); //byte
     
-    @PowerNukkitOnly
-    @Deprecated @DeprecationDetails(reason = "NukkitX added this constant with a different name",
-            replaceWith = "DATA_HAS_COMMAND_BLOCK", since = "1.3.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_COMMAND_BLOCK_ENABLED = 69; //byte
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit",
+            reason = "Apparently this the ID 24 was reused to represent CLIENT_EVENT but Cloudburst Nukkit is still mapping it as age")
+    public static final int DATA_ENTITY_AGE = dynamic(DATA_CLIENT_EVENT); //short
     
-    @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_COMMAND = 70; //string
-    public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = 71; //string
-    public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = 72; //byte
-    public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = 73; //byte
-    public static final int DATA_STRENGTH = 74; //int
-    public static final int DATA_MAX_STRENGTH = 75; //int
-    @Since("1.2.0.0-PN") public static final int DATA_SPELL_CASTING_COLOR = 76; //int
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final int DATA_USING_ITEM = dynamic(25); //byte
+    public static final int DATA_PLAYER_FLAGS = dynamic(26); //byte
+    @Since("1.2.0.0-PN") public static final int DATA_PLAYER_INDEX = dynamic(27);
+    public static final int DATA_PLAYER_BED_POSITION = dynamic(28); //block coords
+    public static final int DATA_FIREBALL_POWER_X = dynamic(29); //float
+    public static final int DATA_FIREBALL_POWER_Y = dynamic(30); //float
+    public static final int DATA_FIREBALL_POWER_Z = dynamic(31); //float
+    @Since("1.2.0.0-PN") public static final int DATA_AUX_POWER = dynamic(32); //???
+    @Since("1.2.0.0-PN") public static final int DATA_FISH_X = dynamic(33); //float
+    @Since("1.2.0.0-PN") public static final int DATA_FISH_Z = dynamic(34); //float
+    @Since("1.2.0.0-PN") public static final int DATA_FISH_ANGLE = dynamic(35); //float
+    public static final int DATA_POTION_AUX_VALUE = dynamic(36); //short
+    public static final int DATA_LEAD_HOLDER_EID = dynamic(37); //long
+    public static final int DATA_SCALE = dynamic(38); //float
+    @Since("1.4.0.0-PN") public static final int DATA_INTERACTIVE_TAG = dynamic(39); //string (button text)
     
-    @PowerNukkitOnly("Backward compatibility")
-    @Deprecated @DeprecationDetails(reason = "NukkitX added this constant with a different name",
-            replaceWith = "DATA_SPELL_CASTING_COLOR", since = "1.3.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_EVOKER_SPELL_COLOR = 76; // int
+    @PowerNukkitOnly @Since("1.2.0.0-PN")
+    @Deprecated @DeprecationDetails(
+            by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "This is not only for NPC, it's used to display any interactive button text " +
+                    "and Nukkit added this constant with a different name",
+            replaceWith = "DATA_INTERACTIVE_TAG")
+    public static final int DATA_HAS_NPC_COMPONENT = dynamic(DATA_INTERACTIVE_TAG); //byte
     
-    public static final int DATA_LIMITED_LIFE = 77; // int
-    public static final int DATA_ARMOR_STAND_POSE_INDEX = 78; // int
-    public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = 79; // int
-    public static final int DATA_ALWAYS_SHOW_NAMETAG = 80; // byte
-    public static final int DATA_COLOR_2 = 81; // byte
-    @Since("1.2.0.0-PN") public static final int DATA_NAME_AUTHOR = 82;
-    public static final int DATA_SCORE_TAG = 83; //String
-    public static final int DATA_BALLOON_ATTACHED_ENTITY = 84; // long
-    public static final int DATA_PUFFERFISH_SIZE = 85;
-    @Since("1.2.0.0-PN") public static final int DATA_BUBBLE_TIME = 86;
-    
-    @PowerNukkitOnly
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_BUBBLE_TIME", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_BOAT_BUBBLE_TIME = 86;
-    
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_AGENT", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_AGENT_ID = 87;
-    
-    @Since("1.2.0.0-PN") public static final int DATA_AGENT = 87;
-    @Since("1.2.0.0-PN") public static final int DATA_SITTING_AMOUNT = 88;
-    @Since("1.2.0.0-PN") public static final int DATA_SITTING_AMOUNT_PREVIOUS = 89;
-    @Since("1.2.0.0-PN") public static final int DATA_EATING_COUNTER = 90;
-    public static final int DATA_FLAGS_EXTENDED = 91;
-    @Since("1.2.0.0-PN") public static final int DATA_LAYING_AMOUNT = 92;
-    @Since("1.2.0.0-PN") public static final int DATA_LAYING_AMOUNT_PREVIOUS = 93;
-
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_DURATION", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_AREA_EFFECT_CLOUD_DURATION = 94; // int
-    
-    @Since("1.2.0.0-PN") public static final int DATA_DURATION = 94;
-
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_SPAWN_TIME", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_AREA_EFFECT_CLOUD_SPAWN_TIME = 95; // long
-    
-    @Since("1.2.0.0-PN") public static final int DATA_SPAWN_TIME = 95;
-
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_CHANGE_RATE", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_PER_TICK = 96; // float
-    
-    @Since("1.2.0.0-PN") public static final int DATA_CHANGE_RATE = 96;
-
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_CHANGE_ON_PICK", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP = 97; // float
-    
-    @Since("1.2.0.0-PN") public static final int DATA_CHANGE_ON_PICKUP = 97;
-
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_PICKUP_COUNT", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT = 98; // int
-    
-    @Since("1.2.0.0-PN") public static final int DATA_PICKUP_COUNT = 98;
-
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_INTERACT_TEXT", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_INTERACTIVE_TAG = 99; // string (button text)
-    
-    @Since("1.2.0.0-PN") public static final int DATA_INTERACT_TEXT = 99;
-    public static final int DATA_TRADE_TIER = 100; // int
-    public static final int DATA_MAX_TRADE_TIER = 101; // int
-
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_TRADE_EXPERIENCE", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_TRADE_XP = 102; // int
-    
-    @Since("1.2.0.0-PN") public static final int DATA_TRADE_EXPERIENCE = 102;
-    @Since("1.1.1.0-PN") public static final int DATA_SKIN_ID = 103; // int
-    @Since("1.2.0.0-PN") public static final int DATA_SPAWNING_FRAMES = 104;
-    @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_TICK_DELAY = 105;
-    @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_EXECUTE_ON_FIRST_TICK = 106;
-    @Since("1.2.0.0-PN") public static final int DATA_AMBIENT_SOUND_INTERVAL = 107;
-    @Since("1.3.0.0-PN") public static final int DATA_AMBIENT_SOUND_INTERVAL_RANGE = 108;
-    @Since("1.2.0.0-PN") public static final int DATA_AMBIENT_SOUND_EVENT_NAME = 109;
-    @Since("1.2.0.0-PN") public static final int DATA_FALL_DAMAGE_MULTIPLIER = 110;
-    @Since("1.2.0.0-PN") public static final int DATA_NAME_RAW_TEXT = 111;
-    @Since("1.2.0.0-PN") public static final int DATA_CAN_RIDE_TARGET = 112;
-    @Since("1.3.0.0-PN") public static final int DATA_LOW_TIER_CURED_DISCOUNT = 113;
-    @Since("1.3.0.0-PN") public static final int DATA_HIGH_TIER_CURED_DISCOUNT = 114;
-    @Since("1.3.0.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT = 115;
-    @Since("1.3.0.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = 116;
-    @Since("1.3.0.0-PN") public static final int DATA_HITBOX = 117;
-    @Since("1.3.0.0-PN") public static final int DATA_IS_BUOYANT = 118;
-    @Since("1.3.0.0-PN") public static final int DATA_BUOYANCY_DATA = 119;
+    public static final int DATA_NPC_SKIN_ID = dynamic(40); //string
+    public static final int DATA_URL_TAG = dynamic(41); //string
+    public static final int DATA_MAX_AIR = dynamic(42); //short
+    public static final int DATA_MARK_VARIANT = dynamic(43); //int
+    public static final int DATA_CONTAINER_TYPE = dynamic(44); //byte
+    public static final int DATA_CONTAINER_BASE_SIZE = dynamic(45); //int
+    public static final int DATA_CONTAINER_EXTRA_SLOTS_PER_STRENGTH = dynamic(46); //int
+    public static final int DATA_BLOCK_TARGET = dynamic(47); //block coords (ender crystal)
+    public static final int DATA_WITHER_INVULNERABLE_TICKS = dynamic(48); //int
+    public static final int DATA_WITHER_TARGET_1 = dynamic(49); //long
+    public static final int DATA_WITHER_TARGET_2 = dynamic(50); //long
+    public static final int DATA_WITHER_TARGET_3 = dynamic(51); //long
+    @Since("1.2.0.0-PN") public static final int DATA_AERIAL_ATTACK = dynamic(52);
+    public static final int DATA_BOUNDING_BOX_WIDTH = dynamic(53); //float
+    public static final int DATA_BOUNDING_BOX_HEIGHT = dynamic(54); //float
+    public static final int DATA_FUSE_LENGTH = dynamic(55); //int
+    public static final int DATA_RIDER_SEAT_POSITION = dynamic(56); //vector3f
+    public static final int DATA_RIDER_ROTATION_LOCKED = dynamic(57); //byte
+    public static final int DATA_RIDER_MAX_ROTATION = dynamic(58); //float
+    public static final int DATA_RIDER_MIN_ROTATION = dynamic(59); //float
+    @Since("1.4.0.0-PN") public static final int DATA_RIDER_ROTATION_OFFSET = dynamic(60);
+    public static final int DATA_AREA_EFFECT_CLOUD_RADIUS = dynamic(61); //float
+    public static final int DATA_AREA_EFFECT_CLOUD_WAITING = dynamic(62); //int
+    public static final int DATA_AREA_EFFECT_CLOUD_PARTICLE_ID = dynamic(63); //int
+    @Since("1.2.0.0-PN") public static final int DATA_SHULKER_PEEK_ID = dynamic(64); //int
+    public static final int DATA_SHULKER_ATTACH_FACE = dynamic(65); //byte
+    @Since("1.2.0.0-PN") public static final int DATA_SHULKER_ATTACHED = dynamic(66); //short
+    public static final int DATA_SHULKER_ATTACH_POS = dynamic(67); //block coords
+    public static final int DATA_TRADING_PLAYER_EID = dynamic(68); //long
+    @Since("1.2.0.0-PN") public static final int DATA_TRADING_CAREER = dynamic(69);
+    @Since("1.2.0.0-PN") public static final int DATA_HAS_COMMAND_BLOCK = dynamic(70); //byte
+    @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_COMMAND = dynamic(71); //string
+    public static final int DATA_COMMAND_BLOCK_LAST_OUTPUT = dynamic(72); //string
+    public static final int DATA_COMMAND_BLOCK_TRACK_OUTPUT = dynamic(73); //byte
+    public static final int DATA_CONTROLLING_RIDER_SEAT_NUMBER = dynamic(74); //byte
+    public static final int DATA_STRENGTH = dynamic(75); //int
+    public static final int DATA_MAX_STRENGTH = dynamic(76); //int
+    @Since("1.2.0.0-PN") public static final int DATA_SPELL_CASTING_COLOR = dynamic(77); //int
+    public static final int DATA_LIMITED_LIFE = dynamic(78); //int
+    public static final int DATA_ARMOR_STAND_POSE_INDEX = dynamic(79); //int
+    public static final int DATA_ENDER_CRYSTAL_TIME_OFFSET = dynamic(80); //int
+    public static final int DATA_ALWAYS_SHOW_NAMETAG = dynamic(81); //byte
+    public static final int DATA_COLOR_2 = dynamic(82); //byte
+    @Since("1.2.0.0-PN") public static final int DATA_NAME_AUTHOR = dynamic(83);
+    public static final int DATA_SCORE_TAG = dynamic(84); //String
+    public static final int DATA_BALLOON_ATTACHED_ENTITY = dynamic(85); //long
+    public static final int DATA_PUFFERFISH_SIZE = dynamic(86); //byte
+    @Since("1.2.0.0-PN") public static final int DATA_BUBBLE_TIME = dynamic(87); //int
+    @Since("1.2.0.0-PN") public static final int DATA_AGENT = dynamic(88); //long
+    @Since("1.2.0.0-PN") public static final int DATA_SITTING_AMOUNT = dynamic(89); //??
+    @Since("1.2.0.0-PN") public static final int DATA_SITTING_AMOUNT_PREVIOUS = dynamic(90); //??
+    @Since("1.2.0.0-PN") public static final int DATA_EATING_COUNTER = dynamic(91); //int
+    public static final int DATA_FLAGS_EXTENDED = dynamic(92); //flags
+    @Since("1.2.0.0-PN") public static final int DATA_LAYING_AMOUNT = dynamic(93); //??
+    @Since("1.2.0.0-PN") public static final int DATA_LAYING_AMOUNT_PREVIOUS = dynamic(94); //??
+    @Since("1.2.0.0-PN") public static final int DATA_DURATION = dynamic(95); //int
+    @Since("1.2.0.0-PN") public static final int DATA_SPAWN_TIME = dynamic(96); //int
+    @Since("1.2.0.0-PN") public static final int DATA_CHANGE_RATE = dynamic(97); //float
+    @Since("1.2.0.0-PN") public static final int DATA_CHANGE_ON_PICKUP = dynamic(98); //float
+    @Since("1.2.0.0-PN") public static final int DATA_PICKUP_COUNT = dynamic(99); //int
+    @Since("1.2.0.0-PN") public static final int DATA_INTERACT_TEXT = dynamic(100); //string
+    public static final int DATA_TRADE_TIER = dynamic(101); //int
+    public static final int DATA_MAX_TRADE_TIER = dynamic(102); //int
+    @Since("1.2.0.0-PN") public static final int DATA_TRADE_EXPERIENCE = dynamic(103); //int
+    @Since("1.1.1.0-PN") public static final int DATA_SKIN_ID = dynamic(104); //int
+    @Since("1.2.0.0-PN") public static final int DATA_SPAWNING_FRAMES = dynamic(105); //??
+    @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_TICK_DELAY = dynamic(106); //int
+    @Since("1.2.0.0-PN") public static final int DATA_COMMAND_BLOCK_EXECUTE_ON_FIRST_TICK = dynamic(107); //byte
+    @Since("1.2.0.0-PN") public static final int DATA_AMBIENT_SOUND_INTERVAL = dynamic(108); //float
+    @Since("1.3.0.0-PN") public static final int DATA_AMBIENT_SOUND_INTERVAL_RANGE = dynamic(109); //float
+    @Since("1.2.0.0-PN") public static final int DATA_AMBIENT_SOUND_EVENT_NAME = dynamic(110); //string
+    @Since("1.2.0.0-PN") public static final int DATA_FALL_DAMAGE_MULTIPLIER = dynamic(111); //float
+    @Since("1.2.0.0-PN") public static final int DATA_NAME_RAW_TEXT = dynamic(112); //??
+    @Since("1.2.0.0-PN") public static final int DATA_CAN_RIDE_TARGET = dynamic(113); //byte
+    @Since("1.3.0.0-PN") public static final int DATA_LOW_TIER_CURED_DISCOUNT = dynamic(114); //int
+    @Since("1.3.0.0-PN") public static final int DATA_HIGH_TIER_CURED_DISCOUNT = dynamic(115); //int
+    @Since("1.3.0.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT = dynamic(116); //int
+    @Since("1.3.0.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = dynamic(117); //int
+    @Since("1.3.0.0-PN") public static final int DATA_HITBOX = dynamic(118); //NBT
+    @Since("1.3.0.0-PN") public static final int DATA_IS_BUOYANT = dynamic(119); //byte
+    @Since("1.4.0.0-PN") public static final int DATA_FREEZING_EFFECT_STRENGTH = 120;
+    @Since("1.3.0.0-PN") public static final int DATA_BUOYANCY_DATA = dynamic(120); //string
+    @Since("1.4.0.0-PN") public static final int DATA_GOAT_HORN_COUNT = 122;
 
     // Flags
-    public static final int DATA_FLAG_ONFIRE = 0;
-    public static final int DATA_FLAG_SNEAKING = 1;
-    public static final int DATA_FLAG_RIDING = 2;
-    public static final int DATA_FLAG_SPRINTING = 3;
-    public static final int DATA_FLAG_ACTION = 4;
-    public static final int DATA_FLAG_INVISIBLE = 5;
-    public static final int DATA_FLAG_TEMPTED = 6;
-    public static final int DATA_FLAG_INLOVE = 7;
-    public static final int DATA_FLAG_SADDLED = 8;
-    public static final int DATA_FLAG_POWERED = 9;
-    public static final int DATA_FLAG_IGNITED = 10;
-    public static final int DATA_FLAG_BABY = 11; //disable head scaling
-    public static final int DATA_FLAG_CONVERTING = 12;
-    public static final int DATA_FLAG_CRITICAL = 13;
-    public static final int DATA_FLAG_CAN_SHOW_NAMETAG = 14;
-    public static final int DATA_FLAG_ALWAYS_SHOW_NAMETAG = 15;
-    public static final int DATA_FLAG_IMMOBILE = 16, DATA_FLAG_NO_AI = 16;
-    public static final int DATA_FLAG_SILENT = 17;
-    public static final int DATA_FLAG_WALLCLIMBING = 18;
-    public static final int DATA_FLAG_CAN_CLIMB = 19;
-    public static final int DATA_FLAG_SWIMMER = 20;
-    public static final int DATA_FLAG_CAN_FLY = 21;
-    public static final int DATA_FLAG_WALKER = 22;
-    public static final int DATA_FLAG_RESTING = 23;
-    public static final int DATA_FLAG_SITTING = 24;
-    public static final int DATA_FLAG_ANGRY = 25;
-    public static final int DATA_FLAG_INTERESTED = 26;
-    public static final int DATA_FLAG_CHARGED = 27;
-    public static final int DATA_FLAG_TAMED = 28;
-    public static final int DATA_FLAG_ORPHANED = 29;
-    public static final int DATA_FLAG_LEASHED = 30;
-    public static final int DATA_FLAG_SHEARED = 31;
-    public static final int DATA_FLAG_GLIDING = 32;
-    public static final int DATA_FLAG_ELDER = 33;
-    public static final int DATA_FLAG_MOVING = 34;
-    public static final int DATA_FLAG_BREATHING = 35;
-    public static final int DATA_FLAG_CHESTED = 36;
-    public static final int DATA_FLAG_STACKABLE = 37;
-    public static final int DATA_FLAG_SHOWBASE = 38;
-    public static final int DATA_FLAG_REARING = 39;
-    public static final int DATA_FLAG_VIBRATING = 40;
-    public static final int DATA_FLAG_IDLING = 41;
-    public static final int DATA_FLAG_EVOKER_SPELL = 42;
-    public static final int DATA_FLAG_CHARGE_ATTACK = 43;
-    public static final int DATA_FLAG_WASD_CONTROLLED = 44;
-    public static final int DATA_FLAG_CAN_POWER_JUMP = 45;
-    public static final int DATA_FLAG_LINGER = 46;
-    public static final int DATA_FLAG_HAS_COLLISION = 47;
-    public static final int DATA_FLAG_GRAVITY = 48;
-    public static final int DATA_FLAG_FIRE_IMMUNE = 49;
-    public static final int DATA_FLAG_DANCING = 50;
-    public static final int DATA_FLAG_ENCHANTED = 51;
-    public static final int DATA_FLAG_SHOW_TRIDENT_ROPE = 52; // tridents show an animated rope when enchanted with loyalty after they are thrown and return to their owner. To be combined with DATA_OWNER_EID
-    public static final int DATA_FLAG_CONTAINER_PRIVATE = 53; //inventory is private, doesn't drop contents when killed if true
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_TRANSFORMING = 54;
-    public static final int DATA_FLAG_SPIN_ATTACK = 55;
-    public static final int DATA_FLAG_SWIMMING = 56;
-    public static final int DATA_FLAG_BRIBED = 57; //dolphins have this set when they go to find treasure for the player
-    public static final int DATA_FLAG_PREGNANT = 58;
-    public static final int DATA_FLAG_LAYING_EGG = 59;
-    
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_FLAG_RIDER_CAN_PICK", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_FLAG_RIDER_CAN_PICKUP = 60; // PowerNukkit
+    public static final int DATA_FLAG_ONFIRE = dynamic(0);
+    public static final int DATA_FLAG_SNEAKING = dynamic(1);
+    public static final int DATA_FLAG_RIDING = dynamic(2);
+    public static final int DATA_FLAG_SPRINTING = dynamic(3);
+    public static final int DATA_FLAG_ACTION = dynamic(4);
+    public static final int DATA_FLAG_INVISIBLE = dynamic(5);
+    public static final int DATA_FLAG_TEMPTED = dynamic(6);
+    public static final int DATA_FLAG_INLOVE = dynamic(7);
+    public static final int DATA_FLAG_SADDLED = dynamic(8);
+    public static final int DATA_FLAG_POWERED = dynamic(9);
+    public static final int DATA_FLAG_IGNITED = dynamic(10);
+    public static final int DATA_FLAG_BABY = dynamic(11); //disable head scaling
+    public static final int DATA_FLAG_CONVERTING = dynamic(12);
+    public static final int DATA_FLAG_CRITICAL = dynamic(13);
+    public static final int DATA_FLAG_CAN_SHOW_NAMETAG = dynamic(14);
+    public static final int DATA_FLAG_ALWAYS_SHOW_NAMETAG = dynamic(15);
+    public static final int DATA_FLAG_IMMOBILE = dynamic(16);
+    public static final int DATA_FLAG_NO_AI = DATA_FLAG_IMMOBILE;
+    public static final int DATA_FLAG_SILENT = dynamic(17);
+    public static final int DATA_FLAG_WALLCLIMBING = dynamic(18);
+    public static final int DATA_FLAG_CAN_CLIMB = dynamic(19);
+    public static final int DATA_FLAG_SWIMMER = dynamic(20);
+    public static final int DATA_FLAG_CAN_FLY = dynamic(21);
+    public static final int DATA_FLAG_WALKER = dynamic(22);
+    public static final int DATA_FLAG_RESTING = dynamic(23);
+    public static final int DATA_FLAG_SITTING = dynamic(24);
+    public static final int DATA_FLAG_ANGRY = dynamic(25);
+    public static final int DATA_FLAG_INTERESTED = dynamic(26);
+    public static final int DATA_FLAG_CHARGED = dynamic(27);
+    public static final int DATA_FLAG_TAMED = dynamic(28);
+    public static final int DATA_FLAG_ORPHANED = dynamic(29);
+    public static final int DATA_FLAG_LEASHED = dynamic(30);
+    public static final int DATA_FLAG_SHEARED = dynamic(31);
+    public static final int DATA_FLAG_GLIDING = dynamic(32);
+    public static final int DATA_FLAG_ELDER = dynamic(33);
+    public static final int DATA_FLAG_MOVING = dynamic(34);
+    public static final int DATA_FLAG_BREATHING = dynamic(35);
+    public static final int DATA_FLAG_CHESTED = dynamic(36);
+    public static final int DATA_FLAG_STACKABLE = dynamic(37);
+    public static final int DATA_FLAG_SHOWBASE = dynamic(38);
+    public static final int DATA_FLAG_REARING = dynamic(39);
+    public static final int DATA_FLAG_VIBRATING = dynamic(40);
+    public static final int DATA_FLAG_IDLING = dynamic(41);
+    public static final int DATA_FLAG_EVOKER_SPELL = dynamic(42);
+    public static final int DATA_FLAG_CHARGE_ATTACK = dynamic(43);
+    public static final int DATA_FLAG_WASD_CONTROLLED = dynamic(44);
+    public static final int DATA_FLAG_CAN_POWER_JUMP = dynamic(45);
+    public static final int DATA_FLAG_LINGER = dynamic(46);
+    public static final int DATA_FLAG_HAS_COLLISION = dynamic(47);
+    public static final int DATA_FLAG_GRAVITY = dynamic(48);
+    public static final int DATA_FLAG_FIRE_IMMUNE = dynamic(49);
+    public static final int DATA_FLAG_DANCING = dynamic(50);
+    public static final int DATA_FLAG_ENCHANTED = dynamic(51);
+    public static final int DATA_FLAG_SHOW_TRIDENT_ROPE = dynamic(52); // tridents show an animated rope when enchanted with loyalty after they are thrown and return to their owner. To be combined with DATA_OWNER_EID
+    public static final int DATA_FLAG_CONTAINER_PRIVATE = dynamic(53); //inventory is private, doesn't drop contents when killed if true
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_TRANSFORMING = dynamic(54);
+    public static final int DATA_FLAG_SPIN_ATTACK = dynamic(55);
+    public static final int DATA_FLAG_SWIMMING = dynamic(56);
+    public static final int DATA_FLAG_BRIBED = dynamic(57); //dolphins have this set when they go to find treasure for the player
+    public static final int DATA_FLAG_PREGNANT = dynamic(58);
+    public static final int DATA_FLAG_LAYING_EGG = dynamic(59);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_RIDER_CAN_PICK = dynamic(60);
+    @PowerNukkitOnly @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRANSITION_SITTING = dynamic(61); // PowerNukkit but without typo
 
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_RIDER_CAN_PICK = 60; // NukkitX
-    
-    //TODO Is it actually sitting? or should really be setting? Needs to investigate.
-    /**
-     * @deprecated This is not available in NukkitX yet, use with care.
-     * @see #DATA_FLAG_TRANSITION_SETTING
-     */
-    @PowerNukkitOnly
-    @Deprecated @DeprecationDetails(reason = "Unsure if it's a typo or not, use with care", since = "1.2.0.0-PN",
-            replaceWith = "DATA_FLAG_TRANSITION_SETTING", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_FLAG_TRANSITION_SITTING = 61; // PowerNukkit but without typo
-    
     /**
      * @deprecated This is from NukkitX but it has a typo which we can't remove unless NukkitX removes from their side.
      * @see #DATA_FLAG_TRANSITION_SITTING
      */
-    @Deprecated @DeprecationDetails(reason = "Unsure if it's a typo or not, use with care", since = "1.2.0.0-PN",
-            replaceWith = "DATA_FLAG_TRANSITION_SITTING", toBeRemovedAt = "1.4.0.0-PN")
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRANSITION_SETTING = 61; // NukkitX with the same typo
-    
-    public static final int DATA_FLAG_EATING = 62;
-    public static final int DATA_FLAG_LAYING_DOWN = 63;
-    public static final int DATA_FLAG_SNEEZING = 64;
-    public static final int DATA_FLAG_TRUSTING = 65;
-    public static final int DATA_FLAG_ROLLING = 66;
-    public static final int DATA_FLAG_SCARED = 67;
-    public static final int DATA_FLAG_IN_SCAFFOLDING = 68;
-    public static final int DATA_FLAG_OVER_SCAFFOLDING = 69;
-    public static final int DATA_FLAG_FALL_THROUGH_SCAFFOLDING = 70;
-    public static final int DATA_FLAG_BLOCKING = 71; //shield
-    
-    /**
-     * @deprecated Use {@link #DATA_FLAG_TRANSITION_BLOCKING} instead.
-     */
-    @Deprecated @DeprecationDetails(reason = "NukkitX maps this constant with a different name",
-            replaceWith = "DATA_FLAG_TRANSITION_BLOCKING", since = "1.2.0.0-PN", toBeRemovedAt = "1.4.0.0-PN")
-    public static final int DATA_FLAG_DISABLED_BLOCKING = 72;
-    
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRANSITION_BLOCKING = 72;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_BLOCKED_USING_SHIELD = 73;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_BLOCKED_USING_DAMAGED_SHIELD = 74;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_SLEEPING = 75;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_WANTS_TO_WAKE = 76;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRADE_INTEREST = 77;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_DOOR_BREAKER = 78;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_BREAKING_OBSTRUCTION = 79;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_DOOR_OPENER = 80;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_ILLAGER_CAPTAIN = 81;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_STUNNED = 82;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_ROARING = 83;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_DELAYED_ATTACK = 84;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_AVOIDING_MOBS = 85;
-    @Since("1.3.0.0-PN") public static final int DATA_FLAG_IS_AVOIDING_BLOCKS = 86;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK = 87;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_HIDDEN_WHEN_INVISIBLE = 88;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_IN_UI = 89;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_STALKING = 90;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_EMOTING = 91;
-    @Since("1.2.0.0-PN") public static final int DATA_FLAG_CELEBRATING = 92;
-    @Since("1.3.0.0-PN") public static final int DATA_FLAG_ADMIRING = 93;
-    @Since("1.3.0.0-PN") public static final int DATA_FLAG_CELEBRATING_SPECIAL = 94;
+    @Deprecated @DeprecationDetails(
+            reason = "This is from NukkitX but it has a typo which we can't remove unless NukkitX removes from their side.",
+            since = "1.2.0.0-PN",
+            replaceWith = "DATA_FLAG_TRANSITION_SITTING")
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRANSITION_SETTING = DATA_FLAG_TRANSITION_SITTING; // NukkitX with the same typo
+
+    public static final int DATA_FLAG_EATING = dynamic(62);
+    public static final int DATA_FLAG_LAYING_DOWN = dynamic(63);
+    public static final int DATA_FLAG_SNEEZING = dynamic(64);
+    public static final int DATA_FLAG_TRUSTING = dynamic(65);
+    public static final int DATA_FLAG_ROLLING = dynamic(66);
+    public static final int DATA_FLAG_SCARED = dynamic(67);
+    public static final int DATA_FLAG_IN_SCAFFOLDING = dynamic(68);
+    public static final int DATA_FLAG_OVER_SCAFFOLDING = dynamic(69);
+    public static final int DATA_FLAG_FALL_THROUGH_SCAFFOLDING = dynamic(70);
+    public static final int DATA_FLAG_BLOCKING = dynamic(71); //shield
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRANSITION_BLOCKING = dynamic(72);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_BLOCKED_USING_SHIELD = dynamic(73);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_BLOCKED_USING_DAMAGED_SHIELD = dynamic(74);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_SLEEPING = dynamic(75);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_WANTS_TO_WAKE = dynamic(76);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_TRADE_INTEREST = dynamic(77);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_DOOR_BREAKER = dynamic(78);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_BREAKING_OBSTRUCTION = dynamic(79);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_DOOR_OPENER = dynamic(80);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_ILLAGER_CAPTAIN = dynamic(81);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_STUNNED = dynamic(82);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_ROARING = dynamic(83);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_DELAYED_ATTACK = dynamic(84);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_AVOIDING_MOBS = dynamic(85);
+    @Since("1.3.0.0-PN") public static final int DATA_FLAG_IS_AVOIDING_BLOCKS = dynamic(86);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_FACING_TARGET_TO_RANGE_ATTACK = dynamic(87);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_HIDDEN_WHEN_INVISIBLE = dynamic(88);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_IS_IN_UI = dynamic(89);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_STALKING = dynamic(90);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_EMOTING = dynamic(91);
+    @Since("1.2.0.0-PN") public static final int DATA_FLAG_CELEBRATING = dynamic(92);
+    @Since("1.3.0.0-PN") public static final int DATA_FLAG_ADMIRING = dynamic(93);
+    @Since("1.3.0.0-PN") public static final int DATA_FLAG_CELEBRATING_SPECIAL = dynamic(94);
+    @Since("1.4.0.0-PN") public static final int DATA_FLAG_RAM_ATTACK = dynamic(96);
 
     public static long entityCount = 1;
 
@@ -456,7 +404,7 @@ public abstract class Entity extends Location implements Metadatable {
     public int maxFireTicks;
     public int fireTicks = 0;
     public int inPortalTicks = 0;
-    
+
     @PowerNukkitOnly
     @Since("1.2.1.0-PN")
     protected boolean inEndPortal;
@@ -487,11 +435,11 @@ public abstract class Entity extends Location implements Metadatable {
     protected boolean isPlayer = false;
 
     private volatile boolean initialized;
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean noClip = false;
-    
+
     public float getHeight() {
         return 0;
     }
@@ -1551,7 +1499,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     private Position getNearestValidPortal(Position currentPos) {
         AxisAlignedBB axisAlignedBB = new SimpleAxisAlignedBB(
-                new Vector3(currentPos.getFloorX() - 128.0, 1.0, currentPos.getFloorZ() - 128.0), 
+                new Vector3(currentPos.getFloorX() - 128.0, 1.0, currentPos.getFloorZ() - 128.0),
                 new Vector3(currentPos.getFloorX() + 128.0, currentPos.level.getDimension() == Level.DIMENSION_NETHER? 128 : 256, currentPos.getFloorZ() + 128.0));
         BiPredicate<BlockVector3, BlockState> condition = (pos, state) -> state.getBlockId() == BlockID.NETHER_PORTAL;
         List<Block> blocks = currentPos.level.scanBlocks(axisAlignedBB, condition);
@@ -1567,16 +1515,16 @@ public abstract class Entity extends Location implements Metadatable {
             double ey = by - block.y;
             return ey * ey;
         });
-        
+
         Block nearestPortal = blocks.stream()
                 .filter(block-> block.down().getId() != BlockID.NETHER_PORTAL)
                 .min(euclideanDistance.thenComparing(heightDistance))
                 .orElse(null);
-        
+
         if (nearestPortal == null) {
             return null;
         }
-        
+
         return nearestPortal;
     }
 
@@ -2102,8 +2050,8 @@ public abstract class Entity extends Location implements Metadatable {
 
         AxisAlignedBB newBB = this.boundingBox.getOffsetBoundingBox(dx, dy, dz);
 
-        if (server.getAllowFlight() 
-                || isPlayer && ((Player) this).getAdventureSettings().get(AdventureSettings.Type.NO_CLIP) 
+        if (server.getAllowFlight()
+                || isPlayer && ((Player) this).getAdventureSettings().get(AdventureSettings.Type.NO_CLIP)
                 || !this.level.hasCollision(this, newBB, false)) {
             this.boundingBox = newBB;
         }
@@ -2247,7 +2195,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (onGround && movX == 0 && movY == 0 && movZ == 0 && dx == 0 && dy == 0 && dz == 0) {
             return;
         }
-        
+
         if (this.noClip) {
             this.isCollidedVertically = false;
             this.isCollidedHorizontally = false;
@@ -2312,7 +2260,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (this.noClip) {
             return;
         }
-        
+
         Vector3 vector = new Vector3(0, 0, 0);
         boolean portal = false;
         boolean scaffolding = false;
@@ -2355,7 +2303,7 @@ public abstract class Entity extends Location implements Metadatable {
         } else {
             inEndPortal = false;
         }
-        
+
         if (portal) {
             if (this.inPortalTicks <= 80) {
                 // 81 means the server won't try to teleport
@@ -2735,31 +2683,31 @@ public abstract class Entity extends Location implements Metadatable {
         hash = (int) (29 * hash + this.getId());
         return hash;
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean isSpinAttacking() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_SPIN_ATTACK);
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setSpinAttacking() {
         this.setSpinAttacking(true);
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setSpinAttacking(boolean value) {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SPIN_ATTACK, value);
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean isNoClip() {
         return noClip;
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void setNoClip(boolean noClip) {

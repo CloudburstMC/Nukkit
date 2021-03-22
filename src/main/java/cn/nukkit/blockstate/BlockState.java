@@ -8,9 +8,11 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.UnknownRuntimeIdException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateDataTypeException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.OptionalBoolean;
@@ -316,14 +318,52 @@ public final class BlockState implements Serializable, IBlockState {
         return onlyWithProperty(property.getName(), value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockState forItem() {
-        BlockProperties properties = getProperties();
-        Set<String> allNames = properties.getNames();
-        List<String> itemNames = properties.getItemPropertyNames();
+        BlockProperties allProperties = getProperties();
+        Set<String> allNames = allProperties.getNames();
+        
+        BlockProperties itemProperties = allProperties.getItemBlockProperties();
+        List<String> itemNames = itemProperties.getItemPropertyNames();
         if (allNames.size() == itemNames.size() && allNames.containsAll(itemNames)) {
             return this;
         }
         return storage.onlyWithProperties(this, itemNames);
+    }
+
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public ItemBlock asItemBlock(int count) {
+        BlockProperties allProperties = getProperties();
+        Set<String> allNames = allProperties.getNames();
+        
+        int itemBlockMeta;
+        BlockProperties itemProperties = allProperties.getItemBlockProperties();
+        List<String> itemNames = itemProperties.getItemPropertyNames();
+        BlockState trimmedState;
+        if (allNames.size() == itemNames.size() && allNames.containsAll(itemNames)) {
+            itemBlockMeta = getExactIntStorage();
+            trimmedState = this;
+        } else if (itemNames.isEmpty()) {
+            itemBlockMeta = 0; 
+            trimmedState = isDefaultState()? this : of(getBlockId());
+        } else {
+            trimmedState = storage.onlyWithProperties(this, itemNames);
+            MutableBlockState itemState = itemProperties.createMutableState(getBlockId());
+            itemProperties.forEach(property -> itemState.setPropertyValue(property.getName(), getPropertyValue(property)));
+            itemBlockMeta = itemState.getExactIntStorage();
+        }
+        
+        int runtimeId = trimmedState.getRuntimeId();
+        if (runtimeId == BlockStateRegistry.getUpdateBlockRegistration() && !"minecraft:info_update".equals(trimmedState.getPersistenceName())) {
+            throw new UnknownRuntimeIdException("The current block state can't be represented as an item. State: "+trimmedState+", Trimmed: "+trimmedState+" ItemBlockMeta: "+itemBlockMeta);
+        }
+        Block block = trimmedState.getBlock();
+        return new ItemBlock(block, itemBlockMeta, count);
     }
 
     @Nonnegative

@@ -8,11 +8,21 @@ import cn.nukkit.api.Since;
  * @author CreeperFace
  */
 public enum Sound {
+    @Since("1.4.0.0-PN") AMBIENT_BASALT_DELTAS_ADDITIONS("ambient.basalt_deltas.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_BASALT_DELTAS_LOOP("ambient.basalt_deltas.loop"),
     AMBIENT_BASALT_DELTAS_MOOD("ambient.basalt_deltas.mood"),
     AMBIENT_CAVE("ambient.cave"),
+    @Since("1.4.0.0-PN") AMBIENT_CRIMSON_FOREST_ADDITIONS("ambient.crimson_forest.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_CRIMSON_FOREST_LOOP("ambient.crimson_forest.loop"),
     AMBIENT_CRIMSON_FOREST_MOOD("ambient.crimson_forest.mood"),
+    @Since("1.4.0.0-PN") AMBIENT_NETHER_WASTES_ADDITIONS("ambient.nether_wastes.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_NETHER_WASTES_LOOP("ambient.nether_wastes.loop"),
     AMBIENT_NETHER_WASTES_MOOD("ambient.nether_wastes.mood"),
+    @Since("1.4.0.0-PN") AMBIENT_SOULSAND_VALLEY_ADDITIONS("ambient.soulsand_valley.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_SOULSAND_VALLEY_LOOP("ambient.soulsand_valley.loop"),
     AMBIENT_SOULSAND_VALLEY_MOOD("ambient.soulsand_valley.mood"),
+    @Since("1.4.0.0-PN") AMBIENT_WARPED_FOREST_ADDITIONS("ambient.warped_forest.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_WARPED_FOREST_LOOP("ambient.warped_forest.loop"),
     AMBIENT_WARPED_FOREST_MOOD("ambient.warped_forest.mood"),
     AMBIENT_WEATHER_LIGHTNING_IMPACT("ambient.weather.lightning.impact"),
     AMBIENT_WEATHER_RAIN("ambient.weather.rain"),
