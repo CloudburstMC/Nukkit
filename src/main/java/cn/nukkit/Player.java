@@ -5249,7 +5249,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.addWindow(this.offhandInventory, ContainerIds.OFFHAND, true, true);
 
         this.craftingGrid = this.playerUIInventory.getCraftingGrid();
-        this.addWindow(this.craftingGrid, ContainerIds.NONE);
+        this.addWindow(this.craftingGrid, ContainerIds.NONE, true);
 
         //TODO: more windows
     }
