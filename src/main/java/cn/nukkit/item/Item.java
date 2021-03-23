@@ -1182,6 +1182,22 @@ public class Item implements Cloneable, BlockID, ItemID {
     public int getId() {
         return id;
     }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final int getNetworkFullId() throws UnknownNetworkIdException {
+        try {
+            return RuntimeItems.getRuntimeMapping().getNetworkFullId(this);
+        } catch (IllegalArgumentException e) {
+            throw new UnknownNetworkIdException(this, e);
+        }
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final int getNetworkId() throws UnknownNetworkIdException {
+        return RuntimeItems.getNetworkId(getNetworkFullId());
+    }
     
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
