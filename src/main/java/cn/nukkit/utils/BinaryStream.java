@@ -479,13 +479,13 @@ public class BinaryStream {
 
         int auxValue = item.getCount();
         boolean isDurable = item instanceof ItemDurable;
-        if (!isDurable) {
-            int meta = clearData ? 0 : item.hasMeta() ? item.getDamage() : -1;;
+        //if (!isDurable) {
+            int meta = clearData ? 0 : item.hasMeta() ? item.getDamage() : -1;
             auxValue |= ((meta & 0x7fff) << 8);
-        }
+        //}
         this.putVarInt(auxValue);
 
-        if (item.hasCompoundTag() || isDurable) {
+        if (item.hasCompoundTag() || isDurable && item.getDamage() != 0) {
             try {
                 // hack for tool damage
                 byte[] nbt = item.getCompoundTag();
