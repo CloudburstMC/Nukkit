@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -106,9 +107,12 @@ public class BlockTNT extends BlockSolid {
             item.useOn(this);
             this.prime(80, player);
             return true;
-        }
-        if (item.getId() == Item.FIRE_CHARGE) {
-            if (!player.isCreative()) player.getInventory().removeItem(Item.get(Item.FIRE_CHARGE, 0, 1));
+        } else if (item.getId() == Item.FIRE_CHARGE) {
+            if (!player.isCreative()) item.count--;
+            this.prime(80, player);
+            return true;
+        } else if (item.hasEnchantment(Enchantment.ID_FIRE_ASPECT)) {
+            item.useOn(this);
             this.prime(80, player);
             return true;
         }

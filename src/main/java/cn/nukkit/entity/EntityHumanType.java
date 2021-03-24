@@ -244,4 +244,9 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
 
         super.setOnFire(seconds);
     }
+
+    @Override
+    protected boolean applyNameTag(Player player, Item item) {
+        return false;
+    }
 }
