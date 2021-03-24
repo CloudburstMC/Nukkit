@@ -3,6 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.item.food.Food;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.CompletedUsingItemPacket;
 
@@ -10,6 +11,7 @@ import cn.nukkit.network.protocol.CompletedUsingItemPacket;
  * @author MagicDroidX (Nukkit Project)
  */
 public abstract class ItemEdible extends Item {
+
     public ItemEdible(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
@@ -63,6 +65,8 @@ public abstract class ItemEdible extends Item {
                 --this.count;
                 player.getInventory().setItemInHand(this);
             }
+            
+            player.getLevel().addSound(this, Sound.RANDOM_BURP);
         }
         
         return true;
