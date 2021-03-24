@@ -61,6 +61,16 @@ public class BlockDropper extends BlockDispenser {
     }
 
     @Override
+    public double getResistance() {
+        return 3.5;
+    }
+
+    @Override
+    public double getHardness() {
+        return 3.5;
+    }
+
+    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }

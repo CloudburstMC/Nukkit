@@ -29,11 +29,6 @@ public class TextPacket extends DataPacket {
     public static final byte TYPE_SYSTEM = 6;
     public static final byte TYPE_WHISPER = 7;
     public static final byte TYPE_ANNOUNCEMENT = 8;
-    @PowerNukkitOnly("Backward compatibility")
-    @Deprecated @DeprecationDetails(
-            since = "1.3.0.0-PN", toBeRemovedAt = "1.4.0.0-PN",
-            reason = "Renamed to TYPE_JSON by NukkitX", replaceWith = "TYPE_OBJECT")
-    public static final byte TYPE_JSON = 9;
     @Since("1.3.0.0-PN") public static final byte TYPE_OBJECT = 9;
     @Since("1.3.0.0-PN") public static final byte TYPE_OBJECT_WHISPER = 10;
 

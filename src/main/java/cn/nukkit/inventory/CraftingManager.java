@@ -6,6 +6,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.item.RuntimeItemMapping;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.network.protocol.DataPacket;
@@ -32,7 +34,7 @@ public class CraftingManager {
 
     @Deprecated
     @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", reason = "Field signature change from BatchPacket to DataPacket",
-        replaceWith = "getCraftingPacket() to be safer", toBeRemovedAt = "1.4.0.0-PN")
+        replaceWith = "getCraftingPacket() to be safer", toBeRemovedAt = "1.5.0.0-PN")
     public static BatchPacket packet = null;
     private static DataPacket packet0 = null;
     
@@ -43,6 +45,8 @@ public class CraftingManager {
     public final Map<Integer, BlastFurnaceRecipe> blastFurnaceRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, SmokerRecipe> smokerRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, CampfireRecipe> campfireRecipes = new Int2ObjectOpenHashMap<>();
+
+    @Since("1.3.2.0-PN") public final Map<UUID, MultiRecipe> multiRecipes = new HashMap<>();
 
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
@@ -126,7 +130,7 @@ public class CraftingManager {
                                 this.registerRecipe(new ShapelessRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted));
                                 break;
                             case "stonecutter":
-                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted.get(0)));
+                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, Item.fromJson(first), sorted.get(0)));
                                 break;
                             case "cartography_table":
                                 this.registerRecipe(new CartographyRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted));
@@ -195,6 +199,9 @@ public class CraftingManager {
                                 break;
                         }
                         break;
+                    case 4:
+                        this.registerRecipe(new MultiRecipe(UUID.fromString((String) recipe.get("uuid"))));
+                        break;
                     default:
                         break;
                 }
@@ -206,6 +213,7 @@ public class CraftingManager {
         // Load brewing recipes
         List<Map> potionMixes = config.getMapList("potionMixes");
 
+        RuntimeItemMapping runtimeMapping = RuntimeItems.getRuntimeMapping();
         for (Map potionMix : potionMixes) {
             int fromPotionId = ((Number) potionMix.get("inputId")).intValue(); // gson returns doubles...
             int fromPotionMeta = ((Number) potionMix.get("inputMeta")).intValue();
@@ -213,6 +221,10 @@ public class CraftingManager {
             int ingredientMeta = ((Number) potionMix.get("reagentMeta")).intValue();
             int toPotionId = ((Number) potionMix.get("outputId")).intValue();
             int toPotionMeta = ((Number) potionMix.get("outputMeta")).intValue();
+
+            fromPotionId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(fromPotionId));
+            ingredient = RuntimeItems.getId(runtimeMapping.getLegacyFullId(ingredient));
+            toPotionId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(toPotionId));
 
             registerBrewingRecipe(new BrewingRecipe(Item.get(fromPotionId, fromPotionMeta), Item.get(ingredient, ingredientMeta), Item.get(toPotionId, toPotionMeta)));
         }
@@ -223,6 +235,10 @@ public class CraftingManager {
             int fromItemId = ((Number) containerMix.get("inputId")).intValue();
             int ingredient = ((Number) containerMix.get("reagentId")).intValue();
             int toItemId = ((Number) containerMix.get("outputId")).intValue();
+
+            fromItemId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(fromItemId));
+            ingredient = RuntimeItems.getId(runtimeMapping.getLegacyFullId(ingredient));
+            toItemId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(toItemId));
 
             registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
         }
@@ -256,6 +272,10 @@ public class CraftingManager {
 
         for (FurnaceRecipe recipe : this.getFurnaceRecipes().values()) {
             pk.addFurnaceRecipe(recipe);
+        }
+
+        for (MultiRecipe recipe : this.multiRecipes.values()) {
+            pk.addMultiRecipe(recipe);
         }
 
         for (SmokerRecipe recipe : smokerRecipes.values()) {
@@ -541,6 +561,11 @@ public class CraftingManager {
             return recipe.matchItems(inputList, extraOutputList, multiplier);
         }
         return false;
+    }
+
+    @Since("1.3.2.0-PN")
+    public void registerMultiRecipe(MultiRecipe recipe) {
+        this.multiRecipes.put(recipe.getId(), recipe);
     }
 
     public static class Entry {

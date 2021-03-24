@@ -8,7 +8,7 @@ import cn.nukkit.entity.Entity;
 public class EnchantmentDamageAll extends EnchantmentDamage {
 
     public EnchantmentDamageAll() {
-        super(ID_DAMAGE_ALL, "all", 10, TYPE.ALL);
+        super(ID_DAMAGE_ALL, "all", Rarity.COMMON, TYPE.ALL);
     }
 
     @Override
