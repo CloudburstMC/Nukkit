@@ -64,9 +64,9 @@ public abstract class ItemEdible extends Item {
             if (player.isAdventure() || player.isSurvival()) {
                 --this.count;
                 player.getInventory().setItemInHand(this);
+                
+                player.getLevel().addSound(player, Sound.RANDOM_BURP);
             }
-            
-            player.getLevel().addSound(this, Sound.RANDOM_BURP);
         }
         
         return true;
