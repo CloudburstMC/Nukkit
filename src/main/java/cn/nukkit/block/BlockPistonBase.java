@@ -203,7 +203,6 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             }
 
             List<Block> newBlocks = calculator.getBlocksToMove();
-
             attached = newBlocks.stream().map(Vector3::asBlockVector3).collect(Collectors.toList());
 
             BlockFace side = extending ? direction : direction.getOpposite();
@@ -238,8 +237,13 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
                 new BlockEntityMovingBlock(this.level.getChunk(newBlock.getChunkX(), newBlock.getChunkZ()), nbt);
 
-                if (this.level.getBlockIdAt(oldPos.getFloorX(), oldPos.getFloorY(), oldPos.getFloorZ()) != BlockID.MOVING_BLOCK && sticky) {
-                    this.level.setBlock(oldPos, Block.get(BlockID.AIR));
+                //Set the block one forward to it to prevent weird duplicating
+                //It is setting the first block in the chain to air since the block next to it is the piston
+                if (sticky && getLevel().getBlock(oldPos).getSide(side.getOpposite()).getId() != BlockID.PISTON_HEAD) {
+                    if(!(getLevel().getBlock(oldPos).getSide(side.getOpposite()).getLocation().equals(getLocation()))) {
+                        Block id = getLevel().getBlock(oldPos).getSide(side.getOpposite());
+                        this.level.setBlock(oldPos, id);
+                    }
                 }
             }
         }
