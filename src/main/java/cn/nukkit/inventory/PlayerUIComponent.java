@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 public class PlayerUIComponent extends BaseInventory {
+
+    public static final int CREATED_ITEM_OUTPUT_UI_SLOT = 50;
+
     private final PlayerUIInventory playerUI;
     private final int offset;
     private final int size;

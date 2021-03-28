@@ -4,11 +4,21 @@ package cn.nukkit.level;
  * @author CreeperFace
  */
 public enum Sound {
+    AMBIENT_BASALT_DELTAS_ADDITIONS("ambient.basalt_deltas.additions"),
+    AMBIENT_BASALT_DELTAS_LOOP("ambient.basalt_deltas.loop"),
     AMBIENT_BASALT_DELTAS_MOOD("ambient.basalt_deltas.mood"),
     AMBIENT_CAVE("ambient.cave"),
+    AMBIENT_CRIMSON_FOREST_ADDITIONS("ambient.crimson_forest.additions"),
+    AMBIENT_CRIMSON_FOREST_LOOP("ambient.crimson_forest.loop"),
     AMBIENT_CRIMSON_FOREST_MOOD("ambient.crimson_forest.mood"),
+    AMBIENT_NETHER_WASTES_ADDITIONS("ambient.nether_wastes.additions"),
+    AMBIENT_NETHER_WASTES_LOOP("ambient.nether_wastes.loop"),
     AMBIENT_NETHER_WASTES_MOOD("ambient.nether_wastes.mood"),
+    AMBIENT_SOULSAND_VALLEY_ADDITIONS("ambient.soulsand_valley.additions"),
+    AMBIENT_SOULSAND_VALLEY_LOOP("ambient.soulsand_valley.loop"),
     AMBIENT_SOULSAND_VALLEY_MOOD("ambient.soulsand_valley.mood"),
+    AMBIENT_WARPED_FOREST_ADDITIONS("ambient.warped_forest.additions"),
+    AMBIENT_WARPED_FOREST_LOOP("ambient.warped_forest.loop"),
     AMBIENT_WARPED_FOREST_MOOD("ambient.warped_forest.mood"),
     AMBIENT_WEATHER_LIGHTNING_IMPACT("ambient.weather.lightning.impact"),
     AMBIENT_WEATHER_RAIN("ambient.weather.rain"),
