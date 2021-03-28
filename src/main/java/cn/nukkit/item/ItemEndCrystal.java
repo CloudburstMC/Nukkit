@@ -41,15 +41,16 @@ public class ItemEndCrystal extends Item {
         if (!(target instanceof BlockBedrock) && !(target instanceof BlockObsidian)) return false;
         FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
         Entity[] entities = level.getNearbyEntities(new SimpleAxisAlignedBB(target.x, target.y, target.z, target.x + 1, target.y + 2, target.z + 1));
+        Block up = target.up();
 
-        if (chunk == null || target.up().getId() != BlockID.AIR || target.up(2).getId() != BlockID.AIR || entities.length != 0) {
+        if (chunk == null || up.getId() != BlockID.AIR || up.up().getId() != BlockID.AIR || entities.length != 0) {
             return false;
         }
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", target.x + 0.5))
-                        .add(new DoubleTag("", target.up().y))
+                        .add(new DoubleTag("", up.y))
                         .add(new DoubleTag("", target.z + 0.5)))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("", 0))
