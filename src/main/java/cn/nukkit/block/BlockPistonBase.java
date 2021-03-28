@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMovingBlock;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
@@ -202,8 +203,9 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             }
 
             List<Block> newBlocks = calculator.getBlocksToMove();
-
             attached = newBlocks.stream().map(Vector3::asBlockVector3).collect(Collectors.toList());
+            if(!isExtended())Collections.reverse(newBlocks);
+            if(!isExtended())Collections.reverse(attached);
 
             BlockFace side = extending ? direction : direction.getOpposite();
 
@@ -213,7 +215,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
                 BlockEntity blockEntity = this.level.getBlockEntity(oldPos);
 
-                this.level.setBlock(newBlock, Block.get(BlockID.MOVING_BLOCK), true);
+                this.level.setBlock(newBlock, Block.get(newBlock.getId()), true);
 
                 CompoundTag nbt = BlockEntity.getDefaultCompound(newBlock, BlockEntity.MOVING_BLOCK)
                         .putInt("pistonPosX", this.getFloorX())
@@ -237,8 +239,11 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
                 new BlockEntityMovingBlock(this.level.getChunk(newBlock.getChunkX(), newBlock.getChunkZ()), nbt);
 
-                if (this.level.getBlockIdAt(oldPos.getFloorX(), oldPos.getFloorY(), oldPos.getFloorZ()) != BlockID.MOVING_BLOCK) {
-                    this.level.setBlock(oldPos, Block.get(BlockID.AIR));
+                if (sticky) {
+                    if(!(getLevel().getBlock(oldPos).getSide(side.getOpposite()).getLocation().equals(getLocation()))) {
+                        this.level.setBlock(oldPos, Block.get(0));
+                        this.level.setBlock(oldPos.getSide(side), newBlock);
+                    }
                 }
             }
         }

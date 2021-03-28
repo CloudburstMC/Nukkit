@@ -209,7 +209,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
             pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
             pk.data = 1000;
 
-            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
+            //this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
         }
 
         pk.evid = LevelEventPacket.EVENT_PARTICLE_SHOOT;

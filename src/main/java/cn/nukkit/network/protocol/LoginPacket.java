@@ -82,6 +82,9 @@ public class LoginPacket extends DataPacket {
         if (skinToken.has("SkinId")) {
             skin.setSkinId(skinToken.get("SkinId").getAsString());
         }
+        if (skinToken.has("PlayFabID")) {
+            skin.setPlayFabId(skinToken.get("PlayFabID").getAsString());
+        }
         if (skinToken.has("CapeId")) {
             skin.setCapeId(skinToken.get("CapeId").getAsString());
         }
@@ -150,7 +153,8 @@ public class LoginPacket extends DataPacket {
         byte[] data = Base64.getDecoder().decode(element.get("Image").getAsString());
         int width = element.get("ImageWidth").getAsInt();
         int height = element.get("ImageHeight").getAsInt();
-        return new SkinAnimation(new SerializedImage(width, height, data), type, frames);
+        int expression = element.get("AnimationExpression").getAsInt();
+        return new SkinAnimation(new SerializedImage(width, height, data), type, frames, expression);
     }
 
     private static SerializedImage getImage(JsonObject token, String name) {
