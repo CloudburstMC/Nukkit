@@ -47,6 +47,8 @@ check("CUSTOM" not in project_version, "The release version has CUSTOM identifie
                                        "project state is really ready for publishing! Version: " + project_version)
 check('-PN' in project_version, "The project version is missing the '-PN' suffix! Version: " + project_version)
 
+log('-> GPG keys:', cmd('gpg', '--list-keys'))
+
 start_progress("Build setup")
 log("-> Preparing to publish", project_name, project_version)
 
