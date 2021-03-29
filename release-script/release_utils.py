@@ -61,7 +61,7 @@ def cmd(*command):
 
 def set_git_config(config, value):
     check(len(config) > 0, "The git config key must not be empty")
-    if len(value) == 0:
+    if value is None:
         cmd('git', 'config', '--unset', config)
     else:
         cmd('git', 'config', config, value)
@@ -69,7 +69,10 @@ def set_git_config(config, value):
 
 git_config_backups = {}
 for _key in git_config_bot:
-    git_config_backups[_key] = cmd('git', 'config', _key)
+    try:
+        git_config_backups[_key] = cmd('git', 'config', _key)
+    except subprocess.CalledProcessError:
+        git_config_backups[_key] = None
 
 
 def commit_cmd(*command):
