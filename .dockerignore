@@ -11,3 +11,4 @@ Dockerfile
 docker-compose.yml
 target
 /release-script
+__pycache__
