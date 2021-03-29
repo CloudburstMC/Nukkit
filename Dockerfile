@@ -26,7 +26,7 @@ WORKDIR /src
 COPY --from=prepare /src /src
 
 # Build the source
-RUN mvn clean package
+RUN mvn --no-transfer-progress clean package
 
 # Use OpenJDK JRE image to runtime
 FROM openjdk:8-jre-slim AS run

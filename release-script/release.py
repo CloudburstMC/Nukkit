@@ -62,6 +62,7 @@ except subprocess.CalledProcessError as err:
     print("-> The tag", git_tag, "is available")
 
 mvn = 'mvn'
+ntp = '--no-transfer-progress'
 if use_mvn_wrapper:
     if is_windows:
         mvn = 'mvnw.cmd'
@@ -73,7 +74,7 @@ adjust_java_home(mvn, project_name, check_java_version)
 
 if run_test_build:
     print('-> Executing a test build with', mvn, 'clean package')
-    args = [mvn, 'clean', 'package', '-Dmaven.javadoc.skip=true']
+    args = [mvn, ntp, 'clean', 'package', '-Dmaven.javadoc.skip=true']
     if not run_tests:
         args += ['-Dmaven.test.skip=true']
     status_code = subprocess.call(args)
@@ -121,7 +122,7 @@ try:
 
     if run_maven_deploy:
         print('-> Executing a maven deploy with', mvn, 'clean deploy')
-        args = [mvn, 'clean', 'deploy']
+        args = [mvn, ntp, 'clean', 'deploy']
         if run_test_build or not run_tests:
             args += ['-Dmaven.test.skip=true']
         status_code = subprocess.call(args)
