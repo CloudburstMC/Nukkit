@@ -47,19 +47,21 @@ check("CUSTOM" not in project_version, "The release version has CUSTOM identifie
                                        "project state is really ready for publishing! Version: " + project_version)
 check('-PN' in project_version, "The project version is missing the '-PN' suffix! Version: " + project_version)
 
-print("-> Preparing to publish", project_name, project_version)
+start_progress("Build setup")
+log("-> Preparing to publish", project_name, project_version)
 
 git_is_dirty = cmd('git', 'status', '--porcelain')
 if not ignore_dirty_state:
     check(not git_is_dirty, "The workspace is dirty!\n" + git_is_dirty)
 
 
+set_build_number(project_version)
 git_tag = 'v' + project_version
 try:
     existing_tag = cmd('git', 'rev-parse', git_tag)
     raise failure("The tag " + git_tag + " is already referencing the commit " + existing_tag)
 except subprocess.CalledProcessError as err:
-    print("-> The tag", git_tag, "is available")
+    log("-> The tag", git_tag, "is available")
 
 mvn = 'mvn'
 ntp = '--no-transfer-progress'
@@ -69,41 +71,49 @@ if use_mvn_wrapper:
     else:
         mvn = './mvnw'
 
-print("-> Checking java version")
+log("-> Checking java version")
 adjust_java_home(mvn, project_name, check_java_version)
+finish_progress()
 
 if run_test_build:
-    print('-> Executing a test build with', mvn, 'clean package')
+    start_progress("Test build")
+    log('-> Executing a test build with', mvn, 'clean package')
     args = [mvn, ntp, 'clean', 'package', '-Dmaven.javadoc.skip=true']
     if not run_tests:
         args += ['-Dmaven.test.skip=true']
     status_code = subprocess.call(args)
     check(status_code == 0, "Could not execute a normal build! Maven returned status code " + str(status_code))
+    finish_progress()
 
+start_progress("Adjusting GIT repository")
 if create_git_branch:
     git_branch = 'release/' + git_tag
     if git_branch != cmd('git', 'branch', '--show-current'):
-        print("-> Creating branch", git_branch)
+        log("-> Creating branch", git_branch)
         cmd('git', 'checkout', '-b', git_branch)
 
 if create_git_commit:
-    print("-> Executing the build commit")
+    log("-> Executing the build commit")
     commit_cmd('git', 'commit', '--allow-empty', '-m', 'Releasing ' + project_name + ' ' + git_tag)
 
 if create_git_tag:
-    print("-> Creating tag", git_tag)
+    log("-> Creating tag", git_tag)
     cmd('git', 'tag', git_tag)
+finish_progress()
 
 docker_tags = []
 try:
     if run_docker_build:
+        start_progress("Executing Docker build")
         docker_version = project_version.replace('-PN', '')
         docker_tag = docker_tag_prefix + ':' + docker_version
         docker_tags += [docker_tag]
-        print('-> Executing a docker build for tag', docker_tag)
+        log('-> Executing a docker build for tag', docker_tag)
         status_code = subprocess.call(('docker', 'build', '-t', docker_tag, '.'))
         check(status_code == 0, "Could not execute a docker build! Status code: " + str(status_code))
+        finish_progress()
 
+        start_progress("Tagging Docker image")
         docker_version_parts = docker_version.split('.')
         for i in range(len(docker_version_parts)):
             docker_version_parts.pop()
@@ -116,31 +126,37 @@ try:
 
             if docker_sub_version is not None:
                 docker_sub_tag = docker_tag_prefix + ':' + docker_sub_version
-                print("-> Adding docker tag", docker_sub_tag)
+                log("-> Adding docker tag", docker_sub_tag)
                 cmd('docker', 'tag', docker_tag, docker_sub_tag)
                 docker_tags += [docker_tag]
+        finish_progress()
 
     if run_maven_deploy:
-        print('-> Executing a maven deploy with', mvn, 'clean deploy')
+        start_progress("Executing Maven Deploy")
+        log('-> Executing a maven deploy with', mvn, 'clean deploy')
         args = [mvn, ntp, 'clean', 'deploy']
         if run_test_build or not run_tests:
             args += ['-Dmaven.test.skip=true']
         status_code = subprocess.call(args)
         check(status_code == 0, "Could not execute the maven deploy! Maven returned status code " + str(status_code))
+        finish_progress()
 except Exception as e:
-    print("-> The release has failed! Removing release commit and the git tag", git_tag, file=sys.stderr)
+    log("-> The release has failed! Removing release commit and the git tag", git_tag, file=sys.stderr)
     cmd('git', 'tag', '-d', git_tag)
     cmd('git', 'reset', '--soft', 'HEAD~1')
     raise e
 
 if run_docker_push:
+    start_progress("Pushing Docker image and tags")
     for docker_tag_to_push in docker_tags:
-        print('-> Pushing docker tag', docker_tag_to_push)
+        log('-> Pushing docker tag', docker_tag_to_push)
         cmd('docker', 'push', docker_tag_to_push)
+    finish_progress()
 
 if update_pom_version:
+    start_progress("Updating pom.xml")
     next_version = project_version + '-CUSTOM'
-    print('-> Changing the project version to', next_version)
+    log('-> Changing the project version to', next_version)
     for node in project_version_tag.childNodes:
         project_version_tag.removeChild(node)
     project_version_tag.appendChild(pom_doc.createTextNode(next_version))
@@ -154,13 +170,16 @@ if update_pom_version:
     if create_git_commit:
         cmd('git', 'add', 'pom.xml')
         cmd('git', 'commit', '-m', 'Version changed to ' + next_version)
+    finish_progress()
 
 if run_git_push:
+    start_progress("Pushing GIT tag and commits")
     if create_git_commit:
-        print("-> Pushing commits to the Git repository")
+        log("-> Pushing commits to the Git repository")
         cmd('git', 'push')
     if create_git_tag:
         print("-> Pushing tag", git_tag, "to the Git repository")
         cmd('git', 'push', 'origin', git_tag)
+    finish_progress()
 
-print("-> The build script has completed")
+log("-> The build script has completed")

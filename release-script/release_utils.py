@@ -100,3 +100,29 @@ def adjust_java_home(mvn, project_name, raise_failures, looped=False):
                         break
                 if raise_failures:
                     raise failure(project_name + " must be built with Java 8 (1.8)")
+
+
+progress = []
+
+
+def start_progress(*message):
+    if os.environ['TEAMCITY_VERSION']:
+        global progress
+        msg = " ".join(message)
+        progress += [msg]
+        print("##teamcity[progressStart '" + msg + "']", flush=True)
+    print("-->", *message)
+
+
+def finish_progress():
+    if os.environ['TEAMCITY_VERSION']:
+        print("##teamcity[progressFinish '" + progress.pop() + "']", flush=True)
+
+
+def log(*args):
+    print(*args, flush=True)
+
+
+def set_build_number(version):
+    if os.environ['TEAMCITY_VERSION']:
+        print("##teamcity[buildNumber '" + version + "']", flush=True)
