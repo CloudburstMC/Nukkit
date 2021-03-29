@@ -29,8 +29,8 @@ from release_config import *
 # run_maven_deploy = False
 # run_git_push = False
 # create_git_tag = False
-create_git_branch = False
+# create_git_branch = False
 # create_git_commit = False
-update_pom_version = False
+# update_pom_version = False
 # docker_tag_prefix = 'powernukkit/powernukkit'
-git_config_bot['commit.gpgsign'] = 'false'
+# git_config_bot['commit.gpgsign'] = 'false'
