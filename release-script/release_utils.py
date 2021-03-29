@@ -83,3 +83,20 @@ def commit_cmd(*command):
     finally:
         for key in git_config_backups:
             set_git_config(key, git_config_backups[key])
+
+
+def adjust_java_home(mvn, project_name, raise_failures, looped=False):
+    for version_line in subprocess.check_output([mvn, '-version']).decode().strip().split("\n"):
+        if "Java version: " in version_line:
+            print("->", version_line)
+            if "Java version: 1.8" not in version_line:
+                jdk_8_home = os.getenv('JDK_1_8')
+                java_home = os.getenv('JAVA_HOME')
+                if jdk_8_home and java_home != jdk_8_home:
+                    print("-> Found an alternative JDK 1.8 at", jdk_8_home)
+                    os.putenv('JAVA_HOME', jdk_8_home)
+                    if not looped:
+                        adjust_java_home(mvn, project_name, raise_failures)
+                        break
+                if raise_failures:
+                    raise failure(project_name + " must be built with Java 8 (1.8)")

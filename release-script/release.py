@@ -69,11 +69,7 @@ if use_mvn_wrapper:
         mvn = './mvnw'
 
 print("-> Checking java version")
-for version_line in subprocess.check_output([mvn, '-version']).decode().strip().split("\n"):
-    if "Java version: " in version_line:
-        print("->", version_line)
-        if check_java_version and "Java version: 1.8" not in version_line:
-            raise failure(project_name + " must be built with Java 8 (1.8)")
+adjust_java_home(mvn, project_name, check_java_version)
 
 if run_test_build:
     print('-> Executing a test build with', mvn, 'clean package')
