@@ -10,5 +10,4 @@ logs
 Dockerfile
 docker-compose.yml
 target
-release.py
-release.pyo
+/release-script

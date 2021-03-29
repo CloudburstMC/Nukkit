@@ -7,7 +7,13 @@ FROM alpine/git:v2.26.2 AS prepare
 
 # Copy the source
 WORKDIR /src
-COPY ./ /src
+COPY pom.xml /src
+
+COPY src/main/java /src/src/main/java
+COPY src/main/resources /src/src/main/resources
+
+COPY src/test/java/cn /src/src/test/java/cn
+COPY src/test/resources /src/src/test/resources
 
 # Update the language submodule
 RUN if [ -z "$(ls -A /src/src/main/resources/lang)" ]; then git submodule update --init; fi

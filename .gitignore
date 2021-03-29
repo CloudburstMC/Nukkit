@@ -245,3 +245,4 @@ data/*
 /helm-values.local.yaml
 
 *.pyo
+/release-script/release_utils.py

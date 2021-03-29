@@ -14,84 +14,9 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import os
-import subprocess
-import sys
 from xml.dom import minidom
 
-ignore_dirty_state = False
-use_mvn_wrapper = True
-check_java_version = True
-run_test_build = True
-run_tests = True
-run_docker_build = True
-run_docker_push = True
-run_maven_deploy = True
-run_git_push = True
-create_git_tag = True
-create_git_branch = True
-create_git_commit = True
-update_pom_version = True
-docker_tag_prefix = 'powernukkit/powernukkit'
-git_config_bot = {
-    'commit.gpgsign': 'false',
-    'user.name': 'PowerNukkit',
-    'user.email': 'github-bot@powernukkit.org'
-}
-
-
-def get_text(nodelist):
-    rc = []
-    for node in nodelist:
-        if node.nodeType == node.TEXT_NODE:
-            rc.append(node.data)
-    return ''.join(rc)
-
-
-def failure(reason):
-    print("FAILED:", reason, file=sys.stderr)
-    return Exception(reason)
-
-
-def check(condition, message):
-    if message is None:
-        raise failure("Bad usage of the check function, the message argument was not provided")
-    if not condition:
-        raise failure(message)
-
-
-def cmd(*command):
-    return subprocess.check_output(
-        command, stderr=subprocess.DEVNULL
-    ).decode().strip()
-
-
-def set_git_config(config, value):
-    check(len(config) > 0, "The git config key must not be empty")
-    if len(value) == 0:
-        cmd('git', 'config', '--unset', config)
-    else:
-        cmd('git', 'config', config, value)
-
-
-git_config_backups = {
-    'commit.gpgsign': '',
-    'user.name': '',
-    'user.email': ''
-}
-for _key in git_config_backups:
-    git_config_backups[_key] = cmd('git', 'config', _key)
-
-
-def commit_cmd(*command):
-    try:
-        for key in git_config_backups:
-            set_git_config(key, git_config_bot[key])
-        return cmd(*command)
-    finally:
-        for key in git_config_backups:
-            set_git_config(key, git_config_backups[key])
-
+from release_utils import *
 
 pom_doc = minidom.parse('pom.xml')
 project_name = None
