@@ -19,17 +19,18 @@ import subprocess
 import sys
 from xml.dom import minidom
 
-ignore_dirty_state = True
+ignore_dirty_state = False
 use_mvn_wrapper = True
 check_java_version = True
-run_test_build = False
-run_tests = False
-run_docker_build = False
-run_docker_push = False
-run_maven_deploy = False
-create_git_tag = False
-create_git_branch = False
-create_git_commit = False
+run_test_build = True
+run_tests = True
+run_docker_build = True
+run_docker_push = True
+run_maven_deploy = True
+run_git_push = True
+create_git_tag = True
+create_git_branch = True
+create_git_commit = True
 update_pom_version = True
 docker_tag_prefix = 'powernukkit/powernukkit'
 git_config_bot = {
@@ -222,12 +223,22 @@ if update_pom_version:
         project_version_tag.removeChild(node)
     project_version_tag.appendChild(pom_doc.createTextNode(next_version))
 
-    pom_output = open("pom-output.xml", "w")
+    pom_output = open("pom.xml", "w")
     try:
         pom_doc.documentElement.writexml(pom_output)
     finally:
         pom_output.close()
 
     if create_git_commit:
-        cmd('git', 'add', 'pom-output.xml')
+        cmd('git', 'add', 'pom.xml')
         cmd('git', 'commit', '-m', 'Version changed to ' + next_version)
+
+if run_git_push:
+    if create_git_commit:
+        print("-> Pushing commits to the Git repository")
+        cmd('git', 'push')
+    if create_git_tag:
+        print("-> Pushing tag", git_tag, "to the Git repository")
+        cmd('git', 'push', 'origin', git_tag)
+
+print("-> The build script has completed")
