@@ -1,16 +1,16 @@
 #  https://PowerNukkit.org - The Nukkit you know but Powerful!
 #  Copyright (C) 2021  José Roberto de Araújo Júnior
-# 
+#
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
 #  the Free Software Foundation, either version 3 of the License, or
 #  (at your option) any later version.
-# 
+#
 #  This program is distributed in the hope that it will be useful,
 #  but WITHOUT ANY WARRANTY; without even the implied warranty of
 #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #  GNU General Public License for more details.
-# 
+#
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -75,7 +75,7 @@ if run_test_build:
     print('-> Executing a test build with', mvn, 'clean package')
     args = [mvn, 'clean', 'package', '-Dmaven.javadoc.skip=true']
     if not run_tests:
-        args += '-Dmaven.test.skip=true'
+        args += ['-Dmaven.test.skip=true']
     status_code = subprocess.call(args)
     check(status_code == 0, "Could not execute a normal build! Maven returned status code " + str(status_code))
 
@@ -98,7 +98,7 @@ try:
     if run_docker_build:
         docker_version = project_version.replace('-PN', '')
         docker_tag = docker_tag_prefix + ':' + docker_version
-        docker_tags += docker_tag
+        docker_tags += [docker_tag]
         print('-> Executing a docker build for tag', docker_tag)
         status_code = subprocess.call(('docker', 'build', '-t', docker_tag, '.'))
         check(status_code == 0, "Could not execute a docker build! Status code: " + str(status_code))
@@ -117,13 +117,13 @@ try:
                 docker_sub_tag = docker_tag_prefix + ':' + docker_sub_version
                 print("-> Adding docker tag", docker_sub_tag)
                 cmd('docker', 'tag', docker_tag, docker_sub_tag)
-                docker_tags += docker_tag
+                docker_tags += [docker_tag]
 
     if run_maven_deploy:
         print('-> Executing a maven deploy with', mvn, 'clean deploy')
         args = [mvn, 'clean', 'deploy']
         if run_test_build or not run_tests:
-            args += '-Dmaven.test.skip=true'
+            args += ['-Dmaven.test.skip=true']
         status_code = subprocess.call(args)
         check(status_code == 0, "Could not execute the maven deploy! Maven returned status code " + str(status_code))
 except Exception as e:
