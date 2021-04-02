@@ -19,10 +19,9 @@ import cn.nukkit.nbt.tag.ListTag;
 public class EntityVillager extends EntityCreature implements InventoryHolder, EntityNPC, EntityAgeable {
 
     public static final int NETWORK_ID = 115;
-	private TradeInventory inventory;
-	private List<TradeInventoryRecipe> recipes = new ArrayList<TradeInventoryRecipe>();
-	
-	private int tradeTier = 0;
+    private TradeInventory inventory;
+    private List<TradeInventoryRecipe> recipes = new ArrayList<TradeInventoryRecipe>();
+    private int tradeTier = 0;
 
     public EntityVillager(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -62,49 +61,49 @@ public class EntityVillager extends EntityCreature implements InventoryHolder, E
     }
     
     public void setTradeTier(int tier) {
-    	this.tradeTier = tier;
+        this.tradeTier = tier;
     }
     
     public int getTradeTier() {
-    	return this.tradeTier;
+        return this.tradeTier;
     }
     
     @Override
     public boolean onInteract(Player player, Item item) {
-    	if(recipes.size() > 0) {
-    		player.addWindow(this.getInventory());
-    		return true;
-    	}
-    	return false;
+        if(recipes.size() > 0) {
+            player.addWindow(this.getInventory());
+            return true;
+        }
+        return false;
     }
     
     public void addTradeRcipe(TradeInventoryRecipe recipe) {
-    	this.recipes.add(recipe);
+        this.recipes.add(recipe);
     }
     
 	public CompoundTag getOffers() {
-		CompoundTag nbt = new CompoundTag();
-		nbt.putList(recipesToNbt());
-		nbt.putList(getTierExpRequirements());
-		return nbt;
+	    CompoundTag nbt = new CompoundTag();
+	    nbt.putList(recipesToNbt());
+	    nbt.putList(getTierExpRequirements());
+	    return nbt;
 	}
 	
 	private ListTag<CompoundTag> recipesToNbt() {
-		ListTag<CompoundTag> tag = new ListTag<CompoundTag>("Recipes");
-		for(TradeInventoryRecipe recipe : this.recipes) {
-			tag.add(recipe.toNBT());
-		}
-		return tag;
+	    ListTag<CompoundTag> tag = new ListTag<CompoundTag>("Recipes");
+	    for(TradeInventoryRecipe recipe : this.recipes) {
+	        tag.add(recipe.toNBT());
+	    }
+	    return tag;
 	}
 	
 	private ListTag<CompoundTag> getTierExpRequirements() {
-		ListTag<CompoundTag> tag = new ListTag<CompoundTag>("TierExpRequirements");
-		tag.add(new CompoundTag().putInt("0", 0));
-		tag.add(new CompoundTag().putInt("1", 10));
-		tag.add(new CompoundTag().putInt("2", 60));
-		tag.add(new CompoundTag().putInt("3", 160));
-		tag.add(new CompoundTag().putInt("4", 310));
-		return tag;
+	    ListTag<CompoundTag> tag = new ListTag<CompoundTag>("TierExpRequirements");
+	    tag.add(new CompoundTag().putInt("0", 0));
+	    tag.add(new CompoundTag().putInt("1", 10));
+	    tag.add(new CompoundTag().putInt("2", 60));
+	    tag.add(new CompoundTag().putInt("3", 160));
+	    tag.add(new CompoundTag().putInt("4", 310));
+	    return tag;
 	}
 
     public boolean isBaby() {
