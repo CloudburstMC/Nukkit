@@ -21,7 +21,6 @@ public class EntityVillager extends EntityCreature implements InventoryHolder, E
     public static final int NETWORK_ID = 115;
     private TradeInventory inventory;
     private List<TradeInventoryRecipe> recipes = new ArrayList<TradeInventoryRecipe>();
-    private int tradeTier = 0;
 
     public EntityVillager(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -58,19 +57,38 @@ public class EntityVillager extends EntityCreature implements InventoryHolder, E
         super.initEntity();
         this.setMaxHealth(20);
         this.inventory = new TradeInventory(this);
+        if(this.namedTag.getCompound("Offers") != null) {
+            ListTag<CompoundTag> nbtRecipes = this.namedTag.getCompound("Offers").getList("Recipes", CompoundTag.class);
+            for(CompoundTag nbt : nbtRecipes.getAll()) {
+                recipes.add(TradeInventoryRecipe.toNBT(nbt));
+            }
+        } else {
+            CompoundTag nbt = new CompoundTag("Offers");
+            nbt.putList(new ListTag<CompoundTag>("Recipes"));
+            nbt.putList(getDefaultTierExpRequirements());
+            this.namedTag.putCompound("Offers", nbt);
+        }
     }
     
     public void setTradeTier(int tier) {
-        this.tradeTier = tier;
+        this.namedTag.putInt("TradeTier", tier);
     }
     
     public int getTradeTier() {
-        return this.tradeTier;
+        return this.namedTag.getInt("TradeTier");
+    }
+    
+    public void setWilling(boolean value) {
+        this.namedTag.putBoolean("Willing", value);
+    }
+    
+    public boolean isWilling() {
+        return this.namedTag.getBoolean("Willing");
     }
     
     @Override
     public boolean onInteract(Player player, Item item) {
-        if(recipes.size() > 0) {
+        if(this.namedTag.getCompound("Offers") != null) {
             player.addWindow(this.getInventory());
             return true;
         }
@@ -79,32 +97,27 @@ public class EntityVillager extends EntityCreature implements InventoryHolder, E
     
     public void addTradeRcipe(TradeInventoryRecipe recipe) {
         this.recipes.add(recipe);
+        ListTag<CompoundTag> nbtRecipes = this.getOffers().getList("Recipes", CompoundTag.class);
+        nbtRecipes.add(recipe.toNBT());
     }
     
-	public CompoundTag getOffers() {
-	    CompoundTag nbt = new CompoundTag();
-	    nbt.putList(recipesToNbt());
-	    nbt.putList(getTierExpRequirements());
-	    return nbt;
+    public List<TradeInventoryRecipe> getRecipes(){
+        return this.recipes;
+    }
+    
+    public CompoundTag getOffers() {
+        return this.namedTag.getCompound("Offers");
 	}
 	
-	private ListTag<CompoundTag> recipesToNbt() {
-	    ListTag<CompoundTag> tag = new ListTag<CompoundTag>("Recipes");
-	    for(TradeInventoryRecipe recipe : this.recipes) {
-	        tag.add(recipe.toNBT());
-	    }
-	    return tag;
-	}
-	
-	private ListTag<CompoundTag> getTierExpRequirements() {
+	private ListTag<CompoundTag> getDefaultTierExpRequirements() {
 	    ListTag<CompoundTag> tag = new ListTag<CompoundTag>("TierExpRequirements");
 	    tag.add(new CompoundTag().putInt("0", 0));
 	    tag.add(new CompoundTag().putInt("1", 10));
-	    tag.add(new CompoundTag().putInt("2", 60));
-	    tag.add(new CompoundTag().putInt("3", 160));
-	    tag.add(new CompoundTag().putInt("4", 310));
+	    tag.add(new CompoundTag().putInt("2", 70));
+	    tag.add(new CompoundTag().putInt("3", 150));
+	    tag.add(new CompoundTag().putInt("4", 250));
 	    return tag;
-	}
+    }
 
     public boolean isBaby() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_BABY);

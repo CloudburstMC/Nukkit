@@ -21,7 +21,7 @@ public class TradeInventory extends BaseInventory {
 		UpdateTradePacket pk = new UpdateTradePacket();
 		pk.windowId = (byte) who.getWindowId(this);
 		pk.windowType = (byte) InventoryType.TRADING.getNetworkType();
-		pk.isWilling = true;
+		pk.isWilling = this.getHolder().isWilling();
 		pk.screen2 = true;
 		pk.trader = this.getHolder().getId();
 		pk.tradeTier = this.getHolder().getTradeTier();
