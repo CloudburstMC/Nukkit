@@ -694,7 +694,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         } else {
             item = fromString(id);
         }
-        item = new Item(item.getId(), item.getDamage(), item.getCount());
         item.setCompoundTag(nbtBytes);
         return item;
     }
