@@ -50,6 +50,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_BOW = dynamic(385);
     public static final int DURABILITY_TRIDENT = dynamic(251);
     public static final int DURABILITY_FISHING_ROD = dynamic(65);
+    @Since("1.4.0.0-PN") public static final int DURABILITY_CROSSBOW = dynamic(465);
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -189,7 +190,16 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean isTool() {
-        return (this.id == FLINT_STEEL || this.id == SHEARS || this.id == BOW || this.id == SHIELD  || this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe());
+        switch (this.id) {
+            case FLINT_STEEL:
+            case SHEARS:
+            case BOW:
+            case CROSSBOW:
+            case SHIELD:
+                return true;
+            default:
+                return this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe();
+        }
     }
 
     @Override

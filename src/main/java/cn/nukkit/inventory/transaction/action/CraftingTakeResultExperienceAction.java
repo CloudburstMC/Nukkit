@@ -51,9 +51,9 @@ public class CraftingTakeResultExperienceAction extends CraftingTakeResultAction
     @Override
     public boolean execute(Player source) {
         if (super.execute(source)) {
-            int experience = getExperience();
-            if (experience > 0) {
-                source.getLevel().dropExpOrb(source, experience, null, 3);
+            int exp = getExperience();
+            if (exp > 0) {
+                source.getLevel().dropExpOrb(source, exp, null, 3);
             }
             return true;
         }

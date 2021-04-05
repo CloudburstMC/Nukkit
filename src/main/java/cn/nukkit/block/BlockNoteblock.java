@@ -6,6 +6,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMusic;
+import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
@@ -80,6 +81,16 @@ public class BlockNoteblock extends BlockSolid implements RedstoneComponent, Blo
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int onTouch(@Nullable Player player, Action action) {
+        if (action == Action.LEFT_CLICK_BLOCK && (player == null || (!player.isCreative() && !player.isSpectator()))) {
+            emitSound();
+        }
+        return super.onTouch(player, action);
     }
 
     public int getStrength() {

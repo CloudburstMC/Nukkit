@@ -10,7 +10,7 @@ import cn.nukkit.item.enchantment.Enchantment;
 public class EnchantmentProtectionAll extends EnchantmentProtection {
 
     public EnchantmentProtectionAll() {
-        super(Enchantment.ID_PROTECTION_ALL, "all", 10, TYPE.ALL);
+        super(Enchantment.ID_PROTECTION_ALL, "all", Rarity.COMMON, TYPE.ALL);
     }
 
     @Override
@@ -20,7 +20,7 @@ public class EnchantmentProtectionAll extends EnchantmentProtection {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 20;
+        return this.getMinEnchantAbility(level) + 11;
     }
 
     @Override

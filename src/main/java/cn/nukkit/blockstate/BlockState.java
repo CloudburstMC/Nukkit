@@ -354,7 +354,7 @@ public final class BlockState implements Serializable, IBlockState {
         } else {
             trimmedState = storage.onlyWithProperties(this, itemNames);
             MutableBlockState itemState = itemProperties.createMutableState(getBlockId());
-            itemProperties.forEach(property -> itemState.setPropertyValue(property.getName(), getPropertyValue(property)));
+            itemNames.forEach(property -> itemState.setPropertyValue(property, getPropertyValue(property)));
             itemBlockMeta = itemState.getExactIntStorage();
         }
         
