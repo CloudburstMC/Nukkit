@@ -1157,7 +1157,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 log.trace("Outbound {}: {}", this.getName(), packet);
             }
 
-            this.interfaz.putPacket(this, packet, false, true);
+            this.interfaz.putPacket(this, packet, false, false);
         }
         return true;
     }
