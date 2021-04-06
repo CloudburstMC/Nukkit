@@ -143,6 +143,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected final Set<Integer> permanentWindows = new IntOpenHashSet();
     private boolean inventoryOpen;
     protected int closingWindowId = Integer.MIN_VALUE;
+    
+    public boolean isTrading = false;
 
     protected int messageCounter = 2;
 
@@ -4689,6 +4691,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public CraftingGrid getCraftingGrid() {
         return this.craftingGrid;
+    }
+    
+    public TradeInventory getTradeInventory() {
+        for(Inventory inv : this.windows.keySet()) {
+            if(inv instanceof TradeInventory) {
+                return (TradeInventory) inv;
+            }
+        }
+        return null;
     }
 
     public void setCraftingGrid(CraftingGrid grid) {

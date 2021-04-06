@@ -16,20 +16,20 @@ public class TradeInventoryRecipe {
 	@Getter
 	private Item secondBuyItem;
 	
-	private int tier = -1;
+	private int tier = 0;
 	private int maxUses = 999;
 	private int buyCountA = 0;
 	private int buyCountB = 0;
 	private int uses = 0;
 	private int demand = 0;
-	private int rewardsExp = 0;
+	private byte rewardsExp = (byte) 0;
 	private int traderExp = 0;
 	private float priceMultiplierA = 0F;
 	private float priceMultiplierB = 0F;
 	
 	
 	public TradeInventoryRecipe(Item sellItem, Item buyItem) {
-		this(sellItem, buyItem, Item.get(0));
+		this(sellItem, buyItem, null);
 	}
 	
 	public TradeInventoryRecipe(Item sellItem, Item buyItem, Item secondBuyItem) {
@@ -78,7 +78,7 @@ public class TradeInventoryRecipe {
 		return this;
 	}
 	
-	public TradeInventoryRecipe setRewardExp(int reward) {
+	public TradeInventoryRecipe setRewardExp(byte reward) {
 		this.rewardsExp = reward;
 		return this;
 	}
@@ -86,14 +86,16 @@ public class TradeInventoryRecipe {
 	public CompoundTag toNBT() {
 		CompoundTag nbt = new CompoundTag();
 		nbt.putCompound("buyA", NBTIO.putItemHelper(buyItem, -1));
-		nbt.putCompound("buyB", NBTIO.putItemHelper(secondBuyItem,-1));
+		if(secondBuyItem != null) {
+			nbt.putCompound("buyB", NBTIO.putItemHelper(secondBuyItem,-1));
+		}
 		nbt.putCompound("sell", NBTIO.putItemHelper(sellItem, -1));
 		nbt.putInt("tier", tier);
 		nbt.putInt("buyCountA", buyCountA);
 		nbt.putInt("buyCountB", buyCountB);
 		nbt.putInt("uses", uses);
 		nbt.putInt("maxUses", maxUses);
-		nbt.putInt("rewardExp", rewardsExp);
+		nbt.putByte("rewardExp", rewardsExp);
 		nbt.putInt("demand", demand);
 		nbt.putInt("traderExp", traderExp);
 		nbt.putFloat("priceMultiplierA", priceMultiplierA);
@@ -102,7 +104,7 @@ public class TradeInventoryRecipe {
 	}
 	
 	public static TradeInventoryRecipe toNBT(CompoundTag nbt) {
-		TradeInventoryRecipe recipe = new TradeInventoryRecipe(NBTIO.getItemHelper(nbt.getCompound("sell")), NBTIO.getItemHelper(nbt.getCompound("buyA")), NBTIO.getItemHelper(nbt.getCompound("buyB")))
+		TradeInventoryRecipe recipe = new TradeInventoryRecipe(NBTIO.getItemHelper(nbt.getCompound("sell")), NBTIO.getItemHelper(nbt.getCompound("buyA")), nbt.contains("buyB") ? NBTIO.getItemHelper(nbt.getCompound("buyB")) : null)
 				.setTier(nbt.getInt("tier"))
 				.setBuyCount(nbt.getInt("buyCountA"), A_ITEM)
 				.setBuyCount(nbt.getInt("buyCountB"), B_ITEM)
@@ -110,7 +112,7 @@ public class TradeInventoryRecipe {
 				.setMultiplier(nbt.getInt("priceMultiplierA"), A_ITEM)
 				.setMultiplier(nbt.getInt("priceMultiplierB"), B_ITEM)
 				.setDemand(nbt.getInt("demand"))
-				.setRewardExp(nbt.getInt("rewardExp"));
+				.setRewardExp((byte)nbt.getByte("rewardExp"));
 		return recipe;
 	}
 	
