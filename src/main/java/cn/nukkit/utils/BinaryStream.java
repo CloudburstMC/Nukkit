@@ -406,16 +406,16 @@ public class BinaryStream {
         String[] canPlace;
         String[] canBreak;
 
-        try (LittleEndianByteBufInputStream stream = new LittleEndianByteBufInputStream(buf); NBTInputStream nbtStream = new NBTInputStream(stream)) {
+        try (LittleEndianByteBufInputStream stream = new LittleEndianByteBufInputStream(buf)) {
             int nbtSize = stream.readShort();
 
             CompoundTag compoundTag = null;
             if (nbtSize > 0) {
-                compoundTag = (CompoundTag) Tag.readNamedTag(nbtStream);
+                compoundTag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
             } else if (nbtSize == -1) {
                 int tagCount = stream.readUnsignedByte();
                 if (tagCount != 1) throw new IllegalArgumentException("Expected 1 tag but got " + tagCount);
-                compoundTag = (CompoundTag) Tag.readNamedTag(nbtStream);
+                compoundTag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
             }
 
             if (compoundTag != null && compoundTag.getAllTags().size() > 0) {
