@@ -1093,4 +1093,8 @@ public class Item implements Cloneable, BlockID, ItemID {
             return null;
         }
     }
+
+    public final int getNetworkId() {
+        return RuntimeItems.getNetworkId(RuntimeItems.getRuntimeMapping().getNetworkFullId(this));
+    }
 }

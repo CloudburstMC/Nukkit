@@ -56,11 +56,15 @@ public class GlobalBlockPalette {
     }
 
     public static int getOrCreateRuntimeId(int id, int meta) {
+        return getOrCreateRuntimeId(id, meta, false);
+    }
+
+    public static int getOrCreateRuntimeId(int id, int meta, boolean returnMissing) {
         int legacyId = id << 6 | meta;
         int runtimeId = legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
             runtimeId = legacyToRuntimeId.get(id << 6);
-            if (runtimeId == -1) {
+            if (runtimeId == -1 && !returnMissing) {
                 log.info("Creating new runtime ID for unknown block {}", id);
                 runtimeId = runtimeIdAllocator.getAndIncrement();
                 legacyToRuntimeId.put(id << 6, runtimeId);
