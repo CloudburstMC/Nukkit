@@ -475,7 +475,7 @@ public class BinaryStream {
         this.putSlot(item, false);
     }
 
-    public void putSlot(Item item, boolean crafting) {
+    public void putSlot(Item item, boolean instanceItem) {
         if (item == null || item.getId() == 0) {
             putByte((byte) 0);
             return;
@@ -489,14 +489,14 @@ public class BinaryStream {
         putLShort(item.getCount());
         putUnsignedVarInt(item.getDamage());
 
-        if (!crafting) {
+        if (!instanceItem) {
             putBoolean(true);
             putVarInt(0);
         }
 
         if (item instanceof ItemBlock) {
             putVarInt(GlobalBlockPalette.getOrCreateRuntimeId(item.getBlock().getId(), item.getBlock().getDamage()));
-        } else if (crafting) {
+        } else if (instanceItem) {
             int runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(item.getId(), item.getDamage(), true);
             putVarInt(Math.max(runtimeId, 0));
         } else {
@@ -504,12 +504,11 @@ public class BinaryStream {
         }
 
         ByteBuf userDataBuf = ByteBufAllocator.DEFAULT.ioBuffer();
-        try (LittleEndianByteBufOutputStream stream = new LittleEndianByteBufOutputStream(userDataBuf);
-             NBTOutputStream nbtStream = new NBTOutputStream(stream)) {
+        try (LittleEndianByteBufOutputStream stream = new LittleEndianByteBufOutputStream(userDataBuf)) {
             if (item.hasCompoundTag()) {
                 stream.writeShort(-1);
                 stream.writeByte(1); // Hardcoded in current version
-                Tag.writeNamedTag(NBTIO.read(item.getCompoundTag(), ByteOrder.LITTLE_ENDIAN), nbtStream);
+                stream.write(item.getCompoundTag());
             } else {
                 userDataBuf.writeShortLE(0);
             }
