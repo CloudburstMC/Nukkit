@@ -10,12 +10,9 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.stream.NBTInputStream;
-import cn.nukkit.nbt.stream.NBTOutputStream;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.LittleEndianByteBufInputStream;
 import cn.nukkit.network.LittleEndianByteBufOutputStream;
 import cn.nukkit.network.protocol.types.EntityLink;
@@ -494,14 +491,8 @@ public class BinaryStream {
             putVarInt(0);
         }
 
-        if (item instanceof ItemBlock) {
-            putVarInt(GlobalBlockPalette.getOrCreateRuntimeId(item.getBlock().getId(), item.getBlock().getDamage()));
-        } else if (instanceItem) {
-            int runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(item.getId(), item.getDamage(), true);
-            putVarInt(Math.max(runtimeId, 0));
-        } else {
-            putVarInt(0);
-        }
+        int runtimeId = GlobalBlockPalette.getOrCreateRuntimeId(item.getBlock().getId(), item.getBlock().getDamage(), true);
+        putVarInt(Math.max(runtimeId, 0)); // put 0 if not in the palette
 
         ByteBuf userDataBuf = ByteBufAllocator.DEFAULT.ioBuffer();
         try (LittleEndianByteBufOutputStream stream = new LittleEndianByteBufOutputStream(userDataBuf)) {
