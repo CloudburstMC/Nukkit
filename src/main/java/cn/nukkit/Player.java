@@ -3165,7 +3165,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     if (item.onClickAir(this, directionVector)) {
                                         if (!this.isCreative()) {
-                                            if (this.inventory.getItemInHand().getId() == item.getId() || item.getId() == 0) {
+                                            if (item.getId() == 0 || this.inventory.getItemInHand().getId() == item.getId()) {
                                                 this.inventory.setItemInHand(item);
                                             } else {
                                                 server.getLogger().debug("Tried to set item " + item.getId() + " but " + this.username + " had item " + this.inventory.getItemInHand().getId() + " in their hand slot");
@@ -3230,7 +3230,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             }
                                         }
 
-                                        if (this.inventory.getItemInHand().getId() == item.getId() || item.getId() == 0) {
+                                        if (item.getId() == 0 || this.inventory.getItemInHand().getId() == item.getId()) {
                                             this.inventory.setItemInHand(item);
                                         } else {
                                             server.getLogger().debug("Tried to set item " + item.getId() + " but " + this.username + " had item " + this.inventory.getItemInHand().getId() + " in their hand slot");
@@ -3278,7 +3278,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
                                             this.inventory.setItemInHand(Item.get(0));
                                         } else {
-                                            if (this.inventory.getItemInHand().getId() == item.getId() || item.getId() == 0) {
+                                            if (item.getId() == 0 || this.inventory.getItemInHand().getId() == item.getId()) {
                                                 this.inventory.setItemInHand(item);
                                             } else {
                                                 server.getLogger().debug("Tried to set item " + item.getId() + " but " + this.username + " had item " + this.inventory.getItemInHand().getId() + " in their hand slot");
