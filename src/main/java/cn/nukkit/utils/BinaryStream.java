@@ -417,7 +417,16 @@ public class BinaryStream {
             }
 
             if (compoundTag != null && compoundTag.getAllTags().size() > 0) {
-                nbt = NBTIO.write(compoundTag, ByteOrder.LITTLE_ENDIAN, false);
+                if (compoundTag.contains("Damage")) {
+                    damage = compoundTag.getInt("Damage");
+                    compoundTag.remove("Damage");
+                }
+                if (compoundTag.contains("__DamageConflict__")) {
+                    compoundTag.put("Damage", compoundTag.removeAndGet("__DamageConflict__"));
+                }
+                if (!compoundTag.isEmpty()) {
+                    nbt = NBTIO.write(compoundTag, ByteOrder.LITTLE_ENDIAN);
+                }
             }
 
             canPlace = new String[stream.readInt()];
@@ -498,7 +507,22 @@ public class BinaryStream {
 
         ByteBuf userDataBuf = ByteBufAllocator.DEFAULT.ioBuffer();
         try (LittleEndianByteBufOutputStream stream = new LittleEndianByteBufOutputStream(userDataBuf)) {
-            if (item.hasCompoundTag()) {
+            if (item instanceof ItemDurable) {
+                byte[] nbt = item.getCompoundTag();
+                CompoundTag tag;
+                if (nbt == null || nbt.length == 0) {
+                    tag = new CompoundTag();
+                } else {
+                    tag = NBTIO.read(nbt, ByteOrder.LITTLE_ENDIAN);
+                }
+                if (tag.contains("Damage")) {
+                    tag.put("__DamageConflict__", tag.removeAndGet("Damage"));
+                }
+                tag.putInt("Damage", item.getDamage());
+                stream.writeShort(-1);
+                stream.writeByte(1); // Hardcoded in current version
+                stream.write(NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN));
+            } else if (item.hasCompoundTag()) {
                 stream.writeShort(-1);
                 stream.writeByte(1); // Hardcoded in current version
                 stream.write(item.getCompoundTag());
