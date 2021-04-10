@@ -3932,34 +3932,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         ev.setKeepExperience(this.level.gameRules.getBoolean(GameRule.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());
 
-        if (cause != null && cause.getCause() != DamageCause.VOID && cause.getCause() != DamageCause.SUICIDE) {
-            PlayerOffhandInventory offhandInventory = this.getOffhandInventory();
-            PlayerInventory playerInventory = this.getInventory();
-            if (offhandInventory.getItem(0).getId() == Item.TOTEM || playerInventory.getItemInHand().getId() == Item.TOTEM) {
-                this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
-                this.extinguish();
-                this.removeAllEffects();
-                this.setHealth(1);
-
-                this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
-                this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800).setAmplifier(1));
-                this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
-
-                EntityEventPacket pk = new EntityEventPacket();
-                pk.eid = this.getId();
-                pk.event = EntityEventPacket.CONSUME_TOTEM;
-                this.dataPacket(pk);
-
-                if (offhandInventory.getItem(0).getId() == Item.TOTEM) {
-                    offhandInventory.clear(0);
-                } else {
-                    playerInventory.clear(playerInventory.getHeldItemIndex());
-                }
-
-                ev.setCancelled(true);
-            }
-        }
-
         this.server.getPluginManager().callEvent(ev);
 
         if (!ev.isCancelled()) {
