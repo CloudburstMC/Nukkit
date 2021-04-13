@@ -494,7 +494,7 @@ public class BinaryStream {
         putVarInt(networkId);
 
         putLShort(item.getCount());
-        putUnsignedVarInt(item instanceof ItemDurable ? item.getDamage() : 0);
+        putUnsignedVarInt(item instanceof ItemDurable || item.getId() > 256 ? item.getDamage() : 0);
 
         if (!instanceItem) {
             putBoolean(true);
