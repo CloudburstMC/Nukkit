@@ -886,6 +886,10 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
+    public Block getBlockUnsafe() {
+        return this.block;
+    }
+
     public int getId() {
         return id;
     }
