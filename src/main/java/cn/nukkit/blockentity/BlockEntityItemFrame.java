@@ -1,12 +1,17 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.LevelEventPacket;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Pub4Game on 03.07.2016.
@@ -107,5 +112,28 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     public int getAnalogOutput() {
         return this.getItem() == null || this.getItem().getId() == 0 ? 0 : this.getItemRotation() % 8 + 1;
+    }
+
+    public boolean dropItem(Player player) {
+        Item item = this.getItem();
+        if (item != null && item.getId() != Item.AIR) {
+            if (player != null) {
+                ItemFrameDropItemEvent event = new ItemFrameDropItemEvent(player, this.getBlock(), this, item);
+                this.level.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    this.spawnTo(player);
+                    return true;
+                }
+            }
+
+            if (this.getItemDropChance() > ThreadLocalRandom.current().nextFloat()) {
+                this.level.dropItem(this.add(0.5, 0, 0.5), item);
+            }
+            this.setItem(Item.get(Item.AIR));
+            this.setItemRotation(0);
+            this.level.addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_REMOVED);
+            return true;
+        }
+        return false;
     }
 }
