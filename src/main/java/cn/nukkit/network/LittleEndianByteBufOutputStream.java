@@ -1,16 +1,20 @@
 package cn.nukkit.network;
 
+import cn.nukkit.api.Since;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+@Since("1.4.0.0-PN")
 public class LittleEndianByteBufOutputStream extends ByteBufOutputStream {
 
     private final ByteBuf buffer;
 
-    public LittleEndianByteBufOutputStream(ByteBuf buffer) {
+    @Since("1.4.0.0-PN")
+    public LittleEndianByteBufOutputStream(@Nonnull ByteBuf buffer) {
         super(buffer);
         this.buffer = buffer;
     }

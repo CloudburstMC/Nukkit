@@ -671,7 +671,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         return fromJson(data, false);
     }
 
-    private static Item fromJson(Map<String, Object> data, boolean ignoreUnsupported) {
+    private static Item fromJson(Map<String, Object> data, boolean ignoreNegativeItemId) {
         String nbt = (String) data.get("nbt_b64");
         byte[] nbtBytes;
         if (nbt != null) {
@@ -686,7 +686,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         int id = Utils.toInt(data.get("id"));
-        if (ignoreUnsupported && id < 0) return null;
+        if (ignoreNegativeItemId && id < 0) return null;
 
         return get(id, Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
