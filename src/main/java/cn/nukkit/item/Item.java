@@ -5,6 +5,8 @@ import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.api.API;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.UnknownRuntimeIdException;
@@ -666,6 +668,10 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static Item fromJson(Map<String, Object> data) {
+        return fromJson(data, false);
+    }
+
+    private static Item fromJson(Map<String, Object> data, boolean ignoreUnsupported) {
         String nbt = (String) data.get("nbt_b64");
         byte[] nbtBytes;
         if (nbt != null) {
@@ -679,7 +685,10 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
         }
 
-        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+        int id = Utils.toInt(data.get("id"));
+        if (ignoreUnsupported && id < 0) return null;
+
+        return get(id, Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
 
     private static Item fromJsonStringId(Map<String, Object> data) {
@@ -1178,6 +1187,12 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
+    @Since("1.4.0.0-PN")
+    @API(definition = API.Definition.INTERNAL, usage = API.Usage.INCUBATING)
+    public Block getBlockUnsafe() {
+        return this.block;
+    }
+
     public int getId() {
         return id;
     }
@@ -1192,7 +1207,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
-    @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public final int getNetworkId() throws UnknownNetworkIdException {
         return RuntimeItems.getNetworkId(getNetworkFullId());
