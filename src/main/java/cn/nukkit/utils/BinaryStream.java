@@ -376,21 +376,21 @@ public class BinaryStream {
     }
 
     public Item getSlot() {
-        int id = getVarInt();
-        if (id == 0) {
+        int networkId = getVarInt();
+        if (networkId == 0) {
             return Item.get(0, 0, 0);
         }
 
         int count = getLShort();
         int damage = (int) getUnsignedVarInt();
 
-        int fullId = RuntimeItems.getRuntimeMapping().getLegacyFullId(id);
-        id = RuntimeItems.getId(fullId);
+        int fullId = RuntimeItems.getRuntimeMapping().getLegacyFullId(networkId);
+        int id = RuntimeItems.getId(fullId);
 
-        /*boolean hasData = RuntimeItems.hasData(fullId); // Unnecessary when the damage is read from NBT
+        boolean hasData = RuntimeItems.hasData(fullId);
         if (hasData) {
             damage = RuntimeItems.getData(fullId);
-        }*/
+        }
 
         if (getBoolean()) { // hasNetId
             getVarInt(); // netId
@@ -497,26 +497,31 @@ public class BinaryStream {
         putVarInt(networkId);
         putLShort(item.getCount());
 
-        boolean useLegacyData = false;
+        int legacyData = 0;
         if (item.getId() > 256) { // Not a block
             if (item instanceof ItemDurable || !RuntimeItems.hasData(networkFullId)) {
-                useLegacyData = true;
+                legacyData = item.getDamage();
             }
         }
-        putUnsignedVarInt(useLegacyData ? item.getDamage() : 0);
+        putUnsignedVarInt(legacyData);
 
         if (!instanceItem) {
-            putBoolean(true);
-            putVarInt(0); //TODO
+            putBoolean(true); // hasNetId
+            putVarInt(0); // netId
         }
 
         Block block = item.getBlockUnsafe();
-        int runtimeId = block == null ? 0 : GlobalBlockPalette.getOrCreateRuntimeId(block.getId(), block.getDamage());
-        putVarInt(runtimeId);
+        int blockRuntimeId = block == null ? 0 : block.getRuntimeId();
+        putVarInt(blockRuntimeId);
+
+        int data = 0;
+        if (item instanceof ItemDurable || item.getId() < 256) {
+            data = item.getDamage();
+        }
 
         ByteBuf userDataBuf = ByteBufAllocator.DEFAULT.ioBuffer();
         try (LittleEndianByteBufOutputStream stream = new LittleEndianByteBufOutputStream(userDataBuf)) {
-            if (item.getDamage() != 0) {
+            if (data != 0) {
                 byte[] nbt = item.getCompoundTag();
                 CompoundTag tag;
                 if (nbt == null || nbt.length == 0) {
@@ -527,7 +532,7 @@ public class BinaryStream {
                 if (tag.contains("Damage")) {
                     tag.put("__DamageConflict__", tag.removeAndGet("Damage"));
                 }
-                tag.putInt("Damage", item.getDamage());
+                tag.putInt("Damage", data);
                 stream.writeShort(-1);
                 stream.writeByte(1); // Hardcoded in current version
                 stream.write(NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN));
