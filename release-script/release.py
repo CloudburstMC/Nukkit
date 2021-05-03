@@ -89,8 +89,10 @@ if run_test_build:
     start_progress("Test build")
     log('-> Executing a test build with', mvn, 'clean package')
     args = [mvn, ntp, 'clean', 'package', '-Dmaven.javadoc.skip=true']
-    if not run_tests:
-        args += ['-Dmaven.test.skip=true']
+    if run_tests:
+        args += ['-DskipTests=false']
+    else:
+        args += ['-DskipTests=true']
     status_code = subprocess.call(args)
     check(status_code == 0, "Could not execute a normal build! Maven returned status code " + str(status_code))
     finish_progress()
@@ -146,7 +148,9 @@ try:
         log('-> Executing a maven deploy with', mvn, 'clean deploy')
         args = [mvn, ntp, 'clean', 'deploy']
         if run_test_build or not run_tests:
-            args += ['-Dmaven.test.skip=true']
+            args += ['-DDskipTests=true']
+        else:
+            args += ['-DDskipTests=false']
         status_code = subprocess.call(args)
         check(status_code == 0, "Could not execute the maven deploy! Maven returned status code " + str(status_code))
         finish_progress()

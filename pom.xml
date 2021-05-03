@@ -76,6 +76,7 @@
         <log4j2.version>2.13.3</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jline.version>3.9.0</jline.version>
+        <skipTests>true</skipTests>
     </properties>
 
     <distributionManagement>
@@ -337,6 +338,9 @@
                         <version>${junit.platform.version}</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <skipTests>${skipTests}</skipTests>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -379,6 +383,7 @@
                 <configuration> <!-- add this to disable checking -->
                     <source>8</source>
                     <doclint>none</doclint>
+                    <quiet>true</quiet>
                 </configuration>
                 <executions>
                     <execution>
