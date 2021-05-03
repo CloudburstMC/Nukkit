@@ -26,11 +26,15 @@ run_git_push = True
 create_git_tag = True
 create_git_branch = True
 create_git_commit = True
+set_github_remote = True
 update_pom_version = True
 docker_tag_prefix = 'powernukkit/powernukkit'
+git_remote_url = 'git@github.com:PowerNukkit/PowerNukkit.git'
+git_remote_name = 'release'
 git_config_bot = {
-    'user.signingkey': 'BCB3AD96313CC7D292E58CA611DF304775A727C6',
+    'user.signingkey': 'D1F95F70994B202BF88B6C6D5093B6EC28B05461',
     'commit.gpgsign': 'true',
-    'user.name': 'PowerNukkit',
+    'gpg.program': 'gpg',
+    'user.name': 'PowerNukkitBot',
     'user.email': 'github-bot@powernukkit.org'
 }

@@ -47,6 +47,14 @@ check("CUSTOM" not in project_version, "The release version has CUSTOM identifie
                                        "project state is really ready for publishing! Version: " + project_version)
 check('-PN' in project_version, "The project version is missing the '-PN' suffix! Version: " + project_version)
 
+check_support('gpg --version')
+if create_git_commit or create_git_tag or create_git_branch:
+    check_support('git --version')
+if run_docker_build or run_docker_push:
+    check_support('docker --version')
+if not use_mvn_wrapper:
+    check_support('mvn -version')
+
 log('-> GPG keys:', cmd('gpg', '--list-keys'))
 
 start_progress("Build setup")
@@ -171,17 +179,25 @@ if update_pom_version:
 
     if create_git_commit:
         cmd('git', 'add', 'pom.xml')
-        cmd('git', 'commit', '-m', 'Version changed to ' + next_version)
+        commit_cmd('git', 'commit', '-m', 'Version changed to ' + next_version)
     finish_progress()
 
 if run_git_push:
     start_progress("Pushing GIT tag and commits")
+    if set_github_remote:
+        log("-> Setting the git remote", git_remote_name, "to", git_remote_url)
+        try:
+            log("Trying to add...")
+            cmd('git', 'remote', 'add', git_remote_name, git_remote_url)
+        except subprocess.CalledProcessError:
+            log("Trying to set...")
+            cmd('git', 'remote', 'set-url', git_remote_name, git_remote_url)
     if create_git_commit:
         log("-> Pushing commits to the Git repository")
-        cmd('git', 'push')
+        cmd('git', 'push', '-u', git_remote_name)
     if create_git_tag:
         print("-> Pushing tag", git_tag, "to the Git repository")
-        cmd('git', 'push', 'origin', git_tag)
+        cmd('git', 'push', git_remote_name, git_tag)
     finish_progress()
 
 log("-> The build script has completed")

@@ -54,9 +54,7 @@ def check(condition, message):
 
 
 def cmd(*command):
-    return subprocess.check_output(
-        command, stderr=subprocess.DEVNULL
-    ).decode().strip()
+    return subprocess.check_output(command).decode().strip()
 
 
 def set_git_config(config, value):
@@ -105,18 +103,26 @@ def adjust_java_home(mvn, project_name, raise_failures, looped=False):
 progress = []
 
 
+def is_teamcity():
+    if os.getenv('TEAMCITY_VERSION'):
+        # log("TeamCity: true")
+        return True
+    # log("TeamCity: false")
+    return False
+
+
 def start_progress(*message):
-    if os.environ['TEAMCITY_VERSION']:
+    if is_teamcity():
         global progress
         msg = " ".join(message)
         progress += [msg]
-        print("##teamcity[progressStart '" + msg + "']", flush=True)
+        print("##teamcity[blockOpened '" + msg + "']", flush=True)
     print("-->", *message)
 
 
 def finish_progress():
-    if os.environ['TEAMCITY_VERSION']:
-        print("##teamcity[progressFinish '" + progress.pop() + "']", flush=True)
+    if is_teamcity():
+        print("##teamcity[blockClosed '" + progress.pop() + "']", flush=True)
 
 
 def log(*args):
@@ -124,5 +130,13 @@ def log(*args):
 
 
 def set_build_number(version):
-    if os.environ['TEAMCITY_VERSION']:
+    if is_teamcity():
         print("##teamcity[buildNumber '" + version + "']", flush=True)
+
+
+def check_support(args):
+    try:
+        log('OK:', args, cmd(*args.split(' ')).split("\n")[0])
+    except Exception as e:
+        log('FAIL:', args)
+        raise e
