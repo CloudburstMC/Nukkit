@@ -116,13 +116,13 @@ def start_progress(*message):
         global progress
         msg = " ".join(message)
         progress += [msg]
-        print("##teamcity[blockOpened '" + msg + "']", flush=True)
+        print("##teamcity[blockOpened name='" + msg + "']", flush=True)
     print("-->", *message)
 
 
 def finish_progress():
     if is_teamcity():
-        print("##teamcity[blockClosed '" + progress.pop() + "']", flush=True)
+        print("##teamcity[blockClosed name='" + progress.pop() + "']", flush=True)
 
 
 def log(*args):
