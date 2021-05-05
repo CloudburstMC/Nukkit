@@ -205,7 +205,7 @@ if run_git_push:
         log("-> Fetching from ", git_remote_name)
         cmd('git', 'fetch', git_remote_name)
     else:
-        git_remote_name = cmd('git', 'config', 'branch.master.remote')
+        git_remote_name = 'origin'
 
     log("Remote:", git_remote_name)
     log("Branch:", git_branch)
