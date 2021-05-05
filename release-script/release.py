@@ -98,11 +98,17 @@ if run_test_build:
     finish_progress()
 
 start_progress("Adjusting GIT repository")
+git_branch = None
 if create_git_branch:
     git_branch = 'release/' + git_tag
     if git_branch != cmd('git', 'branch', '--show-current'):
         log("-> Creating branch", git_branch)
         cmd('git', 'checkout', '-b', git_branch)
+
+if create_git_branch or create_git_commit:
+    if git_branch is None:
+        git_branch = cmd('git', 'branch', '--show-current')
+    log('-> Current branch:', git_branch)
 
 if create_git_commit:
     log("-> Executing the build commit")
