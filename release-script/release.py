@@ -204,6 +204,12 @@ if run_git_push:
             cmd('git', 'remote', 'set-url', git_remote_name, git_remote_url)
         log("-> Fetching from ", git_remote_name)
         cmd('git', 'fetch', git_remote_name)
+    else:
+        git_remote_name = cmd('git', 'config', 'branch.master.remote')
+
+    log("Remote:", git_remote_name)
+    log("Branch:", git_branch)
+
     if create_git_commit:
         log("-> Pushing commits to the Git repository")
         cmd('git', 'push', '-u', git_remote_name, git_branch)
