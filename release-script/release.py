@@ -197,6 +197,7 @@ if run_git_push:
     if set_github_remote:
         log("-> Setting the git remote", git_remote_name, "to", git_remote_url)
         try:
+            log("Remotes:", cmd('git', 'remote', 'get-url', 'origin', '--all'))
             log("Trying to add...")
             cmd('git', 'remote', 'add', git_remote_name, git_remote_url)
         except subprocess.CalledProcessError:
