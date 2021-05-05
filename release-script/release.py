@@ -197,15 +197,16 @@ if run_git_push:
     if set_github_remote:
         log("-> Setting the git remote", git_remote_name, "to", git_remote_url)
         try:
-            log("Remotes:", cmd('git', 'remote', 'get-url', 'origin', '--all'))
             log("Trying to add...")
             cmd('git', 'remote', 'add', git_remote_name, git_remote_url)
         except subprocess.CalledProcessError:
             log("Trying to set...")
             cmd('git', 'remote', 'set-url', git_remote_name, git_remote_url)
+        log("-> Fetching from ", git_remote_name)
+        cmd('git', 'fetch', git_remote_name)
     if create_git_commit:
         log("-> Pushing commits to the Git repository")
-        cmd('git', 'push', '-u', git_remote_name)
+        cmd('git', 'push', '-u', git_remote_name, git_branch)
     if create_git_tag:
         print("-> Pushing tag", git_tag, "to the Git repository")
         cmd('git', 'push', git_remote_name, git_tag)
