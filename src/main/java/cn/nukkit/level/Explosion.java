@@ -164,16 +164,14 @@ public class Explosion {
                 int exposure = 1;
                 double impact = (1 - distance) * exposure;
 
-                if (this.doesDamage) {
-                    int damage = (int) (((impact * impact + impact) / 2) * 8 * explosionSize + 1);
+                int damage = this.doesDamage ? (int) (((impact * impact + impact) / 2) * 8 * explosionSize + 1) : 0;
 
-                    if (this.what instanceof Entity) {
-                        entity.attack(new EntityDamageByEntityEvent((Entity) this.what, entity, DamageCause.ENTITY_EXPLOSION, damage));
-                    } else if (this.what instanceof Block) {
-                        entity.attack(new EntityDamageByBlockEvent((Block) this.what, entity, DamageCause.BLOCK_EXPLOSION, damage));
-                    } else {
-                        entity.attack(new EntityDamageEvent(entity, DamageCause.BLOCK_EXPLOSION, damage));
-                    }
+                if (this.what instanceof Entity) {
+                    entity.attack(new EntityDamageByEntityEvent((Entity) this.what, entity, DamageCause.ENTITY_EXPLOSION, damage));
+                } else if (this.what instanceof Block) {
+                    entity.attack(new EntityDamageByBlockEvent((Block) this.what, entity, DamageCause.BLOCK_EXPLOSION, damage));
+                } else {
+                    entity.attack(new EntityDamageEvent(entity, DamageCause.BLOCK_EXPLOSION, damage));
                 }
 
                 if (!(entity instanceof EntityItem || entity instanceof EntityXPOrb)) {
