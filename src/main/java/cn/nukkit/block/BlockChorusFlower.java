@@ -37,4 +37,14 @@ public class BlockChorusFlower extends BlockTransparent {
     public Item[] getDrops(Item item) {
         return new Item[]{this.toItem()};
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }

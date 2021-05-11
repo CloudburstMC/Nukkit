@@ -49,7 +49,7 @@ public class ShortTag extends NumberTag<Integer> {
 
     @Override
     public String toString() {
-        return "" + data;
+        return "ShortTag " + this.getName() + "(data: " + data + ")";
     }
 
     @Override

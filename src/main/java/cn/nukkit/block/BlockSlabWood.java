@@ -68,7 +68,7 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public BlockColor getColor() {
-        switch(getDamage() & 0x07){
+        switch (getDamage() & 0x07) {
             default:
             case 0: //OAK
                 return BlockColor.WOOD_BLOCK_COLOR;

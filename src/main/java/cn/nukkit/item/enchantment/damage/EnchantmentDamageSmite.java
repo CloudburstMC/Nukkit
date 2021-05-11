@@ -25,7 +25,7 @@ public class EnchantmentDamageSmite extends EnchantmentDamage {
 
     @Override
     public double getDamageBonus(Entity entity) {
-        if(entity instanceof EntitySmite) {
+        if (entity instanceof EntitySmite) {
             return getLevel() * 2.5;
         }
 

@@ -2,6 +2,7 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
@@ -42,6 +43,8 @@ public abstract class BlockEntity extends Position {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
+    public static final String DISPENSER = "Dispenser";
+    public static final String DROPPER = "Dropper";
 
 
     public static long count = 1;
@@ -52,7 +55,7 @@ public abstract class BlockEntity extends Position {
     public String name;
     public long id;
 
-    public boolean movable = true;
+    public boolean movable;
 
     public boolean closed = false;
     public CompoundTag namedTag;
@@ -76,7 +79,13 @@ public abstract class BlockEntity extends Position {
         this.x = this.namedTag.getInt("x");
         this.y = this.namedTag.getInt("y");
         this.z = this.namedTag.getInt("z");
-        this.movable = this.namedTag.getBoolean("isMovable");
+
+        if (namedTag.contains("isMovable")) {
+            this.movable = this.namedTag.getBoolean("isMovable");
+        } else {
+            this.movable = true;
+            namedTag.putBoolean("isMovable", true);
+        }
 
         this.initBlockEntity();
 
@@ -199,6 +208,10 @@ public abstract class BlockEntity extends Position {
 
     public void setDirty() {
         chunk.setChanged();
+
+        if (this.getLevelBlock().getId() != BlockID.AIR) {
+            this.level.updateComparatorOutputLevel(this);
+        }
     }
 
     public String getName() {
@@ -210,7 +223,7 @@ public abstract class BlockEntity extends Position {
     }
 
     public static CompoundTag getDefaultCompound(Vector3 pos, String id) {
-        return new CompoundTag("")
+        return new CompoundTag()
                 .putString("id", id)
                 .putInt("x", pos.getFloorX())
                 .putInt("y", pos.getFloorY())

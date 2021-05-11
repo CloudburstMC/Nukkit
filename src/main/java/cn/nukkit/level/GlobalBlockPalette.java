@@ -8,10 +8,14 @@ import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import lombok.extern.log4j.Log4j2;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.nio.ByteOrder;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,6 +25,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GlobalBlockPalette {
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
+    private static final Int2ObjectMap<String> legacyIdToString = new Int2ObjectOpenHashMap<>();
+    private static final Map<String, Integer> stringToLegacyId = new HashMap<>();
     private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
 
     static {
@@ -43,10 +49,14 @@ public class GlobalBlockPalette {
             if (!state.contains("LegacyStates")) continue;
 
             List<CompoundTag> legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
+            String name = state.getCompound("block").getString("name");
 
             // Resolve to first legacy id
             CompoundTag firstState = legacyStates.get(0);
             runtimeIdToLegacy.put(runtimeId, firstState.getInt("id") << 6 | firstState.getShort("val"));
+
+            stringToLegacyId.put(name, firstState.getInt("id"));
+            legacyIdToString.put(firstState.getInt("id"), name);
 
             for (CompoundTag legacyState : legacyStates) {
                 int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
@@ -72,5 +82,13 @@ public class GlobalBlockPalette {
 
     public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
         return getOrCreateRuntimeId(legacyId >> 4, legacyId & 0xf);
+    }
+
+    public static int getLegacyId(int runtimeId) {
+        return runtimeIdToLegacy.get(runtimeId);
+    }
+
+    public static String getName(int id) {
+        return legacyIdToString.get(id);
     }
 }
