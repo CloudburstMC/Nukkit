@@ -7,6 +7,7 @@ import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.particle.ExplodeParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.Vector3;
@@ -105,13 +106,17 @@ public class ItemBucket extends Item {
                     }
 
                     if (player.isSurvival()) {
-                        Item clone = this.clone();
-                        clone.setCount(this.getCount() - 1);
-                        player.getInventory().setItemInHand(clone);
-                        if (player.getInventory().canAddItem(ev.getItem())) {
-                            player.getInventory().addItem(ev.getItem());
+                        if (this.getCount() - 1 <= 0) {
+                            player.getInventory().setItemInHand(ev.getItem());
                         } else {
-                            player.dropItem(ev.getItem());
+                            Item clone = this.clone();
+                            clone.setCount(this.getCount() - 1);
+                            player.getInventory().setItemInHand(clone);
+                            if (player.getInventory().canAddItem(ev.getItem())) {
+                                player.getInventory().addItem(ev.getItem());
+                            } else {
+                                player.dropItem(ev.getItem());
+                            }
                         }
                     }
 
@@ -133,8 +138,10 @@ public class ItemBucket extends Item {
                 ev.setCancelled(true);
             }
 
+            boolean nether = false;
             if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
                 ev.setCancelled(true);
+                nether = true;
             }
 
             player.getServer().getPluginManager().callEvent(ev);
@@ -142,13 +149,17 @@ public class ItemBucket extends Item {
             if (!ev.isCancelled()) {
                 player.getLevel().setBlock(block, targetBlock, true, true);
                 if (player.isSurvival()) {
-                    Item clone = this.clone();
-                    clone.setCount(this.getCount() - 1);
-                    player.getInventory().setItemInHand(clone);
-                    if (player.getInventory().canAddItem(ev.getItem())) {
-                        player.getInventory().addItem(ev.getItem());
+                    if (this.getCount() - 1 <= 0) {
+                        player.getInventory().setItemInHand(ev.getItem());
                     } else {
-                        player.dropItem(ev.getItem());
+                        Item clone = this.clone();
+                        clone.setCount(this.getCount() - 1);
+                        player.getInventory().setItemInHand(clone);
+                        if (player.getInventory().canAddItem(ev.getItem())) {
+                            player.getInventory().addItem(ev.getItem());
+                        } else {
+                            player.dropItem(ev.getItem());
+                        }
                     }
                 }
 
@@ -178,6 +189,13 @@ public class ItemBucket extends Item {
                 }
 
                 return true;
+            } else if (nether) {
+                if (!player.isCreative()) {
+                    this.setDamage(0); // Empty bucket
+                    player.getInventory().setItemInHand(this);
+                }
+                player.getLevel().addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_FIZZ);
+                player.getLevel().addParticle(new ExplodeParticle(target.add(0.5, 1, 0.5)));
             } else {
                 player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 player.getInventory().sendContents(player);
@@ -194,7 +212,7 @@ public class ItemBucket extends Item {
 
     @Override
     public boolean onUse(Player player, int ticksUsed) {
-        if (player.isSpectator()) {
+        if (player.isSpectator() || this.getDamage() != 1) {
             return false;
         }
 
@@ -207,9 +225,7 @@ public class ItemBucket extends Item {
         }
 
         if (!player.isCreative()) {
-            this.count--;
-            player.getInventory().setItemInHand(this);
-            player.getInventory().addItem(new ItemBucket());
+            player.getInventory().setItemInHand(new ItemBucket());
         }
 
         player.removeAllEffects();

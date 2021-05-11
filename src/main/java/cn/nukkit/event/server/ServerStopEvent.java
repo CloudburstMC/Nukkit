@@ -1,6 +1,5 @@
 package cn.nukkit.event.server;
 
-import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
