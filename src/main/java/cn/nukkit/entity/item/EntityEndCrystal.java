@@ -36,6 +36,7 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
         }
 
         this.fireProof = true;
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_FIRE_IMMUNE, true);
     }
 
     @Override
