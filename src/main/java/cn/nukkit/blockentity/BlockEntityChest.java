@@ -70,8 +70,8 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     @Override
     public void onBreak() {
         if (this.isPaired()) {
-			unpair();
-		}
+            unpair();
+        }
         for (Item content : inventory.getContents().values()) {
             level.dropItem(this, content);
         }
