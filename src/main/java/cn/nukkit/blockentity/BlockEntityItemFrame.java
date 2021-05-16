@@ -17,6 +17,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
 import javax.annotation.Nullable;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Pub4Game
@@ -120,10 +121,24 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         return this.getItem() == null || this.getItem().getId() == 0 ? 0 : this.getItemRotation() % 8 + 1;
     }
 
+    @Since("1.4.0.0-PN")
+    public boolean dropItem(Player player) {
+        Item before = this.getItem();
+        if (before == null || before.isNull()) {
+            return false;
+        }
+        EntityItem drop = dropItemAndGetEntity(player);
+        if (drop != null) {
+            return true;
+        }
+        Item after = this.getItem();
+        return after == null || after.isNull();
+    }
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nullable
-    public EntityItem dropItem(@Nullable Player player) {
+    public EntityItem dropItemAndGetEntity(@Nullable Player player) {
         Level level = getValidLevel();
         Item drop = getItem();
         if (drop.isNull()) {
@@ -141,13 +156,16 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
             }
             return null;
         }
-        
-        EntityItem itemEntity = level.dropAndGetItem(add(0.5, 0.25, 0.5), drop);
-        if (itemEntity == null) {
-            if (player != null) {
-                spawnTo(player);
+
+        EntityItem itemEntity = null;
+        if (this.getItemDropChance() > ThreadLocalRandom.current().nextFloat()) {
+            itemEntity = level.dropAndGetItem(add(0.5, 0.25, 0.5), drop);
+            if (itemEntity == null) {
+                if (player != null) {
+                    spawnTo(player);
+                }
+                return null;
             }
-            return null;
         }
         
         setItem(MinecraftItemID.AIR.get(0), true);
