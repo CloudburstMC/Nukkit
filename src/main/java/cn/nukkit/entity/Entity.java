@@ -1976,7 +1976,9 @@ public abstract class Entity extends Location implements Metadatable {
         return hasWaterAt(this.getEyeHeight());
     }
 
-    private boolean hasWaterAt(float height) {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected boolean hasWaterAt(float height) {
         double y = this.y + height;
         Block block = this.level.getBlock(this.temporalVector.setComponents(NukkitMath.floorDouble(this.x), NukkitMath.floorDouble(y), NukkitMath.floorDouble(this.z)));
 
