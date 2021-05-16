@@ -9,6 +9,7 @@ import cn.nukkit.block.BlockTNT;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityShulkerBox;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityXPOrb;
 import cn.nukkit.event.block.BlockExplodeEvent;
@@ -48,6 +49,7 @@ public class Explosion {
     private final double stepLen = 0.3d;
 
     private final Object what;
+    private boolean doesDamage = true;
 
     public Explosion(Position center, double size, Entity what) {
         this(center, size, (Object) what);
@@ -111,6 +113,18 @@ public class Explosion {
      * @return bool
      */
     public boolean explodeA() {
+        if (what instanceof EntityExplosive) {
+            Entity entity = (Entity) what;
+            int block = level.getBlockIdAt(entity.getFloorX(), entity.getFloorY(), entity.getFloorZ());
+            if (block == BlockID.WATER || block == BlockID.STILL_WATER
+                    || (block = level.getBlockIdAt(entity.getFloorX(), entity.getFloorY(), entity.getFloorZ(), 1)) == BlockID.WATER
+                    || block == BlockID.STILL_WATER
+            ) {
+                this.doesDamage = false;
+                return true;
+            }
+        }
+
         if (this.size < 0.1) {
             return false;
         }
@@ -225,7 +239,6 @@ public class Explosion {
         double maxZ = NukkitMath.ceilDouble(this.source.z + explosionSize + 1);
 
         AxisAlignedBB explosionBB = new SimpleAxisAlignedBB(minX, minY, minZ, maxX, maxY, maxZ);
-
         Entity[] list = this.level.getNearbyEntities(explosionBB, this.what instanceof Entity ? (Entity) this.what : null);
         for (Entity entity : list) {
             double distance = entity.distance(this.source) / explosionSize;
@@ -234,7 +247,8 @@ public class Explosion {
                 Vector3 motion = entity.subtract(this.source).normalize();
                 int exposure = 1;
                 double impact = (1 - distance) * exposure;
-                int damage = (int) (((impact * impact + impact) / 2) * 8 * explosionSize + 1);
+
+                int damage = this.doesDamage ? (int) (((impact * impact + impact) / 2) * 8 * explosionSize + 1) : 0;
 
                 if (this.what instanceof Entity) {
                     entity.attack(new EntityDamageByEntityEvent((Entity) this.what, entity, DamageCause.ENTITY_EXPLOSION, damage));

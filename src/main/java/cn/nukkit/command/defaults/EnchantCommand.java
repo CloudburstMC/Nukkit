@@ -34,7 +34,8 @@ public class EnchantCommand extends VanillaCommand {
                         "protection", "fire_protection", "feather_falling", "blast_protection", "projectile_projection", "thorns", "respiration",
                         "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods", "knockback", "fire_aspect", "looting", "efficiency",
                         "silk_touch", "durability", "fortune", "power", "punch", "flame", "infinity", "luck_of_the_sea", "lure", "frost_walker", "mending",
-                        "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling")),
+                        "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling", "multishot", "piercing", "quick_charge",
+                        "soul_speed")),
                 CommandParameter.newType("level", true, CommandParamType.INT)
         });
     }
@@ -157,6 +158,14 @@ public class EnchantCommand extends VanillaCommand {
                 return 31;
             case "channeling":
                 return 32;
+            case "multishot":
+                return 33;
+            case "piercing":
+                return 34;
+            case "quick_charge":
+                return 35;
+            case "soul_speed":
+                return 36;
             default:
                 return Integer.parseInt(value);
         }

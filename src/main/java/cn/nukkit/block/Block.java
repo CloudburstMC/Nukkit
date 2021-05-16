@@ -7,6 +7,7 @@ import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockstate.*;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -954,6 +955,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public int onUpdate(int type) {
         return 0;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int onTouch(@Nullable Player player, PlayerInteractEvent.Action action) {
+        return onUpdate(Level.BLOCK_UPDATE_TOUCH);
     }
     
     @PowerNukkitOnly

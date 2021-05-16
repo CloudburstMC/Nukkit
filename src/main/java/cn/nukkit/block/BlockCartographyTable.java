@@ -60,9 +60,9 @@ public class BlockCartographyTable extends BlockSolid {
     
     @Override
     public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
-        if (player != null) {
-            player.craftingType = Player.CRAFTING_CARTOGRAPHY;
-        }
-        return true;
+        //if (player != null) {
+        //    player.craftingType = Player.CRAFTING_CARTOGRAPHY;
+        //}
+        return false;
     }
 }
