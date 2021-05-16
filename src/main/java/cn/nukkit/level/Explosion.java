@@ -116,7 +116,10 @@ public class Explosion {
         if (what instanceof EntityExplosive) {
             Entity entity = (Entity) what;
             int block = level.getBlockIdAt(entity.getFloorX(), entity.getFloorY(), entity.getFloorZ());
-            if (block == BlockID.WATER || block == BlockID.STILL_WATER) {
+            if (block == BlockID.WATER || block == BlockID.STILL_WATER
+                    || (block = level.getBlockIdAt(entity.getFloorX(), entity.getFloorY(), entity.getFloorZ(), 1)) == BlockID.WATER
+                    || block == BlockID.STILL_WATER
+            ) {
                 this.doesDamage = false;
                 return true;
             }
