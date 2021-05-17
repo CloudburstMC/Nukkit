@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.api.Since;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.TransactionData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
@@ -40,7 +42,13 @@ public class InventoryTransactionPacket extends DataPacket {
     public int transactionType;
     public NetworkInventoryAction[] actions;
     public TransactionData transactionData;
-    @Since("1.3.0.0-PN") public boolean hasNetworkIds;
+
+    @Since("1.3.0.0-PN")
+    @PowerNukkitOnly("Backward compatibility")
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Removed from NukkitX", toBeRemovedAt = "1.5.0.0-PN")
+    public boolean hasNetworkIds;
+
     @Since("1.3.0.0-PN") public int legacyRequestId;
 
     /**
@@ -62,7 +70,6 @@ public class InventoryTransactionPacket extends DataPacket {
         this.putVarInt(this.legacyRequestId);
         //TODO legacySlot array
         this.putUnsignedVarInt(this.transactionType);
-        this.putBoolean(this.hasNetworkIds);
         this.putUnsignedVarInt(this.actions.length);
         for (NetworkInventoryAction action : this.actions) {
             action.write(this);
@@ -121,8 +128,6 @@ public class InventoryTransactionPacket extends DataPacket {
         }
 
         this.transactionType = (int) this.getUnsignedVarInt();
-
-        this.hasNetworkIds = this.getBoolean();
 
         int length = (int) this.getUnsignedVarInt();
         Collection<NetworkInventoryAction> actions = new ArrayDeque<>();

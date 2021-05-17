@@ -19,7 +19,6 @@ import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
-import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.event.block.LecternPageChangeEvent;
 import cn.nukkit.event.block.WaterFrostEvent;
 import cn.nukkit.event.entity.*;
@@ -109,7 +108,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final Player[] EMPTY_ARRAY = new Player[0];
-    
+
     private static final int NO_SHIELD_DELAY = 10;
 
     public static final int SURVIVAL = 0;
@@ -220,14 +219,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected final int spawnThreshold;
 
     protected Position spawnPosition = null;
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     protected Vector3 spawnBlockPosition;
 
     protected int inAirTicks = 0;
     protected int startAirTicks = 5;
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     private int noShieldTicks;
@@ -283,7 +282,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private int timeSinceRest;
 
     protected int lastPlayerdLevelUpSoundTime = 0;
-    
+
     private TaskHandler delayedPosTrackingUpdate;
 
     private float soulSpeedMultiplier = 1;
@@ -642,7 +641,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public Map<String, PermissionAttachmentInfo> getEffectivePermissions() {
         return this.perm.getEffectivePermissions();
     }
-    
+
     private static InetSocketAddress uncheckedNewInetSocketAddress(String ip, int port) {
         try {
             return new InetSocketAddress(InetAddress.getByName(ip), port);
@@ -650,11 +649,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             throw new IllegalArgumentException(exception);
         }
     }
-    
+
     public Player(SourceInterface interfaz, Long clientID, String ip, int port) {
         this(interfaz, clientID, uncheckedNewInetSocketAddress(ip, port));
     }
-    
+
     @PowerNukkitOnly
     public Player(SourceInterface interfaz, Long clientID, InetSocketAddress socketAddress) {
         super(null, new CompoundTag());
@@ -1022,7 +1021,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void updateTrackingPositions() {
         updateTrackingPositions(false);
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public void updateTrackingPositions(boolean delayed) {
@@ -1164,7 +1163,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @DeprecationDetails(by = "Cloudburst Nukkit", since = "2019-05-08", replaceWith = "dataPacket(DataPacket)",
             reason = "ACKs are handled by the RakNet layer only")
-    @PowerNukkitDifference(since = "1.3.2.0-PN", 
+    @PowerNukkitDifference(since = "1.3.2.0-PN",
             info = "Cloudburst changed the return values from 0/-1 to 1/0, breaking backward compatibility for no reason, " +
                     "we reversed that.")
     @Deprecated
@@ -1385,7 +1384,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.resetFallDistance();
 
         this.inventory.sendContents(this);
-        this.inventory.sendContents(this.getViewers().values());
         this.inventory.sendHeldItem(this.hasSpawned.values());
         this.offhandInventory.sendContents(this);
         this.offhandInventory.sendContents(this.getViewers().values());
@@ -1509,7 +1507,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 b-> b.getId() == BlockID.SCAFFOLDING
         );
         setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_OVER_SCAFFOLDING, scaffoldingUnder.length > 0);
-        
+
         if (endPortal) {
             if (!inEndPortal) {
                 inEndPortal = true;
@@ -1519,7 +1517,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         } else {
             inEndPortal = false;
         }
-        
+
         if (portal) {
             if (this.isCreative() && this.inPortalTicks < 80) {
                 this.inPortalTicks = 80;
@@ -1797,12 +1795,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         return false;
-    }
-
-    public void sendMovementSpeed(float movementSpeed) {
-        Attribute attribute = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(movementSpeed);
-
-        this.setAttribute(attribute);
     }
 
     public void sendAttributes() {
@@ -2688,13 +2680,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
                                 break;
                             }
-                            
+
                             if (!block.isBlockChangeAllowed(this)) {
                                 break;
                             }
-                            
+
                             if (!this.isCreative()) {
-                                
+
                                 //improved this to take stuff like swimming, ladders, enchanted tools into account, fix wrong tool break time calculations for bad tools (pmmp/PocketMine-MP#211)
                                 //Done by lmlstarqaq
                                 double breakTime = Math.ceil(target.calculateBreakTime(this.inventory.getItemInHand(), this) * 20);
@@ -2831,18 +2823,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
                                 break;
                             }
-                            
+
                             int riptideLevel = this.inventory.getItemInHand().getEnchantmentLevel(Enchantment.ID_TRIDENT_RIPTIDE);
                             if (riptideLevel < 1) {
                                 this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
                                 break;
                             }
-                            
+
                             if (!(this.isTouchingWater() || (this.getLevel().isRaining() && this.getLevel().canBlockSeeSky(this)))) {
                                 this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
                                 break;
                             }
-                            
+
                             PlayerToggleSpinAttackEvent playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, true);
                             this.server.getPluginManager().callEvent(playerToggleSpinAttackEvent);
 
@@ -2850,7 +2842,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
                             } else {
                                 this.setSpinAttacking(true);
-                                
+
                                 Sound riptideSound;
                                 if (riptideLevel >= 3) {
                                     riptideSound = Sound.ITEM_TRIDENT_RIPTIDE_3;
@@ -3049,7 +3041,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
                             break;
                     }
-                    
+
                     if (animationEvent.getAnimationType() == AnimatePacket.Action.SWING_ARM) {
                         setNoShieldTicks(NO_SHIELD_DELAY);
                     }
@@ -3153,7 +3145,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 case ProtocolInfo.CRAFTING_EVENT_PACKET:
                     CraftingEventPacket craftingEventPacket = (CraftingEventPacket) packet;
-                    if (craftingType == CRAFTING_BIG && craftingEventPacket.type == CraftingEventPacket.TYPE_WORKBENCH 
+                    if (craftingType == CRAFTING_BIG && craftingEventPacket.type == CraftingEventPacket.TYPE_WORKBENCH
                             || craftingType == CRAFTING_SMALL && craftingEventPacket.type == CraftingEventPacket.TYPE_INVENTORY) {
                         if (craftingTransaction != null) {
                             craftingTransaction.setReadyToExecute(true);
@@ -3212,33 +3204,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Command.broadcastCommandMessage(this, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(this.gamemode)));
                     }
                     break;
-                    
+
                 // PowerNukkit Note: This packed is not being sent anymore since 1.16.210
                 case ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET:
                     ItemFrameDropItemPacket itemFrameDropItemPacket = (ItemFrameDropItemPacket) packet;
                     Vector3 vector3 = this.temporalVector.setComponents(itemFrameDropItemPacket.x, itemFrameDropItemPacket.y, itemFrameDropItemPacket.z);
-                    BlockEntity blockEntityItemFrame = this.level.getBlockEntity(vector3);
-                    BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntityItemFrame;
-                    if (itemFrame != null) {
-                        block = itemFrame.getBlock();
-                        Item itemDrop = itemFrame.getItem();
-                        ItemFrameDropItemEvent itemFrameDropItemEvent = new ItemFrameDropItemEvent(this, block, itemFrame, itemDrop);
-                        this.server.getPluginManager().callEvent(itemFrameDropItemEvent);
-                        if (!itemFrameDropItemEvent.isCancelled()) {
-                            if (itemDrop.getId() != Item.AIR) {
-                                vector3 = this.temporalVector.setComponents(itemFrame.x + 0.5, itemFrame.y, itemFrame.z + 0.5);
-                                this.level.dropItem(vector3, itemDrop);
-                                itemFrame.setItem(new ItemBlock(Block.get(BlockID.AIR)));
-                                itemFrame.setItemRotation(0);
-                                this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_REMOVED);
-                            }
-                        } else {
-                            itemFrame.spawnTo(this);
-                        }
+                    BlockEntity itemFrame = this.level.getBlockEntity(vector3);
+                    if (itemFrame instanceof BlockEntityItemFrame) {
+                        ((BlockEntityItemFrame) itemFrame).dropItem(this);
                     }
                     break;
-                    
-                    
+
+
                 case ProtocolInfo.LECTERN_UPDATE_PACKET:
                     LecternUpdatePacket lecternUpdatePacket = (LecternUpdatePacket) packet;
                     BlockVector3 blockPosition = lecternUpdatePacket.blockPosition;
@@ -3659,7 +3636,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         log.warn(this.getName() + " tried to attack oneself");
                                         break;
                                     }
-                                    
+
                                     float itemDamage = item.getAttackDamage();
 
                                     for (Enchantment enchantment : item.getEnchantments()) {
@@ -3684,12 +3661,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     if ((target instanceof Player) && !this.level.getGameRules().getBoolean(GameRule.PVP)) {
                                         entityDamageByEntityEvent.setCancelled();
                                     }
-                                    
-                                    
+
+
                                     if (target instanceof EntityLiving) {
                                         ((EntityLiving) target).preAttack(this);
                                     }
-                                    
+
                                     try {
                                         if (!target.attack(entityDamageByEntityEvent)) {
                                             if (item.isTool() && this.isSurvival()) {
@@ -3853,7 +3830,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             anvilInventory.setNewItemName(playerTypingAnvilInventoryEvent.getTypedName());
                         }
                     }
-                    
+
                     textResponsePacket.text = filterTextPacket.text;
                     textResponsePacket.fromServer = true;
                     this.dataPacket(textResponsePacket);
@@ -4154,8 +4131,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.stopFishing(false);
                 }
             }
-            
-            // Close the temporary windows first, so they have chance to change all inventories before being disposed 
+
+            // Close the temporary windows first, so they have chance to change all inventories before being disposed
             this.removeAllWindows(false);
             resetCraftingGridType();
 
@@ -4241,7 +4218,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     public void saveNBT() {
         super.saveNBT();
-        
+
         if (spawnBlockPosition == null) {
             namedTag.remove("SpawnBlockPositionX").remove("SpawnBlockPositionY").remove("SpawnBlockPositionZ");
         } else {
@@ -4428,7 +4405,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         ev.setKeepExperience(this.level.gameRules.getBoolean(GameRule.KEEP_INVENTORY));
         ev.setKeepInventory(ev.getKeepExperience());
 
-        // Note for diff comparison: Totem code was moved to Entity 
         this.server.getPluginManager().callEvent(ev);
 
         if (!ev.isCancelled()) {
@@ -4480,7 +4456,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.dataPacket(pk);
         }
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     protected boolean isValidRespawnBlock(Block block) {
@@ -4492,7 +4468,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             BlockBed bed = (BlockBed) block;
             return bed.isBedValid();
         }
-        
+
         return false;
     }
 
@@ -4509,7 +4485,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (spawnBlock == null) {
             spawnBlock = spawnPosition;
         }
-        
+
         PlayerRespawnEvent playerRespawnEvent = new PlayerRespawnEvent(this, this.getSpawn());
         Block respawnBlock;
         int respawnBlockDim = Level.DIMENSION_OVERWORLD;
@@ -4528,9 +4504,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 playerRespawnEvent.setRespawnPosition(this.server.getDefaultLevel().getSafeSpawn());
             }
         }
-        
+
         this.server.getPluginManager().callEvent(playerRespawnEvent);
-        
+
         if (!playerRespawnEvent.isRespawnBlockAvailable()) {
             if (!playerRespawnEvent.isKeepRespawnBlockPosition()) {
                 this.spawnBlockPosition = null;
@@ -4538,7 +4514,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (!playerRespawnEvent.isKeepRespawnPosition()) {
                 this.spawnPosition = null;
                 if (playerRespawnEvent.isSendInvalidRespawnBlockMessage()) {
-                    sendMessage(new TranslationContainer(TextFormat.GRAY + 
+                    sendMessage(new TranslationContainer(TextFormat.GRAY +
                             "%tile."+(respawnBlockDim==Level.DIMENSION_OVERWORLD?"bed":"respawn_anchor")+".notValid"));
                 }
             }
@@ -4680,7 +4656,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (playLevelUpSound && levelBefore < level && levelBefore / 5 != level / 5 && this.lastPlayerdLevelUpSoundTime < this.age - 100) {
             this.lastPlayerdLevelUpSoundTime = this.age;
             this.level.addLevelSoundEvent(
-                    this, 
+                    this,
                     LevelSoundEventPacketV2.SOUND_LEVELUP,
                     Math.min(7, level / 5) << 28,
                     "",
@@ -4726,9 +4702,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setMovementSpeed(float speed, boolean send) {
         super.setMovementSpeed(speed);
         if (this.spawned && send) {
-            Attribute attribute = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
-            this.setAttribute(attribute);
+            this.sendMovementSpeed(speed);
         }
+    }
+
+    public void sendMovementSpeed(float speed){
+        Attribute attribute = Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(speed);
+        this.setAttribute(attribute);
     }
 
     public Entity getKiller() {
@@ -5201,7 +5181,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         } else {
             inventory.getViewers().add(this);
         }
-        
+
         if (!isPermanent) {
             updateTrackingPositions(true);
         }
@@ -5487,6 +5467,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (isSprinting() != value) {
             super.setSprinting(value);
             this.setMovementSpeed(value ? getMovementSpeed() * 1.3f : getMovementSpeed() / 1.3f);
+
+            if(this.hasEffect(Effect.SPEED)) {
+                float movementSpeed = this.getMovementSpeed();
+                this.sendMovementSpeed(value ? movementSpeed * 1.3f : movementSpeed);
+            }
         }
     }
 
@@ -5555,11 +5540,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         return false;
                     }
                 }
-                
+
                 if (!((EntityThrownTrident) entity).isPlayer()) {
                     return false;
                 }
-                
+
                 Item item = ((EntityThrownTrident) entity).getItem();
                 if (this.isSurvival() && !inventory.canAddItem(item)) {
                     return false;
@@ -5748,7 +5733,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         boolean shouldBlock = getNoShieldTicks() == 0
                 && (this.isSneaking() || getRiding() != null)
                 && (this.getInventory().getItemInHand().getId() == ItemID.SHIELD || this.getOffhandInventory().getItem(0).getId() == ItemID.SHIELD);
-        
+
         if (isBlocking() != shouldBlock) {
             this.setBlocking(shouldBlock);
         }
@@ -5787,7 +5772,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     /**
-     * Adds the items to the main player inventory and drops on the floor any excess. 
+     * Adds the items to the main player inventory and drops on the floor any excess.
      * @param items The items to give to the player.
      */
     @PowerNukkitOnly
