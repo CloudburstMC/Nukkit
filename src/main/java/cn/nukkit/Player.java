@@ -181,6 +181,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Since("1.3.1.0-PN") protected EnchantTransaction enchantTransaction;
     @Since("1.3.2.0-PN") protected RepairItemTransaction repairItemTransaction;
     @Since("1.4.0.0-PN") @PowerNukkitOnly protected GrindstoneTransaction grindstoneTransaction;
+    @Since("1.4.0.0-PN") @PowerNukkitOnly protected SmithingTransaction smithingTransaction;
 
     public long creationTime = 0;
 
@@ -3294,6 +3295,85 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     InventoryTransactionPacket transactionPacket = (InventoryTransactionPacket) packet;
 
+                    if (transactionPacket.transactionType == InventoryTransactionPacket.TYPE_MISMATCH
+                            && !isCreative()
+                            && (inv = getWindowById(SMITHING_WINDOW_ID)) instanceof SmithingInventory) {
+                        SmithingInventory smithingInventory = (SmithingInventory) inv;
+                        if (!smithingInventory.getResult().isNull()) {
+                            InventoryTransactionPacket fixedPacket = new InventoryTransactionPacket();
+                            fixedPacket.isRepairItemPart = true;
+                            fixedPacket.actions = new NetworkInventoryAction[6];
+
+                            Item fromIngredient = smithingInventory.getIngredient().clone();
+                            Item toIngredient = fromIngredient.decrement(1);
+
+                            Item fromEquipment = smithingInventory.getEquipment().clone();
+                            Item toEquipment = fromEquipment.decrement(1);
+
+                            Item fromResult = Item.getBlock(BlockID.AIR);
+                            Item toResult = smithingInventory.getResult().clone();
+
+                            NetworkInventoryAction action = new NetworkInventoryAction();
+                            action.windowId = ContainerIds.UI;
+                            action.inventorySlot = SmithingInventory.SMITHING_INGREDIENT_UI_SLOT;
+                            action.oldItem = fromIngredient.clone();
+                            action.newItem = toIngredient.clone();
+                            fixedPacket.actions[0] = action;
+
+                            action = new NetworkInventoryAction();
+                            action.windowId = ContainerIds.UI;
+                            action.inventorySlot = SmithingInventory.SMITHING_EQUIPMENT_UI_SLOT;
+                            action.oldItem = fromEquipment.clone();
+                            action.newItem = toEquipment.clone();
+                            fixedPacket.actions[1] = action;
+
+                            int emptyPlayerSlot = -1;
+                            for (int slot = 0; slot < inventory.getSize(); slot++) {
+                                if (inventory.getItem(slot).isNull()) {
+                                    emptyPlayerSlot = slot;
+                                    break;
+                                }
+                            }
+                            if (emptyPlayerSlot == -1) {
+                                sendAllInventories();
+                                getCursorInventory().sendContents(this);
+                            } else {
+                                action = new NetworkInventoryAction();
+                                action.windowId = ContainerIds.INVENTORY;
+                                action.inventorySlot = emptyPlayerSlot; // Cursor
+                                action.oldItem = Item.getBlock(BlockID.AIR);
+                                action.newItem = toResult.clone();
+                                fixedPacket.actions[2] = action;
+
+                                action = new NetworkInventoryAction();
+                                action.sourceType = NetworkInventoryAction.SOURCE_TODO;
+                                action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_RESULT;
+                                action.inventorySlot = 2; // result
+                                action.oldItem = toResult.clone();
+                                action.newItem = fromResult.clone();
+                                fixedPacket.actions[3] = action;
+
+                                action = new NetworkInventoryAction();
+                                action.sourceType = NetworkInventoryAction.SOURCE_TODO;
+                                action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_INPUT;
+                                action.inventorySlot = 0; // equipment
+                                action.oldItem = toEquipment.clone();
+                                action.newItem = fromEquipment.clone();
+                                fixedPacket.actions[4] = action;
+
+                                action = new NetworkInventoryAction();
+                                action.sourceType = NetworkInventoryAction.SOURCE_TODO;
+                                action.windowId = NetworkInventoryAction.SOURCE_TYPE_ANVIL_MATERIAL;
+                                action.inventorySlot = 1; // material
+                                action.oldItem = toIngredient.clone();
+                                action.newItem = fromIngredient.clone();
+                                fixedPacket.actions[5] = action;
+
+                                transactionPacket = fixedPacket;
+                            }
+                        }
+                    }
+
                     List<InventoryAction> actions = new ArrayList<>();
                     for (NetworkInventoryAction networkInventoryAction : transactionPacket.actions) {
                         if (craftingType == CRAFTING_STONECUTTER && craftingTransaction != null
@@ -3338,14 +3418,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     case CRAFTING_STONECUTTER:
                                         sound = Sound.BLOCK_STONECUTTER_USE;
                                         break;
-                                    case CRAFTING_GRINDSTONE:
-                                        sound = Sound.BLOCK_GRINDSTONE_USE;
-                                        break;
                                     case CRAFTING_CARTOGRAPHY:
                                         sound = Sound.BLOCK_CARTOGRAPHY_TABLE_USE;
-                                        break;
-                                    case CRAFTING_SMITHING:
-                                        sound = Sound.SMITHING_TABLE_USE;
                                         break;
                                 }
 
@@ -3375,6 +3449,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                         return;
                     } else if (transactionPacket.isRepairItemPart) {
+                        Sound sound = null;
                         if (GrindstoneTransaction.checkForItemPart(actions)) {
                             if (this.grindstoneTransaction == null) {
                                 this.grindstoneTransaction = new GrindstoneTransaction(this, actions);
@@ -3384,8 +3459,30 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
                             }
                             if (this.grindstoneTransaction.canExecute()) {
-                                this.grindstoneTransaction.execute();
-                                this.grindstoneTransaction = null;
+                                try {
+                                    if (this.grindstoneTransaction.execute()) {
+                                        sound = Sound.BLOCK_GRINDSTONE_USE;
+                                    }
+                                } finally {
+                                    this.grindstoneTransaction = null;
+                                }
+                            }
+                        } if (SmithingTransaction.checkForItemPart(actions)) {
+                            if (this.smithingTransaction == null) {
+                                this.smithingTransaction = new SmithingTransaction(this, actions);
+                            } else {
+                                for (InventoryAction action : actions) {
+                                    this.smithingTransaction.addAction(action);
+                                }
+                            }
+                            if (this.smithingTransaction.canExecute()) {
+                                try {
+                                    if (this.smithingTransaction.execute()) {
+                                        sound = Sound.SMITHING_TABLE_USE;
+                                    }
+                                } finally {
+                                    this.smithingTransaction = null;
+                                }
                             }
                         } else {
                             if (this.repairItemTransaction == null) {
@@ -3396,8 +3493,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
                             }
                             if (this.repairItemTransaction.canExecute()) {
-                                this.repairItemTransaction.execute();
-                                this.repairItemTransaction = null;
+                                try {
+                                    this.repairItemTransaction.execute();
+                                } finally {
+                                    this.repairItemTransaction = null;
+                                }
+                            }
+                        }
+
+                        if (sound != null) {
+                            Collection<Player> players = level.getChunkPlayers(getChunkX(), getChunkZ()).values();
+                            players.remove(this);
+                            if (!players.isEmpty()) {
+                                level.addSound(this, sound, 1f, 1f, players);
                             }
                         }
                         return;
@@ -3429,6 +3537,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (GrindstoneTransaction.checkForItemPart(actions)) {
                             for (InventoryAction action : actions) {
                                 this.grindstoneTransaction.addAction(action);
+                            }
+                            return;
+                        } if (SmithingTransaction.checkForItemPart(actions)) {
+                            for (InventoryAction action : actions) {
+                                this.smithingTransaction.addAction(action);
                             }
                             return;
                         } else if (RepairItemTransaction.checkForRepairItemPart(actions)) {

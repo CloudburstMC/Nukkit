@@ -281,16 +281,10 @@ public class NetworkInventoryAction {
                     } else if (player.getWindowById(Player.SMITHING_WINDOW_ID) instanceof SmithingInventory) {
                         switch (this.windowId) {
                             case SOURCE_TYPE_ANVIL_INPUT:
-                                this.inventorySlot = 0;
-                                return new CraftingTransferMaterialAction(this.oldItem, this.newItem, this.inventorySlot);
                             case SOURCE_TYPE_ANVIL_MATERIAL:
-                                this.inventorySlot = 1;
-                                return new CraftingTransferMaterialAction(this.oldItem, this.newItem, this.inventorySlot);
                             case SOURCE_TYPE_ANVIL_OUTPUT:
-                                break;
                             case SOURCE_TYPE_ANVIL_RESULT:
-                                this.inventorySlot = 2;
-                                return new CraftingTakeResultAction(this.oldItem, this.newItem);
+                                return new SmithingItemAction(this.oldItem, this.newItem, this.inventorySlot);
                         }
                     } else {
                         log.debug("Player {} has no open anvil or grindstone inventory", player.getName());

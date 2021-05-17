@@ -474,8 +474,8 @@ public class CraftingManager {
     @Nullable
     public SmithingRecipe matchSmithingRecipe(Item equipment, Item ingredient) {
         List<Item> inputList = new ArrayList<>(2);
-        inputList.add(equipment);
-        inputList.add(ingredient);
+        inputList.add(equipment.decrement(equipment.count - 1));
+        inputList.add(ingredient.decrement(ingredient.count - 1));
         return matchSmithingRecipe(inputList);
     }
     
