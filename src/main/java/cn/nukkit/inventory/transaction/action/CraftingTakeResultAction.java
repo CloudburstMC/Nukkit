@@ -4,10 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.item.Item;
+import lombok.ToString;
 
 /**
  * @author CreeperFace
  */
+@ToString(callSuper = true)
 public class CraftingTakeResultAction extends InventoryAction {
 
     public CraftingTakeResultAction(Item sourceItem, Item targetItem) {

@@ -1383,6 +1383,23 @@ public class Item implements Cloneable, BlockID, ItemID {
         return false;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final Item decrement(int amount) {
+        return increment(-amount);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final Item increment(int amount) {
+        if (count + amount <= 0) {
+            return getBlock(BlockID.AIR);
+        }
+        Item cloned = clone();
+        cloned.count += amount;
+        return cloned;
+    }
+
     /**
      * When true, this item can be used to reduce growing times like a bone meal.
      * @return {@code true} if it can act like a bone meal
