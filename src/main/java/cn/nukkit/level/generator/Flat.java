@@ -1,7 +1,8 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
@@ -10,6 +11,7 @@ import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,9 +20,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public class Flat extends Generator {
 
     @Override
@@ -140,7 +142,7 @@ public class Flat extends Generator {
                 }
             }
         } catch (Exception e) {
-            Server.getInstance().getLogger().error("error while parsing the preset", e);
+            log.error("error while parsing the preset", e);
             throw new RuntimeException(e);
         }
     }

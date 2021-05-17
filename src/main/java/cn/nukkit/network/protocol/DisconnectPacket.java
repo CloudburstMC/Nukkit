@@ -3,7 +3,7 @@ package cn.nukkit.network.protocol;
 import lombok.ToString;
 
 /**
- * Created by on 15-10-12.
+ * @since 15-10-12
  */
 @ToString
 public class DisconnectPacket extends DataPacket {

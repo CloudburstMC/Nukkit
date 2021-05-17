@@ -7,8 +7,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class Fuel {
     public static final Map<Integer, Short> duration = new TreeMap<>();

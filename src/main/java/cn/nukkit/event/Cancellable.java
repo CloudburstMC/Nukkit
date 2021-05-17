@@ -1,7 +1,7 @@
 package cn.nukkit.event;
 
 /**
- * Created by Nukkit Team.
+ * @author Nukkit Team.
  */
 public interface Cancellable {
 

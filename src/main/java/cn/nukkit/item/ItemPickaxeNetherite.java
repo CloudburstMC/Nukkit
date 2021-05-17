@@ -21,13 +21,13 @@ public class ItemPickaxeNetherite extends ItemTool {
     }
 
     @Override
-    public boolean isPickaxe() {
-        return true;
+    public int getMaxDurability() {
+        return ItemTool.DURABILITY_NETHERITE;
     }
 
     @Override
-    public int getAttackDamage() {
-        return 6;
+    public boolean isPickaxe() {
+        return true;
     }
 
     @Override
@@ -36,7 +36,12 @@ public class ItemPickaxeNetherite extends ItemTool {
     }
 
     @Override
-    public int getMaxDurability() {
-        return ItemTool.DURABILITY_NETHERITE;
+    public int getAttackDamage() {
+        return 6;
+    }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
     }
 }

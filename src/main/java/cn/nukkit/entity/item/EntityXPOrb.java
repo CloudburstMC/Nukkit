@@ -11,8 +11,8 @@ import it.unimi.dsi.fastutil.ints.IntArrayList;
 import java.util.List;
 
 /**
- * Created on 2015/12/26 by xtypr.
- * Package cn.nukkit.entity in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/26
  */
 public class EntityXPOrb extends Entity {
 
@@ -126,7 +126,7 @@ public class EntityXPOrb extends Entity {
                 if (this.pickupDelay < 0) {
                     this.pickupDelay = 0;
                 }
-            } else {
+            }/* else { // Done in Player#checkNearEntities
                 for (Entity entity : this.level.getCollidingEntities(this.boundingBox, this)) {
                     if (entity instanceof Player) {
                         if (((Player) entity).pickupEntity(this, false)) {
@@ -134,7 +134,7 @@ public class EntityXPOrb extends Entity {
                         }
                     }
                 }
-            }
+            }*/
 
             this.motionY -= this.getGravity();
 
@@ -143,7 +143,7 @@ public class EntityXPOrb extends Entity {
             }
 
             if (this.closestPlayer == null || this.closestPlayer.distanceSquared(this) > 64.0D) {
-                for (Player p : level.getPlayers().values()) {
+                for (Player p : this.getViewers().values()) {
                     if (!p.isSpectator() && p.distance(this) <= 8) {
                         this.closestPlayer = p;
                         break;

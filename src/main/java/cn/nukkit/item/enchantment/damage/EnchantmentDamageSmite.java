@@ -4,13 +4,12 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntitySmite;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentDamageSmite extends EnchantmentDamage {
 
     public EnchantmentDamageSmite() {
-        super(ID_DAMAGE_SMITE, "undead", 5, TYPE.SMITE);
+        super(ID_DAMAGE_SMITE, "undead", Rarity.UNCOMMON, TYPE.SMITE);
     }
 
     @Override

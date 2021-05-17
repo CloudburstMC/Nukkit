@@ -4,8 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.event.Event;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockEvent extends Event {
 

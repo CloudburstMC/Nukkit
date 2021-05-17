@@ -1,0 +1,38 @@
+<component name="ProjectCodeStyleConfiguration">
+  <code_scheme name="Project" version="173">
+    <JavaCodeStyleSettings>
+      <REPEAT_ANNOTATIONS>
+        <ANNO name="cn.nukkit.api.NewRakNetOnly" />
+        <ANNO name="cn.nukkit.api.PowerNukkitDifference" />
+        <ANNO name="cn.nukkit.api.PowerNukkitOnly" />
+        <ANNO name="cn.nukkit.api.RemovedFromNewRakNet" />
+        <ANNO name="cn.nukkit.api.Since" />
+        <ANNO name="cn.nukkit.api.Unsigned" />
+        <ANNO name="javax.annotation.Nonnegative" />
+        <ANNO name="javax.annotation.Nonnull" />
+        <ANNO name="javax.annotation.Nullable" />
+      </REPEAT_ANNOTATIONS>
+    </JavaCodeStyleSettings>
+    <JetCodeStyleSettings>
+      <option name="PACKAGES_TO_USE_STAR_IMPORTS">
+        <value>
+          <package name="java.util" alias="false" withSubpackages="false" />
+          <package name="kotlinx.android.synthetic" alias="false" withSubpackages="true" />
+          <package name="io.ktor" alias="false" withSubpackages="true" />
+        </value>
+      </option>
+      <option name="PACKAGES_IMPORT_LAYOUT">
+        <value>
+          <package name="" alias="false" withSubpackages="true" />
+          <package name="java" alias="false" withSubpackages="true" />
+          <package name="javax" alias="false" withSubpackages="true" />
+          <package name="kotlin" alias="false" withSubpackages="true" />
+          <package name="" alias="true" withSubpackages="true" />
+        </value>
+      </option>
+    </JetCodeStyleSettings>
+    <ScalaCodeStyleSettings>
+      <option name="MULTILINE_STRING_CLOSING_QUOTES_ON_NEW_LINE" value="true" />
+    </ScalaCodeStyleSettings>
+  </code_scheme>
+</component>

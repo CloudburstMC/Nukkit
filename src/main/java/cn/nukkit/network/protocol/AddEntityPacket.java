@@ -13,8 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString
 public class AddEntityPacket extends DataPacket {
@@ -83,7 +82,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityMinecartTNT.NETWORK_ID, "minecraft:tnt_minecart")
             .put(EntityMinecartChest.NETWORK_ID, "minecraft:chest_minecart")
             .put(100, "minecraft:command_block_minecart")
-            .put(61, "minecraft:armor_stand")
+            .put(EntityArmorStand.NETWORK_ID, "minecraft:armor_stand")
             .put(EntityItem.NETWORK_ID, "minecraft:item")
             .put(EntityPrimedTNT.NETWORK_ID, "minecraft:tnt")
             .put(EntityFallingBlock.NETWORK_ID, "minecraft:falling_block")
@@ -130,7 +129,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityHoglin.NETWORK_ID, "minecraft:hoglin")
             .put(EntityStrider.NETWORK_ID, "minecraft:strider")
             .put(EntityZoglin.NETWORK_ID, "minecraft:zoglin")
-            .put(127, "minecraft:piglin_brute")
+            .put(EntityPiglinBrute.NETWORK_ID, "minecraft:piglin_brute")
             .build();
 
     @Override
@@ -152,8 +151,8 @@ public class AddEntityPacket extends DataPacket {
     public float pitch;
     public float headYaw;
     public EntityMetadata metadata = new EntityMetadata();
-    public Attribute[] attributes = new Attribute[0];
-    public EntityLink[] links = new EntityLink[0];
+    public Attribute[] attributes = Attribute.EMPTY_ARRAY;
+    public EntityLink[] links = EntityLink.EMPTY_ARRAY;
 
     @Override
     public void decode() {

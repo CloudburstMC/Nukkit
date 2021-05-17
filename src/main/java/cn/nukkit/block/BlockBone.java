@@ -1,12 +1,15 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author CreeperFace
@@ -55,13 +58,11 @@ public class BlockBone extends BlockSolidMeta implements Faceable {
         return ItemTool.TYPE_PICKAXE;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{new ItemBlock(this)};
-        }
-
-        return new Item[0];
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override
@@ -70,7 +71,7 @@ public class BlockBone extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         this.setDamage(((this.getDamage() & 0x3) | FACES[face.getIndex()]));
         this.getLevel().setBlock(block, this, true);
         return true;

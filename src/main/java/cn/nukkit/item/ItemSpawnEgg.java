@@ -18,8 +18,7 @@ import cn.nukkit.nbt.tag.ListTag;
 import java.util.Random;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemSpawnEgg extends Item {
     
@@ -46,6 +45,10 @@ public class ItemSpawnEgg extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+        if (player.isAdventure()) {
+            return false;
+        }
+
         FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
 
         if (chunk == null) {

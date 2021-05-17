@@ -1,5 +1,6 @@
 package cn.nukkit.entity.weather;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockID;
@@ -7,15 +8,16 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.GameRule;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by boybook on 2016/2/27.
+ * @author boybook
+ * @since 2016/2/27
  */
 public class EntityLightning extends Entity implements EntityLightningStrike {
 
@@ -84,6 +86,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         return super.attack(source);
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
@@ -101,8 +104,8 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         this.entityBaseTick(tickDiff);
 
         if (this.state == 2) {
-            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_THUNDER);
-            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_EXPLODE);
+            this.level.addSound(this, Sound.AMBIENT_WEATHER_THUNDER);
+            this.level.addSound(this, Sound.RANDOM_EXPLODE);
         }
 
         this.state--;

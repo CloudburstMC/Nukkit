@@ -7,8 +7,7 @@ import cn.nukkit.event.block.BlockEvent;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class CampfireSmeltEvent extends BlockEvent implements Cancellable {
 

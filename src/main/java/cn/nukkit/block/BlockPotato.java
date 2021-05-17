@@ -1,12 +1,14 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemPotato;
+import cn.nukkit.item.ItemID;
+import cn.nukkit.item.enchantment.Enchantment;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * Created by Pub4Game on 15.01.2016.
+ * @author Pub4Game
+ * @since 15.01.2016
  */
 public class BlockPotato extends BlockCrops {
 
@@ -30,18 +32,34 @@ public class BlockPotato extends BlockCrops {
 
     @Override
     public Item toItem() {
-        return new ItemPotato();
+        return Item.get(ItemID.POTATO);
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (getDamage() >= 0x07) {
+        if (!isFullyGrown()) {
             return new Item[]{
-                    new ItemPotato(0, new Random().nextInt(3) + 1)
+                    Item.get(ItemID.POTATO)
+            };
+        }
+        
+        int drops = 2;
+        int attempts = 3 + Math.min(0, item.getEnchantmentLevel(Enchantment.ID_FORTUNE_DIGGING));
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        for (int i = 0; i < attempts; i++) {
+            if (random.nextInt(7) < 4) { // 4/7, 0.57142857142857142857142857142857
+                drops++;
+            }
+        }
+        
+        if (random.nextInt(5) < 1) { // 1/5, 0.2
+            return new Item[]{
+                    Item.get(ItemID.POTATO,0, drops),
+                    Item.get(ItemID.POISONOUS_POTATO)
             };
         } else {
             return new Item[]{
-                    new ItemPotato()
+                    Item.get(ItemID.POTATO, 0, drops)
             };
         }
     }

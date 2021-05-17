@@ -1,12 +1,11 @@
 package cn.nukkit.item.enchantment;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentWaterWalker extends Enchantment {
     protected EnchantmentWaterWalker() {
-        super(ID_WATER_WALKER, "waterWalker", 2, EnchantmentType.ARMOR_FEET);
+        super(ID_WATER_WALKER, "waterWalker", Rarity.RARE, EnchantmentType.ARMOR_FEET);
     }
 
     @Override

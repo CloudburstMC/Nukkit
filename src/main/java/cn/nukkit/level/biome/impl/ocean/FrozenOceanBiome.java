@@ -3,8 +3,7 @@ package cn.nukkit.level.biome.impl.ocean;
 import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
 
 /**
- * author: DaPorkchop_
- * Nukkit Project
+ * @author DaPorkchop_ (Nukkit Project)
  * <p>
  * This biome does not generate naturally
  */

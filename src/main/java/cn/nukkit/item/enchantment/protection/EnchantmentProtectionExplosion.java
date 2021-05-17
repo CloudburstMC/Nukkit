@@ -4,13 +4,12 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentProtectionExplosion extends EnchantmentProtection {
 
     public EnchantmentProtectionExplosion() {
-        super(ID_PROTECTION_EXPLOSION, "explosion", 2, TYPE.EXPLOSION);
+        super(ID_PROTECTION_EXPLOSION, "explosion", Rarity.RARE, TYPE.EXPLOSION);
     }
 
     @Override
@@ -20,7 +19,7 @@ public class EnchantmentProtectionExplosion extends EnchantmentProtection {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 12;
+        return this.getMinEnchantAbility(level) + 8;
     }
 
     @Override

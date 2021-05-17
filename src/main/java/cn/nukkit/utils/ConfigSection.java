@@ -3,7 +3,8 @@ package cn.nukkit.utils;
 import java.util.*;
 
 /**
- * Created by fromgate on 26.04.2016.
+ * @author fromgate
+ * @since 26.04.2016
  */
 public class ConfigSection extends LinkedHashMap<String, Object> {
 

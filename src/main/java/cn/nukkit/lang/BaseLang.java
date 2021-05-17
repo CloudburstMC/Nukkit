@@ -1,18 +1,18 @@
 package cn.nukkit.lang;
 
-import cn.nukkit.Server;
-import cn.nukkit.utils.Utils;
+import io.netty.util.internal.EmptyArrays;
+import lombok.extern.log4j.Log4j2;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public class BaseLang {
     public static final String FALLBACK_LANGUAGE = "eng";
 
@@ -65,64 +65,51 @@ public class BaseLang {
 
     protected Map<String, String> loadLang(String path) {
         try {
-            String content = Utils.readFile(path);
-            Map<String, String> d = new HashMap<>();
-            for (String line : content.split("\n")) {
-                line = line.trim();
-                if (line.equals("") || line.charAt(0) == '#') {
-                    continue;
-                }
-                String[] t = line.split("=");
-                if (t.length < 2) {
-                    continue;
-                }
-                String key = t[0];
-                String value = "";
-                for (int i = 1; i < t.length - 1; i++) {
-                    value += t[i] + "=";
-                }
-                value += t[t.length - 1];
-                if (value.equals("")) {
-                    continue;
-                }
-                d.put(key, value);
+            File file = new File(path);
+            if (!file.exists() || file.isDirectory()) {
+                throw new FileNotFoundException();
             }
-            return d;
+            try (FileInputStream stream = new FileInputStream(file)) {
+                return parseLang(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
+            }
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.fatal("Failed to load language at {}", path, e);
             return null;
         }
     }
 
     protected Map<String, String> loadLang(InputStream stream) {
         try {
-            String content = Utils.readFile(stream);
-            Map<String, String> d = new HashMap<>();
-            for (String line : content.split("\n")) {
-                line = line.trim();
-                if (line.equals("") || line.charAt(0) == '#') {
-                    continue;
-                }
-                String[] t = line.split("=");
-                if (t.length < 2) {
-                    continue;
-                }
-                String key = t[0];
-                String value = "";
-                for (int i = 1; i < t.length - 1; i++) {
-                    value += t[i] + "=";
-                }
-                value += t[t.length - 1];
-                if (value.equals("")) {
-                    continue;
-                }
-                d.put(key, value);
-            }
-            return d;
+            return parseLang(new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8)));
         } catch (IOException e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("Failed to parse the language input stream", e);
             return null;
         }
+    }
+    
+    private Map<String, String> parseLang(BufferedReader reader) throws IOException {
+        Map<String, String> d = new HashMap<>();
+        String line;
+        while ((line = reader.readLine()) != null) {
+            line = line.trim();
+            if (line.isEmpty() || line.charAt(0) == '#') {
+                continue;
+            }
+            String[] t = line.split("=", 2);
+            if (t.length < 2) {
+                continue;
+            }
+            String key = t[0];
+            String value = t[1];
+            if (value.length() > 1 && value.charAt(0) == '"' && value.charAt(value.length()-1) == '"') {
+                value = value.substring(1, value.length() - 1).replace("\\\"", "\"").replace("\\\\", "\\");
+            }
+            if (value.isEmpty()) {
+                continue;
+            }
+            d.put(key, value);
+        }
+        return d;
     }
 
     public String translateString(String str) {
@@ -133,7 +120,7 @@ public class BaseLang {
         if (params != null) {
             return this.translateString(str, params, null);
         }
-        return this.translateString(str, new String[0], null);
+        return this.translateString(str, EmptyArrays.EMPTY_STRINGS, null);
     }
 
     public String translateString(String str, Object... params) {
@@ -144,7 +131,7 @@ public class BaseLang {
             }
             return this.translateString(str, paramsToString, null);
         }
-        return this.translateString(str, new String[0], null);
+        return this.translateString(str, EmptyArrays.EMPTY_STRINGS, null);
     }
 
     public String translateString(String str, String param, String onlyPrefix) {

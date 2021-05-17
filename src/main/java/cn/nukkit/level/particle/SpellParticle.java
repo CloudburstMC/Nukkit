@@ -6,8 +6,8 @@ import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/12/27 by xtypr.
- * Package cn.nukkit.level.particle in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/27
  * The name "spell" comes from minecraft wiki.
  */
 public class SpellParticle extends Particle {

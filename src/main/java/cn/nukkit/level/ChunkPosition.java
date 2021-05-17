@@ -4,9 +4,7 @@ import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.Vector3;
 
 /**
- * Author: Adam Matthew
- * <p>
- * Nukkit Project
+ * @author Adam Matthew (Nukkit Project)
  */
 public class ChunkPosition {
 

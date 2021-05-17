@@ -5,18 +5,15 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.Faceable;
 
+import javax.annotation.Nonnull;
+
 public class BlockJigsaw extends BlockSolidMeta implements Faceable {
     public BlockJigsaw() {
         this(0);
     }
     
     public BlockJigsaw(int meta) {
-        super(meta % 6);
-    }
-    
-    @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta % 6);
+        super(meta);
     }
     
     @Override
@@ -60,7 +57,7 @@ public class BlockJigsaw extends BlockSolidMeta implements Faceable {
     }
     
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (Math.abs(player.x - this.x) < 2 && Math.abs(player.z - this.z) < 2) {
             double y = player.y + player.getEyeHeight();
         

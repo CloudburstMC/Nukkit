@@ -1,8 +1,16 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntList;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Pub4Game
@@ -39,14 +47,47 @@ public class BlockNetherrack extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
+        if (item.isNull() || !item.isFertilizer() || up().getId() != AIR) {
+            return false;
         }
+
+        IntList options = new IntArrayList(2);
+        for(BlockFace face: BlockFace.Plane.HORIZONTAL) {
+            int id = getSide(face).getId();
+            if ((id == CRIMSON_NYLIUM || id == WARPED_NYLIUM) && !options.contains(id)) {
+                options.add(id);
+            }
+        }
+        
+        int nylium;
+        int size = options.size();
+        if (size == 0) {
+            return false;
+        } else if (size == 1) {
+            nylium = options.getInt(0);
+        } else {
+            nylium = options.getInt(ThreadLocalRandom.current().nextInt(size));
+        }
+        
+        if (level.setBlock(this, Block.get(nylium), true)) {
+            if (player == null || !player.isCreative()) {
+                item.count--;
+            }
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
     }
 
     @Override

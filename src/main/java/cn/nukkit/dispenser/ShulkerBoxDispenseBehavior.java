@@ -2,41 +2,31 @@ package cn.nukkit.dispenser;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockDispenser;
-import cn.nukkit.block.BlockID;
-import cn.nukkit.block.BlockShulkerBox;
-import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.block.BlockUndyedShulkerBox;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.nbt.tag.CompoundTag;
 
 public class ShulkerBoxDispenseBehavior extends DefaultDispenseBehavior {
 
     @Override
     public Item dispense(BlockDispenser block, BlockFace face, Item item) {
-        Block shulkerBox = new BlockShulkerBox();
         Block target = block.getSide(face);
+        
+        if (!target.canBeReplaced()) {
+            success = false;
+            return null;
+        }
 
-        this.success = block.level.getCollidingEntities(shulkerBox.getBoundingBox()).length == 0;
+        BlockUndyedShulkerBox shulkerBox = (BlockUndyedShulkerBox) item.getBlock().clone();
+        shulkerBox.level = block.level;
+        shulkerBox.layer = 0;
+        shulkerBox.x = target.x;
+        shulkerBox.y = target.y;
+        shulkerBox.z = target.z;
 
-        if (this.success) {
-            BlockFace shulkerBoxFace = target.down().getId() == BlockID.AIR ? face : BlockFace.UP;
-
-            CompoundTag nbt = BlockEntity.getDefaultCompound(target, BlockEntity.SHULKER_BOX);
-            nbt.putByte("facing", shulkerBoxFace.getIndex());
-
-            if (item.hasCustomName()) {
-                nbt.putString("CustomName", item.getCustomName());
-            }
-
-            CompoundTag tag = item.getNamedTag();
-
-            if (tag != null) {
-                if (tag.contains("Items")) {
-                    nbt.putList(tag.getList("Items"));
-                }
-            }
-
-            BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, target, nbt);
+        BlockFace shulkerBoxFace = shulkerBox.down().isTransparent() ? face : BlockFace.UP;
+        
+        if (success = shulkerBox.place(item, target, target.getSide(shulkerBoxFace.getOpposite()), shulkerBoxFace, 0, 0, 0, null)) {
             block.level.updateComparatorOutputLevel(target);
         }
 

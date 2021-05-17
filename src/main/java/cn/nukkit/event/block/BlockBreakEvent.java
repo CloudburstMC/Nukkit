@@ -8,8 +8,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockBreakEvent extends BlockEvent implements Cancellable {
 
@@ -25,7 +24,7 @@ public class BlockBreakEvent extends BlockEvent implements Cancellable {
     protected final BlockFace face;
 
     protected boolean instaBreak = false;
-    protected Item[] blockDrops = new Item[0];
+    protected Item[] blockDrops = Item.EMPTY_ARRAY;
     protected int blockXP = 0;
 
     protected boolean fastBreak = false;

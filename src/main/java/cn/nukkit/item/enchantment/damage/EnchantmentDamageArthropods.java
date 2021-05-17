@@ -7,13 +7,12 @@ import cn.nukkit.potion.Effect;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentDamageArthropods extends EnchantmentDamage {
 
     public EnchantmentDamageArthropods() {
-        super(ID_DAMAGE_ARTHROPODS, "arthropods", 5, TYPE.SMITE);
+        super(ID_DAMAGE_ARTHROPODS, "arthropods", Rarity.UNCOMMON, TYPE.SMITE);
     }
 
     @Override

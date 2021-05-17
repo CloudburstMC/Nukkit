@@ -1,23 +1,32 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMovingBlock;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
+import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.BlockStateRegistry;
 import cn.nukkit.event.block.BlockPistonEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.RedstoneComponent;
 import com.google.common.collect.Lists;
+import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +35,10 @@ import java.util.stream.Collectors;
 /**
  * @author CreeperFace
  */
-public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+@Log4j2
+public abstract class BlockPistonBase extends BlockSolidMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityPistonArm> {
 
     public boolean sticky;
 
@@ -36,6 +48,22 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
     public BlockPistonBase(int meta) {
         super(meta);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.PISTON_ARM;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityPistonArm> getBlockEntityClass() {
+        return BlockEntityPistonArm.class;
     }
 
     @Override
@@ -48,46 +76,49 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         return 0.5;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (Math.abs(player.getFloorX() - this.x) <= 1 && Math.abs(player.getFloorZ() - this.z) <= 1) {
-            double y = player.y + player.getEyeHeight();
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
+        if (player != null) {
+            if (Math.abs(player.getFloorX() - this.x) <= 1 && Math.abs(player.getFloorZ() - this.z) <= 1) {
+                double y = player.y + player.getEyeHeight();
 
-            if (y - this.y > 2) {
-                this.setDamage(BlockFace.UP.getIndex());
-            } else if (this.y - y > 0) {
-                this.setDamage(BlockFace.DOWN.getIndex());
+                if (y - this.y > 2) {
+                    this.setDamage(BlockFace.UP.getIndex());
+                } else if (this.y - y > 0) {
+                    this.setDamage(BlockFace.DOWN.getIndex());
+                } else {
+                    this.setDamage(player.getHorizontalFacing().getIndex());
+                }
             } else {
                 this.setDamage(player.getHorizontalFacing().getIndex());
             }
-        } else {
-            this.setDamage(player.getHorizontalFacing().getIndex());
         }
+
         if(this.level.getBlockEntity(this) != null) {
             BlockEntity blockEntity = this.level.getBlockEntity(this);
-            Server.getInstance().getLogger().warning("Found unused BlockEntity at world=" + blockEntity.getLevel().getName() + " x=" + blockEntity.getX() + " y=" + blockEntity.getY() + " z=" + blockEntity.getZ() + " whilst attempting to place piston, closing it.");
+            log.warn("Found unused BlockEntity at world={} x={} y={} z={} whilst attempting to place piston, closing it.", blockEntity.getLevel().getName(), blockEntity.getX(), blockEntity.getY(), blockEntity.getZ());
             blockEntity.saveNBT();
             blockEntity.close();
         }
 
-        this.level.setBlock(block, this, true, true);
-
-        CompoundTag nbt = new CompoundTag("")
-                .putString("id", BlockEntity.PISTON_ARM)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
+        CompoundTag nbt = new CompoundTag()
                 .putInt("facing", this.getBlockFace().getIndex())
-                .putBoolean("Sticky", this.sticky);
+                .putBoolean("Sticky", this.sticky)
+                .putBoolean("powered", isGettingPower());
 
-        BlockEntityPistonArm piston = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, this.level.getChunk(getChunkX(), getChunkZ()), nbt);
-        piston.powered = isPowered();
 
+        BlockEntityPistonArm piston = BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt);
+        if (piston == null) {
+            return false;
+        }
+        
         this.checkState(piston.powered);
         return true;
     }
@@ -112,6 +143,8 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     @Override
+    @PowerNukkitDifference(info = "Using new method for checking if powered + update all around redstone torches, " +
+            "even if the piston can't move.", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type != Level.BLOCK_UPDATE_NORMAL && type != Level.BLOCK_UPDATE_REDSTONE && type != Level.BLOCK_UPDATE_SCHEDULED) {
             return 0;
@@ -120,17 +153,22 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 return 0;
             }
 
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
-            if (blockEntity instanceof BlockEntityPistonArm) {
-                BlockEntityPistonArm arm = (BlockEntityPistonArm) blockEntity;
-                boolean powered = this.isPowered();
+            // We can't use getOrCreateBlockEntity(), because the update method is called on block place,
+            // before the "real" BlockEntity is set. That means, if we'd use the other method here,
+            // it would create two BlockEntities.
+            BlockEntityPistonArm arm = this.getBlockEntity();
 
-                if (arm.state % 2 == 0 && arm.powered != powered && checkState(powered)) {
-                    arm.powered = powered;
+            boolean powered = this.isGettingPower();
+            this.updateAroundRedstoneTorches(powered);
 
-                    if (arm.chunk != null) {
-                        arm.chunk.setChanged();
-                    }
+            if (arm == null || !arm.finished)
+                return 0;
+
+            if (arm.state % 2 == 0 && arm.powered != powered && checkState(powered)) {
+                arm.powered = powered;
+
+                if (arm.chunk != null) {
+                    arm.chunk.setChanged();
                 }
             }
 
@@ -138,13 +176,33 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         }
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    private void updateAroundRedstoneTorches(boolean powered) {
+        for (BlockFace side : BlockFace.values()) {
+            if ((getSide(side) instanceof BlockRedstoneTorch && powered)
+                    || (getSide(side) instanceof BlockRedstoneTorchUnlit && !powered)) {
+                BlockTorch torch = (BlockTorch) getSide(side);
+
+                BlockTorch.TorchAttachment torchAttachment = torch.getTorchAttachment();
+                Block support = torch.getSide(torchAttachment.getAttachedFace());
+
+                if (support.getLocation().equals(this.getLocation())) {
+                    torch.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+                }
+            }
+        }
+    }
+
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     private boolean checkState(Boolean isPowered) {
         if (!this.level.getServer().isRedstoneEnabled()) {
             return false;
         }
 
         if (isPowered == null) {
-            isPowered = this.isPowered();
+            isPowered = this.isGettingPower();
         }
 
         if (isPowered && !isExtended()) {
@@ -152,21 +210,23 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 return false;
             }
 
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_OUT);
+            this.getLevel().addSound(this, Sound.TILE_PISTON_OUT);
             return true;
         } else if (!isPowered && isExtended()) {
             if (!this.doMove(false)) {
                 return false;
             }
 
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_IN);
+            this.getLevel().addSound(this, Sound.TILE_PISTON_IN);
             return true;
         }
 
         return false;
     }
 
-    private boolean isPowered() {
+    @PowerNukkitDifference(info = "Piston shouldn't be powered from redstone under it.", since = "1.4.0.0-PN")
+    @Override
+    public boolean isGettingPower() {
         BlockFace face = getBlockFace();
 
         for (BlockFace side : BlockFace.values()) {
@@ -176,7 +236,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
             Block b = this.getSide(side);
 
-            if (b.getId() == Block.REDSTONE_WIRE && b.getDamage() > 0) {
+            if (b.getId() == Block.REDSTONE_WIRE && b.getDamage() > 0 && b.y >= this.getY()) {
                 return true;
             }
 
@@ -188,9 +248,14 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         return false;
     }
 
+    @Deprecated @DeprecationDetails(reason = "New method; keeping for plugin compatibility.", replaceWith = "#isGettingPower()", since = "1.4.0.0-PN", by = "PowerNukkit")
+    public boolean isPowered() {
+        return this.isGettingPower();
+    }
+
     private boolean doMove(boolean extending) {
         BlockFace direction = getBlockFace();
-        BlocksCalculator calculator = new BlocksCalculator(extending);
+        BlocksCalculator calculator = new BlocksCalculator(level, this, getBlockFace(), extending, sticky);
 
         boolean canMove = calculator.canMove();
 
@@ -237,10 +302,8 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             for (Block newBlock : newBlocks) {
                 Vector3 oldPos = newBlock.add(0);
                 newBlock.position(newBlock.add(0).getSide(side));
-
-                this.level.setBlock(newBlock, Block.get(BlockID.MOVING_BLOCK), true);
-
-                CompoundTag nbt = BlockEntity.getDefaultCompound(newBlock, BlockEntity.MOVING_BLOCK)
+                
+                CompoundTag nbt = new CompoundTag()
                         .putInt("pistonPosX", this.getFloorX())
                         .putInt("pistonPosY", this.getFloorY())
                         .putInt("pistonPosZ", this.getFloorZ())
@@ -248,13 +311,15 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                                 .putInt("id", newBlock.getId()) //only for nukkit purpose
                                 .putInt("meta", newBlock.getDamage()) //only for nukkit purpose
                                 .putShort("val", newBlock.getDamage())
-                                .putString("name", GlobalBlockPalette.getName(newBlock.getId()))
+                                .putString("name", BlockStateRegistry.getPersistenceName(newBlock.getId()))
                         );
 
-                if (!tags.get(i).isEmpty())
+                if (!tags.get(i).isEmpty()) {
                     nbt.putCompound("movingEntity", tags.get(i));
+                }
 
-                BlockEntity.createBlockEntity(BlockEntity.MOVING_BLOCK, newBlock, nbt);
+                BlockEntityHolder.setBlockAndCreateEntity((BlockEntityHolder<?>) BlockState.of(BlockID.MOVING_BLOCK).getBlock(newBlock), 
+                        true, true, nbt);
 
                 if (this.level.getBlockIdAt(oldPos.getFloorX(), oldPos.getFloorY(), oldPos.getFloorZ()) != BlockID.MOVING_BLOCK) {
                     this.level.setBlock(oldPos, Block.get(BlockID.AIR));
@@ -267,7 +332,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             this.level.setBlock(this.getSide(direction), createHead(this.getDamage()));
         }
 
-        BlockEntityPistonArm blockEntity = (BlockEntityPistonArm) this.level.getBlockEntity(this);
+        BlockEntityPistonArm blockEntity = getOrCreateBlockEntity();
         blockEntity.move(extending, attached);
         return true;
     }
@@ -305,26 +370,39 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         private final Block blockToMove;
         private final BlockFace moveDirection;
         private final boolean extending;
+        private final boolean sticky;
 
         private final List<Block> toMove = new ArrayList<>();
         private final List<Block> toDestroy = new ArrayList<>();
 
-        public BlocksCalculator(boolean extending) {
-            this.pistonPos = getLocation();
-            this.extending = extending;
+        /**
+         * @param level Unused, needed for compatibility with Cloudburst Nukkit plugins
+         */
+        public BlocksCalculator(Level level, Block block, BlockFace facing, boolean extending) {
+            this(level, block, facing, extending, false);
+        }
 
-            BlockFace face = getBlockFace();
+        /**
+         * @param level Unused, needed for compatibility with Cloudburst Nukkit plugins
+         */
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        public BlocksCalculator(Level level, Block pos, BlockFace face, boolean extending, boolean sticky) {
+            this.pistonPos = pos.getLocation();
+            this.extending = extending;
+            this.sticky = sticky;
+
             if (!extending) {
                 this.armPos = pistonPos.getSide(face);
             }
 
             if (extending) {
                 this.moveDirection = face;
-                this.blockToMove = getSide(face);
+                this.blockToMove = pos.getSide(face);
             } else {
                 this.moveDirection = face.getOpposite();
                 if (sticky) {
-                    this.blockToMove = getSide(face, 2);
+                    this.blockToMove = pos.getSide(face, 2);
                 } else {
                     this.blockToMove = null;
                 }
@@ -352,7 +430,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 return true;
             }
 
-            if (!this.addBlockLine(this.blockToMove, this.blockToMove.getSide(this.moveDirection.getOpposite()))) {
+            if (!this.addBlockLine(this.blockToMove, this.blockToMove.getSide(this.moveDirection.getOpposite()), true)) {
                 return false;
             }
 
@@ -368,15 +446,19 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             return true;
         }
 
-        private boolean addBlockLine(Block origin, Block from) {
+        @PowerNukkitDifference(info = "Fix honeyblock on piston facing direction" +
+                "+ fix block pushing limit for slime/honey blocks" +
+                "+ fix that honey/slime blocks could be retracted when the piston retracts in facing direction",
+                since = "1.4.0.0-PN")
+        private boolean addBlockLine(Block origin, Block from, boolean mainBlockLine) {
             Block block = origin.clone();
 
             if (block.getId() == AIR) {
                 return true;
             }
 
-            if (block.getId() == SLIME_BLOCK && from.getId() == HONEY_BLOCK
-                    || block.getId() == HONEY_BLOCK && from.getId() == SLIME_BLOCK) {
+            if (!mainBlockLine && (block.getId() == SLIME_BLOCK && from.getId() == HONEY_BLOCK
+                    || block.getId() == HONEY_BLOCK && from.getId() == SLIME_BLOCK)) {
                 return true;
             }
 
@@ -401,8 +483,14 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             int count = 1;
             List<Block> sticked = new ArrayList<>();
 
-            while (block.getId() == SLIME_BLOCK) {
+            while (block.getId() == SLIME_BLOCK || block.getId() == HONEY_BLOCK) {
+                Block oldBlock = block.clone();
                 block = origin.getSide(this.moveDirection.getOpposite(), count);
+
+                if (!extending && (block.getId() == SLIME_BLOCK && oldBlock.getId() == HONEY_BLOCK
+                        || block.getId() == HONEY_BLOCK && oldBlock.getId() == SLIME_BLOCK)) {
+                    break;
+                }
 
                 if (block.getId() == AIR || !canPush(block, this.moveDirection, false, extending) || block.equals(this.pistonPos)) {
                     break;
@@ -413,9 +501,10 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     break;
                 }
 
-                if (++count + this.toMove.size() > 12) {
+                if (count + this.toMove.size() > 12) {
                     return false;
                 }
+                count++;
 
                 sticked.add(block);
             }
@@ -438,7 +527,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                     for (int i = 0; i <= index + stickedCount; ++i) {
                         Block b = this.toMove.get(i);
 
-                        if (b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
+                        if ((b.getId() == SLIME_BLOCK || b.getId() == HONEY_BLOCK) && !this.addBranchingBlocks(b)) {
                             return false;
                         }
                     }
@@ -481,7 +570,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
         private boolean addBranchingBlocks(Block block) {
             for (BlockFace face : BlockFace.values()) {
-                if (face.getAxis() != this.moveDirection.getAxis() && !this.addBlockLine(block.getSide(face), block)) {
+                if (face.getAxis() != this.moveDirection.getAxis() && !this.addBlockLine(block.getSide(face), block, false)) {
                     return false;
                 }
             }

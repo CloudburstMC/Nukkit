@@ -1,27 +1,25 @@
 package cn.nukkit.item.enchantment;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentLure extends Enchantment {
     protected EnchantmentLure() {
-        super(ID_LURE, "fishingSpeed", 2, EnchantmentType.FISHING_ROD);
+        super(ID_LURE, "fishingSpeed", Rarity.RARE, EnchantmentType.FISHING_ROD);
     }
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return 15 + (level - 1) * 9;
+        return level + 8 * level + 6;
     }
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 50;
+        return getMinEnchantAbility(level) + 45 + level;
     }
 
     @Override
     public int getMaxLevel() {
         return 3;
     }
-
 }

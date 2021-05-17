@@ -6,7 +6,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created by CreeperFace on 26. 11. 2016.
+ * @author CreeperFace
+ * @since 26. 11. 2016
  */
 public class BlockRedSandstone extends BlockSandstone {
 
@@ -33,17 +34,6 @@ public class BlockRedSandstone extends BlockSandstone {
         };
 
         return names[this.getDamage() & 0x03];
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
     }
 
     @Override

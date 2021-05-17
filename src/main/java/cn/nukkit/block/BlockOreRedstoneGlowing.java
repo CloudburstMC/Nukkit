@@ -8,8 +8,8 @@ import cn.nukkit.level.Level;
 //和pm源码有点出入，这里参考了wiki
 
 /**
- * Created on 2015/12/6 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/6
  */
 public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
@@ -42,7 +42,7 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
             BlockFadeEvent event = new BlockFadeEvent(this, get(REDSTONE_ORE));
             level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
-                level.setBlock(this, event.getNewState(), false, false);
+                level.setBlock(this, event.getNewState(), false, true);
             }
 
             return Level.BLOCK_UPDATE_WEAK;

@@ -6,8 +6,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.math.Vector3;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityMotionEvent extends EntityEvent implements Cancellable {
     private static final HandlerList handlers = new HandlerList();

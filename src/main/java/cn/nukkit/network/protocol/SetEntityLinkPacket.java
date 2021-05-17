@@ -4,7 +4,7 @@ import cn.nukkit.api.Since;
 import lombok.ToString;
 
 /**
- * Created on 15-10-22.
+ * @since 15-10-22
  */
 @ToString
 public class SetEntityLinkPacket extends DataPacket {

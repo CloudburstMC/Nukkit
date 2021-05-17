@@ -4,8 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockOreIron extends BlockSolid {
 
@@ -34,19 +33,13 @@ public class BlockOreIron extends BlockSolid {
     }
 
     @Override
-    public String getName() {
-        return "Iron Ore";
+    public int getToolTier() {
+        return ItemTool.TIER_STONE;
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
-            return new Item[]{
-                    Item.get(IRON_ORE)
-            };
-        } else {
-            return new Item[0];
-        }
+    public String getName() {
+        return "Iron Ore";
     }
 
     @Override

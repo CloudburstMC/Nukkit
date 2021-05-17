@@ -1,6 +1,6 @@
 package cn.nukkit.scheduler;
 
-import cn.nukkit.Server;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * 表达一个任务的类。<br>A class that describes a task.
@@ -19,6 +19,7 @@ import cn.nukkit.Server;
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
  * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
+@Log4j2
 public abstract class Task implements Runnable {
     private TaskHandler taskHandler = null;
 
@@ -59,7 +60,7 @@ public abstract class Task implements Runnable {
         try {
             this.getHandler().cancel();
         } catch (RuntimeException ex) {
-            Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+            log.fatal("Exception while invoking onCancel", ex);
         }
     }
 

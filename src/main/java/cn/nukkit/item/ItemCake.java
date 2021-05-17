@@ -4,8 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemCake extends Item {
 
@@ -20,10 +19,5 @@ public class ItemCake extends Item {
     public ItemCake(Integer meta, int count) {
         super(CAKE, 0, count, "Cake");
         this.block = Block.get(BlockID.CAKE_BLOCK);
-    }
-
-    @Override
-    public int getMaxStackSize() {
-        return 64;
     }
 }

@@ -4,8 +4,7 @@ import cn.nukkit.math.BlockVector3;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 @ToString(exclude = "namedTag")
 public class BlockEntityDataPacket extends DataPacket {

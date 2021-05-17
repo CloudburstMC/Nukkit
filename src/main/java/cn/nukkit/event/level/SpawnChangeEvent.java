@@ -5,8 +5,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class SpawnChangeEvent extends LevelEvent {
 

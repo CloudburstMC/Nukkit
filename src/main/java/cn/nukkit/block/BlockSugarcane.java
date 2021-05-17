@@ -10,8 +10,11 @@ import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
- * Created by Pub4Game on 09.01.2016.
+ * @author Pub4Game
+ * @since 09.01.2016
  */
 public class BlockSugarcane extends BlockFlowable {
 
@@ -44,7 +47,7 @@ public class BlockSugarcane extends BlockFlowable {
     }
 
     @Override
-    public boolean onActivate(Item item, Player player) {
+    public boolean onActivate(@Nonnull Item item, Player player) {
         if (item.isFertilizer()) { //Bonemeal
             int count = 1;
 
@@ -146,7 +149,7 @@ public class BlockSugarcane extends BlockFlowable {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (block.getId() != AIR) {
             return false;
         }
@@ -166,7 +169,7 @@ public class BlockSugarcane extends BlockFlowable {
         if (downId == SUGARCANE_BLOCK) {
             return true;
         }
-        if (downId != GRASS && downId != DIRT && downId != SAND) {
+        if (downId != GRASS && downId != DIRT && downId != SAND || down.getId() == PODZOL) {
             return false;
         }
         for (BlockFace face : BlockFace.Plane.HORIZONTAL) {

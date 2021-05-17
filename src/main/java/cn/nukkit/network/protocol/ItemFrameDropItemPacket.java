@@ -4,7 +4,8 @@ import cn.nukkit.math.BlockVector3;
 import lombok.ToString;
 
 /**
- * Created by Pub4Game on 03.07.2016.
+ * @author Pub4Game
+ * @since 03.07.2016
  */
 @ToString
 public class ItemFrameDropItemPacket extends DataPacket {

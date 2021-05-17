@@ -2,10 +2,10 @@ package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
+import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.biome.type.CoveredBiome;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.MathHelper;
 import cn.nukkit.math.NukkitRandom;
@@ -13,8 +13,7 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.Random;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class PopulatorCaves extends Populator {
 

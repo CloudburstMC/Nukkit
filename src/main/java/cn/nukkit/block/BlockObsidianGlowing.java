@@ -1,12 +1,14 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 
 /**
- * Created on 2015/11/22 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/22
  */
 public class BlockObsidianGlowing extends BlockSolid {
 
@@ -48,6 +50,13 @@ public class BlockObsidianGlowing extends BlockSolid {
         return new ItemBlock(Block.get(BlockID.OBSIDIAN));
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int getToolTier() {
+        return ItemTool.TIER_DIAMOND;
+    }
+
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() > ItemTool.DIAMOND_PICKAXE) {
@@ -55,7 +64,7 @@ public class BlockObsidianGlowing extends BlockSolid {
                     toItem()
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

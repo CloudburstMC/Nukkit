@@ -1,9 +1,13 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.api.PowerNukkitDifference;
+
+import lombok.extern.log4j.Log4j2;
+
 import java.io.IOException;
 import java.util.zip.Deflater;
 
-
+@Log4j2
 public abstract class Zlib {
     private static ZlibProvider[] providers;
     private static ZlibProvider provider;
@@ -15,7 +19,7 @@ public abstract class Zlib {
     }
 
     public static void setProvider(int providerIndex) {
-        MainLogger.getLogger().info("Selected Zlib Provider: " + providerIndex + " (" + provider.getClass().getCanonicalName() + ")");
+        log.info("Selected Zlib Provider: {} ({})", providerIndex, provider.getClass().getCanonicalName());
         switch (providerIndex) {
             case 0:
                 if (providers[providerIndex] == null)
@@ -33,20 +37,23 @@ public abstract class Zlib {
                 throw new UnsupportedOperationException("Invalid provider: " + providerIndex);
         }
         if (providerIndex != 2) {
-            MainLogger.getLogger().warning(" - This Zlib will negatively affect performance");
+            log.warn(" - This Zlib will negatively affect performance");
         }
         provider = providers[providerIndex];
     }
 
-    public static byte[] deflate(byte[] data) throws Exception {
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Throws IOException instead of Exception")
+    public static byte[] deflate(byte[] data) throws IOException {
         return deflate(data, Deflater.DEFAULT_COMPRESSION);
     }
 
-    public static byte[] deflate(byte[] data, int level) throws Exception {
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Throws IOException instead of Exception")
+    public static byte[] deflate(byte[] data, int level) throws IOException {
         return provider.deflate(data, level);
     }
 
-    public static byte[] deflate(byte[][] data, int level) throws Exception {
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Throws IOException instead of Exception")
+    public static byte[] deflate(byte[][] data, int level) throws IOException {
         return provider.deflate(data, level);
     }
 

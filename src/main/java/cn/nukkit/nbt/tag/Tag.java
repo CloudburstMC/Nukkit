@@ -3,6 +3,7 @@ package cn.nukkit.nbt.tag;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Objects;
@@ -80,6 +81,7 @@ public abstract class Tag {
         return this;
     }
 
+    @Nonnull
     public String getName() {
         if (name == null) return "";
         return name;

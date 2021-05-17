@@ -1,8 +1,7 @@
 package cn.nukkit.block;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockWaterStill extends BlockWater {
 

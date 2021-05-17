@@ -9,6 +9,7 @@ import java.lang.annotation.*;
 @Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.TYPE,
         ElementType.FIELD, ElementType.PACKAGE})
 @Documented
+@Inherited
 public @interface Since {
     /**
      * The version which added the element.

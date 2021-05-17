@@ -8,15 +8,15 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemArmor;
 import cn.nukkit.item.ItemElytra;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentThorns extends Enchantment {
     protected EnchantmentThorns() {
-        super(ID_THORNS, "thorns", 1, EnchantmentType.ARMOR);
+        super(ID_THORNS, "thorns", Rarity.VERY_RARE, EnchantmentType.ARMOR);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class EnchantmentThorns extends Enchantment {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 50;
+        return super.getMinEnchantAbility(level) + 50;
     }
 
     @Override
@@ -56,6 +56,11 @@ public class EnchantmentThorns extends Enchantment {
         if (shouldHit(random, thornsLevel)) {
             attacker.attack(new EntityDamageByEntityEvent(entity, attacker, EntityDamageEvent.DamageCause.ENTITY_ATTACK, getDamage(random, level), 0f));
         }
+    }
+
+    @Override
+    public boolean canEnchant(@Nonnull Item item) {
+        return !(item instanceof ItemElytra) && super.canEnchant(item);
     }
 
     @Override
