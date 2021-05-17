@@ -471,6 +471,8 @@ public class CraftingManager {
         map.put(hash, recipe);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nullable
     public SmithingRecipe matchSmithingRecipe(Item equipment, Item ingredient) {
         List<Item> inputList = new ArrayList<>(2);
@@ -478,7 +480,9 @@ public class CraftingManager {
         inputList.add(ingredient.decrement(ingredient.count - 1));
         return matchSmithingRecipe(inputList);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nullable
     public SmithingRecipe matchSmithingRecipe(@Nonnull List<Item> inputList) {
         inputList.sort(recipeComparator);
@@ -503,7 +507,9 @@ public class CraftingManager {
         inputList.add(ingredient);
         return matchSmithingRecipe(inputList, primaryOutput);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public SmithingRecipe matchSmithingRecipe(@Nonnull List<Item> inputList, @Nonnull Item primaryOutput) {
         int outputHash = getItemHash(primaryOutput);
         if (!this.smithingRecipes.containsKey(outputHash)) {
