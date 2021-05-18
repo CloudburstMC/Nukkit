@@ -26,9 +26,9 @@ public class EntityMooshroom extends EntityAnimal {
     @Override
     public float getHeight() {
         if (isBaby()) {
-            return 0.7f;
+            return 0.65f;
         }
-        return 1.4f;
+        return 1.3f;
     }
 
     @Override

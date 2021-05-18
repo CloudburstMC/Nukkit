@@ -633,7 +633,7 @@ public class Server {
         this.commandMap = new SimpleCommandMap(this);
 
         // Initialize metrics
-        new NukkitMetrics(this);
+        NukkitMetrics.startNow(this);
 
         this.registerEntities();
         this.registerBlockEntities();
