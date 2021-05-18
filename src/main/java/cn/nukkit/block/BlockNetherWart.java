@@ -5,9 +5,9 @@ import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemNetherWart;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
 
 import java.util.Random;
 
@@ -28,7 +28,7 @@ public class BlockNetherWart extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (down.getId() == SOUL_SAND) {
-            this.getLevel().setBlock(block, this, true, true);
+            this.getWorld().setBlock(block, this, true, true);
             return true;
         }
         return false;
@@ -36,12 +36,12 @@ public class BlockNetherWart extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() != SOUL_SAND) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == World.BLOCK_UPDATE_RANDOM) {
             if (new Random().nextInt(10) == 1) {
                 if (this.getDamage() < 0x03) {
                     BlockNetherWart block = (BlockNetherWart) this.clone();
@@ -50,13 +50,13 @@ public class BlockNetherWart extends BlockFlowable {
                     Server.getInstance().getPluginManager().callEvent(ev);
 
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), true, true);
+                        this.getWorld().setBlock(this, ev.getNewState(), true, true);
                     } else {
-                        return Level.BLOCK_UPDATE_RANDOM;
+                        return World.BLOCK_UPDATE_RANDOM;
                     }
                 }
             } else {
-                return Level.BLOCK_UPDATE_RANDOM;
+                return World.BLOCK_UPDATE_RANDOM;
             }
         }
 

@@ -7,11 +7,11 @@ import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
 
 import java.util.EnumSet;
 import java.util.Random;
@@ -140,7 +140,7 @@ public class BlockVine extends BlockTransparentMeta {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (block.getId() != VINE && target.isSolid() && face.getHorizontalIndex() != -1) {
             this.setDamage(getMetaFromFace(face.getOpposite()));
-            this.getLevel().setBlock(block, this, true, true);
+            this.getWorld().setBlock(block, this, true, true);
             return true;
         }
 
@@ -165,7 +165,7 @@ public class BlockVine extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             Block up = this.up();
             Set<BlockFace> upFaces = up instanceof BlockVine ? ((BlockVine) up).getFaces() : null;
             Set<BlockFace> faces = this.getFaces();
@@ -175,15 +175,15 @@ public class BlockVine extends BlockTransparentMeta {
                 }
             }
             if (faces.isEmpty() && !up.isSolid()) {
-                this.getLevel().useBreakOn(this, null, null, true);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this, null, null, true);
+                return World.BLOCK_UPDATE_NORMAL;
             }
             int meta = getMetaFromFaces(faces);
             if (meta != this.getDamage()) {
-                this.level.setBlock(this, Block.get(VINE, meta), true);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.world.setBlock(this, Block.get(VINE, meta), true);
+                return World.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == World.BLOCK_UPDATE_RANDOM) {
             Random random = ThreadLocalRandom.current();
             if (random.nextInt(4) == 0) {
                 BlockFace face = BlockFace.random(random);
@@ -240,7 +240,7 @@ public class BlockVine extends BlockTransparentMeta {
                         putVineOnHorizontalFace(below, below.getDamage() | meta, id == AIR ? this : null);
                     }
                 }
-                return Level.BLOCK_UPDATE_RANDOM;
+                return World.BLOCK_UPDATE_RANDOM;
             }
         }
         return 0;
@@ -255,7 +255,7 @@ public class BlockVine extends BlockTransparentMeta {
         for (int x = blockX - 4; x <= blockX + 4; x++) {
             for (int z = blockZ - 4; z <= blockZ + 4; z++) {
                 for (int y = blockY - 1; y <= blockY + 1; y++) {
-                    if (this.level.getBlock(x, y, z).getId() == VINE) {
+                    if (this.world.getBlock(x, y, z).getId() == VINE) {
                         if (++count >= 5) return false;
                     }
                 }
@@ -273,9 +273,9 @@ public class BlockVine extends BlockTransparentMeta {
         } else {
             event = new BlockGrowEvent(block, vine);
         }
-        this.level.getServer().getPluginManager().callEvent(event);
+        this.world.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
-            this.level.setBlock(block, vine, true);
+            this.world.setBlock(block, vine, true);
         }
     }
 

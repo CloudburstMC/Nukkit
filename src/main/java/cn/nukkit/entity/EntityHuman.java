@@ -3,7 +3,6 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.IntPositionEntityData;
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
@@ -11,6 +10,7 @@ import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import cn.nukkit.utils.*;
+import cn.nukkit.world.format.FullChunk;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -283,7 +283,7 @@ public class EntityHuman extends EntityHumanType {
 
     @Override
     public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
-        this.level.addPlayerMovement(this, x, y, z, yaw, pitch, headYaw);
+        this.world.addPlayerMovement(this, x, y, z, yaw, pitch, headYaw);
     }
 
     @Override

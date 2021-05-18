@@ -5,12 +5,12 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityComparator;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemRedstoneComparator;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.WorldEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
 
 /**
  * @author CreeperFace
@@ -51,16 +51,16 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     protected int getRedstoneSignal() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.world.getBlockEntity(this);
 
         return blockEntity instanceof BlockEntityComparator ? ((BlockEntityComparator) blockEntity).getOutputSignal() : 0;
     }
 
     @Override
     public void updateState() {
-        if (!this.level.isBlockTickPending(this, this)) {
+        if (!this.world.isBlockTickPending(this, this)) {
             int output = this.calculateOutput();
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
+            BlockEntity blockEntity = this.world.getBlockEntity(this);
             int power = blockEntity instanceof BlockEntityComparator ? ((BlockEntityComparator) blockEntity).getOutputSignal() : 0;
 
             if (output != power || this.isPowered() != this.shouldBePowered()) {
@@ -71,7 +71,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                 }*/
 
                 //System.out.println("schedule update 0");
-                this.level.scheduleUpdate(this, this, 2);
+                this.world.scheduleUpdate(this, this, 2);
             }
         }
     }
@@ -119,8 +119,8 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
             this.setDamage(this.getDamage() + 4);
         }
 
-        this.level.addLevelEvent(this.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_BUTTON_CLICK, this.getMode() == Mode.SUBTRACT ? 500 : 550);
-        this.level.setBlock(this, this, true, false);
+        this.world.addLevelEvent(this.add(0.5, 0.5, 0.5), WorldEventPacket.EVENT_SOUND_BUTTON_CLICK, this.getMode() == Mode.SUBTRACT ? 500 : 550);
+        this.world.setBlock(this, this, true, false);
         //bug?
 
         this.onChange();
@@ -129,7 +129,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == World.BLOCK_UPDATE_SCHEDULED) {
             this.onChange();
             return type;
         }
@@ -139,7 +139,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     private void onChange() {
         int output = this.calculateOutput();
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.world.getBlockEntity(this);
         int currentOutput = 0;
 
         if (blockEntity instanceof BlockEntityComparator) {
@@ -153,12 +153,12 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
             boolean isPowered = this.isPowered();
 
             if (isPowered && !shouldBePowered) {
-                this.level.setBlock(this, getUnpowered(), true, false);
+                this.world.setBlock(this, getUnpowered(), true, false);
             } else if (!isPowered && shouldBePowered) {
-                this.level.setBlock(this, getPowered(), true, false);
+                this.world.setBlock(this, getPowered(), true, false);
             }
 
-            this.level.updateAroundRedstone(this, null);
+            this.world.updateAroundRedstone(this, null);
         }
     }
 
@@ -171,11 +171,11 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z);
-            BlockEntityComparator comparator = (BlockEntityComparator) BlockEntity.createBlockEntity(BlockEntity.COMPARATOR, this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            BlockEntityComparator comparator = (BlockEntityComparator) BlockEntity.createBlockEntity(BlockEntity.COMPARATOR, this.world.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
             if (comparator == null) {
                 return false;
             }
-            onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+            onUpdate(World.BLOCK_UPDATE_REDSTONE);
             return true;
         }
 

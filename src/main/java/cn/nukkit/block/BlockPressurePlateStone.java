@@ -67,7 +67,7 @@ public class BlockPressurePlateStone extends BlockPressurePlateBase {
     protected int computeRedstoneStrength() {
         AxisAlignedBB bb = getCollisionBoundingBox();
 
-        for (Entity entity : this.level.getCollidingEntities(bb)) {
+        for (Entity entity : this.world.getCollidingEntities(bb)) {
             if (entity instanceof EntityLiving && entity.doesTriggerPressurePlate()) {
                 return 15;
             }

@@ -3,9 +3,9 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
+import cn.nukkit.world.World;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -86,7 +86,7 @@ public class StatusCommand extends VanillaCommand {
         sender.sendMessage(TextFormat.GOLD + "Players: " + playerColor + server.getOnlinePlayers().size() + TextFormat.GREEN + " online, " +
                 TextFormat.RED + server.getMaxPlayers() + TextFormat.GREEN + " max. ");
 
-        for (Level level : server.getLevels().values()) {
+        for (World level : server.getWorlds().values()) {
             sender.sendMessage(
                     TextFormat.GOLD + "World \"" + level.getFolderName() + "\"" + (!Objects.equals(level.getFolderName(), level.getName()) ? " (" + level.getName() + ")" : "") + ": " +
                             TextFormat.RED + level.getChunks().size() + TextFormat.GREEN + " chunks, " +

@@ -3,8 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.world.World;
 
 /**
  * Created by CreeperFace on 2.6.2017.
@@ -62,17 +62,17 @@ public class BlockConcretePowder extends BlockFallable {
     
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
-            super.onUpdate(Level.BLOCK_UPDATE_NORMAL);
+        if (type == World.BLOCK_UPDATE_NORMAL) {
+            super.onUpdate(World.BLOCK_UPDATE_NORMAL);
 
             for (int side = 1; side <= 5; side++) {
                 Block block = this.getSide(BlockFace.fromIndex(side));
                 if (block.getId() == Block.WATER || block.getId() == Block.STILL_WATER) {
-                    this.level.setBlock(this, Block.get(Block.CONCRETE, this.meta), true, true);
+                    this.world.setBlock(this, Block.get(Block.CONCRETE, this.meta), true, true);
                 }
             }
 
-            return Level.BLOCK_UPDATE_NORMAL;
+            return World.BLOCK_UPDATE_NORMAL;
         }
         return 0;
     }
@@ -90,9 +90,9 @@ public class BlockConcretePowder extends BlockFallable {
         }
 
         if (concrete) {
-            this.level.setBlock(this, Block.get(Block.CONCRETE, this.getDamage()), true, true);
+            this.world.setBlock(this, Block.get(Block.CONCRETE, this.getDamage()), true, true);
         } else {
-            this.level.setBlock(this, this, true, true);
+            this.world.setBlock(this, this, true, true);
         }
 
         return true;

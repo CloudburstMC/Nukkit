@@ -5,12 +5,12 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityBoat;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.world.World;
 
 /**
  * Created by yescallop on 2016/2/13.
@@ -35,7 +35,7 @@ public class ItemBoat extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(World level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (face != BlockFace.UP) return false;
         EntityBoat boat = (EntityBoat) Entity.createEntity("Boat",
                 level.getChunk(block.getFloorX() >> 4, block.getFloorZ() >> 4), new CompoundTag("")

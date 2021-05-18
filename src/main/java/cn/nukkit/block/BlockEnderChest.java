@@ -94,7 +94,7 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
         int[] faces = {2, 5, 3, 4};
         this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag("")
                 .putString("id", BlockEntity.ENDER_CHEST)
                 .putInt("x", (int) this.x)
@@ -112,7 +112,7 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
             }
         }
 
-        BlockEntityEnderChest ender = (BlockEntityEnderChest) BlockEntity.createBlockEntity(BlockEntity.ENDER_CHEST, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        BlockEntityEnderChest ender = (BlockEntityEnderChest) BlockEntity.createBlockEntity(BlockEntity.ENDER_CHEST, this.getWorld().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
         return ender != null;
     }
 
@@ -124,7 +124,7 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
                 return true;
             }
 
-            BlockEntity t = this.getLevel().getBlockEntity(this);
+            BlockEntity t = this.getWorld().getBlockEntity(this);
             BlockEntityEnderChest chest;
             if (t instanceof BlockEntityEnderChest) {
                 chest = (BlockEntityEnderChest) t;
@@ -134,7 +134,7 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                chest = (BlockEntityEnderChest) BlockEntity.createBlockEntity(BlockEntity.ENDER_CHEST, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+                chest = (BlockEntityEnderChest) BlockEntity.createBlockEntity(BlockEntity.ENDER_CHEST, this.getWorld().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
                 if (chest == null) {
                     return false;
                 }

@@ -1,0 +1,22 @@
+package cn.nukkit.event.world;
+
+import cn.nukkit.event.HandlerList;
+import cn.nukkit.world.World;
+
+/**
+ * author: MagicDroidX
+ * Nukkit Project
+ */
+public class WorldLoadEvent extends WorldEvent {
+
+    private static final HandlerList handlers = new HandlerList();
+
+    public static HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public WorldLoadEvent(World world) {
+        super(world);
+    }
+
+}

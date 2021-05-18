@@ -6,10 +6,10 @@ import cn.nukkit.event.block.LeavesDecayEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Hash;
+import cn.nukkit.world.World;
 import it.unimi.dsi.fastutil.longs.LongArraySet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
@@ -72,7 +72,7 @@ public class BlockLeaves extends BlockTransparentMeta {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.setPersistent(true);
-        this.getLevel().setBlock(this, this, true);
+        this.getWorld().setBlock(this, this, true);
         return true;
     }
 
@@ -110,10 +110,10 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM && !isPersistent() && !isCheckDecay()) {
+        if (type == World.BLOCK_UPDATE_RANDOM && !isPersistent() && !isCheckDecay()) {
             setCheckDecay(true);
-            getLevel().setBlock(this, this, false, false);
-        } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
+            getWorld().setBlock(this, this, false, false);
+        } else if (type == World.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
             setDamage(getDamage() & 0x03);
             int check = 0;
 
@@ -121,10 +121,10 @@ public class BlockLeaves extends BlockTransparentMeta {
 
             Server.getInstance().getPluginManager().callEvent(ev);
             if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, check)) {
-                getLevel().setBlock(this, this, false, false);
+                getWorld().setBlock(this, this, false, false);
             } else {
-                getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

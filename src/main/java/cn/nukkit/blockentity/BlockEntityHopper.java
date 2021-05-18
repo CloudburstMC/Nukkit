@@ -9,13 +9,13 @@ import cn.nukkit.event.inventory.InventoryMoveItemEvent;
 import cn.nukkit.inventory.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.HashSet;
 
@@ -61,7 +61,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.level.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) == Block.HOPPER_BLOCK;
+        return this.world.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) == Block.HOPPER_BLOCK;
     }
 
     @Override
@@ -159,12 +159,12 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
         this.transferCooldown--;
         
-        if (this.level.isBlockPowered(getBlock())) {
+        if (this.world.isBlockPowered(getBlock())) {
         	return true;
         }
 
         if (!this.isOnTransferCooldown()) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this.up());
+            BlockEntity blockEntity = this.world.getBlockEntity(this.up());
 
             boolean changed = pushItems();
 
@@ -191,7 +191,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             return false;
         }
 
-        BlockEntity blockEntity = this.level.getBlockEntity(this.up());
+        BlockEntity blockEntity = this.world.getBlockEntity(this.up());
         //Fix for furnace outputs
         if (blockEntity instanceof BlockEntityFurnace) {
             FurnaceInventory inv = ((BlockEntityFurnace) blockEntity).getInventory();
@@ -264,7 +264,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
 
         boolean pickedUpItem = false;
 
-        for (Entity entity : this.level.getCollidingEntities(this.pickupArea)) {
+        for (Entity entity : this.world.getCollidingEntities(this.pickupArea)) {
             if (entity.isClosed() || !(entity instanceof EntityItem)) {
                 continue;
             }
@@ -320,7 +320,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     @Override
     public void onBreak() {
         for (Item content : inventory.getContents().values()) {
-            level.dropItem(this, content);
+            world.dropItem(this, content);
         }
         this.inventory.clearAll();
     }
@@ -330,7 +330,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             return false;
         }
 
-        BlockEntity be = this.level.getBlockEntity(this.getSide(BlockFace.fromIndex(this.level.getBlockDataAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()))));
+        BlockEntity be = this.world.getBlockEntity(this.getSide(BlockFace.fromIndex(this.world.getBlockDataAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()))));
 
         if (be instanceof BlockEntityHopper && this.getBlock().getDamage() == 0 || !(be instanceof InventoryHolder))
             return false;

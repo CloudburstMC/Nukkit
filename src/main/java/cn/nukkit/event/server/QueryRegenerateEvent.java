@@ -58,7 +58,7 @@ public class QueryRegenerateEvent extends ServerEvent {
         this.gameType = (server.getGamemode() & 0x01) == 0 ? "SMP" : "CMP";
         this.version = server.getVersion();
         this.server_engine = server.getName() + " " + server.getNukkitVersion();
-        this.map = server.getDefaultLevel() == null ? "unknown" : server.getDefaultLevel().getName();
+        this.map = server.getDefaultWorld() == null ? "unknown" : server.getDefaultWorld().getName();
         this.numPlayers = this.players.length;
         this.maxPlayers = server.getMaxPlayers();
         this.whitelist = server.hasWhitelist() ? "on" : "off";

@@ -73,10 +73,10 @@ public class BlockFlowerPot extends BlockFlowable {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        BlockEntityFlowerPot flowerPot = (BlockEntityFlowerPot) BlockEntity.createBlockEntity(BlockEntity.FLOWER_POT, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+        BlockEntityFlowerPot flowerPot = (BlockEntityFlowerPot) BlockEntity.createBlockEntity(BlockEntity.FLOWER_POT, getWorld().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
         if (flowerPot == null) return false;
 
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
         return true;
     }
 
@@ -92,7 +92,7 @@ public class BlockFlowerPot extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = getWorld().getBlockEntity(this);
         if (!(blockEntity instanceof BlockEntityFlowerPot)) return false;
 
         if (blockEntity.namedTag.getShort("item") != AIR || blockEntity.namedTag.getInt("mData") != AIR) {
@@ -106,7 +106,7 @@ public class BlockFlowerPot extends BlockFlowable {
                 blockEntity.namedTag.putShort("item", AIR);
                 blockEntity.namedTag.putInt("data", 0);
                 this.setDamage(0);
-                this.level.setBlock(this, this, true);
+                this.world.setBlock(this, this, true);
                 ((BlockEntityFlowerPot) blockEntity).spawnToAll();
                 return true;
             }
@@ -129,7 +129,7 @@ public class BlockFlowerPot extends BlockFlowable {
         blockEntity.namedTag.putInt("data", itemMeta);
 
         this.setDamage(1);
-        this.getLevel().setBlock(this, this, true);
+        this.getWorld().setBlock(this, this, true);
         ((BlockEntityFlowerPot) blockEntity).spawnToAll();
 
         if (player.isSurvival()) {
@@ -144,7 +144,7 @@ public class BlockFlowerPot extends BlockFlowable {
         boolean dropInside = false;
         int insideID = 0;
         int insideMeta = 0;
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = getWorld().getBlockEntity(this);
         if (blockEntity instanceof BlockEntityFlowerPot) {
             dropInside = true;
             insideID = blockEntity.namedTag.getShort("item");

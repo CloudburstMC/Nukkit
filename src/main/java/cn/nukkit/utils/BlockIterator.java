@@ -1,9 +1,9 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.world.World;
 
 import java.util.Iterator;
 
@@ -12,7 +12,7 @@ import java.util.Iterator;
  * Nukkit Project
  */
 public class BlockIterator implements Iterator<Block> {
-    private final Level level;
+    private final World level;
     private final int maxDistance;
 
     private static final int gridSize = 1 << 24;
@@ -36,15 +36,15 @@ public class BlockIterator implements Iterator<Block> {
     private BlockFace secondFace;
     private BlockFace thirdFace;
 
-    public BlockIterator(Level level, Vector3 start, Vector3 direction) {
+    public BlockIterator(World level, Vector3 start, Vector3 direction) {
         this(level, start, direction, 0);
     }
 
-    public BlockIterator(Level level, Vector3 start, Vector3 direction, double yOffset) {
+    public BlockIterator(World level, Vector3 start, Vector3 direction, double yOffset) {
         this(level, start, direction, yOffset, 0);
     }
 
-    public BlockIterator(Level level, Vector3 start, Vector3 direction, double yOffset, int maxDistance) {
+    public BlockIterator(World level, Vector3 start, Vector3 direction, double yOffset, int maxDistance) {
         this.level = level;
         this.maxDistance = maxDistance;
         this.blockQueue = new Block[3];

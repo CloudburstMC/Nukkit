@@ -10,8 +10,8 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Level;
 import cn.nukkit.utils.TextFormat;
+import cn.nukkit.world.World;
 
 import java.util.StringJoiner;
 
@@ -57,7 +57,7 @@ public class KillCommand extends VanillaCommand {
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
             } else if (args[0].equals("@e")) {
                 StringJoiner joiner = new StringJoiner(", ");
-                for (Level level : Server.getInstance().getLevels().values()) {
+                for (World level : Server.getInstance().getWorlds().values()) {
                     for (Entity entity : level.getEntities()) {
                         if (!(entity instanceof Player)) {
                             joiner.add(entity.getName());
@@ -85,7 +85,7 @@ public class KillCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                     return true;
                 }
-                for (Level level : Server.getInstance().getLevels().values()) {
+                for (World level : Server.getInstance().getWorlds().values()) {
                     for (Entity entity : level.getEntities()) {
                         if (entity instanceof Player) {
                             entity.setHealth(0);

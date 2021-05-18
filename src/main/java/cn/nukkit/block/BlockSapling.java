@@ -1,18 +1,18 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.level.StructureGrowEvent;
+import cn.nukkit.event.world.StructureGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.ListChunkManager;
-import cn.nukkit.level.generator.object.BasicGenerator;
-import cn.nukkit.level.generator.object.tree.*;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector2;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.ListChunkManager;
+import cn.nukkit.world.generator.object.BasicGenerator;
+import cn.nukkit.world.generator.object.tree.*;
+import cn.nukkit.world.particle.BoneMealParticle;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,7 +67,7 @@ public class BlockSapling extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND || down.getId() == Block.PODZOL) {
-            this.getLevel().setBlock(block, this, true, true);
+            this.getWorld().setBlock(block, this, true, true);
             return true;
         }
 
@@ -85,7 +85,7 @@ public class BlockSapling extends BlockFlowable {
                 item.count--;
             }
 
-            this.level.addParticle(new BoneMealParticle(this));
+            this.world.addParticle(new BoneMealParticle(this));
             if (ThreadLocalRandom.current().nextFloat() >= 0.45) {
                 return true;
             }
@@ -98,25 +98,25 @@ public class BlockSapling extends BlockFlowable {
     }
 
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) { //Growth
+        } else if (type == World.BLOCK_UPDATE_RANDOM) { //Growth
             if (ThreadLocalRandom.current().nextInt(1, 8) == 1) {
                 if ((this.getDamage() & 0x08) == 0x08) {
                     this.grow();
                 } else {
                     this.setDamage(this.getDamage() | 0x08);
-                    this.getLevel().setBlock(this, this, true);
-                    return Level.BLOCK_UPDATE_RANDOM;
+                    this.getWorld().setBlock(this, this, true);
+                    return World.BLOCK_UPDATE_RANDOM;
                 }
             } else {
-                return Level.BLOCK_UPDATE_RANDOM;
+                return World.BLOCK_UPDATE_RANDOM;
             }
         }
-        return Level.BLOCK_UPDATE_NORMAL;
+        return World.BLOCK_UPDATE_NORMAL;
     }
 
     private void grow() {
@@ -156,45 +156,45 @@ public class BlockSapling extends BlockFlowable {
                 break;
             //TODO: big spruce
             default:
-                ListChunkManager chunkManager = new ListChunkManager(this.level);
+                ListChunkManager chunkManager = new ListChunkManager(this.world);
                 ObjectTree.growTree(chunkManager, this.getFloorX(), this.getFloorY(), this.getFloorZ(), new NukkitRandom(), this.getDamage() & 0x07);
                 StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
-                this.level.getServer().getPluginManager().callEvent(ev);
+                this.world.getServer().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {
                     return;
                 }
                 for(Block block : ev.getBlockList()) {
-                    this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
+                    this.world.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
                 }
                 return;
         }
 
         if (bigTree) {
-            this.level.setBlock(vector3, get(AIR), true, false);
-            this.level.setBlock(vector3.add(1, 0, 0), get(AIR), true, false);
-            this.level.setBlock(vector3.add(0, 0, 1), get(AIR), true, false);
-            this.level.setBlock(vector3.add(1, 0, 1), get(AIR), true, false);
+            this.world.setBlock(vector3, get(AIR), true, false);
+            this.world.setBlock(vector3.add(1, 0, 0), get(AIR), true, false);
+            this.world.setBlock(vector3.add(0, 0, 1), get(AIR), true, false);
+            this.world.setBlock(vector3.add(1, 0, 1), get(AIR), true, false);
         } else {
-            this.level.setBlock(this, get(AIR), true, false);
+            this.world.setBlock(this, get(AIR), true, false);
         }
 
-        ListChunkManager chunkManager = new ListChunkManager(this.level);
+        ListChunkManager chunkManager = new ListChunkManager(this.world);
         boolean success = generator.generate(chunkManager, new NukkitRandom(), vector3);
         StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
-        this.level.getServer().getPluginManager().callEvent(ev);
+        this.world.getServer().getPluginManager().callEvent(ev);
         if (ev.isCancelled() || !success) {
             if (bigTree) {
-                this.level.setBlock(vector3, this, true, false);
-                this.level.setBlock(vector3.add(1, 0, 0), this, true, false);
-                this.level.setBlock(vector3.add(0, 0, 1), this, true, false);
-                this.level.setBlock(vector3.add(1, 0, 1), this, true, false);
+                this.world.setBlock(vector3, this, true, false);
+                this.world.setBlock(vector3.add(1, 0, 0), this, true, false);
+                this.world.setBlock(vector3.add(0, 0, 1), this, true, false);
+                this.world.setBlock(vector3.add(1, 0, 1), this, true, false);
             } else {
-                this.level.setBlock(this, this, true, false);
+                this.world.setBlock(this, this, true, false);
             }
             return;
         }
         for(Block block : ev.getBlockList()) {
-            this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
+            this.world.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
         }
     }
 
@@ -226,7 +226,7 @@ public class BlockSapling extends BlockFlowable {
     }
 
     public boolean isSameType(Vector3 pos, int type) {
-        Block block = this.level.getBlock(pos);
+        Block block = this.world.getBlock(pos);
         return block.getId() == this.getId() && (block.getDamage() & 0x07) == (type & 0x07);
     }
 

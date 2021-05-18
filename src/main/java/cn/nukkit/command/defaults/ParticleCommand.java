@@ -8,9 +8,9 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Position;
-import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.world.Position;
+import cn.nukkit.world.particle.*;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -52,7 +52,7 @@ public class ParticleCommand extends VanillaCommand {
         if (sender instanceof Player) {
             defaultPosition = ((Player) sender).getPosition();
         } else {
-            defaultPosition = new Position(0, 0, 0, sender.getServer().getDefaultLevel());
+            defaultPosition = new Position(0, 0, 0, sender.getServer().getDefaultWorld());
         }
 
         String name = args[0].toLowerCase();
@@ -68,7 +68,7 @@ public class ParticleCommand extends VanillaCommand {
         } catch (Exception e) {
             return false;
         }
-        Position position = new Position(x, y, z, defaultPosition.getLevel());
+        Position position = new Position(x, y, z, defaultPosition.getWorld());
 
         int count = 1;
         if (args.length > 4) {
@@ -94,7 +94,7 @@ public class ParticleCommand extends VanillaCommand {
         Particle particle = this.getParticle(name, position, data);
 
         if (particle == null) {
-            position.level.addParticleEffect(position.asVector3f(), args[0], -1, position.level.getDimension());
+            position.world.addParticleEffect(position.asVector3f(), args[0], -1, position.world.getDimension());
             return true;
         }
 
@@ -108,7 +108,7 @@ public class ParticleCommand extends VanillaCommand {
                     position.y + (random.nextFloat() * 2 - 1),
                     position.z + (random.nextFloat() * 2 - 1)
             );
-            position.getLevel().addParticle(particle);
+            position.getWorld().addParticle(particle);
         }
 
         return true;

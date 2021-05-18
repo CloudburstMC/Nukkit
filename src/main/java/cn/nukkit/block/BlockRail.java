@@ -4,13 +4,13 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
+import cn.nukkit.world.World;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,12 +70,12 @@ public class BlockRail extends BlockFlowable implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             Optional<BlockFace> ascendingDirection = this.getOrientation().ascendingDirection();
             Block down = this.down();
             if ((down.isTransparent() && down.getId() != HOPPER_BLOCK) || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;
@@ -139,9 +139,9 @@ public class BlockRail extends BlockFlowable implements Faceable {
                 }
             }
         }
-        this.level.setBlock(this, this, true, true);
+        this.world.setBlock(this, this, true, true);
         if (!isAbstract()) {
-            level.scheduleUpdate(this, this, 0);
+            world.scheduleUpdate(this, this, 0);
         }
         return true;
     }
@@ -228,7 +228,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
     public void setOrientation(Orientation o) {
         if (o.metadata() != this.getRealMeta()) {
             this.setDamage(o.metadata());
-            this.level.setBlock(this, this, false, true);
+            this.world.setBlock(this, this, false, true);
         }
     }
 
@@ -254,7 +254,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
         } else {
             setDamage(getDamage() & 0x7);
         }
-        level.setBlock(this, this, true, true);
+        world.setBlock(this, this, true, true);
     }
 
     @Override

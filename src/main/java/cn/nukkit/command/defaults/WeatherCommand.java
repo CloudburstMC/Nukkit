@@ -7,7 +7,7 @@ import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Level;
+import cn.nukkit.world.World;
 
 /**
  * author: Angelic47
@@ -36,7 +36,7 @@ public class WeatherCommand extends VanillaCommand {
         }
 
         String weather = args[0];
-        Level level;
+        World level;
         int seconds;
         if (args.length > 1) {
             try {
@@ -50,9 +50,9 @@ public class WeatherCommand extends VanillaCommand {
         }
 
         if (sender instanceof Player) {
-            level = ((Player) sender).getLevel();
+            level = ((Player) sender).getWorld();
         } else {
-            level = sender.getServer().getDefaultLevel();
+            level = sender.getServer().getDefaultWorld();
         }
 
         switch (weather) {

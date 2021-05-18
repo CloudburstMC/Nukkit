@@ -1,8 +1,8 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * Created by PetteriM1

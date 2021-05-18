@@ -1,6 +1,6 @@
 package cn.nukkit.inventory;
 
-import cn.nukkit.level.Position;
+import cn.nukkit.world.Position;
 
 /**
  * author: MagicDroidX
@@ -11,7 +11,7 @@ public class FakeBlockMenu extends Position implements InventoryHolder {
     private final Inventory inventory;
 
     public FakeBlockMenu(Inventory inventory, Position pos) {
-        super(pos.x, pos.y, pos.z, pos.level);
+        super(pos.x, pos.y, pos.z, pos.world);
         this.inventory = inventory;
     }
 

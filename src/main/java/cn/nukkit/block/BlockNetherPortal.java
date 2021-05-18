@@ -2,12 +2,12 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
+import cn.nukkit.world.Position;
 
 /**
  * Created on 2016/1/5 by xtypr.
@@ -104,7 +104,7 @@ public class BlockNetherPortal extends BlockFlowable implements Faceable {
     }
 
     public static void spawnPortal(Position pos)   {
-        Level lvl = pos.level;
+        World lvl = pos.world;
         int x = pos.getFloorX(), y = pos.getFloorY(), z = pos.getFloorZ();
 
         for (int xx = -1; xx < 4; xx++) {

@@ -12,7 +12,7 @@ import cn.nukkit.inventory.transaction.action.RepairItemAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.WorldEventPacket;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
@@ -74,7 +74,7 @@ public class RepairItemTransaction extends InventoryTransaction {
         }
 
         FakeBlockMenu holder = inventory.getHolder();
-        Block block = this.source.level.getBlock(holder.getFloorX(), holder.getFloorY(), holder.getFloorZ());
+        Block block = this.source.world.getBlock(holder.getFloorX(), holder.getFloorY(), holder.getFloorZ());
         if (block.getId() == Block.ANVIL) {
             int oldDamage = block.getDamage() >= 8 ? 2 : block.getDamage() >= 4 ? 1 : 0;
             int newDamage = !this.source.isCreative() && ThreadLocalRandom.current().nextInt(100) < 12 ? oldDamage + 1 : oldDamage;
@@ -85,20 +85,20 @@ public class RepairItemTransaction extends InventoryTransaction {
             if (!ev.isCancelled()) {
                 newDamage = ev.getNewDamage();
                 if (newDamage > 2) {
-                    this.source.level.setBlock(block, Block.get(Block.AIR), true);
-                    this.source.level.addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ANVIL_BREAK);
+                    this.source.world.setBlock(block, Block.get(Block.AIR), true);
+                    this.source.world.addLevelEvent(block, WorldEventPacket.EVENT_SOUND_ANVIL_BREAK);
                 } else {
                     if (newDamage < 0) {
                         newDamage = 0;
                     }
                     if (newDamage != oldDamage) {
                         block.setDamage((newDamage << 2) | (block.getDamage() & 0x3));
-                        this.source.level.setBlock(block, block, true);
+                        this.source.world.setBlock(block, block, true);
                     }
-                    this.source.level.addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ANVIL_USE);
+                    this.source.world.addLevelEvent(block, WorldEventPacket.EVENT_SOUND_ANVIL_USE);
                 }
             } else {
-                this.source.level.addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ANVIL_USE);
+                this.source.world.addLevelEvent(block, WorldEventPacket.EVENT_SOUND_ANVIL_USE);
             }
         }
 

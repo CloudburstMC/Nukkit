@@ -24,9 +24,9 @@ public class SeedCommand extends VanillaCommand {
 
         long seed;
         if (sender instanceof Player) {
-            seed = ((Player) sender).getLevel().getSeed();
+            seed = ((Player) sender).getWorld().getSeed();
         } else {
-            seed = sender.getServer().getDefaultLevel().getSeed();
+            seed = sender.getServer().getDefaultWorld().getSeed();
         }
 
         sender.sendMessage(new TranslationContainer("commands.seed.success", String.valueOf(seed)));

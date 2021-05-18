@@ -3,12 +3,12 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.GlobalBlockPalette;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.GlobalBlockPalette;
+import cn.nukkit.world.World;
 
 /**
  * Created by CreeperFace on 27. 11. 2016.
@@ -40,7 +40,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         }
 
         this.setDamage(face.getIndex());
-        this.level.setBlock(block, this, true, true);
+        this.world.setBlock(block, this, true, true);
         return true;
     }
 
@@ -55,39 +55,39 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
             return false;
         }
 
-        this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
+        this.world.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         this.setDamage(this.getDamage() ^ 0x08);
-        this.level.setBlock(this, this, true, false);
-        this.level.addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_POWER_ON, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
-        this.level.scheduleUpdate(this, 30);
+        this.world.setBlock(this, this, true, false);
+        this.world.addLevelSoundEvent(this.add(0.5, 0.5, 0.5), WorldSoundEventPacket.SOUND_POWER_ON, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
+        this.world.scheduleUpdate(this, 30);
         Vector3 pos = getLocation();
 
-        level.updateAroundRedstone(pos, null);
-        level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+        world.updateAroundRedstone(pos, null);
+        world.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
         return true;
     }
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.getSide(getFacing().getOpposite()).isTransparent()) {
-                this.level.useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.world.useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        } else if (type == World.BLOCK_UPDATE_SCHEDULED) {
             if (this.isActivated()) {
-                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+                this.world.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
 
                 this.setDamage(this.getDamage() ^ 0x08);
-                this.level.setBlock(this, this, true, false);
-                this.level.addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_POWER_OFF, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
+                this.world.setBlock(this, this, true, false);
+                this.world.addLevelSoundEvent(this.add(0.5, 0.5, 0.5), WorldSoundEventPacket.SOUND_POWER_OFF, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
 
                 Vector3 pos = getLocation();
-                level.updateAroundRedstone(pos, null);
-                level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+                world.updateAroundRedstone(pos, null);
+                world.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
             }
 
-            return Level.BLOCK_UPDATE_SCHEDULED;
+            return World.BLOCK_UPDATE_SCHEDULED;
         }
 
         return 0;
@@ -118,7 +118,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     @Override
     public boolean onBreak(Item item) {
         if (isActivated()) {
-            this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+            this.world.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
         }
 
         return super.onBreak(item);

@@ -4,10 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
+import cn.nukkit.world.World;
 
 /**
  * @author CreeperFace
@@ -38,13 +38,13 @@ public class BlockTripWireHook extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (!this.getSide(this.getFacing().getOpposite()).isNormalBlock()) {
-                this.level.useBreakOn(this);
+                this.world.useBreakOn(this);
             }
 
             return type;
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        } else if (type == World.BLOCK_UPDATE_SCHEDULED) {
             this.calculateState(false, true, -1, null);
             return type;
         }
@@ -62,7 +62,7 @@ public class BlockTripWireHook extends BlockFlowable {
             this.setFace(face);
         }
 
-        this.level.setBlock(this, this);
+        this.world.setBlock(this, this);
 
         if (player != null) {
             this.calculateState(false, false, -1, null);
@@ -81,8 +81,8 @@ public class BlockTripWireHook extends BlockFlowable {
         }
 
         if (powered) {
-            this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
+            this.world.updateAroundRedstone(this, null);
+            this.world.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
         }
 
         return true;
@@ -100,7 +100,7 @@ public class BlockTripWireHook extends BlockFlowable {
 
         for (int i = 1; i < 42; ++i) {
             Vector3 vector = v.getSide(facing, i);
-            Block b = this.level.getBlock(vector);
+            Block b = this.world.getBlock(vector);
 
             if (b instanceof BlockTripWireHook) {
                 if (((BlockTripWireHook) b).getFacing() == facing.getOpposite()) {
@@ -123,7 +123,7 @@ public class BlockTripWireHook extends BlockFlowable {
                     nextPowered |= disarmed && wirePowered;
 
                     if (i == pos) {
-                        this.level.scheduleUpdate(this, 10);
+                        this.world.scheduleUpdate(this, 10);
                         canConnect &= disarmed;
                     }
                 }
@@ -142,9 +142,9 @@ public class BlockTripWireHook extends BlockFlowable {
             Vector3 vec = v.getSide(facing, distance);
             BlockFace face = facing.getOpposite();
             hook.setFace(face);
-            this.level.setBlock(vec, hook, true, false);
-            this.level.updateAroundRedstone(vec, null);
-            this.level.updateAroundRedstone(vec.getSide(face.getOpposite()), null);
+            this.world.setBlock(vec, hook, true, false);
+            this.world.updateAroundRedstone(vec, null);
+            this.world.updateAroundRedstone(vec.getSide(face.getOpposite()), null);
             this.addSound(vec, canConnect, nextPowered, attached, powered);
         }
 
@@ -152,11 +152,11 @@ public class BlockTripWireHook extends BlockFlowable {
 
         if (!onBreak) {
             hook.setFace(facing);
-            this.level.setBlock(v, hook, true, false);
+            this.world.setBlock(v, hook, true, false);
 
             if (updateAround) {
-                this.level.updateAroundRedstone(v, null);
-                this.level.updateAroundRedstone(v.getSide(facing.getOpposite()), null);
+                this.world.updateAroundRedstone(v, null);
+                this.world.updateAroundRedstone(v.getSide(facing.getOpposite()), null);
             }
         }
 
@@ -165,12 +165,12 @@ public class BlockTripWireHook extends BlockFlowable {
                 Vector3 vc = v.getSide(facing, i);
                 block = blocks[i];
 
-                if (block != null && this.level.getBlockIdAt(vc.getFloorX(), vc.getFloorY(), vc.getFloorZ()) != Block.AIR) {
+                if (block != null && this.world.getBlockIdAt(vc.getFloorX(), vc.getFloorY(), vc.getFloorZ()) != Block.AIR) {
                     if (canConnect ^ ((block.getDamage() & 0x04) > 0)) {
                         block.setDamage(block.getDamage() ^ 0x04);
                     }
 
-                    this.level.setBlock(vc, block, true, false);
+                    this.world.setBlock(vc, block, true, false);
                 }
             }
         }
@@ -178,15 +178,15 @@ public class BlockTripWireHook extends BlockFlowable {
 
     private void addSound(Vector3 pos, boolean canConnect, boolean nextPowered, boolean attached, boolean powered) {
         if (nextPowered && !powered) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_POWER_ON);
-            this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
+            this.world.addLevelSoundEvent(pos, WorldSoundEventPacket.SOUND_POWER_ON);
+            this.world.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         } else if (!nextPowered && powered) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_POWER_OFF);
-            this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+            this.world.addLevelSoundEvent(pos, WorldSoundEventPacket.SOUND_POWER_OFF);
+            this.world.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
         } else if (canConnect && !attached) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_ATTACH);
+            this.world.addLevelSoundEvent(pos, WorldSoundEventPacket.SOUND_ATTACH);
         } else if (!canConnect && attached) {
-            this.level.addLevelSoundEvent(pos, LevelSoundEventPacket.SOUND_DETACH);
+            this.world.addLevelSoundEvent(pos, WorldSoundEventPacket.SOUND_DETACH);
         }
     }
 

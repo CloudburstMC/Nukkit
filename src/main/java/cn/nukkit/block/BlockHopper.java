@@ -7,11 +7,11 @@ import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemHopper;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
 
 /**
  * @author CreeperFace
@@ -56,13 +56,13 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
         this.setDamage(facing.getIndex());
 
-        boolean powered = this.level.isBlockPowered(this.getLocation());
+        boolean powered = this.world.isBlockPowered(this.getLocation());
 
         if (powered == this.isEnabled()) {
             this.setEnabled(!powered);
         }
 
-        this.level.setBlock(this, this);
+        this.world.setBlock(this, this);
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
@@ -71,13 +71,13 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-        BlockEntityHopper hopper = (BlockEntityHopper) BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
+        BlockEntityHopper hopper = (BlockEntityHopper) BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.world.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
         return hopper != null;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.world.getBlockEntity(this);
 
         if (blockEntity instanceof BlockEntityHopper) {
             return player.addWindow(((BlockEntityHopper) blockEntity).getInventory()) != -1;
@@ -97,7 +97,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.world.getBlockEntity(this);
 
         if (blockEntity instanceof BlockEntityHopper) {
             return ContainerInventory.calculateRedstone(((BlockEntityHopper) blockEntity).getInventory());
@@ -122,12 +122,12 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
-            boolean powered = this.level.isBlockPowered(this.getLocation());
+        if (type == World.BLOCK_UPDATE_NORMAL) {
+            boolean powered = this.world.isBlockPowered(this.getLocation());
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);
-                this.level.setBlock(this, this, true, false);
+                this.world.setBlock(this, this, true, false);
             }
 
             return type;

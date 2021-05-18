@@ -6,12 +6,12 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.MinecartHopperInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.MinecartType;
+import cn.nukkit.world.format.FullChunk;
 
 public class EntityMinecartHopper extends EntityMinecartAbstract implements InventoryHolder {
 
@@ -48,9 +48,9 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     public void dropItem() {
         super.dropItem();
 
-        this.level.dropItem(this, Item.get(Item.HOPPER));
+        this.world.dropItem(this, Item.get(Item.HOPPER));
         for (Item item : this.inventory.getContents().values()) {
-            this.level.dropItem(this, item);
+            this.world.dropItem(this, item);
         }
         this.inventory.clearAll();
     }

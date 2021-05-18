@@ -3,11 +3,11 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
 
 /**
  * @author CreeperFace
@@ -27,10 +27,10 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     @Override
     public boolean onBreak(Item item) {
         Vector3 pos = getLocation();
-        this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
+        this.world.setBlock(this, Block.get(BlockID.AIR), true, true);
 
         for (BlockFace face : BlockFace.values()) {
-            this.level.updateAroundRedstone(pos.getSide(face), null);
+            this.world.updateAroundRedstone(pos.getSide(face), null);
         }
         return true;
     }
@@ -42,48 +42,48 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         }
 
         this.setDamage(player != null ? player.getDirection().getOpposite().getHorizontalIndex() : 0);
-        this.level.setBlock(block, this, true, true);
+        this.world.setBlock(block, this, true, true);
 
         if (shouldBePowered()) {
-            this.level.scheduleUpdate(this, 1);
+            this.world.scheduleUpdate(this, 1);
         }
         return true;
     }
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == World.BLOCK_UPDATE_SCHEDULED) {
             if (!this.isLocked()) {
                 Vector3 pos = getLocation();
                 boolean shouldBePowered = this.shouldBePowered();
 
                 if (this.isPowered && !shouldBePowered) {
-                    this.level.setBlock(pos, this.getUnpowered(), true, true);
+                    this.world.setBlock(pos, this.getUnpowered(), true, true);
 
-                    this.level.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
+                    this.world.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
                 } else if (!this.isPowered) {
-                    this.level.setBlock(pos, this.getPowered(), true, true);
-                    this.level.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
+                    this.world.setBlock(pos, this.getPowered(), true, true);
+                    this.world.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
 
                     if (!shouldBePowered) {
 //                        System.out.println("schedule update 2");
-                        level.scheduleUpdate(getPowered(), this, this.getDelay());
+                        world.scheduleUpdate(getPowered(), this, this.getDelay());
                     }
                 }
             }
-        } else if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
+        } else if (type == World.BLOCK_UPDATE_NORMAL || type == World.BLOCK_UPDATE_REDSTONE) {
             // Redstone event
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
-            getLevel().getServer().getPluginManager().callEvent(ev);
+            getWorld().getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return 0;
             }
-            if (type == Level.BLOCK_UPDATE_NORMAL && this.getSide(BlockFace.DOWN).isTransparent()) {
-                this.level.useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+            if (type == World.BLOCK_UPDATE_NORMAL && this.getSide(BlockFace.DOWN).isTransparent()) {
+                this.world.useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             } else {
                 this.updateState();
-                return Level.BLOCK_UPDATE_NORMAL;
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;
@@ -93,7 +93,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
         if (!this.isLocked()) {
             boolean shouldPowered = this.shouldBePowered();
 
-            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.level.isBlockTickPending(this, this)) {
+            if ((this.isPowered && !shouldPowered || !this.isPowered && shouldPowered) && !this.world.isBlockTickPending(this, this)) {
                 /*int priority = -1;
 
                 if (this.isFacingTowardsRepeater()) {
@@ -102,7 +102,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
                     priority = -2;
                 }*/
 
-                this.level.scheduleUpdate(this, this, this.getDelay());
+                this.world.scheduleUpdate(this, this, this.getDelay());
             }
         }
     }
@@ -114,12 +114,12 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     protected int calculateInputStrength() {
         BlockFace face = getFacing();
         Vector3 pos = this.getLocation().getSide(face);
-        int power = this.level.getRedstonePower(pos, face);
+        int power = this.world.getRedstonePower(pos, face);
 
         if (power >= 15) {
             return power;
         } else {
-            Block block = this.level.getBlock(pos);
+            Block block = this.world.getBlock(pos);
             return Math.max(power, block.getId() == Block.REDSTONE_WIRE ? block.getDamage() : 0);
         }
     }
@@ -134,8 +134,8 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     }
 
     protected int getPowerOnSide(Vector3 pos, BlockFace side) {
-        Block block = this.level.getBlock(pos);
-        return isAlternateInput(block) ? (block.getId() == Block.REDSTONE_BLOCK ? 15 : (block.getId() == Block.REDSTONE_WIRE ? block.getDamage() : this.level.getStrongPower(pos, side))) : 0;
+        Block block = this.world.getBlock(pos);
+        return isAlternateInput(block) ? (block.getId() == Block.REDSTONE_BLOCK ? 15 : (block.getId() == Block.REDSTONE_WIRE ? block.getDamage() : this.world.getStrongPower(pos, side))) : 0;
     }
 
     @Override

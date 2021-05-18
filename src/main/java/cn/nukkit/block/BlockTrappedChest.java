@@ -47,7 +47,7 @@ public class BlockTrappedChest extends BlockChest {
             }
             Block c = this.getSide(side);
             if (c instanceof BlockTrappedChest && c.getDamage() == this.getDamage()) {
-                BlockEntity blockEntity = this.getLevel().getBlockEntity(c);
+                BlockEntity blockEntity = this.getWorld().getBlockEntity(c);
                 if (blockEntity instanceof BlockEntityChest && !((BlockEntityChest) blockEntity).isPaired()) {
                     chest = (BlockEntityChest) blockEntity;
                     break;
@@ -55,7 +55,7 @@ public class BlockTrappedChest extends BlockChest {
             }
         }
 
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag("")
                 .putList(new ListTag<>("Items"))
                 .putString("id", BlockEntity.CHEST)
@@ -74,7 +74,7 @@ public class BlockTrappedChest extends BlockChest {
             }
         }
 
-        BlockEntityChest blockEntity = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        BlockEntityChest blockEntity = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getWorld().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
         if (blockEntity == null) {
             return false;
@@ -92,7 +92,7 @@ public class BlockTrappedChest extends BlockChest {
     public int getWeakPower(BlockFace face) {
         int playerCount = 0;
 
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.world.getBlockEntity(this);
 
         if (blockEntity instanceof BlockEntityChest) {
             playerCount = ((BlockEntityChest) blockEntity).getInventory().getViewers().size();

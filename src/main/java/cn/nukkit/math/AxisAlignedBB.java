@@ -1,6 +1,6 @@
 package cn.nukkit.math;
 
-import cn.nukkit.level.MovingObjectPosition;
+import cn.nukkit.world.MovingObjectPosition;
 
 public interface AxisAlignedBB extends Cloneable {
 

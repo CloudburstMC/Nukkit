@@ -4,9 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemCake;
 import cn.nukkit.item.food.Food;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
 
 /**
  * @author Nukkit Project Team
@@ -79,7 +79,7 @@ public class BlockCake extends BlockTransparentMeta {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (down().getId() != Block.AIR) {
-            getLevel().setBlock(block, this, true, true);
+            getWorld().setBlock(block, this, true, true);
 
             return true;
         }
@@ -88,11 +88,11 @@ public class BlockCake extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (down().getId() == Block.AIR) {
-                getLevel().setBlock(this, Block.get(BlockID.AIR), true);
+                getWorld().setBlock(this, Block.get(BlockID.AIR), true);
 
-                return Level.BLOCK_UPDATE_NORMAL;
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
 
@@ -114,10 +114,10 @@ public class BlockCake extends BlockTransparentMeta {
         if (player != null && player.getFoodData().getLevel() < player.getFoodData().getMaxLevel()) {
             if (getDamage() <= 0x06) setDamage(getDamage() + 1);
             if (getDamage() >= 0x06) {
-                getLevel().setBlock(this, Block.get(BlockID.AIR), true);
+                getWorld().setBlock(this, Block.get(BlockID.AIR), true);
             } else {
                 Food.getByRelative(this).eatenBy(player);
-                getLevel().setBlock(this, this, true);
+                getWorld().setBlock(this, this, true);
             }
             return true;
         }

@@ -3,8 +3,8 @@ package cn.nukkit.event.entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.world.Position;
 
 public class CreatureSpawnEvent extends Event implements Cancellable {
 

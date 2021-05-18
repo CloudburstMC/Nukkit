@@ -7,15 +7,15 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.ProjectileHitEvent;
-import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.Position;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
+import cn.nukkit.world.MovingObjectPosition;
+import cn.nukkit.world.Position;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -138,7 +138,7 @@ public class EntityThrownTrident extends EntityProjectile {
         this.timing.startTiming();
 
         if (this.isCollided && !this.hadCollision) {
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_HIT_GROUND);
+            this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_ITEM_TRIDENT_HIT_GROUND);
         }
 
         boolean hasUpdate = super.onUpdate(currentTick);
@@ -184,7 +184,7 @@ public class EntityThrownTrident extends EntityProjectile {
             ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
         entity.attack(ev);
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_HIT);
+        this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_ITEM_TRIDENT_HIT);
         this.hadCollision = true;
         this.close();
         Entity newTrident = create("ThrownTrident", this);
@@ -193,7 +193,7 @@ public class EntityThrownTrident extends EntityProjectile {
     }
 
     public Entity create(Object type, Position source, Object... args) {
-        FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4);
+        FullChunk chunk = source.getWorld().getChunk((int) source.x >> 4, (int) source.z >> 4);
         if (chunk == null) return null;
 
         CompoundTag nbt = Entity.getDefaultNBT(source.add(0.5, 0, 0.5), new Vector3(), new Random().nextFloat() * 360, 0);

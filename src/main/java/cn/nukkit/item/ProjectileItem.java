@@ -10,7 +10,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 
 /**
  * @author CreeperFace
@@ -41,7 +41,7 @@ public abstract class ProjectileItem extends Item {
 
         this.correctNBT(nbt);
 
-        Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
+        Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getWorld().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
         if (projectile != null) {
             if (projectile instanceof EntityEnderPearl) {
                 if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
@@ -66,7 +66,7 @@ public abstract class ProjectileItem extends Item {
                         player.onThrowEnderPearl();
                     }
                     projectile.spawnToAll();
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
+                    player.getWorld().addLevelSoundEvent(player, WorldSoundEventPacket.SOUND_BOW);
                 }
             }
         } else {

@@ -69,7 +69,7 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
         this.setDamage(this.getDamage() + 4);
         if (this.getDamage() > 15) this.setDamage(this.getDamage() % 4);
 
-        this.level.setBlock(this, this, true, false);
+        this.world.setBlock(this, this, true, false);
         return true;
     }
 

@@ -44,7 +44,7 @@ public class BlockPistonHead extends BlockTransparentMeta {
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
+        this.world.setBlock(this, Block.get(BlockID.AIR), true, true);
         Block piston = getSide(getFacing().getOpposite());
 
         if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getFacing() == this.getFacing()) {

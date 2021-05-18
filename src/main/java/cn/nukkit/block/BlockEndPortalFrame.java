@@ -5,7 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
@@ -84,8 +84,8 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
     public boolean onActivate(Item item, Player player) {
         if((this.getDamage() & 0x04) == 0 && player != null && item.getId() == Item.ENDER_EYE) {
             this.setDamage(this.getDamage() + 4);
-            this.getLevel().setBlock(this, this, true, true);
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_END_PORTAL_FRAME_FILL);
+            this.getWorld().setBlock(this, this, true, true);
+            this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_BLOCK_END_PORTAL_FRAME_FILL);
             this.createPortal();
             return true;
         }
@@ -100,7 +100,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
                     if((x == -2 || x == 2) && (z == -2 || z == 2))
                         continue;
                     if(x == -2 || x == 2 || z == -2 || z == 2) {
-                        if(!this.checkFrame(this.getLevel().getBlock(centerSpot.add(x, 0, z)), x, z)) {
+                        if(!this.checkFrame(this.getWorld().getBlock(centerSpot.add(x, 0, z)), x, z)) {
                             return;
                         }
                     }
@@ -110,10 +110,10 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
             for(int x = -1; x <= 1; x++) {
                 for(int z = -1; z <= 1; z++) {
                     Vector3 vector3 = centerSpot.add(x, 0, z);
-                    if(this.getLevel().getBlock(vector3).getId() != Block.AIR) {
-                        this.getLevel().useBreakOn(vector3);
+                    if(this.getWorld().getBlock(vector3).getId() != Block.AIR) {
+                        this.getWorld().useBreakOn(vector3);
                     }
-                    this.getLevel().setBlock(vector3, Block.get(Block.END_PORTAL));
+                    this.getWorld().setBlock(vector3, Block.get(Block.END_PORTAL));
                 }
             }
         }
@@ -123,8 +123,8 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
         for(int x = -2; x <= 2; x++) {
             if(x == 0)
                 continue;
-            Block block = this.getLevel().getBlock(this.add(x, 0, 0));
-            Block iBlock = this.getLevel().getBlock(this.add(x * 2, 0, 0));
+            Block block = this.getWorld().getBlock(this.add(x, 0, 0));
+            Block iBlock = this.getWorld().getBlock(this.add(x * 2, 0, 0));
             if(this.checkFrame(block) && !visited.contains(block)) {
                 visited.add(block);
                 if((x == -1 || x == 1) && this.checkFrame(iBlock))
@@ -132,7 +132,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
                 for(int z = -4; z <= 4; z++) {
                     if(z == 0)
                         continue;
-                    block = this.getLevel().getBlock(this.add(x, 0, z));
+                    block = this.getWorld().getBlock(this.add(x, 0, z));
                     if(this.checkFrame(block)) {
                         return this.add(x / 2, 0, z / 2);
                     }
@@ -142,8 +142,8 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
         for(int z = -2; z <= 2; z++) {
             if(z == 0)
                 continue;
-            Block block = this.getLevel().getBlock(this.add(0, 0, z));
-            Block iBlock = this.getLevel().getBlock(this.add(0, 0, z * 2));
+            Block block = this.getWorld().getBlock(this.add(0, 0, z));
+            Block iBlock = this.getWorld().getBlock(this.add(0, 0, z * 2));
             if(this.checkFrame(block) && !visited.contains(block)) {
                 visited.add(block);
                 if((z == -1 || z == 1) && this.checkFrame(iBlock))
@@ -151,7 +151,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
                 for(int x = -4; x <= 4; x++) {
                     if(x == 0)
                         continue;
-                    block = this.getLevel().getBlock(this.add(x, 0, z));
+                    block = this.getWorld().getBlock(this.add(x, 0, z));
                     if(this.checkFrame(block)) {
                         return this.add(x / 2, 0, z / 2);
                     }
@@ -187,7 +187,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.setDamage(FACES[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-        this.getLevel().setBlock(block, this, true);
+        this.getWorld().setBlock(block, this, true);
         return true;
     }
 

@@ -50,8 +50,8 @@ public class BlockSkull extends BlockTransparentMeta {
     public String getName() {
         int itemMeta = 0;
 
-        if (this.level != null) {
-            BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        if (this.world != null) {
+            BlockEntity blockEntity = getWorld().getBlockEntity(this);
             if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
         }
 
@@ -72,7 +72,7 @@ public class BlockSkull extends BlockTransparentMeta {
             default:
                 return false;
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
 
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.SKULL)
@@ -86,7 +86,7 @@ public class BlockSkull extends BlockTransparentMeta {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        BlockEntitySkull skull = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+        BlockEntitySkull skull = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, getWorld().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
         if (skull == null) {
             return false;
         }
@@ -98,7 +98,7 @@ public class BlockSkull extends BlockTransparentMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = getWorld().getBlockEntity(this);
         int dropMeta = 0;
         if (blockEntity != null) dropMeta = blockEntity.namedTag.getByte("SkullType");
         return new Item[]{
@@ -108,7 +108,7 @@ public class BlockSkull extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = getWorld().getBlockEntity(this);
         int itemMeta = 0;
         if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
         return new ItemSkull(itemMeta);

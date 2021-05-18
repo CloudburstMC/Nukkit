@@ -12,15 +12,15 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.randomitem.Fishing;
-import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.BubbleParticle;
-import cn.nukkit.level.particle.WaterParticle;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.world.MovingObjectPosition;
+import cn.nukkit.world.format.FullChunk;
+import cn.nukkit.world.particle.BubbleParticle;
+import cn.nukkit.world.particle.WaterParticle;
 
 import java.util.Random;
 
@@ -144,7 +144,7 @@ public class EntityFishingHook extends EntityProjectile {
 
     public int getWaterHeight() {
         for (int y = this.getFloorY(); y < 256; y++) {
-            int id = this.level.getBlockIdAt(this.getFloorX(), y, this.getFloorZ());
+            int id = this.world.getBlockIdAt(this.getFloorX(), y, this.getFloorZ());
             if (id == Block.AIR) {
                 return y;
             }
@@ -170,7 +170,7 @@ public class EntityFishingHook extends EntityProjectile {
 
         Random random = new Random();
         for (int i = 0; i < 5; i++) {
-            this.level.addParticle(new BubbleParticle(this.setComponents(
+            this.world.addParticle(new BubbleParticle(this.setComponents(
                     this.x + random.nextDouble() * 0.5 - 0.25,
                     this.getWaterHeight(),
                     this.z + random.nextDouble() * 0.5 - 0.25
@@ -195,7 +195,7 @@ public class EntityFishingHook extends EntityProjectile {
                 this.fish.z + (this.z - this.fish.z) * multiply
         );
         if (new Random().nextInt(100) < 85) {
-            this.level.addParticle(new WaterParticle(this.fish));
+            this.world.addParticle(new WaterParticle(this.fish));
         }
         double dist = Math.abs(Math.sqrt(this.x * this.x + this.z * this.z) - Math.sqrt(this.fish.x * this.fish.x + this.fish.z * this.fish.z));
         if (dist < 0.15) {
@@ -218,7 +218,7 @@ public class EntityFishingHook extends EntityProjectile {
             }
 
             EntityItem itemEntity = new EntityItem(
-                    this.level.getChunk((int) this.x >> 4, (int) this.z >> 4, true),
+                    this.world.getChunk((int) this.x >> 4, (int) this.z >> 4, true),
                     Entity.getDefaultNBT(new Vector3(this.x, this.getWaterHeight(), this.z), motion, new Random().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(item)).putShort("PickupDelay", 1));
 
             if (this.shootingEntity != null && this.shootingEntity instanceof Player) {

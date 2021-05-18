@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.world.World;
 
 /**
  * Created by PetteriM1
@@ -28,12 +28,12 @@ public class BlockWallBanner extends BlockBanner {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.getDamage() >= BlockFace.NORTH.getIndex() && this.getDamage() <= BlockFace.EAST.getIndex()) {
                 if (this.getSide(BlockFace.fromIndex(this.getDamage()).getOpposite()).getId() == AIR) {
-                    this.getLevel().useBreakOn(this);
+                    this.getWorld().useBreakOn(this);
                 }
-                return Level.BLOCK_UPDATE_NORMAL;
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

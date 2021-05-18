@@ -6,11 +6,11 @@ import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
-import cn.nukkit.level.Explosion;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
+import cn.nukkit.world.Explosion;
+import cn.nukkit.world.GameRule;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * @author MagicDroidX
@@ -89,7 +89,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_IGNITED, true);
         this.setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
 
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_FIZZ);
+        this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_FIZZ);
     }
 
 
@@ -147,7 +147,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
             fuse -= tickDiff;
 
             if (fuse <= 0) {
-                if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES))
+                if (this.world.getGameRules().getBoolean(GameRule.TNT_EXPLODES))
                     explode();
                 kill();
             }

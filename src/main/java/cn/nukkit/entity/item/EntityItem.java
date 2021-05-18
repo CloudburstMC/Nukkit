@@ -9,12 +9,12 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * @author MagicDroidX
@@ -143,7 +143,7 @@ public class EntityItem extends Entity {
         
         if (this.age % 60 == 0 && this.onGround && this.getItem() != null && this.isAlive()) {
             if (this.getItem().getCount() < this.getItem().getMaxStackSize()) {
-                for (Entity entity : this.getLevel().getNearbyEntities(getBoundingBox().grow(1, 1, 1), this, false)) {
+                for (Entity entity : this.getWorld().getNearbyEntities(getBoundingBox().grow(1, 1, 1), this, false)) {
                     if (entity instanceof EntityItem) {
                         if (!entity.isAlive()) {
                             continue;
@@ -193,7 +193,7 @@ public class EntityItem extends Entity {
                 }
             }*/
 
-            int bid = level.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ());
+            int bid = world.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ());
             if (bid == BlockID.WATER || bid == BlockID.STILL_WATER) {
                 this.motionY = this.getGravity() - 0.06;
             } else if (!this.isOnGround()) {
@@ -209,7 +209,7 @@ public class EntityItem extends Entity {
             double friction = 1 - this.getDrag();
 
             if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
+                friction *= this.getWorld().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
             }
 
             this.motionX *= friction;

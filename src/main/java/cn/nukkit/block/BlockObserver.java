@@ -47,7 +47,7 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
         } else {
             this.setDamage(0);
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
         return true;
     }
 

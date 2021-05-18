@@ -6,8 +6,8 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.world.World;
 
 import java.text.DecimalFormat;
 
@@ -30,18 +30,18 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-        Level level;
+        World level;
         Vector3 pos;
         if (args.length == 0) {
             if (sender instanceof Player) {
-                level = ((Player) sender).getLevel();
+                level = ((Player) sender).getWorld();
                 pos = ((Player) sender).round();
             } else {
                 sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
                 return true;
             }
         } else if (args.length == 3) {
-            level = sender.getServer().getDefaultLevel();
+            level = sender.getServer().getDefaultWorld();
             try {
                 pos = new Vector3(Integer.parseInt(args[0]), Integer.parseInt(args[1]), Integer.parseInt(args[2]));
             } catch (NumberFormatException e1) {

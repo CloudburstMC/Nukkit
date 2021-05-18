@@ -4,10 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSeedsWheat;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.particle.BoneMealParticle;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -65,7 +65,7 @@ public class BlockTallGrass extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.PODZOL) {
-            this.getLevel().setBlock(block, this, true);
+            this.getWorld().setBlock(block, this, true);
             return true;
         }
         return false;
@@ -73,10 +73,10 @@ public class BlockTallGrass extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;
@@ -108,9 +108,9 @@ public class BlockTallGrass extends BlockFlowable {
                         item.count--;
                     }
 
-                    this.level.addParticle(new BoneMealParticle(this));
-                    this.level.setBlock(this, get(DOUBLE_PLANT, meta), true, false);
-                    this.level.setBlock(up, get(DOUBLE_PLANT, meta ^ BlockDoublePlant.TOP_HALF_BITMASK), true);
+                    this.world.addParticle(new BoneMealParticle(this));
+                    this.world.setBlock(this, get(DOUBLE_PLANT, meta), true, false);
+                    this.world.setBlock(up, get(DOUBLE_PLANT, meta ^ BlockDoublePlant.TOP_HALF_BITMASK), true);
                 }
             }
 

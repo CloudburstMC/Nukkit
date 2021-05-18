@@ -6,13 +6,13 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.ExplodeParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 import cn.nukkit.network.protocol.UpdateBlockPacket;
+import cn.nukkit.world.World;
+import cn.nukkit.world.particle.ExplodeParticle;
 
 /**
  * author: MagicDroidX
@@ -81,7 +81,7 @@ public class ItemBucket extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(World level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (player.isAdventure()) {
             return false;
         }
@@ -94,7 +94,7 @@ public class ItemBucket extends Item {
                 PlayerBucketFillEvent ev;
                 player.getServer().getPluginManager().callEvent(ev = new PlayerBucketFillEvent(player, block, face, this, result));
                 if (!ev.isCancelled()) {
-                    player.getLevel().setBlock(target, Block.get(BlockID.AIR), true, true);
+                    player.getWorld().setBlock(target, Block.get(BlockID.AIR), true, true);
 
                     // When water is removed ensure any adjacent still water is
                     // replaced with water that can flow.
@@ -121,9 +121,9 @@ public class ItemBucket extends Item {
                     }
 
                     if (target instanceof BlockLava) {
-                        level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_LAVA);
+                        level.addLevelSoundEvent(block, WorldSoundEventPacket.SOUND_BUCKET_FILL_LAVA);
                     } else {
-                        level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_WATER);
+                        level.addLevelSoundEvent(block, WorldSoundEventPacket.SOUND_BUCKET_FILL_WATER);
                     }
 
                     return true;
@@ -139,7 +139,7 @@ public class ItemBucket extends Item {
             }
 
             boolean nether = false;
-            if (player.getLevel().getDimension() == Level.DIMENSION_NETHER && this.getDamage() != 10) {
+            if (player.getWorld().getDimension() == World.DIMENSION_NETHER && this.getDamage() != 10) {
                 ev.setCancelled(true);
                 nether = true;
             }
@@ -147,7 +147,7 @@ public class ItemBucket extends Item {
             player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                player.getLevel().setBlock(block, targetBlock, true, true);
+                player.getWorld().setBlock(block, targetBlock, true, true);
                 if (player.isSurvival()) {
                     if (this.getCount() - 1 <= 0) {
                         player.getInventory().setItemInHand(ev.getItem());
@@ -164,9 +164,9 @@ public class ItemBucket extends Item {
                 }
 
                 if (this.getDamage() == 10) {
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
+                    level.addLevelSoundEvent(block, WorldSoundEventPacket.SOUND_BUCKET_EMPTY_LAVA);
                 } else {
-                    level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_WATER);
+                    level.addLevelSoundEvent(block, WorldSoundEventPacket.SOUND_BUCKET_EMPTY_WATER);
                 }
 
                 switch (this.getDamage()) {
@@ -194,10 +194,10 @@ public class ItemBucket extends Item {
                     this.setDamage(0); // Empty bucket
                     player.getInventory().setItemInHand(this);
                 }
-                player.getLevel().addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_FIZZ);
-                player.getLevel().addParticle(new ExplodeParticle(target.add(0.5, 1, 0.5)));
+                player.getWorld().addLevelSoundEvent(target, WorldSoundEventPacket.SOUND_FIZZ);
+                player.getWorld().addParticle(new ExplodeParticle(target.add(0.5, 1, 0.5)));
             } else {
-                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
+                player.getWorld().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
                 player.getInventory().sendContents(player);
             }
         }

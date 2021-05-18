@@ -4,8 +4,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemRedstone;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.world.World;
 
 import java.util.Random;
 
@@ -63,10 +63,10 @@ public class BlockOreRedstone extends BlockSolid {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_TOUCH) { //type == Level.BLOCK_UPDATE_NORMAL ||
-            this.getLevel().setBlock(this, Block.get(BlockID.GLOWING_REDSTONE_ORE), false, false);
+        if (type == World.BLOCK_UPDATE_TOUCH) { //type == Level.BLOCK_UPDATE_NORMAL ||
+            this.getWorld().setBlock(this, Block.get(BlockID.GLOWING_REDSTONE_ORE), false, false);
 
-            return Level.BLOCK_UPDATE_WEAK;
+            return World.BLOCK_UPDATE_WEAK;
         }
 
         return 0;

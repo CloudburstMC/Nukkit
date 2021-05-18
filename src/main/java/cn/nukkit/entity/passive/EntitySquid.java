@@ -2,9 +2,9 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * @author PikyCZ

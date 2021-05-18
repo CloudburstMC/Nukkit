@@ -9,12 +9,12 @@ import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.GameRule;
+import cn.nukkit.world.World;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -71,8 +71,8 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        boolean ret = this.getLevel().setBlock(this, this, true, false);
-        this.getLevel().scheduleUpdate(this, this.tickRate());
+        boolean ret = this.getWorld().setBlock(this, this, true, false);
+        this.getWorld().scheduleUpdate(this, this.tickRate());
 
         return ret;
     }
@@ -81,7 +81,7 @@ public class BlockLava extends BlockLiquid {
     public int onUpdate(int type) {
         int result = super.onUpdate(type);
 
-        if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
+        if (type == World.BLOCK_UPDATE_RANDOM && this.world.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
             Random random = ThreadLocalRandom.current();
 
             int i = random.nextInt(3);
@@ -89,39 +89,39 @@ public class BlockLava extends BlockLiquid {
             if (i > 0) {
                 for (int k = 0; k < i; ++k) {
                     Vector3 v = this.add(random.nextInt(3) - 1, 1, random.nextInt(3) - 1);
-                    Block block = this.getLevel().getBlock(v);
+                    Block block = this.getWorld().getBlock(v);
 
                     if (block.getId() == AIR) {
                         if (this.isSurroundingBlockFlammable(block)) {
                             BlockIgniteEvent e = new BlockIgniteEvent(block, this, null, BlockIgniteEvent.BlockIgniteCause.LAVA);
-                            this.level.getServer().getPluginManager().callEvent(e);
+                            this.world.getServer().getPluginManager().callEvent(e);
 
                             if (!e.isCancelled()) {
                                 Block fire = Block.get(BlockID.FIRE);
-                                this.getLevel().setBlock(v, fire, true);
-                                this.getLevel().scheduleUpdate(fire, fire.tickRate());
-                                return Level.BLOCK_UPDATE_RANDOM;
+                                this.getWorld().setBlock(v, fire, true);
+                                this.getWorld().scheduleUpdate(fire, fire.tickRate());
+                                return World.BLOCK_UPDATE_RANDOM;
                             }
 
                             return 0;
                         }
                     } else if (block.isSolid()) {
-                        return Level.BLOCK_UPDATE_RANDOM;
+                        return World.BLOCK_UPDATE_RANDOM;
                     }
                 }
             } else {
                 for (int k = 0; k < 3; ++k) {
                     Vector3 v = this.add(random.nextInt(3) - 1, 0, random.nextInt(3) - 1);
-                    Block block = this.getLevel().getBlock(v);
+                    Block block = this.getWorld().getBlock(v);
 
                     if (block.up().getId() == AIR && block.getBurnChance() > 0) {
                         BlockIgniteEvent e = new BlockIgniteEvent(block, this, null, BlockIgniteEvent.BlockIgniteCause.LAVA);
-                        this.level.getServer().getPluginManager().callEvent(e);
+                        this.world.getServer().getPluginManager().callEvent(e);
 
                         if (!e.isCancelled()) {
                             Block fire = Block.get(BlockID.FIRE);
-                            this.getLevel().setBlock(v, fire, true);
-                            this.getLevel().scheduleUpdate(fire, fire.tickRate());
+                            this.getWorld().setBlock(v, fire, true);
+                            this.getWorld().scheduleUpdate(fire, fire.tickRate());
                         }
                     }
                 }
@@ -153,7 +153,7 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public int tickRate() {
-        if (this.level.getDimension() == Level.DIMENSION_NETHER) {
+        if (this.world.getDimension() == World.DIMENSION_NETHER) {
             return 10;
         }
         return 30;
@@ -161,7 +161,7 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public int getFlowDecayPerBlock() {
-        if (this.level.getDimension() == Level.DIMENSION_NETHER) {
+        if (this.world.getDimension() == World.DIMENSION_NETHER) {
             return 1;
         }
         return 2;

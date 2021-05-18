@@ -1,8 +1,8 @@
 package cn.nukkit.metadata;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.Level;
 import cn.nukkit.plugin.Plugin;
+import cn.nukkit.world.World;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import java.util.List;
  * Nukkit Project
  */
 public class BlockMetadataStore extends MetadataStore {
-    private final Level owningLevel;
+    private final World owningLevel;
 
-    public BlockMetadataStore(Level owningLevel) {
+    public BlockMetadataStore(World owningLevel) {
         this.owningLevel = owningLevel;
     }
 
@@ -30,7 +30,7 @@ public class BlockMetadataStore extends MetadataStore {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Object must be a Block");
         }
-        if (((Block) block).getLevel() == this.owningLevel) {
+        if (((Block) block).getWorld() == this.owningLevel) {
             return super.getMetadata(block, metadataKey);
         } else {
             throw new IllegalStateException("Block does not belong to world " + this.owningLevel.getName());
@@ -42,7 +42,7 @@ public class BlockMetadataStore extends MetadataStore {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Object must be a Block");
         }
-        if (((Block) block).getLevel() == this.owningLevel) {
+        if (((Block) block).getWorld() == this.owningLevel) {
             return super.hasMetadata(block, metadataKey);
         } else {
             throw new IllegalStateException("Block does not belong to world " + this.owningLevel.getName());
@@ -54,7 +54,7 @@ public class BlockMetadataStore extends MetadataStore {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Object must be a Block");
         }
-        if (((Block) block).getLevel() == this.owningLevel) {
+        if (((Block) block).getWorld() == this.owningLevel) {
             super.removeMetadata(block, metadataKey, owningPlugin);
         } else {
             throw new IllegalStateException("Block does not belong to world " + this.owningLevel.getName());
@@ -66,7 +66,7 @@ public class BlockMetadataStore extends MetadataStore {
         if (!(block instanceof Block)) {
             throw new IllegalArgumentException("Object must be a Block");
         }
-        if (((Block) block).getLevel() == this.owningLevel) {
+        if (((Block) block).getWorld() == this.owningLevel) {
             super.setMetadata(block, metadataKey, newMetadataValue);
         } else {
             throw new IllegalStateException("Block does not belong to world " + this.owningLevel.getName());

@@ -3,8 +3,8 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.world.World;
 
 public class ItemGlassBottle extends Item {
 
@@ -26,7 +26,7 @@ public class ItemGlassBottle extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(World level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (target.getId() == WATER || target.getId() == STILL_WATER) {
             Item potion = new ItemPotion();
 
@@ -38,7 +38,7 @@ public class ItemGlassBottle extends Item {
                 if (player.getInventory().canAddItem(potion)) {
                     player.getInventory().addItem(potion);
                 } else {
-                    player.getLevel().dropItem(player.add(0, 1.3, 0), potion, player.getDirectionVector().multiply(0.4));
+                    player.getWorld().dropItem(player.add(0, 1.3, 0), potion, player.getDirectionVector().multiply(0.4));
                 }
             }
         }

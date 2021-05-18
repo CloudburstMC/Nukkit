@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.level.GameRules;
+import cn.nukkit.world.GameRules;
 import lombok.ToString;
 
 /**

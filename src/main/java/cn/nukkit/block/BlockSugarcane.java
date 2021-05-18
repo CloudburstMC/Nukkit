@@ -5,11 +5,11 @@ import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSugarcane;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.particle.BoneMealParticle;
 
 /**
  * Created by Pub4Game on 09.01.2016.
@@ -50,7 +50,7 @@ public class BlockSugarcane extends BlockFlowable {
             int count = 1;
 
             for (int i = 1; i <= 2; i++) {
-                int id = this.level.getBlockIdAt(this.getFloorX(), this.getFloorY() - i, this.getFloorZ());
+                int id = this.world.getBlockIdAt(this.getFloorX(), this.getFloorY() - i, this.getFloorZ());
 
                 if (id == SUGARCANE_BLOCK) {
                     count++;
@@ -68,7 +68,7 @@ public class BlockSugarcane extends BlockFlowable {
                         Server.getInstance().getPluginManager().callEvent(ev);
 
                         if (!ev.isCancelled()) {
-                            this.getLevel().setBlock(block, ev.getNewState(), true);
+                            this.getWorld().setBlock(block, ev.getNewState(), true);
                             success = true;
                         }
                     } else if (block.getId() != SUGARCANE_BLOCK) {
@@ -81,7 +81,7 @@ public class BlockSugarcane extends BlockFlowable {
                         item.count--;
                     }
 
-                    this.level.addParticle(new BoneMealParticle(this));
+                    this.world.addParticle(new BoneMealParticle(this));
                 }
             }
 
@@ -92,34 +92,34 @@ public class BlockSugarcane extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             Block down = this.down();
             if (down.isTransparent() && down.getId() != SUGARCANE_BLOCK) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == World.BLOCK_UPDATE_RANDOM) {
             if (this.down().getId() != SUGARCANE_BLOCK) {
                 if (this.getDamage() == 0x0F) {
                     for (int y = 1; y < 3; ++y) {
-                        Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
+                        Block b = this.getWorld().getBlock(new Vector3(this.x, this.y + y, this.z));
                         if (b.getId() == AIR) {
                             BlockGrowEvent ev = new BlockGrowEvent(b, Block.get(BlockID.SUGARCANE_BLOCK));
                             Server.getInstance().getPluginManager().callEvent(ev);
                             
                             if (!ev.isCancelled()) {
-                                this.getLevel().setBlock(b, Block.get(BlockID.SUGARCANE_BLOCK), false);
+                                this.getWorld().setBlock(b, Block.get(BlockID.SUGARCANE_BLOCK), false);
                             }
                             break;
                         }
                     }
                     this.setDamage(0);
-                    this.getLevel().setBlock(this, this, false);
+                    this.getWorld().setBlock(this, this, false);
                 } else {
                     this.setDamage(this.getDamage() + 1);
-                    this.getLevel().setBlock(this, this, false);
+                    this.getWorld().setBlock(this, this, false);
                 }
-                return Level.BLOCK_UPDATE_RANDOM;
+                return World.BLOCK_UPDATE_RANDOM;
             }
         }
         return 0;
@@ -132,7 +132,7 @@ public class BlockSugarcane extends BlockFlowable {
         }
         Block down = this.down();
         if (down.getId() == SUGARCANE_BLOCK) {
-            this.getLevel().setBlock(block, Block.get(BlockID.SUGARCANE_BLOCK), true);
+            this.getWorld().setBlock(block, Block.get(BlockID.SUGARCANE_BLOCK), true);
             return true;
         } else if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == SAND || down.getId() == PODZOL) {
             Block block0 = down.north();
@@ -140,7 +140,7 @@ public class BlockSugarcane extends BlockFlowable {
             Block block2 = down.west();
             Block block3 = down.east();
             if ((block0 instanceof BlockWater) || (block1 instanceof BlockWater) || (block2 instanceof BlockWater) || (block3 instanceof BlockWater)) {
-                this.getLevel().setBlock(block, Block.get(BlockID.SUGARCANE_BLOCK), true);
+                this.getWorld().setBlock(block, Block.get(BlockID.SUGARCANE_BLOCK), true);
                 return true;
             }
         }

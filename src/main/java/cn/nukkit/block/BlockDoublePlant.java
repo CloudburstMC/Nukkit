@@ -3,10 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSeedsWheat;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.particle.BoneMealParticle;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -57,18 +57,18 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if ((this.getDamage() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) {
                 // Top
                 if (!(this.down().getId() == DOUBLE_PLANT)) {
-                    this.getLevel().setBlock(this, Block.get(BlockID.AIR), false, true);
-                    return Level.BLOCK_UPDATE_NORMAL;
+                    this.getWorld().setBlock(this, Block.get(BlockID.AIR), false, true);
+                    return World.BLOCK_UPDATE_NORMAL;
                 }
             } else {
                 // Bottom
                 if (this.down().isTransparent() || !(this.up().getId() == DOUBLE_PLANT)) {
-                    this.getLevel().useBreakOn(this);
-                    return Level.BLOCK_UPDATE_NORMAL;
+                    this.getWorld().useBreakOn(this);
+                    return World.BLOCK_UPDATE_NORMAL;
                 }
             }
         }
@@ -81,8 +81,8 @@ public class BlockDoublePlant extends BlockFlowable {
         Block up = up();
 
         if (up.getId() == AIR && (down.getId() == GRASS || down.getId() == DIRT)) {
-            this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
-            this.getLevel().setBlock(up, Block.get(BlockID.DOUBLE_PLANT, getDamage() ^ TOP_HALF_BITMASK), true, true);
+            this.getWorld().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
+            this.getWorld().setBlock(up, Block.get(BlockID.DOUBLE_PLANT, getDamage() ^ TOP_HALF_BITMASK), true, true);
             return true;
         }
 
@@ -94,9 +94,9 @@ public class BlockDoublePlant extends BlockFlowable {
         Block down = down();
 
         if ((this.getDamage() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) { // Top half
-            this.getLevel().useBreakOn(down);
+            this.getWorld().useBreakOn(down);
         } else {
-            this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
+            this.getWorld().setBlock(this, Block.get(BlockID.AIR), true, true);
         }
 
         return true;
@@ -159,8 +159,8 @@ public class BlockDoublePlant extends BlockFlowable {
                     if (player != null && (player.gamemode & 0x01) == 0) {
                         item.count--;
                     }
-                    this.level.addParticle(new BoneMealParticle(this));
-                    this.level.dropItem(this, this.toItem());
+                    this.world.addParticle(new BoneMealParticle(this));
+                    this.world.dropItem(this, this.toItem());
             }
 
             return true;

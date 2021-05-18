@@ -1,23 +1,24 @@
 package cn.nukkit.scheduler;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockUpdateEntry;
+import cn.nukkit.world.World;
+
 import com.google.common.collect.Maps;
 
 import java.util.*;
 
 public class BlockUpdateScheduler {
-    private final Level level;
+    private final World level;
     private long lastTick;
     private Map<Long, LinkedHashSet<BlockUpdateEntry>> queuedUpdates;
 
     private Set<BlockUpdateEntry> pendingUpdates;
 
-    public BlockUpdateScheduler(Level level, long currentTick) {
+    public BlockUpdateScheduler(World level, long currentTick) {
         queuedUpdates = Maps.newHashMap(); // Change to ConcurrentHashMap if this needs to be concurrent
         lastTick = currentTick;
         this.level = level;
@@ -54,7 +55,7 @@ public class BlockUpdateScheduler {
                         Block block = level.getBlock(entry.pos);
 
                         if (Block.equals(block, entry.block, false)) {
-                            block.onUpdate(Level.BLOCK_UPDATE_SCHEDULED);
+                            block.onUpdate(World.BLOCK_UPDATE_SCHEDULED);
                         }
                     } else {
                         level.scheduleUpdate(entry.block, entry.pos, 0);

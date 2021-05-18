@@ -66,7 +66,7 @@ public class BlockPurpur extends BlockSolidMeta {
 
             this.setDamage(((this.getDamage() & 0x03) | faces[face.getIndex()]));
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
 
         return true;
     }

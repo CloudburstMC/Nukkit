@@ -5,10 +5,10 @@ import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSnowball;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.GameRule;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -74,7 +74,7 @@ public class BlockSnowLayer extends BlockFallable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (this.canSurvive()) {
-            this.getLevel().setBlock(block, this, true);
+            this.getWorld().setBlock(block, this, true);
 
             return true;
         }
@@ -88,25 +88,25 @@ public class BlockSnowLayer extends BlockFallable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if ((this.getDamage() & 0x7) != 0x7 || this.up().getId() != SNOW_LAYER) {
                 super.onUpdate(type);
             }
 
-            if (this.level.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) == SNOW_LAYER && !this.canSurvive()) {
-                this.level.useBreakOn(this, null, null, true);
-                if (this.level.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
-                    this.level.dropItem(this, this.toItem());
+            if (this.world.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) == SNOW_LAYER && !this.canSurvive()) {
+                this.world.useBreakOn(this, null, null, true);
+                if (this.world.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
+                    this.world.dropItem(this, this.toItem());
                 }
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 10) {
+        } else if (type == World.BLOCK_UPDATE_RANDOM) {
+            if (this.getWorld().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 10) {
                 BlockFadeEvent event = new BlockFadeEvent(this, (this.getDamage() & 0x7) > 0 ? get(SNOW_LAYER, this.getDamage() - 1) : get(AIR));
-                level.getServer().getPluginManager().callEvent(event);
+                world.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
-                    level.setBlock(this, event.getNewState(), true);
+                    world.setBlock(this, event.getNewState(), true);
                 }
-                return Level.BLOCK_UPDATE_NORMAL;
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;
@@ -169,19 +169,19 @@ public class BlockSnowLayer extends BlockFallable {
     public boolean onActivate(Item item, Player player) {
         if (item.isShovel()) {
             item.useOn(this);
-            this.level.useBreakOn(this, item.clone().clearNamedTag(), null, true);
+            this.world.useBreakOn(this, item.clone().clearNamedTag(), null, true);
             return true;
         } else if (item.getId() == SNOW_LAYER) {
             if ((this.getDamage() & 0x7) != 0x7) {
                 this.setDamage(this.getDamage() + 1);
-                this.level.setBlock(this ,this, true);
+                this.world.setBlock(this ,this, true);
 
                 if (player != null && (player.gamemode & 0x1) == 0) {
                     item.count--;
                 }
                 return true;
             } else {
-                this.level.setBlock(this ,this, true);
+                this.world.setBlock(this ,this, true);
             }
         }
         return false;

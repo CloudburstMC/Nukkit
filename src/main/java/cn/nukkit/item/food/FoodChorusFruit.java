@@ -5,10 +5,10 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
+import cn.nukkit.world.World;
 
 /**
  * Created by Leonidius20 on 20.08.18.
@@ -31,7 +31,7 @@ public class FoodChorusFruit extends FoodNormal {
         int maxY = minY + 16;
         int maxZ = minZ + 16;
 
-        Level level = player.getLevel();
+        World level = player.getWorld();
         if (level == null) return false;
 
         NukkitRandom random = new NukkitRandom();
@@ -56,9 +56,9 @@ public class FoodChorusFruit extends FoodNormal {
             }
 
             // Sounds are broadcast at both source and destination
-            level.addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_TELEPORT);
+            level.addLevelSoundEvent(player, WorldSoundEventPacket.SOUND_TELEPORT);
             player.teleport(new Vector3(x + 0.5, y + 1, z + 0.5), PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
-            level.addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_TELEPORT);
+            level.addLevelSoundEvent(player, WorldSoundEventPacket.SOUND_TELEPORT);
 
             break;
         }

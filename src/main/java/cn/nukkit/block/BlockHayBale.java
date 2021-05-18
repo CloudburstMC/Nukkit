@@ -66,7 +66,7 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
                 0b0100,
         };
         this.setDamage((this.getDamage() & 0x03) | faces[face.getIndex()]);
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
 
         return true;
     }

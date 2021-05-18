@@ -4,9 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.MinecartType;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * Created by Snake1999 on 2016/1/30.
@@ -56,7 +56,7 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
         boolean update = super.onUpdate(currentTick);
 
         if (this.passengers.isEmpty()) {
-            for (Entity entity : this.level.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
+            for (Entity entity : this.world.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
                 if (entity.riding != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal) {
                     continue;
                 }

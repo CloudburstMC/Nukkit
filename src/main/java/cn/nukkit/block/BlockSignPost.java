@@ -6,13 +6,13 @@ import cn.nukkit.blockentity.BlockEntitySign;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSign;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
 
 /**
  * @author Nukkit Project Team
@@ -72,10 +72,10 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
 
             if (face == BlockFace.UP) {
                 setDamage((int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                getLevel().setBlock(block, Block.get(BlockID.SIGN_POST, getDamage()), true);
+                getWorld().setBlock(block, Block.get(BlockID.SIGN_POST, getDamage()), true);
             } else {
                 setDamage(face.getIndex());
-                getLevel().setBlock(block, Block.get(BlockID.WALL_SIGN, getDamage()), true);
+                getWorld().setBlock(block, Block.get(BlockID.WALL_SIGN, getDamage()), true);
             }
 
             if (player != null) {
@@ -88,7 +88,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
                 }
             }
 
-            BlockEntitySign sign = (BlockEntitySign) BlockEntity.createBlockEntity(BlockEntity.SIGN, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+            BlockEntitySign sign = (BlockEntitySign) BlockEntity.createBlockEntity(BlockEntity.SIGN, getWorld().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
             return sign != null;
         }
 
@@ -97,11 +97,11 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (down().getId() == Block.AIR) {
-                getLevel().useBreakOn(this);
+                getWorld().useBreakOn(this);
 
-                return Level.BLOCK_UPDATE_NORMAL;
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
 

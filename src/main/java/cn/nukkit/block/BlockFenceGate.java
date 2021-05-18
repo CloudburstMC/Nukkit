@@ -4,11 +4,11 @@ import cn.nukkit.Player;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.WorldEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -104,7 +104,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.setDamage(player != null ? player.getDirection().getHorizontalIndex() : 0);
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
 
         return true;
     }
@@ -119,7 +119,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
             return false;
         }
 
-        this.getLevel().addLevelEvent(this.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_DOOR);
+        this.getWorld().addLevelEvent(this.add(0.5, 0.5, 0.5), WorldEventPacket.EVENT_SOUND_DOOR);
         return true;
     }
 
@@ -130,7 +130,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
     public boolean toggle(Player player) {
         DoorToggleEvent event = new DoorToggleEvent(this, player);
-        this.getLevel().getServer().getPluginManager().callEvent(event);
+        this.getWorld().getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
             return false;
@@ -174,7 +174,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         }
 
         this.setDamage(direction | ((~this.getDamage()) & 0x04));
-        this.level.setBlock(this, this, false, false);
+        this.world.setBlock(this, this, false, false);
         return true;
     }
 
@@ -184,8 +184,8 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
+        if (type == World.BLOCK_UPDATE_REDSTONE) {
+            if ((!isOpen() && this.world.isBlockPowered(this.getLocation())) || (isOpen() && !this.world.isBlockPowered(this.getLocation()))) {
                 this.toggle(null);
                 return type;
             }

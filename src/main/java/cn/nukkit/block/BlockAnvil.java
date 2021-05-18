@@ -100,7 +100,7 @@ public class BlockAnvil extends BlockFallable implements Faceable {
             } else if (damage >= 8 && damage <= 11) {
                 this.setDamage(this.getDamage() | 0x08);
             }
-            this.getLevel().setBlock(block, this, true);
+            this.getWorld().setBlock(block, this, true);
             return true;
         }
         return false;

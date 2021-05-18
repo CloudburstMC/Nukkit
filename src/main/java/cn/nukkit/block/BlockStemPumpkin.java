@@ -4,9 +4,9 @@ import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSeedsPumpkin;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
+import cn.nukkit.world.World;
 import cn.nukkit.math.NukkitRandom;
 
 /**
@@ -34,12 +34,12 @@ public class BlockStemPumpkin extends BlockCrops {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() != FARMLAND) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == World.BLOCK_UPDATE_RANDOM) {
             NukkitRandom random = new NukkitRandom();
             if (random.nextRange(1, 2) == 1) {
                 if (this.getDamage() < 0x07) {
@@ -48,14 +48,14 @@ public class BlockStemPumpkin extends BlockCrops {
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), true);
+                        this.getWorld().setBlock(this, ev.getNewState(), true);
                     }
-                    return Level.BLOCK_UPDATE_RANDOM;
+                    return World.BLOCK_UPDATE_RANDOM;
                 } else {
                     for (BlockFace face : Plane.HORIZONTAL) {
                         Block b = this.getSide(face);
                         if (b.getId() == PUMPKIN) {
-                            return Level.BLOCK_UPDATE_RANDOM;
+                            return World.BLOCK_UPDATE_RANDOM;
                         }
                     }
                     Block side = this.getSide(Plane.HORIZONTAL.random(random));
@@ -64,12 +64,12 @@ public class BlockStemPumpkin extends BlockCrops {
                         BlockGrowEvent ev = new BlockGrowEvent(side, Block.get(BlockID.PUMPKIN));
                         Server.getInstance().getPluginManager().callEvent(ev);
                         if (!ev.isCancelled()) {
-                            this.getLevel().setBlock(side, ev.getNewState(), true);
+                            this.getWorld().setBlock(side, ev.getNewState(), true);
                         }
                     }
                 }
             }
-            return Level.BLOCK_UPDATE_RANDOM;
+            return World.BLOCK_UPDATE_RANDOM;
         }
         return 0;
     }

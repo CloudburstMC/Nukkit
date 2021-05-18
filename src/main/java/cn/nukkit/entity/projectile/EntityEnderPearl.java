@@ -6,11 +6,11 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.WorldEventPacket;
+import cn.nukkit.world.format.FullChunk;
 
 public class EntityEnderPearl extends EntityProjectile {
     public static final int NETWORK_ID = 87;
@@ -94,16 +94,16 @@ public class EntityEnderPearl extends EntityProjectile {
     }
 
     private void teleport() {
-        if (!this.level.equals(this.shootingEntity.getLevel())) {
+        if (!this.world.equals(this.shootingEntity.getWorld())) {
             return;
         }
 
-        this.level.addLevelEvent(this.shootingEntity.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_PORTAL);
+        this.world.addLevelEvent(this.shootingEntity.add(0.5, 0.5, 0.5), WorldEventPacket.EVENT_SOUND_PORTAL);
         this.shootingEntity.teleport(new Vector3(NukkitMath.floorDouble(this.x) + 0.5, this.y, NukkitMath.floorDouble(this.z) + 0.5), TeleportCause.ENDER_PEARL);
         if ((((Player) this.shootingEntity).getGamemode() & 0x01) == 0) {
             this.shootingEntity.attack(new EntityDamageByEntityEvent(this, shootingEntity, EntityDamageEvent.DamageCause.PROJECTILE, 5f, 0f));
         }
-        this.level.addLevelEvent(this, LevelEventPacket.EVENT_PARTICLE_ENDERMAN_TELEPORT);
-        this.level.addLevelEvent(this.shootingEntity.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_PORTAL);
+        this.world.addLevelEvent(this, WorldEventPacket.EVENT_PARTICLE_ENDERMAN_TELEPORT);
+        this.world.addLevelEvent(this.shootingEntity.add(0.5, 0.5, 0.5), WorldEventPacket.EVENT_SOUND_PORTAL);
     }
 }

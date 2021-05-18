@@ -41,7 +41,7 @@ public class BlockJukebox extends BlockSolid {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = this.getWorld().getBlockEntity(this);
         if (!(blockEntity instanceof BlockEntityJukebox)) {
             blockEntity = this.createBlockEntity();
         }
@@ -76,7 +76,7 @@ public class BlockJukebox extends BlockSolid {
                 .putInt("y", getFloorY())
                 .putInt("z", getFloorZ());
 
-        return BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.level.getChunk(getFloorX() >> 4, getFloorZ() >> 4), nbt);
+        return BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.world.getChunk(getFloorX() >> 4, getFloorZ() >> 4), nbt);
     }
 
     @Override

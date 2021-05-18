@@ -65,7 +65,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (!block.down().isTransparent()) {
-            getLevel().setBlock(block, this, true, true);
+            getWorld().setBlock(block, this, true, true);
 
             CompoundTag nbt = new CompoundTag()
                     .putList(new ListTag<>("Items"))
@@ -85,7 +85,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
                 }
             }
 
-            BlockEntityBrewingStand brewing = (BlockEntityBrewingStand) BlockEntity.createBlockEntity(BlockEntity.BREWING_STAND, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            BlockEntityBrewingStand brewing = (BlockEntityBrewingStand) BlockEntity.createBlockEntity(BlockEntity.BREWING_STAND, getWorld().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
             return brewing != null;
         }
         return false;
@@ -94,7 +94,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = getLevel().getBlockEntity(this);
+            BlockEntity t = getWorld().getBlockEntity(this);
             BlockEntityBrewingStand brewing;
             if (t instanceof BlockEntityBrewingStand) {
                 brewing = (BlockEntityBrewingStand) t;
@@ -105,7 +105,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                brewing = (BlockEntityBrewingStand) BlockEntity.createBlockEntity(BlockEntity.BREWING_STAND, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                brewing = (BlockEntityBrewingStand) BlockEntity.createBlockEntity(BlockEntity.BREWING_STAND, this.getWorld().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
                 if (brewing == null) {
                     return false;
                 }
@@ -150,7 +150,7 @@ public class BlockBrewingStand extends BlockSolidMeta {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.world.getBlockEntity(this);
 
         if (blockEntity instanceof BlockEntityBrewingStand) {
             return ContainerInventory.calculateRedstone(((BlockEntityBrewingStand) blockEntity).getInventory());

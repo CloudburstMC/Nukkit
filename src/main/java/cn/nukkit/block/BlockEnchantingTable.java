@@ -71,7 +71,7 @@ public class BlockEnchantingTable extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
 
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.ENCHANT_TABLE)
@@ -90,14 +90,14 @@ public class BlockEnchantingTable extends BlockTransparent {
             }
         }
 
-        BlockEntityEnchantTable enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        BlockEntityEnchantTable enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, getWorld().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
         return enchantTable != null;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
+            BlockEntity t = this.getWorld().getBlockEntity(this);
             BlockEntityEnchantTable enchantTable;
             if (t instanceof BlockEntityEnchantTable) {
                 enchantTable = (BlockEntityEnchantTable) t;
@@ -108,7 +108,7 @@ public class BlockEnchantingTable extends BlockTransparent {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                enchantTable = (BlockEntityEnchantTable) BlockEntity.createBlockEntity(BlockEntity.ENCHANT_TABLE, this.getWorld().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
                 if (enchantTable == null) {
                     return false;
                 }

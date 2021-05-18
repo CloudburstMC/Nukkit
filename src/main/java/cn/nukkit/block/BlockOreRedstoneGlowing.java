@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.Level;
+import cn.nukkit.world.World;
 
 //和pm源码有点出入，这里参考了wiki
 
@@ -38,14 +38,14 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED || type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == World.BLOCK_UPDATE_SCHEDULED || type == World.BLOCK_UPDATE_RANDOM) {
             BlockFadeEvent event = new BlockFadeEvent(this, get(REDSTONE_ORE));
-            level.getServer().getPluginManager().callEvent(event);
+            world.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
-                level.setBlock(this, event.getNewState(), false, false);
+                world.setBlock(this, event.getNewState(), false, false);
             }
 
-            return Level.BLOCK_UPDATE_WEAK;
+            return World.BLOCK_UPDATE_WEAK;
         }
 
         return 0;

@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-import cn.nukkit.level.Level;
+import cn.nukkit.world.World;
 
 /**
  * author: Angelic47
@@ -33,7 +33,7 @@ public class BlockLavaStill extends BlockLava {
 
     @Override
     public int onUpdate(int type) {
-        if (type != Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type != World.BLOCK_UPDATE_SCHEDULED) {
             return super.onUpdate(type);
         }
         return 0;

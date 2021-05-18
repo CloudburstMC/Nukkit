@@ -13,12 +13,12 @@ import cn.nukkit.inventory.ContainerRecipe;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -106,7 +106,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
     @Override
     public void onBreak() {
         for (Item content : inventory.getContents().values()) {
-            level.dropItem(this, content);
+            world.dropItem(this, content);
         }
         this.inventory.clearAll();
     }
@@ -251,7 +251,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
                             }
                         }
                     }
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POTION_BREWED);
+                    this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_POTION_BREWED);
 
                     ingredient.count--;
                     this.inventory.setIngredient(ingredient);
@@ -327,7 +327,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         }
 
         block.setDamage(meta);
-        this.level.setBlock(block, block, false, false);
+        this.world.setBlock(block, block, false, false);
     }
 
     public int getFuel() {

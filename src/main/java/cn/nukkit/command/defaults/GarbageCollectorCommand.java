@@ -1,10 +1,10 @@
 package cn.nukkit.command.defaults;
 
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.TextFormat;
 import cn.nukkit.utils.ThreadCache;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -29,7 +29,7 @@ public class GarbageCollectorCommand extends VanillaCommand {
         int tilesCollected = 0;
         long memory = Runtime.getRuntime().freeMemory();
 
-        for (Level level : sender.getServer().getLevels().values()) {
+        for (World level : sender.getServer().getWorlds().values()) {
             int chunksCount = level.getChunks().size();
             int entitiesCount = level.getEntities().length;
             int tilesCount = level.getBlockEntities().size();

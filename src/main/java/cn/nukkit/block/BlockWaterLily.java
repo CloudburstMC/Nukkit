@@ -3,10 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/12/1 by xtypr.
@@ -68,7 +68,7 @@ public class BlockWaterLily extends BlockFlowable {
         if (target instanceof BlockWater) {
             Block up = target.up();
             if (up.getId() == Block.AIR) {
-                this.getLevel().setBlock(up, this, true, true);
+                this.getWorld().setBlock(up, this, true, true);
                 return true;
             }
         }
@@ -77,10 +77,10 @@ public class BlockWaterLily extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (!(this.down() instanceof BlockWater)) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

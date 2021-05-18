@@ -62,17 +62,17 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
             this.putUnsignedVarInt(option.getEnchants0().size());
             for (EnchantData data : option.getEnchants0()) {
                 this.putByte((byte) data.getType());
-                this.putByte((byte) data.getLevel());
+                this.putByte((byte) data.getWorld());
             }
             this.putUnsignedVarInt(option.getEnchants1().size());
             for (EnchantData data : option.getEnchants1()) {
                 this.putByte((byte) data.getType());
-                this.putByte((byte) data.getLevel());
+                this.putByte((byte) data.getWorld());
             }
             this.putUnsignedVarInt(option.getEnchants2().size());
             for (EnchantData data : option.getEnchants2()) {
                 this.putByte((byte) data.getType());
-                this.putByte((byte) data.getLevel());
+                this.putByte((byte) data.getWorld());
             }
             this.putString(option.getEnchantName());
             this.putUnsignedVarInt(option.getEnchantNetId());

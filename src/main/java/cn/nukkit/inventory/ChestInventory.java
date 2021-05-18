@@ -2,9 +2,9 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntityChest;
-import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
+import cn.nukkit.world.World;
 
 /**
  * author: MagicDroidX
@@ -35,9 +35,9 @@ public class ChestInventory extends ContainerInventory {
             pk.case1 = 1;
             pk.case2 = 2;
 
-            Level level = this.getHolder().getLevel();
+            World level = this.getHolder().getWorld();
             if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_OPEN);
+                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), WorldSoundEventPacket.SOUND_CHEST_OPEN);
                 level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, pk);
             }
         }
@@ -53,9 +53,9 @@ public class ChestInventory extends ContainerInventory {
             pk.case1 = 1;
             pk.case2 = 0;
 
-            Level level = this.getHolder().getLevel();
+            World level = this.getHolder().getWorld();
             if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_CLOSED);
+                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), WorldSoundEventPacket.SOUND_CHEST_CLOSED);
                 level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, pk);
             }
         }

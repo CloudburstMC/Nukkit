@@ -3,10 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
 
 /**
  * author: Angelic47
@@ -84,7 +84,7 @@ public class BlockRedstoneTorch extends BlockTorch {
                 continue;
             }
 
-            this.level.updateAroundRedstone(pos.getSide(side), null);
+            this.world.updateAroundRedstone(pos.getSide(side), null);
         }
         return true;
     }
@@ -92,11 +92,11 @@ public class BlockRedstoneTorch extends BlockTorch {
     @Override
     public int onUpdate(int type) {
         if (super.onUpdate(type) == 0) {
-            if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
-                this.level.scheduleUpdate(this, tickRate());
-            } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+            if (type == World.BLOCK_UPDATE_NORMAL || type == World.BLOCK_UPDATE_REDSTONE) {
+                this.world.scheduleUpdate(this, tickRate());
+            } else if (type == World.BLOCK_UPDATE_SCHEDULED) {
                 RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
-                getLevel().getServer().getPluginManager().callEvent(ev);
+                getWorld().getServer().getPluginManager().callEvent(ev);
 
                 if (ev.isCancelled()) {
                     return 0;
@@ -116,14 +116,14 @@ public class BlockRedstoneTorch extends BlockTorch {
             BlockFace face = getBlockFace().getOpposite();
             Vector3 pos = getLocation();
 
-            this.level.setBlock(pos, Block.get(BlockID.UNLIT_REDSTONE_TORCH, getDamage()), false, true);
+            this.world.setBlock(pos, Block.get(BlockID.UNLIT_REDSTONE_TORCH, getDamage()), false, true);
 
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {
                     continue;
                 }
 
-                this.level.updateAroundRedstone(pos.getSide(side), null);
+                this.world.updateAroundRedstone(pos.getSide(side), null);
             }
 
             return true;
@@ -134,7 +134,7 @@ public class BlockRedstoneTorch extends BlockTorch {
 
     protected boolean isPoweredFromSide() {
         BlockFace face = getBlockFace().getOpposite();
-        return this.level.isSidePowered(this.getLocation().getSide(face), face);
+        return this.world.isSidePowered(this.getLocation().getSide(face), face);
     }
 
     @Override

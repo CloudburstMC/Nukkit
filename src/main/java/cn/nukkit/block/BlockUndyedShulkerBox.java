@@ -65,7 +65,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     public Item toItem() {
         ItemBlock item = new ItemBlock(this, this.getDamage(), 1);
 
-        BlockEntityShulkerBox t = (BlockEntityShulkerBox) this.getLevel().getBlockEntity(this);
+        BlockEntityShulkerBox t = (BlockEntityShulkerBox) this.getWorld().getBlockEntity(this);
 
         if (t != null) {
             ShulkerBoxInventory i = t.getRealInventory();
@@ -99,7 +99,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(block, this, true);
+        this.getWorld().setBlock(block, this, true);
         CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.SHULKER_BOX)
                 .putByte("facing", face.getIndex());
 
@@ -122,7 +122,7 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
             }
         }
 
-        BlockEntityShulkerBox box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
+        BlockEntityShulkerBox box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getWorld().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
         return box != null;
     }
 
@@ -134,13 +134,13 @@ public class BlockUndyedShulkerBox extends BlockTransparent {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            BlockEntity t = this.getLevel().getBlockEntity(this);
+            BlockEntity t = this.getWorld().getBlockEntity(this);
             BlockEntityShulkerBox box;
             if (t instanceof BlockEntityShulkerBox) {
                 box = (BlockEntityShulkerBox) t;
             } else {
                 CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.SHULKER_BOX);
-                box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
+                box = (BlockEntityShulkerBox) BlockEntity.createBlockEntity(BlockEntity.SHULKER_BOX, this.getWorld().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
                 if (box == null) {
                     return false;
                 }

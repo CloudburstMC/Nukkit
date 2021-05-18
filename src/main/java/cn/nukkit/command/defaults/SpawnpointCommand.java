@@ -6,9 +6,9 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.utils.TextFormat;
+import cn.nukkit.world.World;
+import cn.nukkit.world.Position;
 
 import java.text.DecimalFormat;
 
@@ -47,7 +47,7 @@ public class SpawnpointCommand extends VanillaCommand {
                 return true;
             }
         }
-        Level level = target.getLevel();
+        World level = target.getWorld();
         DecimalFormat round2 = new DecimalFormat("##0.00");
         if (args.length == 4) {
             if (level != null) {

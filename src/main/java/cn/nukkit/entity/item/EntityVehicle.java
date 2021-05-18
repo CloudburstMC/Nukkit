@@ -9,8 +9,8 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleDamageEvent;
 import cn.nukkit.event.vehicle.VehicleDestroyEvent;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * author: MagicDroidX

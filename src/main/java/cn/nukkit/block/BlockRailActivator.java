@@ -1,9 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Rail;
+import cn.nukkit.world.World;
 
 /**
  * @author Nukkit Project Team
@@ -31,10 +31,10 @@ public class BlockRailActivator extends BlockRail {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == World.BLOCK_UPDATE_NORMAL || type == World.BLOCK_UPDATE_REDSTONE || type == World.BLOCK_UPDATE_SCHEDULED) {
             super.onUpdate(type);
             boolean wasPowered = isActive();
-            boolean isPowered = level.isBlockPowered(this.getLocation())
+            boolean isPowered = world.isBlockPowered(this.getLocation())
                     || checkSurrounding(this, true, 0)
                     || checkSurrounding(this, false, 0);
             boolean hasUpdate = false;
@@ -45,9 +45,9 @@ public class BlockRailActivator extends BlockRail {
             }
 
             if (hasUpdate) {
-                level.updateAround(down());
+                world.updateAround(down());
                 if (getOrientation().isAscending()) {
-                    level.updateAround(up());
+                    world.updateAround(up());
                 }
             }
             return type;
@@ -72,7 +72,7 @@ public class BlockRailActivator extends BlockRail {
         int dz = pos.getFloorZ();
 
         BlockRail block;
-        Block block2 = level.getBlock(new Vector3(dx, dy, dz));
+        Block block2 = world.getBlock(new Vector3(dx, dy, dz));
 
         if (Rail.isRailBlock(block2)) {
             block = (BlockRail) block2;
@@ -147,7 +147,7 @@ public class BlockRailActivator extends BlockRail {
     }
 
     protected boolean canPowered(Vector3 pos, Rail.Orientation state, int power, boolean relative) {
-        Block block = level.getBlock(pos);
+        Block block = world.getBlock(pos);
 
         if (!(block instanceof BlockRailActivator)) {
             return false;
@@ -163,7 +163,7 @@ public class BlockRailActivator extends BlockRail {
                 || base != Rail.Orientation.STRAIGHT_EAST_WEST
                 && base != Rail.Orientation.ASCENDING_EAST
                 && base != Rail.Orientation.ASCENDING_WEST)
-                && (level.isBlockPowered(pos) || checkSurrounding(pos, relative, power + 1));
+                && (world.isBlockPowered(pos) || checkSurrounding(pos, relative, power + 1));
     }
 
     @Override

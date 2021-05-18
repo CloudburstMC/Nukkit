@@ -9,13 +9,13 @@ import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecartTNT;
-import cn.nukkit.level.Explosion;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 import cn.nukkit.utils.MinecartType;
+import cn.nukkit.world.Explosion;
+import cn.nukkit.world.GameRule;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -68,7 +68,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
             fuse -= tickDiff;
 
             if (isAlive() && fuse <= 0) {
-                if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
+                if (this.world.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
                     this.explode(ThreadLocalRandom.current().nextInt(5));
                 }
                 this.close();
@@ -83,7 +83,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
     @Override
     public void activate(int x, int y, int z, boolean flag) {
-        level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_IGNITE);
+        world.addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_IGNITE);
         this.fuse = 79;
     }
 
@@ -114,7 +114,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
     @Override
     public void dropItem() {
-        level.dropItem(this, new ItemMinecartTNT());
+        world.dropItem(this, new ItemMinecartTNT());
     }
 
     @Override
@@ -143,7 +143,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         boolean interact = super.onInteract(player, item, clickedPos);
         if (item.getId() == Item.FLINT_AND_STEEL || item.getId() == Item.FIRE_CHARGE) {
-            level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_IGNITE);
+            world.addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_IGNITE);
             this.fuse = 79;
             return true;
         }

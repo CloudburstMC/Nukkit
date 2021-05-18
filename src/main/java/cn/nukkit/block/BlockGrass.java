@@ -4,12 +4,12 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.generator.object.ObjectTallGrass;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.generator.object.ObjectTallGrass;
+import cn.nukkit.world.particle.BoneMealParticle;
 
 /**
  * author: Angelic47
@@ -52,16 +52,16 @@ public class BlockGrass extends BlockDirt {
             if (player != null && (player.gamemode & 0x01) == 0) {
                 item.count--;
             }
-            this.level.addParticle(new BoneMealParticle(this));
-            ObjectTallGrass.growGrass(this.getLevel(), this, new NukkitRandom());
+            this.world.addParticle(new BoneMealParticle(this));
+            ObjectTallGrass.growGrass(this.getWorld(), this, new NukkitRandom());
             return true;
         } else if (item.isHoe()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, Block.get(BlockID.FARMLAND));
+            this.getWorld().setBlock(this, Block.get(BlockID.FARMLAND));
             return true;
         } else if (item.isShovel()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, Block.get(BlockID.GRASS_PATH));
+            this.getWorld().setBlock(this, Block.get(BlockID.GRASS_PATH));
             return true;
         }
 
@@ -70,18 +70,18 @@ public class BlockGrass extends BlockDirt {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM) {
+        if (type == World.BLOCK_UPDATE_RANDOM) {
             NukkitRandom random = new NukkitRandom();
             x = random.nextRange((int) x - 1, (int) x + 1);
             y = random.nextRange((int) y - 2, (int) y + 2);
             z = random.nextRange((int) z - 1, (int) z + 1);
-            Block block = this.getLevel().getBlock(new Vector3(x, y, z));
+            Block block = this.getWorld().getBlock(new Vector3(x, y, z));
             if (block.getId() == Block.DIRT && block.getDamage() == 0) {
                 if (block.up() instanceof BlockAir) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(BlockID.GRASS));
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(block, ev.getNewState());
+                        this.getWorld().setBlock(block, ev.getNewState());
                     }
                 }
              } else if (block.getId() == Block.GRASS) {
@@ -89,7 +89,7 @@ public class BlockGrass extends BlockDirt {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(BlockID.DIRT));
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(block, ev.getNewState());
+                        this.getWorld().setBlock(block, ev.getNewState());
                     }
                 }   
             }

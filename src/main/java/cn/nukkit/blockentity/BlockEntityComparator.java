@@ -1,8 +1,8 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.block.BlockRedstoneComparator;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * @author CreeperFace

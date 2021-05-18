@@ -1,9 +1,9 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * Created by CreeperFace on 2.6.2017.
@@ -29,7 +29,7 @@ public class BlockEntityBed extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.level.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) == Item.BED_BLOCK;
+        return this.world.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ()) == Item.BED_BLOCK;
     }
 
     @Override

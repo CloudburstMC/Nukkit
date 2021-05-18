@@ -3,11 +3,11 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -137,7 +137,7 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
         if (!target.isTransparent()) {
             if (face.getIndex() >= 2 && face.getIndex() <= 5) {
                 this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, this, true, true);
+                this.getWorld().setBlock(block, this, true, true);
                 return true;
             }
         }
@@ -146,7 +146,7 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             int[] faces = {
                     0, //never use
                     1, //never use
@@ -156,8 +156,8 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
                     4
             };
             if (!this.getSide(BlockFace.fromIndex(faces[this.getDamage()])).isSolid()) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;

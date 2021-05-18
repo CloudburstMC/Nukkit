@@ -2,7 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Position;
+import cn.nukkit.world.Position;
 
 /**
  * author: MagicDroidX
@@ -31,7 +31,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
         who.resetCraftingGridType();
 
         for (int i = 0; i < 2; ++i) {
-            this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
+            this.getHolder().getWorld().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
             this.clear(i);
         }
     }

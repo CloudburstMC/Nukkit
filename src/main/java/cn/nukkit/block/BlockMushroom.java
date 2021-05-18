@@ -1,16 +1,16 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.level.StructureGrowEvent;
+import cn.nukkit.event.world.StructureGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.ListChunkManager;
-import cn.nukkit.level.generator.object.mushroom.BigMushroom;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.ListChunkManager;
+import cn.nukkit.world.generator.object.mushroom.BigMushroom;
+import cn.nukkit.world.particle.BoneMealParticle;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -26,11 +26,11 @@ public abstract class BlockMushroom extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (!canStay()) {
-                getLevel().useBreakOn(this);
+                getWorld().useBreakOn(this);
 
-                return Level.BLOCK_UPDATE_NORMAL;
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
         return 0;
@@ -39,7 +39,7 @@ public abstract class BlockMushroom extends BlockFlowable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (canStay()) {
-            getLevel().setBlock(block, this, true, true);
+            getWorld().setBlock(block, this, true, true);
             return true;
         }
         return false;
@@ -61,37 +61,37 @@ public abstract class BlockMushroom extends BlockFlowable {
                 this.grow();
             }
 
-            this.level.addParticle(new BoneMealParticle(this));
+            this.world.addParticle(new BoneMealParticle(this));
             return true;
         }
         return false;
     }
 
     public boolean grow() {
-        this.level.setBlock(this, Block.get(BlockID.AIR), true, false);
+        this.world.setBlock(this, Block.get(BlockID.AIR), true, false);
 
         BigMushroom generator = new BigMushroom(getType());
 
-        ListChunkManager chunkManager = new ListChunkManager(this.level);
+        ListChunkManager chunkManager = new ListChunkManager(this.world);
         if (generator.generate(chunkManager, new NukkitRandom(), this)) {
             StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
-            this.level.getServer().getPluginManager().callEvent(ev);
+            this.world.getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return false;
             }
             for(Block block : ev.getBlockList()) {
-                this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
+                this.world.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
             }
             return true;
         } else {
-            this.level.setBlock(this, this, true, false);
+            this.world.setBlock(this, this, true, false);
             return false;
         }
     }
 
     public boolean canStay() {
         Block block = this.down();
-        return block.getId() == MYCELIUM || block.getId() == PODZOL || (!block.isTransparent() && this.level.getFullLight(this) < 13);
+        return block.getId() == MYCELIUM || block.getId() == PODZOL || (!block.isTransparent() && this.world.getFullLight(this) < 13);
     }
 
     @Override

@@ -5,9 +5,9 @@ import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
 
 /**
  * @author Nukkit Project Team
@@ -44,25 +44,25 @@ public class BlockRedstoneLamp extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (this.level.isBlockPowered(this.getLocation())) {
-            this.level.setBlock(this, Block.get(BlockID.LIT_REDSTONE_LAMP), false, true);
+        if (this.world.isBlockPowered(this.getLocation())) {
+            this.world.setBlock(this, Block.get(BlockID.LIT_REDSTONE_LAMP), false, true);
         } else {
-            this.level.setBlock(this, this, false, true);
+            this.world.setBlock(this, this, false, true);
         }
         return true;
     }
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) {
+        if (type == World.BLOCK_UPDATE_NORMAL || type == World.BLOCK_UPDATE_REDSTONE) {
             // Redstone event
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
-            getLevel().getServer().getPluginManager().callEvent(ev);
+            getWorld().getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return 0;
             }
-            if (this.level.isBlockPowered(this.getLocation())) {
-                this.level.setBlock(this, Block.get(BlockID.LIT_REDSTONE_LAMP), false, false);
+            if (this.world.isBlockPowered(this.getLocation())) {
+                this.world.setBlock(this, Block.get(BlockID.LIT_REDSTONE_LAMP), false, false);
                 return 1;
             }
         }

@@ -1,7 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.RuntimeItems;
-import cn.nukkit.level.GameRules;
+import cn.nukkit.world.GameRules;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 

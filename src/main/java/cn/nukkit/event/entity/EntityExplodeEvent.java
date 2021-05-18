@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Position;
+import cn.nukkit.world.Position;
 
 import java.util.List;
 

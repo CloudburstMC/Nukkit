@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFirework;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
@@ -13,6 +12,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class ItemFirework extends Item {
     }
 
     @Override
-    public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+    public boolean onActivate(World level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (player.isAdventure()) {
             return false;
         }
@@ -82,7 +82,7 @@ public class ItemFirework extends Item {
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
         if (player.getInventory().getChestplate() instanceof ItemElytra && player.isGliding()) {
-            this.spawnFirework(player.getLevel(), player);
+            this.spawnFirework(player.getWorld(), player);
 
             player.setMotion(new Vector3(
                     -Math.sin(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * 2,
@@ -131,7 +131,7 @@ public class ItemFirework extends Item {
         this.getNamedTag().getCompound("Fireworks").putList(new ListTag<CompoundTag>("Explosions"));
     }
 
-    private void spawnFirework(Level level, Vector3 pos) {
+    private void spawnFirework(World level, Vector3 pos) {
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", pos.x + 0.5))

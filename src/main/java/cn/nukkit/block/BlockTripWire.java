@@ -4,9 +4,9 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemString;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.world.World;
 
 /**
  * @author CreeperFace
@@ -96,10 +96,10 @@ public class BlockTripWire extends BlockFlowable {
 
         if (!powered) {
             this.setPowered(true);
-            this.level.setBlock(this, this, true, false);
+            this.world.setBlock(this, this, true, false);
             this.updateHook(false);
 
-            this.level.scheduleUpdate(this, 10);
+            this.world.scheduleUpdate(this, 10);
         }
     }
 
@@ -130,13 +130,13 @@ public class BlockTripWire extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == World.BLOCK_UPDATE_SCHEDULED) {
             if (!isPowered()) {
                 return type;
             }
 
             boolean found = false;
-            for (Entity entity : this.level.getCollidingEntities(this.getCollisionBoundingBox())) {
+            for (Entity entity : this.world.getCollidingEntities(this.getCollisionBoundingBox())) {
                 if (!entity.doesTriggerPressurePlate()) {
                     continue;
                 }
@@ -145,10 +145,10 @@ public class BlockTripWire extends BlockFlowable {
             }
 
             if (found) {
-                this.level.scheduleUpdate(this, 10);
+                this.world.scheduleUpdate(this, 10);
             } else {
                 this.setPowered(false);
-                this.level.setBlock(this, this, true, false);
+                this.world.setBlock(this, this, true, false);
                 this.updateHook(false);
             }
             return type;
@@ -159,7 +159,7 @@ public class BlockTripWire extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(this, this, true, true);
+        this.getWorld().setBlock(this, this, true, true);
         this.updateHook(false);
 
         return true;
@@ -169,12 +169,12 @@ public class BlockTripWire extends BlockFlowable {
     public boolean onBreak(Item item) {
         if (item.getId() == Item.SHEARS) {
             this.setDisarmed(true);
-            this.level.setBlock(this, this, true, false);
+            this.world.setBlock(this, this, true, false);
             this.updateHook(false);
-            this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
+            this.getWorld().setBlock(this, Block.get(BlockID.AIR), true, true);
         } else {
             this.setPowered(true);
-            this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
+            this.getWorld().setBlock(this, Block.get(BlockID.AIR), true, true);
             this.updateHook(true);
         }
 

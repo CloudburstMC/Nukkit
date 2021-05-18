@@ -3,13 +3,13 @@ package cn.nukkit.entity.item;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.potion.PotionCollideEvent;
-import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.Particle;
-import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
+import cn.nukkit.world.format.FullChunk;
+import cn.nukkit.world.particle.Particle;
+import cn.nukkit.world.particle.SpellParticle;
 
 /**
  * @author xtypr
@@ -126,10 +126,10 @@ public class EntityPotion extends EntityProjectile {
 
         particle = new SpellParticle(this, r, g, b);
 
-        this.getLevel().addParticle(particle);
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_GLASS);
+        this.getWorld().addParticle(particle);
+        this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_GLASS);
 
-        Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.125, 2.125, 4.125));
+        Entity[] entities = this.getWorld().getNearbyEntities(this.getBoundingBox().grow(4.125, 2.125, 4.125));
         for (Entity anEntity : entities) {
             double distance = anEntity.distanceSquared(this);
             if (distance < 16) {

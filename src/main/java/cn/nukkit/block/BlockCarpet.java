@@ -2,11 +2,11 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/11/24 by xtypr.
@@ -69,7 +69,7 @@ public class BlockCarpet extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (down.getId() != Item.AIR) {
-            this.getLevel().setBlock(block, this, true, true);
+            this.getWorld().setBlock(block, this, true, true);
             return true;
         }
         return false;
@@ -77,11 +77,11 @@ public class BlockCarpet extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() == Item.AIR) {
-                this.getLevel().useBreakOn(this);
+                this.getWorld().useBreakOn(this);
 
-                return Level.BLOCK_UPDATE_NORMAL;
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
 

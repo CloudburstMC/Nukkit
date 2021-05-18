@@ -1,0 +1,25 @@
+package cn.nukkit.world.biome.impl.mushroom;
+
+import cn.nukkit.world.biome.type.GrassyBiome;
+import cn.nukkit.world.generator.populator.impl.MushroomPopulator;
+
+public class MushroomIslandBiome extends GrassyBiome {
+    public MushroomIslandBiome() {
+        MushroomPopulator mushroomPopulator = new MushroomPopulator();
+        mushroomPopulator.setBaseAmount(1);
+        addPopulator(mushroomPopulator);
+
+        this.setBaseHeight(0.2f);
+        this.setHeightVariation(0.3f);
+    }
+
+    @Override
+    public String getName() {
+        return "Mushroom Island";
+    }
+
+    @Override
+    public int getSurfaceId(int x, int y, int z) {
+        return MYCELIUM << 4;
+    }
+}

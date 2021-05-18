@@ -4,10 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.particle.BoneMealParticle;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -30,7 +30,7 @@ public abstract class BlockCrops extends BlockFlowable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (block.down().getId() == FARMLAND) {
-            this.getLevel().setBlock(block, this, true, true);
+            this.getWorld().setBlock(block, this, true, true);
             return true;
         }
         return false;
@@ -53,8 +53,8 @@ public abstract class BlockCrops extends BlockFlowable {
                     return false;
                 }
 
-                this.getLevel().setBlock(this, ev.getNewState(), false, true);
-                this.level.addParticle(new BoneMealParticle(this));
+                this.getWorld().setBlock(this, ev.getNewState(), false, true);
+                this.world.addParticle(new BoneMealParticle(this));
 
                 if (player != null && (player.gamemode & 0x01) == 0) {
                     item.count--;
@@ -69,12 +69,12 @@ public abstract class BlockCrops extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() != FARMLAND) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == World.BLOCK_UPDATE_RANDOM) {
             if (ThreadLocalRandom.current().nextInt(2) == 1) {
                 if (this.getDamage() < 0x07) {
                     BlockCrops block = (BlockCrops) this.clone();
@@ -83,13 +83,13 @@ public abstract class BlockCrops extends BlockFlowable {
                     Server.getInstance().getPluginManager().callEvent(ev);
 
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), false, true);
+                        this.getWorld().setBlock(this, ev.getNewState(), false, true);
                     } else {
-                        return Level.BLOCK_UPDATE_RANDOM;
+                        return World.BLOCK_UPDATE_RANDOM;
                     }
                 }
             } else {
-                return Level.BLOCK_UPDATE_RANDOM;
+                return World.BLOCK_UPDATE_RANDOM;
             }
         }
 

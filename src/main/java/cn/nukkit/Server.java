@@ -14,12 +14,12 @@ import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.event.level.LevelInitEvent;
-import cn.nukkit.event.level.LevelLoadEvent;
 import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.event.server.ServerStopEvent;
+import cn.nukkit.event.world.WorldInitEvent;
+import cn.nukkit.event.world.WorldLoadEvent;
 import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.inventory.Recipe;
 import cn.nukkit.item.Item;
@@ -27,23 +27,9 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.EnumLevel;
-import cn.nukkit.level.GlobalBlockPalette;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
-import cn.nukkit.level.biome.EnumBiome;
-import cn.nukkit.level.format.LevelProvider;
-import cn.nukkit.level.format.LevelProviderManager;
-import cn.nukkit.level.format.anvil.Anvil;
-import cn.nukkit.level.format.leveldb.LevelDB;
-import cn.nukkit.level.format.mcregion.McRegion;
-import cn.nukkit.level.generator.Flat;
-import cn.nukkit.level.generator.Generator;
-import cn.nukkit.level.generator.Nether;
-import cn.nukkit.level.generator.Normal;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
-import cn.nukkit.metadata.LevelMetadataStore;
+import cn.nukkit.metadata.WorldMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
 import cn.nukkit.metrics.NukkitMetrics;
 import cn.nukkit.nbt.NBTIO;
@@ -78,6 +64,20 @@ import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
+import cn.nukkit.world.EnumWorld;
+import cn.nukkit.world.GlobalBlockPalette;
+import cn.nukkit.world.World;
+import cn.nukkit.world.Position;
+import cn.nukkit.world.biome.EnumBiome;
+import cn.nukkit.world.format.WorldProvider;
+import cn.nukkit.world.format.WorldProviderManager;
+import cn.nukkit.world.format.anvil.Anvil;
+import cn.nukkit.world.format.leveldb.LevelDB;
+import cn.nukkit.world.format.mcregion.McRegion;
+import cn.nukkit.world.generator.Flat;
+import cn.nukkit.world.generator.Generator;
+import cn.nukkit.world.generator.Nether;
+import cn.nukkit.world.generator.Normal;
 import co.aikar.timings.Timings;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -87,6 +87,7 @@ import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
+import cn.nukkit.utils.WorldException;
 
 import java.io.File;
 import java.io.IOException;
@@ -169,7 +170,7 @@ public class Server {
 
     private PlayerMetadataStore playerMetadata;
 
-    private LevelMetadataStore levelMetadata;
+    private WorldMetadataStore levelMetadata;
 
     private Network network;
 
@@ -211,31 +212,31 @@ public class Server {
 
     private final Map<UUID, Player> playerList = new HashMap<>();
 
-    private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
-        public Level put(Integer key, Level value) {
-            Level result = super.put(key, value);
-            levelArray = levels.values().toArray(new Level[0]);
+    private final Map<Integer, World> worlds = new HashMap<Integer, World>() {
+        public World put(Integer key, World value) {
+            World result = super.put(key, value);
+            worldArray = worlds.values().toArray(new World[0]);
             return result;
         }
 
         public boolean remove(Object key, Object value) {
             boolean result = super.remove(key, value);
-            levelArray = levels.values().toArray(new Level[0]);
+            worldArray = worlds.values().toArray(new World[0]);
             return result;
         }
 
-        public Level remove(Object key) {
-            Level result = super.remove(key);
-            levelArray = levels.values().toArray(new Level[0]);
+        public World remove(Object key) {
+            World result = super.remove(key);
+            worldArray = worlds.values().toArray(new World[0]);
             return result;
         }
     };
 
-    private Level[] levelArray = new Level[0];
+    private World[] worldArray = new World[0];
 
     private final ServiceManager serviceManager = new NKServiceManager();
 
-    private Level defaultLevel = null;
+    private World defaultWorld = null;
 
     private boolean allowNether;
 
@@ -367,9 +368,9 @@ public class Server {
                 put("pvp", true);
                 put("difficulty", 1);
                 put("generator-settings", "");
-                put("level-name", "world");
-                put("level-seed", "");
-                put("level-type", "DEFAULT");
+                put("world-name", "world");
+                put("world-seed", "");
+                put("world-type", "DEFAULT");
                 put("allow-nether", true);
                 put("enable-query", true);
                 put("enable-rcon", false);
@@ -422,7 +423,7 @@ public class Server {
 
         this.entityMetadata = new EntityMetadataStore();
         this.playerMetadata = new PlayerMetadataStore();
-        this.levelMetadata = new LevelMetadataStore();
+        this.levelMetadata = new WorldMetadataStore();
 
         this.operators = new Config(this.dataPath + "ops.txt", Config.ENUM);
         this.whitelist = new Config(this.dataPath + "white-list.txt", Config.ENUM);
@@ -504,9 +505,9 @@ public class Server {
 
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
-        LevelProviderManager.addProvider(this, Anvil.class);
-        LevelProviderManager.addProvider(this, McRegion.class);
-        LevelProviderManager.addProvider(this, LevelDB.class);
+        WorldProviderManager.addProvider(this, Anvil.class);
+        WorldProviderManager.addProvider(this, McRegion.class);
+        WorldProviderManager.addProvider(this, LevelDB.class);
 
         Generator.addGenerator(Flat.class, "flat", Generator.TYPE_FLAT);
         Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
@@ -515,7 +516,7 @@ public class Server {
         //todo: add old generator and hell generator
 
         for (String name : this.getConfig("worlds", new HashMap<String, Object>()).keySet()) {
-            if (!this.loadLevel(name)) {
+            if (!this.loadWorld(name)) {
                 long seed;
                 try {
                     seed = ((Integer) this.getConfig("worlds." + name + ".seed")).longValue();
@@ -536,42 +537,42 @@ public class Server {
                     options.put("preset", preset.toString());
                 }
 
-                this.generateLevel(name, seed, generator, options);
+                this.generateWorld(name, seed, generator, options);
             }
         }
 
-        if (this.getDefaultLevel() == null) {
-            String defaultName = this.getPropertyString("level-name", "world");
+        if (this.getDefaultWorld() == null) {
+            String defaultName = this.getPropertyString("world-name", "world");
             if (defaultName == null || defaultName.trim().isEmpty()) {
-                this.getLogger().warning("level-name cannot be null, using default");
+                this.getLogger().warning("world-name cannot be null, using default");
                 defaultName = "world";
-                this.setPropertyString("level-name", defaultName);
+                this.setPropertyString("world-name", defaultName);
             }
 
-            if (!this.loadLevel(defaultName)) {
+            if (!this.loadWorld(defaultName)) {
                 long seed;
-                String seedString = String.valueOf(this.getProperty("level-seed", System.currentTimeMillis()));
+                String seedString = String.valueOf(this.getProperty("world-seed", System.currentTimeMillis()));
                 try {
                     seed = Long.parseLong(seedString);
                 } catch (NumberFormatException e) {
                     seed = seedString.hashCode();
                 }
-                this.generateLevel(defaultName, seed == 0 ? System.currentTimeMillis() : seed);
+                this.generateWorld(defaultName, seed == 0 ? System.currentTimeMillis() : seed);
             }
 
-            this.setDefaultLevel(this.getLevelByName(defaultName));
+            this.setDefaultWorld(this.getWorldByName(defaultName));
         }
 
         this.properties.save(true);
 
-        if (this.getDefaultLevel() == null) {
+        if (this.getDefaultWorld() == null) {
             this.getLogger().emergency(this.getLanguage().translateString("nukkit.level.defaultError"));
             this.forceShutdown();
 
             return;
         }
 
-        EnumLevel.initLevels();
+        EnumWorld.initWorlds();
 
         if (this.getConfig("ticks-per.autosave", 6000) > 0) {
             this.autoSaveTicks = this.getConfig("ticks-per.autosave", 6000);
@@ -782,7 +783,7 @@ public class Server {
 
         log.info("Saving levels...");
 
-        for (Level level : this.levelArray) {
+        for (World level : this.worldArray) {
             level.save();
         }
 
@@ -854,8 +855,8 @@ public class Server {
             this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
 
             this.getLogger().debug("Unloading all levels");
-            for (Level level : this.levelArray) {
-                this.unloadLevel(level, true);
+            for (World level : this.worldArray) {
+                this.unloadWorld(level, true);
             }
 
             this.getLogger().debug("Closing console");
@@ -945,9 +946,9 @@ public class Server {
 
                         { // Instead of wasting time, do something potentially useful
                             int offset = 0;
-                            for (int i = 0; i < levelArray.length; i++) {
-                                offset = (i + lastLevelGC) % levelArray.length;
-                                Level level = levelArray[offset];
+                            for (int i = 0; i < worldArray.length; i++) {
+                                offset = (i + lastLevelGC) % worldArray.length;
+                                World level = worldArray[offset];
                                 level.doGarbageCollection(allocated - 1);
                                 allocated = next - System.currentTimeMillis();
                                 if (allocated <= 0) {
@@ -1084,7 +1085,7 @@ public class Server {
         }
 
         //Do level ticks
-        for (Level level : this.levelArray) {
+        for (World level : this.worldArray) {
             if (level.getTickRate() > this.baseTickRate && --level.tickRateCounter > 0) {
                 continue;
             }
@@ -1132,7 +1133,7 @@ public class Server {
                 }
             }
 
-            for (Level level : this.levelArray) {
+            for (World level : this.worldArray) {
                 level.save();
             }
             Timings.levelSaveTimer.stopTiming();
@@ -1210,7 +1211,7 @@ public class Server {
         }
 
         if (this.tickCounter % 100 == 0) {
-            for (Level level : this.levelArray) {
+            for (World level : this.worldArray) {
                 level.doChunkGarbageCollection();
             }
         }
@@ -1345,13 +1346,13 @@ public class Server {
 
     public void setAutoSave(boolean autoSave) {
         this.autoSave = autoSave;
-        for (Level level : this.levelArray) {
+        for (World level : this.worldArray) {
             level.setAutoSave(this.autoSave);
         }
     }
 
-    public String getLevelType() {
-        return this.getPropertyString("level-type", "DEFAULT");
+    public String getWorldType() {
+        return this.getPropertyString("world-type", "DEFAULT");
     }
 
     public boolean getGenerateStructures() {
@@ -1501,7 +1502,7 @@ public class Server {
         return playerMetadata;
     }
 
-    public LevelMetadataStore getLevelMetadata() {
+    public WorldMetadataStore getLevelMetadata() {
         return levelMetadata;
     }
 
@@ -1666,7 +1667,7 @@ public class Server {
             if (this.shouldSavePlayerData()) {
                 log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             }
-            Position spawn = this.getDefaultLevel().getSafeSpawn();
+            Position spawn = this.getDefaultWorld().getSafeSpawn();
             nbt = new CompoundTag()
                     .putLong("firstPlayed", System.currentTimeMillis() / 1000)
                     .putLong("lastPlayed", System.currentTimeMillis() / 1000)
@@ -1674,7 +1675,7 @@ public class Server {
                             .add(new DoubleTag("0", spawn.x))
                             .add(new DoubleTag("1", spawn.y))
                             .add(new DoubleTag("2", spawn.z)))
-                    .putString("Level", this.getDefaultLevel().getName())
+                    .putString("Level", this.getDefaultWorld().getName())
                     .putList(new ListTag<>("Inventory"))
                     .putCompound("Achievements", new CompoundTag())
                     .putInt("playerGameType", this.getGamemode())
@@ -1858,61 +1859,61 @@ public class Server {
         }
     }
 
-    public Map<Integer, Level> getLevels() {
-        return levels;
+    public Map<Integer, World> getWorlds() {
+        return worlds;
     }
 
-    public Level getDefaultLevel() {
-        return defaultLevel;
+    public World getDefaultWorld() {
+        return defaultWorld;
     }
 
-    public void setDefaultLevel(Level defaultLevel) {
-        if (defaultLevel == null || (this.isLevelLoaded(defaultLevel.getFolderName()) && defaultLevel != this.defaultLevel)) {
-            this.defaultLevel = defaultLevel;
+    public void setDefaultWorld(World defaultWorld) {
+        if (defaultWorld == null || (this.isWorldLoaded(defaultWorld.getFolderName()) && defaultWorld != this.defaultWorld)) {
+            this.defaultWorld = defaultWorld;
         }
     }
 
-    public boolean isLevelLoaded(String name) {
-        return this.getLevelByName(name) != null;
+    public boolean isWorldLoaded(String name) {
+        return this.getWorldByName(name) != null;
     }
 
-    public Level getLevel(int levelId) {
-        if (this.levels.containsKey(levelId)) {
-            return this.levels.get(levelId);
+    public World getWorld(int levelId) {
+        if (this.worlds.containsKey(levelId)) {
+            return this.worlds.get(levelId);
         }
         return null;
     }
 
-    public Level getLevelByName(String name) {
-        for (Level level : this.levelArray) {
-            if (level.getFolderName().equalsIgnoreCase(name)) {
-                return level;
+    public World getWorldByName(String name) {
+        for (World world : this.worldArray) {
+            if (world.getFolderName().equalsIgnoreCase(name)) {
+                return world;
             }
         }
 
         return null;
     }
 
-    public boolean unloadLevel(Level level) {
-        return this.unloadLevel(level, false);
+    public boolean unloadWorld(World world) {
+        return this.unloadWorld(world, false);
     }
 
-    public boolean unloadLevel(Level level, boolean forceUnload) {
-        if (level == this.getDefaultLevel() && !forceUnload) {
-            throw new IllegalStateException("The default level cannot be unloaded while running, please switch levels.");
+    public boolean unloadWorld(World world, boolean forceUnload) {
+        if (world == this.getDefaultWorld() && !forceUnload) {
+            throw new IllegalStateException("The default world cannot be unloaded while running, please switch worlds.");
         }
 
-        return level.unload(forceUnload);
+        return world.unload(forceUnload);
 
     }
 
-    public boolean loadLevel(String name) {
+    public boolean loadWorld(String name) {
         if (Objects.equals(name.trim(), "")) {
-            throw new LevelException("Invalid empty level name");
+            throw new WorldException("Invalid empty world name");
         }
-        if (this.isLevelLoaded(name)) {
+        if (this.isWorldLoaded(name)) {
             return true;
-        } else if (!this.isLevelGenerated(name)) {
+        } else if (!this.isWorldGenerated(name)) {
             log.warn(this.getLanguage().translateString("nukkit.level.notFound", name));
 
             return false;
@@ -1926,7 +1927,7 @@ public class Server {
             path = this.getDataPath() + "worlds/" + name + "/";
         }
 
-        Class<? extends LevelProvider> provider = LevelProviderManager.getProvider(path);
+        Class<? extends WorldProvider> provider = WorldProviderManager.getProvider(path);
 
         if (provider == null) {
             log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, "Unknown provider"}));
@@ -1934,43 +1935,43 @@ public class Server {
             return false;
         }
 
-        Level level;
+        World world;
         try {
-            level = new Level(this, name, path, provider);
+            world = new World(this, name, path, provider);
         } catch (Exception e) {
             log.error(this.getLanguage().translateString("nukkit.level.loadError", new String[]{name, e.getMessage()}));
             return false;
         }
 
-        this.levels.put(level.getId(), level);
+        this.worlds.put(world.getId(), world);
 
-        level.initLevel();
+        world.initLevel();
 
-        this.getPluginManager().callEvent(new LevelLoadEvent(level));
+        this.getPluginManager().callEvent(new WorldLoadEvent(world));
 
-        level.setTickRate(this.baseTickRate);
+        world.setTickRate(this.baseTickRate);
 
         return true;
     }
 
-    public boolean generateLevel(String name) {
-        return this.generateLevel(name, new java.util.Random().nextLong());
+    public boolean generateWorld(String name) {
+        return this.generateWorld(name, new java.util.Random().nextLong());
     }
 
-    public boolean generateLevel(String name, long seed) {
-        return this.generateLevel(name, seed, null);
+    public boolean generateWorld(String name, long seed) {
+        return this.generateWorld(name, seed, null);
     }
 
-    public boolean generateLevel(String name, long seed, Class<? extends Generator> generator) {
-        return this.generateLevel(name, seed, generator, new HashMap<>());
+    public boolean generateWorld(String name, long seed, Class<? extends Generator> generator) {
+        return this.generateWorld(name, seed, generator, new HashMap<>());
     }
 
-    public boolean generateLevel(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options) {
-        return generateLevel(name, seed, generator, options, null);
+    public boolean generateWorld(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options) {
+        return generateWorld(name, seed, generator, options, null);
     }
 
-    public boolean generateLevel(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options, Class<? extends LevelProvider> provider) {
-        if (Objects.equals(name.trim(), "") || this.isLevelGenerated(name)) {
+    public boolean generateWorld(String name, long seed, Class<? extends Generator> generator, Map<String, Object> options, Class<? extends WorldProvider> provider) {
+        if (Objects.equals(name.trim(), "") || this.isWorldGenerated(name)) {
             return false;
         }
 
@@ -1979,11 +1980,11 @@ public class Server {
         }
 
         if (generator == null) {
-            generator = Generator.getGenerator(this.getLevelType());
+            generator = Generator.getGenerator(this.getWorldType());
         }
 
         if (provider == null) {
-            provider = LevelProviderManager.getProviderByName(this.getConfig().get("level-settings.default-format", "anvil"));
+            provider = WorldProviderManager.getProviderByName(this.getConfig().get("level-settings.default-format", "anvil"));
         }
 
         String path;
@@ -1994,23 +1995,23 @@ public class Server {
             path = this.getDataPath() + "worlds/" + name + "/";
         }
 
-        Level level;
+        World world;
         try {
             provider.getMethod("generate", String.class, String.class, long.class, Class.class, Map.class).invoke(null, path, name, seed, generator, options);
 
-            level = new Level(this, name, path, provider);
-            this.levels.put(level.getId(), level);
+            world = new World(this, name, path, provider);
+            this.worlds.put(world.getId(), world);
 
-            level.initLevel();
-            level.setTickRate(this.baseTickRate);
+            world.initLevel();
+            world.setTickRate(this.baseTickRate);
         } catch (Exception e) {
             log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, Utils.getExceptionMessage(e)}));
             return false;
         }
 
-        this.getPluginManager().callEvent(new LevelInitEvent(level));
+        this.getPluginManager().callEvent(new WorldInitEvent(world));
 
-        this.getPluginManager().callEvent(new LevelLoadEvent(level));
+        this.getPluginManager().callEvent(new WorldLoadEvent(world));
 
         /*this.getLogger().notice(this.getLanguage().translateString("nukkit.level.backgroundGeneration", name));
 
@@ -2044,15 +2045,15 @@ public class Server {
         return true;
     }
 
-    public boolean isLevelGenerated(String name) {
+    public boolean isWorldGenerated(String name) {
         if (Objects.equals(name.trim(), "")) {
             return false;
         }
 
         String path = this.getDataPath() + "worlds/" + name + "/";
-        if (this.getLevelByName(name) == null) {
+        if (this.getWorldByName(name) == null) {
 
-            return LevelProviderManager.getProvider(path) != null;
+            return WorldProviderManager.getProvider(path) != null;
         }
 
         return true;

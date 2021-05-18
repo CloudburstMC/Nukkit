@@ -37,7 +37,7 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
         if ((fy > 0.5 && face != BlockFace.UP) || face == BlockFace.DOWN) {
             this.setDamage(this.getDamage() | 0x04); //Upside-down stairs
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
 
         return true;
     }

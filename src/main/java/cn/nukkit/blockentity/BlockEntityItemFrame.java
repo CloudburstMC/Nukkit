@@ -6,10 +6,10 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.WorldEventPacket;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -34,7 +34,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
             namedTag.putFloat("ItemDropChance", 1.0f);
         }
 
-        this.level.updateComparatorOutputLevel(this);
+        this.world.updateComparatorOutputLevel(this);
 
         super.initBlockEntity();
     }
@@ -55,7 +55,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     public void setItemRotation(int itemRotation) {
         this.namedTag.putByte("ItemRotation", itemRotation);
-        this.level.updateComparatorOutputLevel(this);
+        this.world.updateComparatorOutputLevel(this);
         this.setDirty();
     }
 
@@ -74,7 +74,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
             this.setDirty();
         }
 
-        this.level.updateComparatorOutputLevel(this);
+        this.world.updateComparatorOutputLevel(this);
     }
 
     public float getItemDropChance() {
@@ -119,7 +119,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         if (item != null && item.getId() != Item.AIR) {
             if (player != null) {
                 ItemFrameDropItemEvent event = new ItemFrameDropItemEvent(player, this.getBlock(), this, item);
-                this.level.getServer().getPluginManager().callEvent(event);
+                this.world.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) {
                     this.spawnTo(player);
                     return true;
@@ -127,11 +127,11 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
             }
 
             if (this.getItemDropChance() > ThreadLocalRandom.current().nextFloat()) {
-                this.level.dropItem(this.add(0.5, 0, 0.5), item);
+                this.world.dropItem(this.add(0.5, 0, 0.5), item);
             }
             this.setItem(Item.get(Item.AIR));
             this.setItemRotation(0);
-            this.level.addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_REMOVED);
+            this.world.addLevelEvent(this, WorldEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_REMOVED);
             return true;
         }
         return false;

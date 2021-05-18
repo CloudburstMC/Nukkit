@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.utils.LevelException;
+import cn.nukkit.utils.WorldException;
 
 /**
  * Created on 2015/12/6 by xtypr.
@@ -36,7 +36,7 @@ public abstract class BlockThin extends BlockTransparent {
             e = east ? onSE : offSE;
             n = north ? onNW : offNW;
             s = south ? onSE : offSE;
-        } catch (LevelException ignore) {
+        } catch (WorldException ignore) {
             //null sucks
         }
         return new SimpleAxisAlignedBB(

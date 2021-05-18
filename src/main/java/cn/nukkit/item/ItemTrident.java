@@ -12,7 +12,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 
 /**
  * Created by PetteriM1
@@ -97,7 +97,7 @@ public class ItemTrident extends ItemTool {
                     entityShootBowEvent.getProjectile().kill();
                 } else {
                     entityShootBowEvent.getProjectile().spawnToAll();
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_THROW);
+                    player.getWorld().addLevelSoundEvent(player, WorldSoundEventPacket.SOUND_ITEM_TRIDENT_THROW);
                     if (!player.isCreative()) {
                         this.count--;
                         player.getInventory().setItemInHand(this);

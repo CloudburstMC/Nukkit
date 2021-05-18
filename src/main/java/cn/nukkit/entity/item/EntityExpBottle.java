@@ -2,11 +2,11 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
-import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.particle.Particle;
-import cn.nukkit.level.particle.SpellParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
+import cn.nukkit.world.format.FullChunk;
+import cn.nukkit.world.particle.Particle;
+import cn.nukkit.world.particle.SpellParticle;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -89,10 +89,10 @@ public class EntityExpBottle extends EntityProjectile {
 
     public void dropXp() {
         Particle particle2 = new SpellParticle(this, 0x00385dc6);
-        this.getLevel().addParticle(particle2);
+        this.getWorld().addParticle(particle2);
 
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_GLASS);
+        this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_GLASS);
 
-        this.getLevel().dropExpOrb(this, ThreadLocalRandom.current().nextInt(3, 12));
+        this.getWorld().dropExpOrb(this, ThreadLocalRandom.current().nextInt(3, 12));
     }
 }

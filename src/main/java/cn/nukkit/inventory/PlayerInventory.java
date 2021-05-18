@@ -62,7 +62,7 @@ public class PlayerInventory extends BaseInventory {
         if (this.getHolder() instanceof Player) {
             Player player = (Player) this.getHolder();
             PlayerItemHeldEvent ev = new PlayerItemHeldEvent(player, this.getItem(slot), slot);
-            this.getHolder().getLevel().getServer().getPluginManager().callEvent(ev);
+            this.getHolder().getWorld().getServer().getPluginManager().callEvent(ev);
 
             if (ev.isCancelled()) {
                 this.sendContents(this.getViewers());

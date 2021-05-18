@@ -13,9 +13,6 @@ import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBoat;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.Location;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
@@ -23,6 +20,9 @@ import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
+import cn.nukkit.world.GameRule;
+import cn.nukkit.world.Location;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.ArrayList;
 
@@ -164,7 +164,7 @@ public class EntityBoat extends EntityVehicle {
             double friction = 1 - this.getDrag();
 
             if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
+                friction *= this.getWorld().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
             }
 
             this.motionX *= friction;
@@ -177,8 +177,8 @@ public class EntityBoat extends EntityVehicle {
 
             this.motionZ *= friction;
 
-            Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
-            Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
+            Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, world);
+            Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, world);
 
             this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
 
@@ -190,7 +190,7 @@ public class EntityBoat extends EntityVehicle {
             this.updateMovement();
 
             if (this.passengers.size() < 2) {
-                for (Entity entity : this.level.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
+                for (Entity entity : this.world.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
                     if (entity.riding != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal || isPassenger(entity)) {
                         continue;
                     }
@@ -275,7 +275,7 @@ public class EntityBoat extends EntityVehicle {
 
             @Override
             public void accept(int x, int y, int z) {
-                Block block = EntityBoat.this.level.getBlock(EntityBoat.this.temporalVector.setComponents(x, y, z));
+                Block block = EntityBoat.this.world.getBlock(EntityBoat.this.temporalVector.setComponents(x, y, z));
 
                 if (block instanceof BlockWater) {
                     double level = block.getMaxY();
@@ -408,8 +408,8 @@ public class EntityBoat extends EntityVehicle {
     public void kill() {
         super.kill();
 
-        if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-            this.level.dropItem(this, new ItemBoat(this.woodID));
+        if (world.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+            this.world.dropItem(this, new ItemBoat(this.woodID));
         }
     }
 

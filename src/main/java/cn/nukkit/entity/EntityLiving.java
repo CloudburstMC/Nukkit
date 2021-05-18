@@ -13,16 +13,16 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTurtleShell;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.network.protocol.AnimatePacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockIterator;
+import cn.nukkit.world.GameRule;
+import cn.nukkit.world.format.FullChunk;
 import co.aikar.timings.Timings;
 
 import java.util.ArrayList;
@@ -125,8 +125,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                     animate.action = AnimatePacket.Action.CRITICAL_HIT;
                     animate.eid = getId();
 
-                    this.getLevel().addChunkPacket(damager.getChunkX(), damager.getChunkZ(), animate);
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ATTACK_STRONG);
+                    this.getWorld().addChunkPacket(damager.getChunkX(), damager.getChunkZ(), animate);
+                    this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_ATTACK_STRONG);
 
                     source.setDamage(source.getDamage() * 1.5f);
                 }
@@ -190,9 +190,9 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         EntityDeathEvent ev = new EntityDeathEvent(this, this.getDrops());
         this.server.getPluginManager().callEvent(ev);
 
-        if (this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+        if (this.world.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
             for (cn.nukkit.item.Item item : ev.getDrops()) {
-                this.getLevel().dropItem(this, item);
+                this.getWorld().dropItem(this, item);
             }
         }
     }
@@ -277,7 +277,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         }
 
         if (this.riding == null) {
-            for (Entity entity : level.getNearbyEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
+            for (Entity entity : world.getNearbyEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
                 if (entity instanceof EntityRideable) {
                     this.collidingWith(entity);
                 }
@@ -285,7 +285,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         }
 
         // Used to check collisions with magma blocks
-        Block block = this.level.getBlock((int) x, (int) y - 1, (int) z);
+        Block block = this.world.getBlock((int) x, (int) y - 1, (int) z);
         if (block instanceof BlockMagma) block.onEntityCollide(this);
 
         Timings.livingEntityBaseTickTimer.stopTiming();
@@ -321,7 +321,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
         List<Block> blocks = new ArrayList<>();
 
-        BlockIterator itr = new BlockIterator(this.level, this.getPosition(), this.getDirectionVector(), this.getEyeHeight(), maxDistance);
+        BlockIterator itr = new BlockIterator(this.world, this.getPosition(), this.getDirectionVector(), this.getEyeHeight(), maxDistance);
 
         while (itr.hasNext()) {
             Block block = itr.next();

@@ -7,12 +7,12 @@ import cn.nukkit.entity.item.EntityEndCrystal;
 import cn.nukkit.entity.mob.EntityBlaze;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.world.MovingObjectPosition;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * author: MagicDroidX
@@ -130,7 +130,7 @@ public abstract class EntityProjectile extends Entity {
 
             Vector3 moveVector = new Vector3(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
 
-            Entity[] list = this.getLevel().getCollidingEntities(this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1, 1, 1), this);
+            Entity[] list = this.getWorld().getCollidingEntities(this.boundingBox.addCoord(this.motionX, this.motionY, this.motionZ).expand(1, 1, 1), this);
 
             double nearDistance = Integer.MAX_VALUE;
             Entity nearEntity = null;

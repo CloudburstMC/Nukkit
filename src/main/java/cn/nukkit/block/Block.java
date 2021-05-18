@@ -7,9 +7,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.Position;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
@@ -18,6 +15,9 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.MovingObjectPosition;
+import cn.nukkit.world.Position;
 
 import java.lang.reflect.Constructor;
 import java.util.List;
@@ -372,7 +372,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             block.x = pos.x;
             block.y = pos.y;
             block.z = pos.z;
-            block.level = pos.level;
+            block.world = pos.world;
         }
         return block;
     }
@@ -381,17 +381,17 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return fullList[(id << 4) + data].clone();
     }
 
-    public static Block get(int fullId, Level level, int x, int y, int z) {
+    public static Block get(int fullId, World level, int x, int y, int z) {
         Block block = fullList[fullId].clone();
         block.x = x;
         block.y = y;
         block.z = z;
-        block.level = level;
+        block.world = level;
         return block;
     }
 
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        return this.getLevel().setBlock(this, this, true, true);
+        return this.getWorld().setBlock(this, this, true, true);
     }
 
     //http://minecraft.gamepedia.com/Breaking
@@ -408,7 +408,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public boolean onBreak(Item item) {
-        return this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
+        return this.getWorld().setBlock(this, Block.get(BlockID.AIR), true, true);
     }
 
     public int onUpdate(int type) {
@@ -535,7 +535,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         this.x = (int) v.x;
         this.y = (int) v.y;
         this.z = (int) v.z;
-        this.level = v.level;
+        this.world = v.world;
     }
 
     public Item[] getDrops(Item item) {
@@ -703,7 +703,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     public Block getSide(BlockFace face) {
         if (this.isValid()) {
-            return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
+            return this.getWorld().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
         }
         return this.getSide(face, 1);
     }
@@ -711,9 +711,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public Block getSide(BlockFace face, int step) {
         if (this.isValid()) {
             if (step == 1) {
-                return this.getLevel().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
+                return this.getWorld().getBlock((int) x + face.getXOffset(), (int) y + face.getYOffset(), (int) z + face.getZOffset());
             } else {
-                return this.getLevel().getBlock((int) x + face.getXOffset() * step, (int) y + face.getYOffset() * step, (int) z + face.getZOffset() * step);
+                return this.getWorld().getBlock((int) x + face.getXOffset() * step, (int) y + face.getYOffset() * step, (int) z + face.getZOffset() * step);
             }
         }
         Block block = Block.get(Item.AIR, 0);
@@ -924,15 +924,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @Override
     public void setMetadata(String metadataKey, MetadataValue newMetadataValue) throws Exception {
-        if (this.getLevel() != null) {
-            this.getLevel().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
+        if (this.getWorld() != null) {
+            this.getWorld().getBlockMetadata().setMetadata(this, metadataKey, newMetadataValue);
         }
     }
 
     @Override
     public List<MetadataValue> getMetadata(String metadataKey) throws Exception {
-        if (this.getLevel() != null) {
-            return this.getLevel().getBlockMetadata().getMetadata(this, metadataKey);
+        if (this.getWorld() != null) {
+            return this.getWorld().getBlockMetadata().getMetadata(this, metadataKey);
 
         }
         return null;
@@ -940,13 +940,13 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @Override
     public boolean hasMetadata(String metadataKey) throws Exception {
-        return this.getLevel() != null && this.getLevel().getBlockMetadata().hasMetadata(this, metadataKey);
+        return this.getWorld() != null && this.getWorld().getBlockMetadata().hasMetadata(this, metadataKey);
     }
 
     @Override
     public void removeMetadata(String metadataKey, Plugin owningPlugin) throws Exception {
-        if (this.getLevel() != null) {
-            this.getLevel().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
+        if (this.getWorld() != null) {
+            this.getWorld().getBlockMetadata().removeMetadata(this, metadataKey, owningPlugin);
         }
     }
 

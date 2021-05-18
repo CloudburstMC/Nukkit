@@ -6,11 +6,11 @@ import cn.nukkit.entity.EntityHanging;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.ItemPainting;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPaintingPacket;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.world.GameRule;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,8 +63,8 @@ public class EntityPainting extends EntityHanging {
         if (super.attack(source)) {
             if (source instanceof EntityDamageByEntityEvent) {
                 Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-                if (damager instanceof Player && (((Player) damager).isAdventure() || ((Player) damager).isSurvival()) && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-                    this.level.dropItem(this, new ItemPainting());
+                if (damager instanceof Player && (((Player) damager).isAdventure() || ((Player) damager).isSurvival()) && this.world.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+                    this.world.dropItem(this, new ItemPainting());
                 }
             }
             this.close();

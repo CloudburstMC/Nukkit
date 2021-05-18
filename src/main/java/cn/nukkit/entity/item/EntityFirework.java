@@ -9,11 +9,11 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.EntityEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.Random;
 
@@ -91,7 +91,7 @@ public class EntityFirework extends Entity {
 
 
             if (this.fireworkAge == 0) {
-                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LAUNCH);
+                this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_LAUNCH);
             }
 
             this.fireworkAge++;
@@ -103,7 +103,7 @@ public class EntityFirework extends Entity {
                 pk.event = EntityEventPacket.FIREWORK_EXPLOSION;
                 pk.eid = this.getId();
 
-                level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LARGE_BLAST, -1, NETWORK_ID);
+                world.addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_LARGE_BLAST, -1, NETWORK_ID);
 
                 Server.broadcastPacket(getViewers().values(), pk);
 

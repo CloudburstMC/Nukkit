@@ -4,14 +4,14 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.WorldEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -66,7 +66,7 @@ public class BlockTNT extends BlockSolid {
     }
 
     public void prime(int fuse, Entity source) {
-        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
+        this.getWorld().setBlock(this, Block.get(BlockID.AIR), true);
         double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
@@ -82,19 +82,19 @@ public class BlockTNT extends BlockSolid {
                         .add(new FloatTag("", 0)))
                 .putShort("Fuse", fuse);
         Entity tnt = Entity.createEntity("PrimedTnt",
-                this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
+                this.getWorld().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
                 nbt, source
         );
         if(tnt == null) {
             return;
         }
         tnt.spawnToAll();
-        this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TNT);
+        this.getWorld().addLevelEvent(this, WorldEventPacket.EVENT_SOUND_TNT);
     }
 
     @Override
     public int onUpdate(int type) {
-        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && this.level.isBlockPowered(this.getLocation())) {
+        if ((type == World.BLOCK_UPDATE_NORMAL || type == World.BLOCK_UPDATE_REDSTONE) && this.world.isBlockPowered(this.getLocation())) {
             this.prime();
         }
 

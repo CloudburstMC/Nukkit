@@ -2,11 +2,11 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.particle.BoneMealParticle;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -65,7 +65,7 @@ public class BlockFlower extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.FARMLAND || down.getId() == Block.PODZOL) {
-            this.getLevel().setBlock(block, this, true);
+            this.getWorld().setBlock(block, this, true);
 
             return true;
         }
@@ -74,11 +74,11 @@ public class BlockFlower extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
-                this.getLevel().useBreakOn(this);
+                this.getWorld().useBreakOn(this);
 
-                return Level.BLOCK_UPDATE_NORMAL;
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
 
@@ -102,7 +102,7 @@ public class BlockFlower extends BlockFlowable {
                 item.count--;
             }
 
-            this.level.addParticle(new BoneMealParticle(this));
+            this.world.addParticle(new BoneMealParticle(this));
 
             for (int i = 0; i < 8; i++) {
                 Vector3 vec = this.add(
@@ -110,11 +110,11 @@ public class BlockFlower extends BlockFlowable {
                         ThreadLocalRandom.current().nextInt(-1, 2),
                         ThreadLocalRandom.current().nextInt(-3, 4));
 
-                if (level.getBlock(vec).getId() == AIR && level.getBlock(vec.down()).getId() == GRASS && vec.getY() >= 0 && vec.getY() < 256) {
+                if (world.getBlock(vec).getId() == AIR && world.getBlock(vec.down()).getId() == GRASS && vec.getY() >= 0 && vec.getY() < 256) {
                     if (ThreadLocalRandom.current().nextInt(10) == 0) {
-                        this.level.setBlock(vec, this.getUncommonFlower(), true);
+                        this.world.setBlock(vec, this.getUncommonFlower(), true);
                     } else {
-                        this.level.setBlock(vec, get(this.getId()), true);
+                        this.world.setBlock(vec, get(this.getId()), true);
                     }
                 }
             }

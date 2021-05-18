@@ -106,7 +106,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
             }
             Block c = this.getSide(BlockFace.fromIndex(side));
             if (c instanceof BlockChest && c.getDamage() == this.getDamage()) {
-                BlockEntity blockEntity = this.getLevel().getBlockEntity(c);
+                BlockEntity blockEntity = this.getWorld().getBlockEntity(c);
                 if (blockEntity instanceof BlockEntityChest && !((BlockEntityChest) blockEntity).isPaired()) {
                     chest = (BlockEntityChest) blockEntity;
                     break;
@@ -114,7 +114,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
             }
         }
 
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag("")
                 .putList(new ListTag<>("Items"))
                 .putString("id", BlockEntity.CHEST)
@@ -133,7 +133,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
             }
         }
 
-        BlockEntityChest blockEntity = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+        BlockEntityChest blockEntity = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getWorld().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
 
         if (blockEntity == null) {
             return false;
@@ -149,11 +149,11 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        BlockEntity t = this.getLevel().getBlockEntity(this);
+        BlockEntity t = this.getWorld().getBlockEntity(this);
         if (t instanceof BlockEntityChest) {
             ((BlockEntityChest) t).unpair();
         }
-        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
+        this.getWorld().setBlock(this, Block.get(BlockID.AIR), true, true);
 
         return true;
     }
@@ -166,7 +166,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
                 return true;
             }
 
-            BlockEntity t = this.getLevel().getBlockEntity(this);
+            BlockEntity t = this.getWorld().getBlockEntity(this);
             BlockEntityChest chest;
             if (t instanceof BlockEntityChest) {
                 chest = (BlockEntityChest) t;
@@ -177,7 +177,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
                         .putInt("x", (int) this.x)
                         .putInt("y", (int) this.y)
                         .putInt("z", (int) this.z);
-                chest = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
+                chest = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getWorld().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
                 if (chest == null) {
                     return false;
                 }
@@ -205,7 +205,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
     }
 
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.world.getBlockEntity(this);
 
         if (blockEntity instanceof BlockEntityChest) {
             return ContainerInventory.calculateRedstone(((BlockEntityChest) blockEntity).getInventory());

@@ -7,13 +7,13 @@ import cn.nukkit.entity.item.EntityPrimedTNT;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBed;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
 
 /**
  * author: MagicDroidX
@@ -67,15 +67,15 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
 
-        if (this.level.getDimension() == Level.DIMENSION_NETHER || this.level.getDimension() == Level.DIMENSION_THE_END) {
+        if (this.world.getDimension() == World.DIMENSION_NETHER || this.world.getDimension() == World.DIMENSION_THE_END) {
             CompoundTag tag = EntityPrimedTNT.getDefaultNBT(this).putShort("Fuse", 0);
-            new EntityPrimedTNT(this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), tag);
+            new EntityPrimedTNT(this.world.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), tag);
             return true;
         }
 
-        int time = this.getLevel().getTime() % Level.TIME_FULL;
+        int time = this.getWorld().getTime() % World.TIME_FULL;
 
-        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
+        boolean isNight = (time >= World.TIME_NIGHT && time < World.TIME_SUNRISE);
 
         if (player != null && !isNight) {
             player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
@@ -126,8 +126,8 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
             if (next.canBeReplaced() && !downNext.isTransparent()) {
                 int meta = player.getDirection().getHorizontalIndex();
 
-                this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
-                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
+                this.getWorld().setBlock(block, Block.get(this.getId(), meta), true, true);
+                this.getWorld().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
 
                 createBlockEntity(this, item.getDamage());
                 createBlockEntity(next, item.getDamage());
@@ -147,27 +147,27 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
 
         if ((this.getDamage() & 0x08) == 0x08) { //This is the Top part of bed
             if (blockNorth.getId() == BED_BLOCK && (blockNorth.getDamage() & 0x08) != 0x08) { //Checks if the block ID&&meta are right
-                this.getLevel().setBlock(blockNorth, Block.get(BlockID.AIR), true, true);
+                this.getWorld().setBlock(blockNorth, Block.get(BlockID.AIR), true, true);
             } else if (blockSouth.getId() == BED_BLOCK && (blockSouth.getDamage() & 0x08) != 0x08) {
-                this.getLevel().setBlock(blockSouth, Block.get(BlockID.AIR), true, true);
+                this.getWorld().setBlock(blockSouth, Block.get(BlockID.AIR), true, true);
             } else if (blockEast.getId() == BED_BLOCK && (blockEast.getDamage() & 0x08) != 0x08) {
-                this.getLevel().setBlock(blockEast, Block.get(BlockID.AIR), true, true);
+                this.getWorld().setBlock(blockEast, Block.get(BlockID.AIR), true, true);
             } else if (blockWest.getId() == BED_BLOCK && (blockWest.getDamage() & 0x08) != 0x08) {
-                this.getLevel().setBlock(blockWest, Block.get(BlockID.AIR), true, true);
+                this.getWorld().setBlock(blockWest, Block.get(BlockID.AIR), true, true);
             }
         } else { //Bottom Part of Bed
             if (blockNorth.getId() == this.getId() && (blockNorth.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockNorth, Block.get(BlockID.AIR), true, true);
+                this.getWorld().setBlock(blockNorth, Block.get(BlockID.AIR), true, true);
             } else if (blockSouth.getId() == this.getId() && (blockSouth.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockSouth, Block.get(BlockID.AIR), true, true);
+                this.getWorld().setBlock(blockSouth, Block.get(BlockID.AIR), true, true);
             } else if (blockEast.getId() == this.getId() && (blockEast.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockEast, Block.get(BlockID.AIR), true, true);
+                this.getWorld().setBlock(blockEast, Block.get(BlockID.AIR), true, true);
             } else if (blockWest.getId() == this.getId() && (blockWest.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockWest, Block.get(BlockID.AIR), true, true);
+                this.getWorld().setBlock(blockWest, Block.get(BlockID.AIR), true, true);
             }
         }
 
-        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, false); // Do not update both parts to prevent duplication bug if there is two fallable blocks top of the bed
+        this.getWorld().setBlock(this, Block.get(BlockID.AIR), true, false); // Do not update both parts to prevent duplication bug if there is two fallable blocks top of the bed
 
         return true;
     }
@@ -176,7 +176,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
         CompoundTag nbt = BlockEntity.getDefaultCompound(pos, BlockEntity.BED);
         nbt.putByte("color", color);
 
-        BlockEntity.createBlockEntity(BlockEntity.BED, this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
+        BlockEntity.createBlockEntity(BlockEntity.BED, this.world.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
     }
 
     @Override
@@ -190,8 +190,8 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     }
 
     public DyeColor getDyeColor() {
-        if (this.level != null) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
+        if (this.world != null) {
+            BlockEntity blockEntity = this.world.getBlockEntity(this);
 
             if (blockEntity instanceof BlockEntityBed) {
                 return ((BlockEntityBed) blockEntity).getDyeColor();

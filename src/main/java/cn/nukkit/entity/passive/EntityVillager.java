@@ -2,8 +2,8 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.entity.EntityAgeable;
 import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.world.format.FullChunk;
 
 public class EntityVillager extends EntityCreature implements EntityNPC, EntityAgeable {
 

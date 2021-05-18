@@ -5,7 +5,6 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBanner;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitMath;
@@ -16,6 +15,7 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
 
 /**
  * Created by PetteriM1
@@ -70,10 +70,10 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
         if (face != BlockFace.DOWN) {
             if (face == BlockFace.UP) {
                 this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                this.getLevel().setBlock(block, this, true);
+                this.getWorld().setBlock(block, this, true);
             } else {
                 this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, Block.get(BlockID.WALL_BANNER, this.getDamage()), true);
+                this.getWorld().setBlock(block, Block.get(BlockID.WALL_BANNER, this.getDamage()), true);
             }
 
             CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)
@@ -96,11 +96,11 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.down().getId() == Block.AIR) {
-                this.getLevel().useBreakOn(this);
+                this.getWorld().useBreakOn(this);
 
-                return Level.BLOCK_UPDATE_NORMAL;
+                return World.BLOCK_UPDATE_NORMAL;
             }
         }
 
@@ -109,7 +109,7 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = this.getWorld().getBlockEntity(this);
         Item item = Item.get(Item.BANNER);
         if (blockEntity instanceof BlockEntityBanner) {
             BlockEntityBanner banner = (BlockEntityBanner) blockEntity;
@@ -139,8 +139,8 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
     }
 
     public DyeColor getDyeColor() {
-        if (this.level != null) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
+        if (this.world != null) {
+            BlockEntity blockEntity = this.world.getBlockEntity(this);
 
             if (blockEntity instanceof BlockEntityBanner) {
                 return ((BlockEntityBanner) blockEntity).getDyeColor();

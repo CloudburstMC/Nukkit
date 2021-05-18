@@ -6,12 +6,12 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.MinecartChestInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.MinecartType;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * Created by Snake1999 on 2016/1/30.
@@ -52,9 +52,9 @@ public class EntityMinecartChest extends EntityMinecartAbstract implements Inven
     public void dropItem() {
         super.dropItem();
 
-        this.level.dropItem(this, Item.get(Item.CHEST));
+        this.world.dropItem(this, Item.get(Item.CHEST));
         for (Item item : this.inventory.getContents().values()) {
-            this.level.dropItem(this, item);
+            this.world.dropItem(this, item);
         }
         this.inventory.clearAll();
     }

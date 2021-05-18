@@ -3,10 +3,10 @@ package cn.nukkit.inventory;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryOpenEvent;
-import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
+import cn.nukkit.world.Position;
 
 public class FakeBlockUIComponent extends PlayerUIComponent {
     private final InventoryType type;

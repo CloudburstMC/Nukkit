@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Level;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/11/13 by xtypr.
@@ -30,7 +30,7 @@ public class SaveCommand extends VanillaCommand {
             player.save();
         }
 
-        for (Level level : sender.getServer().getLevels().values()) {
+        for (World level : sender.getServer().getWorlds().values()) {
             level.save(true);
         }
 

@@ -6,12 +6,12 @@ import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.event.block.BlockPistonChangeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         } else {
             this.setDamage(player.getHorizontalFacing().getIndex());
         }
-        this.level.setBlock(block, this, true, false);
+        this.world.setBlock(block, this, true, false);
 
         CompoundTag nbt = new CompoundTag("")
                 .putString("id", BlockEntity.PISTON_ARM)
@@ -65,7 +65,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 .putInt("z", (int) this.z)
                 .putBoolean("Sticky", this.sticky);
 
-        BlockEntityPistonArm be = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        BlockEntityPistonArm be = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, this.world.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
         if (be == null) return false;
         //this.checkState();
@@ -74,7 +74,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
+        this.world.setBlock(this, Block.get(BlockID.AIR), true, true);
 
         Block block = this.getSide(getFacing());
 
@@ -95,12 +95,12 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         if (type != 6 && type != 1) {
             return 0;
         } else {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
+            BlockEntity blockEntity = this.world.getBlockEntity(this);
             if (blockEntity instanceof BlockEntityPistonArm) {
                 BlockEntityPistonArm arm = (BlockEntityPistonArm) blockEntity;
                 boolean powered = this.isPowered();
                 if (arm.powered != powered) {
-                    this.level.getServer().getPluginManager().callEvent(new BlockPistonChangeEvent(this, powered ? 0 : 15, powered ? 15 : 0));
+                    this.world.getServer().getPluginManager().callEvent(new BlockPistonChangeEvent(this, powered ? 0 : 15, powered ? 15 : 0));
                     arm.powered = !arm.powered;
                     if (arm.chunk != null) {
                         arm.chunk.setChanged();
@@ -117,12 +117,12 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         boolean isPowered = this.isPowered();
 
         if (isPowered && !isExtended()) {
-            if ((new BlocksCalculator(this.level, this, facing, true)).canMove()) {
+            if ((new BlocksCalculator(this.world, this, facing, true)).canMove()) {
                 if (!this.doMove(true)) {
                     return;
                 }
 
-                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_OUT);
+                this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_PISTON_OUT);
             } else {
             }
         } else if (!isPowered && isExtended()) {
@@ -130,19 +130,19 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
             if (this.sticky) {
                 Vector3 pos = this.add(facing.getXOffset() * 2, facing.getYOffset() * 2, facing.getZOffset() * 2);
-                Block block = this.level.getBlock(pos);
+                Block block = this.world.getBlock(pos);
 
                 if (block.getId() == AIR) {
-                    this.level.setBlock(this.getLocation().getSide(facing), Block.get(BlockID.AIR), true, true);
+                    this.world.setBlock(this.getLocation().getSide(facing), Block.get(BlockID.AIR), true, true);
                 }
                 if (canPush(block, facing.getOpposite(), false) && (!(block instanceof BlockFlowable) || block.getId() == PISTON || block.getId() == STICKY_PISTON)) {
                     this.doMove(false);
                 }
             } else {
-                this.level.setBlock(getLocation().getSide(facing), Block.get(BlockID.AIR), true, false);
+                this.world.setBlock(getLocation().getSide(facing), Block.get(BlockID.AIR), true, false);
             }
 
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_PISTON_IN);
+            this.getWorld().addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_PISTON_IN);
         }
     }
 
@@ -154,18 +154,18 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         BlockFace face = getFacing();
 
         for (BlockFace side : BlockFace.values()) {
-            if (side != face && this.level.isSidePowered(this.getLocation().getSide(side), side)) {
+            if (side != face && this.world.isSidePowered(this.getLocation().getSide(side), side)) {
                 return true;
             }
         }
 
-        if (this.level.isSidePowered(this, BlockFace.DOWN)) {
+        if (this.world.isSidePowered(this, BlockFace.DOWN)) {
             return true;
         } else {
             Vector3 pos = this.getLocation().up();
 
             for (BlockFace side : BlockFace.values()) {
-                if (side != BlockFace.DOWN && this.level.isSidePowered(pos.getSide(side), side)) {
+                if (side != BlockFace.DOWN && this.world.isSidePowered(pos.getSide(side), side)) {
                     return true;
                 }
             }
@@ -179,10 +179,10 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         BlockFace direction = getFacing();
 
         if (!extending) {
-            this.level.setBlock(pos.getSide(direction), Block.get(BlockID.AIR), true, false);
+            this.world.setBlock(pos.getSide(direction), Block.get(BlockID.AIR), true, false);
         }
 
-        BlocksCalculator calculator = new BlocksCalculator(this.level, this, direction, extending);
+        BlocksCalculator calculator = new BlocksCalculator(this.world, this, direction, extending);
 
         if (!calculator.canMove()) {
             return false;
@@ -196,16 +196,16 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
             for (int i = destroyBlocks.size() - 1; i >= 0; --i) {
                 Block block = destroyBlocks.get(i);
-                this.level.useBreakOn(block);
+                this.world.useBreakOn(block);
             }
 
             for (int i = blocks.size() - 1; i >= 0; --i) {
                 Block block = blocks.get(i);
-                this.level.setBlock(block, Block.get(BlockID.AIR));
+                this.world.setBlock(block, Block.get(BlockID.AIR));
                 Vector3 newPos = block.getLocation().getSide(side);
 
                 //TODO: change this to block entity
-                this.level.setBlock(newPos, newBlocks.get(i));
+                this.world.setBlock(newPos, newBlocks.get(i));
             }
 
             Vector3 pistonHead = pos.getSide(direction);
@@ -213,7 +213,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             if (extending) {
                 //extension block entity
 
-                this.level.setBlock(pistonHead, Block.get(BlockID.PISTON_HEAD, this.getDamage()));
+                this.world.setBlock(pistonHead, Block.get(BlockID.PISTON_HEAD, this.getDamage()));
             }
 
             return true;
@@ -237,7 +237,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
     public static class BlocksCalculator {
 
-        private final Level level;
+        private final World level;
         private final Vector3 pistonPos;
         private final Block blockToMove;
         private final BlockFace moveDirection;
@@ -245,7 +245,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         private final List<Block> toMove = new ArrayList<>();
         private final List<Block> toDestroy = new ArrayList<>();
 
-        public BlocksCalculator(Level level, Block pos, BlockFace facing, boolean extending) {
+        public BlocksCalculator(World level, Block pos, BlockFace facing, boolean extending) {
             this.level = level;
             this.pistonPos = pos.getLocation();
 

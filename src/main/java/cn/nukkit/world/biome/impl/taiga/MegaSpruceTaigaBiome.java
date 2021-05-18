@@ -1,0 +1,22 @@
+package cn.nukkit.world.biome.impl.taiga;
+
+import cn.nukkit.world.generator.populator.impl.tree.SpruceBigTreePopulator;
+
+/**
+ * author: DaPorkchop_
+ * Nukkit Project
+ */
+public class MegaSpruceTaigaBiome extends TaigaBiome {
+    public MegaSpruceTaigaBiome() {
+        super();
+
+        SpruceBigTreePopulator bigTrees = new SpruceBigTreePopulator();
+        bigTrees.setBaseAmount(6);
+        this.addPopulator(bigTrees);
+    }
+
+    @Override
+    public String getName() {
+        return "Mega Spruce Taiga";
+    }
+}

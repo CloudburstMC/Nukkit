@@ -5,12 +5,12 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityMusic;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
+import cn.nukkit.world.Sound;
 
 /**
  * Created by Snake1999 on 2016/1/17.
@@ -54,7 +54,7 @@ public class BlockNoteblock extends BlockSolid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.getLevel().setBlock(block, this, true);
+        this.getWorld().setBlock(block, this, true);
         return this.createBlockEntity() != null;
     }
 
@@ -214,7 +214,7 @@ public class BlockNoteblock extends BlockSolid {
 
         Instrument instrument = this.getInstrument();
 
-        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_NOTE, instrument.ordinal() << 8 | this.getStrength());
+        this.world.addLevelSoundEvent(this, WorldSoundEventPacket.SOUND_NOTE, instrument.ordinal() << 8 | this.getStrength());
 
         BlockEventPacket pk = new BlockEventPacket();
         pk.x = this.getFloorX();
@@ -222,7 +222,7 @@ public class BlockNoteblock extends BlockSolid {
         pk.z = this.getFloorZ();
         pk.case1 = instrument.ordinal();
         pk.case2 = this.getStrength();
-        this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
+        this.getWorld().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
     }
 
     @Override
@@ -234,10 +234,10 @@ public class BlockNoteblock extends BlockSolid {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_REDSTONE) {
+        if (type == World.BLOCK_UPDATE_REDSTONE) {
             BlockEntityMusic blockEntity = this.getBlockEntity();
             if (blockEntity != null) {
-                if (this.getLevel().isBlockPowered(this)) {
+                if (this.getWorld().isBlockPowered(this)) {
                     if (!blockEntity.isPowered()) {
                         this.emitSound();
                     }
@@ -251,7 +251,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     private BlockEntityMusic getBlockEntity() {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = this.getWorld().getBlockEntity(this);
         if (blockEntity instanceof BlockEntityMusic) {
             return (BlockEntityMusic) blockEntity;
         }
@@ -259,7 +259,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     private BlockEntityMusic createBlockEntity() {
-        return (BlockEntityMusic) BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
+        return (BlockEntityMusic) BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getWorld().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
                                         BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }
 

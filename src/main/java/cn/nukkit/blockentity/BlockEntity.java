@@ -2,12 +2,12 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.level.Position;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.MainLogger;
+import cn.nukkit.world.Position;
+import cn.nukkit.world.format.FullChunk;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import com.google.common.collect.BiMap;
@@ -66,9 +66,9 @@ public abstract class BlockEntity extends Position {
         }
 
         this.timing = Timings.getBlockEntityTiming(this);
-        this.server = chunk.getProvider().getLevel().getServer();
+        this.server = chunk.getProvider().getWorld().getServer();
         this.chunk = chunk;
-        this.setLevel(chunk.getProvider().getLevel());
+        this.setLevel(chunk.getProvider().getWorld());
         this.namedTag = nbt;
         this.name = "";
         this.lastUpdate = System.currentTimeMillis();
@@ -81,7 +81,7 @@ public abstract class BlockEntity extends Position {
         this.initBlockEntity();
 
         this.chunk.addBlockEntity(this);
-        this.getLevel().addBlockEntity(this);
+        this.getWorld().addBlockEntity(this);
     }
 
     protected void initBlockEntity() {
@@ -177,7 +177,7 @@ public abstract class BlockEntity extends Position {
     }
 
     public final void scheduleUpdate() {
-        this.level.scheduleBlockEntityUpdate(this);
+        this.world.scheduleBlockEntityUpdate(this);
     }
 
     public void close() {
@@ -186,10 +186,10 @@ public abstract class BlockEntity extends Position {
             if (this.chunk != null) {
                 this.chunk.removeBlockEntity(this);
             }
-            if (this.level != null) {
-                this.level.removeBlockEntity(this);
+            if (this.world != null) {
+                this.world.removeBlockEntity(this);
             }
-            this.level = null;
+            this.world = null;
         }
     }
 

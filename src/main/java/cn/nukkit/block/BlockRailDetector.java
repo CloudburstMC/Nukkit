@@ -3,9 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityMinecartAbstract;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
@@ -53,7 +53,7 @@ public class BlockRailDetector extends BlockRail {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        if (type == World.BLOCK_UPDATE_SCHEDULED) {
             updateState();
             return type;
         }
@@ -69,7 +69,7 @@ public class BlockRailDetector extends BlockRail {
         boolean wasPowered = isActive();
         boolean isPowered = false;
 
-        for (Entity entity : level.getNearbyEntities(new SimpleAxisAlignedBB(
+        for (Entity entity : world.getNearbyEntities(new SimpleAxisAlignedBB(
                 getFloorX() + 0.125D,
                 getFloorY(),
                 getFloorZ() + 0.125D,
@@ -84,17 +84,17 @@ public class BlockRailDetector extends BlockRail {
 
         if (isPowered && !wasPowered) {
             setActive(true);
-            level.scheduleUpdate(this, this, 0);
-            level.scheduleUpdate(this, this.down(), 0);
+            world.scheduleUpdate(this, this, 0);
+            world.scheduleUpdate(this, this.down(), 0);
         }
 
         if (!isPowered && wasPowered) {
             setActive(false);
-            level.scheduleUpdate(this, this, 0);
-            level.scheduleUpdate(this, this.down(), 0);
+            world.scheduleUpdate(this, this, 0);
+            world.scheduleUpdate(this, this.down(), 0);
         }
 
-        level.updateComparatorOutputLevel(this);
+        world.updateComparatorOutputLevel(this);
     }
 
     @Override

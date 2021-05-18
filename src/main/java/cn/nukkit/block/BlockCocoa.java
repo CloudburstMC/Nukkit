@@ -6,13 +6,13 @@ import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.world.World;
+import cn.nukkit.world.particle.BoneMealParticle;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -129,7 +129,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
                 };
 
                 this.setDamage(faces[face.getIndex()]);
-                this.level.setBlock(block, this, true, true);
+                this.world.setBlock(block, this, true, true);
                 return true;
             }
         }
@@ -138,7 +138,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             int[] faces = new int[]{
                     3, 4, 2, 5, 3, 4, 2, 5, 3, 4, 2, 5
             };
@@ -146,10 +146,10 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
             Block side = this.getSide(BlockFace.fromIndex(faces[this.getDamage()]));
 
             if (side.getId() != Block.WOOD && side.getDamage() != BlockWood.JUNGLE) {
-                this.getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
+                this.getWorld().useBreakOn(this);
+                return World.BLOCK_UPDATE_NORMAL;
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == World.BLOCK_UPDATE_RANDOM) {
             if (ThreadLocalRandom.current().nextInt(2) == 1) {
                 if (this.getDamage() / 4 < 2) {
                     BlockCocoa block = (BlockCocoa) this.clone();
@@ -158,13 +158,13 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
                     Server.getInstance().getPluginManager().callEvent(ev);
 
                     if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(this, ev.getNewState(), true, true);
+                        this.getWorld().setBlock(this, ev.getNewState(), true, true);
                     } else {
-                        return Level.BLOCK_UPDATE_RANDOM;
+                        return World.BLOCK_UPDATE_RANDOM;
                     }
                 }
             } else {
-                return Level.BLOCK_UPDATE_RANDOM;
+                return World.BLOCK_UPDATE_RANDOM;
             }
         }
 
@@ -188,8 +188,8 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
                 if (ev.isCancelled()) {
                     return false;
                 }
-                this.getLevel().setBlock(this, ev.getNewState(), true, true);
-                this.level.addParticle(new BoneMealParticle(this));
+                this.getWorld().setBlock(this, ev.getNewState(), true, true);
+                this.world.addParticle(new BoneMealParticle(this));
 
                 if (player != null && (player.gamemode & 0x01) == 0) {
                     item.count--;

@@ -6,8 +6,8 @@ import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.GameRules;
+import cn.nukkit.world.GameRule;
+import cn.nukkit.world.GameRules;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -82,7 +82,7 @@ public class GameruleCommand extends VanillaCommand {
             sender.sendMessage(new TranslationContainer("%commands.generic.ingame"));
             return true;
         }
-        GameRules rules = ((Player) sender).getLevel().getGameRules();
+        GameRules rules = ((Player) sender).getWorld().getGameRules();
 
         switch (args.length) {
             case 0:

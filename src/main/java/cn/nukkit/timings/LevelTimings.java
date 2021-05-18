@@ -1,6 +1,6 @@
 package cn.nukkit.timings;
 
-import cn.nukkit.level.Level;
+import cn.nukkit.world.World;
 import co.aikar.timings.Timing;
 import co.aikar.timings.TimingsManager;
 
@@ -25,7 +25,7 @@ public class LevelTimings {
     public final Timing syncChunkLoadEntitiesTimer;
     public final Timing syncChunkLoadBlockEntitiesTimer;
 
-    public LevelTimings(Level level) {
+    public LevelTimings(World level) {
         String name = level.getFolderName() + " - ";
 
         this.doChunkUnload = TimingsManager.getTiming(name + "doChunkUnload");

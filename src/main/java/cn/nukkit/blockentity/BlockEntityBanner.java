@@ -1,11 +1,11 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BannerPattern;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.world.format.FullChunk;
 
 public class BlockEntityBanner extends BlockEntitySpawnable {
 

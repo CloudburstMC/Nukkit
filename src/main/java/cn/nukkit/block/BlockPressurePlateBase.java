@@ -9,12 +9,12 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.GlobalBlockPalette;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.WorldSoundEventPacket;
+import cn.nukkit.world.GlobalBlockPalette;
+import cn.nukkit.world.World;
 
 /**
  * Created by Snake1999 on 2016/1/11.
@@ -84,11 +84,11 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (this.down().isTransparent()) {
-                this.level.useBreakOn(this);
+                this.world.useBreakOn(this);
             }
-        } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+        } else if (type == World.BLOCK_UPDATE_SCHEDULED) {
             int power = this.getRedstonePower();
 
             if (power > 0) {
@@ -105,7 +105,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
             return false;
         }
 
-        this.level.setBlock(block, this, true, true);
+        this.world.setBlock(block, this, true, true);
         return true;
     }
 
@@ -127,7 +127,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
                 ev = new EntityInteractEvent(entity, this);
             }
 
-            this.level.getServer().getPluginManager().callEvent(ev);
+            this.world.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
                 updateState(power);
@@ -142,32 +142,32 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
         if (oldStrength != strength) {
             this.setRedstonePower(strength);
-            this.level.setBlock(this, this, false, false);
+            this.world.setBlock(this, this, false, false);
 
-            this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().down(), null);
+            this.world.updateAroundRedstone(this, null);
+            this.world.updateAroundRedstone(this.getLocation().down(), null);
 
             if (!isPowered && wasPowered) {
                 this.playOffSound();
-                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+                this.world.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
             } else if (isPowered && !wasPowered) {
                 this.playOnSound();
-                this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
+                this.world.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
             }
         }
 
         if (isPowered) {
-            this.level.scheduleUpdate(this, 20);
+            this.world.scheduleUpdate(this, 20);
         }
     }
 
     @Override
     public boolean onBreak(Item item) {
-        this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
+        this.world.setBlock(this, Block.get(BlockID.AIR), true, true);
 
         if (this.getRedstonePower() > 0) {
-            this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().down(), null);
+            this.world.updateAroundRedstone(this, null);
+            this.world.updateAroundRedstone(this.getLocation().down(), null);
         }
 
         return true;
@@ -192,11 +192,11 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     }
 
     protected void playOnSound() {
-        this.level.addLevelSoundEvent(this.add(0.5, 0.1, 0.5), LevelSoundEventPacket.SOUND_POWER_ON, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
+        this.world.addLevelSoundEvent(this.add(0.5, 0.1, 0.5), WorldSoundEventPacket.SOUND_POWER_ON, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
     }
 
     protected void playOffSound() {
-        this.level.addLevelSoundEvent(this.add(0.5, 0.1, 0.5), LevelSoundEventPacket.SOUND_POWER_OFF, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
+        this.world.addLevelSoundEvent(this.add(0.5, 0.1, 0.5), WorldSoundEventPacket.SOUND_POWER_OFF, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
     }
 
     protected abstract int computeRedstoneStrength();

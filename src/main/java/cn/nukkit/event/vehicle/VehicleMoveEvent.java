@@ -2,7 +2,7 @@ package cn.nukkit.event.vehicle;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Location;
+import cn.nukkit.world.Location;
 
 public class VehicleMoveEvent extends VehicleEvent {
 

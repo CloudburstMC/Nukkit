@@ -5,11 +5,11 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemItemFrame;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.WorldEventPacket;
+import cn.nukkit.world.World;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -42,9 +42,9 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             if (!this.getSide(getFacing()).isSolid()) {
-                this.level.useBreakOn(this);
+                this.world.useBreakOn(this);
                 return type;
             }
         }
@@ -59,7 +59,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = this.getWorld().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
         if (itemFrame.getItem().getId() == Item.AIR) {
         	Item itemOnFrame = item.clone();
@@ -69,10 +69,10 @@ public class BlockItemFrame extends BlockTransparentMeta {
         	}
             itemOnFrame.setCount(1);
             itemFrame.setItem(itemOnFrame);
-            this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_ADDED);
+            this.getWorld().addLevelEvent(this, WorldEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_ADDED);
         } else {
             itemFrame.setItemRotation((itemFrame.getItemRotation() + 1) % 8);
-            this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_ROTATED);
+            this.getWorld().addLevelEvent(this, WorldEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_ROTATED);
         }
         return true;
     }
@@ -81,7 +81,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (face.getIndex() > 1 && target.isSolid() && (!block.isSolid() || block.canBeReplaced())) {
             this.setDamage(FACING[face.getIndex()]);
-            this.getLevel().setBlock(block, this, true, true);
+            this.getWorld().setBlock(block, this, true, true);
             CompoundTag nbt = new CompoundTag()
                     .putString("id", BlockEntity.ITEM_FRAME)
                     .putInt("x", (int) block.x)
@@ -94,7 +94,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
                     nbt.put(aTag.getName(), aTag);
                 }
             }
-            BlockEntityItemFrame frame = (BlockEntityItemFrame) BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+            BlockEntityItemFrame frame = (BlockEntityItemFrame) BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this.getWorld().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
             if (frame == null) {
                 return false;
             }
@@ -105,14 +105,14 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @Override
     public boolean onBreak(Item item) {
-        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
-        this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_REMOVED);
+        this.getWorld().setBlock(this, Block.get(BlockID.AIR), true, true);
+        this.getWorld().addLevelEvent(this, WorldEventPacket.EVENT_SOUND_ITEM_FRAME_REMOVED);
         return true;
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        BlockEntity blockEntity = this.getWorld().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
         if (itemFrame != null && ThreadLocalRandom.current().nextFloat() <= itemFrame.getItemDropChance()) {
             return new Item[]{
@@ -142,7 +142,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
 
     @Override
     public int getComparatorInputOverride() {
-        BlockEntity blockEntity = this.level.getBlockEntity(this);
+        BlockEntity blockEntity = this.world.getBlockEntity(this);
 
         if (blockEntity instanceof BlockEntityItemFrame) {
             return ((BlockEntityItemFrame) blockEntity).getAnalogOutput();

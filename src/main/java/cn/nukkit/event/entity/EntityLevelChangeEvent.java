@@ -3,7 +3,7 @@ package cn.nukkit.event.entity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Level;
+import cn.nukkit.world.World;
 
 /**
  * author: MagicDroidX
@@ -16,20 +16,20 @@ public class EntityLevelChangeEvent extends EntityEvent implements Cancellable {
         return handlers;
     }
 
-    private final Level originLevel;
-    private final Level targetLevel;
+    private final World originLevel;
+    private final World targetLevel;
 
-    public EntityLevelChangeEvent(Entity entity, Level originLevel, Level targetLevel) {
+    public EntityLevelChangeEvent(Entity entity, World originLevel, World targetLevel) {
         this.entity = entity;
         this.originLevel = originLevel;
         this.targetLevel = targetLevel;
     }
 
-    public Level getOrigin() {
+    public World getOrigin() {
         return originLevel;
     }
 
-    public Level getTarget() {
+    public World getTarget() {
         return targetLevel;
     }
 }

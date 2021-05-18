@@ -9,11 +9,11 @@ import cn.nukkit.inventory.FurnaceRecipe;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.HashSet;
 
@@ -115,7 +115,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     @Override
     public void onBreak() {
         for (Item content : inventory.getContents().values()) {
-            level.dropItem(this, content);
+            world.dropItem(this, content);
         }
         this.inventory.clearAll();
     }
@@ -199,7 +199,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
         burnTime = ev.getBurnTime();
         burnDuration = 0;
         if (this.getBlock().getId() == Item.FURNACE) {
-            this.getLevel().setBlock(this, Block.get(BlockID.BURNING_FURNACE, this.getBlock().getDamage()), true);
+            this.getWorld().setBlock(this, Block.get(BlockID.BURNING_FURNACE, this.getBlock().getDamage()), true);
         }
 
         if (burnTime > 0 && ev.isBurning()) {
@@ -267,7 +267,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
             ret = true;
         } else {
             if (this.getBlock().getId() == Item.BURNING_FURNACE) {
-                this.getLevel().setBlock(this, Block.get(BlockID.FURNACE, this.getBlock().getDamage()), true);
+                this.getWorld().setBlock(this, Block.get(BlockID.FURNACE, this.getBlock().getDamage()), true);
             }
             burnTime = 0;
             cookTime = 0;

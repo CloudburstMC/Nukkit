@@ -3,7 +3,7 @@ package cn.nukkit.event.entity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.level.Location;
+import cn.nukkit.world.Location;
 
 /**
  * author: MagicDroidX

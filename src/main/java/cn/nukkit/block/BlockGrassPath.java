@@ -56,7 +56,7 @@ public class BlockGrassPath extends BlockGrass {
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
             item.useOn(this);
-            this.getLevel().setBlock(this, get(FARMLAND), true);
+            this.getWorld().setBlock(this, get(FARMLAND), true);
             return true;
         }
 

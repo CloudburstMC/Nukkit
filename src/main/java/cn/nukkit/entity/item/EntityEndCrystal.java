@@ -3,11 +3,11 @@ package cn.nukkit.entity.item;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.level.Explosion;
-import cn.nukkit.level.GameRule;
-import cn.nukkit.level.Position;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.world.Explosion;
+import cn.nukkit.world.GameRule;
+import cn.nukkit.world.Position;
+import cn.nukkit.world.format.FullChunk;
 
 /**
  * Created by PetteriM1
@@ -81,7 +81,7 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
 
             this.close();
 
-            if (this.level.getGameRules().getBoolean(GameRule.MOB_GRIEFING)) {
+            if (this.world.getGameRules().getBoolean(GameRule.MOB_GRIEFING)) {
                 explode.explodeA();
                 explode.explodeB();
             }

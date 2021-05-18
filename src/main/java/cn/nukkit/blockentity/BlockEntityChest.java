@@ -9,11 +9,11 @@ import cn.nukkit.inventory.DoubleChestInventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.world.format.FullChunk;
 
 import java.util.HashSet;
 
@@ -71,7 +71,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     @Override
     public void onBreak() {
         for (Item content : inventory.getContents().values()) {
-            level.dropItem(this, content);
+            world.dropItem(this, content);
         }
         inventory.clearAll(); // Stop items from being moved around by another player in the inventory
     }
@@ -169,7 +169,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
                 }
             }
         } else {
-            if (level.isChunkLoaded(this.namedTag.getInt("pairx") >> 4, this.namedTag.getInt("pairz") >> 4)) {
+            if (world.isChunkLoaded(this.namedTag.getInt("pairx") >> 4, this.namedTag.getInt("pairz") >> 4)) {
                 this.doubleInventory = null;
                 this.namedTag.remove("pairx");
                 this.namedTag.remove("pairz");
@@ -203,7 +203,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     public BlockEntityChest getPair() {
         if (this.isPaired()) {
-            BlockEntity blockEntity = this.getLevel().getBlockEntityIfLoaded(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
+            BlockEntity blockEntity = this.getWorld().getBlockEntityIfLoaded(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
             if (blockEntity instanceof BlockEntityChest) {
                 return (BlockEntityChest) blockEntity;
             }

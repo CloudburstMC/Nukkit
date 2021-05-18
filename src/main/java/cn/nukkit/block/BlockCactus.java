@@ -7,12 +7,12 @@ import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.world.World;
 
 /**
  * @author Nukkit Project Team
@@ -89,36 +89,36 @@ public class BlockCactus extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_NORMAL) {
+        if (type == World.BLOCK_UPDATE_NORMAL) {
             Block down = down();
             if (down.getId() != SAND && down.getId() != CACTUS) {
-                this.getLevel().useBreakOn(this);
+                this.getWorld().useBreakOn(this);
             } else {
                 for (int side = 2; side <= 5; ++side) {
                     Block block = getSide(BlockFace.fromIndex(side));
                     if (!block.canBeFlowedInto()) {
-                        this.getLevel().useBreakOn(this);
+                        this.getWorld().useBreakOn(this);
                     }
                 }
             }
-        } else if (type == Level.BLOCK_UPDATE_RANDOM) {
+        } else if (type == World.BLOCK_UPDATE_RANDOM) {
             if (down().getId() != CACTUS) {
                 if (this.getDamage() == 0x0F) {
                     for (int y = 1; y < 3; ++y) {
-                        Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
+                        Block b = this.getWorld().getBlock(new Vector3(this.x, this.y + y, this.z));
                         if (b.getId() == AIR) {
                             BlockGrowEvent event = new BlockGrowEvent(b, Block.get(BlockID.CACTUS));
                             Server.getInstance().getPluginManager().callEvent(event);
                             if (!event.isCancelled()) {
-                                this.getLevel().setBlock(b, event.getNewState(), true);
+                                this.getWorld().setBlock(b, event.getNewState(), true);
                             }
                         }
                     }
                     this.setDamage(0);
-                    this.getLevel().setBlock(this, this);
+                    this.getWorld().setBlock(this, this);
                 } else {
                     this.setDamage(this.getDamage() + 1);
-                    this.getLevel().setBlock(this, this);
+                    this.getWorld().setBlock(this, this);
                 }
             }
         }
@@ -135,7 +135,7 @@ public class BlockCactus extends BlockTransparentMeta {
             Block block2 = west();
             Block block3 = east();
             if (block0.canBeFlowedInto() && block1.canBeFlowedInto() && block2.canBeFlowedInto() && block3.canBeFlowedInto()) {
-                this.getLevel().setBlock(this, this, true);
+                this.getWorld().setBlock(this, this, true);
 
                 return true;
             }

@@ -9,7 +9,7 @@ import cn.nukkit.item.*;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.WorldEventPacket;
 
 import java.util.Map;
 
@@ -66,7 +66,7 @@ public class BlockCauldron extends BlockSolidMeta {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        BlockEntity be = this.level.getBlockEntity(this);
+        BlockEntity be = this.world.getBlockEntity(this);
 
         if (!(be instanceof BlockEntityCauldron)) {
             return false;
@@ -86,13 +86,13 @@ public class BlockCauldron extends BlockSolidMeta {
                     bucket.setDamage(8);//water bucket
 
                     PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, item, bucket);
-                    this.level.getServer().getPluginManager().callEvent(ev);
+                    this.world.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         replaceBucket(item, player, ev.getItem());
                         this.setDamage(0);//empty
-                        this.level.setBlock(this, this, true);
+                        this.world.setBlock(this, this, true);
                         cauldron.clearCustomColor();
-                        this.getLevel().addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_WATER);
+                        this.getWorld().addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), WorldEventPacket.EVENT_CAULDRON_TAKE_WATER);
                     }
                 } else if (item.getDamage() == 8) {//water bucket
 
@@ -105,7 +105,7 @@ public class BlockCauldron extends BlockSolidMeta {
                     bucket.setDamage(0);//empty bucket
 
                     PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, item, bucket);
-                    this.level.getServer().getPluginManager().callEvent(ev);
+                    this.world.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         replaceBucket(item, player, ev.getItem());
                         if (cauldron.hasPotion()) {//if has potion
@@ -113,13 +113,13 @@ public class BlockCauldron extends BlockSolidMeta {
                             cauldron.setPotionId(0xffff);//reset potion
                             cauldron.setSplashPotion(false);
                             cauldron.clearCustomColor();
-                            this.level.setBlock(this, this, true);
-                            this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_SOUND_EXPLODE);
+                            this.world.setBlock(this, this, true);
+                            this.world.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), WorldEventPacket.EVENT_SOUND_EXPLODE);
                         } else {
                             this.setDamage(6);//fill
                             cauldron.clearCustomColor();
-                            this.level.setBlock(this, this, true);
-                            this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_SOUND_CAULDRON_FILL_WATER);
+                            this.world.setBlock(this, this, true);
+                            this.world.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), WorldEventPacket.EVENT_SOUND_CAULDRON_FILL_WATER);
                         }
                         //this.update();
                     }
@@ -150,11 +150,11 @@ public class BlockCauldron extends BlockSolidMeta {
                     if (player.getInventory().canAddItem(bottle)) {
                         player.getInventory().addItem(bottle);
                     } else {
-                        player.getLevel().dropItem(player.add(0, 1.3, 0), bottle, player.getDirectionVector().multiply(0.4));
+                        player.getWorld().dropItem(player.add(0, 1.3, 0), bottle, player.getDirectionVector().multiply(0.4));
                     }
                 }
 
-                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_FILL_POTION);
+                this.world.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), WorldEventPacket.EVENT_CAULDRON_FILL_POTION);
                 break;
             case Item.GLASS_BOTTLE:
                 if (isEmpty()) {
@@ -175,17 +175,17 @@ public class BlockCauldron extends BlockSolidMeta {
                     if (player.getInventory().canAddItem(potion)) {
                         player.getInventory().addItem(potion);
                     } else {
-                        player.getLevel().dropItem(player.add(0, 1.3, 0), potion, player.getDirectionVector().multiply(0.4));
+                        player.getWorld().dropItem(player.add(0, 1.3, 0), potion, player.getDirectionVector().multiply(0.4));
                     }
                 }
 
-                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_POTION);
+                this.world.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), WorldEventPacket.EVENT_CAULDRON_TAKE_POTION);
                 break;
             default:
                 return true;
         }
 
-        this.level.updateComparatorOutputLevel(this);
+        this.world.updateComparatorOutputLevel(this);
         return true;
     }
     
@@ -198,7 +198,7 @@ public class BlockCauldron extends BlockSolidMeta {
                 if (player.getInventory().canAddItem(newBucket)) {
                     player.getInventory().addItem(newBucket);
                 } else {
-                    player.getLevel().dropItem(player.add(0, 1.3, 0), newBucket, player.getDirectionVector().multiply(0.4));
+                    player.getWorld().dropItem(player.add(0, 1.3, 0), newBucket, player.getDirectionVector().multiply(0.4));
                 }
             }
         }
@@ -221,11 +221,11 @@ public class BlockCauldron extends BlockSolidMeta {
             }
         }
 
-        BlockEntityCauldron cauldron = (BlockEntityCauldron) BlockEntity.createBlockEntity(BlockEntity.CAULDRON, this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+        BlockEntityCauldron cauldron = (BlockEntityCauldron) BlockEntity.createBlockEntity(BlockEntity.CAULDRON, this.world.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
         if (cauldron == null) {
             return false;
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getWorld().setBlock(block, this, true, true);
         return true;
     }
 

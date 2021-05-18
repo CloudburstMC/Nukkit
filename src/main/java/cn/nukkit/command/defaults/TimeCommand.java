@@ -7,8 +7,8 @@ import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
-import cn.nukkit.level.Level;
 import cn.nukkit.utils.TextFormat;
+import cn.nukkit.world.World;
 
 /**
  * Created on 2015/11/11 by xtypr.
@@ -54,7 +54,7 @@ public class TimeCommand extends VanillaCommand {
 
                 return true;
             }
-            for (Level level : sender.getServer().getLevels().values()) {
+            for (World level : sender.getServer().getWorlds().values()) {
                 level.checkTime();
                 level.startTime();
                 level.checkTime();
@@ -67,7 +67,7 @@ public class TimeCommand extends VanillaCommand {
 
                 return true;
             }
-            for (Level level : sender.getServer().getLevels().values()) {
+            for (World level : sender.getServer().getWorlds().values()) {
                 level.checkTime();
                 level.stopTime();
                 level.checkTime();
@@ -80,11 +80,11 @@ public class TimeCommand extends VanillaCommand {
 
                 return true;
             }
-            Level level;
+            World level;
             if (sender instanceof Player) {
-                level = ((Player) sender).getLevel();
+                level = ((Player) sender).getWorld();
             } else {
-                level = sender.getServer().getDefaultLevel();
+                level = sender.getServer().getDefaultWorld();
             }
             sender.sendMessage(new TranslationContainer("commands.time.query.gametime", String.valueOf(level.getTime())));
             return true;
@@ -106,17 +106,17 @@ public class TimeCommand extends VanillaCommand {
 
             int value;
             if ("day".equals(args[1])) {
-                value = Level.TIME_DAY;
+                value = World.TIME_DAY;
             } else if ("night".equals(args[1])) {
-                value = Level.TIME_NIGHT;
+                value = World.TIME_NIGHT;
             } else if ("midnight".equals(args[1])) {
-                value = Level.TIME_MIDNIGHT;
+                value = World.TIME_MIDNIGHT;
             } else if ("noon".equals(args[1])) {
-                value = Level.TIME_NOON;
+                value = World.TIME_NOON;
             } else if ("sunrise".equals(args[1])) {
-                value = Level.TIME_SUNRISE;
+                value = World.TIME_SUNRISE;
             } else if ("sunset".equals(args[1])) {
-                value = Level.TIME_SUNSET;
+                value = World.TIME_SUNSET;
             } else {
                 try {
                     value = Math.max(0, Integer.parseInt(args[1]));
@@ -126,7 +126,7 @@ public class TimeCommand extends VanillaCommand {
                 }
             }
 
-            for (Level level : sender.getServer().getLevels().values()) {
+            for (World level : sender.getServer().getWorlds().values()) {
                 level.checkTime();
                 level.setTime(value);
                 level.checkTime();
@@ -147,7 +147,7 @@ public class TimeCommand extends VanillaCommand {
                 return true;
             }
 
-            for (Level level : sender.getServer().getLevels().values()) {
+            for (World level : sender.getServer().getWorlds().values()) {
                 level.checkTime();
                 level.setTime(level.getTime() + value);
                 level.checkTime();
