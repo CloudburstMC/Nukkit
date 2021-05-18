@@ -36,17 +36,17 @@ public class EntityBee extends EntityAnimal {
     @Override
     public float getWidth() {
         if (this.isBaby()) {
-            return 0.35f;
+            return 0.275f;
         }
-        return 0.7f;
+        return 0.55f;
     }
 
     @Override
     public float getHeight() {
         if (this.isBaby()) {
-            return 0.30f;
+            return 0.25f;
         }
-        return 0.6f;
+        return 0.5f;
     }
 
     @Since("1.1.1.0-PN")

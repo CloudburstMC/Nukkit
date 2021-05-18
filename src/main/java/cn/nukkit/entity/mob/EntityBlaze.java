@@ -28,7 +28,7 @@ public class EntityBlaze extends EntityMob {
 
     @Override
     public float getWidth() {
-        return 0.6f;
+        return 0.5f;
     }
 
     @Override
