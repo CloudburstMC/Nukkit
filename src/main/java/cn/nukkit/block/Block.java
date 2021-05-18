@@ -381,12 +381,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return fullList[(id << 4) + data].clone();
     }
 
-    public static Block get(int fullId, World level, int x, int y, int z) {
+    public static Block get(int fullId, World world, int x, int y, int z) {
         Block block = fullList[fullId].clone();
         block.x = x;
         block.y = y;
         block.z = z;
-        block.world = level;
+        block.world = world;
         return block;
     }
 
