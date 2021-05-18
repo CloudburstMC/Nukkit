@@ -3,10 +3,12 @@ package cn.nukkit.inventory.transaction.action;
 import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerDropItemEvent;
 import cn.nukkit.item.Item;
+import lombok.ToString;
 
 /**
  * @author CreeperFace
  */
+@ToString(callSuper = true)
 public class DropItemAction extends InventoryAction {
 
     public DropItemAction(Item source, Item target) {

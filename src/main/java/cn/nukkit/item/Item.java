@@ -2,8 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.api.PowerNukkitDifference;
-import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.*;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
@@ -106,7 +105,11 @@ public class Item implements Cloneable, BlockID, ItemID {
     private byte[] tags = EmptyArrays.EMPTY_BYTES;
     private transient CompoundTag cachedNBT = null;
     public int count;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Unused", replaceWith = "meta or getDamage()")
     protected int durability = 0;
+
     protected String name;
 
     public Item(int id) {
@@ -666,6 +669,10 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static Item fromJson(Map<String, Object> data) {
+        return fromJson(data, false);
+    }
+
+    private static Item fromJson(Map<String, Object> data, boolean ignoreNegativeItemId) {
         String nbt = (String) data.get("nbt_b64");
         byte[] nbtBytes;
         if (nbt != null) {
@@ -679,7 +686,10 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
         }
 
-        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+        int id = Utils.toInt(data.get("id"));
+        if (ignoreNegativeItemId && id < 0) return null;
+
+        return get(id, Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
 
     private static Item fromJsonStringId(Map<String, Object> data) {
@@ -1178,6 +1188,12 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
+    @Since("1.4.0.0-PN")
+    @API(definition = API.Definition.INTERNAL, usage = API.Usage.INCUBATING)
+    public Block getBlockUnsafe() {
+        return this.block;
+    }
+
     public int getId() {
         return id;
     }
@@ -1192,7 +1208,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
-    @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public final int getNetworkId() throws UnknownNetworkIdException {
         return RuntimeItems.getNetworkId(getNetworkFullId());
@@ -1366,6 +1381,23 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final Item decrement(int amount) {
+        return increment(-amount);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final Item increment(int amount) {
+        if (count + amount <= 0) {
+            return getBlock(BlockID.AIR);
+        }
+        Item cloned = clone();
+        cloned.count += amount;
+        return cloned;
     }
 
     /**

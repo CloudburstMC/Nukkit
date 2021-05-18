@@ -2,7 +2,9 @@ package cn.nukkit.inventory.transaction.action;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 public class TakeLevelAction extends InventoryAction {
     
     private final int levels;

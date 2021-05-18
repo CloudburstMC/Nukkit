@@ -1,6 +1,6 @@
 /*
  * https://PowerNukkit.org - The Nukkit you know but Powerful!
- * Copyright (C) 2020  José Roberto de Araújo Júnior
+ * Copyright (C) 2021  José Roberto de Araújo Júnior
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,43 +22,47 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
-import lombok.ToString;
 
 /**
  * @author joserobjr
- * @since 2020-09-13
+ * @since 2021-05-16
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-@ToString(callSuper = true)
-public class CraftingTakeResultExperienceAction extends CraftingTakeResultAction {
+public class SmithingItemAction extends InventoryAction {
+
+    private final int type;
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    protected int experience;
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public CraftingTakeResultExperienceAction(Item sourceItem, Item targetItem, int experience) {
+    public SmithingItemAction(Item sourceItem, Item targetItem, int type) {
         super(sourceItem, targetItem);
-        this.experience = experience;
+        this.type = type;
     }
 
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public int getExperience() {
-        return experience;
+    @Override
+    public boolean isValid(Player source) {
+        return source.getWindowById(Player.SMITHING_WINDOW_ID) != null;
     }
 
     @Override
     public boolean execute(Player source) {
-        if (super.execute(source)) {
-            int exp = getExperience();
-            if (exp > 0) {
-                source.getLevel().dropExpOrb(source, exp, null, 3);
-            }
-            return true;
-        }
-        return false;
+        return true;
+    }
+
+    @Override
+    public void onExecuteSuccess(Player source) {
+        // Does nothing
+    }
+
+    @Override
+    public void onExecuteFail(Player source) {
+        // Does nothing
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getType() {
+        return type;
     }
 }

@@ -20,7 +20,7 @@ import cn.nukkit.network.protocol.LevelEventPacket;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static cn.nukkit.math.BlockFace.AxisDirection.POSITIVE;
 
@@ -126,11 +126,11 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
     @PowerNukkitDifference(info = "Allow to place on walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
-        if (face.getHorizontalIndex() == -1 
+        if (face.getHorizontalIndex() == -1
                 || (target.getId() != COBBLE_WALL && (!target.isSolid() || (block.isSolid() && !block.canBeReplaced())))) {
             return false;
         }
-        
+
         this.setDamage(FACING[face.getIndex()]);
         CompoundTag nbt = new CompoundTag()
                 .putByte("ItemRotation", 0)
@@ -144,7 +144,7 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
         if (frame == null) {
             return false;
         }
-        
+
         this.getLevel().addSound(this, Sound.BLOCK_ITEMFRAME_PLACE);
         return true;
     }
@@ -159,8 +159,7 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
     @Override
     public Item[] getDrops(Item item) {
         BlockEntityItemFrame itemFrame = getBlockEntity();
-        int chance = new Random().nextInt(100) + 1;
-        if (itemFrame != null && chance <= (itemFrame.getItemDropChance() * 100)) {
+        if (itemFrame != null && ThreadLocalRandom.current().nextFloat() <= itemFrame.getItemDropChance()) {
             return new Item[]{
                     toItem(), itemFrame.getItem().clone()
             };
@@ -236,16 +235,16 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
                 {2.0/16, 14.0/16},
                 {2.0/16, 14.0/16}
         };
-        
+
         BlockFace facing = getFacing();
         if (facing.getAxisDirection() == POSITIVE) {
             int axis = facing.getAxis().ordinal();
             aabb[axis][0] = 0;
             aabb[axis][1] = 1.0/16;
         }
-        
+
         return new SimpleAxisAlignedBB(
-                aabb[0][0] + x, aabb[1][0] + y, aabb[2][0] + z, 
+                aabb[0][0] + x, aabb[1][0] + y, aabb[2][0] + z,
                 aabb[0][1] + x, aabb[1][1] + y, aabb[2][1] + z
         );
     }
