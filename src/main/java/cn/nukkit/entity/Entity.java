@@ -518,7 +518,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.scheduleUpdate();
     }
 
-    protected final void init(FullChunk chunk, CompoundTag nbt) {
+    protected final void init(FullChunk chunk, CompoundTag nbt) throws Exception {
         if ((chunk == null || chunk.getProvider() == null)) {
             throw new ChunkException("Invalid garbage Chunk given to Entity");
         }
@@ -614,7 +614,7 @@ public abstract class Entity extends Location implements Metadatable {
                 this.scheduleUpdate();
             }
         } catch(Exception e) {
-            log.error(e);
+            throw new Exception(e);
             this.close(false);
         }
     }
