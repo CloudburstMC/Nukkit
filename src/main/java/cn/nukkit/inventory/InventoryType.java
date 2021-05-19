@@ -51,6 +51,7 @@ public enum InventoryType {
     MINECART_CHEST(27, "Minecart with Chest", 0), // Should be 10
     MINECART_HOPPER(5, "Minecart with Hopper", 8), // Should be 11
     OFFHAND(1, "Offhand", -1),
+    @PowerNukkitOnly @Since("1.4.0.0-PN") TRADING(3, "Villager Trade", 15),
     @PowerNukkitOnly @Since("1.4.0.0-PN") SMITHING_TABLE(2, "Smithing Table", 33);
 
     private final int size;
