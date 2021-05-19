@@ -203,6 +203,22 @@ public class NetworkInventoryAction {
                             this.windowId = Player.SMITHING_WINDOW_ID;
                             this.inventorySlot = 1;
                             break;
+                        case GrindstoneInventory.GRINDSTONE_EQUIPMENT_UI_SLOT:
+                            if (player.getWindowById(Player.GRINDSTONE_WINDOW_ID) == null) {
+                                log.error("Player {} does not have grindstone window open", player.getName());
+                                return null;
+                            }
+                            this.windowId = Player.GRINDSTONE_WINDOW_ID;
+                            this.inventorySlot = 0;
+                            break;
+                        case GrindstoneInventory.GRINDSTONE_INGREDIENT_UI_SLOT:
+                            if (player.getWindowById(Player.GRINDSTONE_WINDOW_ID) == null) {
+                                log.error("Player {} does not have grindstone window open", player.getName());
+                                return null;
+                            }
+                            this.windowId = Player.GRINDSTONE_WINDOW_ID;
+                            this.inventorySlot = 1;
+                            break;
                     }
                 }
 
@@ -274,7 +290,9 @@ public class NetworkInventoryAction {
                             case SOURCE_TYPE_ANVIL_INPUT:
                             case SOURCE_TYPE_ANVIL_MATERIAL:
                             case SOURCE_TYPE_ANVIL_RESULT:
-                                return new GrindstoneItemAction(this.oldItem, this.newItem, this.windowId, ((GrindstoneInventory) inv).getResultExperience());
+                                return new GrindstoneItemAction(this.oldItem, this.newItem, this.windowId,
+                                        this.windowId != SOURCE_TYPE_ANVIL_RESULT? 0 : ((GrindstoneInventory) inv).getResultExperience()
+                                );
                             default:
                                 return new SlotChangeAction(inv, this.inventorySlot, this.oldItem, this.newItem);
                         }
