@@ -614,8 +614,8 @@ public abstract class Entity extends Location implements Metadatable {
                 this.scheduleUpdate();
             }
         } catch(Exception e) {
-            throw new Exception(e);
             this.close(false);
+            throw e;
         }
     }
 
