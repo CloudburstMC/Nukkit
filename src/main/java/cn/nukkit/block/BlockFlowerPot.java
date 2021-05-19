@@ -1,8 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityFlowerPot;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFlowerPot;
 import cn.nukkit.level.Level;
@@ -11,10 +16,19 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+import static cn.nukkit.block.BlockLeaves.UPDATE;
+
 /**
  * @author Nukkit Project Team
  */
-public class BlockFlowerPot extends BlockFlowable {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
+public class BlockFlowerPot extends BlockFlowable implements BlockEntityHolder<BlockEntityFlowerPot> {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static BlockProperties PROPERTIES = new BlockProperties(UPDATE);
 
     public BlockFlowerPot() {
         this(0);
@@ -22,6 +36,14 @@ public class BlockFlowerPot extends BlockFlowable {
 
     public BlockFlowerPot(int meta) {
         super(meta);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     protected static boolean canPlaceIntoFlowerPot(int id) {
@@ -34,6 +56,10 @@ public class BlockFlowerPot extends BlockFlowable {
             case BROWN_MUSHROOM:
             case CACTUS:
             case WITHER_ROSE:
+            case WARPED_FUNGUS:
+            case CRIMSON_FUNGUS:
+            case WARPED_ROOTS:
+            case CRIMSON_ROOTS:
             case BAMBOO:
                 return true;
             default:
@@ -41,6 +67,7 @@ public class BlockFlowerPot extends BlockFlowable {
         }
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 1;
@@ -56,6 +83,22 @@ public class BlockFlowerPot extends BlockFlowable {
         return FLOWER_POT_BLOCK;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Class<? extends BlockEntityFlowerPot> getBlockEntityClass() {
+        return BlockEntityFlowerPot.class;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    @Override
+    public String getBlockEntityType() {
+        return BlockEntity.FLOWER_POT;
+    }
+
     @Override
     public double getHardness() {
         return 0;
@@ -65,15 +108,12 @@ public class BlockFlowerPot extends BlockFlowable {
     public double getResistance() {
         return 0;
     }
-    
-    private boolean isSupportValid(Block block) {
-        return block.isSolid(BlockFace.UP) || block instanceof BlockFence || block instanceof BlockWall || block instanceof BlockHopper;
-    }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!isSupportValid(down())) {
+            if (!BlockLever.isSupportValid(down(), BlockFace.UP)) {
                 level.useBreakOn(this);
                 return type;
             }
@@ -81,17 +121,14 @@ public class BlockFlowerPot extends BlockFlowable {
         return 0;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed support logic")
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!isSupportValid(down())) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
+        if (!BlockLever.isSupportValid(down(), BlockFace.UP)) {
             return false;
         }
         
         CompoundTag nbt = new CompoundTag()
-                .putString("id", BlockEntity.FLOWER_POT)
-                .putInt("x", (int) this.x)
-                .putInt("y", (int) this.y)
-                .putInt("z", (int) this.z)
                 .putShort("item", 0)
                 .putInt("data", 0);
         if (item.hasCustomBlockData()) {
@@ -99,50 +136,101 @@ public class BlockFlowerPot extends BlockFlowable {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        BlockEntityFlowerPot flowerPot = (BlockEntityFlowerPot) BlockEntity.createBlockEntity(BlockEntity.FLOWER_POT, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
-        if (flowerPot == null) return false;
+        
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
+    }
 
-        this.getLevel().setBlock(block, this, true, true);
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public Item getFlower() {
+        BlockEntityFlowerPot blockEntity = getBlockEntity();
+        if (blockEntity == null) {
+            return Item.get(0, 0, 0);
+        }
+        int id = blockEntity.namedTag.getShort("item");
+        if (id == 0) {
+            return Item.get(0, 0, 0);
+        }
+        
+        int data = blockEntity.namedTag.getInt("data");
+        return Item.get(id, data, 1);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean setFlower(@Nullable Item item) {
+        if (item == null || item.getId() == 0) {
+            removeFlower();
+            return true;
+        }
+        
+        BlockEntityFlowerPot blockEntity = getOrCreateBlockEntity();
+        int contentId = item.getBlockId();
+        if (contentId == -1 || !canPlaceIntoFlowerPot(contentId)) {
+            contentId = item.getId();
+            if (!canPlaceIntoFlowerPot(contentId)) {
+                return false;
+            }
+        }
+
+        int itemMeta = item.getDamage();
+        blockEntity.namedTag.putShort("item", contentId);
+        blockEntity.namedTag.putInt("data", itemMeta);
+
+        setBooleanValue(UPDATE, true);
+        getLevel().setBlock(this, this, true);
+        blockEntity.spawnToAll();
         return true;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void removeFlower() {
+        BlockEntityFlowerPot blockEntity = getOrCreateBlockEntity();
+        blockEntity.namedTag.putShort("item", 0);
+        blockEntity.namedTag.putInt("data", 0);
+
+        setBooleanValue(UPDATE, false);
+        getLevel().setBlock(this, this, true);
+        blockEntity.spawnToAll();
+    }
+    
     @Override
     public boolean canBeActivated() {
         return true;
     }
 
     @Override
-    public boolean onActivate(Item item) {
-        return this.onActivate(item, null);
-    }
-
-    @Override
-    public boolean onActivate(Item item, Player player) {
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        if (!(blockEntity instanceof BlockEntityFlowerPot)) return false;
-        if (blockEntity.namedTag.getShort("item") != 0 || blockEntity.namedTag.getInt("mData") != 0) return false;
-        int blockId;
-        int itemMeta;
-        if (!canPlaceIntoFlowerPot(item.getId())) {
-            if (!canPlaceIntoFlowerPot(item.getBlock().getId())) {
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
+        if (getBooleanValue(UPDATE)) {
+            if (player == null) {
+                return false;
+            }
+            
+            Item flower = getFlower();
+            if (flower.getId() != 0) {
+                removeFlower();
+                player.giveItem(flower);
                 return true;
             }
-            blockId = item.getBlock().getId();
-            itemMeta = item.getDamage();
-        } else {
-            blockId = item.getId();
-            itemMeta = item.getDamage();
         }
-        blockEntity.namedTag.putShort("item", blockId);
-        blockEntity.namedTag.putInt("data", itemMeta);
-
-        this.setDamage(1);
-        this.getLevel().setBlock(this, this, true);
-        ((BlockEntityFlowerPot) blockEntity).spawnToAll();
-
-        if (player.isSurvival()) {
-            item.setCount(item.getCount() - 1);
-            player.getInventory().setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+        
+        if (item.isNull()) {
+            return false;
+        }
+        
+        BlockEntityFlowerPot blockEntity = getOrCreateBlockEntity();
+        if (blockEntity.namedTag.getShort("item") != 0 || blockEntity.namedTag.getInt("mData") != 0) {
+            return false;
+        }
+        
+        if (!setFlower(item)) {
+            return false;
+        }
+        
+        if (player == null || !player.isCreative()) {
+            item.count--;
         }
         return true;
     }
@@ -152,8 +240,8 @@ public class BlockFlowerPot extends BlockFlowable {
         boolean dropInside = false;
         int insideID = 0;
         int insideMeta = 0;
-        BlockEntity blockEntity = getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityFlowerPot) {
+        BlockEntityFlowerPot blockEntity = getBlockEntity();
+        if (blockEntity != null) {
             dropInside = true;
             insideID = blockEntity.namedTag.getShort("item");
             insideMeta = blockEntity.namedTag.getInt("data");
@@ -162,7 +250,7 @@ public class BlockFlowerPot extends BlockFlowable {
         if (dropInside) {
             return new Item[]{
                     new ItemFlowerPot(),
-                    Block.get(insideID, insideMeta).toItem()
+                    BlockState.of(insideID, insideMeta).getBlock(this).toItem()
             };
         } else {
             return new Item[]{

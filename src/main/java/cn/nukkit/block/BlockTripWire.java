@@ -1,12 +1,17 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemString;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * @author CreeperFace
@@ -36,6 +41,7 @@ public class BlockTripWire extends BlockTransparentMeta {
         return true;
     }
 
+    @PowerNukkitOnly
     @Override
     public int getWaterloggingLevel() {
         return 2;
@@ -96,6 +102,7 @@ public class BlockTripWire extends BlockTransparentMeta {
         }
     }
 
+    @PowerNukkitDifference(info = "Trigger observer.", since = "1.4.0.0-PN")
     @Override
     public void onEntityCollide(Entity entity) {
         if (!this.level.getServer().isRedstoneEnabled()) {
@@ -114,6 +121,7 @@ public class BlockTripWire extends BlockTransparentMeta {
             this.updateHook(false);
 
             this.level.scheduleUpdate(this, 10);
+            this.level.updateComparatorOutputLevelSelective(this, true);
         }
     }
 
@@ -146,6 +154,7 @@ public class BlockTripWire extends BlockTransparentMeta {
         }
     }
 
+    @PowerNukkitDifference(info = "Trigger observer.", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (!this.level.getServer().isRedstoneEnabled()) {
@@ -172,6 +181,8 @@ public class BlockTripWire extends BlockTransparentMeta {
                 this.setPowered(false);
                 this.level.setBlock(this, this, true, false);
                 this.updateHook(false);
+
+                this.level.updateComparatorOutputLevelSelective(this, true);
             }
             return type;
         }
@@ -180,7 +191,7 @@ public class BlockTripWire extends BlockTransparentMeta {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+    public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         this.getLevel().setBlock(this, this, true, true);
         this.updateHook(false);
 

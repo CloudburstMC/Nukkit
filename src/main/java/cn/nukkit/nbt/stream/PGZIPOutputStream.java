@@ -1,5 +1,7 @@
 package cn.nukkit.nbt.stream;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntList;
 
@@ -212,11 +214,10 @@ public class PGZIPOutputStream extends FilterOutputStream {
         emitUntil(0);
         super.flush();
     }
-
-    // Master thread only
-    @Override
-    public void close() throws IOException {
-        // LOG.info("Closing: bytesWritten=" + bytesWritten);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void finish() throws IOException {
         if (bytesWritten >= 0) {
             flush();
 
@@ -229,6 +230,15 @@ public class PGZIPOutputStream extends FilterOutputStream {
             buf.putInt(bytesWritten);
             out.write(buf.array()); // allocate() guarantees a backing array.
             // LOG.info("trailer is " + Arrays.toString(buf.array()));
+        }
+    }
+
+    // Master thread only
+    @Override
+    public void close() throws IOException {
+        // LOG.info("Closing: bytesWritten=" + bytesWritten);
+        if (bytesWritten >= 0) {
+            finish();
 
             out.flush();
             out.close();

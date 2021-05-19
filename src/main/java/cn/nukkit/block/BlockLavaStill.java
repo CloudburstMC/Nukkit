@@ -3,8 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.level.Level;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class BlockLavaStill extends BlockLava {
 

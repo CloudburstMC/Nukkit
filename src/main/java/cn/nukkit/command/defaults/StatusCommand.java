@@ -11,8 +11,8 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Created on 2015/11/11 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/11
  */
 public class StatusCommand extends VanillaCommand {
     private static final String UPTIME_FORMAT = TextFormat.RED + "%d" + TextFormat.GOLD + " days " +
@@ -93,7 +93,7 @@ public class StatusCommand extends VanillaCommand {
                             TextFormat.RED + level.getEntities().length + TextFormat.GREEN + " entities, " +
                             TextFormat.RED + level.getBlockEntities().size() + TextFormat.GREEN + " blockEntities." +
                             " Time " + ((level.getTickRate() > 1 || level.getTickRateTime() > 40) ? TextFormat.RED : TextFormat.YELLOW) + NukkitMath.round(level.getTickRateTime(), 2) + "ms" +
-                            (level.getTickRate() > 1 ? " (tick rate " + level.getTickRate() + ")" : "")
+                            (level.getTickRate() > 1 ? " (tick rate " + (19 - level.getTickRate()) + ")" : "")
             );
         }
 

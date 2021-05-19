@@ -4,8 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.math.Vector3;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockUpdateEntry implements Comparable<BlockUpdateEntry> {
     private static long entryID = 0;

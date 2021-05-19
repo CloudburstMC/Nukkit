@@ -31,7 +31,7 @@ public @interface DeprecationDetails {
     String toBeRemovedAt() default "";
 
     /**
-     * The maintainer party that has added this depreciation. For example: PowerNukkit, Clourburst Nukkit, and Nukkit
+     * The maintainer party that has added this depreciation. For example: PowerNukkit, Cloudburst Nukkit, and Nukkit
      */
     String by() default "";
 }

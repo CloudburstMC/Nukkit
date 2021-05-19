@@ -9,8 +9,7 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockOreLapis extends BlockSolid {
 
@@ -39,13 +38,18 @@ public class BlockOreLapis extends BlockSolid {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_STONE;
+    }
+
+    @Override
     public String getName() {
         return "Lapis Lazuli Ore";
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
+        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             ThreadLocalRandom random = ThreadLocalRandom.current();
             int count = 4 + random.nextInt(5);
             Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
@@ -63,7 +67,7 @@ public class BlockOreLapis extends BlockSolid {
                     MinecraftItemID.LAPIS_LAZULI.get(count)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

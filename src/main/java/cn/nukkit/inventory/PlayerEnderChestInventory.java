@@ -1,14 +1,15 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.BlockEnderChest;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityHumanType;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 public class PlayerEnderChestInventory extends BaseInventory {
 
@@ -21,6 +22,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
         return (EntityHuman) this.holder;
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public void onOpen(Player who) {
         if (who != this.getHolder()) {
@@ -53,12 +55,13 @@ public class PlayerEnderChestInventory extends BaseInventory {
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_ENDERCHEST_OPEN);
+                level.addSound(this.getHolder().add(0.5, 0.5, 0.5), Sound.RANDOM_ENDERCHESTOPEN);
                 level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, blockEventPacket);
             }
         }
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public void onClose(Player who) {
         ContainerClosePacket containerClosePacket = new ContainerClosePacket();
@@ -78,7 +81,7 @@ public class PlayerEnderChestInventory extends BaseInventory {
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_ENDERCHEST_CLOSED);
+                level.addSound(this.getHolder().add(0.5, 0.5, 0.5), Sound.RANDOM_ENDERCHESTCLOSED);
                 level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, blockEventPacket);
             }
 

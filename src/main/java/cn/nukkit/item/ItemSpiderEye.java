@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 /**
- * Created by Snake1999 on 2016/1/14.
- * Package cn.nukkit.item in project nukkit.
+ * @author Snake1999
+ * @since 2016/1/14
  */
 public class ItemSpiderEye extends Item {
 

@@ -6,8 +6,7 @@ import cn.nukkit.item.food.Food;
 import cn.nukkit.math.Vector3;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class ItemEdible extends Item {
     public ItemEdible(int id, Integer meta, int count, String name) {
@@ -46,7 +45,7 @@ public abstract class ItemEdible extends Item {
         }
 
         Food food = Food.getByRelative(this);
-        if (player.isSurvival() && food != null && food.eatenBy(player)) {
+        if ((player.isAdventure() || player.isSurvival()) && food != null && food.eatenBy(player)) {
             --this.count;
             player.getInventory().setItemInHand(this);
         }

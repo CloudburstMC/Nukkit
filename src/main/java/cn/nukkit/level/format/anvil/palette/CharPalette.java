@@ -1,13 +1,14 @@
 package cn.nukkit.level.format.anvil.palette;
 
+import io.netty.util.internal.EmptyArrays;
+
 import java.util.Arrays;
 
 /**
  * @author https://github.com/boy0001/
  */
 public class CharPalette {
-    private static char[] CHAR0 = new char[0];
-    private char[] keys = CHAR0;
+    private char[] keys = EmptyArrays.EMPTY_CHARS;
     private char lastIndex = Character.MAX_VALUE;
 
     public void add(char key) {

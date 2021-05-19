@@ -2,8 +2,8 @@ package cn.nukkit.entity.projectile;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockBell;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.LongEntityData;
@@ -12,6 +12,7 @@ import cn.nukkit.event.block.BellRingEvent;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.MovingObjectPosition;
+import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
@@ -23,15 +24,18 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class EntityProjectile extends Entity {
 
     public static final int DATA_SHOOTER_ID = 17;
 
     public Entity shootingEntity = null;
-
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean hasAge = true;
+    
     protected double getDamage() {
         return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
     }
@@ -100,9 +104,16 @@ public abstract class EntityProjectile extends Entity {
                 }
             }
         }
+        afterCollisionWithEntity(entity);
         if (closeOnCollide) {
             this.close();
         }
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected void afterCollisionWithEntity(Entity entity) {
+        
     }
 
     @Override
@@ -111,7 +122,7 @@ public abstract class EntityProjectile extends Entity {
 
         this.setMaxHealth(1);
         this.setHealth(1);
-        if (this.namedTag.contains("Age")) {
+        if (this.namedTag.contains("Age") && this.hasAge) {
             this.age = this.namedTag.getShort("Age");
         }
     }
@@ -124,9 +135,19 @@ public abstract class EntityProjectile extends Entity {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putShort("Age", this.age);
+        if (this.hasAge) {
+            this.namedTag.putShort("Age", this.age);
+        }
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected void updateMotion() {
+        this.motionY -= this.getGravity();
+        this.motionX *= 1 - this.getDrag();
+        this.motionZ *= 1 - this.getDrag();
+    }
+    
     @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
@@ -146,9 +167,7 @@ public abstract class EntityProjectile extends Entity {
             MovingObjectPosition movingObjectPosition = null;
 
             if (!this.isCollided) {
-                this.motionY -= this.getGravity();
-                this.motionX *= 1 - this.getDrag();
-                this.motionZ *= 1 - this.getDrag();
+                updateMotion();
             }
 
             Vector3 moveVector = new Vector3(this.x + this.motionX, this.y + this.motionY, this.z + this.motionZ);
@@ -160,7 +179,8 @@ public abstract class EntityProjectile extends Entity {
 
             for (Entity entity : list) {
                 if (/*!entity.canCollideWith(this) or */
-                        (entity == this.shootingEntity && this.ticksLived < 5)
+                        (entity == this.shootingEntity && this.ticksLived < 5) ||
+                                (entity instanceof Player && ((Player) entity).getGamemode() == Player.SPECTATOR)
                 ) {
                     continue;
                 }
@@ -187,10 +207,15 @@ public abstract class EntityProjectile extends Entity {
             if (movingObjectPosition != null) {
                 if (movingObjectPosition.entityHit != null) {
                     onCollideWithEntity(movingObjectPosition.entityHit);
-                    return true;
+                    hasUpdate = true;
+                    if (closed) {
+                        return true;
+                    }
                 }
             }
 
+            Position position = getPosition();
+            Vector3 motion = getMotion();
             this.move(this.motionX, this.motionY, this.motionZ);
 
             if (this.isCollided && !this.hadCollision) { //collide with block
@@ -201,7 +226,7 @@ public abstract class EntityProjectile extends Entity {
                 this.motionZ = 0;
 
                 this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromBlock(this.getFloorX(), this.getFloorY(), this.getFloorZ(), -1, this)));
-                onCollideWithBlock();
+                onCollideWithBlock(position, motion);
                 addHitEffect();
                 return false;
             } else if (!this.isCollided && this.hadCollision) {
@@ -234,21 +259,34 @@ public abstract class EntityProjectile extends Entity {
         this.motionZ += rand.nextGaussian() * 0.007499999832361937 * modifier;
     }
 
-    protected void onCollideWithBlock() {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected void onCollideWithBlock(Position position, Vector3 motion) {
         for (Block collisionBlock : level.getCollisionBlocks(getBoundingBox().grow(0.1, 0.1, 0.1))) {
-            onCollideWithBlock(collisionBlock);
+            onCollideWithBlock(position, motion, collisionBlock);
         }
     }
 
-    protected boolean onCollideWithBlock(Block collisionBlock) {
-        if (collisionBlock instanceof BlockBell) {
-            ((BlockBell) collisionBlock).ring(this, BellRingEvent.RingCause.PROJECTILE);
-            return true;
-        }
-        return false;
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected boolean onCollideWithBlock(Position position, Vector3 motion, Block collisionBlock) {
+        return collisionBlock.onProjectileHit(this, position, motion);
     }
 
+    @PowerNukkitOnly
     protected void addHitEffect() {
 
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean hasAge() {
+        return hasAge;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setAge(boolean hasAge) {
+        this.hasAge = hasAge;
     }
 }

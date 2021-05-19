@@ -18,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Snake1999 and Pub4Game on 2016/1/23.
- * Package cn.nukkit.command.defaults in project nukkit.
+ * @author Snake1999 and Pub4Game
+ * @since 2016/1/23
  */
 public class EffectCommand extends Command {
     public EffectCommand(String name) {

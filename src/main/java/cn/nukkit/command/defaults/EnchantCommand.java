@@ -6,13 +6,16 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
 /**
- * Created by Pub4Game on 23.01.2016.
+ * @author Pub4Game
+ * @since 23.01.2016
  */
 public class EnchantCommand extends VanillaCommand {
 
@@ -31,7 +34,8 @@ public class EnchantCommand extends VanillaCommand {
                         "protection", "fire_protection", "feather_falling", "blast_protection", "projectile_projection", "thorns", "respiration",
                         "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods", "knockback", "fire_aspect", "looting", "efficiency",
                         "silk_touch", "durability", "fortune", "power", "punch", "flame", "infinity", "luck_of_the_sea", "lure", "frost_walker", "mending",
-                        "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling")),
+                        "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling", "multishot", "piercing", "quick_charge",
+                        "soul_speed")),
                 CommandParameter.newType("level", true, CommandParamType.INT)
         });
     }
@@ -66,12 +70,22 @@ public class EnchantCommand extends VanillaCommand {
         }
         enchantment.setLevel(enchantLevel);
         Item item = player.getInventory().getItemInHand();
-        if (item.getId() <= 0) {
+        if (item.getId() == 0) {
             sender.sendMessage(new TranslationContainer("commands.enchant.noItem"));
             return true;
         }
-        item.addEnchantment(enchantment);
-        player.getInventory().setItemInHand(item);
+        if (item.getId() != ItemID.BOOK) {
+            item.addEnchantment(enchantment);
+            player.getInventory().setItemInHand(item);
+        } else {
+            Item enchanted = Item.get(ItemID.ENCHANTED_BOOK, 0, 1, item.getCompoundTag());
+            enchanted.addEnchantment(enchantment);
+            Item clone = item.clone();
+            clone.count--;
+            PlayerInventory inventory = player.getInventory();
+            inventory.setItemInHand(clone);
+            player.giveItem(enchanted);
+        }
         Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success"));
         return true;
     }
@@ -144,6 +158,14 @@ public class EnchantCommand extends VanillaCommand {
                 return 31;
             case "channeling":
                 return 32;
+            case "multishot":
+                return 33;
+            case "piercing":
+                return 34;
+            case "quick_charge":
+                return 35;
+            case "soul_speed":
+                return 36;
             default:
                 return Integer.parseInt(value);
         }

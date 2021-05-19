@@ -2,11 +2,15 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockAir;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.utils.RedstoneComponent;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityMoveByPistonEvent;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
@@ -30,13 +34,23 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
     public float progress;
     public float lastProgress = 1;
+
     public BlockFace facing;
+
     public boolean extending;
+
     public boolean sticky;
+
     public int state;
     public int newState = 1;
+
     public List<BlockVector3> attachedBlocks;
+
     public boolean powered;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean finished = true;
 
     public BlockEntityPistonArm(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -141,20 +155,26 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
         }
     }
 
+    @PowerNukkitDifference(info = "Trigger observer (with #setDirty()).", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Add option to see if blockentity is currently handling piston move (var finished)")
     public void move(boolean extending, List<BlockVector3> attachedBlocks) {
         this.extending = extending;
         this.lastProgress = this.progress = extending ? 0 : 1;
         this.state = this.newState = extending ? 1 : 3;
         this.attachedBlocks = attachedBlocks;
         this.movable = false;
+        this.finished = false;
 
         this.level.addChunkPacket(getChunkX(), getChunkZ(), getSpawnPacket());
         this.lastProgress = extending ? -MOVE_STEP : 1 + MOVE_STEP;
+        this.setDirty();
         this.moveCollidedEntities();
         this.scheduleUpdate();
     }
 
     @Override
+    @PowerNukkitDifference(info = "Add option to see if blockentity is currently handling piston move (var finished)" +
+            "+ update around redstone directly after moved block set", since = "1.4.0.0-PN")
     public boolean onUpdate() {
         boolean hasUpdate = true;
 
@@ -180,7 +200,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
                     movingBlock.close();
                     Block moved = ((BlockEntityMovingBlock) movingBlock).getMovingBlock();
 
-                    CompoundTag blockEntity = ((BlockEntityMovingBlock) movingBlock).getBlockEntity();
+                    CompoundTag blockEntity = ((BlockEntityMovingBlock) movingBlock).getMovingBlockEntityCompound();
 
                     if (blockEntity != null) {
                         blockEntity.putInt("x", movingBlock.getFloorX());
@@ -189,7 +209,10 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
                         BlockEntity.createBlockEntity(blockEntity.getString("id"), this.level.getChunk(movingBlock.getChunkX(), movingBlock.getChunkZ()), blockEntity);
                     }
 
-                    this.level.setBlock(movingBlock, moved);
+                    if (this.level.setBlock(movingBlock, moved)) {
+                        moved.onUpdate(Level.BLOCK_UPDATE_MOVED);
+                        RedstoneComponent.updateAroundRedstone(moved);
+                    }
                 }
             }
 
@@ -203,6 +226,7 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
             this.level.scheduleUpdate(this.getLevelBlock(), 1);
             this.attachedBlocks.clear();
             hasUpdate = false;
+            this.finished = true;
         }
 
         this.level.addChunkPacket(getChunkX(), getChunkZ(), getSpawnPacket());
@@ -215,7 +239,8 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
     }
 
     public boolean isBlockEntityValid() {
-        return true;
+        int id = getLevelBlock().getId();
+        return id == BlockID.PISTON || id == BlockID.STICKY_PISTON; 
     }
 
     public void saveNBT() {

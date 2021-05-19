@@ -3,13 +3,12 @@ package cn.nukkit.item.enchantment.damage;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EnchantmentDamageAll extends EnchantmentDamage {
 
     public EnchantmentDamageAll() {
-        super(ID_DAMAGE_ALL, "all", 10, TYPE.ALL);
+        super(ID_DAMAGE_ALL, "all", Rarity.COMMON, TYPE.ALL);
     }
 
     @Override

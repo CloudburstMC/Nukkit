@@ -7,7 +7,8 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created by Pub4Game on 21.06.2016.
+ * @author Pub4Game
+ * @since 21.06.2016
  */
 public class EntityVillagerV1 extends EntityCreature implements EntityNPC, EntityAgeable {
 
@@ -34,9 +35,9 @@ public class EntityVillagerV1 extends EntityCreature implements EntityNPC, Entit
     @Override
     public float getHeight() {
         if (this.isBaby()) {
-            return 0.9f;
+            return 0.95f;
         }
-        return 1.8f;
+        return 1.9f;
     }
 
     @Override

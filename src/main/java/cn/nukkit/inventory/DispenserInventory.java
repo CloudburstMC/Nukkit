@@ -1,8 +1,10 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.blockentity.BlockEntityDispenser;
 
-public class DispenserInventory extends ContainerInventory {
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Extends EjectableInventory only in PowerNukkit")
+public class DispenserInventory extends EjectableInventory {
 
     public DispenserInventory(BlockEntityDispenser blockEntity) {
         super(blockEntity, InventoryType.DISPENSER);

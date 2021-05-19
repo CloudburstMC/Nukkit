@@ -5,8 +5,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 
 /**
- * author: funcraft
- * Nukkit Project
+ * @author funcraft (Nukkit Project)
  */
 public class ThunderChangeEvent extends WeatherEvent implements Cancellable {
 

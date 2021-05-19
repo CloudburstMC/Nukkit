@@ -4,7 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
 
 /**
- * Created by Leonidius20 on 20.08.18.
+ * @author Leonidius20
+ * @since 20.08.18
  */
 public class ItemChorusFruit extends ItemEdible {
 

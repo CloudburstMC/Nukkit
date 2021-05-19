@@ -1,11 +1,21 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.StoneSlab3Type;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 public class BlockSlabStone3 extends BlockSlab {
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+            StoneSlab3Type.PROPERTY,
+            TOP_SLOT_PROPERTY
+    );
+    
     public static final int END_STONE_BRICKS = 0;
     public static final int SMOOTH_RED_SANDSTONE = 1;
     public static final int POLISHED_ANDESITE = 2;
@@ -28,56 +38,42 @@ public class BlockSlabStone3 extends BlockSlab {
         return STONE_SLAB3;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "End Stone Brick",
-                "Smooth Red Sandstone",
-                "Polished Andesite",
-                "Andesite",
-                "Diorite",
-                "Polished Diorite",
-                "Granite",
-                "Polisehd Granite"
-        };
-
-        return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
+
+    @Override
+    public String getSlabName() {
+        return getSlabType().getEnglishName();
+    }
+
+    public StoneSlab3Type getSlabType() {
+        return getPropertyValue(StoneSlab3Type.PROPERTY);
+    }
+    
+    public void setSlabType(StoneSlab3Type type) {
+        setPropertyValue(StoneSlab3Type.PROPERTY, type);
+    }
+
+
+    @Override
+    public boolean isSameType(BlockSlab slab) {
+        return slab.getId() == getId() && getSlabType().equals(slab.getPropertyValue(StoneSlab3Type.PROPERTY));
+    }
+
 
     @Override
     public BlockColor getColor() {
-        switch (this.getDamage() & 0x07) {
-            case END_STONE_BRICKS:
-                return BlockColor.SAND_BLOCK_COLOR;
-            case SMOOTH_RED_SANDSTONE:
-                return BlockColor.ORANGE_BLOCK_COLOR;
-            default:
-            case POLISHED_ANDESITE:
-            case ANDESITE:
-                return BlockColor.STONE_BLOCK_COLOR;
-            case DIORITE:
-            case POLISHED_DIORITE:
-                return BlockColor.QUARTZ_BLOCK_COLOR;
-            case GRANITE:
-            case POLISHED_GRANITE:
-                return BlockColor.DIRT_BLOCK_COLOR;
-        }
+        return getSlabType().getColor();
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
-    }
-
-    @Override
-    public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

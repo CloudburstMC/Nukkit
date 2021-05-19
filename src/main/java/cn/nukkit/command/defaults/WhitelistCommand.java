@@ -9,8 +9,8 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
 /**
- * Created on 2015/11/12 by xtypr.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/12
  */
 public class WhitelistCommand extends VanillaCommand {
 
@@ -107,7 +107,7 @@ public class WhitelistCommand extends VanillaCommand {
     }
 
     private boolean badPerm(CommandSender sender, String perm) {
-        if (!sender.hasPermission("nukkit.command.whitelist" + perm)) {
+        if (!sender.hasPermission("nukkit.command.whitelist." + perm)) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
 
             return true;

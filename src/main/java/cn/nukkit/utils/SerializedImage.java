@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import io.netty.util.internal.EmptyArrays;
 import lombok.ToString;
 
 import java.util.Objects;
@@ -8,7 +9,7 @@ import static cn.nukkit.entity.data.Skin.*;
 
 @ToString(exclude = {"data"})
 public class SerializedImage {
-    public static final SerializedImage EMPTY = new SerializedImage(0, 0, new byte[0]);
+    public static final SerializedImage EMPTY = new SerializedImage(0, 0, EmptyArrays.EMPTY_BYTES);
 
     public final int width;
     public final int height;

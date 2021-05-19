@@ -1,9 +1,12 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import com.google.common.collect.Iterators;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
 public enum BlockFace {
@@ -268,6 +271,23 @@ public enum BlockFace {
                 throw new RuntimeException("Unable to get counter-clockwise Y-rotated face of " + this);
         }
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public CompassRoseDirection getCompassRoseDirection() {
+        switch (this) {
+            case NORTH:
+                return CompassRoseDirection.NORTH;
+            case SOUTH:
+                return CompassRoseDirection.SOUTH;
+            case WEST:
+                return CompassRoseDirection.WEST;
+            case EAST:
+                return CompassRoseDirection.EAST;
+            default:
+                return null;
+        }
+    }
 
     public String toString() {
         return name;
@@ -350,7 +370,13 @@ public enum BlockFace {
 
         private BlockFace[] faces;
 
-        public BlockFace random(NukkitRandom rand) { //todo Default Random?
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        public BlockFace random() {
+            return faces[ThreadLocalRandom.current().nextInt(faces.length)];
+        }
+        
+        public BlockFace random(NukkitRandom rand) {
             return faces[rand.nextBoundedInt(faces.length)];
         }
 

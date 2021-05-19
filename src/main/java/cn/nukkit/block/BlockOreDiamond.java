@@ -9,8 +9,7 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class BlockOreDiamond extends BlockSolid {
 
@@ -39,13 +38,18 @@ public class BlockOreDiamond extends BlockSolid {
     }
 
     @Override
+    public int getToolTier() {
+        return ItemTool.TIER_IRON;
+    }
+
+    @Override
     public String getName() {
         return "Diamond Ore";
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
+        if (item.isPickaxe() && item.getTier() >= getToolTier()) {
             int count = 1;
             Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
             if (fortune != null && fortune.getLevel() >= 1) {
@@ -62,7 +66,7 @@ public class BlockOreDiamond extends BlockSolid {
                     new ItemDiamond(0, count)
             };
         } else {
-            return new Item[0];
+            return Item.EMPTY_ARRAY;
         }
     }
 

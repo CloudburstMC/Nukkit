@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -22,18 +23,18 @@ public class EntityWither extends EntityMob implements EntitySmite {
 
     @Override
     public float getWidth() {
-        return 0.9f;
+        return 1.0f;
     }
 
     @Override
     public float getHeight() {
-        return 3.5f;
+        return 3.0f;
     }
 
     @Override
     protected void initEntity() {
         super.initEntity();
-        this.setMaxHealth(300);
+        this.setMaxHealth(600);
     }
 
     @Override
@@ -43,6 +44,11 @@ public class EntityWither extends EntityMob implements EntitySmite {
 
     @Override
     public boolean isUndead() {
+        return true;
+    }
+
+    @Override
+    public boolean isPreventingSleep(Player player) {
         return true;
     }
 }

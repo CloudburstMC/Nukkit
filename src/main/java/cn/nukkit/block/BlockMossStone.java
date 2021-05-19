@@ -4,8 +4,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * Created on 2015/12/2 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/12/2
  */
 public class BlockMossStone extends BlockSolid {
 
@@ -38,14 +38,8 @@ public class BlockMossStone extends BlockSolid {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    toItem()
-            };
-        } else {
-            return new Item[0];
-        }
+    public int getToolTier() {
+        return ItemTool.TIER_WOODEN;
     }
 
     @Override

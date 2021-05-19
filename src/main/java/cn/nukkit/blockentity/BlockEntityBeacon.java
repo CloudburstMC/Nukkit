@@ -1,19 +1,20 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
 
 import java.util.Map;
 
 /**
- * author: Rover656
+ * @author Rover656
  */
 public class BlockEntityBeacon extends BlockEntitySpawnable {
 
@@ -59,12 +60,13 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                 .putInt("z", (int) this.z)
                 .putString("Lock", this.namedTag.getString("Lock"))
                 .putInt("Levels", this.namedTag.getInt("Levels"))
-                .putInt("Primary", this.namedTag.getInt("Primary"))
-                .putInt("Secondary", this.namedTag.getInt("Secondary"));
+                .putInt("primary", this.namedTag.getInt("Primary"))
+                .putInt("secondary", this.namedTag.getInt("Secondary"));
     }
 
     private long currentTick = 0;
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onUpdate() {
         //Only apply effects every 4 secs
@@ -80,13 +82,13 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         //Skip beacons that do not have a pyramid or sky access
         if (newPowerLevel < 1 || !hasSkyAccess()) {
             if (oldPowerLevel > 0) {
-                this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_DEACTIVATE);
+                this.getLevel().addSound(this, Sound.BEACON_DEACTIVATE);
             }
             return true;
         } else if (oldPowerLevel < 1) {
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_ACTIVATE);
+            this.getLevel().addSound(this, Sound.BEACON_ACTIVATE);
         } else {
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_AMBIENT);
+            this.getLevel().addSound(this, Sound.BEACON_AMBIENT);
         }
 
         //Get all players in game
@@ -95,6 +97,10 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         //Calculate vars for beacon power
         int range = 10 + getPowerLevel() * 10;
         int duration = 9 + getPowerLevel() * 2;
+
+        if (!isPrimaryAllowed(getPrimaryPower(), getPowerLevel())) {
+            return true;
+        }
 
         for(Map.Entry<Long, Player> entry : players.entrySet()) {
             Player p = entry.getValue();
@@ -111,32 +117,21 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                     e.setDuration(duration * 20);
 
                     //If secondary is selected as the primary too, apply 2 amplification
-                    if (getSecondaryPower() == getPrimaryPower()) {
+                    if (getPowerLevel() == POWER_LEVEL_MAX && getSecondaryPower() == getPrimaryPower()) {
                         e.setAmplifier(1);
-                    } else {
-                        e.setAmplifier(0);
                     }
-
-                    //Hide particles
-                    e.setVisible(false);
 
                     //Add the effect
                     p.addEffect(e);
                 }
 
                 //If we have a secondary power as regen, apply it
-                if (getSecondaryPower() == Effect.REGENERATION) {
+                if (getPowerLevel() == POWER_LEVEL_MAX && getSecondaryPower() == Effect.REGENERATION) {
                     //Get the regen effect
                     e = Effect.getEffect(Effect.REGENERATION);
 
                     //Set duration
                     e.setDuration(duration * 20);
-
-                    //Regen I
-                    e.setAmplifier(1);
-
-                    //Hide particles
-                    e.setVisible(false);
 
                     //Add effect
                     p.addEffect(e);
@@ -183,8 +178,9 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                             testBlockId != Block.IRON_BLOCK &&
                                     testBlockId != Block.GOLD_BLOCK &&
                                     testBlockId != Block.EMERALD_BLOCK &&
-                                    testBlockId != Block.DIAMOND_BLOCK
-                            ) {
+                                    testBlockId != Block.DIAMOND_BLOCK &&
+                                    testBlockId != Block.NETHERITE_BLOCK
+                    ) {
                         return powerLevel - 1;
                     }
 
@@ -196,13 +192,13 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     }
 
     public int getPowerLevel() {
-        return namedTag.getInt("Level");
+        return namedTag.getInt("Levels");
     }
 
     public void setPowerLevel(int level) {
         int currentLevel = getPowerLevel();
         if (level != currentLevel) {
-            namedTag.putInt("Level", level);
+            namedTag.putInt("Levels", level);
             setDirty();
             this.spawnToAll();
         }
@@ -234,20 +230,37 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         }
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean updateCompoundTag(CompoundTag nbt, Player player) {
         if (!nbt.getString("id").equals(BlockEntity.BEACON)) {
             return false;
         }
 
-        this.setPrimaryPower(nbt.getInt("primary"));
-        this.setSecondaryPower(nbt.getInt("secondary"));
+        int primary = nbt.getInt("primary");
+        if (!isPrimaryAllowed(primary, this.getPowerLevel())) {
+            return false;
+        }
 
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_POWER);
+        int secondary = nbt.getInt("secondary");
+        if (secondary != 0 && secondary != primary && secondary != Effect.REGENERATION) {
+            return false;
+        }
+
+        this.setPrimaryPower(primary);
+        this.setSecondaryPower(secondary);
+
+        this.getLevel().addSound(this, Sound.BEACON_POWER);
 
         BeaconInventory inv = (BeaconInventory)player.getWindowById(Player.BEACON_WINDOW_ID);
 
         inv.setItem(0, new ItemBlock(Block.get(BlockID.AIR), 0, 0));
         return true;
+    }
+
+    private static boolean isPrimaryAllowed(int primary, int powerLevel) {
+        return ((primary == Effect.SPEED || primary == Effect.HASTE) && powerLevel >= 1) ||
+                ((primary == Effect.DAMAGE_RESISTANCE || primary == Effect.JUMP) && powerLevel >= 2) ||
+                (primary == Effect.STRENGTH && powerLevel >= 3);
     }
 }

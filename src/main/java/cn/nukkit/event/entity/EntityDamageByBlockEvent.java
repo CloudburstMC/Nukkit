@@ -4,8 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntityDamageByBlockEvent extends EntityDamageEvent {
 

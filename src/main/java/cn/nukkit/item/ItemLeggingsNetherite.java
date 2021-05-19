@@ -1,5 +1,6 @@
 package cn.nukkit.item;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.Since;
 
 @Since("1.3.2.0-PN")
@@ -31,17 +32,23 @@ public class ItemLeggingsNetherite extends ItemArmor {
     }
 
     @Override
-    public int getMaxDurability() {
-        return 555;
-    }
-
-    @Override
     public int getArmorPoints() {
         return 6;
     }
 
     @Override
+    public int getMaxDurability() {
+        return 555;
+    }
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed toughness value")
+    @Override
     public int getToughness() {
-        return 2;
+        return 3;
+    }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
     }
 }

@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.weather.EntityLightningStrike;
@@ -35,7 +36,7 @@ public class EntityCreeper extends EntityMob {
 
     @Override
     public float getHeight() {
-        return 1.7f;
+        return 1.8f;
     }
 
     public EntityCreeper(FullChunk chunk, CompoundTag nbt) {
@@ -90,6 +91,11 @@ public class EntityCreeper extends EntityMob {
         if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
             return new Item[]{Item.get(Item.GUNPOWDER, ThreadLocalRandom.current().nextInt(2) + 1)};
         }
-        return new Item[0];
+        return Item.EMPTY_ARRAY;
+    }
+
+    @Override
+    public boolean isPreventingSleep(Player player) {
+        return true;
     }
 }

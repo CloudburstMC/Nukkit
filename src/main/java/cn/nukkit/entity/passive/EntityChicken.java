@@ -5,7 +5,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Author: BeYkeRYkt Nukkit Project
+ * @author BeYkeRYkt (Nukkit Project)
  */
 public class EntityChicken extends EntityAnimal {
 
@@ -18,17 +18,17 @@ public class EntityChicken extends EntityAnimal {
     @Override
     public float getWidth() {
         if (this.isBaby()) {
-            return 0.2f;
+            return 0.3f;
         }
-        return 0.4f;
+        return 0.6f;
     }
 
     @Override
     public float getHeight() {
         if (this.isBaby()) {
-            return 0.35f;
+            return 0.4f;
         }
-        return 0.7f;
+        return 0.8f;
     }
 
     @Override

@@ -7,8 +7,12 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 /**
- * Created by Pub4Game on 03.07.2016.
+ * @author Pub4Game
+ * @since 03.07.2016
  */
 public class ItemFrameDropItemEvent extends BlockEvent implements Cancellable {
 
@@ -17,7 +21,7 @@ public class ItemFrameDropItemEvent extends BlockEvent implements Cancellable {
     private final Item item;
     private final BlockEntityItemFrame itemFrame;
 
-    public ItemFrameDropItemEvent(Player player, Block block, BlockEntityItemFrame itemFrame, Item item) {
+    public ItemFrameDropItemEvent(@Nullable Player player, @Nonnull Block block, @Nonnull BlockEntityItemFrame itemFrame, @Nonnull Item item) {
         super(block);
         this.player = player;
         this.itemFrame = itemFrame;
@@ -28,14 +32,17 @@ public class ItemFrameDropItemEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
+    @Nullable
     public Player getPlayer() {
         return player;
     }
 
+    @Nonnull
     public BlockEntityItemFrame getItemFrame() {
         return itemFrame;
     }
 
+    @Nonnull
     public Item getItem() {
         return item;
     }

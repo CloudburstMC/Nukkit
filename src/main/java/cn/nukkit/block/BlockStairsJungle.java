@@ -3,8 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * Created on 2015/11/25 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * @author xtypr
+ * @since 2015/11/25
  */
 public class BlockStairsJungle extends BlockStairsWood {
 

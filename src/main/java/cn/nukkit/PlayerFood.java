@@ -9,7 +9,8 @@ import cn.nukkit.item.food.Food;
 import cn.nukkit.potion.Effect;
 
 /**
- * Created by funcraft on 2015/11/11.
+ * @author funcraft
+ * @since 2015/11/11
  */
 public class PlayerFood {
 

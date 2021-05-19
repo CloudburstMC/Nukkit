@@ -5,8 +5,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.block.BlockUpdateEvent;
 
 /**
- * author: Angelic47
- * Nukkit Project
+ * @author Angelic47 (Nukkit Project)
  */
 public class RedstoneUpdateEvent extends BlockUpdateEvent {
 

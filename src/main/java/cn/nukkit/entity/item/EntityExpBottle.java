@@ -1,7 +1,9 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.SpellParticle;
@@ -95,9 +97,10 @@ public class EntityExpBottle extends EntityProjectile {
 
         this.getLevel().dropExpOrb(this, ThreadLocalRandom.current().nextInt(3, 12));
     }
-    
+
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     protected void addHitEffect() {
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_GLASS);
+        this.getLevel().addSound(this, Sound.RANDOM_GLASS);
     }
 }

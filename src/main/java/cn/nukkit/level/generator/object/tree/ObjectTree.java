@@ -1,13 +1,16 @@
 package cn.nukkit.level.generator.object.tree;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockSapling;
+import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class ObjectTree {
     protected boolean overridable(int id) {
@@ -45,22 +48,54 @@ public abstract class ObjectTree {
         growTree(level, x, y, z, random, 0);
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Magic value in type", 
+            replaceWith = "growTree(ChunkManager level, int x, int y, int z, NukkitRandom random, WoodType type, boolean tall)")
     public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random, int type) {
-        ObjectTree tree;
+        WoodType woodType;
+        boolean tall = false;
         switch (type) {
             case BlockSapling.SPRUCE:
-                tree = new ObjectSpruceTree();
+                woodType = WoodType.SPRUCE;
                 break;
             case BlockSapling.BIRCH:
-                tree = new ObjectBirchTree();
+                woodType = WoodType.BIRCH;
                 break;
             case BlockSapling.JUNGLE:
-                tree = new ObjectJungleTree();
+                woodType = WoodType.JUNGLE;
                 break;
             case BlockSapling.BIRCH_TALL:
-                tree = new ObjectTallBirchTree();
+                woodType = WoodType.BIRCH;
+                tall = true;
                 break;
             case BlockSapling.OAK:
+            default:
+                woodType = WoodType.OAK;
+                break;
+        }
+
+        growTree(level, x, y, z, random, woodType, tall);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static void growTree(ChunkManager level, int x, int y, int z, NukkitRandom random, WoodType type, boolean tall) {
+        ObjectTree tree;
+        switch (type) {
+            case SPRUCE:
+                tree = new ObjectSpruceTree();
+                break;
+            case BIRCH:
+                if (tall) {
+                    tree = new ObjectTallBirchTree();
+                } else {
+                    tree = new ObjectBirchTree();
+                }
+                break;
+            case JUNGLE:
+                tree = new ObjectJungleTree();
+                break;
+            case OAK:
             default:
                 tree = new ObjectOakTree();
                 //todo: more complex treeeeeeeeeeeeeeeee

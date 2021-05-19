@@ -4,7 +4,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class EntitySalmon extends EntityAnimal {
 
@@ -25,12 +25,12 @@ public class EntitySalmon extends EntityAnimal {
 
     @Override
     public float getWidth() {
-        return 0.7f;
+        return 0.5f;
     }
 
     @Override
     public float getHeight() {
-        return 0.4f;
+        return 0.5f;
     }
 
     @Override

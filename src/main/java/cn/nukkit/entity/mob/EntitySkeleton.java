@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -34,7 +35,7 @@ public class EntitySkeleton extends EntityMob implements EntitySmite {
 
     @Override
     public float getHeight() {
-        return 1.99f;
+        return 1.9f;
     }
 
     @Override
@@ -49,6 +50,11 @@ public class EntitySkeleton extends EntityMob implements EntitySmite {
 
     @Override
     public boolean isUndead() {
+        return true;
+    }
+
+    @Override
+    public boolean isPreventingSleep(Player player) {
         return true;
     }
 }

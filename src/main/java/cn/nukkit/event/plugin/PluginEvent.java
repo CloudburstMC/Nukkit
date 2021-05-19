@@ -5,8 +5,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.plugin.Plugin;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class PluginEvent extends Event {
 

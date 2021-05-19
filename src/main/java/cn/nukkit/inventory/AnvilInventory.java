@@ -1,8 +1,13 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Position;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -16,19 +21,22 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class AnvilInventory extends FakeBlockUIComponent {
-    
-    public static final int OFFSET = 1;
+
+    @Since("1.3.2.0-PN") public static final int ANVIL_INPUT_UI_SLOT = 1;
+    @Since("1.3.2.0-PN") public static final int ANVIL_MATERIAL_UI_SLOT = 2;
+    @Since("1.3.2.0-PN") public static final int ANVIL_OUTPUT_UI_SLOT = CREATED_ITEM_OUTPUT_UI_SLOT;
+
+    @PowerNukkitOnly public static final int OFFSET = 1;
     public static final int TARGET = 0;
     public static final int SACRIFICE = 1;
-    public static final int RESULT = 50;
-    
-    private int levelCost;
+    public static final int RESULT = ANVIL_OUTPUT_UI_SLOT - 1; //1: offset
+
+    private int cost;
     private String newItemName;
-    
+
     @NonNull
     private Item currentResult = Item.get(0);
 
@@ -36,6 +44,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
         super(playerUI, InventoryType.ANVIL, OFFSET, position);
     }
     
+    /*
     @Override
     public void onSlotChange(int index, Item before, boolean send) {
         try {
@@ -46,7 +55,10 @@ public class AnvilInventory extends FakeBlockUIComponent {
             super.onSlotChange(index, before, send);
         }
     }
+     */
     
+    @Deprecated
+    @DeprecationDetails(since = "1.3.2.0-PN", by = "PowerNukkit", reason = "Experimenting the new implementation by Nukkit")
     public void updateResult() {
         Item target = getFirstItem();
         Item sacrifice = getSecondItem();
@@ -158,7 +170,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
                             resultLevel = sacrificeEnchantment.getMaxLevel();
                         }
                         
-                        enchantmentMap.put(sacrificeEnchantment.getId(), Enchantment.get(sacrificeEnchantment.getId()).setLevel(resultLevel));
+                        enchantmentMap.put(sacrificeEnchantment.getId(), Enchantment.getEnchantment(sacrificeEnchantment.getId()).setLevel(resultLevel));
                         int rarity = 0;
                         int weight = sacrificeEnchantment.getWeight();
                         if (weight >= 10) {
@@ -227,7 +239,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
             namedTag.remove("ench");
             result.setNamedTag(namedTag);
             if (!enchantmentMap.isEmpty()) {
-                result.addEnchantment(enchantmentMap.values().toArray(new Enchantment[0]));
+                result.addEnchantment(enchantmentMap.values().toArray(Enchantment.EMPTY_ARRAY));
             }
         }
         setResult(result);
@@ -258,6 +270,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
         who.craftingType = Player.CRAFTING_ANVIL;
     }
     
+    /*
     @Override
     public Item getItem(int index) {
         if (index < 0 || index > 3) {
@@ -282,19 +295,55 @@ public class AnvilInventory extends FakeBlockUIComponent {
         
         return super.setItem(index, item, send);
     }
-    
+     */
+
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "getInputSlot()"
+    )
     public Item getFirstItem() {
         return getItem(TARGET);
     }
-    
+
+    @Since("1.3.2.0-PN")
+    public Item getInputSlot() {
+        return this.getItem(TARGET);
+    }
+
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "getMaterialSlot()"
+    )
     public Item getSecondItem() {
         return getItem(SACRIFICE);
     }
-    
-    public Item getResult() {
-        return currentResult.clone();
+
+    @Since("1.3.2.0-PN")
+    public Item getMaterialSlot() {
+        return this.getItem(SACRIFICE);
     }
 
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "getOutputSlot()"
+    )
+    public Item getResult() {
+        //return currentResult.clone();
+        return getOutputSlot();
+    }
+
+    @Since("1.3.2.0-PN")
+    public Item getOutputSlot() {
+        return this.getItem(RESULT);
+    }
+
+    /*
     @Override
     public void sendContents(Player... players) {
         super.sendContents(players);
@@ -303,36 +352,33 @@ public class AnvilInventory extends FakeBlockUIComponent {
             player.sendExperienceLevel();
         }
     }
+     */
 
+    @PowerNukkitOnly
     public boolean setFirstItem(Item item, boolean send) {
         return setItem(SACRIFICE, item, send);
     }
-    
+
+    @PowerNukkitOnly
     public boolean setFirstItem(Item item) {
         return setFirstItem(item, true);
     }
-    
+
+    @PowerNukkitOnly
     public boolean setSecondItem(Item item, boolean send) {
         return setItem(SACRIFICE, item, send);
     }
-    
+
+    @PowerNukkitOnly
     public boolean setSecondItem(Item item) {
         return setSecondItem(item, true);
     }
 
-    /**
-     * @deprecated send parameter is deprecated. This method will be removed in 1.3.0.0-PN.
-     */
-    @Deprecated
-    public boolean setResult(Item item, boolean send) {
+    private boolean setResult(Item item, boolean send) {
         return setItem(2, item, send);
     }
 
-    /**
-     * @deprecated the client won't see this change, and the transaction might fail. This method will be removed from public in 1.3.0.0-PN.
-     */
-    @Deprecated
-    public boolean setResult(Item item) {
+    private boolean setResult(Item item) {
         if (item == null || item.isNull()) {
             this.currentResult = Item.get(0);
         } else {
@@ -344,78 +390,120 @@ public class AnvilInventory extends FakeBlockUIComponent {
     private static int getRepairCost(Item item) {
         return item.hasCompoundTag() && item.getNamedTag().contains("RepairCost") ? item.getNamedTag().getInt("RepairCost") : 0;
     }
-    
+
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "getCost()"
+    )
     public int getLevelCost() {
-        return levelCost;
+        return getCost();
     }
-    
+
+    @PowerNukkitOnly
+    @Deprecated @DeprecationDetails(
+            reason = "NukkitX added the samething with other name.",
+            by = "PowerNukkit", since = "1.3.2.0-PN",
+            replaceWith = "setCost(int)"
+    )
     protected void setLevelCost(int levelCost) {
-        this.levelCost = levelCost;
+        setCost(levelCost);
     }
-    
+
+    @Since("1.3.2.0-PN")
+    public int getCost() {
+        return this.cost;
+    }
+
+    @Since("1.3.2.0-PN")
+    public void setCost(int cost) {
+        this.cost = cost;
+    }
+
+    @PowerNukkitOnly
     public String getNewItemName() {
         return newItemName;
     }
-    
+
+    @PowerNukkitOnly
     public void setNewItemName(String newItemName) {
         this.newItemName = newItemName;
     }
     
     private static int getRepairMaterial(Item target) {
         switch (target.getId()) {
-            case Item.WOODEN_SWORD:
-            case Item.WOODEN_PICKAXE:
-            case Item.WOODEN_SHOVEL:
-            case Item.WOODEN_AXE:
-            case Item.WOODEN_HOE:
-                return Block.PLANKS;
+            case ItemID.WOODEN_SWORD:
+            case ItemID.WOODEN_PICKAXE:
+            case ItemID.WOODEN_SHOVEL:
+            case ItemID.WOODEN_AXE:
+            case ItemID.WOODEN_HOE:
+                return BlockID.PLANKS;
         
-            case Item.IRON_SWORD:
-            case Item.IRON_PICKAXE:
-            case Item.IRON_SHOVEL:
-            case Item.IRON_AXE:
-            case Item.IRON_HOE:
-            case Item.IRON_HELMET:
-            case Item.IRON_CHESTPLATE:
-            case Item.IRON_LEGGINGS:
-            case Item.IRON_BOOTS:
-                return Item.IRON_INGOT;
+            case ItemID.IRON_SWORD:
+            case ItemID.IRON_PICKAXE:
+            case ItemID.IRON_SHOVEL:
+            case ItemID.IRON_AXE:
+            case ItemID.IRON_HOE:
+            case ItemID.IRON_HELMET:
+            case ItemID.IRON_CHESTPLATE:
+            case ItemID.IRON_LEGGINGS:
+            case ItemID.IRON_BOOTS:
+            case ItemID.CHAIN_HELMET:
+            case ItemID.CHAIN_CHESTPLATE:
+            case ItemID.CHAIN_LEGGINGS:
+            case ItemID.CHAIN_BOOTS:
+                return ItemID.IRON_INGOT;
         
-            case Item.GOLD_SWORD:
-            case Item.GOLD_PICKAXE:
-            case Item.GOLD_SHOVEL:
-            case Item.GOLD_AXE:
-            case Item.GOLD_HOE:
-            case Item.GOLD_HELMET:
-            case Item.GOLD_CHESTPLATE:
-            case Item.GOLD_LEGGINGS:
-            case Item.GOLD_BOOTS:
-                return Item.GOLD_INGOT;
+            case ItemID.GOLD_SWORD:
+            case ItemID.GOLD_PICKAXE:
+            case ItemID.GOLD_SHOVEL:
+            case ItemID.GOLD_AXE:
+            case ItemID.GOLD_HOE:
+            case ItemID.GOLD_HELMET:
+            case ItemID.GOLD_CHESTPLATE:
+            case ItemID.GOLD_LEGGINGS:
+            case ItemID.GOLD_BOOTS:
+                return ItemID.GOLD_INGOT;
         
-            case Item.DIAMOND_SWORD:
-            case Item.DIAMOND_PICKAXE:
-            case Item.DIAMOND_SHOVEL:
-            case Item.DIAMOND_AXE:
-            case Item.DIAMOND_HOE:
-            case Item.DIAMOND_HELMET:
-            case Item.DIAMOND_CHESTPLATE:
-            case Item.DIAMOND_LEGGINGS:
-            case Item.DIAMOND_BOOTS:
-                return Item.DIAMOND;
+            case ItemID.DIAMOND_SWORD:
+            case ItemID.DIAMOND_PICKAXE:
+            case ItemID.DIAMOND_SHOVEL:
+            case ItemID.DIAMOND_AXE:
+            case ItemID.DIAMOND_HOE:
+            case ItemID.DIAMOND_HELMET:
+            case ItemID.DIAMOND_CHESTPLATE:
+            case ItemID.DIAMOND_LEGGINGS:
+            case ItemID.DIAMOND_BOOTS:
+                return ItemID.DIAMOND;
         
-            case Item.LEATHER_CAP:
-            case Item.LEATHER_TUNIC:
-            case Item.LEATHER_PANTS:
-            case Item.LEATHER_BOOTS:
-                return Item.LEATHER;
+            case ItemID.LEATHER_CAP:
+            case ItemID.LEATHER_TUNIC:
+            case ItemID.LEATHER_PANTS:
+            case ItemID.LEATHER_BOOTS:
+                return ItemID.LEATHER;
                 
-            case Item.STONE_SWORD:
-            case Item.STONE_PICKAXE:
-            case Item.STONE_SHOVEL:
-            case Item.STONE_AXE:
-            case Item.STONE_HOE:
-                return Item.COBBLESTONE;
+            case ItemID.STONE_SWORD:
+            case ItemID.STONE_PICKAXE:
+            case ItemID.STONE_SHOVEL:
+            case ItemID.STONE_AXE:
+            case ItemID.STONE_HOE:
+                return BlockID.COBBLESTONE;
+
+            case ItemID.NETHERITE_SWORD:
+            case ItemID.NETHERITE_PICKAXE:
+            case ItemID.NETHERITE_SHOVEL:
+            case ItemID.NETHERITE_AXE:
+            case ItemID.NETHERITE_HOE:
+            case ItemID.NETHERITE_HELMET:
+            case ItemID.NETHERITE_CHESTPLATE:
+            case ItemID.NETHERITE_LEGGINGS:
+            case ItemID.NETHERITE_BOOTS:
+                return ItemID.NETHERITE_INGOT;
                 
+            case ItemID.ELYTRA:
+                return ItemID.PHANTOM_MEMBRANE;
+
             default:
                 return 0;
         }

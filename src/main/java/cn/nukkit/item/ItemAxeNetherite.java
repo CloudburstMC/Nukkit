@@ -21,13 +21,13 @@ public class ItemAxeNetherite extends ItemTool {
     }
 
     @Override
-    public boolean isAxe() {
-        return true;
+    public int getMaxDurability() {
+        return ItemTool.DURABILITY_NETHERITE;
     }
 
     @Override
-    public int getAttackDamage() {
-        return 7;
+    public boolean isAxe() {
+        return true;
     }
 
     @Override
@@ -36,7 +36,12 @@ public class ItemAxeNetherite extends ItemTool {
     }
 
     @Override
-    public int getMaxDurability() {
-        return ItemTool.DURABILITY_NETHERITE;
+    public int getAttackDamage() {
+        return 8;
+    }
+
+    @Override
+    public boolean isLavaResistant() {
+        return true;
     }
 }

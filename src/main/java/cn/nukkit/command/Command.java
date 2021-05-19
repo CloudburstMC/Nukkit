@@ -9,16 +9,16 @@ import cn.nukkit.permission.Permissible;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import io.netty.util.internal.EmptyArrays;
 
 import java.util.*;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public abstract class Command {
 
-    private static CommandData defaultDataTemplate = null;
+    private static CommandData defaultDataTemplate;
 
     protected CommandData commandData;
 
@@ -28,34 +28,34 @@ public abstract class Command {
 
     private String label;
 
-    private String[] aliases = new String[0];
+    private String[] aliases;
 
-    private String[] activeAliases = new String[0];
+    private String[] activeAliases;
 
-    private CommandMap commandMap = null;
+    private CommandMap commandMap;
 
-    protected String description = "";
+    protected String description;
 
-    protected String usageMessage = "";
+    protected String usageMessage;
 
-    private String permission = null;
+    private String permission;
 
-    private String permissionMessage = null;
+    private String permissionMessage;
 
     protected Map<String, CommandParameter[]> commandParameters = new HashMap<>();
 
     public Timing timing;
 
     public Command(String name) {
-        this(name, "", null, new String[0]);
+        this(name, "", null, EmptyArrays.EMPTY_STRINGS);
     }
 
     public Command(String name, String description) {
-        this(name, description, null, new String[0]);
+        this(name, description, null, EmptyArrays.EMPTY_STRINGS);
     }
 
     public Command(String name, String description, String usageMessage) {
-        this(name, description, usageMessage, new String[0]);
+        this(name, description, usageMessage, EmptyArrays.EMPTY_STRINGS);
     }
 
     public Command(String name, String description, String usageMessage, String[] aliases) {

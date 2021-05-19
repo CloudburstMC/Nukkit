@@ -4,9 +4,18 @@ import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.item.Item;
+
 import java.util.ArrayList;
 
 public class CommandParameter {
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final CommandParameter[] EMPTY_ARRAY = new CommandParameter[0];
+    
     public String name;
     public CommandParamType type;
     public boolean optional;
@@ -57,7 +66,7 @@ public class CommandParameter {
         this.name = name;
         this.type = CommandParamType.RAWTEXT;
         this.optional = optional;
-        this.enumData = new CommandEnum(enumType, new ArrayList<>());
+        this.enumData = new CommandEnum(enumType, ENUM_TYPE_ITEM_LIST.equals(enumType)? Item.getItemList() : new ArrayList<>());
     }
 
     /**
@@ -188,7 +197,7 @@ public class CommandParameter {
     public final static String ARG_TYPE_INT = "int";
 
     @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Cloudburst Nukkit") @PowerNukkitOnly("Re-added for backward compatibility")
-    public static final String ENUM_TYPE_ITEM_LIST = "itemType";
+    public static final String ENUM_TYPE_ITEM_LIST = "Item";
 
     @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Cloudburst Nukkit") @PowerNukkitOnly("Re-added for backward compatibility")
     public static final String ENUM_TYPE_BLOCK_LIST = "blockType";

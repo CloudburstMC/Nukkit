@@ -1,8 +1,11 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 /**
- * Created by Snake1999 on 2016/1/10.
- * Package cn.nukkit.utils in project nukkit
+ * @author Snake1999
+ * @since 2016/1/10
  */
 public class BlockColor  {
 
@@ -69,6 +72,39 @@ public class BlockColor  {
     public static final BlockColor GREEN_TERRACOTA_BLOCK_COLOR = new BlockColor(0x4c, 0x52, 0x2a);
     public static final BlockColor RED_TERRACOTA_BLOCK_COLOR = new BlockColor(0x8e, 0x3c, 0x2e);
     public static final BlockColor BLACK_TERRACOTA_BLOCK_COLOR = new BlockColor(0x25, 0x16, 0x10);
+
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockColor CRIMSON_NYLIUM_BLOCK_COLOR = new BlockColor(0xBD, 0x30, 0x31);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockColor CRIMSON_STEM_BLOCK_COLOR = new BlockColor(0x94, 0x3F, 0x61);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockColor CRIMSON_HYPHAE_BLOCK_COLOR = new BlockColor(0x5C, 0x19, 0x1D);
+    
+    
+    
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockColor WARPED_NYLIUM_BLOCK_COLOR = new BlockColor(0x16, 0x7E, 0x86);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockColor WARPED_STEM_BLOCK_COLOR = new BlockColor(0x3A, 0x8E, 0x8C);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockColor WARPED_HYPHAE_BLOCK_COLOR = new BlockColor(0x56, 0x2C, 0x3E);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockColor WARPED_WART_BLOCK_COLOR = new BlockColor(0x14, 0xB4, 0x85);
+    
 
 
     private int red;

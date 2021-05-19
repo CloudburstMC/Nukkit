@@ -1,5 +1,8 @@
 package cn.nukkit.item;
 
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -7,7 +10,7 @@ import cn.nukkit.utils.BannerPattern;
 import cn.nukkit.utils.DyeColor;
 
 /**
- * Created by PetteriM1
+ * @author PetteriM1
  */
 public class ItemBanner extends Item {
 
@@ -74,7 +77,16 @@ public class ItemBanner extends Item {
     public int getPatternsSize() {
         return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).getList("Patterns").size();
     }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean hasPattern() {
+        return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).contains("Patterns");
+    }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", 
+            reason = "Does nothing, used to do a backward compatibility but the content and usage were removed by Cloudburst")
     public void correctNBT() {
 
     }

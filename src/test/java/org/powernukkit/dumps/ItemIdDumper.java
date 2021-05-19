@@ -60,9 +60,9 @@ public class ItemIdDumper {
             int itemId;
             if (!object.has("oldId")) {
                 itemId = object.get("id").getAsInt();
-                log.warn(object.get("name").getAsString()+" don't have oldId!");
+                log.warn("{} don't have oldId!", object.get("name").getAsString());
                 if (itemId > 255) {
-                    log.warn("Skipping id "+itemId);
+                    log.warn("Skipping id {}", itemId);
                     continue;
                 }
             } else {

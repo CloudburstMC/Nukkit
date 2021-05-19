@@ -1,5 +1,8 @@
 package cn.nukkit.math;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 public class BlockVector3 implements Cloneable {
     public int x;
     public int y;
@@ -18,6 +21,15 @@ public class BlockVector3 implements Cloneable {
         this.x = x;
         this.y = y;
         this.z = z;
+        return this;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockVector3 setComponentsAdding(Vector3 pos, BlockFace face) {
+        this.x = pos.getFloorX() + face.getXOffset();
+        this.y = pos.getFloorY() + face.getYOffset();
+        this.z = pos.getFloorZ() + face.getZOffset();
         return this;
     }
 
@@ -183,6 +195,43 @@ public class BlockVector3 implements Cloneable {
 
     public double distanceSquared(double x, double y, double z) {
         return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2) + Math.pow(this.z - z, 2);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getChunkX() {
+        return x >> 4;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getChunkZ() {
+        return z >> 4;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getChunkSectionY() {
+        return y >> 4;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public ChunkVector2 getChunkVector() {
+        return new ChunkVector2(getChunkX(), getChunkZ());
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public int getAxis(BlockFace.Axis axis) {
+        switch (axis) {
+            case X:
+                return x;
+            case Y:
+                return y;
+            default:
+                return z;
+        }
     }
 
     @Override

@@ -2,12 +2,16 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockstate.BlockStateRegistry;
 import cn.nukkit.level.GameRules;
+import cn.nukkit.utils.BinaryStream;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * Created on 15-10-13.
+ * @since 15-10-13
  */
 @Log4j2
 @ToString
@@ -142,7 +146,9 @@ public class StartGamePacket extends DataPacket {
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
         this.putBoolean(this.isTrial);
-        this.putVarInt(this.isMovementServerAuthoritative ? 1 : 0); // 2 - rewind
+        this.putUnsignedVarInt(this.isMovementServerAuthoritative ? 1 : 0); // 2 - rewind
+        this.putVarInt(0); // RewindHistorySize
+        this.putBoolean(false); // isServerAuthoritativeBlockBreaking
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
         this.putUnsignedVarInt(0); // Custom blocks

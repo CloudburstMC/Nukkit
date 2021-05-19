@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityProjectile;
@@ -9,19 +10,18 @@ import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.Random;
 import java.util.stream.Stream;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class ItemBow extends ItemTool {
 
@@ -54,13 +54,14 @@ public class ItemBow extends ItemTool {
                         .anyMatch(inv -> inv.contains(Item.get(ItemID.ARROW)));
     }
 
+    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
     @Override
     public boolean onRelease(Player player, int ticksUsed) {
         Item itemArrow = Item.get(Item.ARROW, 0, 1);
 
         Inventory inventory = player.getOffhandInventory();
 
-        if (!inventory.contains(itemArrow) && !(inventory = player.getInventory()).contains(itemArrow) && player.isSurvival()) {
+        if (!inventory.contains(itemArrow) && !(inventory = player.getInventory()).contains(itemArrow) && (player.isAdventure() || player.isSurvival())) {
             player.getOffhandInventory().sendContents(player);
             inventory.sendContents(player);
             return false;
@@ -119,7 +120,7 @@ public class ItemBow extends ItemTool {
             if (infinity && (projectile = entityShootBowEvent.getProjectile()) instanceof EntityArrow) {
                 ((EntityArrow) projectile).setPickupMode(EntityArrow.PICKUP_CREATIVE);
             }
-            if (player.isSurvival()) {
+            if (player.isAdventure() || player.isSurvival()) {
                 if (!infinity) {
                     inventory.removeItem(itemArrow);
                 }
@@ -127,7 +128,8 @@ public class ItemBow extends ItemTool {
                     Enchantment durability = this.getEnchantment(Enchantment.ID_DURABILITY);
                     if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))) {
                         this.setDamage(this.getDamage() + 1);
-                        if (this.getDamage() >= getMaxDurability()) {
+                        if (this.getDamage() >= getMaxDurability()) { 
+                            player.getLevel().addSound(player, Sound.RANDOM_BREAK);
                             this.count--;
                         }
                         player.getInventory().setItemInHand(this);
@@ -141,7 +143,7 @@ public class ItemBow extends ItemTool {
                     entityShootBowEvent.getProjectile().kill();
                 } else {
                     entityShootBowEvent.getProjectile().spawnToAll();
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
+                    player.getLevel().addSound(player, Sound.RANDOM_BOW);
                 }
             }
         }

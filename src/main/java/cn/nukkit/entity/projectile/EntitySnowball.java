@@ -16,8 +16,7 @@ import java.util.Arrays;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * @author MagicDroidX (Nukkit Project)
  */
 public class EntitySnowball extends EntityProjectile {
     public static final int NETWORK_ID = 81;
@@ -113,6 +112,6 @@ public class EntitySnowball extends EntityProjectile {
         int chunkX = (int) x >> 4;
         int chunkZ = (int) z >> 4;
         Level level = this.level;
-        level.getServer().batchPackets(level.getChunkPlayers(chunkX, chunkZ).values().toArray(new Player[0]), allPackets);
+        level.getServer().batchPackets(level.getChunkPlayers(chunkX, chunkZ).values().toArray(Player.EMPTY_ARRAY), allPackets);
     }
 }
