@@ -18,8 +18,6 @@ import cn.nukkit.event.entity.EntityPortalEnterEvent.PortalType;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
-import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.level.*;

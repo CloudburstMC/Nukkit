@@ -3295,6 +3295,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     InventoryTransactionPacket transactionPacket = (InventoryTransactionPacket) packet;
 
+                    // Nasty hack because the client won't change the right packet in survival when creating netherite stuff
+                    // so we are emulating what Mojang should be sending
                     if (transactionPacket.transactionType == InventoryTransactionPacket.TYPE_MISMATCH
                             && !isCreative()
                             && (inv = getWindowById(SMITHING_WINDOW_ID)) instanceof SmithingInventory) {
@@ -3467,7 +3469,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     this.grindstoneTransaction = null;
                                 }
                             }
-                        } if (SmithingTransaction.checkForItemPart(actions)) {
+                        } else if (SmithingTransaction.checkForItemPart(actions)) {
                             if (this.smithingTransaction == null) {
                                 this.smithingTransaction = new SmithingTransaction(this, actions);
                             } else {
@@ -3534,26 +3536,40 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.enchantTransaction = null;
                         }
                     } else if (this.repairItemTransaction != null) {
-                        if (GrindstoneTransaction.checkForItemPart(actions)) {
-                            for (InventoryAction action : actions) {
-                                this.grindstoneTransaction.addAction(action);
-                            }
-                            return;
-                        } if (SmithingTransaction.checkForItemPart(actions)) {
-                            for (InventoryAction action : actions) {
-                                this.smithingTransaction.addAction(action);
-                            }
-                            return;
-                        } else if (RepairItemTransaction.checkForRepairItemPart(actions)) {
+                        if (RepairItemTransaction.checkForRepairItemPart(actions)) {
                             for (InventoryAction action : actions) {
                                 this.repairItemTransaction.addAction(action);
                             }
                             return;
                         } else {
-                            this.server.getLogger().debug("Got unexpected normal inventory action with incomplete repair item transaction from " + this.getName() + ", refusing to execute repair item " + transactionPacket.toString());
+                            log.debug("Got unexpected normal inventory action with incomplete repair item transaction from " + this.getName() + ", refusing to execute repair item " + transactionPacket.toString());
                             this.removeAllWindows(false);
                             this.sendAllInventories();
                             this.repairItemTransaction = null;
+                        }
+                    } else if (this.grindstoneTransaction != null) {
+                        if (GrindstoneTransaction.checkForItemPart(actions)) {
+                            for (InventoryAction action : actions) {
+                                this.grindstoneTransaction.addAction(action);
+                            }
+                            return;
+                        } else {
+                            log.debug("Got unexpected normal inventory action with incomplete grindstone transaction from {}, refusing to execute use the grindstone {}", this.getName(), transactionPacket.toString());
+                            this.removeAllWindows(false);
+                            this.sendAllInventories();
+                            this.grindstoneTransaction = null;
+                        }
+                    } else if (this.smithingTransaction != null) {
+                        if (SmithingTransaction.checkForItemPart(actions)) {
+                            for (InventoryAction action : actions) {
+                                this.smithingTransaction.addAction(action);
+                            }
+                            return;
+                        } else {
+                            log.debug("Got unexpected normal inventory action with incomplete smithing table transaction from {}, refusing to execute use the smithing table {}", this.getName(), transactionPacket.toString());
+                            this.removeAllWindows(false);
+                            this.sendAllInventories();
+                            this.smithingTransaction = null;
                         }
                     }
 
