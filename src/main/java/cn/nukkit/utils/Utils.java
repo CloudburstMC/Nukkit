@@ -9,12 +9,19 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.SplittableRandom;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -381,5 +388,34 @@ public class Utils {
     @Since("1.3.2.0-PN")
     public static int dynamic(int value) {
         return value;
+    }
+
+    /**
+     * A way to tell the java compiler to do not replace the users of a {@code public static final} constant
+     * with the value defined in it, forcing the JVM to get the value directly from the class, preventing
+     * binary incompatible changes.
+     * @see <a href="https://stackoverflow.com/a/12065326/804976>https://stackoverflow.com/a/12065326/804976</a>
+     * @param value The value to be assigned to the field.
+     * @return The same value that was passed as parameter
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static <T> T dynamic(T value) {
+        return value;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static void zipFolder(Path sourceFolderPath, Path zipPath) throws IOException {
+        try (ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()))) {
+            Files.walkFileTree(sourceFolderPath, new SimpleFileVisitor<Path>() {
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    zos.putNextEntry(new ZipEntry(sourceFolderPath.relativize(file).toString()));
+                    Files.copy(file, zos);
+                    zos.closeEntry();
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
     }
 }

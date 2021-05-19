@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.utils.ClientChainData;
@@ -70,6 +71,11 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     public UUID getUuid() {
         return this.uuid;
+    }
+
+    @Since("1.4.0.0-PN")
+    public LoginChainData getChainData() {
+        return this.chainData;
     }
 
     @Since("1.3.2.0-PN")

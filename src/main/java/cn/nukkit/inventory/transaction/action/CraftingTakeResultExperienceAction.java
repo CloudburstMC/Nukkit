@@ -22,6 +22,7 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
+import lombok.ToString;
 
 /**
  * @author joserobjr
@@ -29,6 +30,7 @@ import cn.nukkit.item.Item;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
+@ToString(callSuper = true)
 public class CraftingTakeResultExperienceAction extends CraftingTakeResultAction {
 
     @PowerNukkitOnly
@@ -51,9 +53,9 @@ public class CraftingTakeResultExperienceAction extends CraftingTakeResultAction
     @Override
     public boolean execute(Player source) {
         if (super.execute(source)) {
-            int experience = getExperience();
-            if (experience > 0) {
-                source.getLevel().dropExpOrb(source, experience, null, 3);
+            int exp = getExperience();
+            if (exp > 0) {
+                source.getLevel().dropExpOrb(source, exp, null, 3);
             }
             return true;
         }

@@ -18,7 +18,7 @@ public class EmotePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.runtimeId = this.getUnsignedVarLong();
+        this.runtimeId = this.getEntityRuntimeId();
         this.emoteID = this.getString();
         this.flags = (byte) this.getByte();
     }
@@ -26,7 +26,7 @@ public class EmotePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarLong(this.runtimeId);
+        this.putEntityRuntimeId(this.runtimeId);
         this.putString(this.emoteID);
         this.putByte(flags);
     }

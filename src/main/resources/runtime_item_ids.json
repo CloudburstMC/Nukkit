@@ -3333,7 +3333,7 @@
     "oldId": 325
   },
   {
-    "oldData": 4,
+    "oldData": 5,
     "name": "minecraft:pufferfish_bucket",
     "id": 367,
     "oldId": 325
@@ -3867,7 +3867,7 @@
     "name": "minecraft:wither_skeleton_spawn_egg",
     "id": 462,
     "oldId": 383,
-    "oldData": 34
+    "oldData": 48
   },
   {
     "name": "minecraft:donkey_spawn_egg",

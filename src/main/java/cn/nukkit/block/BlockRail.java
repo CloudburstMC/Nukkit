@@ -1,15 +1,24 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.OptionalBoolean;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
@@ -26,6 +35,35 @@ import static cn.nukkit.utils.Rail.Orientation.*;
  * @since 2016/1/11
  */
 public class BlockRail extends BlockFlowable implements Faceable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BooleanBlockProperty ACTIVE = new BooleanBlockProperty("rail_data_bit", false);
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperty<Rail.Orientation> UNCURVED_RAIL_DIRECTION = new ArrayBlockProperty<>("rail_direction", false, new Rail.Orientation[]{
+            STRAIGHT_NORTH_SOUTH, STRAIGHT_EAST_WEST,
+            ASCENDING_EAST, ASCENDING_WEST,
+            ASCENDING_NORTH, ASCENDING_SOUTH
+    });
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperty<Rail.Orientation> CURVED_RAIL_DIRECTION = new ArrayBlockProperty<>("rail_direction", false, new Rail.Orientation[]{
+            STRAIGHT_NORTH_SOUTH, STRAIGHT_EAST_WEST,
+            ASCENDING_EAST, ASCENDING_WEST,
+            ASCENDING_NORTH, ASCENDING_SOUTH,
+            CURVED_SOUTH_EAST, CURVED_SOUTH_WEST,
+            CURVED_NORTH_WEST, CURVED_NORTH_EAST
+    });
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties ACTIVABLE_PROPERTIES = new BlockProperties(UNCURVED_RAIL_DIRECTION, ACTIVE);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(CURVED_RAIL_DIRECTION);
 
     // 0x8: Set the block active
     // 0x7: Reset the block to normal
@@ -48,6 +86,14 @@ public class BlockRail extends BlockFlowable implements Faceable {
     @Override
     public int getId() {
         return RAIL;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -109,34 +155,34 @@ public class BlockRail extends BlockFlowable implements Faceable {
         List<BlockFace> faces = new ArrayList<>(railsAround.values());
         if (railsAround.size() == 1) {
             BlockRail other = rails.get(0);
-            this.setDamage(this.connect(other, railsAround.get(other)).metadata());
+            this.setRailDirection(this.connect(other, railsAround.get(other)));
         } else if (railsAround.size() == 4) {
             if (this.isAbstract()) {
-                this.setDamage(this.connect(rails.get(faces.indexOf(SOUTH)), SOUTH, rails.get(faces.indexOf(EAST)), EAST).metadata());
+                this.setRailDirection(this.connect(rails.get(faces.indexOf(SOUTH)), SOUTH, rails.get(faces.indexOf(EAST)), EAST));
             } else {
-                this.setDamage(this.connect(rails.get(faces.indexOf(EAST)), EAST, rails.get(faces.indexOf(WEST)), WEST).metadata());
+                this.setRailDirection(this.connect(rails.get(faces.indexOf(EAST)), EAST, rails.get(faces.indexOf(WEST)), WEST));
             }
         } else if (!railsAround.isEmpty()) {
             if (this.isAbstract()) {
                 if (railsAround.size() == 2) {
                     BlockRail rail1 = rails.get(0);
                     BlockRail rail2 = rails.get(1);
-                    this.setDamage(this.connect(rail1, railsAround.get(rail1), rail2, railsAround.get(rail2)).metadata());
+                    this.setRailDirection(this.connect(rail1, railsAround.get(rail1), rail2, railsAround.get(rail2)));
                 } else {
                     List<BlockFace> cd = Stream.of(CURVED_SOUTH_EAST, CURVED_NORTH_EAST, CURVED_SOUTH_WEST)
                             .filter(o -> faces.containsAll(o.connectingDirections()))
                             .findFirst().get().connectingDirections();
                     BlockFace f1 = cd.get(0);
                     BlockFace f2 = cd.get(1);
-                    this.setDamage(this.connect(rails.get(faces.indexOf(f1)), f1, rails.get(faces.indexOf(f2)), f2).metadata());
+                    this.setRailDirection(this.connect(rails.get(faces.indexOf(f1)), f1, rails.get(faces.indexOf(f2)), f2));
                 }
             } else {
                 BlockFace f = faces.stream().min((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((x == y) ? 0 : -1)).get();
                 BlockFace fo = f.getOpposite();
                 if (faces.contains(fo)) { //Opposite connectable
-                    this.setDamage(this.connect(rails.get(faces.indexOf(f)), f, rails.get(faces.indexOf(fo)), fo).metadata());
+                    this.setRailDirection(this.connect(rails.get(faces.indexOf(f)), f, rails.get(faces.indexOf(fo)), fo));
                 } else {
-                    this.setDamage(this.connect(rails.get(faces.indexOf(f)), f).metadata());
+                    this.setRailDirection(this.connect(rails.get(faces.indexOf(f)), f));
                 }
             }
         }
@@ -230,18 +276,46 @@ public class BlockRail extends BlockFlowable implements Faceable {
     public boolean canPowered() {
         return this.canBePowered;
     }
-
-    public Orientation getOrientation() {
-        return byMetadata(this.getRealMeta());
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public final Orientation getRailDirection() {
+        return getOrientation();
     }
 
+    /**
+     * Changes the rail direction without changing anything else.
+     * @param orientation The new orientation
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setRailDirection(Orientation orientation) {
+        setPropertyValue(CURVED_RAIL_DIRECTION.getName(), orientation);
+    }
+
+    public Orientation getOrientation() {
+        return (Orientation) getPropertyValue(CURVED_RAIL_DIRECTION.getName());
+    }
+
+    /**
+     * Changes the rail direction and update the state in the world if the orientation changed in a single call.
+     * 
+     * Note that the level block won't change if the current block has already the given orientation.
+     * 
+     * @see #setRailDirection(Orientation) 
+     * @see Level#setBlock(Vector3, int, Block, boolean, boolean) 
+     */
     public void setOrientation(Orientation o) {
-        if (o.metadata() != this.getRealMeta()) {
-            this.setDamage(o.metadata());
+        if (o != getOrientation()) {
+            setRailDirection(o);
             this.level.setBlock(this, this, false, true);
         }
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit",
+            reason = "This hack is no longer needed after the block state implementation and is no longer maintained")
     public int getRealMeta() {
         // Check if this can be powered
         // Avoid modifying the value from meta (The rail orientation may be false)
@@ -255,28 +329,50 @@ public class BlockRail extends BlockFlowable implements Faceable {
     }
 
     public boolean isActive() {
-        return (getDamage() & 0x8) != 0;
+        return getProperties().contains(ACTIVE) && getBooleanValue(ACTIVE);
     }
 
+    /**
+     * Changes the active flag and update the state in the world in a single call.
+     * 
+     * The active flag will not change if the block state don't have the {@link #ACTIVE} property, 
+     * and it will not throw exceptions related to missing block properties. 
+     *
+     * The level block will always update.
+     *
+     * @see #setRailDirection(Orientation)
+     * @see Level#setBlock(Vector3, int, Block, boolean, boolean)
+     */
     public void setActive(boolean active) {
-        if (active) {
-            setDamage(getDamage() | 0x8);
-        } else {
-            setDamage(getDamage() & 0x7);
+        if (getProperties().contains(ACTIVE)) {
+            setRailActive(active);
         }
         level.setBlock(this, this, true, true);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public OptionalBoolean isRailActive() {
+        return getProperties().contains(ACTIVE)? 
+                OptionalBoolean.of(getBooleanValue(ACTIVE)) : 
+                OptionalBoolean.empty();
+    }
+
+    /**
+     * @throws NoSuchElementException If attempt to set the rail to active but it don't have the {@link #ACTIVE} property.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setRailActive(boolean active) throws NoSuchElementException {
+        if (!active && !getProperties().contains(ACTIVE)) {
+            return;
+        }
+        setBooleanValue(ACTIVE, active);
     }
 
     @Override
     public Item toItem() {
         return new ItemBlock(this, 0);
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                Item.get(Item.RAIL, 0, 1)
-        };
     }
 
     @Override

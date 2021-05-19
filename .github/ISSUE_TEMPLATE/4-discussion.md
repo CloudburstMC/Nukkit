@@ -14,7 +14,7 @@ assignees: ''
 
 ### 📋 Debug information
 <!-- ⚠ This information may help us to give you better answers but they are not required ⚠ -->
-<!-- Use the 'debugpaste' command in PowerNukkit -->
+<!-- Use the 'debugpaste upload' command in PowerNukkit -->
 <!-- You can get the version from the file name, the 'about' or 'debugpaste' command outputs -->
 * PowerNukkit version: ✍
 * Debug link: ✍

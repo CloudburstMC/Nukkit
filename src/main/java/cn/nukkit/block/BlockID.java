@@ -302,7 +302,8 @@ public interface BlockID {
     int RED_GLAZED_TERRACOTTA = 234;
     int BLACK_GLAZED_TERRACOTTA = 235;
     int CONCRETE = 236;
-    int CONCRETE_POWDER = 237;
+    @Since("1.4.0.0-PN") @PowerNukkitOnly int CONCRETEPOWDER = 237;
+    int CONCRETE_POWDER = CONCRETEPOWDER;
 
     int CHORUS_PLANT = 240;
     int STAINED_GLASS = 241;
@@ -475,7 +476,7 @@ public interface BlockID {
     int SOUL_LANTERN = 524;
     int NETHERITE_BLOCK = 525;
     int ANCIENT_DERBRIS = 526;
-    //int RESPAWN_ANCHOR = 527;
+    int RESPAWN_ANCHOR = 527;
     int BLACKSTONE = 528;
     int POLISHED_BLACKSTONE_BRICKS = 529;
     int POLISHED_BLACKSTONE_BRICK_STAIRS = 530;
