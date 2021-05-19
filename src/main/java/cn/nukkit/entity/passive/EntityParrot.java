@@ -31,7 +31,7 @@ public class EntityParrot extends EntityAnimal {
 
     @Override
     public float getHeight() {
-        return 0.9f;
+        return 1.0f;
     }
 
     @Override

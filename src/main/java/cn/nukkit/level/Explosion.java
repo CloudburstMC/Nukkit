@@ -202,8 +202,11 @@ public class Explosion {
 
         Vector3 source = (new Vector3(this.source.x, this.source.y, this.source.z)).floor();
         double yield = (1d / this.size) * 100d;
-
-
+        
+        if (affectedBlocks == null) {
+            affectedBlocks = new LinkedHashSet<>();
+        }
+        
         if (this.what instanceof Entity) {
             List<Block> affectedBlocksList = new ArrayList<>(this.affectedBlocks);
             EntityExplodeEvent ev = new EntityExplodeEvent((Entity) this.what, this.source, affectedBlocksList, yield);

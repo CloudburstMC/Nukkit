@@ -83,6 +83,11 @@ public class SmithingRecipe implements Recipe {
     @Since("1.4.0.0-PN")
     public Item getFinalResult(Item equip) {
         Item finalResult = getResult().clone();
+
+        if (equip.hasCompoundTag()) {
+            finalResult.setCompoundTag(equip.getCompoundTag());
+        }
+
         int maxDurability = finalResult.getMaxDurability();
         if (maxDurability <= 0 || equip.getMaxDurability() <= 0) {
             return finalResult;
