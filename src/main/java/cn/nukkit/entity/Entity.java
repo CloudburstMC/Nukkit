@@ -615,7 +615,7 @@ public abstract class Entity extends Location implements Metadatable {
             }
         } catch(Exception e) {
             this.close(false);
-            throw e;
+            log.error(e);
         }
     }
 
