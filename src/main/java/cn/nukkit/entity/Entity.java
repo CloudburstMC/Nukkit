@@ -594,15 +594,27 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataProperty(new FloatEntityData(DATA_SCALE, scale), false);
         this.setDataProperty(new ByteEntityData(DATA_COLOR, 0), false);
 
-        this.chunk.addEntity(this);
-        this.level.addEntity(this);
+        try {
+            this.chunk.addEntity(this);
+            this.level.addEntity(this);
 
-        this.initEntity();
+            this.initEntity();
 
-        this.lastUpdate = this.server.getTick();
-        this.server.getPluginManager().callEvent(new EntitySpawnEvent(this));
+            this.lastUpdate = this.server.getTick();
 
-        this.scheduleUpdate();
+            EntitySpawnEvent event = new EntitySpawnEvent(this);
+
+            this.server.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                this.close(false);
+            } else {
+                this.scheduleUpdate();
+            }
+        } catch(Exception e) {
+            this.close(false);
+            throw e;
+        }
     }
 
     public boolean hasCustomName() {
@@ -2528,8 +2540,39 @@ public abstract class Entity extends Location implements Metadatable {
     public void close() {
         if (!this.closed) {
             this.closed = true;
-            this.server.getPluginManager().callEvent(new EntityDespawnEvent(this));
+
+            EntityDespawnEvent event = new EntityDespawnEvent(this);
+
+            this.server.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) return;
+
             this.despawnFromAll();
+
+            if (this.chunk != null) {
+                this.chunk.removeEntity(this);
+            }
+
+            if (this.level != null) {
+                this.level.removeEntity(this);
+            }
+        }
+    }
+
+    private void close(Boolean despawn) {
+        if (!this.closed) {
+            this.closed = true;
+
+            if (despawn) {
+                EntityDespawnEvent event = new EntityDespawnEvent(this);
+
+                this.server.getPluginManager().callEvent(event);
+
+                if (event.isCancelled()) return;
+            }
+
+            this.despawnFromAll();
+
             if (this.chunk != null) {
                 this.chunk.removeEntity(this);
             }
