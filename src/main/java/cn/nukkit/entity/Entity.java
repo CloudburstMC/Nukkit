@@ -2541,20 +2541,32 @@ public abstract class Entity extends Location implements Metadatable {
         if (!this.closed) {
             this.closed = true;
 
-            EntityDespawnEvent event = new EntityDespawnEvent(this);
+            try {
+                EntityDespawnEvent event = new EntityDespawnEvent(this);
 
-            this.server.getPluginManager().callEvent(event);
+                this.server.getPluginManager().callEvent(event);
 
-            if (event.isCancelled()) return;
-
-            this.despawnFromAll();
-
-            if (this.chunk != null) {
-                this.chunk.removeEntity(this);
+                if (event.isCancelled()) {
+                    this.closed = false;
+                    return;
+                }
+            } catch (Throwable e) {
+                this.closed = false;
+                throw e;
             }
 
-            if (this.level != null) {
-                this.level.removeEntity(this);
+            try {
+                this.despawnFromAll();
+            } finally {
+                try {
+                    if (this.chunk != null) {
+                        this.chunk.removeEntity(this);
+                    }
+                } finally {
+                    if (this.level != null) {
+                        this.level.removeEntity(this);
+                    }
+                }
             }
         }
     }
