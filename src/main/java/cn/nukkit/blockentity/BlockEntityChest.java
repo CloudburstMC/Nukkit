@@ -55,7 +55,6 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     @Override
     public void close() {
         if (!closed) {
-            unpair();
 
             for (Player player : new HashSet<>(this.getInventory().getViewers())) {
                 player.removeWindow(this.getInventory());
@@ -70,6 +69,9 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     @Override
     public void onBreak() {
+        if (this.isPaired()) {
+            unpair();
+        }
         for (Item content : inventory.getContents().values()) {
             level.dropItem(this, content);
         }
