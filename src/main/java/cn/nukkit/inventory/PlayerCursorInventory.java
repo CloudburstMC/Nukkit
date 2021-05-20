@@ -27,4 +27,9 @@ public class PlayerCursorInventory extends PlayerUIComponent {
     public InventoryType getType() {
         return InventoryType.CURSOR;
     }
+
+    @Override
+    public void sendContents(Player... players) {
+        playerUI.sendSlot(0, players);
+    }
 }

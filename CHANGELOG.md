@@ -12,7 +12,16 @@ Click the link above to see the future.
 ### Fixes
 - [#857] Items in wrong tabs of the creative inventory and at the side of crafting grid screens
 - [#959] Give command not working correctly when using a namespace, like in `/give minecraft:dirt`
-- [#960] _Alpha Bug_: Error when a player that have a bad item created from a bad alpha version attempt to join 
+- [#960] _Alpha Bug_: Error when a player that have a bad item created from a bad alpha version attempt to join
+
+### Changed
+- [#990] Removed all symbols that were marked to be removed at `1.4.0.0-PN`
+- [#990] `Entity` data constants were all marked as `dynamic` because they have risk to be changed in Minecraft updates
+- [#990] `Entity` data with id `60` and higher were shifted up by `1` id, this means that all plugins accessing them needs to be recompiled!
+- [#990] `AvailableCommandsPacket` argument type constants were all marked as `dynamic`
+- [#990] Added support to Minecraft Bedrock Edition `1.16.210`
+- [#990] `stripped_warped_hyphae`, `stripped_warped_stem`, `stripped_crimson_hyphae`, and `stripped_crimson_stem` don't have the `deprecated` block property anymore 
+- [#990] The chunk content version was increased to `10` to update the stripped stems and hyphaes.
 
 ## 1.4.0.0-PN-ALPHA.2 - 2020-11-22
 This changelog is still being worked on.
@@ -683,3 +692,4 @@ Fixes several anvil issues.
 [#917]: https://github.com/PowerNukkit/PowerNukkit/issues/917
 [#959]: https://github.com/PowerNukkit/PowerNukkit/issues/959
 [#960]: https://github.com/PowerNukkit/PowerNukkit/issues/960
+[#990]: https://github.com/PowerNukkit/PowerNukkit/issues/990

@@ -4,8 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import lombok.Getter;
+import lombok.ToString;
 
 @Since("1.3.1.0-PN")
+@ToString(callSuper = true)
 public class EnchantingAction extends InventoryAction {
     @Getter @Since("1.3.1.0-PN")
     private int type;

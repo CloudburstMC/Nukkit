@@ -35,7 +35,7 @@ public class EntityDrowned extends EntityMob implements EntitySmite {
 
     @Override
     public float getHeight() {
-        return 1.95f;
+        return 1.9f;
     }
 
     @Override

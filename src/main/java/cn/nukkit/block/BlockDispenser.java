@@ -73,6 +73,16 @@ public class BlockDispenser extends BlockSolidMeta implements RedstoneComponent,
         return BlockEntity.DISPENSER;
     }
 
+    @Override
+    public double getHardness() {
+        return 3.5;
+    }
+
+    @Override
+    public double getResistance() {
+        return 3.5;
+    }
+
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Nonnull

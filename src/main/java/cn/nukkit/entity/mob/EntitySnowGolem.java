@@ -26,12 +26,12 @@ public class EntitySnowGolem extends EntityMob {
 
     @Override
     public float getWidth() {
-        return 0.7f;
+        return 0.4f;
     }
 
     @Override
     public float getHeight() {
-        return 1.9f;
+        return 1.8f;
     }
 
     @Override

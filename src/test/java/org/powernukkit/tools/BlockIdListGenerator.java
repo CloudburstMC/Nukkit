@@ -52,7 +52,7 @@ public class BlockIdListGenerator {
         
         for (int id = 0; id < Block.MAX_BLOCK_ID; id++) {
             String persistenceName = BlockStateRegistry.getPersistenceName(id);
-            if (persistenceName != null) {
+            if (!persistenceName.equals("blockid:"+id)) {
                 ids.put(id, persistenceName);
             } else {
                 ids.putIfAbsent(id, "");

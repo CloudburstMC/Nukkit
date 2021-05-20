@@ -76,13 +76,14 @@
         <log4j2.version>2.13.3</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jline.version>3.9.0</jline.version>
+        <skipTests>true</skipTests>
     </properties>
 
     <distributionManagement>
         <repository>
             <id>powernukkit-releases</id>
             <name>powernukkit-releases</name>
-            <url>https://api.bintray.com/maven/powernukkit/powernukkit/PowerNukkit</url>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <snapshotRepository>
             <id>powernukkit-snapshots</id>
@@ -91,7 +92,7 @@
         </snapshotRepository>
     </distributionManagement>
     
-    <repositories>
+    <!--<repositories>
         <repository>
             <id>powernukkit-snapshots</id>
             <name>powernukkit-snapshots</name>
@@ -99,14 +100,7 @@
             <releases><enabled>false</enabled></releases>
             <snapshots><enabled>true</enabled></snapshots>
         </repository>
-        <repository>
-            <id>powernukkit-bintray</id>
-            <name>powernukkit-bintray</name>
-            <url>https://dl.bintray.com/powernukkit/powernukkit</url>
-            <releases><enabled>true</enabled></releases>
-            <snapshots><enabled>false</enabled></snapshots>
-        </repository>
-    </repositories>
+    </repositories>-->
 
     <dependencies>
         <dependency>
@@ -122,6 +116,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.powernukkit.fastutil</groupId>
             <artifactId>fastutil-lite</artifactId>
             <version>8.1.1</version>
@@ -130,7 +130,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>24.1.1-jre</version>
+            <version>29.0-jre</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -142,7 +142,7 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.5</version>
+            <version>2.8.6</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -166,12 +166,24 @@
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry</artifactId>
-            <version>4.0.0-alpha.2</version>
+            <version>4.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>io.sentry</groupId>
             <artifactId>sentry-log4j2</artifactId>
-            <version>4.0.0-alpha.2</version>
+            <version>4.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -326,6 +338,9 @@
                         <version>${junit.platform.version}</version>
                     </dependency>
                 </dependencies>
+                <configuration>
+                    <skipTests>${skipTests}</skipTests>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -337,6 +352,9 @@
                         <configuration>
                             <rules>
                                 <DependencyConvergence />
+                                <requireJavaVersion>
+                                    <version>1.8</version>
+                                </requireJavaVersion>
                             </rules>
                         </configuration>
                         <goals>
@@ -365,6 +383,7 @@
                 <configuration> <!-- add this to disable checking -->
                     <source>8</source>
                     <doclint>none</doclint>
+                    <quiet>true</quiet>
                 </configuration>
                 <executions>
                     <execution>
@@ -469,6 +488,20 @@
                         <forceLongFormat>false</forceLongFormat>
                     </gitDescribe>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
