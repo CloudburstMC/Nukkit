@@ -80,7 +80,7 @@ public class BlockDoublePlant extends BlockFlowable {
         Block down = down();
         Block up = up();
 
-        if (up.getId() == AIR && (down.getId() == GRASS || down.getId() == DIRT)) {
+        if (up.getId() == AIR && (down.getId() == GRASS || down.getId() == DIRT || down.getId() == PODZOL || down.getId() == FARMLAND)) {
             this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
             this.getLevel().setBlock(up, Block.get(BlockID.DOUBLE_PLANT, getDamage() ^ TOP_HALF_BITMASK), true, true);
             return true;
