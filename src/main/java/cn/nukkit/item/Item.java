@@ -2,8 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.api.PowerNukkitDifference;
-import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.*;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
@@ -19,10 +18,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.nbt.tag.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
@@ -109,7 +105,11 @@ public class Item implements Cloneable, BlockID, ItemID {
     private byte[] tags = EmptyArrays.EMPTY_BYTES;
     private transient CompoundTag cachedNBT = null;
     public int count;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Unused", replaceWith = "meta or getDamage()")
     protected int durability = 0;
+
     protected String name;
 
     public Item(int id) {
@@ -360,6 +360,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
+            list[CROSSBOW] = ItemCrossbow.class; //471
             list[SPRUCE_SIGN] = ItemSpruceSign.class; //472
             list[BIRCH_SIGN] = ItemBirchSign.class; //473
             list[JUNGLE_SIGN] = ItemJungleSign.class; //474
@@ -668,6 +669,10 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public static Item fromJson(Map<String, Object> data) {
+        return fromJson(data, false);
+    }
+
+    private static Item fromJson(Map<String, Object> data, boolean ignoreNegativeItemId) {
         String nbt = (String) data.get("nbt_b64");
         byte[] nbtBytes;
         if (nbt != null) {
@@ -681,7 +686,10 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
         }
 
-        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+        int id = Utils.toInt(data.get("id"));
+        if (ignoreNegativeItemId && id < 0) return null;
+
+        return get(id, Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
 
     private static Item fromJsonStringId(Map<String, Object> data) {
@@ -696,7 +704,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         } else {
             item = fromString(id);
         }
-        item = new Item(item.getId(), item.getDamage(), item.getCount());
         item.setCompoundTag(nbtBytes);
         return item;
     }
@@ -954,6 +961,35 @@ public class Item implements Cloneable, BlockID, ItemID {
         return enchantments.toArray(Enchantment.EMPTY_ARRAY);
     }
 
+    @Since("1.3.2.0-PN")
+    public int getRepairCost() {
+        if (this.hasCompoundTag()) {
+            CompoundTag tag = this.getNamedTag();
+            if (tag.contains("RepairCost")) {
+                Tag repairCost = tag.get("RepairCost");
+                if (repairCost instanceof IntTag) {
+                    return ((IntTag) repairCost).data;
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Since("1.3.2.0-PN")
+    public Item setRepairCost(int cost) {
+        if (cost <= 0 && this.hasCompoundTag()) {
+            return this.setNamedTag(this.getNamedTag().remove("RepairCost"));
+        }
+
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+        return this.setNamedTag(tag.putInt("RepairCost", cost));
+    }
+
     public boolean hasCustomName() {
         if (!this.hasCompoundTag()) {
             return false;
@@ -1152,8 +1188,29 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
+    @Since("1.4.0.0-PN")
+    @API(definition = API.Definition.INTERNAL, usage = API.Usage.INCUBATING)
+    public Block getBlockUnsafe() {
+        return this.block;
+    }
+
     public int getId() {
         return id;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final int getNetworkFullId() throws UnknownNetworkIdException {
+        try {
+            return RuntimeItems.getRuntimeMapping().getNetworkFullId(this);
+        } catch (IllegalArgumentException e) {
+            throw new UnknownNetworkIdException(this, e);
+        }
+    }
+
+    @Since("1.4.0.0-PN")
+    public final int getNetworkId() throws UnknownNetworkIdException {
+        return RuntimeItems.getNetworkId(getNetworkFullId());
     }
     
     @PowerNukkitOnly
@@ -1324,6 +1381,23 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final Item decrement(int amount) {
+        return increment(-amount);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final Item increment(int amount) {
+        if (count + amount <= 0) {
+            return getBlock(BlockID.AIR);
+        }
+        Item cloned = clone();
+        cloned.count += amount;
+        return cloned;
     }
 
     /**

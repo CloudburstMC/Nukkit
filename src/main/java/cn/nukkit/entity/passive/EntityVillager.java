@@ -29,9 +29,9 @@ public class EntityVillager extends EntityCreature implements EntityNPC, EntityA
     @Override
     public float getHeight() {
         if (this.isBaby()) {
-            return 0.9f;
+            return 0.95f;
         }
-        return 1.8f;
+        return 1.9f;
     }
 
     @Override
@@ -45,6 +45,7 @@ public class EntityVillager extends EntityCreature implements EntityNPC, EntityA
         this.setMaxHealth(20);
     }
 
+    @Override
     public boolean isBaby() {
         return this.getDataFlag(DATA_FLAGS, DATA_FLAG_BABY);
     }

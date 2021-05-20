@@ -633,7 +633,7 @@ public class Server {
         this.commandMap = new SimpleCommandMap(this);
 
         // Initialize metrics
-        new NukkitMetrics(this);
+        NukkitMetrics.startNow(this);
 
         this.registerEntities();
         this.registerBlockEntities();
@@ -1678,11 +1678,15 @@ public class Server {
     }
 
     public String getMotd() {
-        return this.getPropertyString("motd", "A Nukkit Powered Server");
+        return this.getPropertyString("motd", "PowerNukkit Server");
     }
 
     public String getSubMotd() {
-        return this.getPropertyString("sub-motd", "https://nukkitx.com");
+        String subMotd = this.getPropertyString("sub-motd", "https://powernukkit.org");
+        if (subMotd.isEmpty()) {
+            subMotd = "https://powernukkit.org"; // The client doesn't allow empty sub-motd in 1.16.210
+        }
+        return subMotd;
     }
 
     public boolean getForceResources() {

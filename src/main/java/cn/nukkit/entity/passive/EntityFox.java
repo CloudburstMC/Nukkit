@@ -26,12 +26,12 @@ public class EntityFox extends EntityAnimal {
 
     @Override
     public float getWidth() {
-        return 0.7f;
+        return 0.6f;
     }
 
     @Override
     public float getHeight() {
-        return 0.6f;
+        return 0.7f;
     }
 
     @Override

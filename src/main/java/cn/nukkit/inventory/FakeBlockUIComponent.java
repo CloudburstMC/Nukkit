@@ -76,4 +76,11 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
         who.dataPacket(pk);
         super.onClose(who);
     }
+
+    @Override
+    public void sendContents(Player... players) {
+        for (int slot = 0; slot < getSize(); slot++) {
+            sendSlot(slot, players);
+        }
+    }
 }

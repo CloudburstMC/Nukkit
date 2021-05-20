@@ -1,0 +1,771 @@
+[
+  {
+    "id": "protection",
+    "nid": 0,
+    "i18n": "enchantment.protect.all",
+    "incompatible": [
+      "blast_protection",
+      "fire_protection",
+      "projectile_protection"
+    ],
+    "weight": 10,
+    "primary": [
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots"
+    ],
+    "secondary": [],
+    "levels": [
+      [1, 12],
+      [12, 23],
+      [23, 34],
+      [34, 45]
+    ]
+  },
+  {
+    "id": "fire_protection",
+    "nid": 1,
+    "i18n": "enchantment.protect.fire",
+    "incompatible": [
+      "blast_protection",
+      "protection",
+      "projectile_protection"
+    ],
+    "weight": 5,
+    "primary": [
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots"
+    ],
+    "secondary": [],
+    "levels": [
+      [10, 18],
+      [18, 26],
+      [26, 34],
+      [34, 42]
+    ]
+  },
+  {
+    "id": "feather_falling",
+    "nid": 2,
+    "i18n": "enchantment.protect.fall",
+    "incompatible": [],
+    "weight": 5,
+    "primary": [
+      "boots"
+    ],
+    "secondary": [],
+    "levels": [
+      [5, 11],
+      [11, 17],
+      [17, 23],
+      [23, 29]
+    ]
+  },
+  {
+    "id": "blast_protection",
+    "nid": 3,
+    "i18n": "enchantment.protect.explosion",
+    "incompatible": [
+      "protection",
+      "fire_protection",
+      "projectile_protection"
+    ],
+    "weight": 2,
+    "primary": [
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots"
+    ],
+    "secondary": [],
+    "levels": [
+      [5, 13],
+      [13, 21],
+      [21, 29],
+      [29, 37]
+    ]
+  },
+  {
+    "id": "projectile_protection",
+    "nid": 4,
+    "i18n": "enchantment.protect.projectile",
+    "incompatible": [
+      "blast_protection",
+      "fire_protection",
+      "protection"
+    ],
+    "weight": 5,
+    "primary": [
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots"
+    ],
+    "secondary": [],
+    "levels": [
+      [3,9],
+      [9,15],
+      [15,21],
+      [21,27]
+    ]
+  },
+  {
+    "id": "respiration",
+    "nid": 6,
+    "i18n": "enchantment.oxygen",
+    "incompatible": [],
+    "weight": 2,
+    "primary": [
+      "helmet"
+    ],
+    "secondary": [],
+    "levels": [
+      [10,40],
+      [20,50],
+      [30,60]
+    ]
+  },
+  {
+    "id": "aqua_affinity",
+    "nid": 8,
+    "i18n": "enchantment.waterWorker",
+    "incompatible": [],
+    "weight": 2,
+    "primary": [
+      "helmet"
+    ],
+    "secondary": [],
+    "levels": [
+      [1, 41]
+    ]
+  },
+  {
+    "id": "thorns",
+    "nid": 5,
+    "i18n": "enchantment.thorns",
+    "incompatible": [],
+    "weight": 1,
+    "primary": [
+      "chestplate"
+    ],
+    "secondary": [
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots"
+    ],
+    "levels": [
+      [10,61],
+      [30,71],
+      [50,81]
+    ]
+  },
+  {
+    "id": "depth_strider",
+    "nid": 7,
+    "i18n": "enchantment.waterWalker",
+    "incompatible": [
+      "frost_walker"
+    ],
+    "weight": 2,
+    "primary": [
+      "boots"
+    ],
+    "secondary": [],
+    "levels":[
+      [10,25],
+      [20,35],
+      [30,45]
+    ]
+  },
+  {
+    "id": "frost_walker",
+    "nid": 25,
+    "i18n": "enchantment.frostwalker",
+    "incompatible": [
+      "depth_strider"
+    ],
+    "weight": 1,
+    "primary": [
+      "boots"
+    ],
+    "secondary": [],
+    "levels": [
+      [10,25],
+      [20,35]
+    ]
+  },
+  {
+    "id": "binding",
+    "nid": 27,
+    "i18n": "enchantment.curse.binding",
+    "incompatible": [
+    ],
+    "weight": 1,
+    "primary": [],
+    "secondary": [
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots",
+      "elytra",
+      "pumpkin",
+      "skull"
+    ],
+    "levels": [
+      [25,50]
+    ]
+  },
+  {
+    "id": "soul_speed",
+    "nid": 36,
+    "i18n": "enchantment.soul_speed",
+    "incompatible": [
+    ],
+    "weight": 1,
+    "primary": [],
+    "secondary": [
+      "boots"
+    ],
+    "levels": [
+      [10,25],
+      [20,35],
+      [30,45]
+    ]
+  },
+  {
+    "id": "sharpness",
+    "nid": 9,
+    "i18n": "enchantment.damage.all",
+    "incompatible": [
+      "bane_of_arthropods",
+      "smite"
+    ],
+    "weight": 10,
+    "primary": [
+      "sword",
+      "axe"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [1,21],
+      [12,32],
+      [23,43],
+      [34,54],
+      [45,65]
+    ]
+  },
+  {
+    "id": "smite",
+    "nid": 10,
+    "i18n": "enchantment.damage.undead",
+    "incompatible": [
+      "bane_of_arthropods",
+      "sharpness"
+    ],
+    "weight": 5,
+    "primary": [
+      "sword",
+      "axe"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [5,25],
+      [13,33],
+      [21,41],
+      [29,49],
+      [37,57]
+    ]
+  },
+  {
+    "id": "bane_of_arthropods",
+    "nid": 11,
+    "i18n": "enchantment.damage.arthropods",
+    "incompatible": [
+      "smite",
+      "sharpness"
+    ],
+    "weight": 5,
+    "primary": [
+      "sword",
+      "axe"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [5,25],
+      [13,33],
+      [21,41],
+      [29,49],
+      [37,57]
+    ]
+  },
+  {
+    "id": "knockback",
+    "nid": 12,
+    "i18n": "enchantment.knockback",
+    "incompatible": [
+    ],
+    "weight": 5,
+    "primary": [
+      "sword"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [5, 61],
+      [25,71]
+    ]
+  },
+  {
+    "id": "fire_aspect",
+    "nid": 13,
+    "i18n": "enchantment.fire",
+    "incompatible": [
+    ],
+    "weight": 2,
+    "primary": [
+      "sword"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [10,61],
+      [30,71]
+    ]
+  },
+  {
+    "id": "looting",
+    "nid": 14,
+    "i18n": "enchantment.lootBonus",
+    "incompatible": [
+    ],
+    "weight": 2,
+    "primary": [
+      "sword"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [15,61],
+      [24,71],
+      [33,81]
+    ]
+  },
+  {
+    "id": "power",
+    "nid": 19,
+    "i18n": "enchantment.arrowDamage",
+    "incompatible": [
+    ],
+    "weight": 10,
+    "primary": [
+      "bow"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [1,16],
+      [11,26],
+      [21,36],
+      [31,46],
+      [41,56]
+    ]
+  },
+  {
+    "id": "punch",
+    "nid": 20,
+    "i18n": "enchantment.arrowKnockback",
+    "incompatible": [
+    ],
+    "weight": 2,
+    "primary": [
+      "bow"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [12,37],
+      [32,57]
+    ]
+  },
+  {
+    "id": "flame",
+    "nid": 21,
+    "i18n": "enchantment.arrowFire",
+    "incompatible": [
+    ],
+    "weight": 2,
+    "primary": [
+      "bow"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [20,50]
+    ]
+  },
+  {
+    "id": "infinity",
+    "nid": 22,
+    "i18n": "enchantment.arrowInfinite",
+    "incompatible": [
+      "mending"
+    ],
+    "weight": 1,
+    "primary": [
+      "bow"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [20, 50]
+    ]
+  },
+  {
+    "id": "efficiency",
+    "nid": 15,
+    "i18n": "enchantment.digging",
+    "incompatible": [
+    ],
+    "weight": 10,
+    "primary": [
+      "pickaxe",
+      "shovel",
+      "axe",
+      "hoe"
+    ],
+    "secondary": [
+      "shears"
+    ],
+    "levels": [
+      [1,61],
+      [11,71],
+      [21,81],
+      [31,91],
+      [41,101]
+    ]
+  },
+  {
+    "id": "silk_touch",
+    "nid": 16,
+    "i18n": "enchantment.untouching",
+    "incompatible": [
+      "fortune"
+    ],
+    "weight": 1,
+    "primary": [
+      "pickaxe",
+      "shovel",
+      "axe",
+      "hoe"
+    ],
+    "secondary": [
+      "shears"
+    ],
+    "levels": [
+      [15,61]
+    ]
+  },
+  {
+    "id": "fortune",
+    "nid": 18,
+    "i18n": "enchantment.lootBonusDigger",
+    "incompatible": [
+      "silk_touch"
+    ],
+    "weight": 2,
+    "primary": [
+      "pickaxe",
+      "shovel",
+      "axe",
+      "hoe"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [15,61],
+      [24,71],
+      [33,81]
+    ]
+  },
+  {
+    "id": "luck_of_the_sea",
+    "nid": 23,
+    "i18n": "enchantment.lootBonusFishing",
+    "incompatible": [
+    ],
+    "weight": 2,
+    "primary": [
+      "fishing_rod"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [15,61],
+      [24,71],
+      [33,81]
+    ]
+  },
+  {
+    "id": "lure",
+    "nid": 24,
+    "i18n": "enchantment.fishingSpeed",
+    "incompatible": [
+    ],
+    "weight": 2,
+    "primary": [
+      "fishing_rod"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [15,61],
+      [24,71],
+      [33,81]
+    ]
+  },
+  {
+    "id": "unbreaking",
+    "nid": 17,
+    "i18n": "enchantment.durability",
+    "incompatible": [
+    ],
+    "weight": 5,
+    "primary": [
+      "pickaxe",
+      "shovel",
+      "axe",
+      "hoe",
+      "fishing_rod",
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots",
+      "sword",
+      "bow",
+      "trident",
+      "crossbow"
+    ],
+    "secondary": [
+      "shears",
+      "flint_and_steel",
+      "shield",
+      "carrot_on_stick",
+      "warped_fungus_on_stick",
+      "elytra"
+    ],
+    "levels": [
+      [5,61],
+      [13,71],
+      [21,81]
+    ]
+  },
+  {
+    "id": "mending",
+    "nid": 26,
+    "i18n": "enchantment.mending",
+    "incompatible": [
+      "infinity"
+    ],
+    "weight": 2,
+    "primary": [
+    ],
+    "secondary": [
+      "pickaxe",
+      "shovel",
+      "axe",
+      "hoe",
+      "fishing_rod",
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots",
+      "sword",
+      "bow",
+      "trident",
+      "crossbow",
+      "shears",
+      "flint_and_steel",
+      "shield",
+      "carrot_on_stick",
+      "warped_fungus_on_stick",
+      "elytra"
+    ],
+    "levels": [
+      [25,75]
+    ]
+  },
+  {
+    "id": "vanishing",
+    "nid": 28,
+    "i18n": "enchantment.curse.vanishing",
+    "incompatible": [
+    ],
+    "weight": 1,
+    "primary": [],
+    "secondary": [
+      "helmet",
+      "chestplate",
+      "leggings",
+      "boots",
+      "pickaxe",
+      "shovel",
+      "axe",
+      "sword",
+      "hoe",
+      "fishing_rod",
+      "bow",
+      "shears",
+      "flint_and_steel",
+      "carrot_on_stick",
+      "warped_fungus_on_stick",
+      "shield",
+      "elytra",
+      "pumpkin",
+      "skull",
+      "trident",
+      "crossbow",
+      "compass"
+    ],
+    "levels": [
+      [25,50]
+    ]
+  },
+  {
+    "id": "channeling",
+    "nid": 32,
+    "i18n": "enchantment.tridentChanneling",
+    "incompatible": [
+      "riptide"
+    ],
+    "weight": 1,
+    "primary": [
+      "trident"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [25,50]
+    ]
+  },
+  {
+    "id": "impaling",
+    "nid": 29,
+    "i18n": "enchantment.tridentImpaling",
+    "incompatible": [
+    ],
+    "weight": 2,
+    "primary": [
+      "trident"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [1,21],
+      [9,29],
+      [17,37],
+      [25,45],
+      [33,53]
+    ]
+  },
+  {
+    "id": "loyalty",
+    "nid": 31,
+    "i18n": "enchantment.tridentLoyalty",
+    "incompatible": [
+      "riptide"
+    ],
+    "weight": 5,
+    "primary": [
+      "trident"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [12,50],
+      [19,50],
+      [26,50]
+    ]
+  },
+  {
+    "id": "riptide",
+    "nid": 30,
+    "i18n": "enchantment.tridentRiptide",
+    "incompatible": [
+      "loyalty",
+      "channeling"
+    ],
+    "weight": 2,
+    "primary": [
+      "trident"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [17,50],
+      [24,50],
+      [31,50]
+    ]
+  },
+  {
+    "id": "multishot",
+    "nid": 33,
+    "i18n": "enchantment.crossbowMultishot",
+    "incompatible": [
+      "piercing"
+    ],
+    "weight": 2,
+    "primary": [
+      "crossbow"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [20,50]
+    ]
+  },
+  {
+    "id": "piercing",
+    "nid": 34,
+    "i18n": "enchantment.crossbowPiercing",
+    "incompatible": [
+      "multishot"
+    ],
+    "weight": 10,
+    "primary": [
+      "crossbow"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [1,50],
+      [11,50],
+      [21,50],
+      [31,50]
+    ]
+  },
+  {
+    "id": "quick_charge",
+    "nid": 35,
+    "i18n": "enchantment.crossbowQuickCharge",
+    "incompatible": [
+    ],
+    "weight": 5,
+    "primary": [
+      "crossbow"
+    ],
+    "secondary": [
+    ],
+    "levels": [
+      [12,50],
+      [32,50],
+      [52,50]
+    ]
+  }
+]

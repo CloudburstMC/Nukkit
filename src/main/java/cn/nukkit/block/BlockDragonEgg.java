@@ -1,11 +1,15 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.event.block.BlockFromToEvent;
+import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockDragonEgg extends BlockFallable {
@@ -60,6 +64,24 @@ public class BlockDragonEgg extends BlockFallable {
             this.teleport();
         }
         return super.onUpdate(type);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int onTouch(@Nullable Player player, Action action) {
+        switch (action) {
+            case RIGHT_CLICK_BLOCK:
+                break;
+            case LEFT_CLICK_BLOCK:
+                if (player != null && player.isCreative()) {
+                    return 0;
+                }
+                break;
+            default:
+                return 0;
+        }
+        return super.onTouch(player, action);
     }
 
     public void teleport() {

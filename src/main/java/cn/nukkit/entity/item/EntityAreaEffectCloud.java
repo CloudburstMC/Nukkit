@@ -110,7 +110,7 @@ public class EntityAreaEffectCloud extends Entity {
     }
     
     public int getPickupCount() {
-        return this.getDataPropertyInt(DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT);
+        return this.getDataPropertyInt(DATA_PICKUP_COUNT);
     }
     
     public void setPickupCount(int pickupCount) {
@@ -118,11 +118,11 @@ public class EntityAreaEffectCloud extends Entity {
     }
     
     public void setPickupCount(int pickupCount, boolean send) {
-        this.setDataProperty(new IntEntityData(DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT, pickupCount), send);
+        this.setDataProperty(new IntEntityData(DATA_PICKUP_COUNT, pickupCount), send);
     } 
     
     public float getRadiusChangeOnPickup() {
-        return this.getDataPropertyFloat(DATA_AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP);
+        return this.getDataPropertyFloat(DATA_CHANGE_ON_PICKUP);
     }
     
     public void setRadiusChangeOnPickup(float radiusChangeOnPickup) {
@@ -130,11 +130,11 @@ public class EntityAreaEffectCloud extends Entity {
     }
     
     public void setRadiusChangeOnPickup(float radiusChangeOnPickup, boolean send) {
-        this.setDataProperty(new FloatEntityData(DATA_AREA_EFFECT_CLOUD_RADIUS_CHANGE_ON_PICKUP, radiusChangeOnPickup), send);
+        this.setDataProperty(new FloatEntityData(DATA_CHANGE_ON_PICKUP, radiusChangeOnPickup), send);
     }
     
     public float getRadiusPerTick() {
-        return this.getDataPropertyFloat(DATA_AREA_EFFECT_CLOUD_RADIUS_PER_TICK);
+        return this.getDataPropertyFloat(DATA_CHANGE_RATE);
     }
     
     public void setRadiusPerTick(float radiusPerTick) {
@@ -142,11 +142,11 @@ public class EntityAreaEffectCloud extends Entity {
     }
     
     public void setRadiusPerTick(float radiusPerTick, boolean send) {
-        this.setDataProperty(new FloatEntityData(DATA_AREA_EFFECT_CLOUD_RADIUS_PER_TICK, radiusPerTick), send);
+        this.setDataProperty(new FloatEntityData(DATA_CHANGE_RATE, radiusPerTick), send);
     }
     
     public long getSpawnTime() {
-        return this.getDataPropertyInt(DATA_AREA_EFFECT_CLOUD_SPAWN_TIME);
+        return this.getDataPropertyInt(DATA_SPAWN_TIME);
     }
     
     public void setSpawnTime(long spawnTime) {
@@ -154,11 +154,11 @@ public class EntityAreaEffectCloud extends Entity {
     }
     
     public void setSpawnTime(long spawnTime, boolean send) {
-        this.setDataProperty(new LongEntityData(DATA_AREA_EFFECT_CLOUD_SPAWN_TIME, spawnTime), send);
+        this.setDataProperty(new LongEntityData(DATA_SPAWN_TIME, spawnTime), send);
     }
     
     public int getDuration() {
-        return this.getDataPropertyInt(DATA_AREA_EFFECT_CLOUD_DURATION);
+        return this.getDataPropertyInt(DATA_DURATION);
     }
     
     public void setDuration(int duration) {
@@ -166,7 +166,7 @@ public class EntityAreaEffectCloud extends Entity {
     }
     
     public void setDuration(int duration, boolean send) {
-        this.setDataProperty(new IntEntityData(DATA_AREA_EFFECT_CLOUD_DURATION, duration), send);
+        this.setDataProperty(new IntEntityData(DATA_DURATION, duration), send);
     }
     
     public float getRadius() {
@@ -200,8 +200,8 @@ public class EntityAreaEffectCloud extends Entity {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_FIRE_IMMUNE, true);
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE, true);
         this.setDataProperty(new ShortEntityData(DATA_AREA_EFFECT_CLOUD_PARTICLE_ID, 32), false);
-        this.setDataProperty(new LongEntityData(DATA_AREA_EFFECT_CLOUD_SPAWN_TIME, this.level.getCurrentTick()), false);
-        this.setDataProperty(new IntEntityData(DATA_AREA_EFFECT_CLOUD_PICKUP_COUNT, 0), false);
+        this.setDataProperty(new LongEntityData(DATA_SPAWN_TIME, this.level.getCurrentTick()), false);
+        this.setDataProperty(new IntEntityData(DATA_PICKUP_COUNT, 0), false);
         
         cloudEffects = new ArrayList<>(1);
         for (CompoundTag effectTag : namedTag.getList("mobEffects", CompoundTag.class).getAll()) {
