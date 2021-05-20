@@ -18,14 +18,14 @@ COPY src/test/resources /src/src/test/resources
 RUN if [ -z "$(ls -A /src/src/main/resources/lang)" ]; then git submodule update --init; fi
 
 # Prepare to build the source
-FROM maven:3.6-jdk-8-alpine as build
+FROM maven:3.8.1-jdk-11-slim as build
 
 # Copy the source
 WORKDIR /src
 COPY --from=prepare /src /src
 
 # Build the source
-RUN mvn -Dmaven.javadoc.skip=true --no-transfer-progress clean package
+RUN mvn -Dmaven.javadoc.skip=true -Denforcer.skip=true --no-transfer-progress clean package
 
 # Final image
 FROM quay.io/pterodactyl/core:java-11 as pterodactyl
