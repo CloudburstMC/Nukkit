@@ -121,33 +121,64 @@ finish_progress()
 
 docker_tags = []
 try:
-    if run_docker_build:
-        start_progress("Executing Docker build")
+    if run_docker_build or run_docker_build_pterodactyl:
+        def build_docker(tag, source):
+            global docker_tags
+            log('-> Executing a docker build for tag', tag)
+            stt = subprocess.call(('docker', 'build', '-t', tag, source))
+            check(stt == 0, "Could not execute a docker build! Status code: " + str(stt))
+            docker_tags += [tag]
+
         docker_version = project_version.replace('-PN', '')
         docker_tag = docker_tag_prefix + ':' + docker_version
-        docker_tags += [docker_tag]
-        log('-> Executing a docker build for tag', docker_tag)
-        status_code = subprocess.call(('docker', 'build', '-t', docker_tag, '.'))
-        check(status_code == 0, "Could not execute a docker build! Status code: " + str(status_code))
-        finish_progress()
-
-        start_progress("Tagging Docker image")
         docker_version_parts = docker_version.split('.')
-        for i in range(len(docker_version_parts)):
+        is_snapshot = docker_version_parts[-1].lower() == "snapshot"
+        if is_snapshot:
             docker_version_parts.pop()
-            if len(docker_version_parts) > 0 and docker_version_parts[-1].isnumeric():
-                docker_sub_version = ".".join(docker_version_parts)
-            elif len(docker_version_parts) == 0:
-                docker_sub_version = "latest"
-            else:
-                break
+        elif run_docker_build:
+            start_progress("Executing Docker build")
+            build_docker(docker_tag, '.')
+            finish_progress()
 
-            if docker_sub_version is not None:
-                docker_sub_tag = docker_tag_prefix + ':' + docker_sub_version
-                log("-> Adding docker tag", docker_sub_tag)
-                cmd('docker', 'tag', docker_tag, docker_sub_tag)
-                docker_tags += [docker_tag]
-        finish_progress()
+        def pterodactyl_tag_name(base, java):
+            return base + '-pterodactyl-java-' + java
+
+        def build_pterodactyl(java):
+            base = docker_tag
+            if is_snapshot:
+                base = "bleeding"
+            build_docker(pterodactyl_tag_name(base, java), './pterodactyl-image-java'+java+'.Dockerfile')
+
+        if run_docker_build_pterodactyl:
+            start_progress("Building pterodactyl images")
+            build_pterodactyl(8)
+            build_pterodactyl(11)
+            finish_progress()
+
+        if not is_snapshot:
+            start_progress("Tagging Docker image")
+            for i in range(len(docker_version_parts)):
+                docker_version_parts.pop()
+                if len(docker_version_parts) > 0 and docker_version_parts[-1].isnumeric():
+                    docker_sub_version = ".".join(docker_version_parts)
+                elif len(docker_version_parts) == 0:
+                    docker_sub_version = "latest"
+                else:
+                    break
+
+                if docker_sub_version is not None:
+                    def add_tag(from_tag, to_tag):
+                        global docker_tags
+                        log("-> Adding docker tag", to_tag)
+                        cmd('docker', 'tag', from_tag, to_tag)
+                        docker_tags += [to_tag]
+
+                    subversion_tag = docker_tag_prefix + ':' + docker_sub_version
+                    add_tag(docker_tag, subversion_tag)
+                    if run_docker_build_pterodactyl:
+                        add_tag(pterodactyl_tag_name(docker_tag, 8), pterodactyl_tag_name(subversion_tag, 8))
+                        add_tag(pterodactyl_tag_name(docker_tag, 11), pterodactyl_tag_name(subversion_tag, 11))
+            finish_progress()
 
     if run_maven_deploy:
         start_progress("Executing Maven Deploy")
