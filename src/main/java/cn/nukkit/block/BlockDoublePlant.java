@@ -66,7 +66,8 @@ public class BlockDoublePlant extends BlockFlowable {
                 }
             } else {
                 // Bottom
-                if (this.down().isTransparent() || !(this.up().getId() == DOUBLE_PLANT)) {
+                Block down = this.down();
+                if ((down.isTransparent() && down.getId() != FARMLAND) || this.up().getId() != DOUBLE_PLANT) {
                     this.getLevel().useBreakOn(this);
                     return Level.BLOCK_UPDATE_NORMAL;
                 }
