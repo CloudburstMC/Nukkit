@@ -517,7 +517,7 @@ public class BlockStateRegistry {
     @AllArgsConstructor
     @ToString
     @EqualsAndHashCode
-    private class Registration {
+    private static class Registration {
         @Nullable
         private BlockState state;
         

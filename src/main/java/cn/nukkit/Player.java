@@ -1161,7 +1161,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 log.trace("Outbound {}: {}", this.getName(), packet);
             }
 
-            this.interfaz.putPacket(this, packet, false, true);
+            this.interfaz.putPacket(this, packet, false, false);
         }
         return true;
     }
@@ -2251,10 +2251,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
         startGamePacket.dimension = (byte) getLevel().getDimension();
         //startGamePacket.isInventoryServerAuthoritative = true;
-        this.dataPacket(startGamePacket);
-        
+      
+        this.dataPacketImmediately(startGamePacket);
+      
         this.dataPacket(new ItemComponentPacket());
-        
+
         this.dataPacket(new BiomeDefinitionListPacket());
         this.dataPacket(new AvailableEntityIdentifiersPacket());
         this.inventory.sendCreativeContents();
@@ -2947,11 +2948,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             ((EntityRideable) riding).mountEntity(this);
                             break;
                         case InteractPacket.ACTION_OPEN_INVENTORY:
-                            if (targetEntity.getId() != this.getId()) break;
+                            if (targetEntity instanceof EntityRideable) {
+                                if (!(targetEntity instanceof EntityBoat || targetEntity instanceof EntityMinecartEmpty)) {
+                                    break;
+                                }
+                            } else if (targetEntity.getId() != this.getId()) {
+                                break;
+                            }
+                            
                             if (!this.inventoryOpen) {
                                 this.inventory.open(this);
                                 this.inventoryOpen = true;
                             }
+                            
                             break;
                     }
                     break;
@@ -3297,6 +3306,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     InventoryTransactionPacket transactionPacket = (InventoryTransactionPacket) packet;
 
+                    // Nasty hack because the client won't change the right packet in survival when creating netherite stuff
+                    // so we are emulating what Mojang should be sending
                     if (transactionPacket.transactionType == InventoryTransactionPacket.TYPE_MISMATCH
                             && !isCreative()
                             && (inv = getWindowById(SMITHING_WINDOW_ID)) instanceof SmithingInventory) {
@@ -3469,7 +3480,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     this.grindstoneTransaction = null;
                                 }
                             }
-                        } if (SmithingTransaction.checkForItemPart(actions)) {
+                        } else if (SmithingTransaction.checkForItemPart(actions)) {
                             if (this.smithingTransaction == null) {
                                 this.smithingTransaction = new SmithingTransaction(this, actions);
                             } else {
@@ -3536,26 +3547,40 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.enchantTransaction = null;
                         }
                     } else if (this.repairItemTransaction != null) {
-                        if (GrindstoneTransaction.checkForItemPart(actions)) {
-                            for (InventoryAction action : actions) {
-                                this.grindstoneTransaction.addAction(action);
-                            }
-                            return;
-                        } if (SmithingTransaction.checkForItemPart(actions)) {
-                            for (InventoryAction action : actions) {
-                                this.smithingTransaction.addAction(action);
-                            }
-                            return;
-                        } else if (RepairItemTransaction.checkForRepairItemPart(actions)) {
+                        if (RepairItemTransaction.checkForRepairItemPart(actions)) {
                             for (InventoryAction action : actions) {
                                 this.repairItemTransaction.addAction(action);
                             }
                             return;
                         } else {
-                            this.server.getLogger().debug("Got unexpected normal inventory action with incomplete repair item transaction from " + this.getName() + ", refusing to execute repair item " + transactionPacket.toString());
+                            log.debug("Got unexpected normal inventory action with incomplete repair item transaction from " + this.getName() + ", refusing to execute repair item " + transactionPacket.toString());
                             this.removeAllWindows(false);
                             this.sendAllInventories();
                             this.repairItemTransaction = null;
+                        }
+                    } else if (this.grindstoneTransaction != null) {
+                        if (GrindstoneTransaction.checkForItemPart(actions)) {
+                            for (InventoryAction action : actions) {
+                                this.grindstoneTransaction.addAction(action);
+                            }
+                            return;
+                        } else {
+                            log.debug("Got unexpected normal inventory action with incomplete grindstone transaction from {}, refusing to execute use the grindstone {}", this.getName(), transactionPacket.toString());
+                            this.removeAllWindows(false);
+                            this.sendAllInventories();
+                            this.grindstoneTransaction = null;
+                        }
+                    } else if (this.smithingTransaction != null) {
+                        if (SmithingTransaction.checkForItemPart(actions)) {
+                            for (InventoryAction action : actions) {
+                                this.smithingTransaction.addAction(action);
+                            }
+                            return;
+                        } else {
+                            log.debug("Got unexpected normal inventory action with incomplete smithing table transaction from {}, refusing to execute use the smithing table {}", this.getName(), transactionPacket.toString());
+                            this.removeAllWindows(false);
+                            this.sendAllInventories();
+                            this.smithingTransaction = null;
                         }
                     }
 
@@ -4242,7 +4267,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (notify && reason.length() > 0) {
                 DisconnectPacket pk = new DisconnectPacket();
                 pk.message = reason;
-                this.dataPacket(pk);
+                this.dataPacketImmediately(pk); // Send DisconnectPacket before the connection is closed, so its reason will show properly
             }
 
             this.connected = false;
@@ -5964,5 +5989,29 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.source = source;
         pk.message = message;
         this.dataPacket(pk);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean dataPacketImmediately(DataPacket packet) {
+        if (!this.connected) {
+            return false;
+        }
+
+        try (Timing ignored = Timings.getSendDataPacketTiming(packet)) {
+            DataPacketSendEvent ev = new DataPacketSendEvent(this, packet);
+            this.server.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return false;
+            }
+
+            if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
+                log.trace("Immediate Outbound {}: {}", this.getName(), packet);
+            }
+
+            this.interfaz.putPacket(this, packet, false, true);
+        }
+        
+        return true;
     }
 }

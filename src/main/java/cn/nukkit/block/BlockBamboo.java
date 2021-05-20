@@ -250,17 +250,6 @@ public class BlockBamboo extends BlockTransparentMeta {
     }
 
     @Override
-    public double getBreakTime(Item item, Player player) {
-        double breakTime = super.getBreakTime(item, player);
-
-        if (item.isSword()) {
-            breakTime /= 30;
-        }
-
-        return breakTime;
-    }
-
-    @Override
     public boolean canBeActivated() {
         return true;
     }

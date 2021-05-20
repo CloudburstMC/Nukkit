@@ -21,6 +21,7 @@ run_test_build = True
 run_tests = True
 run_docker_build = True
 run_docker_push = True
+run_docker_build_pterodactyl = True
 run_maven_deploy = True
 run_git_push = True
 create_git_tag = True

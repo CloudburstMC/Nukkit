@@ -26,6 +26,7 @@ from release_config import *
 # run_tests = False
 # run_docker_build = False
 # run_docker_push = False
+# run_docker_build_pterodactyl = True
 # run_maven_deploy = False
 # run_git_push = False
 # create_git_tag = False

@@ -18,8 +18,6 @@ import cn.nukkit.event.entity.EntityPortalEnterEvent.PortalType;
 import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
-import cn.nukkit.inventory.PlayerInventory;
-import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.level.*;
@@ -596,15 +594,27 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataProperty(new FloatEntityData(DATA_SCALE, scale), false);
         this.setDataProperty(new ByteEntityData(DATA_COLOR, 0), false);
 
-        this.chunk.addEntity(this);
-        this.level.addEntity(this);
+        try {
+            this.chunk.addEntity(this);
+            this.level.addEntity(this);
 
-        this.initEntity();
+            this.initEntity();
 
-        this.lastUpdate = this.server.getTick();
-        this.server.getPluginManager().callEvent(new EntitySpawnEvent(this));
+            this.lastUpdate = this.server.getTick();
 
-        this.scheduleUpdate();
+            EntitySpawnEvent event = new EntitySpawnEvent(this);
+
+            this.server.getPluginManager().callEvent(event);
+
+            if (event.isCancelled()) {
+                this.close(false);
+            } else {
+                this.scheduleUpdate();
+            }
+        } catch(Exception e) {
+            this.close(false);
+            throw e;
+        }
     }
 
     public boolean hasCustomName() {
@@ -2530,8 +2540,51 @@ public abstract class Entity extends Location implements Metadatable {
     public void close() {
         if (!this.closed) {
             this.closed = true;
-            this.server.getPluginManager().callEvent(new EntityDespawnEvent(this));
+
+            try {
+                EntityDespawnEvent event = new EntityDespawnEvent(this);
+
+                this.server.getPluginManager().callEvent(event);
+
+                if (event.isCancelled()) {
+                    this.closed = false;
+                    return;
+                }
+            } catch (Throwable e) {
+                this.closed = false;
+                throw e;
+            }
+
+            try {
+                this.despawnFromAll();
+            } finally {
+                try {
+                    if (this.chunk != null) {
+                        this.chunk.removeEntity(this);
+                    }
+                } finally {
+                    if (this.level != null) {
+                        this.level.removeEntity(this);
+                    }
+                }
+            }
+        }
+    }
+
+    private void close(Boolean despawn) {
+        if (!this.closed) {
+            this.closed = true;
+
+            if (despawn) {
+                EntityDespawnEvent event = new EntityDespawnEvent(this);
+
+                this.server.getPluginManager().callEvent(event);
+
+                if (event.isCancelled()) return;
+            }
+
             this.despawnFromAll();
+
             if (this.chunk != null) {
                 this.chunk.removeEntity(this);
             }
