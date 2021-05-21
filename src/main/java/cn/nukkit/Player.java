@@ -4010,6 +4010,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             pk.respawnState = RespawnPacket.STATE_SEARCHING_FOR_SPAWN;
 
             this.dataPacket(pk);
+
+            if (level.getGameRules().getBoolean(GameRule.DO_IMMEDIATE_RESPAWN)) {
+                SetHealthPacket healthPk = new SetHealthPacket();
+                healthPk.health = this.getMaxHealth();
+                this.dataPacket(healthPk);
+            }
         }
     }
 
