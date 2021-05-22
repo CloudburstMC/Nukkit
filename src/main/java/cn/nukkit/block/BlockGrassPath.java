@@ -6,6 +6,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
@@ -16,7 +17,6 @@ import javax.annotation.Nonnull;
  * @author xtypr
  * @since 2015/11/22
  */
-
 public class BlockGrassPath extends BlockGrass {
 
     public BlockGrassPath() {
@@ -29,7 +29,7 @@ public class BlockGrassPath extends BlockGrass {
 
     @Override
     public String getName() {
-        return "Grass Path";
+        return "Dirt Path";
     }
 
     @Override
@@ -37,15 +37,19 @@ public class BlockGrassPath extends BlockGrass {
         return ItemTool.TYPE_SHOVEL;
     }
 
-    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Returns y+1, making this a normal cube")
     @Override
     public double getMaxY() {
-        return this.y +1; // Even though the block is visually smaller, the actual bounding box is just a normal cube 
+        return this.y + 1;
+    }
+    
+    @Override
+    public double getHardness() {
+        return 0.65;
     }
 
     @Override
     public double getResistance() {
-        return 3.25;
+        return 0.65;
     }
 
     @Override
@@ -60,6 +64,13 @@ public class BlockGrassPath extends BlockGrass {
 
     @Override
     public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.up().isSolid()) {
+                this.level.setBlock(this, Block.get(BlockID.DIRT), false, true);
+            }
+            
+            return Level.BLOCK_UPDATE_NORMAL;
+        }
         return 0;
     }
 

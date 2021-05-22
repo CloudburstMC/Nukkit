@@ -1,6 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockBeehive;
 import cn.nukkit.block.BlockFlower;
@@ -11,12 +12,18 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * @author joserobjr
+ */
+@Since("1.1.1.0-PN")
 public class EntityBee extends EntityAnimal {
 
+    @Since("1.1.1.0-PN")
     public static final int NETWORK_ID = 122;
     
     private int beehiveTimer = 600;
-    
+
+    @Since("1.1.1.0-PN")
     public EntityBee(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -29,31 +36,35 @@ public class EntityBee extends EntityAnimal {
     @Override
     public float getWidth() {
         if (this.isBaby()) {
-            return 0.35f;
+            return 0.275f;
         }
-        return 0.7f;
+        return 0.55f;
     }
 
     @Override
     public float getHeight() {
         if (this.isBaby()) {
-            return 0.30f;
+            return 0.25f;
         }
-        return 0.6f;
+        return 0.5f;
     }
 
+    @Since("1.1.1.0-PN")
     public boolean getHasNectar() {
         return false;
     }
 
+    @Since("1.1.1.0-PN")
     public void setHasNectar(boolean hasNectar) {
     
     }
-    
+
+    @Since("1.1.1.0-PN")
     public boolean isAngry() {
         return false;
     }
-    
+
+    @Since("1.1.1.0-PN")
     public void setAngry(boolean angry) {
     
     }
@@ -95,14 +106,17 @@ public class EntityBee extends EntityAnimal {
         this.setMaxHealth(10);
     }
 
+    @Since("1.1.1.0-PN")
     public void nectarDelivered(BlockEntityBeehive blockEntityBeehive) {
 
     }
-    
+
+    @Since("1.1.1.0-PN")
     public void leftBeehive(BlockEntityBeehive blockEntityBeehive) {
     
     }
-    
+
+    @Since("1.1.1.0-PN")
     public void setAngry(Player player) {
     
     }

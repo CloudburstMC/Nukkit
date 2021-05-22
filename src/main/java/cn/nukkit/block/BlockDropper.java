@@ -5,8 +5,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDropper;
-import cn.nukkit.dispenser.DefaultDispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehavior;
+import cn.nukkit.dispenser.DropperDispenseBehavior;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
@@ -54,9 +54,20 @@ public class BlockDropper extends BlockDispenser {
         super.dispense();
     }
 
+    @PowerNukkitDifference(info = "Spend items in container, the dropper faces to (if there is one).", since = "1.4.0.0-PN")
     @Override
     protected DispenseBehavior getDispenseBehavior(Item item) {
-        return new DefaultDispenseBehavior();
+        return new DropperDispenseBehavior();
+    }
+
+    @Override
+    public double getResistance() {
+        return 3.5;
+    }
+
+    @Override
+    public double getHardness() {
+        return 3.5;
     }
 
     @Override

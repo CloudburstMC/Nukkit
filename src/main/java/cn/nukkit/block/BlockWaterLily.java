@@ -116,4 +116,9 @@ public class BlockWaterLily extends BlockFlowable {
     public boolean canPassThrough() {
         return false;
     }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
 }

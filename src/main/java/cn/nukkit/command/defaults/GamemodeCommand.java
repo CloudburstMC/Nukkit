@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
+import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
@@ -25,13 +26,12 @@ public class GamemodeCommand extends VanillaCommand {
                 "nukkit.command.gamemode.other");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("mode", CommandParamType.INT, false),
-                new CommandParameter("player", CommandParamType.TARGET, true)
+                CommandParameter.newType("gameMode", CommandParamType.INT),
+                CommandParameter.newType("player", true, CommandParamType.TARGET)
         });
         this.commandParameters.put("byString", new CommandParameter[]{
-                new CommandParameter("mode", new String[]{"survival", "s", "creative", "c",
-                        "adventure", "a", "spectator", "spc", "view", "v"}),
-                new CommandParameter("player", CommandParamType.TARGET, true)
+                CommandParameter.newEnum("gameMode", CommandEnum.ENUM_GAMEMODE),
+                CommandParameter.newType("player", true, CommandParamType.TARGET)
         });
     }
 
@@ -76,12 +76,11 @@ public class GamemodeCommand extends VanillaCommand {
         if (!((Player) target).setGamemode(gameMode)) {
             sender.sendMessage("Game mode update for " + target.getName() + " failed");
         } else {
-            String gamemodeString = Server.getGamemodeString(gameMode);
             if (target.equals(sender)) {
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", gamemodeString));
+                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(gameMode)));
             } else {
-                target.sendMessage(new TranslationContainer("gameMode.changed", gamemodeString));
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", gamemodeString, target.getName()));
+                target.sendMessage(new TranslationContainer("gameMode.changed", Server.getGamemodeString(gameMode)));
+                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", target.getName(), Server.getGamemodeString(gameMode)));
             }
         }
 

@@ -27,7 +27,6 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
     public static final int NETWORK_ID = 97;
     private int fuse;
-    private boolean activated = false;
 
     public EntityMinecartTNT(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -105,6 +104,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
             return;
         }
         Explosion explosion = new Explosion(this, event.getForce(), this);
+        explosion.setFireChance(event.getFireChance());
         if (event.isBlockBreaking()) {
             explosion.explodeA();
         }

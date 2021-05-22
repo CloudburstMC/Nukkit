@@ -74,6 +74,7 @@ public interface BlockID {
     int TORCH = 50;
     int FIRE = 51;
     int MONSTER_SPAWNER = 52;
+    @PowerNukkitOnly @Since("1.3.2.0-PN") int MOB_SPAWNER = MONSTER_SPAWNER;
     int WOOD_STAIRS = 53;
     int WOODEN_STAIRS = 53;
     int OAK_WOOD_STAIRS = 53;
@@ -301,7 +302,8 @@ public interface BlockID {
     int RED_GLAZED_TERRACOTTA = 234;
     int BLACK_GLAZED_TERRACOTTA = 235;
     int CONCRETE = 236;
-    int CONCRETE_POWDER = 237;
+    @Since("1.4.0.0-PN") @PowerNukkitOnly int CONCRETEPOWDER = 237;
+    int CONCRETE_POWDER = CONCRETEPOWDER;
 
     int CHORUS_PLANT = 240;
     int STAINED_GLASS = 241;
@@ -474,7 +476,7 @@ public interface BlockID {
     int SOUL_LANTERN = 524;
     int NETHERITE_BLOCK = 525;
     int ANCIENT_DERBRIS = 526;
-    //int RESPAWN_ANCHOR = 527;
+    int RESPAWN_ANCHOR = 527;
     int BLACKSTONE = 528;
     int POLISHED_BLACKSTONE_BRICKS = 529;
     int POLISHED_BLACKSTONE_BRICK_STAIRS = 530;
@@ -507,4 +509,5 @@ public interface BlockID {
     int CHISELED_NETHER_BRICKS = 557;
     int CRACKED_NETHER_BRICKS = 558;
     int QUARTZ_BRICKS = 559;
+    //int UNKNOWN = 600;
 }

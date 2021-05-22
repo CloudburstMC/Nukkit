@@ -91,7 +91,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_IGNITED, true);
         this.setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
 
-        this.getLevel().addSound(this, Sound.RANDOM_FIZZ);
+        this.getLevel().addSound(this, Sound.RANDOM_FUSE);
     }
 
 
@@ -168,6 +168,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
             return;
         }
         Explosion explosion = new Explosion(this, event.getForce(), this);
+        explosion.setFireChance(event.getFireChance());
         if (event.isBlockBreaking()) {
             explosion.explodeA();
         }

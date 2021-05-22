@@ -13,6 +13,7 @@ import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBucket;
+import cn.nukkit.item.MinecraftItemID;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.potion.Effect;
@@ -94,41 +95,37 @@ public class BlockCauldronLava extends BlockCauldron {
     
         switch (item.getId()) {
             case Item.BUCKET:
+                ItemBucket bucket = (ItemBucket) item;
+                if (bucket.getFishEntityId() != null) {
+                    break;
+                }
                 if (item.getDamage() == 0) { //empty
                     if (!isFull() || cauldron.isCustomColor() || cauldron.hasPotion()) {
                         break;
                     }
     
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(10);//lava bucket
-    
-                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, bucket);
+                    PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, this, null, this, item, MinecraftItemID.LAVA_BUCKET.get(1, bucket.getCompoundTag()));
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        replaceBucket(item, player, ev.getItem());
+                        replaceBucket(bucket, player, ev.getItem());
                         this.setFillLevel(0);//empty
                         this.level.setBlock(this, new BlockCauldron(0), true);
                         cauldron.clearCustomColor();
                         this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.BUCKET_FILL_LAVA);
                     }
-                } else if (item.getDamage() == 8 || item.getDamage() == 10) { //water or lava bucket
+                } else if (bucket.isWater() || bucket.isLava()) { //water or lava bucket
                     if (isFull() && !cauldron.isCustomColor() && !cauldron.hasPotion() && item.getDamage() == 10) {
                         break;
                     }
     
-                    ItemBucket bucket = (ItemBucket) item.clone();
-                    bucket.setCount(1);
-                    bucket.setDamage(0);//empty bucket
-    
-                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, bucket);
+                    PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, this, null, this, item, MinecraftItemID.BUCKET.get(1, bucket.getCompoundTag()));
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
-                        replaceBucket(item, player, ev.getItem());
+                        replaceBucket(bucket, player, ev.getItem());
     
                         if (cauldron.hasPotion()) {//if has potion
                             clearWithFizz(cauldron);
-                        } else if (item.getDamage() == 10) { //lava bucket
+                        } else if (bucket.isLava()) { //lava bucket
                             this.setFillLevel(5);//fill
                             cauldron.clearCustomColor();
                             this.level.setBlock(this, this, true);

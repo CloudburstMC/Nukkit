@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.API;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
@@ -22,7 +23,17 @@ public class GrindstoneInventory extends FakeBlockUIComponent {
     private static final int SLOT_FIRST_ITEM = 0;
     private static final int SLOT_SECOND_ITEM = 1;
     private static final int SLOT_RESULT = 50 - OFFSET;
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @API(usage = API.Usage.INCUBATING, definition = API.Definition.INTERNAL)
+    public static final int GRINDSTONE_EQUIPMENT_UI_SLOT = OFFSET + SLOT_FIRST_ITEM;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @API(usage = API.Usage.INCUBATING, definition = API.Definition.INTERNAL)
+    public static final int GRINDSTONE_INGREDIENT_UI_SLOT = OFFSET + SLOT_SECOND_ITEM;
+
     private int resultExperience;
 
     @PowerNukkitOnly
@@ -153,7 +164,7 @@ public class GrindstoneInventory extends FakeBlockUIComponent {
         CompoundTag tag = result.getNamedTag();
         if (tag == null) tag = new CompoundTag();
         tag.remove("ench");
-        tag.putInt("RepairCost", 0);
+        
         result.setCompoundTag(tag);
         if (!secondItem.isNull() && firstItem.getMaxDurability() > 0) {
             int first = firstItem.getMaxDurability() - firstItem.getDamage();

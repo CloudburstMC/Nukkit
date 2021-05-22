@@ -65,7 +65,7 @@ public class MainLogger extends ThreadedLogger {
     }
 
     public void logException(Throwable t) {
-        log.throwing(t);
+        log.catching(t);
     }
 
     @Override

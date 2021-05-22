@@ -7,9 +7,12 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
+import cn.nukkit.Player;
 import cn.nukkit.math.BlockFace;
 
 import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.event.block.BlockIgniteEvent;
+import cn.nukkit.network.protocol.LevelEventPacket;
 
 /**
  * @author PetteriM1
@@ -35,6 +38,10 @@ public class ItemFireCharge extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+        if (player.isAdventure()) {
+            return false;
+        }
+
         if (block.getId() == AIR && (target.isSolid() || target.getBurnChance() > 0)) {
             if (target.getId() == OBSIDIAN) {
                 if (level.createPortal(target)) {
@@ -54,7 +61,7 @@ public class ItemFireCharge extends Item {
 
                 if (!e.isCancelled()) {
                     level.setBlock(fire, fire, true);
-                    level.addSound(block, Sound.MOB_GHAST_FIREBALL);
+                    level.addLevelEvent(block, LevelEventPacket.EVENT_SOUND_BLAZE_SHOOT, 78642);
                     level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
                 }
                 if (player.isSurvival()) {

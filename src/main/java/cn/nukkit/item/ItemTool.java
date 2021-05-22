@@ -23,8 +23,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TIER_STONE = 3;
     public static final int TIER_IRON = 4;
     public static final int TIER_DIAMOND = 5;
-    @PowerNukkitOnly @Since("1.4.0.0-PN")
-    public static final int TIER_NETHERITE = dynamic(6);
+    @Since("1.3.2.0-PN") public static final int TIER_NETHERITE = 6;
 
     public static final int TYPE_NONE = 0;
     public static final int TYPE_SWORD = 1;
@@ -32,8 +31,8 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TYPE_PICKAXE = 3;
     public static final int TYPE_AXE = 4;
     public static final int TYPE_SHEARS = 5;
-    @PowerNukkitOnly @Since("1.4.0.0-PN")
-    public static final int TYPE_HOE = dynamic(6);
+    @Since("1.3.2.0-PN") public static final int TYPE_HOE = 6;
+    
     /**
      * Same breaking speed independent of the tool.
      */
@@ -45,12 +44,13 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_STONE = dynamic(132);
     public static final int DURABILITY_IRON = dynamic(251);
     public static final int DURABILITY_DIAMOND = dynamic(1562);
-    public static final int DURABILITY_NETHERITE = dynamic(2032);
+    @Since("1.3.2.0-PN") public static final int DURABILITY_NETHERITE = dynamic(2032);
     public static final int DURABILITY_FLINT_STEEL = dynamic(65);
     public static final int DURABILITY_SHEARS = dynamic(239);
     public static final int DURABILITY_BOW = dynamic(385);
     public static final int DURABILITY_TRIDENT = dynamic(251);
     public static final int DURABILITY_FISHING_ROD = dynamic(65);
+    @Since("1.4.0.0-PN") public static final int DURABILITY_CROSSBOW = dynamic(465);
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -110,8 +110,9 @@ public abstract class ItemTool extends Item implements ItemDurable {
         if (block.getToolType() == ItemTool.TYPE_PICKAXE && this.isPickaxe() ||
                 block.getToolType() == ItemTool.TYPE_SHOVEL && this.isShovel() ||
                 block.getToolType() == ItemTool.TYPE_AXE && this.isAxe() ||
+                block.getToolType() == ItemTool.TYPE_HOE && this.isHoe() ||
                 block.getToolType() == ItemTool.TYPE_SWORD && this.isSword() ||
-                block.getToolType() == ItemTool.SHEARS && this.isShears() ||
+                block.getToolType() == ItemTool.TYPE_SHEARS && this.isShears() ||
                 block.getToolType() == ItemTool.TYPE_HOE && this.isHoe()
                 ) {
             this.meta++;
@@ -189,7 +190,16 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean isTool() {
-        return (this.id == FLINT_STEEL || this.id == SHEARS || this.id == BOW || this.id == SHIELD  || this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe());
+        switch (this.id) {
+            case FLINT_STEEL:
+            case SHEARS:
+            case BOW:
+            case CROSSBOW:
+            case SHIELD:
+                return true;
+            default:
+                return this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe();
+        }
     }
 
     @Override

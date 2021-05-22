@@ -9,6 +9,7 @@ import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
+import cn.nukkit.blockproperty.value.BellAttachmentType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
@@ -99,7 +100,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
             // If the bell is standing and follow the path, make it tall
             case BELL:
                 BlockBell bell = (BlockBell) above;
-                return bell.getAttachmentType() == BlockBell.TYPE_ATTACHMENT_STANDING
+                return bell.getBellAttachmentType() == BellAttachmentType.STANDING
                         && bell.getBlockFace().getAxis() != face.getAxis();
             default:
                 if (above instanceof BlockWallBase) {
@@ -157,7 +158,8 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
                 try {
                     connect(blockFace, above, false);
                 } catch (RuntimeException e) {
-                    log.error("Failed to connect the block "+this+" at "+getLocation()+" to "+blockFace+" which is "+side+" at "+side.getLocation());
+                    log.error("Failed to connect the block {} at {} to {} which is {} at {}", 
+                            this, getLocation(), blockFace, side, side.getLocation(), e);
                     throw e;
                 }
             } else {
@@ -320,7 +322,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
             // If the bell is standing and don't follow the path, make it a post
             case BELL:
                 BlockBell bell = (BlockBell) above;
-                if (bell.getAttachmentType() == BlockBell.TYPE_ATTACHMENT_STANDING
+                if (bell.getBellAttachmentType() == BellAttachmentType.STANDING
                         && bell.getBlockFace().getAxis() == axis) {
                     return true;
                 }

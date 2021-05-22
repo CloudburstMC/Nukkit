@@ -53,6 +53,11 @@ public class BlockSoulSand extends BlockSolid {
     }
 
     @Override
+    public boolean isSoulSpeedCompatible() {
+        return true;
+    }
+
+    @Override
     public void onEntityCollide(Entity entity) {
         entity.motionX *= 0.4d;
         entity.motionZ *= 0.4d;

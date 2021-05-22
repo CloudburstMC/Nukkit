@@ -2,8 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.api.PowerNukkitDifference;
-import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.*;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
@@ -19,13 +18,9 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.nbt.tag.StringTag;
-import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.nbt.tag.*;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
@@ -48,12 +43,24 @@ import java.util.stream.Stream;
  */
 @Log4j2
 public class Item implements Cloneable, BlockID, ItemID {
-    //Normal Item IDs
-    
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final Item[] EMPTY_ARRAY = new Item[0];
     
+    /**
+     * Groups:
+     * <ol>
+     *     <li>namespace (optional)</li>
+     *     <li>item name (choice)</li>
+     *     <li>damage (optional, for item name)</li>
+     *     <li>numeric id (choice)</li>
+     *     <li>damage (optional, for numeric id)</li>
+     * </ol>
+     */
+    private static final Pattern ITEM_STRING_PATTERN = Pattern.compile(
+            //       1:namespace    2:name           3:damage   4:num-id    5:damage
+            "^(?:(?:([a-z_]\\w*):)?([a-z._]\\w*)(?::(-?\\d+))?|(-?\\d+)(?::(-?\\d+))?)$");
+
     protected static String UNKNOWN_STR = "Unknown";
     public static Class[] list = null;
     
@@ -98,7 +105,11 @@ public class Item implements Cloneable, BlockID, ItemID {
     private byte[] tags = EmptyArrays.EMPTY_BYTES;
     private transient CompoundTag cachedNBT = null;
     public int count;
+
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Unused", replaceWith = "meta or getDamage()")
     protected int durability = 0;
+
     protected String name;
 
     public Item(int id) {
@@ -309,7 +320,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[PRISMARINE_CRYSTALS] = ItemPrismarineCrystals.class; //422
             list[RAW_MUTTON] = ItemMuttonRaw.class; //423
             list[COOKED_MUTTON] = ItemMuttonCooked.class; //424
-            list[Item.ARMOR_STAND] = ItemArmorStand.class; //425
+            list[ARMOR_STAND] = ItemArmorStand.class; //425
             list[END_CRYSTAL] = ItemEndCrystal.class; //426
             list[SPRUCE_DOOR] = ItemDoorSpruce.class; //427
             list[BIRCH_DOOR] = ItemDoorBirch.class; //428
@@ -349,6 +360,7 @@ public class Item implements Cloneable, BlockID, ItemID {
             
             list[TURTLE_SHELL] = ItemTurtleShell.class; //469
 
+            list[CROSSBOW] = ItemCrossbow.class; //471
             list[SPRUCE_SIGN] = ItemSpruceSign.class; //472
             list[BIRCH_SIGN] = ItemBirchSign.class; //473
             list[JUNGLE_SIGN] = ItemJungleSign.class; //474
@@ -398,9 +410,9 @@ public class Item implements Cloneable, BlockID, ItemID {
             list[CHAIN] = ItemChain.class; //758
             list[RECORD_PIGSTEP] = ItemRecordPigstep.class; //759
             list[NETHER_SPROUTS] = ItemNetherSprouts.class; //760
-            
-            list[SOUL_CAMPFIRE] = ItemCampfireSoul.class; //801
 
+            list[SOUL_CAMPFIRE] = ItemCampfireSoul.class; //801
+            
             for (int i = 0; i < 256; ++i) {
                 if (Block.list[i] != null) {
                     list[i] = Block.list[i];
@@ -445,9 +457,9 @@ public class Item implements Cloneable, BlockID, ItemID {
 
         for (Map map : list) {
             try {
-                addCreativeItem(fromJson(map));
+                addCreativeItem(fromJsonStringId(map));
             } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
+                log.error("Error while registering a creative item", e);
             }
         }
     }
@@ -551,12 +563,15 @@ public class Item implements Cloneable, BlockID, ItemID {
                         state.validate();
                         item = state.asItemBlock(count);
                     } catch (InvalidBlockPropertyMetaException | InvalidBlockStateException e) {
-                        log.warn("Attempted to get an ItemBlock with invalid block state in memory: "+state+", trying to repair the block state...");
+                        log.warn("Attempted to get an ItemBlock with invalid block state in memory: {}, trying to repair the block state...", state);
+                        log.catching(org.apache.logging.log4j.Level.DEBUG, e);
                         Block repaired = state.getBlockRepairing(null, 0, 0, 0);
                         item = repaired.asItemBlock(count);
-                        log.error("Attempted to get an illegal item block " + id + ":" + meta + " ("+blockId+"), the meta was changed to " + item.getDamage());
+                        log.error("Attempted to get an illegal item block {}:{} ({}), the meta was changed to {}",
+                                id, meta, blockId, item.getDamage(), e);
                     } catch (UnknownRuntimeIdException e) {
-                        log.warn("Attempted to get an illegal item block "+id+":"+meta+ " ("+blockId+"), the runtime id was unknown and the meta was changed to 0");
+                        log.warn("Attempted to get an illegal item block {}:{} ({}), the runtime id was unknown and the meta was changed to 0",
+                                id, meta, blockId, e);
                         item = BlockState.of(id).asItemBlock(count);
                     }
                 }
@@ -573,68 +588,91 @@ public class Item implements Cloneable, BlockID, ItemID {
             if (tags.length != 0) {
                 item.setCompoundTag(tags);
             }
-
+            
             return item;
         } catch (Exception e) {
-            log.error("Error getting the item " + id + ":" + meta + (id < 0? " ("+(255 - id)+")":"") + "! Returning an unsafe item stack!", e);
+            log.error("Error getting the item {}:{}{}! Returning an unsafe item stack!", 
+                    id, meta, id < 0? " ("+(255 - id)+")":"", e);
             return new Item(id, meta, count).setCompoundTag(tags);
         }
     }
 
-    private static final Pattern NAMESPACED = Pattern.compile("^(?:([a-zA-Z][a-zA-Z0-9_-]*):)?([a-zA-Z][a-zA-Z0-9_-]*)(?::(\\d+))?$");
-    private static final Pattern ITEM_ID = Pattern.compile("^(-?[1-9]\\d*)(?::(\\d+))?$");
-    
-    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Improve namespaced name handling and allows to get custom blocks by name")
+    @PowerNukkitDifference(since = "1.3.2.0-PN", info = "Improve namespaced name handling and allows to get custom blocks by name")
     public static Item fromString(String str) {
-        Matcher matcher = NAMESPACED.matcher(str);
-        int id = 0;
-        int meta = 0;
-        String metaNumber;
-        if (matcher.matches()) {
-            String namespace = matcher.group(1);
-            String itemName = matcher.group(2).toLowerCase();
-            metaNumber = matcher.group(3);
-            if (namespace == null || namespace.isEmpty()) {
-                namespace = "minecraft";
-            } else {
-                namespace = namespace.toLowerCase();
-            }
-            
-            Integer idFound;
-            if (namespace.equals("minecraft") && (idFound = itemIds.get(itemName)) != null) {
-                id = idFound;
-            } else {
-                Integer blockId = BlockStateRegistry.getBlockId(namespace + ":" + itemName);
-                if (blockId != null) {
-                    id = blockId;
-                    if (id > 255) {
-                        id = 255 - id;
-                    }
-                } else if (namespace.equals("minecraft") && (idFound = blockIds.get(itemName)) != null) {
-                    id = idFound;
-                } else {
-                    return get(0, 0);
-                }
-            }
+        String normalized = str.trim().replace(' ', '_').toLowerCase();
+        Matcher matcher = ITEM_STRING_PATTERN.matcher(normalized);
+        if (!matcher.matches()) {
+            return get(AIR);
+        }
+        
+        String name = matcher.group(2);
+        OptionalInt meta = OptionalInt.empty();
+        String metaGroup;
+        if (name != null) {
+            metaGroup = matcher.group(3);
         } else {
-            matcher = ITEM_ID.matcher(str);
-            if (matcher.matches()) {
-                String itemId = matcher.group(1);
-                metaNumber = matcher.group(2);
-                id = Integer.parseInt(itemId);
+            metaGroup = matcher.group(5);
+        }
+        if (metaGroup != null) {
+            meta = OptionalInt.of(Short.parseShort(metaGroup));
+        }
+
+        String numericIdGroup = matcher.group(4);
+        if (name != null) {
+            String namespaceGroup = matcher.group(1);
+            String namespacedId;
+            if (namespaceGroup != null) {
+                namespacedId = namespaceGroup + ":" + name;
             } else {
-                return get(0, 0);
+                namespacedId = "minecraft:" + name;
+            }
+            MinecraftItemID minecraftItemId = MinecraftItemID.getByNamespaceId(namespacedId);
+            if (minecraftItemId != null) {
+                Item item = minecraftItemId.get(1);
+                if (meta.isPresent()) {
+                    int damage = meta.getAsInt();
+                    if (damage < 0) {
+                        item = item.createFuzzyCraftingRecipe();
+                    } else {
+                        item.setDamage(damage);
+                    }
+                }
+                return item;
+            } else if (namespaceGroup != null && !namespaceGroup.equals("minecraft:")) {
+                return get(AIR);
+            }
+        } else if (numericIdGroup != null) {
+            int id = Integer.parseInt(numericIdGroup);
+            return get(id, meta.orElse(0));
+        }
+        
+        if (name == null) {
+            return get(AIR);
+        }
+
+        int id = 0;
+
+        try {
+            id = ItemID.class.getField(name.toUpperCase()).getInt(null);
+        } catch (Exception ignore1) {
+            try {
+                id = BlockID.class.getField(name.toUpperCase()).getInt(null);
+                if (id > 255) {
+                    id = 255 - id;
+                }
+            } catch (Exception ignore2) {
+
             }
         }
-        
-        if (metaNumber != null && !metaNumber.isEmpty()) {
-            meta = Integer.parseInt(metaNumber) & 0xFFFF;
-        }
-        
-        return get(id, meta);
+
+        return get(id, meta.orElse(0));
     }
 
     public static Item fromJson(Map<String, Object> data) {
+        return fromJson(data, false);
+    }
+
+    private static Item fromJson(Map<String, Object> data, boolean ignoreNegativeItemId) {
         String nbt = (String) data.get("nbt_b64");
         byte[] nbtBytes;
         if (nbt != null) {
@@ -648,7 +686,64 @@ public class Item implements Cloneable, BlockID, ItemID {
             }
         }
 
-        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+        int id = Utils.toInt(data.get("id"));
+        if (ignoreNegativeItemId && id < 0) return null;
+
+        return get(id, Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
+    }
+
+    private static Item fromJsonStringId(Map<String, Object> data) {
+        String nbt = (String) data.get("nbt_b64");
+        byte[] nbtBytes = nbt != null ? Base64.getDecoder().decode(nbt) : EmptyArrays.EMPTY_BYTES;
+
+        String id = data.get("id").toString();
+        Item item;
+        if (data.containsKey("damage")) {
+            int meta = Utils.toInt(data.get("damage"));
+            item = fromString(id+":"+meta);
+        } else {
+            item = fromString(id);
+        }
+        item.setCompoundTag(nbtBytes);
+        return item;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static Item fromJsonNetworkId(Map<String, Object> data) {
+        String nbt = (String) data.get("nbt_b64");
+        byte[] nbtBytes;
+        if (nbt != null) {
+            nbtBytes = Base64.getDecoder().decode(nbt);
+        } else { // Support old format for backwards compat
+            nbt = (String) data.getOrDefault("nbt_hex", null);
+            if (nbt == null) {
+                nbtBytes = EmptyArrays.EMPTY_BYTES;
+            } else {
+                nbtBytes = Utils.parseHexBinary(nbt);
+            }
+        }
+
+        int networkId = Utils.toInt(data.get("id"));
+        RuntimeItemMapping mapping = RuntimeItems.getRuntimeMapping();
+        int legacyFullId = mapping.getLegacyFullId(networkId);
+        int id = RuntimeItems.getId(legacyFullId);
+        OptionalInt meta = RuntimeItems.hasData(legacyFullId)? OptionalInt.of(RuntimeItems.getData(legacyFullId)) : OptionalInt.empty();
+        if (data.containsKey("damage")) {
+            int jsonMeta = Utils.toInt(data.get("damage"));
+            if (jsonMeta != Short.MAX_VALUE) {
+                if (meta.isPresent() && jsonMeta != meta.getAsInt()) {
+                    throw new IllegalArgumentException(
+                            "Conflicting damage value for " + mapping.getNamespacedIdByNetworkId(networkId) + ". " +
+                                    "From json: " + jsonMeta + ", from mapping: " + meta.getAsInt()
+                    );
+                }
+                meta = OptionalInt.of(jsonMeta);
+            } else if (!meta.isPresent()) {
+                meta = OptionalInt.of(-1);
+            }
+        }
+        return get(id, meta.orElse(0), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
 
     public static Item[] fromStringMultiple(String str) {
@@ -757,7 +852,7 @@ public class Item implements Cloneable, BlockID, ItemID {
      * @param id The enchantment ID from {@link Enchantment} constants.
      */
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
+    @Since("1.3.2.0-PN")
     public boolean hasEnchantment(int id) {
         return getEnchantmentLevel(id) > 0;
     }
@@ -864,6 +959,35 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         return enchantments.toArray(Enchantment.EMPTY_ARRAY);
+    }
+
+    @Since("1.3.2.0-PN")
+    public int getRepairCost() {
+        if (this.hasCompoundTag()) {
+            CompoundTag tag = this.getNamedTag();
+            if (tag.contains("RepairCost")) {
+                Tag repairCost = tag.get("RepairCost");
+                if (repairCost instanceof IntTag) {
+                    return ((IntTag) repairCost).data;
+                }
+            }
+        }
+        return 0;
+    }
+
+    @Since("1.3.2.0-PN")
+    public Item setRepairCost(int cost) {
+        if (cost <= 0 && this.hasCompoundTag()) {
+            return this.setNamedTag(this.getNamedTag().remove("RepairCost"));
+        }
+
+        CompoundTag tag;
+        if (!this.hasCompoundTag()) {
+            tag = new CompoundTag();
+        } else {
+            tag = this.getNamedTag();
+        }
+        return this.setNamedTag(tag.putInt("RepairCost", cost));
     }
 
     public boolean hasCustomName() {
@@ -1064,8 +1188,37 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
+    @Since("1.4.0.0-PN")
+    @API(definition = API.Definition.INTERNAL, usage = API.Usage.INCUBATING)
+    public Block getBlockUnsafe() {
+        return this.block;
+    }
+
     public int getId() {
         return id;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final int getNetworkFullId() throws UnknownNetworkIdException {
+        try {
+            return RuntimeItems.getRuntimeMapping().getNetworkFullId(this);
+        } catch (IllegalArgumentException e) {
+            throw new UnknownNetworkIdException(this, e);
+        }
+    }
+
+    @Since("1.4.0.0-PN")
+    public final int getNetworkId() throws UnknownNetworkIdException {
+        return RuntimeItems.getNetworkId(getNetworkFullId());
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.3.2.0-PN")
+    public String getNamespaceId() {
+        return RuntimeItems.getRuntimeMapping().getNamespacedIdByNetworkId(
+                RuntimeItems.getRuntimeMapping().getNetworkFullId(this)
+        );
     }
     
     @PowerNukkitOnly
@@ -1227,6 +1380,33 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+        return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final Item decrement(int amount) {
+        return increment(-amount);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public final Item increment(int amount) {
+        if (count + amount <= 0) {
+            return getBlock(BlockID.AIR);
+        }
+        Item cloned = clone();
+        cloned.count += amount;
+        return cloned;
+    }
+
+    /**
+     * When true, this item can be used to reduce growing times like a bone meal.
+     * @return {@code true} if it can act like a bone meal
+     */
+    @Since("1.3.2.0-PN")
+    @PowerNukkitOnly
+    public boolean isFertilizer() {
         return false;
     }
 

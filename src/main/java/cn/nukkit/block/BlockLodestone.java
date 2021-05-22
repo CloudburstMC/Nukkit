@@ -12,7 +12,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.MainLogger;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,6 +23,7 @@ import java.io.IOException;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
+@Log4j2
 public class BlockLodestone extends BlockSolid implements BlockEntityHolder<BlockEntityLodestone> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -78,7 +79,7 @@ public class BlockLodestone extends BlockSolid implements BlockEntityHolder<Bloc
             trackingHandle = getOrCreateBlockEntity().requestTrackingHandler();
             compass.setTrackingHandle(trackingHandle);
         } catch (Exception e) {
-            MainLogger.getLogger().warning("Could not create a lodestone compass to "+getLocation()+" for "+player.getName(), e);
+            log.warn("Could not create a lodestone compass to {} for {}", getLocation(), player.getName(), e);
             return false;
         }
 
@@ -101,7 +102,7 @@ public class BlockLodestone extends BlockSolid implements BlockEntityHolder<Bloc
             try {
                 getLevel().getServer().getPositionTrackingService().startTracking(player, trackingHandle, false);
             } catch (IOException e) {
-                MainLogger.getLogger().warning("Make the player "+player.getName()+" track "+trackingHandle+" at "+getLocation(), e);
+                log.warn("Failed to make the player {} track {} at {}", player.getName(), trackingHandle, getLocation(),  e);
             }
             getLevel().getServer().getScheduler().scheduleTask(null, player::updateTrackingPositions);
         }

@@ -2,6 +2,7 @@ package cn.nukkit.nbt;
 
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.PNAlphaItemID;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
@@ -52,14 +53,19 @@ public class NBTIO {
         if (!tag.contains("id") || !tag.contains("Count")) {
             return Item.get(0);
         }
-
-        Item item;
-        try {
-            item = Item.get((short) tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
-        } catch (Exception e) {
-            item = Item.fromString(tag.getString("id"));
-            item.setDamage(!tag.contains("Damage") ? 0 : tag.getShort("Damage"));
-            item.setCount(tag.getByte("Count"));
+        int id = (short) tag.getShort("id");
+        int damage = !tag.contains("Damage") ? 0 : tag.getShort("Damage");
+        int amount = tag.getByte("Count");
+        
+        Item item = fixAlphaItem(id, damage, amount);
+        if (item == null) {
+            try {
+                item = Item.get(id, damage, tag.getByte("Count"));
+            } catch (Exception e) {
+                item = Item.fromString(tag.getString("id"));
+                item.setDamage(damage);
+                item.setCount(tag.getByte("Count"));
+            }
         }
 
         Tag tagTag = tag.get("tag");
@@ -68,6 +74,19 @@ public class NBTIO {
         }
 
         return item;
+    }
+    
+    @SuppressWarnings("deprecation")
+    private static Item fixAlphaItem(int id, int damage, int count) {
+        PNAlphaItemID badAlphaId = PNAlphaItemID.getBadAlphaId(id);
+        if (badAlphaId == null) {
+            return null;
+        }
+        Item recovered = badAlphaId.getMinecraftItemId().get(count);
+        if (damage != 0) {
+            recovered.setDamage(damage);
+        }
+        return recovered;
     }
 
     public static CompoundTag read(File file) throws IOException {

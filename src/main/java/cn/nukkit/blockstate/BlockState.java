@@ -3,19 +3,24 @@ package cn.nukkit.blockstate;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.api.Unsigned;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.UnknownRuntimeIdException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateDataTypeException;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.OptionalBoolean;
+import cn.nukkit.utils.Validation;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.annotation.Nonnegative;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -46,7 +51,7 @@ public final class BlockState implements Serializable, IBlockState {
 
     public static final BlockState AIR = BlockState.of(BlockID.AIR, 0);
     
-    private static BlockState growCommonPool(int blockId, byte blockData) {
+    private static BlockState growCommonPool(@Nonnegative int blockId, @Nonnegative byte blockData) {
         synchronized (STATES_COMMON) {
             BlockState[] blockIds = STATES_COMMON[blockData];
             int newLen = blockId + 1;
@@ -59,7 +64,7 @@ public final class BlockState implements Serializable, IBlockState {
         }
     }
     
-    private static BlockState of0xF(int blockId, byte blockData) {
+    private static BlockState of0xF(@Nonnegative int blockId, @Nonnegative byte blockData) {
         BlockState[] blockIds = STATES_COMMON[blockData];
         if (blockIds.length <= blockId) {
             return growCommonPool(blockId, blockData);
@@ -78,15 +83,16 @@ public final class BlockState implements Serializable, IBlockState {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public static BlockState of(int blockId) {
+    public static BlockState of(@Nonnegative int blockId) {
         return of0xF(blockId, (byte)0);
     }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public static BlockState of(int blockId, byte blockData) {
-        if (blockData >= 0 && blockData < 16) {
+    public static BlockState of(@Nonnegative int blockId, @Nonnegative byte blockData) {
+        Validation.checkPositive("blockData", blockData);
+        if (blockData < 16) {
             return of0xF(blockId, blockData);
         }
         return STATES_UNCOMMON.computeIfAbsent(blockId+":"+blockData, k-> new BlockState(blockId, blockData));
@@ -95,8 +101,9 @@ public final class BlockState implements Serializable, IBlockState {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public static BlockState of(int blockId, int blockData) {
-        if (blockData >= 0 && blockData < 16) {
+    public static BlockState of(@Nonnegative int blockId, @Nonnegative int blockData) {
+        Validation.checkPositive("blockData", blockData);
+        if (blockData < 16) {
             return of0xF(blockId, (byte)blockData);
         }
         return STATES_UNCOMMON.computeIfAbsent(blockId+":"+blockData, k-> new BlockState(blockId, blockData));
@@ -105,8 +112,9 @@ public final class BlockState implements Serializable, IBlockState {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public static BlockState of(int blockId, long blockData) {
-        if (blockData >= 0 && blockData < 16) {
+    public static BlockState of(@Nonnegative int blockId, @Nonnegative long blockData) {
+        Validation.checkPositive("blockData", blockData);
+        if (blockData < 16) {
             return of0xF(blockId, (byte)blockData);
         }
         return STATES_UNCOMMON.computeIfAbsent(blockId+":"+blockData, k-> new BlockState(blockId, blockData));
@@ -115,8 +123,9 @@ public final class BlockState implements Serializable, IBlockState {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public static BlockState of(int blockId, BigInteger blockData) {
-        if (blockData.compareTo(BigInteger.ZERO) >= 0 && blockData.compareTo(SIXTEEN) < 0) {
+    public static BlockState of(@Nonnegative int blockId, @Nonnegative BigInteger blockData) {
+        Validation.checkPositive("blockData", blockData);
+        if (blockData.compareTo(SIXTEEN) < 0) {
             return of0xF(blockId, blockData.byteValue());
         }
         return STATES_UNCOMMON.computeIfAbsent(blockId+":"+blockData, k-> new BlockState(blockId, blockData));
@@ -129,7 +138,7 @@ public final class BlockState implements Serializable, IBlockState {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
-    public static BlockState of(int blockId, Number blockData) {
+    public static BlockState of(@Nonnegative int blockId, @Nonnegative Number blockData) {
         Class<? extends Number> c = blockData.getClass();
         if (c == Byte.class) {
             return of(blockId, blockData.byteValue()); 
@@ -145,48 +154,57 @@ public final class BlockState implements Serializable, IBlockState {
     }
     
     @Getter
+    @Nonnegative
     private final int blockId;
+    
     @Nonnull
+    @Nonnegative
     private final Storage storage;
+    
     @ToString.Exclude
     @Nonnull
     private OptionalBoolean valid = OptionalBoolean.empty();
 
-    private BlockState(int blockId) {
+    private BlockState(@Nonnegative int blockId) {
+        Validation.checkPositive("blockId", blockId);
         this.blockId = blockId;
         storage = ZERO_STORAGE;
     }
 
-    private BlockState(int blockId, byte blockData) {
+    private BlockState(@Nonnegative int blockId, @Nonnegative byte blockData) {
+        Validation.checkPositive("blockId", blockId);
         this.blockId = blockId;
         storage = blockData == 0?   ZERO_STORAGE : 
                                     new ByteStorage(blockData);
     }
     
-    private BlockState(int blockId, int blockData) {
+    private BlockState(@Nonnegative int blockId, @Nonnegative int blockData) {
+        Validation.checkPositive("blockId", blockId);
         this.blockId = blockId;
         storage = blockData == 0?               ZERO_STORAGE : 
-                blockData < 0?                  new IntStorage(blockData) :
+                //blockData < 0?                  new IntStorage(blockData) :
                 blockData <= Byte.MAX_VALUE?    new ByteStorage((byte)blockData) : 
                                                 new IntStorage(blockData);
     }
     
-    private BlockState(int blockId, long blockData) {
+    private BlockState(@Nonnegative int blockId, @Nonnegative long blockData) {
+        Validation.checkPositive("blockId", blockId);
         this.blockId = blockId;
         storage = blockData == 0?               ZERO_STORAGE : 
-                blockData < 0?                  new LongStorage(blockData) :
+                //blockData < 0?                  new LongStorage(blockData) :
                 blockData <= Byte.MAX_VALUE?    new ByteStorage((byte)blockData) :
                 blockData <= Integer.MAX_VALUE? new IntStorage((int)blockData) : 
                                                 new LongStorage(blockData);
     }
     
-    private BlockState(int blockId, BigInteger blockData) {
+    private BlockState(@Nonnegative int blockId, @Nonnegative BigInteger blockData) {
+        Validation.checkPositive("blockId", blockId);
         this.blockId = blockId;
         int zeroCmp = BigInteger.ZERO.compareTo(blockData);
         if (zeroCmp == 0) {
             storage = ZERO_STORAGE;
-        } else if (zeroCmp < 0) {
-            storage = new BigIntegerStorage(blockData);
+        //} else if (zeroCmp < 0) {
+        //    storage = new BigIntegerStorage(blockData);
         } else if (blockData.compareTo(BYTE_LIMIT) <= 0) {
             storage = new ByteStorage(blockData.byteValue());
         } else if (blockData.compareTo(INT_LIMIT) <= 0) {
@@ -199,27 +217,27 @@ public final class BlockState implements Serializable, IBlockState {
     }
     
     @Nonnull
-    public BlockState withData(int data) {
+    public BlockState withData(@Nonnegative int data) {
         return of(blockId, data);
     }
 
     @Nonnull
-    public BlockState withData(long data) {
+    public BlockState withData(@Nonnegative long data) {
         return of(blockId, data);
     }
 
     @Nonnull
-    public BlockState withData(BigInteger data) {
+    public BlockState withData(@Nonnegative BigInteger data) {
         return of(blockId, data);
     }
 
     @Nonnull
-    public BlockState withData(Number data) {
+    public BlockState withData(@Nonnegative Number data) {
         return of(blockId, data);
     }
 
     @Nonnull
-    public BlockState withBlockId(int blockId) {
+    public BlockState withBlockId(@Nonnegative int blockId) {
         return storage.withBlockId(blockId);
     }
 
@@ -235,6 +253,13 @@ public final class BlockState implements Serializable, IBlockState {
     @Nonnull
     public BlockState withProperty(String propertyName, @Nullable Serializable value) {
         return storage.withProperty(blockId, getProperties(), propertyName, value);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public BlockState withProperty(String propertyName, String persistenceValue) {
+        return storage.withPropertyString(blockId, getProperties(), propertyName, persistenceValue);
     }
 
     /**
@@ -293,16 +318,55 @@ public final class BlockState implements Serializable, IBlockState {
         return onlyWithProperty(property.getName(), value);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockState forItem() {
-        BlockProperties properties = getProperties();
-        Set<String> allNames = properties.getNames();
-        List<String> itemNames = properties.getItemPropertyNames();
+        BlockProperties allProperties = getProperties();
+        Set<String> allNames = allProperties.getNames();
+        
+        BlockProperties itemProperties = allProperties.getItemBlockProperties();
+        List<String> itemNames = itemProperties.getItemPropertyNames();
         if (allNames.size() == itemNames.size() && allNames.containsAll(itemNames)) {
             return this;
         }
         return storage.onlyWithProperties(this, itemNames);
     }
 
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public ItemBlock asItemBlock(int count) {
+        BlockProperties allProperties = getProperties();
+        Set<String> allNames = allProperties.getNames();
+        
+        int itemBlockMeta;
+        BlockProperties itemProperties = allProperties.getItemBlockProperties();
+        List<String> itemNames = itemProperties.getItemPropertyNames();
+        BlockState trimmedState;
+        if (allNames.size() == itemNames.size() && allNames.containsAll(itemNames)) {
+            itemBlockMeta = getExactIntStorage();
+            trimmedState = this;
+        } else if (itemNames.isEmpty()) {
+            itemBlockMeta = 0; 
+            trimmedState = isDefaultState()? this : of(getBlockId());
+        } else {
+            trimmedState = storage.onlyWithProperties(this, itemNames);
+            MutableBlockState itemState = itemProperties.createMutableState(getBlockId());
+            itemNames.forEach(property -> itemState.setPropertyValue(property, getPropertyValue(property)));
+            itemBlockMeta = itemState.getExactIntStorage();
+        }
+        
+        int runtimeId = trimmedState.getRuntimeId();
+        if (runtimeId == BlockStateRegistry.getUpdateBlockRegistration() && !"minecraft:info_update".equals(trimmedState.getPersistenceName())) {
+            throw new UnknownRuntimeIdException("The current block state can't be represented as an item. State: "+trimmedState+", Trimmed: "+trimmedState+" ItemBlockMeta: "+itemBlockMeta);
+        }
+        Block block = trimmedState.getBlock();
+        return new ItemBlock(block, itemBlockMeta, count);
+    }
+
+    @Nonnegative
     @Nonnull
     @Override
     public Number getDataStorage() {
@@ -315,6 +379,7 @@ public final class BlockState implements Serializable, IBlockState {
         return BlockStateRegistry.getProperties(blockId);
     }
 
+    @Nonnegative
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
@@ -322,6 +387,7 @@ public final class BlockState implements Serializable, IBlockState {
         return storage.getLegacyDamage();
     }
 
+    @Unsigned
     @Deprecated
     @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
     @Override
@@ -329,6 +395,17 @@ public final class BlockState implements Serializable, IBlockState {
         return storage.getBigDamage();
     }
 
+    @Nonnegative
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Deprecated
+    @DeprecationDetails(reason = "Can't store all data, exists for backward compatibility reasons", since = "1.4.0.0-PN", replaceWith = "getDataStorage()")
+    @Override
+    public int getSignedBigDamage() {
+        return storage.getSignedBigDamage();
+    }
+
+    @Nonnegative
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
@@ -373,13 +450,15 @@ public final class BlockState implements Serializable, IBlockState {
     /**
      * @throws ArithmeticException If the storage have more than 32 bits
      */
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @Override
     public int getExactIntStorage() {
         Class<? extends Storage> storageClass = storage.getClass();
-        if (storageClass != ZeroStorage.class && storageClass != ByteStorage.class && storageClass != IntStorage.class) {
-            throw new ArithmeticException(getDataStorage()+" cant be stored in a 32 bits integer without losses. It has "+getBitSize()+" bits");
+        if (getBitSize() >= 32 || storageClass != ZeroStorage.class && storageClass != ByteStorage.class && storageClass != IntStorage.class) {
+            throw new ArithmeticException(getDataStorage()+" cant be stored in a signed 32 bits integer without losses. It has "+getBitSize()+" bits");
         }
-        return getBigDamage();
+        return getSignedBigDamage();
     }
 
     @Since("1.4.0.0-PN")
@@ -529,6 +608,10 @@ public final class BlockState implements Serializable, IBlockState {
         int getLegacyDamage();
 
         int getBigDamage();
+        
+        default int getSignedBigDamage() {
+            return getBigDamage();
+        }
 
         @Nonnull
         Serializable getPropertyValue(BlockProperties properties, String propertyName);
@@ -560,6 +643,9 @@ public final class BlockState implements Serializable, IBlockState {
         void validate(BlockProperties properties);
 
         boolean isDefaultState();
+
+        @Nonnull
+        BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value);
     }
 
     @ParametersAreNonnullByDefault
@@ -620,6 +706,13 @@ public final class BlockState implements Serializable, IBlockState {
         public BlockState withProperty(int blockId, BlockProperties properties, String propertyName, @Nullable Serializable value) {
             // TODO This can cause problems when setting a property that increases the bit size
             return BlockState.of(blockId, properties.setValue(0, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            // TODO This can cause problems when setting a property that increases the bit size
+            return BlockState.of(blockId, properties.setPersistenceValue(0, propertyName, value));
         }
 
         @Nonnull
@@ -720,6 +813,13 @@ public final class BlockState implements Serializable, IBlockState {
         public BlockState withProperty(int blockId, BlockProperties properties, String propertyName, @Nullable Serializable value) {
             // TODO This can cause problems when setting a property that increases the bit size
             return BlockState.of(blockId, properties.setValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            // TODO This can cause problems when setting a property that increases the bit size
+            return BlockState.of(blockId, properties.setPersistenceValue(data, propertyName, value));
         }
 
         @Nonnull
@@ -826,6 +926,13 @@ public final class BlockState implements Serializable, IBlockState {
 
         @Nonnull
         @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            // TODO This can cause problems when setting a property that increases the bit size
+            return BlockState.of(blockId, properties.setPersistenceValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
         public BlockState onlyWithProperties(BlockState currentState, List<String> propertyNames) {
             return BlockState.of(blockId,
                 getProperties().reduceInt(data, (property, offset, current) -> 
@@ -903,6 +1010,11 @@ public final class BlockState implements Serializable, IBlockState {
             return (int)(data & BlockStateRegistry.BIG_META_MASK);
         }
 
+        @Override
+        public int getSignedBigDamage() {
+            return (int)(data & Integer.MAX_VALUE);
+        }
+
         @Nonnull
         @Override
         public Serializable getPropertyValue(BlockProperties properties, String propertyName) {
@@ -917,6 +1029,13 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public boolean getBooleanValue(BlockProperties properties, String propertyName) {
             return properties.getBooleanValue(data, propertyName);
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            // TODO This can cause problems when setting a property that increases the bit size
+            return BlockState.of(blockId, properties.setPersistenceValue(data, propertyName, value));
         }
 
         @Nonnull
@@ -1011,6 +1130,11 @@ public final class BlockState implements Serializable, IBlockState {
             return data.and(BigInteger.valueOf(BlockStateRegistry.BIG_META_MASK)).intValue();
         }
 
+        @Override
+        public int getSignedBigDamage() {
+            return data.and(BigInteger.valueOf(Integer.MAX_VALUE)).intValue();
+        }
+
         @Nonnull
         @Override
         public Serializable getPropertyValue(BlockProperties properties, String propertyName) {
@@ -1037,6 +1161,12 @@ public final class BlockState implements Serializable, IBlockState {
         @Override
         public BlockState withProperty(int blockId, BlockProperties properties, String propertyName, @Nullable Serializable value) {
             return BlockState.of(blockId, properties.setValue(data, propertyName, value));
+        }
+
+        @Nonnull
+        @Override
+        public BlockState withPropertyString(int blockId, BlockProperties properties, String propertyName, String value) {
+            return BlockState.of(blockId, properties.setPersistenceValue(data, propertyName, value));
         }
 
         @Nonnull

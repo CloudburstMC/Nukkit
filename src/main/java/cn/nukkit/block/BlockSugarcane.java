@@ -48,7 +48,7 @@ public class BlockSugarcane extends BlockFlowable {
 
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0F) { //Bonemeal
+        if (item.isFertilizer()) { //Bonemeal
             int count = 1;
 
             for (int i = 1; i <= 2; i++) {
@@ -169,7 +169,7 @@ public class BlockSugarcane extends BlockFlowable {
         if (downId == SUGARCANE_BLOCK) {
             return true;
         }
-        if (downId != GRASS && downId != DIRT && downId != SAND) {
+        if (downId != GRASS && downId != DIRT && downId != SAND || down.getId() == PODZOL) {
             return false;
         }
         for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
