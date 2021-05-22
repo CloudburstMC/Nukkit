@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
  */
 public class EnchantmentSilkTouch extends Enchantment {
     protected EnchantmentSilkTouch() {
-        super(ID_SILK_TOUCH, "untouching", 1, EnchantmentType.DIGGER);
+        super(ID_SILK_TOUCH, "untouching", Rarity.VERY_RARE, EnchantmentType.DIGGER);
     }
 
     @Override
@@ -17,17 +17,12 @@ public class EnchantmentSilkTouch extends Enchantment {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 50;
+        return super.getMinEnchantAbility(level) + 50;
     }
 
     @Override
-    public int getMaxLevel() {
-        return 1;
-    }
-
-    @Override
-    public boolean isCompatibleWith(Enchantment enchantment) {
-        return super.isCompatibleWith(enchantment) && enchantment.id != ID_FORTUNE_DIGGING;
+    public boolean checkCompatibility(Enchantment enchantment) {
+        return super.checkCompatibility(enchantment) && enchantment.id != ID_FORTUNE_DIGGING;
     }
 
     @Override

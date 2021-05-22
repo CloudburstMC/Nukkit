@@ -22,7 +22,7 @@ public class EmoteListPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.runtimeId = this.getEntityUniqueId();
+        this.runtimeId = this.getEntityRuntimeId();
         int size = (int) this.getUnsignedVarInt();
         for (int i = 0; i < size; i++) {
             UUID id = this.getUUID();
@@ -33,7 +33,7 @@ public class EmoteListPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityUniqueId(runtimeId);
+        this.putEntityRuntimeId(runtimeId);
         this.putUnsignedVarInt(pieceIds.size());
         for (UUID id : pieceIds) {
             this.putUUID(id);

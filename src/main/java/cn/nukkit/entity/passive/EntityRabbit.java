@@ -18,17 +18,17 @@ public class EntityRabbit extends EntityAnimal {
     @Override
     public float getWidth() {
         if (this.isBaby()) {
-            return 0.2f;
+            return 0.268f;
         }
-        return 0.4f;
+        return 0.67f;
     }
 
     @Override
     public float getHeight() {
         if (this.isBaby()) {
-            return 0.25f;
+            return 0.268f;
         }
-        return 0.5f;
+        return 0.67f;
     }
 
     @Override
