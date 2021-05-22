@@ -21,6 +21,7 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
@@ -173,33 +174,35 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
             explosion.explodeB();
             return true;
         }
-        
-        if (player != null) {
-            AxisAlignedBB accessArea = new SimpleAxisAlignedBB(head.x - 2, head.y - 5.5, head.z - 2, head.x + 3, head.y + 2.5, head.z + 3)
-                    .addCoord(footPart.getXOffset(), 0, footPart.getZOffset());
-            
-            if (!accessArea.isVectorInside(player)) {
-                player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.tooFar"));
-                return true;
-            }
-            
-            Location spawn = Location.fromObject(head.add(0.5, 0.5, 0.5), player.getLevel(), player.getYaw(), player.getPitch());
-            if (!player.getSpawn().equals(spawn)) {
-                player.setSpawn(spawn);
-            }
-            player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.respawnSet"));
+
+        if (player == null || !player.hasEffect(Effect.CONDUIT_POWER) && getLevelBlockAtLayer(1) instanceof BlockWater) {
+            return true;
         }
+
+        AxisAlignedBB accessArea = new SimpleAxisAlignedBB(head.x - 2, head.y - 5.5, head.z - 2, head.x + 3, head.y + 2.5, head.z + 3)
+                .addCoord(footPart.getXOffset(), 0, footPart.getZOffset());
+
+        if (!accessArea.isVectorInside(player)) {
+            player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.tooFar"));
+            return true;
+        }
+
+        Location spawn = Location.fromObject(head.add(0.5, 0.5, 0.5), player.getLevel(), player.getYaw(), player.getPitch());
+        if (!player.getSpawn().equals(spawn)) {
+            player.setSpawn(spawn);
+        }
+        player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.respawnSet"));
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
 
         boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
 
-        if (player != null && !isNight) {
+        if (!isNight) {
             player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.noSleep"));
             return true;
         }
 
-        if (player != null && !player.isCreative()) {
+        if (!player.isCreative()) {
             AxisAlignedBB checkMonsterArea = new SimpleAxisAlignedBB(head.x - 8, head.y - 6.5, head.z - 8, head.x + 9, head.y + 5.5, head.z + 9)
                     .addCoord(footPart.getXOffset(), 0, footPart.getZOffset());
 
@@ -212,10 +215,9 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
             }
         }
 
-        if (player != null && !player.sleepOn(head)) {
+        if (!player.sleepOn(head)) {
             player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.occupied"));
         }
-
 
         return true;
     }

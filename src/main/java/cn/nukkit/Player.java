@@ -2251,7 +2251,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
         startGamePacket.dimension = (byte) getLevel().getDimension();
         //startGamePacket.isInventoryServerAuthoritative = true;
+      
         this.dataPacketImmediately(startGamePacket);
+      
+        this.dataPacket(new ItemComponentPacket());
 
         this.dataPacket(new BiomeDefinitionListPacket());
         this.dataPacket(new AvailableEntityIdentifiersPacket());
@@ -2945,11 +2948,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             ((EntityRideable) riding).mountEntity(this);
                             break;
                         case InteractPacket.ACTION_OPEN_INVENTORY:
-                            if (targetEntity.getId() != this.getId()) break;
+                            if (targetEntity instanceof EntityRideable) {
+                                if (!(targetEntity instanceof EntityBoat || targetEntity instanceof EntityMinecartEmpty)) {
+                                    break;
+                                }
+                            } else if (targetEntity.getId() != this.getId()) {
+                                break;
+                            }
+                            
                             if (!this.inventoryOpen) {
                                 this.inventory.open(this);
                                 this.inventoryOpen = true;
                             }
+                            
                             break;
                     }
                     break;
