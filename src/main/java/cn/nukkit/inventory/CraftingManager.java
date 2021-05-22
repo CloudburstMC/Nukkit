@@ -114,7 +114,9 @@ public class CraftingManager {
         ids.put(ItemID.DIAMOND_SWORD, ItemID.NETHERITE_SWORD);
         ids.put(ItemID.DIAMOND_PICKAXE, ItemID.NETHERITE_PICKAXE);
         ids.put(ItemID.DIAMOND_HOE, ItemID.NETHERITE_HOE);
-        ids.int2IntEntrySet().forEach(e-> 
+        ids.put(ItemID.DIAMOND_SHOVEL, ItemID.NETHERITE_SHOVEL);
+        ids.put(ItemID.DIAMOND_AXE, ItemID.NETHERITE_AXE);
+        ids.int2IntEntrySet().forEach(e->
                 new SmithingRecipe(
                         Item.get(e.getIntKey()).createFuzzyCraftingRecipe(),
                         ingot,
