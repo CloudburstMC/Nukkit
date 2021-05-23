@@ -116,6 +116,12 @@ public class BlockSponge extends BlockSolidMeta {
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock, entry.distance + 1));
                     }
+                } else if (faceBlock instanceof BlockWater) {
+                    this.level.setBlock(faceBlock, 0, Block.get(BlockID.AIR));
+                    ++waterRemoved;
+                    if (entry.distance < 6) {
+                        entries.add(new Entry(faceBlock, entry.distance + 1));
+                    }
                 } else if (faceBlock.getId() == BlockID.AIR) {
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock, entry.distance + 1));
