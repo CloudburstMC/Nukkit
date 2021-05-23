@@ -112,13 +112,13 @@ public class BlockSponge extends BlockSolidMeta {
                     if (faceBlock.getId() == BlockID.BLOCK_KELP || faceBlock.getId() == BlockID.SEAGRASS || faceBlock.getId() == BlockID.SEA_PICKLE || faceBlock instanceof BlockCoralFan) {
                         faceBlock.getLevel().useBreakOn(faceBlock);
                     }
-                    this.getLevel().setBlock(faceBlock, 1, Block.get(BlockID.AIR));
+                    this.getLevel().setBlockStateAt(faceBlock.getFloorX(), faceBlock.getFloorY(), faceBlock.getFloorZ(), 1, Block.get(BlockID.AIR));
                     ++waterRemoved;
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock, entry.distance + 1));
                     }
                 } else if (faceBlock instanceof BlockWater) {
-                    this.getLevel().setBlock(faceBlock, Block.get(BlockID.AIR));
+                    this.getLevel().setBlockStateAt(faceBlock.getFloorX(), faceBlock.getFloorY(), faceBlock.getFloorZ(), Block.get(BlockID.AIR));
                     ++waterRemoved;
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock, entry.distance + 1));
