@@ -6,8 +6,11 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemItemFrame;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -17,23 +20,28 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
 import static cn.nukkit.math.BlockFace.AxisDirection.POSITIVE;
 
 /**
  * @author Pub4Game
  * @since 03.07.2016
  */
-@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityItemFrame> {
-    private final static int[] FACING = new int[]{4, 5, 3, 2, 1, 0}; // TODO when 1.13 support arrives, add UP/DOWN facings
+@PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder and Faceable only in PowerNukkit")
+public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityItemFrame>, Faceable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BooleanBlockProperty HAS_MAP = new BooleanBlockProperty("item_frame_map_bit", false);
 
-    private final static int FACING_BITMASK = 0b0111;
-    private final static int MAP_BIT = 0b1000;
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(FACING_DIRECTION, HAS_MAP);
 
     public BlockItemFrame() {
         this(0);
@@ -46,6 +54,41 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
     @Override
     public int getId() {
         return ITEM_FRAME_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockFace getBlockFace() {
+        return getPropertyValue(FACING_DIRECTION);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setBlockFace(@Nonnull BlockFace face) {
+        setPropertyValue(FACING_DIRECTION, face);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isStoringMap() {
+        return getBooleanValue(HAS_MAP);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setStoringMap(boolean map) {
+        setBooleanValue(HAS_MAP, map);
     }
 
     @PowerNukkitOnly
@@ -73,7 +116,7 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            Block support = this.getSideAtLayer(0, getFacing());
+            Block support = this.getSideAtLayer(0, getFacing().getOpposite());
             if (!support.isSolid() && support.getId() != COBBLE_WALL) {
                 this.level.useBreakOn(this);
                 return type;
@@ -115,9 +158,17 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
         	}
             itemOnFrame.setCount(1);
             itemFrame.setItem(itemOnFrame);
+            if (itemOnFrame.getId() == ItemID.MAP) {
+                setStoringMap(true);
+                this.getLevel().setBlock(this, this, true);
+            }
             this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_ADDED);
         } else {
             itemFrame.setItemRotation((itemFrame.getItemRotation() + 1) % 8);
+            if (isStoringMap()) {
+                setStoringMap(false);
+                this.getLevel().setBlock(this, this, true);
+            }
             this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_ROTATED);
         }
         return true;
@@ -126,12 +177,12 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
     @PowerNukkitDifference(info = "Allow to place on walls", since = "1.3.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
-        if (face.getHorizontalIndex() == -1
-                || (target.getId() != COBBLE_WALL && (!target.isSolid() || (block.isSolid() && !block.canBeReplaced())))) {
+        if (target.getId() != COBBLE_WALL && (!target.isSolid() || (block.isSolid() && !block.canBeReplaced()))) {
             return false;
         }
 
-        this.setDamage(FACING[face.getIndex()]);
+        setBlockFace(face);
+        setStoringMap(item.getId() == ItemID.MAP);
         CompoundTag nbt = new CompoundTag()
                 .putByte("ItemRotation", 0)
                 .putFloat("ItemDropChance", 1.0f);
@@ -197,18 +248,7 @@ public class BlockItemFrame extends BlockTransparentMeta implements BlockEntityH
     }
 
     public BlockFace getFacing() {
-        switch (this.getDamage() & FACING_BITMASK) {
-            case 0:
-                return BlockFace.WEST;
-            case 1:
-                return BlockFace.EAST;
-            case 2:
-                return BlockFace.NORTH;
-            case 3:
-                return BlockFace.SOUTH;
-        }
-
-        return null;
+        return getBlockFace();
     }
 
     @Override
