@@ -1,13 +1,15 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.block.Block;
 import cn.nukkit.api.Since;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDurable;
+import cn.nukkit.item.ItemID;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
@@ -24,7 +26,6 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.internal.EmptyArrays;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;

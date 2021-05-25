@@ -110,9 +110,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         if (!item.isNull()) {
             CompoundTag itemTag = NBTIO.putItemHelper(item);
             int networkFullId = item.getNetworkFullId();
-            int networkDamage = RuntimeItems.hasData(networkFullId)? RuntimeItems.getData(networkFullId)
-                    : item.hasMeta() && ! (item instanceof ItemDurable) ? item.getDamage()
-                    : 0 ;
+            int networkDamage = (networkFullId & 0x1) == 0x1? 0 : item.getDamage();
             String namespacedId = RuntimeItems.getRuntimeMapping().getNamespacedIdByNetworkId(
                     RuntimeItems.getNetworkId(networkFullId)
             );
