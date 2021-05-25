@@ -5,6 +5,7 @@
 *.xml text eol=lf
 *.yml text eol=lf
 *.ini text=auto
+*.csv text=auto
 *.txt text=auto
 *.bat text eol=crlf
 *.cmd text eol=crlf
