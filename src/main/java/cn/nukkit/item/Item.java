@@ -1216,8 +1216,9 @@ public class Item implements Cloneable, BlockID, ItemID {
     @PowerNukkitOnly
     @Since("1.3.2.0-PN")
     public String getNamespaceId() {
-        return RuntimeItems.getRuntimeMapping().getNamespacedIdByNetworkId(
-                RuntimeItems.getRuntimeMapping().getNetworkFullId(this)
+        RuntimeItemMapping runtimeMapping = RuntimeItems.getRuntimeMapping();
+        return runtimeMapping.getNamespacedIdByNetworkId(
+                RuntimeItems.getNetworkId(runtimeMapping.getNetworkFullId(this))
         );
     }
     
