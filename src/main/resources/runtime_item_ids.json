@@ -3690,6 +3690,11 @@
     "oldId": 382
   },
   {
+    "name": "minecraft:spawn_egg",
+    "id": 614,
+    "oldId": 383
+  },
+  {
     "name": "minecraft:chicken_spawn_egg",
     "id": 433,
     "oldId": 383,
@@ -4667,12 +4672,6 @@
     "name": "minecraft:banner_pattern",
     "id": 613,
     "oldId": 434,
-    "deprecated": true
-  },
-  {
-    "name": "minecraft:spawn_egg",
-    "id": 614,
-    "oldId": 383,
     "deprecated": true
   },
   {
