@@ -17,18 +17,13 @@ public class EntityPanda extends EntityAnimal {
     }
 
     @Override
-    public float getLength() {
-        return 1.825f;
-    }
-
-    @Override
     public float getWidth() {
-        return 1.125f;
+        return 1.7f;
     }
 
     @Override
     public float getHeight() {
-        return 1.25f;
+        return 1.5f;
     }
 
     @Override

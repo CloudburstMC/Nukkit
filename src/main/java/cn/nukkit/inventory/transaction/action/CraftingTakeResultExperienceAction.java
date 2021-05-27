@@ -22,6 +22,7 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
+import lombok.ToString;
 
 /**
  * @author joserobjr
@@ -29,6 +30,7 @@ import cn.nukkit.item.Item;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
+@ToString(callSuper = true)
 public class CraftingTakeResultExperienceAction extends CraftingTakeResultAction {
 
     @PowerNukkitOnly

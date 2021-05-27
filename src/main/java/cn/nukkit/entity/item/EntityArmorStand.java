@@ -515,6 +515,14 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
     }
 
     @Override
+    protected float getDrag() {
+        if (hasWaterAt(getHeight() / 2f)) {
+            return 0.25f;
+        }
+        return 0f;
+    }
+
+    @Override
     public String getInteractButtonText() {
         return "action.interact.armorstand.equip";
     }

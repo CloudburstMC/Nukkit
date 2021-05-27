@@ -39,7 +39,7 @@ public class DoorUpdater implements Updater {
         int legacy = state.getLegacyDamage();
         MutableBlockState mutableState = BlockStateRegistry.createMutableState(state.getBlockId());
         if ((legacy & DOOR_TOP_BIT) > 0) {
-            mutableState.setBooleanValue(BlockDoor.UPPER_BLOCK, true);
+            mutableState.setBooleanValue(CommonBlockProperties.UPPER_BLOCK, true);
             mutableState.setBooleanValue(BlockDoor.DOOR_HINGE, (legacy & DOOR_HINGE_BIT) > 0);
             
             int underY = offsetY + y - 1;
@@ -51,7 +51,7 @@ public class DoorUpdater implements Updater {
                 }
             }
         } else {
-            mutableState.setBooleanValue(BlockDoor.UPPER_BLOCK, false);
+            mutableState.setBooleanValue(CommonBlockProperties.UPPER_BLOCK, false);
             mutableState.setPropertyValue(BlockDoor.DOOR_DIRECTION, BlockDoor.DOOR_DIRECTION.getValueForMeta(legacy & 0x3));
             mutableState.setBooleanValue(CommonBlockProperties.OPEN, (legacy & DOOR_OPEN_BIT) > 0);
         }

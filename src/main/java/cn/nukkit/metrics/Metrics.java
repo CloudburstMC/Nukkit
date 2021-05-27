@@ -1,7 +1,10 @@
 package cn.nukkit.metrics;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.utils.MainLogger;
+import io.netty.util.internal.EmptyArrays;
+import lombok.extern.log4j.Log4j2;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 
@@ -25,8 +28,10 @@ import java.util.zip.GZIPOutputStream;
  * Check out https://bStats.org/ to learn more about bStats!
  */
 @Since("1.3.2.0-PN")
+@Log4j2
 public class Metrics {
     @Since("1.3.2.0-PN") public static final int B_STATS_VERSION = 1;
+    private static final String VALUES = "values";
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
@@ -43,16 +48,31 @@ public class Metrics {
     private final String serverUUID;
 
     // Should failed requests be logged?
-    private static boolean logFailedRequests = false;
+    private final boolean logFailedRequests;
 
-    // The logger for the failed requests
-    private static MainLogger logger;
+    /**
+     * Creates a new instance and starts submitting immediately.
+     * 
+     * @param name The bStats metrics identifier.
+     * @param serverUUID The unique identifier of this server.
+     * @param logFailedRequests If failed submissions should be logged.
+     * @param logger The server main logger, ignored by PowerNukkit.
+     */
+    @Since("1.3.2.0-PN") public Metrics(String name, String serverUUID, boolean logFailedRequests, @SuppressWarnings("unused") MainLogger logger) {
+        this(name, serverUUID, logFailedRequests);
+    }
 
-    @Since("1.3.2.0-PN") public Metrics(String name, String serverUUID, boolean logFailedRequests, MainLogger logger) {
+    /**
+     * Creates a new instance and starts submitting immediately.
+     *
+     * @param name The bStats metrics identifier.
+     * @param serverUUID The unique identifier of this server.
+     * @param logFailedRequests If failed submissions should be logged.
+     */
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public Metrics(String name, String serverUUID, boolean logFailedRequests) {
         this.name = name;
         this.serverUUID = serverUUID;
-        Metrics.logFailedRequests = logFailedRequests;
-        Metrics.logger = logger;
+        this.logFailedRequests = logFailedRequests;
 
         // Start submitting the data
         startSubmitting();
@@ -83,7 +103,7 @@ public class Metrics {
         long initialDelay = (long) (1000 * 60 * (3 + Math.random() * 3));
         long secondDelay = (long) (1000 * 60 * (Math.random() * 30));
         scheduler.schedule(submitTask, initialDelay, TimeUnit.MILLISECONDS);
-        scheduler.scheduleAtFixedRate(submitTask, initialDelay + secondDelay, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(submitTask, initialDelay + secondDelay, 1000 * 60 * 30L, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -146,7 +166,7 @@ public class Metrics {
         } catch (Exception e) {
             // Something went wrong! :(
             if (logFailedRequests) {
-                logger.warning("Could not submit stats of " + name, e);
+                log.warn("Could not submit stats of {}", name, e);
             }
         }
     }
@@ -155,9 +175,9 @@ public class Metrics {
      * Sends the data to the bStats server.
      *
      * @param data The data to send.
-     * @throws Exception If the request failed.
+     * @throws IOException If the request failed.
      */
-    private static void sendData(JSONObject data) throws Exception {
+    private static void sendData(JSONObject data) throws IOException {
         if (data == null) {
             throw new IllegalArgumentException("Data cannot be null!");
         }
@@ -187,7 +207,7 @@ public class Metrics {
     }
 
     /**
-     * Gzips the given String.
+     * GZIPs the given String.
      *
      * @param str The string to gzip.
      * @return The gzipped String.
@@ -195,7 +215,7 @@ public class Metrics {
      */
     private static byte[] compress(final String str) throws IOException {
         if (str == null) {
-            return null;
+            return EmptyArrays.EMPTY_BYTES;
         }
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         GZIPOutputStream gzip = new GZIPOutputStream(outputStream);
@@ -207,7 +227,7 @@ public class Metrics {
     /**
      * Represents a custom chart.
      */
-    @Since("1.3.2.0-PN") public static abstract class CustomChart {
+    @Since("1.3.2.0-PN") public abstract static class CustomChart {
 
         // The id of the chart
         final String chartId;
@@ -234,12 +254,13 @@ public class Metrics {
                     return null;
                 }
                 chart.put("data", data);
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 return null;
             }
             return chart;
         }
 
+        @SuppressWarnings("java:S112")
         @Since("1.3.2.0-PN") protected abstract JSONObject getChartData() throws Exception;
 
     }
@@ -295,33 +316,38 @@ public class Metrics {
 
         @Override
         protected JSONObject getChartData() throws Exception {
-            JSONObject data = new JSONObject();
-            JSONObject values = new JSONObject();
-            Map<String, Integer> map = callable.call();
-            if (map == null || map.isEmpty()) {
-                // Null = skip the chart
-                return null;
-            }
-            boolean allSkipped = true;
-            for (Map.Entry<String, Integer> entry : map.entrySet()) {
-                if (entry.getValue() == 0) {
-                    continue; // Skip this invalid
-                }
-                allSkipped = false;
-                values.put(entry.getKey(), entry.getValue());
-            }
-            if (allSkipped) {
-                // Null = skip the chart
-                return null;
-            }
-            data.put("values", values);
-            return data;
+            return createAdvancedChartData(callable);
         }
+    }
+    
+    private static JSONObject createAdvancedChartData(final Callable<Map<String, Integer>> callable) throws Exception {
+        JSONObject data = new JSONObject();
+        JSONObject values = new JSONObject();
+        Map<String, Integer> map = callable.call();
+        if (map == null || map.isEmpty()) {
+            // Null = skip the chart
+            return null;
+        }
+        boolean allSkipped = true;
+        for (Map.Entry<String, Integer> entry : map.entrySet()) {
+            if (entry.getValue() == 0) {
+                continue; // Skip this invalid
+            }
+            allSkipped = false;
+            values.put(entry.getKey(), entry.getValue());
+        }
+        if (allSkipped) {
+            // Null = skip the chart
+            return null;
+        }
+        data.put(VALUES, values);
+        return data;
     }
 
     /**
-     * Represents a custom drilldown pie.
+     * Represents a custom drill down pie.
      */
+    @SuppressWarnings("SpellCheckingInspection")
     @Since("1.3.2.0-PN") public static class DrilldownPie extends CustomChart {
 
         private final Callable<Map<String, Map<String, Integer>>> callable;
@@ -363,7 +389,7 @@ public class Metrics {
                 // Null = skip the chart
                 return null;
             }
-            data.put("values", values);
+            data.put(VALUES, values);
             return data;
         }
     }
@@ -420,27 +446,7 @@ public class Metrics {
 
         @Override
         protected JSONObject getChartData() throws Exception {
-            JSONObject data = new JSONObject();
-            JSONObject values = new JSONObject();
-            Map<String, Integer> map = callable.call();
-            if (map == null || map.isEmpty()) {
-                // Null = skip the chart
-                return null;
-            }
-            boolean allSkipped = true;
-            for (Map.Entry<String, Integer> entry : map.entrySet()) {
-                if (entry.getValue() == 0) {
-                    continue; // Skip this invalid
-                }
-                allSkipped = false;
-                values.put(entry.getKey(), entry.getValue());
-            }
-            if (allSkipped) {
-                // Null = skip the chart
-                return null;
-            }
-            data.put("values", values);
-            return data;
+            return createAdvancedChartData(callable);
         }
 
     }
@@ -477,7 +483,7 @@ public class Metrics {
                 categoryValues.add(entry.getValue());
                 values.put(entry.getKey(), categoryValues);
             }
-            data.put("values", values);
+            data.put(VALUES, values);
             return data;
         }
 
@@ -526,7 +532,7 @@ public class Metrics {
                 // Null = skip the chart
                 return null;
             }
-            data.put("values", values);
+            data.put(VALUES, values);
             return data;
         }
 

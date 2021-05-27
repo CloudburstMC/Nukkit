@@ -27,13 +27,14 @@ public class ChunkUpdater {
      *     <dt>9</dt><dd>Re-render cobblestone walls to connect to glass, stained glass, and other wall types like border and blackstone wall</dd>
      *     <dt>10</dt><dd>Re-render snow layers to make them cover grass blocks and fix leaves2 issue: https://github.com/PowerNukkit/PowerNukkit/issues/482</dd>
      *     <dt>11</dt><dd>The debug block property was removed from stripped_warped_hyphae, stripped_warped_stem, stripped_crimson_hyphae, and stripped_crimson_stem</dd>
+     *     <dt>12</dt><dd>Upgraded the block frame data values to match the vanilla data, allowing to place up and down and have map</dd>
      * </dl>
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("java:S3400")
     public int getCurrentContentVersion() {
-        return 11;
+        return 12;
     }
 
     @PowerNukkitOnly
@@ -61,11 +62,20 @@ public class ChunkUpdater {
             if (section.getContentVersion() == 10) {
                 updated = upgradeStrippedStemsFromV10toV11(chunk, updated, section);
             }
+            if (section.getContentVersion() == 11) {
+                updated = upgradeFrameFromV11toV12(chunk, section, updated);
+            }
         }
 
         if (updated) {
             chunk.setChanged();
         }
+    }
+
+    private static boolean upgradeFrameFromV11toV12(BaseChunk chunk, ChunkSection section, boolean updated) {
+        updated = walk(chunk, section, new FrameUpdater(section)) || updated;
+        section.setContentVersion(12);
+        return updated;
     }
 
     private boolean upgradeStrippedStemsFromV10toV11(BaseChunk chunk, boolean updated, ChunkSection section) {

@@ -770,6 +770,8 @@ public enum Sound {
     RESPAWN_ANCHOR_CHARGE("respawn_anchor.charge"),
     RESPAWN_ANCHOR_DEPLETE("respawn_anchor.deplete"),
     RESPAWN_ANCHOR_SET_SPAWN("respawn_anchor.set_spawn"),
+    @Since("1.4.0.0-PN") SIGN_DYE_USE("sign.dye.use"),
+    @Since("1.4.0.0-PN") SIGN_INK_SAC_USE("sign.ink_sac.use"),
     SMITHING_TABLE_USE("smithing_table.use"),
     STEP_ANCIENT_DEBRIS("step.ancient_debris"),
     STEP_BASALT("step.basalt"),

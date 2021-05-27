@@ -5,6 +5,8 @@ import io.netty.util.collection.CharObjectHashMap;
 
 import java.util.*;
 
+import static cn.nukkit.inventory.Recipe.matchItemList;
+
 /**
  * @author MagicDroidX (Nukkit Project)
  */
@@ -263,7 +265,7 @@ public class ShapedRecipe implements CraftingRecipe {
         }
         needOutputs.sort(CraftingManager.recipeComparator);
 
-        return this.matchItemList(haveOutputs, needOutputs);
+        return matchItemList(haveOutputs, needOutputs);
     }
 
     /**
@@ -277,26 +279,6 @@ public class ShapedRecipe implements CraftingRecipe {
     @Override
     public boolean matchItems(List<Item> inputList, List<Item> extraOutputList) {
         return matchItems(inputList, extraOutputList, 1);
-    }
-
-    private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
-        for (Item needItem : new ArrayList<>(needItems)) {
-            for (Item haveItem : new ArrayList<>(haveItems)) {
-                if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag())) {
-                    int amount = Math.min(haveItem.getCount(), needItem.getCount());
-                    needItem.setCount(needItem.getCount() - amount);
-                    haveItem.setCount(haveItem.getCount() - amount);
-                    if (haveItem.getCount() == 0) {
-                        haveItems.remove(haveItem);
-                    }
-                    if (needItem.getCount() == 0) {
-                        needItems.remove(needItem);
-                        break;
-                    }
-                }
-            }
-        }
-        return haveItems.isEmpty() && needItems.isEmpty();
     }
 
     @Override
