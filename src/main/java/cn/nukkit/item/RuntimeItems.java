@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.utils.BinaryStream;
 import com.google.gson.Gson;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static com.google.common.base.Verify.verify;
 
 @Since("1.3.2.0-PN")
 @UtilityClass
@@ -59,8 +62,14 @@ public class RuntimeItems {
             if (entry.oldId != null) {
                 boolean hasData = entry.oldData != null;
                 int fullId = getFullId(entry.oldId, hasData ? entry.oldData : 0);
-                legacyNetworkMap.put(fullId, (entry.id << 1) | (hasData ? 1 : 0));
-                networkLegacyMap.put(entry.id, fullId | (hasData ? 1 : 0));
+                if (entry.deprecated != Boolean.TRUE) {
+                    verify(legacyNetworkMap.put(fullId, (entry.id << 1) | (hasData ? 1 : 0)) == 0,
+                            "Conflict while registering an item runtime id!"
+                    );
+                }
+                verify(networkLegacyMap.put(entry.id, fullId | (hasData ? 1 : 0)) == 0,
+                        "Conflict while registering an item runtime id!"
+                );
             }
         }
 
@@ -106,5 +115,8 @@ public class RuntimeItems {
         int id;
         Integer oldId;
         Integer oldData;
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        Boolean deprecated;
     }
 }

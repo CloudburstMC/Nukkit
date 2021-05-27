@@ -14,6 +14,8 @@ COPY src/main/resources /src/src/main/resources
 COPY src/test/java/cn /src/src/test/java/cn
 COPY src/test/resources /src/src/test/resources
 
+COPY .git /src/.git
+
 # Update the language submodule
 RUN if [ -z "$(ls -A /src/src/main/resources/lang)" ]; then git submodule update --init; fi
 

@@ -14683,39 +14683,51 @@ minecraft:flowing_water;liquid_depth=15
 
 minecraft:frame;facing_direction=0;item_frame_map_bit=0
 []
+[]
 
 minecraft:frame;facing_direction=0;item_frame_map_bit=1
+[]
 []
 
 minecraft:frame;facing_direction=1;item_frame_map_bit=0
 []
+[]
 
 minecraft:frame;facing_direction=1;item_frame_map_bit=1
+[]
 []
 
 minecraft:frame;facing_direction=2;item_frame_map_bit=0
 [199:3]
+[]
 
 minecraft:frame;facing_direction=2;item_frame_map_bit=1
 [199:7]
+[]
 
 minecraft:frame;facing_direction=3;item_frame_map_bit=0
 [199:2]
+[]
 
 minecraft:frame;facing_direction=3;item_frame_map_bit=1
 [199:6]
+[]
 
 minecraft:frame;facing_direction=4;item_frame_map_bit=0
 [199:1]
+[]
 
 minecraft:frame;facing_direction=4;item_frame_map_bit=1
 [199:5]
+[]
 
 minecraft:frame;facing_direction=5;item_frame_map_bit=0
 [199:0]
+[]
 
 minecraft:frame;facing_direction=5;item_frame_map_bit=1
 [199:4]
+[]
 
 minecraft:frosted_ice;age=0
 [207:0]
