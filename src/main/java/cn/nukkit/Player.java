@@ -2564,7 +2564,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    temporalVector.setComponents(movePacket.x, movePacket.y, movePacket.z);
+                    temporalVector.setComponents(movePacket.x, movePacket.y - ((EntityBoat) movedEntity).getBaseOffset(), movePacket.z);
                     if (!movedEntity.equals(getRiding()) || !movedEntity.isControlling(this)
                             || temporalVector.distanceSquared(movedEntity) > 10*10) {
                         movedEntity.addMovement(movedEntity.x, movedEntity.y, movedEntity.z, movedEntity.yaw, movedEntity.pitch, movedEntity.yaw);
