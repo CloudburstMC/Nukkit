@@ -424,21 +424,20 @@ public class EntityBoat extends EntityVehicle {
             mode = SetEntityLinkPacket.TYPE_RIDE;
         }
 
-        boolean r = super.mountEntity(entity, mode);
+        return super.mountEntity(entity, mode);
+    }
 
+    @Override
+    public boolean mountEntity(Entity entity, byte mode) {
+        boolean r = super.mountEntity(entity, mode);
         if (entity.riding == this) {
             updatePassengers(true);
 
             entity.setDataProperty(new ByteEntityData(DATA_RIDER_ROTATION_LOCKED, 1));
             entity.setDataProperty(new FloatEntityData(DATA_RIDER_MAX_ROTATION, 90));
-
-            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, this.passengers.indexOf(entity) == 1 ? -90 : 0));
-
-            //            if(entity instanceof Player && mode == SetEntityLinkPacket.TYPE_RIDE){ //TODO: controlling?
-//                entity.setDataProperty(new ByteEntityData(DATA_FLAG_WASD_CONTROLLED))
-//            }
+            entity.setDataProperty(new FloatEntityData(DATA_RIDER_ROTATION_OFFSET, -90));
+            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, this.passengers.indexOf(entity) == 1 ? -90 : 1));
         }
-
         return r;
     }
 
