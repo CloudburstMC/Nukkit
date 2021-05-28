@@ -8,6 +8,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.FloatEntityData;
@@ -32,6 +33,9 @@ import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import cn.nukkit.network.protocol.types.EntityLink;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import static cn.nukkit.network.protocol.SetEntityLinkPacket.TYPE_PASSENGER;
 
@@ -63,6 +67,7 @@ public class EntityBoat extends EntityVehicle {
 
     protected boolean sinking = true;
     private int ticksInWater;
+    private final Set<Entity> ignoreCollision = new HashSet<>(2);
     
     @Deprecated
     @DeprecationDetails(since = "1.3.2.0-PN", by = "PowerNukkit", 
@@ -230,6 +235,15 @@ public class EntityBoat extends EntityVehicle {
         double waterDiff = getWaterLevel();
         if (!hasControllingPassenger()) {
             hasUpdated = computeBuoyancy(waterDiff);
+            Iterator<Entity> iterator = ignoreCollision.iterator();
+            while (iterator.hasNext()) {
+                Entity ignored = iterator.next();
+                if (!ignored.isValid() || ignored.isClosed() || !ignored.isAlive()
+                        || !ignored.getBoundingBox().intersectsWith(getBoundingBox().grow(0.5, 0.5, 0.5))) {
+                    iterator.remove();
+                    hasUpdated = true;
+                }
+            }
             moveBoat(waterDiff);
         } else {
             updateMovement();
@@ -459,6 +473,9 @@ public class EntityBoat extends EntityVehicle {
 
         updatePassengers();
         entity.setDataProperty(new ByteEntityData(DATA_RIDER_ROTATION_LOCKED, 0));
+        if (entity instanceof EntityHuman) {
+            ignoreCollision.add(entity);
+        }
 
         return r;
     }
@@ -493,7 +510,8 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public void applyEntityCollision(Entity entity) {
-        if (this.riding == null && !hasControllingPassenger() && entity.riding != this && !entity.passengers.contains(this)) {
+        if (this.riding == null && !hasControllingPassenger() && entity.riding != this
+                && !entity.passengers.contains(this) && !ignoreCollision.contains(entity)) {
             if (!entity.boundingBox.intersectsWith(this.boundingBox.grow(0.20000000298023224, -0.1, 0.20000000298023224))
                     || entity instanceof Player && ((Player) entity).isSpectator()) {
                 return;
