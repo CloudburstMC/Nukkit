@@ -240,7 +240,7 @@ public class EntityBoat extends EntityVehicle {
                 ticksInWater = 0;
                 hasUpdated = true;
             }
-            hasUpdated = collectCollidingEntities() || hasUpdated;
+            //hasUpdated = collectCollidingEntities() || hasUpdated;
         } else {
             hasUpdated = true;
             ticksInWater += tickDiff;
@@ -257,6 +257,11 @@ public class EntityBoat extends EntityVehicle {
     @Override
     public boolean canCollideWith(Entity entity) {
         return super.canCollideWith(entity) && !isPassenger(entity);
+    }
+
+    @Override
+    public boolean canDoInteraction() {
+        return passengers.size() < 2;
     }
 
     private void moveBoat(double waterDiff) {
@@ -486,7 +491,7 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public void applyEntityCollision(Entity entity) {
-        if (this.riding == null && entity.riding != this && !entity.passengers.contains(this)) {
+        if (this.riding == null && !hasControllingPassenger() && entity.riding != this && !entity.passengers.contains(this)) {
             if (!entity.boundingBox.intersectsWith(this.boundingBox.grow(0.20000000298023224, -0.1, 0.20000000298023224))
                     || entity instanceof Player && ((Player) entity).isSpectator()) {
                 return;
