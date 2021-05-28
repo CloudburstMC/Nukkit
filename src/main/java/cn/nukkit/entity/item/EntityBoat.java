@@ -25,10 +25,15 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.AnimatePacket;
+import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
+import cn.nukkit.network.protocol.types.EntityLink;
 
 import java.util.ArrayList;
+
+import static cn.nukkit.network.protocol.SetEntityLinkPacket.TYPE_PASSENGER;
 
 /**
  * @author yescallop
@@ -53,8 +58,8 @@ public class EntityBoat extends EntityVehicle {
     public static final int PASSENGER_INDEX = 1;
 
     public static final double SINKING_DEPTH = 0.07;
-    public static final double SINKING_SPEED = 0.0005;
-    public static final double SINKING_MAX_SPEED = 0.005;
+    public static final double SINKING_SPEED = 0.000125;
+    public static final double SINKING_MAX_SPEED = 0.00125;
 
     protected boolean sinking = true;
     
@@ -79,7 +84,22 @@ public class EntityBoat extends EntityVehicle {
             woodID = this.namedTag.getByte("woodID");
         }
 
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY, true);
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_STACKABLE, true);
         this.dataProperties.putInt(DATA_VARIANT, woodID);
+        this.dataProperties.putBoolean(DATA_IS_BUOYANT, true);
+        this.dataProperties.putString(DATA_BUOYANCY_DATA, "{\"apply_gravity\":true,\"base_buoyancy\":1.0,\"big_wave_probability\":0.02999999932944775,\"big_wave_speed\":10.0,\"drag_down_on_buoyancy_removed\":0.0,\"liquid_blocks\":[\"minecraft:water\",\"minecraft:flowing_water\"],\"simulate_waves\":true}");
+        this.dataProperties.putInt(DATA_MAX_AIR, 300);
+        this.dataProperties.putLong(DATA_OWNER_EID, -1);
+        this.dataProperties.putFloat(DATA_PADDLE_TIME_LEFT, 0);
+        this.dataProperties.putFloat(DATA_PADDLE_TIME_RIGHT, 0);
+        this.dataProperties.putByte(DATA_CONTROLLING_RIDER_SEAT_NUMBER, 0);
+        this.dataProperties.putInt(DATA_LIMITED_LIFE, -1);
+        this.dataProperties.putByte(DATA_ALWAYS_SHOW_NAMETAG, -1);
+        this.dataProperties.putFloat(DATA_AMBIENT_SOUND_INTERVAL, 8F);
+        this.dataProperties.putFloat(DATA_AMBIENT_SOUND_INTERVAL_RANGE, 16F);
+        this.dataProperties.putString(DATA_AMBIENT_SOUND_EVENT_NAME, "ambient");
+        this.dataProperties.putFloat(DATA_FALL_DAMAGE_MULTIPLIER, 1F);
     }
 
     @Override
@@ -144,6 +164,32 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
+    protected DataPacket createAddEntityPacket() {
+        AddEntityPacket addEntity = new AddEntityPacket();
+        addEntity.type = 0;
+        addEntity.id = "minecraft:boat";
+        addEntity.entityUniqueId = this.getId();
+        addEntity.entityRuntimeId = this.getId();
+        addEntity.yaw = (float) this.yaw;
+        addEntity.headYaw = (float) this.yaw;
+        addEntity.pitch = (float) this.pitch;
+        addEntity.x = (float) this.x;
+        addEntity.y = (float) this.y + getBaseOffset();
+        addEntity.z = (float) this.z;
+        addEntity.speedX = (float) this.motionX;
+        addEntity.speedY = (float) this.motionY;
+        addEntity.speedZ = (float) this.motionZ;
+        addEntity.metadata = this.dataProperties;
+
+        addEntity.links = new EntityLink[this.passengers.size()];
+        for (int i = 0; i < addEntity.links.length; i++) {
+            addEntity.links[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.TYPE_RIDER : TYPE_PASSENGER, false, false);
+        }
+
+        return addEntity;
+    }
+
+    @Override
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
             return false;
@@ -160,6 +206,10 @@ public class EntityBoat extends EntityVehicle {
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
         if (this.isAlive()) {
+            hasUpdate = this.updateBoat() || hasUpdate;
+        }
+
+        if (false && this.isAlive()) {
             super.onUpdate(currentTick);
 
             double waterDiff = getWaterLevel();
@@ -193,11 +243,11 @@ public class EntityBoat extends EntityVehicle {
 
             this.motionX *= friction;
 
-            if (!hasControllingPassenger()) {
-                if (waterDiff > SINKING_DEPTH || sinking) {
+            //if (!hasControllingPassenger()) {
+                if (waterDiff > SINKING_DEPTH/* || sinking*/) {
                     this.motionY = waterDiff > 0.5 ? this.motionY - this.getGravity() : (this.motionY - SINKING_SPEED < -SINKING_MAX_SPEED ? this.motionY : this.motionY - SINKING_SPEED);
                 }
-            }
+            //}
 
             this.motionZ *= friction;
 
@@ -229,6 +279,91 @@ public class EntityBoat extends EntityVehicle {
         }
 
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
+    }
+
+    private boolean updateBoat() {
+        double waterDiff = getWaterLevel();
+        boolean hasUpdated = false;
+        if (!hasControllingPassenger()) {
+            computeBuoyancy(waterDiff);
+            moveBoat(waterDiff);
+        } else {
+            updateMovement();
+            hasUpdated = positionChanged;
+        }
+        collectCollidingEntities();
+        return hasUpdated;
+    }
+
+    private void moveBoat(double waterDiff) {
+        boolean wasOnGround = onGround;
+        checkObstruction(this.x, this.y, this.z);
+        move(this.motionX, this.motionY, this.motionZ);
+
+        double friction = 1 - this.getDrag();
+
+        if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
+            friction *= this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
+        }
+
+        this.motionX *= friction;
+
+        if (!onGround || waterDiff > SINKING_DEPTH/* || sinking*/) {
+            this.motionY = waterDiff > 0.5 ? this.motionY - this.getGravity() : (this.motionY - SINKING_SPEED < -SINKING_MAX_SPEED ? this.motionY : this.motionY - SINKING_SPEED);
+        }
+
+        this.motionZ *= friction;
+
+        Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
+        Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
+
+        this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
+
+        if (!from.equals(to)) {
+            this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
+        }
+
+        //TODO: lily pad collision
+        this.updateMovement();
+        //if (!positionChanged && onGround != wasOnGround) {
+        //    addMovement(x, y + getBaseOffset(), z, yaw, pitch, yaw);
+        //}
+    }
+
+    private void collectCollidingEntities() {
+        if (this.passengers.size() >= 2) {
+            return;
+        }
+
+        for (Entity entity : this.level.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
+            if (entity.riding != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal || isPassenger(entity)) {
+                continue;
+            }
+
+            this.mountEntity(entity);
+
+            if (this.passengers.size() >= 2) {
+                break;
+            }
+        }
+    }
+
+    private boolean computeBuoyancy(double waterDiff) {
+        boolean hasUpdated = false;
+        if (waterDiff > SINKING_DEPTH/4 && !sinking) {
+            sinking = true;
+        } else if (waterDiff < -(SINKING_DEPTH/4) && sinking) {
+            sinking = false;
+        }
+
+        if (waterDiff < -SINKING_DEPTH) {
+            this.motionY = Math.min(0.05, this.motionY + 0.005);
+            hasUpdated = true;
+        } else if (waterDiff < 0 || !sinking) {
+            this.motionY = this.motionY > SINKING_MAX_SPEED ? Math.max(this.motionY - 0.02, SINKING_MAX_SPEED) : this.motionY + SINKING_SPEED;
+            hasUpdated = true;
+        }
+        return hasUpdated;
     }
 
     public void updatePassengers() {
@@ -384,7 +519,7 @@ public class EntityBoat extends EntityVehicle {
     public void onPaddle(AnimatePacket.Action animation, float value) {
         int propertyId = animation == AnimatePacket.Action.ROW_RIGHT ? DATA_PADDLE_TIME_RIGHT : DATA_PADDLE_TIME_LEFT;
 
-        if (getDataPropertyFloat(propertyId) != value) {
+        if (Float.compare(getDataPropertyFloat(propertyId), value) != 0) {
             this.setDataProperty(new FloatEntityData(propertyId, value));
         }
     }
