@@ -927,7 +927,7 @@ public abstract class Entity extends Location implements Metadatable {
                         cause.addSuppressed(exceptions.get(i));
                     }
                 }
-                log.error("Could not create an entity of type {} with {} args", name, args == null? 0 : args.length, cause);
+                log.debug("Could not create an entity of type {} with {} args", name, args == null? 0 : args.length, cause);
             }
         } else {
             log.debug("Entity type {} is unknown", name);
