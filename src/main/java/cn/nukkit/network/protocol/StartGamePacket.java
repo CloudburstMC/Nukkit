@@ -1,12 +1,8 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.api.Since;
-import cn.nukkit.blockstate.BlockStateRegistry;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRules;
-import cn.nukkit.utils.BinaryStream;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
 

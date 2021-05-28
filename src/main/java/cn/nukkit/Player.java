@@ -32,6 +32,7 @@ import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
+import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
@@ -2553,6 +2554,31 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         ((EntityMinecartAbstract) riding).setCurrentSpeed(ipk.motionY);
                     }
                     break;
+                case ProtocolInfo.MOVE_ENTITY_ABSOLUTE_PACKET: {
+                    if (!this.isAlive() || !this.spawned || this.getRiding() == null) {
+                        break;
+                    }
+                    MoveEntityAbsolutePacket movePacket = (MoveEntityAbsolutePacket) packet;
+                    Entity movedEntity = getLevel().getEntity(movePacket.eid);
+                    if (!(movedEntity instanceof EntityBoat)) {
+                        break;
+                    }
+
+                    temporalVector.setComponents(movePacket.x, movePacket.y - ((EntityBoat) movedEntity).getBaseOffset(), movePacket.z);
+                    if (!movedEntity.equals(getRiding()) || !movedEntity.isControlling(this)
+                            || temporalVector.distanceSquared(movedEntity) > 10*10) {
+                        movedEntity.addMovement(movedEntity.x, movedEntity.y, movedEntity.z, movedEntity.yaw, movedEntity.pitch, movedEntity.yaw);
+                        break;
+                    }
+
+                    Location from = movedEntity.getLocation();
+                    movedEntity.setPositionAndRotation(temporalVector, movePacket.headYaw, 0);
+                    Location to = movedEntity.getLocation();
+                    if (!from.equals(to)) {
+                        this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
+                    }
+                    break;
+                }
                 case ProtocolInfo.MOVE_PLAYER_PACKET:
                     if (this.teleportPosition != null) {
                         break;
@@ -2591,12 +2617,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.newPosition = newPos;
                         this.positionChanged = true;
                         this.forceMovement = null;
-                    }
-
-                    if (riding != null) {
-                        if (riding instanceof EntityBoat) {
-                            riding.setPositionAndRotation(this.temporalVector.setComponents(movePlayerPacket.x, movePlayerPacket.y - 1, movePlayerPacket.z), (movePlayerPacket.headYaw + 90) % 360, 0);
-                        }
                     }
 
                     break;
@@ -2946,7 +2966,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 break;
                             }
 
-                            ((EntityRideable) riding).mountEntity(this);
+                            ((EntityRideable) riding).dismountEntity(this);
                             break;
                         case InteractPacket.ACTION_OPEN_INVENTORY:
                             if (targetEntity instanceof EntityRideable) {
@@ -3042,7 +3062,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, ((AnimatePacket) packet).action);
+                    AnimatePacket animatePacket = (AnimatePacket) packet;
+                    PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, animatePacket);
                     this.server.getPluginManager().callEvent(animationEvent);
                     if (animationEvent.isCancelled()) {
                         break;
@@ -3063,9 +3084,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         setNoShieldTicks(NO_SHIELD_DELAY);
                     }
 
-                    AnimatePacket animatePacket = new AnimatePacket();
+                    animatePacket = new AnimatePacket();
                     animatePacket.eid = this.getId();
                     animatePacket.action = animationEvent.getAnimationType();
+                    animatePacket.rowingTime = animationEvent.getRowingTime();
                     Server.broadcastPacket(this.getViewers().values(), animatePacket);
                     break;
                 case ProtocolInfo.SET_HEALTH_PACKET:
