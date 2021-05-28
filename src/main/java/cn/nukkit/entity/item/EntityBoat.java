@@ -209,82 +209,24 @@ public class EntityBoat extends EntityVehicle {
             hasUpdate = this.updateBoat() || hasUpdate;
         }
 
-        if (false && this.isAlive()) {
-            super.onUpdate(currentTick);
-
-            double waterDiff = getWaterLevel();
-            if (!hasControllingPassenger()) {
-
-                if (waterDiff > SINKING_DEPTH && !sinking) {
-                    sinking = true;
-                } else if (waterDiff < -SINKING_DEPTH && sinking) {
-                    sinking = false;
-                }
-
-                if (waterDiff < -SINKING_DEPTH) {
-                    this.motionY = Math.min(0.05, this.motionY + 0.005);
-                } else if (waterDiff < 0 || !sinking) {
-                    this.motionY = this.motionY > SINKING_MAX_SPEED ? Math.max(this.motionY - 0.02, SINKING_MAX_SPEED) : this.motionY + SINKING_SPEED;
-//                    this.motionY = this.motionY + SINKING_SPEED > SINKING_MAX_SPEED ? this.motionY - SINKING_SPEED : this.motionY + SINKING_SPEED;
-                }
-            }
-
-            if (this.checkObstruction(this.x, this.y, this.z)) {
-                hasUpdate = true;
-            }
-
-            this.move(this.motionX, this.motionY, this.motionZ);
-
-            double friction = 1 - this.getDrag();
-
-            if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
-            }
-
-            this.motionX *= friction;
-
-            //if (!hasControllingPassenger()) {
-                if (waterDiff > SINKING_DEPTH/* || sinking*/) {
-                    this.motionY = waterDiff > 0.5 ? this.motionY - this.getGravity() : (this.motionY - SINKING_SPEED < -SINKING_MAX_SPEED ? this.motionY : this.motionY - SINKING_SPEED);
-                }
-            //}
-
-            this.motionZ *= friction;
-
-            Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
-            Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
-
-            this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
-
-            if (!from.equals(to)) {
-                this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
-            }
-
-            //TODO: lily pad collision
-            this.updateMovement();
-
-            if (this.passengers.size() < 2) {
-                for (Entity entity : this.level.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
-                    if (entity.riding != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal || isPassenger(entity)) {
-                        continue;
-                    }
-
-                    this.mountEntity(entity);
-
-                    if (this.passengers.size() >= 2) {
-                        break;
-                    }
-                }
-            }
-        }
-
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
     }
 
     private boolean updateBoat() {
-        double waterDiff = getWaterLevel();
+        // The rolling amplitude
+        if (getRollingAmplitude() > 0) {
+            setRollingAmplitude(getRollingAmplitude() - 1);
+        }
+
+        // A killer task
+        if (y < -16) {
+            kill();
+            return false;
+        }
+
         boolean hasUpdated = false;
         if (!hasControllingPassenger()) {
+            double waterDiff = getWaterLevel();
             computeBuoyancy(waterDiff);
             moveBoat(waterDiff);
         } else {
@@ -292,11 +234,11 @@ public class EntityBoat extends EntityVehicle {
             hasUpdated = positionChanged;
         }
         collectCollidingEntities();
+        this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
         return hasUpdated;
     }
 
     private void moveBoat(double waterDiff) {
-        boolean wasOnGround = onGround;
         checkObstruction(this.x, this.y, this.z);
         move(this.motionX, this.motionY, this.motionZ);
 
@@ -317,17 +259,12 @@ public class EntityBoat extends EntityVehicle {
         Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
         Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
 
-        this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
-
         if (!from.equals(to)) {
             this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
         }
 
         //TODO: lily pad collision
         this.updateMovement();
-        //if (!positionChanged && onGround != wasOnGround) {
-        //    addMovement(x, y + getBaseOffset(), z, yaw, pitch, yaw);
-        //}
     }
 
     private void collectCollidingEntities() {
@@ -436,7 +373,7 @@ public class EntityBoat extends EntityVehicle {
             public void accept(int x, int y, int z) {
                 Block block = EntityBoat.this.level.getBlock(EntityBoat.this.temporalVector.setComponents(x, y, z));
 
-                if (block instanceof BlockWater) {
+                if (block instanceof BlockWater || ((block = block.getLevelBlockAtLayer(1)) instanceof BlockWater)) {
                     double level = block.getMaxY();
 
                     diffY = Math.min(maxY - level, diffY);

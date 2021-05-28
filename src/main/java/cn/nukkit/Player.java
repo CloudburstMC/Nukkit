@@ -32,6 +32,7 @@ import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import cn.nukkit.event.server.DataPacketReceiveEvent;
 import cn.nukkit.event.server.DataPacketSendEvent;
+import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
@@ -2559,7 +2560,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     MoveEntityAbsolutePacket movePacket = (MoveEntityAbsolutePacket) packet;
                     Entity movedEntity = getLevel().getEntity(movePacket.eid);
-                    //if (movedEntity == null) {
                     if (!(movedEntity instanceof EntityBoat)) {
                         break;
                     }
@@ -2571,15 +2571,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
+                    Location from = movedEntity.getLocation();
                     movedEntity.setPositionAndRotation(temporalVector, movePacket.headYaw, 0);
-                    //movedEntity.updateMovement();
-                    //if (movedEntity.setPositionAndRotation(newPos, movePacket.headYaw, movePacket.pitch)) {
-                    //    //movedEntity.resetFallDistance();
-                    //    //movedEntity.onGround = movePacket.onGround;
-//
-                    //    //movedEntity.updateMovement();
-                    //    //Server.broadcastPacket(movedEntity.getViewers().values(), movePacket);
-                    //}
+                    Location to = movedEntity.getLocation();
+                    if (!from.equals(to)) {
+                        this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
+                    }
                     break;
                 }
                 case ProtocolInfo.MOVE_PLAYER_PACKET:
@@ -2621,12 +2618,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.positionChanged = true;
                         this.forceMovement = null;
                     }
-
-                    /*if (riding != null) {
-                        if (riding instanceof EntityBoat) {
-                            riding.setPositionAndRotation(this.temporalVector.setComponents(movePlayerPacket.x, movePlayerPacket.y - 1, movePlayerPacket.z), (movePlayerPacket.headYaw + 90) % 360, 0);
-                        }
-                    }*/
 
                     break;
                 case ProtocolInfo.ADVENTURE_SETTINGS_PACKET:
