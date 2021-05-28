@@ -382,9 +382,9 @@ public class EntityBoat extends EntityVehicle {
                 broadcastLinkPacket(ent, SetEntityLinkPacket.TYPE_PASSENGER);
             }
 
-            float yawDiff = ent.getId() % 2 == 0 ? 90 : 270;
-            ent.setRotation(this.yaw + yawDiff, ent.pitch);
-            ent.updateMovement();
+            //float yawDiff = ent.getId() % 2 == 0 ? 90 : 270;
+            //ent.setRotation(this.yaw + yawDiff, ent.pitch);
+            //ent.updateMovement();
         } else {
             for (Entity passenger : passengers) {
                 super.updatePassengerPosition(passenger);
@@ -442,6 +442,8 @@ public class EntityBoat extends EntityVehicle {
             entity.setDataProperty(new FloatEntityData(DATA_RIDER_MAX_ROTATION, 90));
             entity.setDataProperty(new FloatEntityData(DATA_RIDER_ROTATION_OFFSET, -90));
             entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, this.passengers.indexOf(entity) == 1 ? -90 : 1));
+            entity.setRotation(yaw, entity.pitch);
+            entity.updateMovement();
         }
         return r;
     }
