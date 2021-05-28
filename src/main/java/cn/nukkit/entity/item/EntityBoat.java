@@ -229,16 +229,20 @@ public class EntityBoat extends EntityVehicle {
         boolean hasUpdated = false;
         double waterDiff = getWaterLevel();
         if (!hasControllingPassenger()) {
-            computeBuoyancy(waterDiff);
+            hasUpdated = computeBuoyancy(waterDiff);
             moveBoat(waterDiff);
         } else {
             updateMovement();
-            hasUpdated = positionChanged;
         }
+        hasUpdated = hasUpdated || positionChanged;
         if (waterDiff >= -SINKING_DEPTH) {
-            ticksInWater = 0;
-            collectCollidingEntities();
+            if (ticksInWater != 0) {
+                ticksInWater = 0;
+                hasUpdated = true;
+            }
+            hasUpdated = collectCollidingEntities() || hasUpdated;
         } else {
+            hasUpdated = true;
             ticksInWater += tickDiff;
             if (ticksInWater >= 3 * 20) {
                 for (int i = passengers.size() - 1; i >= 0; i--) {
@@ -284,9 +288,9 @@ public class EntityBoat extends EntityVehicle {
         this.updateMovement();
     }
 
-    private void collectCollidingEntities() {
+    private boolean collectCollidingEntities() {
         if (this.passengers.size() >= 2) {
-            return;
+            return false;
         }
 
         for (Entity entity : this.level.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
@@ -300,6 +304,8 @@ public class EntityBoat extends EntityVehicle {
                 break;
             }
         }
+
+        return true;
     }
 
     private boolean computeBuoyancy(double waterDiff) {
@@ -420,7 +426,7 @@ public class EntityBoat extends EntityVehicle {
 
         boolean r = super.mountEntity(entity, mode);
 
-        if (entity.riding != null) {
+        if (entity.riding == this) {
             updatePassengers(true);
 
             entity.setDataProperty(new ByteEntityData(DATA_RIDER_ROTATION_LOCKED, 1));

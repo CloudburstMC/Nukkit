@@ -3062,7 +3062,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, ((AnimatePacket) packet).action);
+                    AnimatePacket animatePacket = (AnimatePacket) packet;
+                    PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, animatePacket);
                     this.server.getPluginManager().callEvent(animationEvent);
                     if (animationEvent.isCancelled()) {
                         break;
@@ -3083,10 +3084,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         setNoShieldTicks(NO_SHIELD_DELAY);
                     }
 
-                    AnimatePacket animatePacket = new AnimatePacket();
+                    animatePacket = new AnimatePacket();
                     animatePacket.eid = this.getId();
                     animatePacket.action = animationEvent.getAnimationType();
-                    animatePacket.rowingTime = ((AnimatePacket) packet).rowingTime;
+                    animatePacket.rowingTime = animationEvent.getRowingTime();
                     Server.broadcastPacket(this.getViewers().values(), animatePacket);
                     break;
                 case ProtocolInfo.SET_HEALTH_PACKET:
