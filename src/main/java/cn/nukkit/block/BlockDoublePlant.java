@@ -150,16 +150,18 @@ public class BlockDoublePlant extends BlockFlowable {
 
         return false;
     }
-    
+
     private boolean isSupportValid(Block support) {
         switch (support.getId()) {
             case GRASS:
             case DIRT:
+            case PODZOL:
+            case FARMLAND:
                 return true;
             default:
                 return false;
         }
-    } 
+    }
 
     @Override
     public boolean onBreak(Item item) {
