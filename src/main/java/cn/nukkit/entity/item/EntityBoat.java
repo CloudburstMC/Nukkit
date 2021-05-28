@@ -58,10 +58,11 @@ public class EntityBoat extends EntityVehicle {
     public static final int PASSENGER_INDEX = 1;
 
     public static final double SINKING_DEPTH = 0.07;
-    public static final double SINKING_SPEED = 0.000125;
-    public static final double SINKING_MAX_SPEED = 0.00125;
+    public static final double SINKING_SPEED = 0.0005;
+    public static final double SINKING_MAX_SPEED = 0.005;
 
     protected boolean sinking = true;
+    private int ticksInWater;
     
     @Deprecated
     @DeprecationDetails(since = "1.3.2.0-PN", by = "PowerNukkit", 
@@ -100,6 +101,7 @@ public class EntityBoat extends EntityVehicle {
         this.dataProperties.putFloat(DATA_AMBIENT_SOUND_INTERVAL_RANGE, 16F);
         this.dataProperties.putString(DATA_AMBIENT_SOUND_EVENT_NAME, "ambient");
         this.dataProperties.putFloat(DATA_FALL_DAMAGE_MULTIPLIER, 1F);
+        entityCollisionReduction = -0.5;
     }
 
     @Override
@@ -206,13 +208,13 @@ public class EntityBoat extends EntityVehicle {
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
         if (this.isAlive()) {
-            hasUpdate = this.updateBoat() || hasUpdate;
+            hasUpdate = this.updateBoat(tickDiff) || hasUpdate;
         }
 
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
     }
 
-    private boolean updateBoat() {
+    private boolean updateBoat(int tickDiff) {
         // The rolling amplitude
         if (getRollingAmplitude() > 0) {
             setRollingAmplitude(getRollingAmplitude() - 1);
@@ -225,17 +227,32 @@ public class EntityBoat extends EntityVehicle {
         }
 
         boolean hasUpdated = false;
+        double waterDiff = getWaterLevel();
         if (!hasControllingPassenger()) {
-            double waterDiff = getWaterLevel();
             computeBuoyancy(waterDiff);
             moveBoat(waterDiff);
         } else {
             updateMovement();
             hasUpdated = positionChanged;
         }
-        collectCollidingEntities();
+        if (waterDiff >= -SINKING_DEPTH) {
+            ticksInWater = 0;
+            collectCollidingEntities();
+        } else {
+            ticksInWater += tickDiff;
+            if (ticksInWater >= 3 * 20) {
+                for (int i = passengers.size() - 1; i >= 0; i--) {
+                    dismountEntity(passengers.get(i));
+                }
+            }
+        }
         this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
         return hasUpdated;
+    }
+
+    @Override
+    public boolean canCollideWith(Entity entity) {
+        return super.canCollideWith(entity) && !isPassenger(entity);
     }
 
     private void moveBoat(double waterDiff) {
@@ -287,17 +304,18 @@ public class EntityBoat extends EntityVehicle {
 
     private boolean computeBuoyancy(double waterDiff) {
         boolean hasUpdated = false;
-        if (waterDiff > SINKING_DEPTH/4 && !sinking) {
+        waterDiff -= getBaseOffset()/4;
+        if (waterDiff > SINKING_DEPTH && !sinking) {
             sinking = true;
-        } else if (waterDiff < -(SINKING_DEPTH/4) && sinking) {
+        } else if (waterDiff < -SINKING_DEPTH && sinking) {
             sinking = false;
         }
 
-        if (waterDiff < -SINKING_DEPTH) {
-            this.motionY = Math.min(0.05, this.motionY + 0.005);
+        if (waterDiff < -SINKING_DEPTH/1.7) {
+            this.motionY = Math.min(0.05/10, this.motionY + 0.005);
             hasUpdated = true;
         } else if (waterDiff < 0 || !sinking) {
-            this.motionY = this.motionY > SINKING_MAX_SPEED ? Math.max(this.motionY - 0.02, SINKING_MAX_SPEED) : this.motionY + SINKING_SPEED;
+            this.motionY = this.motionY > (SINKING_MAX_SPEED/2) ? Math.max(this.motionY - 0.02, (SINKING_MAX_SPEED/2)) : this.motionY + SINKING_SPEED;
             hasUpdated = true;
         }
         return hasUpdated;
@@ -440,7 +458,7 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        if (this.passengers.size() >= 2) {
+        if (this.passengers.size() >= 2 || getWaterLevel() < -SINKING_DEPTH) {
             return false;
         }
 
@@ -486,6 +504,7 @@ public class EntityBoat extends EntityVehicle {
                 diffX *= 0.05000000074505806;
                 diffZ *= 0.05000000074505806;
                 diffX *= 1 + entityCollisionReduction;
+                diffZ *= 1 + entityCollisionReduction;
 
                 if (this.riding == null) {
                     motionX -= diffX;
