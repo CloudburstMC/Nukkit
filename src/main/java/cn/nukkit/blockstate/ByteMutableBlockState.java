@@ -45,17 +45,23 @@ import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageTy
  * @author joserobjr
  * @since 2020-10-03
  */
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ParametersAreNonnullByDefault
 public class ByteMutableBlockState extends MutableBlockState {
     private byte storage;
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public ByteMutableBlockState(int blockId, BlockProperties properties, byte state) {
         super(blockId, properties);
         this.storage = state;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public ByteMutableBlockState(int blockId, BlockProperties properties) {
         this(blockId, properties, (byte)0);
     }

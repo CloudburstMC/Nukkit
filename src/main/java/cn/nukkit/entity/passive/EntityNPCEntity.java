@@ -10,15 +10,15 @@ import cn.nukkit.nbt.tag.CompoundTag;
 /**
  * @author good777LUCKY
  */
-@Since("1.3.2.0-PN")
+@Since("1.4.0.0-PN")
 @PowerNukkitOnly
 public class EntityNPCEntity extends EntityLiving implements EntityNPC, EntityInteractable {
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     public static final int NETWORK_ID = 51;
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     public EntityNPCEntity(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);

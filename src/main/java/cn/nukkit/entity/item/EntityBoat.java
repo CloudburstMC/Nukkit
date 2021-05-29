@@ -47,7 +47,7 @@ public class EntityBoat extends EntityVehicle {
 
     public static final int NETWORK_ID = 90;
 
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", 
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", by = "Cloudburst Nukkit", 
             reason = "Was removed because it is already defined in Entity.DATA_VARIANT",
             replaceWith = "Entity.DATA_VARIANT")
     @PowerNukkitOnly public static final int DATA_WOOD_ID = 20;
@@ -70,9 +70,9 @@ public class EntityBoat extends EntityVehicle {
     private final Set<Entity> ignoreCollision = new HashSet<>(2);
     
     @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", by = "PowerNukkit", 
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", 
             reason = "Unreliable direct field access", replaceWith = "getVariant(), setVariant(int)")
-    @Since("1.3.2.0-PN") public int woodID;
+    @Since("1.4.0.0-PN") public int woodID;
 
     public EntityBoat(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -570,13 +570,13 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getVariant() {
         return this.woodID;
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public void setVariant(int variant) {
         this.woodID = variant;
         this.dataProperties.putInt(DATA_VARIANT, variant);

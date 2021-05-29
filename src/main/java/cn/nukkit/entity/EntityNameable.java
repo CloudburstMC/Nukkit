@@ -45,7 +45,7 @@ public interface EntityNameable {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     default boolean playerApplyNameTag(@Nonnull Player player, @Nonnull Item item) {
         return playerApplyNameTag(player, item, true);
     }
@@ -67,7 +67,7 @@ public interface EntityNameable {
     }
 
     @PowerNukkitOnly
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", 
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", 
             reason = "New implementation needs a player instance, using this method may allow players to name unexpected entities",
             by = "PowerNukkit", replaceWith = "playerApplyNameTag(Player, Item)")
     default boolean applyNameTag(Item item) {

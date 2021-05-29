@@ -6,12 +6,9 @@ import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
 
 @PowerNukkitOnly
 @Since("1.3.0.0-PN")
-@Getter @Setter
 @EqualsAndHashCode(callSuper = true)
 @Deprecated
 @DeprecationDetails(since = "1.4.0.0-PN", reason = "Moved to a class with more details and unlimited data bits", replaceWith = "InvalidBlockPropertyMetaException")
@@ -29,5 +26,23 @@ public class InvalidBlockDamageException extends InvalidBlockPropertyMetaExcepti
         this.blockId = blockId;
         this.damage = damage;
         this.before = before;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public int getBlockId() {
+        return this.blockId;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public int getDamage() {
+        return this.damage;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
+    public int getBefore() {
+        return this.before;
     }
 }

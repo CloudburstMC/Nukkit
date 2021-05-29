@@ -57,7 +57,7 @@ public class InventoryTransactionPacket extends DataPacket {
      */
     public boolean isCraftingPart = false;
     @Since("1.3.1.0-PN") public boolean isEnchantingPart = false;
-    @Since("1.3.2.0-PN") public boolean isRepairItemPart = false;
+    @Since("1.4.0.0-PN") public boolean isRepairItemPart = false;
 
     @Override
     public byte pid() {

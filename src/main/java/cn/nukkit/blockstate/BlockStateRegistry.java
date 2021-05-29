@@ -38,10 +38,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 @UtilityClass
 @ParametersAreNonnullByDefault
 @Log4j2
 public class BlockStateRegistry {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public final int BIG_META_MASK = 0xFFFFFFFF;
     private final ExecutorService asyncStateRemover = Executors.newSingleThreadExecutor();
     private final Pattern BLOCK_ID_NAME_PATTERN = Pattern.compile("^blockid:(\\d+)$"); 
@@ -229,6 +233,8 @@ public class BlockStateRegistry {
     /**
      * @return {@code null} if the runtime id does not matches any known block state.
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nullable
     public BlockState getBlockStateByRuntimeId(int runtimeId) {
         Registration registration = findRegistrationByRuntimeId(runtimeId);
@@ -268,18 +274,24 @@ public class BlockStateRegistry {
         return state;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int getRuntimeId(BlockState state) {
         return getRegistration(state).runtimeId;
     }
-    
+
     private Registration getRegistration(BlockState state) {
         return blockStateRegistration.computeIfAbsent(state, BlockStateRegistry::findRegistration);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int getRuntimeId(int blockId) {
         return getRuntimeId(BlockState.of(blockId));
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Deprecated
     @DeprecationDetails(reason = "The meta is limited to 32 bits", replaceWith = "getRuntimeId(BlockState state)", since = "1.3.0.0-PN")
     public int getRuntimeId(int blockId, int meta) {
@@ -370,6 +382,8 @@ public class BlockStateRegistry {
         return new ArrayList<>(persistenceNameToBlockId.keySet());
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public String getPersistenceName(int blockId) {
         String persistenceName = blockIdToPersistenceName.get(blockId);
@@ -382,6 +396,8 @@ public class BlockStateRegistry {
         return persistenceName;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void registerPersistenceName(int blockId, String persistenceName) {
         synchronized (blockIdToPersistenceName) {
             String newName = persistenceName.toLowerCase();
@@ -424,30 +440,42 @@ public class BlockStateRegistry {
         stateIdRegistration.remove(getStateId(block));
         stateIdRegistration.remove(state.getLegacyStateId());
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int getBlockPaletteDataVersion() {
         @SuppressWarnings("UnnecessaryLocalVariable")
         Object obj = blockPaletteBytes;
         return obj.hashCode();
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public byte[] getBlockPaletteBytes() {
         return blockPaletteBytes.clone();
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void putBlockPaletteBytes(BinaryStream stream) {
         stream.put(blockPaletteBytes);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int getBlockPaletteLength() {
         return blockPaletteBytes.length;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void copyBlockPaletteBytes(byte[] target, int targetIndex) {
         System.arraycopy(blockPaletteBytes, 0, target, targetIndex, blockPaletteBytes.length);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @SuppressWarnings({"deprecation", "squid:CallToDepreca"})
     @Nonnull
     public BlockProperties getProperties(int blockId) {
@@ -459,11 +487,15 @@ public class BlockStateRegistry {
         return block.getProperties();
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public MutableBlockState createMutableState(int blockId) {
         return getProperties(blockId).createMutableState(blockId);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public MutableBlockState createMutableState(int blockId, int bigMeta) {
         MutableBlockState blockState = createMutableState(blockId);
@@ -474,6 +506,8 @@ public class BlockStateRegistry {
     /**
      * @throws InvalidBlockStateException
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public MutableBlockState createMutableState(int blockId, Number storage) {
         MutableBlockState blockState = createMutableState(blockId);
@@ -481,10 +515,14 @@ public class BlockStateRegistry {
         return blockState;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int getUpdateBlockRegistration() {
         return updateBlockRegistration.runtimeId;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nullable
     public Integer getBlockId(String persistenceName) {
         Integer blockId = persistenceNameToBlockId.get(persistenceName);
@@ -501,7 +539,7 @@ public class BlockStateRegistry {
         }
         return null;
     }
-    
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getFallbackRuntimeId() {

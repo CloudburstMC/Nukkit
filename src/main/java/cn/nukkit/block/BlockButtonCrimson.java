@@ -1,10 +1,19 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockButtonCrimson extends BlockButtonWooden {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockButtonCrimson() {
         this(0);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockButtonCrimson(int meta) {
         super(meta);
     }

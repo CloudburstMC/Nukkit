@@ -17,8 +17,12 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public abstract class BlockLog extends BlockSolidMeta {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected static final BlockProperties PILLAR_PROPERTIES = new BlockProperties(CommonBlockProperties.PILLAR_AXIS);
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected BlockLog(int meta) {
         super(meta);
     }
@@ -28,13 +32,19 @@ public abstract class BlockLog extends BlockSolidMeta {
     @Nonnull
     @Override
     public abstract BlockProperties getProperties();
-    
-    protected abstract BlockState getStrippedState(); 
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    protected abstract BlockState getStrippedState();
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockFace.Axis getPillarAxis() {
         return getPropertyValue(PILLAR_AXIS);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setPillarAxis(BlockFace.Axis axis) {
         setPropertyValue(PILLAR_AXIS, axis);
     }

@@ -22,6 +22,8 @@ import static cn.nukkit.utils.BlockColor.*;
  */
 @PowerNukkitDifference(info = "Extends BlockWallBase and implements BlockConnectable only on PowerNukkit", since = "1.4.0.0-PN")
 public class BlockWall extends BlockWallBase {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<WallType> WALL_BLOCK_TYPE = new ArrayBlockProperty<>("wall_block_type", true, WallType.class);
     
     @PowerNukkitOnly
@@ -96,15 +98,26 @@ public class BlockWall extends BlockWallBase {
     @Since("1.3.0.0-PN")
     @PowerNukkitOnly
     public enum WallConnectionType {
-        NONE, SHORT, TALL
+        @PowerNukkitOnly @Since("1.3.0.0-PN") NONE,
+        @PowerNukkitOnly @Since("1.3.0.0-PN") SHORT,
+        @PowerNukkitOnly @Since("1.3.0.0-PN") TALL
     }
     
     @Since("1.3.0.0-PN")
     @PowerNukkitOnly
     public enum WallType {
-        COBBLESTONE, MOSSY_COBBLESTONE, GRANITE(DIRT_BLOCK_COLOR), DIORITE(QUARTZ_BLOCK_COLOR), ANDESITE, SANDSTONE(SAND_BLOCK_COLOR),
-        BRICK(RED_BLOCK_COLOR), STONE_BRICK, MOSSY_STONE_BRICK, NETHER_BRICK(NETHERRACK_BLOCK_COLOR), END_STONE_BRICK(SAND_BLOCK_COLOR),
-        PRISMARINE(CYAN_BLOCK_COLOR), RED_SANDSTONE(ORANGE_BLOCK_COLOR), RED_NETHER_BRICK(NETHERRACK_BLOCK_COLOR);
+        @PowerNukkitOnly @Since("1.3.0.0-PN") COBBLESTONE,
+        @PowerNukkitOnly @Since("1.3.0.0-PN") MOSSY_COBBLESTONE,
+        @PowerNukkitOnly @Since("1.3.0.0-PN") GRANITE(DIRT_BLOCK_COLOR),
+        @PowerNukkitOnly @Since("1.3.0.0-PN") DIORITE(QUARTZ_BLOCK_COLOR),
+        @PowerNukkitOnly @Since("1.3.0.0-PN") ANDESITE, SANDSTONE(SAND_BLOCK_COLOR),
+        @PowerNukkitOnly @Since("1.3.0.0-PN") BRICK(RED_BLOCK_COLOR),
+        @PowerNukkitOnly @Since("1.3.0.0-PN") STONE_BRICK, MOSSY_STONE_BRICK,
+        @PowerNukkitOnly @Since("1.3.0.0-PN") NETHER_BRICK(NETHERRACK_BLOCK_COLOR),
+        @PowerNukkitOnly @Since("1.3.0.0-PN") END_STONE_BRICK(SAND_BLOCK_COLOR),
+        @PowerNukkitOnly @Since("1.3.0.0-PN") PRISMARINE(CYAN_BLOCK_COLOR),
+        @PowerNukkitOnly @Since("1.3.0.0-PN") RED_SANDSTONE(ORANGE_BLOCK_COLOR),
+        @PowerNukkitOnly @Since("1.3.0.0-PN") RED_NETHER_BRICK(NETHERRACK_BLOCK_COLOR);
         
         private final BlockColor color;
         private final String typeName;

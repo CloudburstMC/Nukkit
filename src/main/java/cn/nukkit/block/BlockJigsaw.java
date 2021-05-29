@@ -1,17 +1,21 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public class BlockJigsaw extends BlockSolidMeta implements Faceable {
+    @PowerNukkitOnly
     public BlockJigsaw() {
         this(0);
     }
-    
+
+    @PowerNukkitOnly
     public BlockJigsaw(int meta) {
         super(meta);
     }

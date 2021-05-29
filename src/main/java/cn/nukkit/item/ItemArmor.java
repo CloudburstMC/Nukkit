@@ -19,15 +19,15 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     public static final int TIER_CHAIN = 3;
     public static final int TIER_GOLD = 4;
     public static final int TIER_DIAMOND = 5;
-    @Since("1.3.2.0-PN") public static final int TIER_NETHERITE = 6;
+    @Since("1.4.0.0-PN") public static final int TIER_NETHERITE = 6;
     
     @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", 
+    @DeprecationDetails(since = "1.4.0.0-PN", 
             reason = "The value of this 'constant' is unstable, it may change if new tiers gets added. Refrain from using it. " +
                     "Changes in this value will not be considered as an API breaking change and will not affect code that " +
                     "is already compiled."
     )
-    public static final int TIER_OTHER = 7;
+    public static final int TIER_OTHER = 1000;
 
     public ItemArmor(int id) {
         super(id);

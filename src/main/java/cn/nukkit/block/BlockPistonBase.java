@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
@@ -20,7 +19,6 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.RedstoneComponent;
 import com.google.common.collect.Lists;
 import lombok.extern.log4j.Log4j2;
@@ -176,8 +174,6 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Redstone
         }
     }
 
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
     private void updateAroundRedstoneTorches(boolean powered) {
         for (BlockFace side : BlockFace.values()) {
             if ((getSide(side) instanceof BlockRedstoneTorch && powered)
@@ -194,8 +190,6 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Redstone
         }
     }
 
-    @PowerNukkitDifference(info = "Using new method to play sounds", since = "1.4.0.0-PN")
-    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     private boolean checkState(Boolean isPowered) {
         if (!this.level.getServer().isRedstoneEnabled()) {
             return false;
@@ -224,7 +218,8 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Redstone
         return false;
     }
 
-    @PowerNukkitDifference(info = "Piston shouldn't be powered from redstone under it.", since = "1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Override
     public boolean isGettingPower() {
         BlockFace face = getBlockFace();
@@ -246,11 +241,6 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Redstone
         }
 
         return false;
-    }
-
-    @Deprecated @DeprecationDetails(reason = "New method; keeping for plugin compatibility.", replaceWith = "#isGettingPower()", since = "1.4.0.0-PN", by = "PowerNukkit")
-    public boolean isPowered() {
-        return this.isGettingPower();
     }
 
     private boolean doMove(boolean extending) {
@@ -446,10 +436,6 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Redstone
             return true;
         }
 
-        @PowerNukkitDifference(info = "Fix honeyblock on piston facing direction" +
-                "+ fix block pushing limit for slime/honey blocks" +
-                "+ fix that honey/slime blocks could be retracted when the piston retracts in facing direction",
-                since = "1.4.0.0-PN")
         private boolean addBlockLine(Block origin, Block from, boolean mainBlockLine) {
             Block block = origin.clone();
 

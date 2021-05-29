@@ -6,9 +6,13 @@ import cn.nukkit.api.Since;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockDoubleSlabBrickBlackstonePolished extends BlockDoubleSlabBlackstonePolished {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockDoubleSlabBrickBlackstonePolished() {
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockDoubleSlabBrickBlackstonePolished(int meta) {
         super(meta);
     }

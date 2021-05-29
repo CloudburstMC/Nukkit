@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -11,12 +12,15 @@ import cn.nukkit.utils.BlockColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockCoralBlock extends BlockSolidMeta {
-    
+
+    @PowerNukkitOnly
     public BlockCoralBlock() {
         this(0);
     }
-    
+
+    @PowerNukkitOnly
     public BlockCoralBlock(int meta) {
         super(meta);
     }
@@ -25,11 +29,13 @@ public class BlockCoralBlock extends BlockSolidMeta {
     public int getId() {
         return CORAL_BLOCK;
     }
-    
+
+    @PowerNukkitOnly
     public boolean isDead() {
         return (getDamage() & 0x8) == 0x8;
     }
-    
+
+    @PowerNukkitOnly
     public void setDead(boolean dead) {
         if (dead) {
             setDamage(getDamage() | 0x8);

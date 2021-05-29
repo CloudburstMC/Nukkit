@@ -11,7 +11,7 @@ import lombok.experimental.UtilityClass;
 import lombok.extern.log4j.Log4j2;
 
 @PowerNukkitOnly
-@Since("1.3.0.0-PN")
+@Since("1.4.0.0-PN")
 @UtilityClass
 @Log4j2
 public class ChunkUpdater {

@@ -400,7 +400,8 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
             }
         }
     }
-    
+
+    @PowerNukkitOnly
     public void clearWithFizz(BlockEntityCauldron cauldron) {
         this.setFillLevel(0);//empty
         cauldron.setPotionId(-1);//reset potion

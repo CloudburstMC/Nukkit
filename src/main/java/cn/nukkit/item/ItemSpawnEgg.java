@@ -34,6 +34,8 @@ public class ItemSpawnEgg extends Item {
         super(SPAWN_EGG, meta, count, "Spawn EntityEgg");
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected ItemSpawnEgg(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
@@ -93,14 +95,14 @@ public class ItemSpawnEgg extends Item {
         return false;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     public Item getLegacySpawnEgg() {
         return Item.get(SPAWN_EGG, getEntityNetworkId(), getCount(), getCompoundTag());
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getEntityNetworkId() {
         return this.meta;
     }

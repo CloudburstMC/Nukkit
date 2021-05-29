@@ -214,9 +214,9 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("1.3.0.0-PN") public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = dynamic(117); //int
     @Since("1.3.0.0-PN") public static final int DATA_HITBOX = dynamic(118); //NBT
     @Since("1.3.0.0-PN") public static final int DATA_IS_BUOYANT = dynamic(119); //byte
-    @Since("1.4.0.0-PN") public static final int DATA_FREEZING_EFFECT_STRENGTH = 120;
+    @Since("1.4.0.0-PN") public static final int DATA_FREEZING_EFFECT_STRENGTH = dynamic(120);
     @Since("1.3.0.0-PN") public static final int DATA_BUOYANCY_DATA = dynamic(121); //string
-    @Since("1.4.0.0-PN") public static final int DATA_GOAT_HORN_COUNT = 122;
+    @Since("1.4.0.0-PN") public static final int DATA_GOAT_HORN_COUNT = dynamic(122);
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = dynamic(0);
@@ -2207,7 +2207,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    @PowerNukkitDifference(since = "1.3.2.0-PN", info = "Will do nothing if the entity is on ground and all args are 0")
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Will do nothing if the entity is on ground and all args are 0")
     protected void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
         if (onGround && movX == 0 && movY == 0 && movZ == 0 && dx == 0 && dy == 0 && dz == 0) {
             return;

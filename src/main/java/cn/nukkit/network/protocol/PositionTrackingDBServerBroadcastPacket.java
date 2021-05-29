@@ -174,8 +174,16 @@ public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public enum Action {
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
         UPDATE,
+
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
         DESTROY,
+
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
         NOT_FOUND
     }
 }
