@@ -53,6 +53,7 @@ Click the link above to see the future.
 - Shield mechanics
 - Trident mechanics
 - Many new API classes and methods not listed here
+- Emerald ore generation
 
 #### Blocks
 - Allow
