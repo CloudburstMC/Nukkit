@@ -5,6 +5,7 @@ import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
@@ -67,13 +68,21 @@ public class BlockLever extends BlockFlowable implements Faceable {
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isPowerOn() ? 15 : 0, isPowerOn() ? 0 : 15));
         this.setDamage(this.getDamage() ^ 0x08);
 
+        boolean redstone = this.level.getServer().isRedstoneEnabled();
+
         this.getLevel().setBlock(this, this, false, true);
         this.getLevel().addLevelEvent(this.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_BUTTON_CLICK, this.isPowerOn() ? 600 : 500);
 
         LeverOrientation orientation = LeverOrientation.byMetadata(this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage());
         BlockFace face = orientation.getFacing();
-        //this.level.updateAroundRedstone(this, null);
-        this.level.updateAroundRedstone(this.getLocation().getSide(face.getOpposite()), isPowerOn() ? face : null);
+
+        if (redstone) {
+            Block target = this.getSide(face.getOpposite());
+            target.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+
+            this.level.updateAroundRedstone(this.getLocation(), isPowerOn() ? face.getOpposite() : null);
+            this.level.updateAroundRedstone(target.getLocation(), isPowerOn() ? face : null);
+        }
         return true;
     }
 

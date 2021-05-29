@@ -82,11 +82,11 @@ public class BlockDoubleSlabStone extends BlockSolidMeta {
     public BlockColor getColor() {
         switch (this.getDamage() & 0x07) {
             default:
-                case BlockDoubleSlabStone.STONE:
-                case BlockDoubleSlabStone.COBBLESTONE:
-                case BlockDoubleSlabStone.BRICK:
-                case BlockDoubleSlabStone.STONE_BRICK:
-                    return BlockColor.STONE_BLOCK_COLOR;
+            case BlockDoubleSlabStone.STONE:
+            case BlockDoubleSlabStone.COBBLESTONE:
+            case BlockDoubleSlabStone.BRICK:
+            case BlockDoubleSlabStone.STONE_BRICK:
+                return BlockColor.STONE_BLOCK_COLOR;
             case BlockDoubleSlabStone.SANDSTONE:
                 return BlockColor.SAND_BLOCK_COLOR;
             case BlockDoubleSlabStone.WOODEN:

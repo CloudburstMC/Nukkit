@@ -1,5 +1,6 @@
 package cn.nukkit.event.player;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.HandlerList;
@@ -42,6 +43,11 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
         this.skin = skin;
         this.address = address;
         this.port = port;
+    }
+
+    @Override
+    public Player getPlayer() {
+        throw new UnsupportedOperationException("Could not get player instance in an async event");
     }
 
     public String getName() {

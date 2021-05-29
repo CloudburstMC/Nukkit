@@ -81,4 +81,14 @@ public class BlockDragonEgg extends BlockFallable {
             }
         }
     }
+
+    @Override
+    public boolean breaksWhenMoved() {
+        return true;
+    }
+
+    @Override
+    public boolean sticksToPiston() {
+        return false;
+    }
 }

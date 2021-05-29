@@ -61,5 +61,7 @@ public class BlockHugeMushroomBrown extends BlockSolidMeta {
     }
 
     @Override
-    public BlockColor getColor() { return BlockColor.DIRT_BLOCK_COLOR; }
+    public BlockColor getColor() {
+        return BlockColor.DIRT_BLOCK_COLOR;
+    }
 }
