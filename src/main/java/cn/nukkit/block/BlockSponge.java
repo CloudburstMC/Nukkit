@@ -107,7 +107,7 @@ public class BlockSponge extends BlockSolidMeta {
         int waterRemoved = 0;
         while (waterRemoved < 64 && (entry = entries.poll()) != null) {
             for (BlockFace face : BlockFace.values()) {
-                Block faceBlock = entry.block.getSide(face);
+                Block faceBlock = entry.block.getSide(0, face);
                 Block faceBlock1 = faceBlock.getLevelBlockAtLayer(1);
                 cn.nukkit.utils.MainLogger.getLogger().info(faceBlock.toString() + "   |   " + faceBlock1.toString());
                 if (faceBlock1 instanceof BlockWater) {
