@@ -112,6 +112,7 @@ public class BlockSponge extends BlockSolidMeta {
                 
                 if (faceBlock instanceof BlockWater) {
                     this.getLevel().setBlockStateAt(faceBlock.getFloorX(), faceBlock.getFloorY(), faceBlock.getFloorZ(), BlockState.AIR);
+                    this.getLevel().updateAround(faceBlock);
                     waterRemoved++;
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock, entry.distance + 1));
@@ -121,6 +122,7 @@ public class BlockSponge extends BlockSolidMeta {
                         faceBlock.getLevel().useBreakOn(faceBlock);
                     }
                     this.getLevel().setBlockStateAt(faceBlock1.getFloorX(), faceBlock1.getFloorY(), faceBlock1.getFloorZ(), 1, BlockState.AIR);
+                    this.getLevel().updateAround(faceBlock1);
                     waterRemoved++;
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock1, entry.distance + 1));
