@@ -5,7 +5,6 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.ChunkSection;
-import lombok.RequiredArgsConstructor;
 
 /**
  * @author joserobjr
@@ -13,9 +12,14 @@ import lombok.RequiredArgsConstructor;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-@RequiredArgsConstructor
 class FrameUpdater implements Updater {
     private final ChunkSection section;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public FrameUpdater(ChunkSection section) {
+        this.section = section;
+    }
 
     @Override
     public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {

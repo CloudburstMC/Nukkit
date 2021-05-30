@@ -11,6 +11,8 @@ import javax.annotation.Nonnull;
  * @author MagicDroidX (Nukkit Project)
  */
 public class BlockUnknown extends BlockMeta {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = CommonBlockProperties.LEGACY_BIG_PROPERTIES; 
 
     private final int id;

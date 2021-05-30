@@ -35,7 +35,7 @@ public class ItemBoat extends Item {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     protected ItemBoat(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
@@ -46,7 +46,7 @@ public class ItemBoat extends Item {
     }
     
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public OptionalInt getLegacyBoatDamage() {
         if (getId() == BOAT) {
             return OptionalInt.of(super.getDamage());

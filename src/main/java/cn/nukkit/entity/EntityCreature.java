@@ -38,7 +38,7 @@ public abstract class EntityCreature extends EntityLiving implements EntityNamea
 
     // Structured like this so I can override nametags in player and dragon classes
     // without overriding onInteract.
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     protected boolean applyNameTag(@Nonnull Player player, @Nonnull Item item){
         // The code was moved to the default block of that interface
         return EntityNameable.super.playerApplyNameTag(player, item);

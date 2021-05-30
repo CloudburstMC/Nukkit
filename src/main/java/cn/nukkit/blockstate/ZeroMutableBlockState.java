@@ -43,6 +43,9 @@ import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageTy
 @ParametersAreNonnullByDefault
 public class ZeroMutableBlockState extends MutableBlockState {
     private final BlockState state;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public ZeroMutableBlockState(int blockId, BlockProperties properties) {
         super(blockId, properties);
         state = BlockState.of(blockId);

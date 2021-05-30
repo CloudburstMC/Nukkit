@@ -6,9 +6,11 @@ import cn.nukkit.item.ItemDarkOakSign;
 
 @PowerNukkitOnly
 public class BlockDarkOakSignPost extends BlockSignPost {
+    @PowerNukkitOnly
     public BlockDarkOakSignPost() {
     }
 
+    @PowerNukkitOnly
     public BlockDarkOakSignPost(int meta) {
         super(meta);
     }

@@ -6,6 +6,8 @@ import cn.nukkit.api.Since;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockBricksBlackstonePolishedCracked extends BlockBricksBlackstonePolished {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockBricksBlackstonePolishedCracked() {
         // Does nothing
     }

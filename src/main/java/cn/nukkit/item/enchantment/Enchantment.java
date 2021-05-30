@@ -80,9 +80,9 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_TRIDENT_RIPTIDE = 30;
     public static final int ID_TRIDENT_LOYALTY = 31;
     public static final int ID_TRIDENT_CHANNELING = 32;
-    @Since("1.3.2.0-PN") public static final int ID_CROSSBOW_MULTISHOT = 33;
-    @Since("1.3.2.0-PN") public static final int ID_CROSSBOW_PIERCING = 34;
-    @Since("1.3.2.0-PN") public static final int ID_CROSSBOW_QUICK_CHARGE = 35;
+    @Since("1.4.0.0-PN") public static final int ID_CROSSBOW_MULTISHOT = 33;
+    @Since("1.4.0.0-PN") public static final int ID_CROSSBOW_PIERCING = 34;
+    @Since("1.4.0.0-PN") public static final int ID_CROSSBOW_QUICK_CHARGE = 35;
     @Since("1.4.0.0-PN") public static final int ID_SOUL_SPEED = 36;
 
     public static void init() {
@@ -135,7 +135,7 @@ public abstract class Enchantment implements Cloneable {
      * The UnknownEnchantment will be always a new instance and changes to it does not affects other calls.
      */
     @Deprecated
-    @DeprecationDetails(by = "PowerNukkit", reason = "This is very insecure and can break the environment", since = "1.3.2.0-PN",
+    @DeprecationDetails(by = "PowerNukkit", reason = "This is very insecure and can break the environment", since = "1.4.0.0-PN",
             replaceWith = "getEnchantment(int)")
     public static Enchantment get(int id) {
         Enchantment enchantment = null;
@@ -163,7 +163,7 @@ public abstract class Enchantment implements Cloneable {
      * @return An array with the enchantment objects, the array may contain null objects but is very unlikely.
      */
     @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", by = "PowerNukkit", 
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", 
             reason = "The objects returned by this method are not safe to use and the implementation may skip some enchantments",
             replaceWith = "getRegisteredEnchantments()"
     )
@@ -185,7 +185,7 @@ public abstract class Enchantment implements Cloneable {
      * @return The objects can be modified without affecting the registry and the collection will not have null values.
      */
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static Collection<Enchantment> getRegisteredEnchantments() {
         return Arrays.stream(enchantments)
                 .filter(Objects::nonNull)
@@ -224,8 +224,8 @@ public abstract class Enchantment implements Cloneable {
      * @param weight How rare this enchantment is, from {@code 1} to {@code 10} both inclusive where {@code 1} is the rarest
      * @param type Where the enchantment can be applied
      */
-    @PowerNukkitOnly("Was removed from Nukkit in 1.3.2.0-PN, keeping it in PowerNukkit for backward compatibility")
-    @Deprecated @DeprecationDetails(by = "Cloudburst Nukkit", since = "1.3.2.0-PN", reason = "Changed the signature without backward compatibility",
+    @PowerNukkitOnly("Was removed from Nukkit in 1.4.0.0-PN, keeping it in PowerNukkit for backward compatibility")
+    @Deprecated @DeprecationDetails(by = "Cloudburst Nukkit", since = "1.4.0.0-PN", reason = "Changed the signature without backward compatibility",
             replaceWith = "Enchantment(int, String, Rarity, EnchantmentType)")
     protected Enchantment(int id, String name, int weight, EnchantmentType type) {
         this(id, name, Rarity.fromWeight(weight), type);
@@ -238,7 +238,7 @@ public abstract class Enchantment implements Cloneable {
      * @param rarity How rare this enchantment is
      * @param type Where the enchantment can be applied
      */
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     protected Enchantment(int id, String name, Rarity rarity, EnchantmentType type) {
         this.id = id;
         this.rarity = rarity;
@@ -299,7 +299,7 @@ public abstract class Enchantment implements Cloneable {
     /**
      * How rare this enchantment is.
      */
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @Nonnull
     public Rarity getRarity() {
         return this.rarity;
@@ -309,7 +309,7 @@ public abstract class Enchantment implements Cloneable {
      * How rare this enchantment is, from {@code 1} to {@code 10} where {@code 1} is the rarest.
      * @deprecated use {@link Rarity#getWeight()} instead
      */
-    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", 
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "Cloudburst Nukkit", 
             reason = "Refactored enchantments and now uses a Rarity enum", 
             replaceWith = "getRarity().getWeight()")
     @Deprecated
@@ -395,7 +395,7 @@ public abstract class Enchantment implements Cloneable {
      * @param enchantment The enchantment to be checked
      * @return If this enchantment is compatible with the other enchantment.
      */
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     protected boolean checkCompatibility(Enchantment enchantment) {
         return this != enchantment;
     }
@@ -431,7 +431,7 @@ public abstract class Enchantment implements Cloneable {
      * Checks if an item can have this enchantment. It's not strict to the enchantment table.
      */
     @PowerNukkitOnly @Since("1.2.1.0-PN")
-    @Deprecated @DeprecationDetails(by = "PowerNukkit", since = "1.3.2.0-PN", 
+    @Deprecated @DeprecationDetails(by = "PowerNukkit", since = "1.4.0.0-PN", 
             reason = "Does the same as canEnchant(item)", replaceWith = "canEnchant(item)")
     public boolean isItemAcceptable(Item item) {
         return canEnchant(item);
@@ -460,12 +460,12 @@ public abstract class Enchantment implements Cloneable {
     /**
      * How rare an enchantment is.
      */
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public enum Rarity {
-        @Since("1.3.2.0-PN") COMMON(10),
-        @Since("1.3.2.0-PN") UNCOMMON(5),
-        @Since("1.3.2.0-PN") RARE(2),
-        @Since("1.3.2.0-PN") VERY_RARE(1);
+        @Since("1.4.0.0-PN") COMMON(10),
+        @Since("1.4.0.0-PN") UNCOMMON(5),
+        @Since("1.4.0.0-PN") RARE(2),
+        @Since("1.4.0.0-PN") VERY_RARE(1);
 
         private final int weight;
 
@@ -473,7 +473,7 @@ public abstract class Enchantment implements Cloneable {
             this.weight = weight;
         }
 
-        @Since("1.3.2.0-PN")
+        @Since("1.4.0.0-PN")
         public int getWeight() {
             return this.weight;
         }
@@ -483,7 +483,7 @@ public abstract class Enchantment implements Cloneable {
          * @param weight The enchantment weight
          * @return The closest rarity
          */
-        @Since("1.3.2.0-PN")
+        @Since("1.4.0.0-PN")
         public static Rarity fromWeight(int weight) {
             if (weight < 2) {
                 return VERY_RARE;

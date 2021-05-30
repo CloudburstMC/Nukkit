@@ -9,7 +9,8 @@ import java.util.Comparator;
 @Since("1.4.0.0-PN")
 public class HumanStringComparator implements Comparator<String> {
     private static final HumanStringComparator INSTANCE = new HumanStringComparator();
-    
+
+    @Override
     public int compare(String o1, String o2) {
 
         String o1StringPart = o1.replaceAll("\\d", "");
@@ -32,6 +33,8 @@ public class HumanStringComparator implements Comparator<String> {
         }
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static HumanStringComparator getInstance() {
         return INSTANCE;
     }

@@ -1,15 +1,23 @@
 package cn.nukkit.utils.functional;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.math.IntIncrementSupplier;
 import cn.nukkit.math.NukkitMath;
 import com.google.common.base.Preconditions;
 
 import java.util.stream.IntStream;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 @FunctionalInterface
 public interface BlockPositionConsumer {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     void accept(int x, int y, int z);
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     static void validate(int fromX, int fromY, int fromZ, int toX, int toY, int toZ, int xInc, int yInc, int zInc) {
         if (fromX <= toX) {
             Preconditions.checkArgument(xInc > 0, "Invalid xInc");
@@ -29,7 +37,9 @@ public interface BlockPositionConsumer {
             Preconditions.checkArgument(zInc < 0, "Invalid zInc");
         }
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     static void xzy(int fromX, int fromY, int fromZ, int toX, int toY, int toZ, int xInc, int yInc, int zInc, BlockPositionConsumer iterator) {
         validate(fromX, fromY, fromZ, toX, toY, toZ, xInc, yInc, zInc);
         
@@ -44,10 +54,14 @@ public interface BlockPositionConsumer {
         )));
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     static void xzy(int fromX, int fromY, int fromZ, int toX, int toY, int toZ, BlockPositionConsumer iterator) {
         xzy(fromX, fromY, fromZ, toX, toY, toZ, fromX <= toX? 1 : -1, fromY <= toY? 1 : -1, fromZ <= toZ? 1 : -1, iterator);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     static void xzy(int toX, int toY, int toZ, BlockPositionConsumer iterator) {
         xzy(0, 0, 0, toX, toY, toZ, iterator);
     }

@@ -12,12 +12,15 @@ import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public class BlockSeagrass extends BlockFlowable {
-    
+
+    @PowerNukkitOnly
     public BlockSeagrass() {
         this(0);
     }
-    
+
+    @PowerNukkitOnly
     public BlockSeagrass(int meta) {
         super(meta);
     }

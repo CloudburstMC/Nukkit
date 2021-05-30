@@ -26,20 +26,20 @@ import lombok.ToString;
  * @author joserobjr
  * @since 2021-02-14
  */
-@Since("1.3.2.0-PN")
+@Since("1.4.0.0-PN")
 @ToString
 public class FilterTextPacket extends DataPacket {
-    @Since("1.3.2.0-PN") public static final byte NETWORK_ID = ProtocolInfo.FILTER_TEXT_PACKET;
+    @Since("1.4.0.0-PN") public static final byte NETWORK_ID = ProtocolInfo.FILTER_TEXT_PACKET;
     
     @Since("1.4.0.0-PN") public String text;
     @Since("1.4.0.0-PN") public boolean fromServer;
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public FilterTextPacket() {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public FilterTextPacket(String text, boolean fromServer) {
         this.text = text;
         this.fromServer = fromServer;
@@ -64,25 +64,25 @@ public class FilterTextPacket extends DataPacket {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public String getText() {
         return text;
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public void setText(String text) {
         this.text = text;
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean isFromServer() {
         return fromServer;
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public void setFromServer(boolean fromServer) {
         this.fromServer = fromServer;
     }

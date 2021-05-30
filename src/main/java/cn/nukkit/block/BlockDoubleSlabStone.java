@@ -60,6 +60,8 @@ public class BlockDoubleSlabStone extends BlockDoubleSlabBase {
         return ItemTool.TYPE_PICKAXE;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public StoneSlab1Type getSlabType() {
         return getPropertyValue(StoneSlab1Type.PROPERTY);
     }
@@ -68,7 +70,9 @@ public class BlockDoubleSlabStone extends BlockDoubleSlabBase {
     public int getSingleSlabId() {
         return STONE_SLAB;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setSlabType(StoneSlab1Type type) {
         setPropertyValue(StoneSlab1Type.PROPERTY, type);
     }

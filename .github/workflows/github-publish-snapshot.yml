@@ -35,6 +35,6 @@ jobs:
       run: sed -i 's@https://oss.sonatype.org/content/repositories/snapshots@https://maven.pkg.github.com/PowerNukkit/PowerNukkit@' pom.xml
     
     - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+      run: mvn -B deploy -Dgpg.skip=true -DskipTests=false -s $GITHUB_WORKSPACE/settings.xml
       env:
         GITHUB_TOKEN: ${{ github.token }}

@@ -26,7 +26,7 @@ import java.util.Map;
 
 import static com.google.common.base.Verify.verify;
 
-@Since("1.3.2.0-PN")
+@Since("1.4.0.0-PN")
 @UtilityClass
 @Log4j2
 public class RuntimeItems {
@@ -78,32 +78,32 @@ public class RuntimeItems {
                 namespaceNetworkMap, networkNamespaceMap);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static RuntimeItemMapping getRuntimeMapping() {
         return itemPalette;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int getId(int fullId) {
         return (short) (fullId >> 16);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int getData(int fullId) {
         return ((fullId >> 1) & 0x7fff);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int getFullId(int id, int data) {
         return (((short) id) << 16) | ((data & 0x7fff) << 1);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int getNetworkId(int networkFullId) {
         return networkFullId >> 1;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static boolean hasData(int id) {
         return (id & 0x1) != 0;
     }

@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
  * <li>A <b>namespaced id</b> is the new way Mojang saves the ids, a string like <code>minecraft:stone</code>. It may change
  * in Minecraft updates but tends to be permanent, unless Mojang decides to change them for some random reasons...
  */
-@Since("1.3.2.0-PN")
+@Since("1.4.0.0-PN")
 public class RuntimeItemMapping {
 
     private final Int2IntMap legacyNetworkMap;
@@ -36,7 +36,7 @@ public class RuntimeItemMapping {
     private final Map<String, OptionalInt> namespaceNetworkMap;
     private final Int2ObjectMap<String> networkNamespaceMap;
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public RuntimeItemMapping(byte[] itemDataPalette, Int2IntMap legacyNetworkMap, Int2IntMap networkLegacyMap) {
         this.itemDataPalette = itemDataPalette;
         this.legacyNetworkMap = legacyNetworkMap;
@@ -48,7 +48,7 @@ public class RuntimeItemMapping {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @API(definition = API.Definition.INTERNAL, usage = API.Usage.BLEEDING)
     public RuntimeItemMapping(
             byte[] itemDataPalette, Int2IntMap legacyNetworkMap, Int2IntMap networkLegacyMap,
@@ -70,7 +70,7 @@ public class RuntimeItemMapping {
      * @return The <b>network id</b>
      * @throws IllegalArgumentException If the mapping of the <b>full id</b> to the <b>network id</b> is unknown
      */
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getNetworkFullId(Item item) {
         int fullId = RuntimeItems.getFullId(item.getId(), item.hasMeta() ? item.getDamage() : -1);
         int networkId = this.legacyNetworkMap.get(fullId);
@@ -90,7 +90,7 @@ public class RuntimeItemMapping {
      * @return The <b>full id</b>
      * @throws IllegalArgumentException If the mapping of the <b>full id</b> to the <b>network id</b> is unknown
      */
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getLegacyFullId(int networkId) {
         int fullId = networkLegacyMap.get(networkId);
         if (fullId == -1) {
@@ -99,7 +99,7 @@ public class RuntimeItemMapping {
         return fullId;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public byte[] getItemDataPalette() {
         return this.itemDataPalette;
     }
@@ -110,7 +110,7 @@ public class RuntimeItemMapping {
      * @return The <b>namespace id</b> or {@code null} if it is unknown
      */
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @Nullable
     public String getNamespacedIdByNetworkId(int networkId) {
         return networkNamespaceMap.get(networkId);
@@ -122,7 +122,7 @@ public class RuntimeItemMapping {
      * @return A <b>network id</b> wrapped in {@link OptionalInt} or an empty {@link OptionalInt} if it is unknown
      */
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @Nonnull
     public OptionalInt getNetworkIdByNamespaceId(@Nonnull String namespaceId) {
         return namespaceNetworkMap.getOrDefault(namespaceId, OptionalInt.empty());
@@ -136,7 +136,7 @@ public class RuntimeItemMapping {
      * @throws IllegalArgumentException If there are unknown mappings in the process. 
      */
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @Nonnull
     public Item getItemByNamespaceId(@Nonnull String namespaceId, int amount) {
         int legacyFullId = getLegacyFullId(

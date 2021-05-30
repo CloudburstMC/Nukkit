@@ -19,7 +19,7 @@ public class SetEntityDataPacket extends DataPacket {
 
     public long eid;
     public EntityMetadata metadata;
-    @Since("1.3.2.0-PN") public long frame;
+    @Since("1.4.0.0-PN") public long frame;
 
     @Override
     public void decode() {

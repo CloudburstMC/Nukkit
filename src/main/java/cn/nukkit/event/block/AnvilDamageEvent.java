@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @PowerNukkitDifference(info = "Extends BlockFadeEvent instead of BlockEvent only in PowerNukkit")
-@Deprecated @DeprecationDetails(since = "1.3.2.0-PN",
+@Deprecated @DeprecationDetails(since = "1.4.0.0-PN",
         reason = "This is only a warning, this event will change in 1.5.0.0-PN, " +
                 "it will no longer extend BlockFadeEvent and the cause enum will be renamed!",
         toBeRemovedAt = "The class will have a breaking change in 1.5.0.0-PN"
@@ -34,13 +34,13 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
     private final CraftingTransaction transaction;
     private final DamageCause cause;
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public AnvilDamageEvent(Block block, int oldDamage, int newDamage, DamageCause cause, Player player) {
         this(adjustBlock(block, oldDamage), adjustBlock(block, newDamage), player, null, cause);
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public AnvilDamageEvent(Block block, Block newState, Player player, @Nullable CraftingTransaction transaction, DamageCause cause) {
         super(block, newState);
         this.player = player;
@@ -68,23 +68,23 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
     }
     
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public DamageCause getDamageCause() {
         return cause;
     }
 
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getOldDamage() {
         return getBlock().getDamage();
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getNewDamage() {
         return getNewState().getDamage();
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public void setNewDamage(int newDamage) {
         getNewState().setDamage(newDamage);
     }
@@ -92,7 +92,7 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
     @PowerNukkitOnly
     @Since("1.1.1.0-PN")
     @Deprecated @DeprecationDetails(
-            since = "1.3.2.0-PN", by = "PowerNukkit",
+            since = "1.4.0.0-PN", by = "PowerNukkit",
             reason = "NukkitX added the class and made getCause() return an enum with a different name.",
             replaceWith = "getDamageCause()",
             toBeRemovedAt = "1.5.0.0-PN"
@@ -104,7 +104,7 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
     @PowerNukkitOnly
     @Since("1.1.1.0-PN")
     @Deprecated @DeprecationDetails(
-            since = "1.3.2.0-PN", by = "PowerNukkit",
+            since = "1.4.0.0-PN", by = "PowerNukkit",
             reason = "NukkitX added the class but with a different enum for the damage cause",
             replaceWith = "DamageCause",
             toBeRemovedAt = "1.6.0.0-PN"
@@ -114,7 +114,7 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
         @PowerNukkitOnly
         @Since("1.1.1.0-PN")
         @Deprecated @DeprecationDetails(
-                since = "1.3.2.0-PN", by = "PowerNukkit",
+                since = "1.4.0.0-PN", by = "PowerNukkit",
                 reason = "NukkitX added the class but with a different enum for the damage cause",
                 replaceWith = "DamageCause.USE",
                 toBeRemovedAt = "1.6.0.0-PN"
@@ -124,7 +124,7 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
         @PowerNukkitOnly
         @Since("1.1.1.0-PN")
         @Deprecated @DeprecationDetails(
-                since = "1.3.2.0-PN", by = "PowerNukkit",
+                since = "1.4.0.0-PN", by = "PowerNukkit",
                 reason = "NukkitX added the class but with a different enum for the damage cause",
                 replaceWith = "DamageCause.FALL",
                 toBeRemovedAt = "1.6.0.0-PN"
@@ -145,10 +145,10 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
         }
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public enum DamageCause {
-        @Since("1.3.2.0-PN") USE,
-        @Since("1.3.2.0-PN") FALL
+        @Since("1.4.0.0-PN") USE,
+        @Since("1.4.0.0-PN") FALL
     }
 
     private static Block adjustBlock(Block block, int damage) {

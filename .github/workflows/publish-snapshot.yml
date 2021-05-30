@@ -26,7 +26,7 @@ jobs:
         server-username: MAVEN_USERNAME
         server-password: MAVEN_PASSWORD
     - name: Publish snapshot
-      run: mvn -B deploy
+      run: mvn -B deploy -Dgpg.skip=true -DskipTests=false
       env:
         MAVEN_USERNAME: ${{ secrets.POWERNUKKIT_SNAPSHOT_USER }}
         MAVEN_PASSWORD: ${{ secrets.POWERNUKKIT_SNAPSHOT_PASSWORD }}

@@ -14,7 +14,7 @@ public class UpdateAttributesPacket extends DataPacket {
 
     public Attribute[] entries;
     public long entityId;
-    @Since("1.3.2.0-PN") public long frame;
+    @Since("1.4.0.0-PN") public long frame;
 
     @Override
     public byte pid() {

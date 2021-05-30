@@ -167,6 +167,8 @@ public final class MultiLayerStorage extends LayerStorage {
         return false;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     @SneakyThrows(CloneNotSupportedException.class)
     @Override
     public MultiLayerStorage clone() {

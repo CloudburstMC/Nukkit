@@ -1,14 +1,22 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.utils.BlockColor;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockStemCrimson extends BlockStem {
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockStemCrimson() {
         this(0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockStemCrimson(int meta) {
         super(meta);
     }

@@ -37,6 +37,8 @@ import static cn.nukkit.blockstate.Loggers.logIBlockState;
 @Since("1.4.0.0-PN")
 @ParametersAreNonnullByDefault
 public interface IBlockState {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnegative
     int getBlockId();
 
