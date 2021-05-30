@@ -205,7 +205,6 @@ public class Level implements ChunkManager, Metadatable {
     private final Long2LongMap unloadQueue = Long2LongMaps.synchronize(new Long2LongOpenHashMap());
 
     private float time;
-    private float fullTime;
     public boolean stopTime;
 
     public float skyLightSubtracted;
