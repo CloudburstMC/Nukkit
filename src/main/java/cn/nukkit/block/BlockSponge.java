@@ -110,7 +110,14 @@ public class BlockSponge extends BlockSolidMeta {
                 Block faceBlock = entry.block.getSideAtLayer(0, face);
                 Block faceBlock1 = faceBlock.getLevelBlockAtLayer(1);
                 cn.nukkit.utils.MainLogger.getLogger().info(faceBlock.toString() + "   |   " + faceBlock1.toString());
-                if (faceBlock1 instanceof BlockWater) {
+                if (faceBlock instanceof BlockWater) {
+                    this.getLevel().setBlockStateAt(faceBlock.getFloorX(), faceBlock.getFloorY(), faceBlock.getFloorZ(), BlockState.AIR);
+                    ++waterRemoved;
+                    if (entry.distance < 6) {
+                        entries.add(new Entry(faceBlock, entry.distance + 1));
+                    }
+                    cn.nukkit.utils.MainLogger.getLogger().info("Water Layer 0 removed!");
+                } else if (faceBlock1 instanceof BlockWater) {
                     if (faceBlock.getId() == BlockID.BLOCK_KELP || faceBlock.getId() == BlockID.SEAGRASS || faceBlock.getId() == BlockID.SEA_PICKLE || faceBlock instanceof BlockCoralFan) {
                         faceBlock.getLevel().useBreakOn(faceBlock);
                     }
@@ -122,16 +129,12 @@ public class BlockSponge extends BlockSolidMeta {
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock1, entry.distance + 1));
                     }
-                } else if (faceBlock instanceof BlockWater) {
-                    this.getLevel().setBlockStateAt(faceBlock.getFloorX(), faceBlock.getFloorY(), faceBlock.getFloorZ(), BlockState.AIR);
-                    ++waterRemoved;
-                    if (entry.distance < 6) {
-                        entries.add(new Entry(faceBlock, entry.distance + 1));
-                    }
+                    cn.nukkit.utils.MainLogger.getLogger().info("Water layer 1 removed!");
                 } else if (faceBlock.getId() == BlockID.AIR) {
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock, entry.distance + 1));
                     }
+                    cn.nukkit.utils.MainLogger.getLogger().info("Air!");
                 }
             }
         }
