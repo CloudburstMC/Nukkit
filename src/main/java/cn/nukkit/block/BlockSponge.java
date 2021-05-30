@@ -130,11 +130,6 @@ public class BlockSponge extends BlockSolidMeta {
                         entries.add(new Entry(faceBlock1, entry.distance + 1));
                     }
                     cn.nukkit.utils.MainLogger.getLogger().info("Water layer 1 removed!");
-                } else if (faceBlock.getId() == BlockID.AIR) {
-                    if (entry.distance < 6) {
-                        entries.add(new Entry(faceBlock, entry.distance + 1));
-                    }
-                    cn.nukkit.utils.MainLogger.getLogger().info("Air!");
                 }
             }
         }
