@@ -843,9 +843,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void sendTime() {
-    	if (this.levelCurrentTick % (30 * 20) == 0) {
-            this.sendTime(this.players.values().toArray(Player.EMPTY_ARRAY));
-        }
+        this.sendTime(this.players.values().toArray(Player.EMPTY_ARRAY));
     }
 
     public GameRules getGameRules() {
@@ -859,7 +857,9 @@ public class Level implements ChunkManager, Metadatable {
 
         updateBlockLight(lightQueue);
         this.checkTime();
-        this.sendTime();
+        if (currentTick % (30 * 20) == 0) {
+            this.sendTime();
+        }
 
         // Tick Weather
         if (this.dimension != DIMENSION_NETHER && this.dimension != DIMENSION_THE_END && gameRules.getBoolean(GameRule.DO_WEATHER_CYCLE)) {
