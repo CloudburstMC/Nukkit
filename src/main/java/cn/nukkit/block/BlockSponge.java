@@ -109,7 +109,7 @@ public class BlockSponge extends BlockSolidMeta {
             for (BlockFace face : BlockFace.values()) {
                 Block faceBlock = entry.block.getSideAtLayer(0, face);
                 Block faceBlock1 = faceBlock.getLevelBlockAtLayer(1);
-                cn.nukkit.utils.MainLogger.getLogger().info(faceBlock.toString() + "   |   " + faceBlock1.toString());
+                cn.nukkit.utils.MainLogger.getLogger().info(faceBlock.toString() + "   |   " + faceBlock1.toString() + "  ||  Entry: " + entry.block.toString() + "  Distance: " + String.valueOf(entry.distance));
                 if (faceBlock instanceof BlockWater) {
                     this.getLevel().setBlockStateAt(faceBlock.getFloorX(), faceBlock.getFloorY(), faceBlock.getFloorZ(), BlockState.AIR);
                     ++waterRemoved;
