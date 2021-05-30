@@ -108,8 +108,9 @@ public class BlockSponge extends BlockSolidMeta {
         while (waterRemoved < 64 && (entry = entries.poll()) != null) {
             for (BlockFace face : BlockFace.values()) {
                 Block faceBlock = entry.block.getSide(face);
+                Block faceBlock1 = faceBlock.getLevelBlockAtLayer(1);
                 
-                if ((Block faceBlock1 = faceBlock.getLevelBlockAtLayer(1)) instanceof BlockWater) {
+                if (faceBlock1 instanceof BlockWater) {
                     if (faceBlock.getId() == BlockID.BLOCK_KELP || faceBlock.getId() == BlockID.SEAGRASS || faceBlock.getId() == BlockID.SEA_PICKLE || faceBlock instanceof BlockCoralFan) {
                         faceBlock.getLevel().useBreakOn(faceBlock);
                     }
