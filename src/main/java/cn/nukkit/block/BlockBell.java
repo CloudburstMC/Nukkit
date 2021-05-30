@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.DeprecationDetails;
-import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
@@ -35,7 +34,6 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 import static cn.nukkit.blockproperty.CommonBlockProperties.TOGGLE;
 
 @PowerNukkitOnly
-@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
 public class BlockBell extends BlockTransparentMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityBell> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -69,10 +67,12 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
             reason = "Magic values", replaceWith = "BellAttachmentType.MULTIPLE")
     public static final int TYPE_ATTACHMENT_MULTIPLE = 3;
 
+    @PowerNukkitOnly
     public BlockBell() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockBell(int meta) {
         super(meta);
     }
@@ -213,10 +213,12 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
         return ring(player, player != null? BellRingEvent.RingCause.HUMAN_INTERACTION : BellRingEvent.RingCause.UNKNOWN);
     }
 
+    @PowerNukkitOnly
     public boolean ring(Entity causeEntity, BellRingEvent.RingCause cause) {
         return ring(causeEntity, cause, null);
     }
 
+    @PowerNukkitOnly
     public boolean ring(Entity causeEntity, BellRingEvent.RingCause cause, BlockFace hitFace) {
         BlockEntityBell bell = getOrCreateBlockEntity();
         boolean addException = true;
@@ -338,7 +340,6 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
     }
 
     @Override
-    @PowerNukkitDifference(info = "Using new method for checking if powered", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (!checkSupport()) {

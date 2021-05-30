@@ -11,7 +11,7 @@ import java.util.Set;
 
 public class PlayerUIComponent extends BaseInventory {
 
-    @Since("1.3.2.0-PN") public static final int CREATED_ITEM_OUTPUT_UI_SLOT = 50;
+    @Since("1.4.0.0-PN") public static final int CREATED_ITEM_OUTPUT_UI_SLOT = 50;
 
     @PowerNukkitOnly protected final PlayerUIInventory playerUI;
     private final int offset;

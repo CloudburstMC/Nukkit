@@ -13,11 +13,14 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockCoralFan extends BlockFlowable implements Faceable {
+    @PowerNukkitOnly
     public BlockCoralFan() {
         this(0);
     }
-    
+
+    @PowerNukkitOnly
     public BlockCoralFan(int meta) {
         super(meta);
     }
@@ -56,11 +59,13 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
     public int getWaterloggingLevel() {
         return 2;
     }
-    
+
+    @PowerNukkitOnly
     public boolean isDead() {
         return false;
     }
-    
+
+    @PowerNukkitOnly
     public int getType() {
         return getDamage() & 0x7;
     }
@@ -69,7 +74,8 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(((getDamage() & 0x8) >> 3) + 1);
     }
-    
+
+    @PowerNukkitOnly
     public BlockFace getRootsFace() {
         return BlockFace.DOWN;
     }

@@ -11,11 +11,14 @@ import cn.nukkit.item.Item;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public abstract class BlockWoodStripped extends BlockWood {
+    @PowerNukkitOnly
     public BlockWoodStripped() {
         this(0);
     }
-    
+
+    @PowerNukkitOnly
     public BlockWoodStripped(int meta) {
         super(meta);
     }

@@ -982,6 +982,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public void afterRemoval(Block newBlock, boolean update) {
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean isSoulSpeedCompatible() {
         return false;
     }
@@ -1303,12 +1305,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @Nonnull
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public double calculateBreakTime(@Nonnull Item item) {
         return calculateBreakTime(item, null);
     }
 
     @Nonnull
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public double calculateBreakTime(@Nonnull Item item, @Nullable Player player) {
         double seconds = 0;
         double blockHardness = getHardness();
@@ -2123,10 +2127,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return true;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public final boolean isBlockChangeAllowed() {
         return getChunk().isBlockChangeAllowed(getFloorX() & 0xF, getFloorY(), getFloorZ() & 0xF);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public final boolean isBlockChangeAllowed(@Nullable Player player) {
         if (isBlockChangeAllowed()) {
             return true;
@@ -2176,6 +2184,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
      * @return if the gets powered.
      */
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @PowerNukkitDifference(info = "Used so often, why not create own method here?", since = "1.4.0.0-PN")
     public boolean isGettingPower() {
         if (!this.level.getServer().isRedstoneEnabled()) return false;

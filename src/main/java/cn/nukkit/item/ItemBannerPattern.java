@@ -42,7 +42,7 @@ public class ItemBannerPattern extends Item {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     protected ItemBannerPattern(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
@@ -59,7 +59,7 @@ public class ItemBannerPattern extends Item {
     }
     
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public BannerPattern.Type getPatternType() {
         if (getId() != BANNER_PATTERN) {
             return BannerPattern.Type.PATTERN_CREEPER;

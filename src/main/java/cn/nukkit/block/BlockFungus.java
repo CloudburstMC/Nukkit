@@ -14,7 +14,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.concurrent.ThreadLocalRandom;
 
+@Since("1.4.0.0-PN")
+@PowerNukkitOnly
 public abstract class BlockFungus extends BlockFlowable {
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     protected BlockFungus() {
         super(0);
     }
@@ -71,9 +75,13 @@ public abstract class BlockFungus extends BlockFlowable {
         
         return true;
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     protected abstract boolean canGrowOn(Block support);
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     protected boolean isValidSupport(@Nonnull Block support) {
         switch (support.getId()) {
             case GRASS:
@@ -95,5 +103,7 @@ public abstract class BlockFungus extends BlockFlowable {
         return true;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public abstract boolean grow(@Nullable Player cause);
 }

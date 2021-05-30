@@ -407,6 +407,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         this.setDataProperty(new ShortEntityData(DATA_AIR, ticks));
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected boolean blockedByShield(EntityDamageEvent source) {
         Entity damager = null;
         if (source instanceof EntityDamageByChildEntityEvent) {

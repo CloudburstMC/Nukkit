@@ -37,7 +37,7 @@ public class CraftingManager {
     public final Collection<Recipe> recipes = new ArrayDeque<>();
 
     @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", reason = "Field signature change from BatchPacket to DataPacket",
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "Cloudburst Nukkit", reason = "Field signature change from BatchPacket to DataPacket",
         replaceWith = "getCraftingPacket() to be safer", toBeRemovedAt = "1.5.0.0-PN")
     public static BatchPacket packet = null;
     private static DataPacket packet0 = null;
@@ -50,7 +50,7 @@ public class CraftingManager {
     public final Map<Integer, SmokerRecipe> smokerRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, CampfireRecipe> campfireRecipes = new Int2ObjectOpenHashMap<>();
 
-    @Since("1.3.2.0-PN") public final Map<UUID, MultiRecipe> multiRecipes = new HashMap<>();
+    @Since("1.4.0.0-PN") public final Map<UUID, MultiRecipe> multiRecipes = new HashMap<>();
 
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
@@ -75,7 +75,7 @@ public class CraftingManager {
     };
     
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static DataPacket getCraftingPacket() {
         return packet0;
     }
@@ -682,7 +682,7 @@ public class CraftingManager {
         return false;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public void registerMultiRecipe(MultiRecipe recipe) {
         this.multiRecipes.put(recipe.getId(), recipe);
     }

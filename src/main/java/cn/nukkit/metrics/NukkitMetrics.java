@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 import static cn.nukkit.utils.NukkitCollectors.countingInt;
 import static java.util.stream.Collectors.groupingBy;
 
-@Since("1.3.2.0-PN")
+@Since("1.4.0.0-PN")
 @Log4j2
 public class NukkitMetrics {
     private static final AtomicReference<Map<Server, NukkitMetrics>> metricsStarted = new AtomicReference<>(Collections.emptyMap());
@@ -47,7 +47,7 @@ public class NukkitMetrics {
     @DeprecationDetails(by = "PowerNukkit", since = "1.4.0.0-PN", replaceWith = "NukkitMetrics.startNow(Server)",
         reason = "The original cloudburst nukkit constructor implementation behaves like a stateful static method " +
                 "and don't comply with Java standards. Use the static method startNow(server) instead.")
-    @Since("1.3.2.0-PN") public NukkitMetrics(Server server) {
+    @Since("1.4.0.0-PN") public NukkitMetrics(Server server) {
         this(server, true);
     }
 

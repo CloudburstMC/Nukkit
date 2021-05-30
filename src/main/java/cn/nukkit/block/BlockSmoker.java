@@ -4,10 +4,12 @@ import cn.nukkit.api.PowerNukkitOnly;
 
 @PowerNukkitOnly
 public class BlockSmoker extends BlockSmokerBurning {
+    @PowerNukkitOnly
     public BlockSmoker() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockSmoker(int meta) {
         super(meta);
     }

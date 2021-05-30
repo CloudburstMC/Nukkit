@@ -197,12 +197,12 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
     @Since("1.4.0.0-PN")
     @RequiredArgsConstructor
     public enum PotionType {
-        EMPTY(POTION_TYPE_EMPTY),
-        NORMAL(POTION_TYPE_NORMAL),
-        SPLASH(POTION_TYPE_SPLASH),
-        LINGERING(POTION_TYPE_LINGERING),
-        LAVA(POTION_TYPE_LAVA),
-        UNKNOWN(-2);
+        @PowerNukkitOnly @Since("1.4.0.0-PN") EMPTY(POTION_TYPE_EMPTY),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") NORMAL(POTION_TYPE_NORMAL),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") SPLASH(POTION_TYPE_SPLASH),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") LINGERING(POTION_TYPE_LINGERING),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") LAVA(POTION_TYPE_LAVA),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") UNKNOWN(-2);
         private final int potionTypeData;
         private static final Int2ObjectMap<PotionType> BY_DATA;
         static {

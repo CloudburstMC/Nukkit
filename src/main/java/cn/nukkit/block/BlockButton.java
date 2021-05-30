@@ -26,7 +26,11 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
  */
 @PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
 public abstract class BlockButton extends BlockFlowable implements RedstoneComponent, Faceable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected static final BooleanBlockProperty BUTTON_PRESSED = new BooleanBlockProperty("button_pressed_bit", false);
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(
             FACING_DIRECTION,
             BUTTON_PRESSED

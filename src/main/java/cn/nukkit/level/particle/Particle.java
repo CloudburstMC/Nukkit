@@ -101,6 +101,7 @@ public abstract class Particle extends Vector3 {
     @Since("1.4.0.0-PN") public static final int TYPE_WAX = dynamic(79);
     @Since("1.4.0.0-PN") public static final int TYPE_ELECTRIC_SPARK = dynamic(80);
 
+    @Since("1.4.0.0-PN")
     public static Integer getParticleIdByName(String name) {
         name = name.toUpperCase();
 
@@ -118,7 +119,7 @@ public abstract class Particle extends Vector3 {
         return null;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static boolean particleExists(String name) {
         return getParticleIdByName(name) != null;   
     }

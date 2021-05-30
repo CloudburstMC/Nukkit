@@ -70,25 +70,25 @@ public class ItemDye extends Item {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     protected ItemDye(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
     public boolean isFertilizer() {
         return getId() == DYE && getDyeColor().equals(DyeColor.WHITE);
     }
     
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     public boolean isLapisLazuli() {
         return getId() == DYE && getDyeColor().equals(DyeColor.BLUE);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     public boolean isCocoaBeans() {
         return getId() == DYE && getDyeColor().equals(DyeColor.BROWN);

@@ -218,6 +218,8 @@ public final class ArrayBlockProperty<E extends Serializable> extends BlockPrope
         return universe.clone();
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean isOrdinal() {
         return ordinal;
     }

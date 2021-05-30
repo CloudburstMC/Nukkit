@@ -18,8 +18,9 @@
 
 package cn.nukkit.blockproperty.exception;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperty;
-import lombok.Getter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -29,8 +30,9 @@ import javax.annotation.ParametersAreNullableByDefault;
  * @author joserobjr
  * @since 2020-01-12
  */
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 @ParametersAreNullableByDefault
-@Getter
 public class InvalidBlockPropertyPersistenceValueException extends InvalidBlockPropertyException {
     private static final long serialVersionUID = 1L;
     
@@ -40,24 +42,32 @@ public class InvalidBlockPropertyPersistenceValueException extends InvalidBlockP
     @Nullable
     private final String invalidValue;
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public InvalidBlockPropertyPersistenceValueException(@Nonnull BlockProperty<?> property, String currentValue, String invalidValue) {
         super(property, buildMessage(currentValue, invalidValue));
         this.currentValue = currentValue;
         this.invalidValue = invalidValue;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public InvalidBlockPropertyPersistenceValueException(@Nonnull BlockProperty<?> property, String currentValue, String invalidValue, String message) {
         super(property, buildMessage(currentValue, invalidValue)+". "+message);
         this.currentValue = currentValue;
         this.invalidValue = invalidValue;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public InvalidBlockPropertyPersistenceValueException(@Nonnull BlockProperty<?> property, String currentValue, String invalidValue, String message, Throwable cause) {
         super(property, buildMessage(currentValue, invalidValue)+". "+message, cause);
         this.currentValue = currentValue;
         this.invalidValue = invalidValue;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public InvalidBlockPropertyPersistenceValueException(@Nonnull BlockProperty<?> property, String currentValue, String invalidValue, Throwable cause) {
         super(property, buildMessage(currentValue, invalidValue), cause);
         this.currentValue = currentValue;
@@ -66,5 +76,20 @@ public class InvalidBlockPropertyPersistenceValueException extends InvalidBlockP
     
     private static String buildMessage(Object currentValue, Object invalidValue) {
         return "Current Value: "+currentValue+", Invalid Value: "+invalidValue;
+    }
+
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public String getCurrentValue() {
+        return this.currentValue;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public String getInvalidValue() {
+        return this.invalidValue;
     }
 }

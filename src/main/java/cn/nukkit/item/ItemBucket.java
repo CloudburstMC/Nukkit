@@ -38,7 +38,7 @@ public class ItemBucket extends Item {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     protected ItemBucket(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
@@ -82,25 +82,25 @@ public class ItemBucket extends Item {
     }
     
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean isEmpty() {
         return getId() == BUCKET && getDamage() == 0;
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean isWater() {
         return getTargetBlock().getId() == BlockID.WATER;
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean isLava() {
         return getTargetBlock().getId() == BlockID.LAVA;
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @Nullable
     public String getFishEntityId() {
         if (getId() != BUCKET) {
@@ -126,7 +126,7 @@ public class ItemBucket extends Item {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public Block getTargetBlock() {
         return getId() == BUCKET? Block.get(getDamageByTarget(this.meta)) : Block.get(BlockID.AIR);
     }
@@ -265,7 +265,7 @@ public class ItemBucket extends Item {
     }
     
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     protected boolean canBeUsedOnDimension(int dimension) {
         if (getId() != BUCKET) {
             return true;
@@ -275,7 +275,7 @@ public class ItemBucket extends Item {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     protected void afterUse(Level level, Block block) {
         if (getId() != BUCKET) {
             return;

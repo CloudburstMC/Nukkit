@@ -49,6 +49,8 @@ public final class BlockState implements Serializable, IBlockState {
     private static final BlockState[][] STATES_COMMON = new BlockState[16][Block.MAX_BLOCK_ID];
     private static final ConcurrentMap<String, BlockState> STATES_UNCOMMON = new ConcurrentHashMap<>();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockState AIR = BlockState.of(BlockID.AIR, 0);
     
     private static BlockState growCommonPool(@Nonnegative int blockId, @Nonnegative byte blockData) {
@@ -215,32 +217,44 @@ public final class BlockState implements Serializable, IBlockState {
             storage = new BigIntegerStorage(blockData);
         }
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public BlockState withData(@Nonnegative int data) {
         return of(blockId, data);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public BlockState withData(@Nonnegative long data) {
         return of(blockId, data);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public BlockState withData(@Nonnegative BigInteger data) {
         return of(blockId, data);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public BlockState withData(@Nonnegative Number data) {
         return of(blockId, data);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public BlockState withBlockId(@Nonnegative int blockId) {
         return storage.withBlockId(blockId);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public <E extends Serializable> BlockState withProperty(BlockProperty<E> property, @Nullable E value) {
         return withProperty(property.getName(), value);
@@ -250,6 +264,8 @@ public final class BlockState implements Serializable, IBlockState {
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public BlockState withProperty(String propertyName, @Nullable Serializable value) {
         return storage.withProperty(blockId, getProperties(), propertyName, value);
@@ -265,6 +281,8 @@ public final class BlockState implements Serializable, IBlockState {
     /**
      * @throws NoSuchElementException If any of the property is not registered
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockState onlyWithProperties(BlockProperty<?>... properties) {
         String[] names = new String[properties.length];
         for (int i = 0; i < properties.length; i++) {
@@ -276,6 +294,8 @@ public final class BlockState implements Serializable, IBlockState {
     /**
      * @throws NoSuchElementException If any of the given property names is not found
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockState onlyWithProperties(String... propertyNames) {
         BlockProperties properties = getProperties();
         List<String> list = Arrays.asList(propertyNames);
@@ -291,6 +311,8 @@ public final class BlockState implements Serializable, IBlockState {
     /**
      * @throws NoSuchElementException If the property was not found
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockState onlyWithProperty(String name) {
         return onlyWithProperties(name);
     }
@@ -298,6 +320,8 @@ public final class BlockState implements Serializable, IBlockState {
     /**
      * @throws NoSuchElementException If the property was not found
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockState onlyWithProperty(BlockProperty<?> property) {
         return onlyWithProperties(property);
     }
@@ -306,6 +330,8 @@ public final class BlockState implements Serializable, IBlockState {
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockState onlyWithProperty(String name, Serializable value) {
         return storage.onlyWithProperty(this, name, value);
     }
@@ -314,6 +340,8 @@ public final class BlockState implements Serializable, IBlockState {
      * @throws NoSuchElementException If the property is not registered
      * @throws InvalidBlockPropertyValueException If the new value is not accepted by the property
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public <T extends Serializable> BlockState onlyWithProperty(BlockProperty<T> property, T value) {
         return onlyWithProperty(property.getName(), value);
     }
@@ -514,6 +542,8 @@ public final class BlockState implements Serializable, IBlockState {
     /**
      * @throws InvalidBlockStateException If the stored state is invalid
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void validate() {
         if (valid == OptionalBoolean.TRUE) {
             return;

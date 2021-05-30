@@ -6,10 +6,11 @@ import cn.nukkit.blockproperty.BlockProperties;
 
 import javax.annotation.Nonnull;
 
-import static cn.nukkit.blockproperty.CommonBlockProperties.DEPRECATED;
-import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
-
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public abstract class BlockStem extends BlockLog {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockStem(int meta) {
         super(meta);
     }
