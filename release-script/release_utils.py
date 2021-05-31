@@ -86,7 +86,7 @@ def commit_cmd(*command):
 def adjust_java_home(mvn, project_name, raise_failures, looped=False):
     version_lines = ['Java version: Unknown']
     try:
-        subprocess.check_output([mvn, '-version']).decode().strip().split("\n")
+        version_lines = subprocess.check_output([mvn, '-version']).decode().strip().split("\n")
     except:
         log('There are issues with JAVA_HOME! Trying to find JDK_1_8!')
         
@@ -100,7 +100,7 @@ def adjust_java_home(mvn, project_name, raise_failures, looped=False):
                     print("-> Found an alternative JDK 1.8 at", jdk_8_home)
                     os.putenv('JAVA_HOME', jdk_8_home)
                     if not looped:
-                        adjust_java_home(mvn, project_name, raise_failures)
+                        adjust_java_home(mvn, project_name, raise_failures, True)
                         break
                 if raise_failures:
                     raise failure(project_name + " must be built with Java 8 (1.8)")
