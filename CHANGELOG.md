@@ -6,14 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version, so we have a better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
-Click the link above to see the future.
+## [1.4.0.0-PN] - 2021-05-31 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
+It's finally here! A stable version of the Nether update! Supporting almost all blocks and items!
+
+It works with Minecraft `1.16.221`!
 
 ### Breaking change!
 ***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!***
 
 - Many `final` constants are no longer constants, they are now marked with `dynamic` due to constant changes on updates
 - The size of the block data bits changed back from `6` to `4` to fix backward compatibility with Nukkit plugins
+- New chunk content versioning! Don't keep changing versions back and forth, or you will end up with having some odd block states!
 
 ### Deprecated
 - All usage of the numeric block damage system is now deprecated, new code should use the new block state system
