@@ -6,14 +6,20 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.math.BlockFace;
-import lombok.AllArgsConstructor;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-@AllArgsConstructor
 public class BeehiveUpdater implements Updater {
     private final ChunkSection section;
     private boolean updateDirection;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BeehiveUpdater(ChunkSection section, boolean updateDirection) {
+        this.section = section;
+        this.updateDirection = updateDirection;
+    }
+
     @Override
     public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
         int blockId = state.getBlockId();
@@ -42,4 +48,5 @@ public class BeehiveUpdater implements Updater {
         }
         return false;
     }
+
 }

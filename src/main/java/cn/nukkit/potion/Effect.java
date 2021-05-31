@@ -2,7 +2,9 @@ package cn.nukkit.potion;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -22,13 +24,44 @@ public class Effect implements Cloneable {
     public static final int FATIGUE = 4;
     public static final int MINING_FATIGUE = 4;
     public static final int STRENGTH = 5;
-    public static final int HEALING = 6;
-    public static final int HARMING = 7;
-    public static final int JUMP = 8;
+
+    @Since("1.4.0.0-PN") public static final int INSTANT_HEALTH = 6;
+    @Deprecated @DeprecationDetails(
+            by = "PowerNukkit", since = "1.4.0.0-PN", 
+            reason = "Was renamed to INSTANT_HEALTH in game, can be removed anytime by Cloudburst Nukkit",
+            replaceWith = "INSTANT_HEALTH")
+    public static final int HEALING = INSTANT_HEALTH;
+
+    @Since("1.4.0.0-PN") public static final int INSTANT_DAMAGE = 7;
+    @Deprecated @DeprecationDetails(
+            by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "Was renamed to INSTANT_DAMAGE in game, can be removed anytime by Cloudburst Nukkit",
+            replaceWith = "INSTANT_DAMAGE")
+    public static final int HARMING = INSTANT_DAMAGE;
+
+
+    @Since("1.4.0.0-PN") public static final int JUMP_BOOST = 8;
+    @Deprecated @DeprecationDetails(
+            by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "Was renamed to JUMP_BOOST in game, can be removed anytime by Cloudburst Nukkit",
+            replaceWith = "JUMP_BOOST")
+    public static final int JUMP = JUMP_BOOST;
+
+
     public static final int NAUSEA = 9;
+    @Deprecated @DeprecationDetails(
+            by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "Was renamed to NAUSEA in game, can be removed anytime by Cloudburst Nukkit",
+            replaceWith = "NAUSEA")
     public static final int CONFUSION = 9;
+    
     public static final int REGENERATION = 10;
-    public static final int DAMAGE_RESISTANCE = 11;
+    @Since("1.4.0.0-PN") public static final int RESISTANCE = 11;
+    @Deprecated @DeprecationDetails(
+            by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "Was renamed to JUMP_BOOST in game, can be removed anytime by Cloudburst Nukkit",
+            replaceWith = "JUMP_BOOST")
+    public static final int DAMAGE_RESISTANCE = RESISTANCE;
     public static final int FIRE_RESISTANCE = 12;
     public static final int WATER_BREATHING = 13;
     public static final int INVISIBILITY = 14;
@@ -43,6 +76,7 @@ public class Effect implements Cloneable {
     public static final int SATURATION = 23;
     public static final int LEVITATION = 24;
     public static final int FATAL_POISON = 25;
+    public static final int CONDUIT_POWER = 26;
     /**
      * @deprecated Typo. Use {@link #CONDUIT_POWER} instead.
      */
@@ -50,9 +84,10 @@ public class Effect implements Cloneable {
     @DeprecationDetails(by = "PowerNukkit and removed by Cloudburst", since = "TBD",
             reason = "Typo", replaceWith = "CONDUIT_POWER")
     @PowerNukkitOnly("Was removed from Cloudburst Nukkit, kept on PowerNukkit for backward compatibility")
-    public static final int COUNDIT_POWER = 26;
-    public static final int CONDUIT_POWER = 26;
+    public static final int COUNDIT_POWER = CONDUIT_POWER;
     public static final int SLOW_FALLING = 27;
+    @Since("1.4.0.0-PN") public static final int BAD_OMEN = 28;
+    @Since("1.4.0.0-PN") public static final int VILLAGE_HERO = 29;
 
     protected static Effect[] effects;
 
@@ -64,12 +99,12 @@ public class Effect implements Cloneable {
         effects[Effect.SWIFTNESS] = new Effect(Effect.SWIFTNESS, "%potion.digSpeed", 217, 192, 67);
         effects[Effect.FATIGUE] = new Effect(Effect.FATIGUE, "%potion.digSlowDown", 74, 66, 23, true);
         effects[Effect.STRENGTH] = new Effect(Effect.STRENGTH, "%potion.damageBoost", 147, 36, 35);
-        effects[Effect.HEALING] = new InstantEffect(Effect.HEALING, "%potion.heal", 248, 36, 35);
-        effects[Effect.HARMING] = new InstantEffect(Effect.HARMING, "%potion.harm", 67, 10, 9, true);
-        effects[Effect.JUMP] = new Effect(Effect.JUMP, "%potion.jump", 34, 255, 76);
+        effects[Effect.INSTANT_HEALTH] = new InstantEffect(Effect.INSTANT_HEALTH, "%potion.heal", 248, 36, 35);
+        effects[Effect.INSTANT_DAMAGE] = new InstantEffect(Effect.INSTANT_DAMAGE, "%potion.harm", 67, 10, 9, true);
+        effects[Effect.JUMP_BOOST] = new Effect(Effect.JUMP_BOOST, "%potion.jump", 34, 255, 76);
         effects[Effect.NAUSEA] = new Effect(Effect.NAUSEA, "%potion.confusion", 85, 29, 74, true);
         effects[Effect.REGENERATION] = new Effect(Effect.REGENERATION, "%potion.regeneration", 205, 92, 171);
-        effects[Effect.DAMAGE_RESISTANCE] = new Effect(Effect.DAMAGE_RESISTANCE, "%potion.resistance", 153, 69, 58);
+        effects[Effect.RESISTANCE] = new Effect(Effect.RESISTANCE, "%potion.resistance", 153, 69, 58);
         effects[Effect.FIRE_RESISTANCE] = new Effect(Effect.FIRE_RESISTANCE, "%potion.fireResistance", 228, 154, 58);
         effects[Effect.WATER_BREATHING] = new Effect(Effect.WATER_BREATHING, "%potion.waterBreathing", 46, 82, 153);
         effects[Effect.INVISIBILITY] = new Effect(Effect.INVISIBILITY, "%potion.invisibility", 127, 131, 146);
@@ -85,10 +120,12 @@ public class Effect implements Cloneable {
 
         effects[Effect.ABSORPTION] = new Effect(Effect.ABSORPTION, "%potion.absorption", 36, 107, 251);
         effects[Effect.SATURATION] = new Effect(Effect.SATURATION, "%potion.saturation", 255, 0, 255);
-        effects[Effect.LEVITATION] = new Effect(Effect.LEVITATION, "%potion.levitation", 206, 255, 255);
+        effects[Effect.LEVITATION] = new Effect(Effect.LEVITATION, "%potion.levitation", 206, 255, 255, true);
         effects[Effect.FATAL_POISON] = new Effect(Effect.FATAL_POISON, "%potion.poison", 78, 147, 49, true);
         effects[Effect.CONDUIT_POWER] = new Effect(Effect.CONDUIT_POWER, "%potion.conduitPower", 29, 194, 209);
         effects[Effect.SLOW_FALLING] = new Effect(Effect.SLOW_FALLING, "%potion.slowFalling", 206, 255, 255);
+        effects[Effect.BAD_OMEN] = new Effect(Effect.BAD_OMEN, "%effect.badOmen", 11, 97, 56, true);
+        effects[Effect.VILLAGE_HERO] = new Effect(Effect.VILLAGE_HERO, "%effect.villageHero", 68, 255, 68).setVisible(false);
     }
 
     public static Effect getEffect(int id) {
@@ -153,6 +190,8 @@ public class Effect implements Cloneable {
         return duration;
     }
 
+    @PowerNukkitDifference(since = "1.4.0.0-PN", 
+            info = "Cloudburst Nukkit always returns false for VILLAGE_HERO, we made the registration register the false value as default instead of this brute-force.")
     public boolean isVisible() {
         return show;
     }
@@ -188,6 +227,7 @@ public class Effect implements Cloneable {
         int interval;
         switch (this.id) {
             case Effect.POISON: //POISON
+            case Effect.FATAL_POISON:
                 if ((interval = (25 >> this.amplifier)) > 0) {
                     return (this.duration % interval) == 0;
                 }
@@ -209,7 +249,8 @@ public class Effect implements Cloneable {
     public void applyEffect(Entity entity) {
         switch (this.id) {
             case Effect.POISON: //POISON
-                if (entity.getHealth() > 1) {
+            case Effect.FATAL_POISON:
+                if (entity.getHealth() > 1 || this.id == FATAL_POISON) {
                     entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, 1));
                 }
                 break;
@@ -256,14 +297,14 @@ public class Effect implements Cloneable {
 
             player.dataPacket(pk);
 
-            if (this.id == Effect.SPEED) {
+            if (this.id == Effect.SPEED && (oldEffect == null || oldEffect.amplifier != this.amplifier)) {
                 if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 + 0.2f * (oldEffect.amplifier + 1)), false);
                 }
                 player.setMovementSpeed(player.getMovementSpeed() * (1 + 0.2f * (this.amplifier + 1)));
             }
 
-            if (this.id == Effect.SLOWNESS) {
+            if (this.id == Effect.SLOWNESS && (oldEffect == null || oldEffect.amplifier != this.amplifier)) {
                 if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 - 0.15f * (oldEffect.amplifier + 1)), false);
                 }
@@ -296,6 +337,11 @@ public class Effect implements Cloneable {
             }
             if (this.id == Effect.SLOWNESS) {
                 ((Player) entity).setMovementSpeed(((Player) entity).getMovementSpeed() / (1 - 0.15f * (this.amplifier + 1)));
+            }
+            if (this.id == Effect.HEALTH_BOOST) {
+                float max = entity.getMaxHealth();
+                float health = Math.min(entity.getHealth(), max);
+                entity.setHealth(health);
             }
         }
 

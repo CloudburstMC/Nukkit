@@ -1,6 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
@@ -11,7 +13,15 @@ import cn.nukkit.math.NukkitRandom;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public abstract class BlockNylium extends BlockSolid {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockNylium() {
+        // Does nothing
+    }
+
     @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
@@ -49,6 +59,8 @@ public abstract class BlockNylium extends BlockSolid {
         return true;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean grow() {
         ObjectNyliumVegetation.growVegetation(level, this, new NukkitRandom());
         return true;

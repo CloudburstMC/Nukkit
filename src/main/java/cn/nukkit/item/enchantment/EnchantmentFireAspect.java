@@ -8,7 +8,7 @@ import cn.nukkit.event.entity.EntityCombustByEntityEvent;
  */
 public class EnchantmentFireAspect extends Enchantment {
     protected EnchantmentFireAspect() {
-        super(ID_FIRE_ASPECT, "fire", 2, EnchantmentType.SWORD);
+        super(ID_FIRE_ASPECT, "fire", Rarity.RARE, EnchantmentType.SWORD);
     }
 
     @Override
@@ -18,7 +18,7 @@ public class EnchantmentFireAspect extends Enchantment {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 50;
+        return super.getMinEnchantAbility(level) + 50;
     }
 
     @Override

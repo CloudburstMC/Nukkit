@@ -11,10 +11,14 @@ import javax.annotation.Nonnull;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockDoubleSlabBlackstone extends BlockDoubleSlabBase {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockDoubleSlabBlackstone() {
         this(0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected BlockDoubleSlabBlackstone(int meta) {
         super(meta);
     }

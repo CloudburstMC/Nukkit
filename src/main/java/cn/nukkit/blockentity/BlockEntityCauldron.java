@@ -1,22 +1,49 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
-import cn.nukkit.level.GlobalBlockPalette;
+import cn.nukkit.block.BlockCauldron;
+import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.UpdateBlockPacket;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BlockColor;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.RequiredArgsConstructor;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author CreeperFace (Nukkit Project)
  */
 public class BlockEntityCauldron extends BlockEntitySpawnable {
-    
-    public static final int POTION_TYPE_EMPTY = 0xFFFF;
+
+    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Using -1 instead of the overflown 0xFFFF")
+    @Deprecated @DeprecationDetails(by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "Magic value", replaceWith = "PotionType")
+    public static final int POTION_TYPE_EMPTY = -1;
+
+    @Deprecated @DeprecationDetails(by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "Magic value", replaceWith = "PotionType")
     public static final int POTION_TYPE_NORMAL = 0;
+
+    @Deprecated @DeprecationDetails(by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "Magic value", replaceWith = "PotionType")
     public static final int POTION_TYPE_SPLASH = 1;
+
+    @Deprecated @DeprecationDetails(by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "Magic value", replaceWith = "PotionType")
     public static final int POTION_TYPE_LINGERING = 2;
+
+    @Deprecated @DeprecationDetails(by = "PowerNukkit", since = "1.4.0.0-PN",
+            reason = "Magic value", replaceWith = "PotionType")
     public static final int POTION_TYPE_LAVA = 0xF19B;
 
     public BlockEntityCauldron(FullChunk chunk, CompoundTag nbt) {
@@ -55,15 +82,27 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
     }
 
     public boolean hasPotion() {
-        return getPotionId() != 0xffff;
+        return (getPotionId() & 0xffff) != 0xffff;
     }
     
     public void setPotionType(int potionType) {
-        this.namedTag.putShort("PotionType", potionType & 0xFFFF);
+        this.namedTag.putShort("PotionType", (short)(potionType & 0xFFFF));
     }
     
     public int getPotionType() {
-        return this.namedTag.getShort("PotionType") & 0xFFFF;
+        return (short)(this.namedTag.getShort("PotionType") & 0xFFFF);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public PotionType getType() {
+        return PotionType.getByTypeData(getPotionType());
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setType(PotionType type) {
+        setPotionType(type.potionTypeData);
     }
 
     public boolean isSplashPotion() {
@@ -104,28 +143,31 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
         int color = (r << 16 | g << 8 | b) & 0xffffff;
 
         namedTag.putInt("CustomColor", color);
-    
-        Block block = getBlock();
-        Player[] viewers = this.level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(Player.EMPTY_ARRAY);
-        UpdateBlockPacket air = new UpdateBlockPacket();
-        air.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(0, 0);
-        air.flags = UpdateBlockPacket.FLAG_ALL_PRIORITY;
-        air.x = (int) x;
-        air.y = (int) y;
-        air.z = (int) z;
-        UpdateBlockPacket self = (UpdateBlockPacket) air.clone();
-        self.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(block.getId(), block.getDamage());
-        for (Player viewer : viewers) {
-            viewer.dataPacket(air);
-            viewer.dataPacket(self);
-        }
-        
+
         spawnToAll();
     }
 
     public void clearCustomColor() {
         namedTag.remove("CustomColor");
         spawnToAll();
+    }
+
+    @Override
+    public void spawnToAll() {
+        BlockCauldron block = (BlockCauldron) getBlock();
+        Player[] viewers = this.level.getChunkPlayers(getChunkX(), getChunkZ()).values().toArray(Player.EMPTY_ARRAY);
+        this.level.sendBlocks(viewers, new Vector3[]{block});
+        super.spawnToAll();
+        Location location = getLocation();
+        Server.getInstance().getScheduler().scheduleTask(null, ()-> {
+            if (isValid()) {
+                BlockEntity cauldron = this.level.getBlockEntity(location);
+                if (cauldron == BlockEntityCauldron.this) {
+                    this.level.sendBlocks(viewers, new Vector3[]{location});
+                    super.spawnToAll();
+                }
+            }
+        });
     }
 
     @Override
@@ -141,11 +183,41 @@ public class BlockEntityCauldron extends BlockEntitySpawnable {
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putShort("PotionId", namedTag.getShort("PotionId"))
-                .putByte("PotionType", namedTag.getShort("PotionType"));
+                .putBoolean("isMovable", isMovable())
+                .putList(new ListTag<>("Items"))
+                .putShort("PotionId", (short) namedTag.getShort("PotionId"))
+                .putShort("PotionType", (short) namedTag.getShort("PotionType"));
         if (namedTag.contains("CustomColor")) {
-            compoundTag.putInt("CustomColor", namedTag.getInt("CustomColor"));
+            compoundTag.putInt("CustomColor", namedTag.getInt("CustomColor") << 8 >> 8);
         }
         return compoundTag;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @RequiredArgsConstructor
+    public enum PotionType {
+        @PowerNukkitOnly @Since("1.4.0.0-PN") EMPTY(POTION_TYPE_EMPTY),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") NORMAL(POTION_TYPE_NORMAL),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") SPLASH(POTION_TYPE_SPLASH),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") LINGERING(POTION_TYPE_LINGERING),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") LAVA(POTION_TYPE_LAVA),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") UNKNOWN(-2);
+        private final int potionTypeData;
+        private static final Int2ObjectMap<PotionType> BY_DATA;
+        static {
+            PotionType[] types = values();
+            BY_DATA = new Int2ObjectOpenHashMap<>(types.length);
+            for (PotionType type : types) {
+                BY_DATA.put(type.potionTypeData, type);
+            }
+        }
+
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        @Nonnull
+        public static PotionType getByTypeData(int typeData) {
+            return BY_DATA.getOrDefault(typeData, PotionType.UNKNOWN);
+        }
     }
 }

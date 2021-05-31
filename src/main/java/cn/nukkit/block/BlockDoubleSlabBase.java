@@ -30,7 +30,9 @@ public abstract class BlockDoubleSlabBase extends BlockSolidMeta {
     public Item toItem() {
         return getCurrentState().forItem().withBlockId(getSingleSlabId()).asItemBlock();
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected boolean isCorrectTool(Item item) {
         return canHarvestWithHand() || canHarvest(item);
     }

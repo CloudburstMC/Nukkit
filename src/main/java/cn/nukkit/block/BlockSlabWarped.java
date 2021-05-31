@@ -10,12 +10,18 @@ import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockSlabWarped extends BlockSlab {
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockSlabWarped() {
         this(0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockSlabWarped(int meta) {
         super(meta, WARPED_DOUBLE_SLAB);
     }

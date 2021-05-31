@@ -22,10 +22,12 @@ import javax.annotation.Nonnull;
 
 @PowerNukkitOnly
 public class BlockCauldronLava extends BlockCauldron {
+    @PowerNukkitOnly
     public BlockCauldronLava() {
         this(0x8);
     }
-    
+
+    @PowerNukkitOnly
     public BlockCauldronLava(int meta) {
         super(meta);
     }

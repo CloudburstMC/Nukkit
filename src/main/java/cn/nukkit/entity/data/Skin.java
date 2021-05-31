@@ -1,5 +1,6 @@
 package cn.nukkit.entity.data;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.utils.*;
 import com.google.common.base.Preconditions;
@@ -32,6 +33,7 @@ public class Skin {
 
     private final String fullSkinId = UUID.randomUUID().toString();
     private String skinId;
+    @Since("1.4.0.0-PN") private String playFabId = "";
     private String skinResourcePatch = GEOMETRY_CUSTOM;
     private SerializedImage skinData;
     private final List<SkinAnimation> animations = new ArrayList<>();
@@ -259,6 +261,23 @@ public class Skin {
 
     public String getFullSkinId() {
         return fullSkinId;
+    }
+
+    @Since("1.4.0.0-PN")
+    public void setPlayFabId(String playFabId) {
+        this.playFabId = playFabId;
+    }
+
+    @Since("1.4.0.0-PN")
+    public String getPlayFabId() {
+        if (this.persona && (this.playFabId == null || this.playFabId.isEmpty())) {
+            try {
+                this.playFabId = this.skinId.split("-")[5];
+            } catch (Exception e) {
+                this.playFabId = this.fullSkinId.replace("-", "").substring(16);
+            }
+        }
+        return this.playFabId;
     }
 
     private static SerializedImage parseBufferedImage(BufferedImage image) {

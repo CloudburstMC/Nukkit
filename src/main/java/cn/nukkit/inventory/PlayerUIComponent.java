@@ -1,6 +1,8 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 
 import java.util.Collections;
@@ -8,7 +10,10 @@ import java.util.Map;
 import java.util.Set;
 
 public class PlayerUIComponent extends BaseInventory {
-    protected final PlayerUIInventory playerUI;
+
+    @Since("1.4.0.0-PN") public static final int CREATED_ITEM_OUTPUT_UI_SLOT = 50;
+
+    @PowerNukkitOnly protected final PlayerUIInventory playerUI;
     private final int offset;
     private final int size;
 
@@ -85,7 +90,7 @@ public class PlayerUIComponent extends BaseInventory {
 
     @Override
     public Set<Player> getViewers() {
-        return playerUI.viewers;
+        return playerUI.getViewers();
     }
 
     @Override
@@ -95,7 +100,7 @@ public class PlayerUIComponent extends BaseInventory {
 
     @Override
     public void onOpen(Player who) {
-
+        
     }
 
     @Override

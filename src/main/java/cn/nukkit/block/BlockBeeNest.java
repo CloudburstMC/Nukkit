@@ -6,10 +6,12 @@ import cn.nukkit.utils.BlockColor;
 
 @PowerNukkitOnly
 public class BlockBeeNest extends BlockBeehive {
+    @PowerNukkitOnly
     public BlockBeeNest() {
         this(0);
     }
 
+    @PowerNukkitOnly
     protected BlockBeeNest(int meta) {
         super(meta);
     }

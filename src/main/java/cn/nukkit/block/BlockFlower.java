@@ -11,13 +11,11 @@ import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.blockproperty.value.SmallFlowerType;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
@@ -114,7 +112,9 @@ public class BlockFlower extends BlockFlowable {
     public SmallFlowerType getFlowerType() {
         return getPropertyValue(RED_FLOWER_TYPE);
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     protected void setOnSingleFlowerType(SmallFlowerType acceptsOnly, SmallFlowerType attemptedToSet) {
         if (attemptedToSet == null || attemptedToSet == acceptsOnly) {
             return;

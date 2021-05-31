@@ -28,11 +28,14 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
 import lombok.NonNull;
+import org.powernukkit.HumanStringComparator;
 
 import java.io.*;
 import java.nio.ByteOrder;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class OverridesUpdater {
     public static void main(String[] args) throws IOException {
@@ -135,7 +138,7 @@ public class OverridesUpdater {
             newOverrides.add(override);
         }
       
-        /*SortedMap<String, CompoundTag> sorted = new TreeMap<>(new HumanStringComparator());
+        SortedMap<String, CompoundTag> sorted = new TreeMap<>(new HumanStringComparator());
         for (CompoundTag tag : originalTags.values()) {
             sorted.put(new BlockInfo(tag.getCompound("block"), tag, new ListTag<>(), new ListTag<>()).getStateName(), tag);
         }
@@ -143,15 +146,15 @@ public class OverridesUpdater {
         for (CompoundTag tag : sorted.values()) {
             String name = tag.getCompound("block").getString("name");
             
-            if (!name.startsWith("minecraft:beehive") || !name.startsWith("minecraft:bee_nest")) {
+            if (!name.startsWith("minecraft:frame")) {
                 continue;
             }
             
             CompoundTag override = new CompoundTag();
             override.putCompound("block", tag.getCompound("block").remove("version"));
-            override.putList(new ListTag<>("LegacyStates")*//*.add(new CompoundTag().putInt("id", blockId).putInt("val", 0))*//*);
+            override.putList(new ListTag<>("LegacyStates")/*.add(new CompoundTag().putInt("id", blockId).putInt("val", 0))*/);
             newOverrides.add(override);
-        }*/
+        }
 
         byte[] bytes = NBTIO.write(new CompoundTag().putList(newOverrides));
         try(FileOutputStream fos = new FileOutputStream("runtime_block_states_overrides.dat")) {

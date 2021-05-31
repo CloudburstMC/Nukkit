@@ -7,6 +7,7 @@ import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockstate.*;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -958,6 +959,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    public int onTouch(@Nullable Player player, PlayerInteractEvent.Action action) {
+        return onUpdate(Level.BLOCK_UPDATE_TOUCH);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void onNeighborChange(@Nonnull BlockFace side) {
         
     }
@@ -975,6 +982,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public void afterRemoval(Block newBlock, boolean update) {
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean isSoulSpeedCompatible() {
         return false;
     }
@@ -1204,7 +1213,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     private static double toolBreakTimeBonus0(int toolType, int toolTier, int blockId) {
-        if (toolType == ItemTool.TYPE_SWORD) return blockId == Block.COBWEB ? 15.0 : 1.0;
+        if (toolType == ItemTool.TYPE_SWORD){
+            if (blockId == BlockID.COBWEB) {
+                return 15.0;
+            }
+            if (blockId == BlockID.BAMBOO) {
+                return 30.0;
+            }
+            return 1.0;
+        }
         if (toolType == ItemTool.TYPE_SHEARS) {
             if (blockId == Block.WOOL || blockId == LEAVES || blockId == LEAVES2) {
                 return 5.0;
@@ -1261,6 +1278,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         if((blockId == LEAVES && item.isHoe()) ||
            (blockId == LEAVES2 && item.isHoe())){
             return (blockToolType == ItemTool.TYPE_SHEARS && item.isHoe());
+        } else if (blockId == BAMBOO  && item.isSword()) {
+            return (blockToolType == ItemTool.TYPE_AXE && item.isSword());
         } else return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
                 (blockToolType == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
                 (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
@@ -1286,12 +1305,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @Nonnull
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public double calculateBreakTime(@Nonnull Item item) {
         return calculateBreakTime(item, null);
     }
 
     @Nonnull
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public double calculateBreakTime(@Nonnull Item item, @Nullable Player player) {
         double seconds = 0;
         double blockHardness = getHardness();
@@ -2106,10 +2127,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return true;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public final boolean isBlockChangeAllowed() {
         return getChunk().isBlockChangeAllowed(getFloorX() & 0xF, getFloorY(), getFloorZ() & 0xF);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public final boolean isBlockChangeAllowed(@Nullable Player player) {
         if (isBlockChangeAllowed()) {
             return true;
@@ -2159,6 +2184,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
      * @return if the gets powered.
      */
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @PowerNukkitDifference(info = "Used so often, why not create own method here?", since = "1.4.0.0-PN")
     public boolean isGettingPower() {
         if (!this.level.getServer().isRedstoneEnabled()) return false;

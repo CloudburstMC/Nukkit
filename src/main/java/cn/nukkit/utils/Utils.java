@@ -29,15 +29,15 @@ import java.util.zip.ZipOutputStream;
 @Log4j2
 public class Utils {
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static final Integer[] EMPTY_INTEGERS = new Integer[0];
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static final SplittableRandom random = new SplittableRandom();
     
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static void safeWrite(File currentFile, Consumer<File> operation) throws IOException {
         File parent = currentFile.getParentFile();
         File newFile = new File(parent, currentFile.getName()+"_new");
@@ -353,7 +353,7 @@ public class Utils {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int rand(int min, int max) {
         if (min == max) {
             return max;
@@ -362,7 +362,7 @@ public class Utils {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static double rand(double min, double max) {
         if (min == max) {
             return max;
@@ -371,7 +371,7 @@ public class Utils {
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static boolean rand() {
         return random.nextBoolean();
     }
@@ -385,8 +385,22 @@ public class Utils {
      * @return The same value that was passed as parameter
      */
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int dynamic(int value) {
+        return value;
+    }
+
+    /**
+     * A way to tell the java compiler to do not replace the users of a {@code public static final} constant
+     * with the value defined in it, forcing the JVM to get the value directly from the class, preventing
+     * binary incompatible changes.
+     * @see <a href="https://stackoverflow.com/a/12065326/804976>https://stackoverflow.com/a/12065326/804976</a>
+     * @param value The value to be assigned to the field.
+     * @return The same value that was passed as parameter
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static <T> T dynamic(T value) {
         return value;
     }
 

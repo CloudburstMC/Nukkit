@@ -19,7 +19,7 @@ public class EntityWanderingTrader extends EntityCreature implements EntityNPC {
 
     @Override
     public float getHeight() {
-        return 1.8f;
+        return 1.9f;
     }
 
     @Override

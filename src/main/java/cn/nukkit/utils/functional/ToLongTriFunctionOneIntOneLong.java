@@ -1,5 +1,8 @@
 package cn.nukkit.utils.functional;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.LongUnaryOperator;
@@ -16,6 +19,8 @@ import java.util.function.LongUnaryOperator;
  * @see Function
  * @since 1.4.0.0-PN
  */
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 @FunctionalInterface
 public interface ToLongTriFunctionOneIntOneLong<F> {
 
@@ -27,6 +32,8 @@ public interface ToLongTriFunctionOneIntOneLong<F> {
      * @param t the third function argument
      * @return the function result
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     long apply(F f, int s, long t);
 
     /**
@@ -40,6 +47,8 @@ public interface ToLongTriFunctionOneIntOneLong<F> {
      * applies the {@code after} function
      * @throws NullPointerException if after is null
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     default ToLongTriFunctionOneIntOneLong<F> andThen(LongUnaryOperator after) {
         Objects.requireNonNull(after);
         return (F f, int s, long t) -> after.applyAsLong(apply(f, s, t));

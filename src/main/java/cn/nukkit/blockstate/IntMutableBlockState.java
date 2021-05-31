@@ -23,17 +23,23 @@ import static cn.nukkit.api.API.Definition.INTERNAL;
 import static cn.nukkit.api.API.Usage.INCUBATING;
 import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageType;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ParametersAreNonnullByDefault
 public class IntMutableBlockState extends MutableBlockState {
     private int storage;
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public IntMutableBlockState(int blockId, BlockProperties properties, int state) {
         super(blockId, properties);
         this.storage = state;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public IntMutableBlockState(int blockId, BlockProperties properties) {
         this(blockId, properties, 0);
     }

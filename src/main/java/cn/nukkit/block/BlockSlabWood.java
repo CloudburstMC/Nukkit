@@ -4,7 +4,6 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.value.WoodType;
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -15,6 +14,8 @@ import javax.annotation.Nonnull;
  * @since 2015/12/2
  */
 public class BlockSlabWood extends BlockSlab {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(
             WoodType.PROPERTY,
             TOP_SLOT_PROPERTY

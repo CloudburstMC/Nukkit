@@ -39,10 +39,14 @@ public class BlockDoubleSlabStone4 extends BlockDoubleSlabBase {
         return BlockSlabStone4.PROPERTIES;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public StoneSlab4Type getSlabType() {
         return getPropertyValue(StoneSlab4Type.PROPERTY);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setSlabType(StoneSlab4Type type) {
         setPropertyValue(StoneSlab4Type.PROPERTY, type);
     }

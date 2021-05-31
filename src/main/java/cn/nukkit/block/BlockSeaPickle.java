@@ -17,12 +17,15 @@ import cn.nukkit.math.Vector2;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockSeaPickle extends BlockFlowable {
 
+    @PowerNukkitOnly
     public BlockSeaPickle() {
         this(0);
     }
 
+    @PowerNukkitOnly
     protected BlockSeaPickle(int meta) {
         super(meta);
     }
@@ -37,10 +40,12 @@ public class BlockSeaPickle extends BlockFlowable {
         return "Sea Pickle";
     }
 
+    @PowerNukkitOnly
     public boolean isDead() {
         return (getDamage() & 0x4) == 0x4;
     }
 
+    @PowerNukkitOnly
     public void setDead(boolean dead) {
         if (dead) {
             setDamage(getDamage() | 0x4);

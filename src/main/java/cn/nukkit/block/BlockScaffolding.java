@@ -19,10 +19,12 @@ import javax.annotation.Nonnull;
 @PowerNukkitOnly
 public class BlockScaffolding extends BlockFallableMeta {
 
+    @PowerNukkitOnly
     public BlockScaffolding() {
         // Does nothing
     }
 
+    @PowerNukkitOnly
     public BlockScaffolding(int meta) {
         super(meta);
     }
@@ -37,18 +39,22 @@ public class BlockScaffolding extends BlockFallableMeta {
         return "Scaffolding";
     }
 
+    @PowerNukkitOnly
     public int getStability() {
         return getDamage() & 0x7;
     }
 
+    @PowerNukkitOnly
     public void setStability(int stability) {
         setDamage(stability & 0x7 | (getDamage() & 0x8));
     }
 
+    @PowerNukkitOnly
     public boolean getStabilityCheck() {
         return (getDamage() & 0x8) > 0;
     }
 
+    @PowerNukkitOnly
     public void setStabilityCheck(boolean check) {
         if (check) {
             setDamage(getDamage() | 0x8);

@@ -8,10 +8,14 @@ import cn.nukkit.utils.BlockColor;
 @Since("1.4.0.0-PN")
 public class BlockFenceCrimson extends BlockFenceBase {
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockFenceCrimson() {
         this(0);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockFenceCrimson(int meta) {
         super(meta);
     }

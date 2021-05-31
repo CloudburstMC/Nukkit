@@ -1,10 +1,19 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.inventory.SmithingInventory;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+@PowerNukkitOnly
 public class BlockSmithingTable extends BlockSolid {
 
+    @PowerNukkitOnly
     public BlockSmithingTable() {
     }
 
@@ -16,6 +25,21 @@ public class BlockSmithingTable extends BlockSolid {
     @Override
     public String getName() {
         return "Smithing Table";
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
+        if (player == null) {
+            return false;
+        }
+        
+        player.addWindow(new SmithingInventory(player.getUIInventory(), this), Player.SMITHING_WINDOW_ID);
+        return true;
     }
 
     @Override

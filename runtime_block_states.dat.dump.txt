@@ -14683,39 +14683,51 @@ minecraft:flowing_water;liquid_depth=15
 
 minecraft:frame;facing_direction=0;item_frame_map_bit=0
 []
+[]
 
 minecraft:frame;facing_direction=0;item_frame_map_bit=1
+[]
 []
 
 minecraft:frame;facing_direction=1;item_frame_map_bit=0
 []
+[]
 
 minecraft:frame;facing_direction=1;item_frame_map_bit=1
+[]
 []
 
 minecraft:frame;facing_direction=2;item_frame_map_bit=0
 [199:3]
+[]
 
 minecraft:frame;facing_direction=2;item_frame_map_bit=1
 [199:7]
+[]
 
 minecraft:frame;facing_direction=3;item_frame_map_bit=0
 [199:2]
+[]
 
 minecraft:frame;facing_direction=3;item_frame_map_bit=1
 [199:6]
+[]
 
 minecraft:frame;facing_direction=4;item_frame_map_bit=0
 [199:1]
+[]
 
 minecraft:frame;facing_direction=4;item_frame_map_bit=1
 [199:5]
+[]
 
 minecraft:frame;facing_direction=5;item_frame_map_bit=0
 [199:0]
+[]
 
 minecraft:frame;facing_direction=5;item_frame_map_bit=1
 [199:4]
+[]
 
 minecraft:frosted_ice;age=0
 [207:0]
@@ -20756,76 +20768,22 @@ minecraft:stripped_birch_log;pillar_axis=y
 minecraft:stripped_birch_log;pillar_axis=z
 [261:2]
 
-minecraft:stripped_crimson_hyphae;deprecated=0;pillar_axis=x
+minecraft:stripped_crimson_hyphae;pillar_axis=x
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=0;pillar_axis=y
+minecraft:stripped_crimson_hyphae;pillar_axis=y
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=0;pillar_axis=z
+minecraft:stripped_crimson_hyphae;pillar_axis=z
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=1;pillar_axis=x
+minecraft:stripped_crimson_stem;pillar_axis=x
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=1;pillar_axis=y
+minecraft:stripped_crimson_stem;pillar_axis=y
 []
 
-minecraft:stripped_crimson_hyphae;deprecated=1;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=2;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=2;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=2;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=3;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=3;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_hyphae;deprecated=3;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_stem;deprecated=0;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_stem;deprecated=0;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_stem;deprecated=0;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_stem;deprecated=1;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_stem;deprecated=1;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_stem;deprecated=1;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_stem;deprecated=2;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_stem;deprecated=2;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_stem;deprecated=2;pillar_axis=z
-[]
-
-minecraft:stripped_crimson_stem;deprecated=3;pillar_axis=x
-[]
-
-minecraft:stripped_crimson_stem;deprecated=3;pillar_axis=y
-[]
-
-minecraft:stripped_crimson_stem;deprecated=3;pillar_axis=z
+minecraft:stripped_crimson_stem;pillar_axis=z
 []
 
 minecraft:stripped_dark_oak_log;pillar_axis=x
@@ -20864,76 +20822,22 @@ minecraft:stripped_spruce_log;pillar_axis=y
 minecraft:stripped_spruce_log;pillar_axis=z
 [260:2]
 
-minecraft:stripped_warped_hyphae;deprecated=0;pillar_axis=x
+minecraft:stripped_warped_hyphae;pillar_axis=x
 []
 
-minecraft:stripped_warped_hyphae;deprecated=0;pillar_axis=y
+minecraft:stripped_warped_hyphae;pillar_axis=y
 []
 
-minecraft:stripped_warped_hyphae;deprecated=0;pillar_axis=z
+minecraft:stripped_warped_hyphae;pillar_axis=z
 []
 
-minecraft:stripped_warped_hyphae;deprecated=1;pillar_axis=x
+minecraft:stripped_warped_stem;pillar_axis=x
 []
 
-minecraft:stripped_warped_hyphae;deprecated=1;pillar_axis=y
+minecraft:stripped_warped_stem;pillar_axis=y
 []
 
-minecraft:stripped_warped_hyphae;deprecated=1;pillar_axis=z
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=2;pillar_axis=x
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=2;pillar_axis=y
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=2;pillar_axis=z
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=3;pillar_axis=x
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=3;pillar_axis=y
-[]
-
-minecraft:stripped_warped_hyphae;deprecated=3;pillar_axis=z
-[]
-
-minecraft:stripped_warped_stem;deprecated=0;pillar_axis=x
-[]
-
-minecraft:stripped_warped_stem;deprecated=0;pillar_axis=y
-[]
-
-minecraft:stripped_warped_stem;deprecated=0;pillar_axis=z
-[]
-
-minecraft:stripped_warped_stem;deprecated=1;pillar_axis=x
-[]
-
-minecraft:stripped_warped_stem;deprecated=1;pillar_axis=y
-[]
-
-minecraft:stripped_warped_stem;deprecated=1;pillar_axis=z
-[]
-
-minecraft:stripped_warped_stem;deprecated=2;pillar_axis=x
-[]
-
-minecraft:stripped_warped_stem;deprecated=2;pillar_axis=y
-[]
-
-minecraft:stripped_warped_stem;deprecated=2;pillar_axis=z
-[]
-
-minecraft:stripped_warped_stem;deprecated=3;pillar_axis=x
-[]
-
-minecraft:stripped_warped_stem;deprecated=3;pillar_axis=y
-[]
-
-minecraft:stripped_warped_stem;deprecated=3;pillar_axis=z
+minecraft:stripped_warped_stem;pillar_axis=z
 []
 
 minecraft:structure_block;structure_block_type=corner
