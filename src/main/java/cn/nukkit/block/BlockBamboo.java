@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -17,16 +18,19 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockBamboo extends BlockTransparentMeta {
 
-    public static final int LEAF_SIZE_NONE = 0;
-    public static final int LEAF_SIZE_SMALL = 1;
-    public static final int LEAF_SIZE_LARGE = 2;
+    public @PowerNukkitOnly static final int LEAF_SIZE_NONE = 0;
+    public @PowerNukkitOnly static final int LEAF_SIZE_SMALL = 1;
+    public @PowerNukkitOnly static final int LEAF_SIZE_LARGE = 2;
 
+    @PowerNukkitOnly
     public BlockBamboo() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockBamboo(int meta) {
         super(meta);
     }
@@ -60,6 +64,7 @@ public class BlockBamboo extends BlockTransparentMeta {
         return 0;
     }
 
+    @PowerNukkitOnly
     public boolean grow(Block up) {
         BlockBamboo newState = new BlockBamboo();
         if (isThick()) {
@@ -82,6 +87,7 @@ public class BlockBamboo extends BlockTransparentMeta {
         return false;
     }
 
+    @PowerNukkitOnly
     public int countHeight() {
         int count = 0;
         Optional<Block> opt;
@@ -227,10 +233,12 @@ public class BlockBamboo extends BlockTransparentMeta {
         return 5;
     }
 
+    @PowerNukkitOnly
     public boolean isThick() {
         return (getDamage() & 0x1) == 0x1;
     }
 
+    @PowerNukkitOnly
     public void setThick(boolean thick) {
         setDamage(getDamage() & (DATA_MASK ^ 0x1) | (thick? 0x1 : 0x0));
     }
@@ -240,10 +248,12 @@ public class BlockBamboo extends BlockTransparentMeta {
         return ItemTool.TYPE_AXE;
     }
 
+    @PowerNukkitOnly
     public int getLeafSize() {
         return (getDamage() >> 1) & 0x3;
     }
 
+    @PowerNukkitOnly
     public void setLeafSize(int leafSize) {
         leafSize = MathHelper.clamp(leafSize, LEAF_SIZE_NONE, LEAF_SIZE_LARGE) & 0b11;
         setDamage(getDamage() & (DATA_MASK ^ 0b110) | (leafSize << 1));
@@ -307,10 +317,12 @@ public class BlockBamboo extends BlockTransparentMeta {
         return false;
     }
 
+    @PowerNukkitOnly
     public int getAge() {
         return (getDamage() & 0x8) >> 3;
     }
 
+    @PowerNukkitOnly
     public void setAge(int age) {
         age = MathHelper.clamp(age, 0, 1) << 3;
         setDamage(getDamage() & (DATA_MASK ^ 0b1000) | age);

@@ -8,10 +8,14 @@ import cn.nukkit.utils.BlockColor;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockWallBlackstonePolished extends BlockWallBase {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockWallBlackstonePolished() {
         this(0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockWallBlackstonePolished(int meta) {
         super(meta);
     }

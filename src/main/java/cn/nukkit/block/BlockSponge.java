@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.GlobalBlockPalette;
@@ -106,21 +107,30 @@ public class BlockSponge extends BlockSolidMeta {
         int waterRemoved = 0;
         while (waterRemoved < 64 && (entry = entries.poll()) != null) {
             for (BlockFace face : BlockFace.values()) {
-
-                Block faceBlock = entry.block.getSide(face);
-                if (faceBlock.getId() == BlockID.WATER || faceBlock.getId() == BlockID.STILL_WATER) {
-                    this.level.setBlock(faceBlock, Block.get(BlockID.AIR));
-                    ++waterRemoved;
+                Block faceBlock = entry.block.getSideAtLayer(0, face);
+                Block faceBlock1 = faceBlock.getLevelBlockAtLayer(1);
+                
+                if (faceBlock instanceof BlockWater) {
+                    this.getLevel().setBlockStateAt(faceBlock.getFloorX(), faceBlock.getFloorY(), faceBlock.getFloorZ(), BlockState.AIR);
+                    this.getLevel().updateAround(faceBlock);
+                    waterRemoved++;
                     if (entry.distance < 6) {
                         entries.add(new Entry(faceBlock, entry.distance + 1));
                     }
-                } else if (faceBlock.getId() == BlockID.AIR) {
+                } else if (faceBlock1 instanceof BlockWater) {
+                    if (faceBlock.getId() == BlockID.BLOCK_KELP || faceBlock.getId() == BlockID.SEAGRASS || faceBlock.getId() == BlockID.SEA_PICKLE || faceBlock instanceof BlockCoralFan) {
+                        faceBlock.getLevel().useBreakOn(faceBlock);
+                    }
+                    this.getLevel().setBlockStateAt(faceBlock1.getFloorX(), faceBlock1.getFloorY(), faceBlock1.getFloorZ(), 1, BlockState.AIR);
+                    this.getLevel().updateAround(faceBlock1);
+                    waterRemoved++;
                     if (entry.distance < 6) {
-                        entries.add(new Entry(faceBlock, entry.distance + 1));
+                        entries.add(new Entry(faceBlock1, entry.distance + 1));
                     }
                 }
             }
         }
+        
         return waterRemoved > 0;
     }
 

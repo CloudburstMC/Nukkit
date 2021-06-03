@@ -38,7 +38,12 @@ public class BlockFenceGate extends BlockTransparentMeta implements RedstoneComp
     // and gives the vanilla behavior; no idea how to make this better :d
     private static final List<Location> manualOverrides = new ArrayList<>();
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public static final BooleanBlockProperty IN_WALL = new BooleanBlockProperty("in_wall_bit", false);
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, OPEN, IN_WALL);
 
     public BlockFenceGate() {
@@ -178,9 +183,8 @@ public class BlockFenceGate extends BlockTransparentMeta implements RedstoneComp
         return this.setOpen(player, !this.isOpen());
     }
 
-    @PowerNukkitDifference(info = "Using direct values, instead of toggling (fixes a redstone bug, that the door won't open). " +
-            "Also adding possibility to detect, whether a player or redstone recently opened/closed the door.", since = "1.4.0.0-PN")
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean setOpen(Player player, boolean open) {
         if (open == this.isOpen()) {
             return false;

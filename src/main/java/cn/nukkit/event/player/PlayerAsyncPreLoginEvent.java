@@ -5,7 +5,6 @@ import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.api.Since;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.utils.ClientChainData;
@@ -42,7 +41,7 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
 
     private final List<Consumer<Server>> scheduledActions = new ArrayList<>();
 
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "LoginChainData and Skin were added by refactoring this constructor", 
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "LoginChainData and Skin were added by refactoring this constructor",
             replaceWith = "PlayerAsyncPreLoginEvent(String name, UUID uuid, LoginChainData chainData, Skin skin, String address, int port)")
     @PowerNukkitOnly("The signature was changed in Cloudburst Nukkit and we re-added this constructor for backward-compatibility")
     public PlayerAsyncPreLoginEvent(String name, UUID uuid, String address, int port) {
@@ -50,7 +49,7 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
         this(name, uuid, ClientChainData.of(EmptyArrays.EMPTY_BYTES), null, address, port);
     }
     
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public PlayerAsyncPreLoginEvent(String name, UUID uuid, LoginChainData chainData, Skin skin, String address, int port) {
         this.name = name;
         this.uuid = uuid;
@@ -78,7 +77,7 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
         return this.chainData;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public String getXuid() {
         return this.chainData.getXUID();
     }

@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.blockproperty.value.DoublePlantType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
@@ -92,29 +93,36 @@ public class BlockTallGrass extends BlockFlowable {
             Block up = this.up();
 
             if (up.getId() == AIR) {
-                int meta;
+                DoublePlantType type;
 
                 switch (this.getDamage()) {
                     case 0:
                     case 1:
-                        meta = BlockDoublePlant.TALL_GRASS;
+                        type = DoublePlantType.TALL_GRASS;
                         break;
                     case 2:
                     case 3:
-                        meta = BlockDoublePlant.LARGE_FERN;
+                        type = DoublePlantType.LARGE_FERN;
                         break;
                     default:
-                        meta = -1;
+                        type = null;
                 }
 
-                if (meta != -1) {
-                    if (player != null && (player.gamemode & 0x01) == 0) {
+                if (type != null) {
+                    if (player != null && !player.isCreative()) {
                         item.count--;
                     }
 
+                    BlockDoublePlant doublePlant = (BlockDoublePlant) Block.get(BlockID.DOUBLE_PLANT);
+                    doublePlant.setDoublePlantType(type);
+                    doublePlant.setTopHalf(false);
+
                     this.level.addParticle(new BoneMealParticle(this));
-                    this.level.setBlock(this, get(DOUBLE_PLANT, meta), true, false);
-                    this.level.setBlock(up, get(DOUBLE_PLANT, meta ^ BlockDoublePlant.TOP_HALF_BITMASK), true);
+                    this.level.setBlock(this, doublePlant, true, false);
+
+                    doublePlant.setTopHalf(true);
+                    this.level.setBlock(up, doublePlant, true);
+                    this.level.updateAround(this);
                 }
             }
 

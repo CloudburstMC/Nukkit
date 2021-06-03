@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.ArrayBlockProperty;
@@ -16,11 +17,16 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
 /**
  * @author MagicDroidX (Nukkit Project)
  */
+@PowerNukkitDifference(info = "Extends BlockLog instead of BlockSolidMeta only in PowerNukkit", since = "1.4.0.0-PN")
 public class BlockWood extends BlockLog {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<WoodType> OLD_LOG_TYPE = new ArrayBlockProperty<>("old_log_type", true, new WoodType[]{
             WoodType.OAK, WoodType.SPRUCE, WoodType.BIRCH, WoodType.JUNGLE
     });
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(OLD_LOG_TYPE, PILLAR_AXIS);
     
     public static final int OAK = 0;

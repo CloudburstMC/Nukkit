@@ -297,14 +297,14 @@ public class Effect implements Cloneable {
 
             player.dataPacket(pk);
 
-            if (this.id == Effect.SPEED) {
+            if (this.id == Effect.SPEED && (oldEffect == null || oldEffect.amplifier != this.amplifier)) {
                 if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 + 0.2f * (oldEffect.amplifier + 1)), false);
                 }
                 player.setMovementSpeed(player.getMovementSpeed() * (1 + 0.2f * (this.amplifier + 1)));
             }
 
-            if (this.id == Effect.SLOWNESS) {
+            if (this.id == Effect.SLOWNESS && (oldEffect == null || oldEffect.amplifier != this.amplifier)) {
                 if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 - 0.15f * (oldEffect.amplifier + 1)), false);
                 }
@@ -337,6 +337,11 @@ public class Effect implements Cloneable {
             }
             if (this.id == Effect.SLOWNESS) {
                 ((Player) entity).setMovementSpeed(((Player) entity).getMovementSpeed() / (1 - 0.15f * (this.amplifier + 1)));
+            }
+            if (this.id == Effect.HEALTH_BOOST) {
+                float max = entity.getMaxHealth();
+                float health = Math.min(entity.getHealth(), max);
+                entity.setHealth(health);
             }
         }
 

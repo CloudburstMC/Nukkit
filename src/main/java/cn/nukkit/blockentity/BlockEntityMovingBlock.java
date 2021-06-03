@@ -1,5 +1,6 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
@@ -46,6 +47,11 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
         }
 
         super.initBlockEntity();
+    }
+
+    @Deprecated @DeprecationDetails(by = "PowerNukkit", since = "1.4.0.0-PN", reason = "renamed", replaceWith = "getMovingBlockEntityCompound()")
+    public CompoundTag getBlockEntity() {
+        return getMovingBlockEntityCompound();
     }
 
     @PowerNukkitOnly

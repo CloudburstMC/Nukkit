@@ -1,10 +1,20 @@
 package cn.nukkit.block;
 
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockNetherWartBlock extends BlockSolid {
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockNetherWartBlock() {
+        // Does nothing
+    }
 
     @Override
     public String getName() {

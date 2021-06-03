@@ -50,6 +50,8 @@ public class PositionTrackingService implements Closeable {
      * @param folder The folder that will hold the position tracking db files
      * @throws FileNotFoundException If the folder does not exists and can't be created 
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public PositionTrackingService(File folder) throws FileNotFoundException {
         if (!folder.isDirectory() && !folder.mkdirs()) {
             throw new FileNotFoundException("Failed to create the folder "+folder);

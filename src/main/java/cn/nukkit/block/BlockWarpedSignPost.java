@@ -8,9 +8,13 @@ import cn.nukkit.item.ItemWarpedSign;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockWarpedSignPost extends BlockSignPost {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockWarpedSignPost() {
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockWarpedSignPost(int meta) {
         super(meta);
     }

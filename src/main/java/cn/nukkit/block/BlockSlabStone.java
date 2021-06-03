@@ -4,7 +4,6 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.value.StoneSlab1Type;
-import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -15,6 +14,8 @@ import javax.annotation.Nonnull;
  * @since 26. 11. 2016
  */
 public class BlockSlabStone extends BlockSlab {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(
             StoneSlab1Type.PROPERTY,
             TOP_SLOT_PROPERTY
@@ -69,11 +70,15 @@ public class BlockSlabStone extends BlockSlab {
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public StoneSlab1Type getSlabType() {
         return getPropertyValue(StoneSlab1Type.PROPERTY);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setSlabType(StoneSlab1Type type) {
         setPropertyValue(StoneSlab1Type.PROPERTY, type);
     }

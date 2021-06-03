@@ -18,18 +18,18 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public static final int FLAG_HAS_PITCH = 0b100000;
 
     public int flags = 0;
-    @Since("1.3.2.0-PN") public float x = 0;
-    @Since("1.3.2.0-PN") public float y = 0;
-    @Since("1.3.2.0-PN") public float z = 0;
+    @Since("1.4.0.0-PN") public float x = 0;
+    @Since("1.4.0.0-PN") public float y = 0;
+    @Since("1.4.0.0-PN") public float z = 0;
 
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Changed to float", replaceWith = "x")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Changed to float", replaceWith = "x")
     @PowerNukkitOnly("Re-added for backward-compatibility")
     public int xDelta = 0;
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Changed to float", replaceWith = "y")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Changed to float", replaceWith = "y")
     @PowerNukkitOnly("Re-added for backward-compatibility")
     public int yDelta = 0;
     @PowerNukkitOnly("Re-added for backward-compatibility")
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Changed to float", replaceWith = "z")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Changed to float", replaceWith = "z")
     public int zDelta = 0;
     
     private int xDecoded;

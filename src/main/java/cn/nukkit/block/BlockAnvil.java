@@ -27,7 +27,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
  * @author Pub4Game
  * @since 27.12.2015
  */
-@PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable")
+@PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable", since = "1.4.0.0-PN")
 public class BlockAnvil extends BlockFallableMeta implements Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")

@@ -566,7 +566,7 @@ public class Level implements ChunkManager, Metadatable {
         this.addLevelEvent(pos, event, 0);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public void addLevelEvent(Vector3 pos, int event, int data) {
         LevelEventPacket pk = new LevelEventPacket();
         pk.evid = event;
@@ -2092,25 +2092,25 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @Nullable
     public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item) {
         return this.dropAndGetItem(source, item, null);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @Nullable
     public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item, @Nullable Vector3 motion) {
         return this.dropAndGetItem(source, item, motion, 10);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @Nullable
     public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item, @Nullable Vector3 motion, int delay) {
         return this.dropAndGetItem(source, item, motion, false, delay);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @Nullable
     public EntityItem dropAndGetItem(@Nonnull Vector3 source, @Nonnull Item item, @Nullable Vector3 motion, boolean dropAround, int delay) {
         EntityItem itemEntity = null;

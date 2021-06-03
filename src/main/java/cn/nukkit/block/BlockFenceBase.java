@@ -15,10 +15,14 @@ import java.util.Optional;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public abstract class BlockFenceBase extends BlockFence {
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockFenceBase() {
         this(0);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockFenceBase(int meta) {
         super(meta);
     }

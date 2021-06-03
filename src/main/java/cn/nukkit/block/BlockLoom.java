@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -9,12 +10,15 @@ import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
 public class BlockLoom extends BlockSolidMeta {
 
+    @PowerNukkitOnly
     public BlockLoom() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockLoom(int meta) {
         super(meta);
     }

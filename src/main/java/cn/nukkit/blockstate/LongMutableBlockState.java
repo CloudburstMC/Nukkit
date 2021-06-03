@@ -24,18 +24,23 @@ import java.math.BigInteger;
 
 import static cn.nukkit.blockstate.IMutableBlockState.handleUnsupportedStorageType;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @ParametersAreNonnullByDefault
 public class LongMutableBlockState extends MutableBlockState {
     private long storage;
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public LongMutableBlockState(int blockId,BlockProperties properties, long state) {
         super(blockId, properties);
         this.storage = state;
     }
 
-
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public LongMutableBlockState(int blockId, BlockProperties properties) {
         this(blockId, properties, 0);
     }

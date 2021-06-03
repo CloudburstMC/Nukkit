@@ -149,6 +149,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                                 cauldronLava.setFillLevel(3);
                                 this.level.setBlock(this, cauldronLava, true, true);
                                 cauldron.clearCustomColor();
+                                cauldron.setType(BlockEntityCauldron.PotionType.LAVA);
                                 this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.BUCKET_EMPTY_LAVA);
                             } else {
                                 clearWithFizz(cauldron);
@@ -168,15 +169,15 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     player.getInventory().setItemInHand(item);
                 }
     
-                BlockColor color = new ItemDye(item.getDamage()).getDyeColor().getColor();
+                BlockColor color = new ItemDye(item.getDamage()).getDyeColor().getLeatherColor();
                 if (!cauldron.isCustomColor()) {
                     cauldron.setCustomColor(color);
                 } else {
                     BlockColor current = cauldron.getCustomColor();
                     BlockColor mixed = new BlockColor(
-                            current.getRed() + (color.getRed() - current.getRed()) / 2,
-                            current.getGreen() + (color.getGreen() - current.getGreen()) / 2,
-                            current.getBlue() + (color.getBlue() - current.getBlue()) / 2
+                            (int)Math.round(Math.sqrt(color.getRed() * current.getRed()) * 0.965),
+                            (int)Math.round(Math.sqrt(color.getGreen() * current.getGreen()) * 0.965),
+                            (int)Math.round(Math.sqrt(color.getBlue() * current.getBlue()) * 0.965)
                     );
                     cauldron.setCustomColor(mixed);
                 }
@@ -279,7 +280,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
 
                 setFillLevel(getFillLevel() - 1);
                 if (isEmpty()) {
-                    cauldron.setPotionId(0xffff);//reset potion
+                    cauldron.setPotionId(-1);//reset potion
                     cauldron.clearCustomColor();
                 }
                 this.level.setBlock(this, this, true);
@@ -399,10 +400,11 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
             }
         }
     }
-    
+
+    @PowerNukkitOnly
     public void clearWithFizz(BlockEntityCauldron cauldron) {
         this.setFillLevel(0);//empty
-        cauldron.setPotionId(0xffff);//reset potion
+        cauldron.setPotionId(-1);//reset potion
         cauldron.setSplashPotion(false);
         cauldron.clearCustomColor();
         this.level.setBlock(this, new BlockCauldron(0), true);
@@ -415,7 +417,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         CompoundTag nbt = new CompoundTag()
-                .putShort("PotionId", 0xffff)
+                .putShort("PotionId", -1)
                 .putByte("SplashPotion", 0);
 
         if (item.hasCustomBlockData()) {

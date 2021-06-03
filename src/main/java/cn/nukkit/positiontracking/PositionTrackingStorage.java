@@ -32,6 +32,8 @@ import java.util.concurrent.TimeUnit;
 @Since("1.4.0.0-PN")
 @ParametersAreNonnullByDefault
 public class PositionTrackingStorage implements Closeable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final int DEFAULT_MAX_STORAGE = 500;
     private static final byte[] HEADER = new byte[]{ 12,32,32, 'P', 'N', 'P', 'T', 'D', 'B', '1' };
     private final int startIndex;
@@ -68,6 +70,8 @@ public class PositionTrackingStorage implements Closeable {
      * @throws IOException If an error has occurred while reading, parsing or creating the file
      * @throws IllegalArgumentException If opening an existing file and the internal startIndex don't match the given startIndex
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public PositionTrackingStorage(int startIndex, File persistenceFile, int maxStorage) throws IOException {
         Preconditions.checkArgument(startIndex > 0, "Start index must be positive. Got {}", startIndex);
         this.startIndex = startIndex;

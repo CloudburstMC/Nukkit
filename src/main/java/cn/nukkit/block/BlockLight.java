@@ -4,11 +4,14 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.AxisAlignedBB;
 
+@PowerNukkitOnly
 public class BlockLight extends BlockTransparentMeta {
+    @PowerNukkitOnly
     public BlockLight() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockLight(int meta) {
         super(meta);
     }

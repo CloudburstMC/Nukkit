@@ -23,10 +23,12 @@ import java.util.Map;
 @PowerNukkitOnly
 public class BlockBarrel extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityBarrel> {
 
+    @PowerNukkitOnly
     public BlockBarrel() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockBarrel(int meta) {
         super(meta);
     }
@@ -149,10 +151,12 @@ public class BlockBarrel extends BlockSolidMeta implements Faceable, BlockEntity
         setDamage((getDamage() & 0x8) | (face.getIndex() & 0x7));
     }
 
+    @PowerNukkitOnly
     public boolean isOpen() {
         return (getDamage() & 0x8) == 0x8;
     }
 
+    @PowerNukkitOnly
     public void setOpen(boolean open) {
         setDamage((getDamage() & 0x7) | (open? 0x8 : 0x0));
     }

@@ -23,7 +23,6 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
-import cn.nukkit.inventory.GrindstoneInventory;
 import cn.nukkit.inventory.SmithingInventory;
 import cn.nukkit.item.Item;
 
@@ -50,7 +49,7 @@ public class SmithingTableEvent extends InventoryEvent implements Cancellable {
     private final @Nonnull Player player;
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public SmithingTableEvent(SmithingInventory inventory, @Nonnull Item equipmentItem, @Nonnull Item resultItem, @Nonnull Item ingredientItem, @Nonnull Player player) {
         super(inventory);
         this.equipmentItem = equipmentItem;
