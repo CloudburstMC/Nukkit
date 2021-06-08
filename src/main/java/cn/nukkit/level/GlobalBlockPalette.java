@@ -19,9 +19,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Log4j2
 public class GlobalBlockPalette {
+
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
-    private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
 
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
@@ -33,25 +33,17 @@ public class GlobalBlockPalette {
                 throw new AssertionError("Unable to locate block state nbt");
             }
             //noinspection unchecked
-            tag = (ListTag<CompoundTag>) NBTIO.readTag(new ByteArrayInputStream(ByteStreams.toByteArray(stream)), ByteOrder.LITTLE_ENDIAN, false);
+            tag = (ListTag<CompoundTag>) NBTIO.readTag(new ByteArrayInputStream(ByteStreams.toByteArray(stream)), ByteOrder.BIG_ENDIAN, false);
         } catch (IOException e) {
             throw new AssertionError("Unable to load block palette", e);
         }
 
         for (CompoundTag state : tag.getAll()) {
-            int runtimeId = runtimeIdAllocator.getAndIncrement();
-            if (!state.contains("LegacyStates")) continue;
-
-            List<CompoundTag> legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
-
-            // Resolve to first legacy id
-            CompoundTag firstState = legacyStates.get(0);
-            runtimeIdToLegacy.put(runtimeId, firstState.getInt("id") << 6 | firstState.getShort("val"));
-
-            for (CompoundTag legacyState : legacyStates) {
-                int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
-                legacyToRuntimeId.put(legacyId, runtimeId);
-            }
+            int id = state.getInt("id");
+            int data = state.getShort("data");
+            int runtimeId = state.getInt("runtimeId");
+            int legacyId = id << 6 | data;
+            legacyToRuntimeId.put(legacyId, runtimeId);
         }
     }
 
@@ -61,10 +53,8 @@ public class GlobalBlockPalette {
         if (runtimeId == -1) {
             runtimeId = legacyToRuntimeId.get(id << 6);
             if (runtimeId == -1) {
-                log.info("Creating new runtime ID for unknown block {}", id);
-                runtimeId = runtimeIdAllocator.getAndIncrement();
-                legacyToRuntimeId.put(id << 6, runtimeId);
-                runtimeIdToLegacy.put(runtimeId, id << 6);
+                log.info("Missing block runtime id mappings for " + id + ':' + meta);
+                return 5035; // Update game block
             }
         }
         return runtimeId;

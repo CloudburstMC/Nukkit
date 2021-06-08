@@ -717,6 +717,7 @@ public class BinaryStream {
         this.putUnsignedVarInt(rules.size());
         rules.forEach((gameRule, value) -> {
             putString(gameRule.getName().toLowerCase());
+            putBoolean(false); // isEditable
             value.write(this);
         });
     }

@@ -75,6 +75,7 @@ public class StartGamePacket extends DataPacket {
     public boolean isMovementServerAuthoritative;
     public boolean isInventoryServerAuthoritative;
     public long currentTick;
+    public String serverEngine = "";
 
     public int enchantmentSeed;
 
@@ -150,5 +151,6 @@ public class StartGamePacket extends DataPacket {
         this.put(RuntimeItems.getRuntimeMapping().getItemDataPalette());
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(this.isInventoryServerAuthoritative);
+        this.putString(this.serverEngine);
     }
 }
