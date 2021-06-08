@@ -716,7 +716,7 @@ public class BinaryStream {
         Map<GameRule, GameRules.Value> rules = gameRules.getGameRules();
         this.putUnsignedVarInt(rules.size());
         rules.forEach((gameRule, value) -> {
-            putString(gameRule.getName().toLowerCase());
+            this.putString(gameRule.getName().toLowerCase());
             value.write(this);
         });
     }
