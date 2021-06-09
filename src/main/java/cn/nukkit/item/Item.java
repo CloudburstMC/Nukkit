@@ -486,11 +486,18 @@ public class Item implements Cloneable, BlockID, ItemID {
             if (blockId == null || blockId > BlockID.QUARTZ_BRICKS) { //TODO Remove this after the support is added
                 return null;
             }
-            BlockState blockState = BlockStateRegistry.getBlockStateByRuntimeId(
-                    ((Number)data.get("blockRuntimeId")).intValue()
-            );
-            if (blockState != null) {
-                item = blockState.asItemBlock();
+            int blockRuntimeId = -1;
+            try {
+                blockRuntimeId = ((Number) data.get("blockRuntimeId")).intValue();
+                BlockState blockState = BlockStateRegistry.getBlockStateByRuntimeId(blockRuntimeId);
+                if (blockState != null) {
+                    item = blockState.asItemBlock();
+                } else {
+                    log.warn("Block state not found for the creative item {} with runtimeId {}", id, blockRuntimeId);
+                }
+            } catch (Throwable e) {
+                log.error("Error loading the creative item {} with runtimeId {}", id, blockRuntimeId, e);
+                return null;
             }
         }
 
