@@ -2272,8 +2272,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void respawnToAll() {
-        for (Player player : this.hasSpawned.values()) {
-            this.hasSpawned.remove(player.getLoaderId());
+        Collection<Player> players = new LinkedList<>(this.hasSpawned.values());
+        this.hasSpawned.clear();
+
+        for (Player player : players) {
             this.spawnTo(player);
         }
     }
