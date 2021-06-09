@@ -62,7 +62,7 @@ public class BlockStateReader {
             }
             
             //noinspection unchecked
-            tags = (ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.LITTLE_ENDIAN, false);
+            tags = (ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.BIG_ENDIAN, false);
         } catch (IOException e) {
             throw new AssertionError(e);
         }

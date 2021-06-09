@@ -4,6 +4,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.DyeColor;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
@@ -61,6 +62,21 @@ public final class CommonBlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final IntBlockProperty DEPRECATED = new IntBlockProperty("deprecated", false, 3);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BlockProperty<DyeColor> COLOR = new ArrayBlockProperty<>("color", true, new DyeColor[] {
+            DyeColor.WHITE, DyeColor.MAGENTA, DyeColor.LIGHT_BLUE, DyeColor.YELLOW, DyeColor.LIME, DyeColor.PINK,
+            DyeColor.GRAY, DyeColor.LIGHT_GRAY, DyeColor.CYAN, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BROWN,
+            DyeColor.GREEN, DyeColor.RED, DyeColor.BLACK
+    }, 4, "color", false, new String[] {
+            "white", "magenta", "light_blue", "yellow", "limte", "pink", "gray", "silver", "cyan", "purple", "blue",
+            "brown", "green", "red", "black"
+    });
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BlockProperties COLOR_BLOCK_PROPERTIES = new BlockProperties(COLOR);
 
     private CommonBlockProperties() {
         throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");

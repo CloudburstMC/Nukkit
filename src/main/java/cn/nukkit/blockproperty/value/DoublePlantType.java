@@ -19,24 +19,24 @@ public enum DoublePlantType {
     SUNFLOWER,
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    LILAC,
+    @Since("FUTURE")
+    SYRINGA("Lilac", false),
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    TALL_GRASS("Double Tallgrass", true),
+    @Since("FUTURE")
+    GRASS("Double Tallgrass", true),
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    LARGE_FERN("Large Fern", true),
+    @Since("FUTURE")
+    FERN("Large Fern", true),
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    ROSE_BUSH,
+    @Since("FUTURE")
+    ROSE("Rose Bush", false),
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    PEONY
+    @Since("FUTURE")
+    PAEONIA("Peony", false)
     ;
     private final String englishName;
     private final boolean replaceable;

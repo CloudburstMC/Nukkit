@@ -25,9 +25,11 @@ import cn.nukkit.utils.Utils;
 import io.netty.util.internal.EmptyArrays;
 import it.unimi.dsi.fastutil.ints.Int2IntArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
+import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.lang.reflect.Modifier;
 import java.nio.ByteOrder;
@@ -447,21 +449,57 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     private static final ArrayList<Item> creative = new ArrayList<>();
 
+    @SneakyThrows(IOException.class)
     @SuppressWarnings("unchecked")
     private static void initCreativeItems() {
         clearCreativeItems();
 
         Config config = new Config(Config.JSON);
-        config.load(Server.class.getClassLoader().getResourceAsStream("creativeitems.json"));
+        try(InputStream resourceAsStream = Server.class.getClassLoader().getResourceAsStream("creativeitems.json")) {
+            config.load(resourceAsStream);
+        }
         List<Map> list = config.getMapList("items");
 
         for (Map map : list) {
             try {
-                addCreativeItem(fromJsonStringId(map));
+                Item item = loadCreativeItemEntry(map);
+                if (item != null) {
+                    addCreativeItem(item);
+                }
             } catch (Exception e) {
                 log.error("Error while registering a creative item", e);
             }
         }
+    }
+
+    private static Item loadCreativeItemEntry(Map<String, Object> data) {
+        String nbt = (String) data.get("nbt_b64");
+        byte[] nbtBytes = nbt != null ? Base64.getDecoder().decode(nbt) : EmptyArrays.EMPTY_BYTES;
+
+        String id = data.get("id").toString();
+        Item item = null;
+        if (data.containsKey("damage")) {
+            int meta = Utils.toInt(data.get("damage"));
+            item = fromString(id + ":" + meta);
+        } else if (data.containsKey("blockRuntimeId")) {
+            Integer blockId = BlockStateRegistry.getBlockId(id);
+            if (blockId == null || blockId > BlockID.QUARTZ_BRICKS) { //TODO Remove this after the support is added
+                return null;
+            }
+            BlockState blockState = BlockStateRegistry.getBlockStateByRuntimeId(
+                    ((Number)data.get("blockRuntimeId")).intValue()
+            );
+            if (blockState != null) {
+                item = blockState.asItemBlock();
+            }
+        }
+
+        if (item == null) {
+            item = fromString(id);
+        }
+
+        item.setCompoundTag(nbtBytes);
+        return item;
     }
 
     public static void clearCreativeItems() {

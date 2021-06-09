@@ -98,11 +98,11 @@ public class BlockTallGrass extends BlockFlowable {
                 switch (this.getDamage()) {
                     case 0:
                     case 1:
-                        type = DoublePlantType.TALL_GRASS;
+                        type = DoublePlantType.GRASS;
                         break;
                     case 2:
                     case 3:
-                        type = DoublePlantType.LARGE_FERN;
+                        type = DoublePlantType.FERN;
                         break;
                     default:
                         type = null;

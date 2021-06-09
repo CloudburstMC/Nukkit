@@ -23,6 +23,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -127,7 +128,11 @@ public class Nukkit {
             Properties properties = new Properties();
             try (FileReader reader = new FileReader(propertiesPath.toFile())) {
                 properties.load(reader);
-                disableSentry.set(Boolean.parseBoolean(properties.getProperty("disable-auto-bug-report", "false")));
+                String value = properties.getProperty("disable-auto-bug-report", "false");
+                if (value.equalsIgnoreCase("on") || value.equals("1")) {
+                    value = "true";
+                }
+                disableSentry.set(Boolean.parseBoolean(value.toLowerCase(Locale.ENGLISH)));
             } catch (IOException e) {
                 log.error("Failed to load server.properties to check disable-auto-bug-report.", e);
             }

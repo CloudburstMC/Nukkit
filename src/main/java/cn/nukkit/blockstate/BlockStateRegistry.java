@@ -12,7 +12,6 @@ import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.HumanStringComparator;
@@ -34,7 +33,6 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,7 +55,6 @@ public class BlockStateRegistry {
     private final Map<String, Registration> stateIdRegistration = new ConcurrentHashMap<>();
     private final Int2ObjectMap<Registration> runtimeIdRegistration = new Int2ObjectOpenHashMap<>();
 
-    private final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
     private final Int2ObjectMap<String> blockIdToPersistenceName = new Int2ObjectOpenHashMap<>();
     private final Map<String, Integer> persistenceNameToBlockId = new LinkedHashMap<>();
     
@@ -65,28 +62,6 @@ public class BlockStateRegistry {
 
     //<editor-fold desc="static initialization" defaultstate="collapsed">
     static {
-        Map<CompoundTag, List<CompoundTag>> metaOverrides = new LinkedHashMap<>();
-        //<editor-fold desc="Loading runtime_block_states_overrides.dat" defaultstate="collapsed">
-        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states_overrides.dat")) {
-            if (stream == null) {
-                throw new AssertionError("Unable to locate block state nbt");
-            }
-
-            ListTag<CompoundTag> states;
-            try (BufferedInputStream buffered = new BufferedInputStream(stream)) {
-                states = NBTIO.read(buffered).getList("Overrides", CompoundTag.class);
-            }
-
-            for (CompoundTag override : states.getAll()) {
-                if (override.contains("block") && override.contains("LegacyStates")) {
-                    metaOverrides.put(override.getCompound("block").remove("version"), override.getList("LegacyStates", CompoundTag.class).getAll());
-                }
-            }
-
-        } catch (IOException e) {
-            throw new AssertionError(e);
-        }
-        //</editor-fold>
 
         //<editor-fold desc="Loading block_ids.csv" defaultstate="collapsed">
         try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("block_ids.csv")) { 
@@ -120,76 +95,42 @@ public class BlockStateRegistry {
         }
         //</editor-fold>
 
-        ListTag<CompoundTag> tag;
-        //<editor-fold desc="Loading runtime_block_states.dat" defaultstate="collapsed">
-        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_block_states.dat")) {
+        //<editor-fold desc="Loading canonical_block_states.nbt" defaultstate="collapsed">
+        List<CompoundTag> tags = new ArrayList<>();
+        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("canonical_block_states.nbt")) {
             if (stream == null) {
                 throw new AssertionError("Unable to locate block state nbt");
             }
 
-            try (BufferedInputStream buffered = new BufferedInputStream(stream)) {
-                //noinspection unchecked
-                tag = (ListTag<CompoundTag>) NBTIO.readTag(buffered, ByteOrder.LITTLE_ENDIAN, false);
+            try (BufferedInputStream bis = new BufferedInputStream(stream)) {
+                int runtimeId = 0;
+                while (bis.available() > 0) {
+                    CompoundTag tag = NBTIO.read(bis, ByteOrder.BIG_ENDIAN, true);
+                    tag.putInt("runtimeId", runtimeId++);
+                    tag.putInt("blockId", persistenceNameToBlockId.getOrDefault(tag.getString("name").toLowerCase(), -1));
+                    tags.add(tag);
+                }
             }
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-
         //</editor-fold>
-
         Integer infoUpdateRuntimeId = null;
         
-        for (CompoundTag state : tag.getAll()) {
-            int runtimeId = runtimeIdAllocator.getAndIncrement();
-            String name = state.getCompound("block").getString("name").toLowerCase();
-            
+        for (CompoundTag state : tags) {
+            int blockId = state.getInt("blockId");
+            int runtimeId = state.getInt("runtimeId");
+            String name = state.getString("name").toLowerCase();
             if (name.equals("minecraft:unknown")) {
                 infoUpdateRuntimeId = runtimeId;
             }
             
-            List<CompoundTag> legacyStates = metaOverrides.get(state.getCompound("block").copy().remove("version"));
-            if (legacyStates == null) {
-                if (!state.contains("LegacyStates")) {
-                    registerStateId(state, runtimeId);
-                    continue;
-                } else {
-                    legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
-                }
-            }
-            
-            // Override is forcing to clear the LegacyStates
-            if (legacyStates.isEmpty()) {
-                registerStateId(state, runtimeId);
-                continue;
-            }
-
-            // Resolve to first legacy id
-            CompoundTag firstState = legacyStates.get(0);
-            int firstId = firstState.getInt("id");
-            int firstMeta = firstState.getInt("val");
-
             // Special condition: minecraft:wood maps 3 blocks, minecraft:wood, minecraft:log and minecraft:log2
             // All other cases, register the name normally
-            if (isNameOwnerOfId(name, firstId)) {
-                registerPersistenceName(firstId, name);
+            if (isNameOwnerOfId(name, blockId)) {
+                registerPersistenceName(blockId, name);
                 registerStateId(state, runtimeId);
-                registerState(firstId, firstMeta, state, runtimeId);
             }
-            
-            registerState(firstId, firstMeta, state, runtimeId);
-
-            for (CompoundTag legacyState : legacyStates) {
-                int newBlockId = legacyState.getInt("id");
-                int meta = legacyState.getInt("val");
-                registerState(newBlockId, meta, state, runtimeId);
-                
-                if (isNameOwnerOfId(name, newBlockId)) {
-                    registerState(newBlockId, meta, state, runtimeId);
-                }
-            }
-            // No point in sending this since the client doesn't use it.
-            state.remove("meta");
-            state.remove("LegacyStates");
         }
 
         if (infoUpdateRuntimeId == null) {
@@ -199,7 +140,7 @@ public class BlockStateRegistry {
         updateBlockRegistration = findRegistrationByRuntimeId(infoUpdateRuntimeId);
         
         try {
-            blockPaletteBytes = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
+            blockPaletteBytes = NBTIO.write(tags, ByteOrder.LITTLE_ENDIAN, true);
         } catch (IOException e) {
             throw new ExceptionInInitializerError(e);
         }
@@ -413,8 +354,7 @@ public class BlockStateRegistry {
         }
     }
 
-    private void registerStateId(CompoundTag state, int runtimeId) {
-        CompoundTag block = state.getCompound("block");
+    private void registerStateId(CompoundTag block, int runtimeId) {
         String stateId = getStateId(block);
         Registration registration = new Registration(null, runtimeId, block);
         
@@ -436,8 +376,7 @@ public class BlockStateRegistry {
         }
         runtimeIdRegistration.put(runtimeId, registration);
         
-        CompoundTag block = originalState.getCompound("block");
-        stateIdRegistration.remove(getStateId(block));
+        stateIdRegistration.remove(getStateId(originalState));
         stateIdRegistration.remove(state.getLegacyStateId());
     }
 
