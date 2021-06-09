@@ -4024,6 +4024,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     notFound.setTrackingId(posTrackReq.getTrackingId());
                     dataPacket(notFound);
                     break;
+                case ProtocolInfo.TICK_SYNC_PACKET:
+                    TickSyncPacket tickSyncPacket = (TickSyncPacket) packet;
+                    
+                    TickSyncPacket tickSyncPacketToClient = new TickSyncPacket();
+                    tickSyncPacketToClient.requestTimestamp = tickSyncPacket.requestTimestamp;
+                    tickSyncPacketToClient.responseTimestamp = (long) this.getServer().getTick();
+                    this.dataPacketImmediately(tickSyncPacketToClient);
+                    break;
                 default:
                     break;
             }
