@@ -6,6 +6,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
+import cn.nukkit.item.RuntimeItemMapping.RuntimeEntry;
+import cn.nukkit.item.RuntimeItemMapping.LegacyEntry;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -20,8 +22,11 @@ import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteOrder;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -1108,7 +1113,11 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
     }
 
+    public final RuntimeEntry getRuntimeEntry() {
+        return RuntimeItems.getMapping().toRuntime(this.getId(), this.getDamage());
+    }
+
     public final int getNetworkId() {
-        return RuntimeItems.getNetworkId(RuntimeItems.getRuntimeMapping().getNetworkFullId(this));
+        return this.getRuntimeEntry().getRuntimeId();
     }
 }
