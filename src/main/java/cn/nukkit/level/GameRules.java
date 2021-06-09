@@ -200,6 +200,7 @@ public class GameRules {
     public static class Value<T> {
         private final Type type;
         private T value;
+        private boolean canBeChanged;
 
         public Value(Type type, T value) {
             this.type = type;
@@ -213,8 +214,16 @@ public class GameRules {
             this.value = value;
         }
 
+        public boolean isCanBeChanged() {
+            return this.canBeChanged;
+        }
+
+        public void setCanBeChanged(boolean canBeChanged) {
+            this.canBeChanged = canBeChanged;
+        }
+
         public Type getType() {
-            return type;
+            return this.type;
         }
 
         private boolean getValueAsBoolean() {
@@ -238,9 +247,10 @@ public class GameRules {
             return (Float) value;
         }
 
-        public void write(BinaryStream pk) {
-            pk.putUnsignedVarInt(type.ordinal());
-            type.write(pk, this);
+        public void write(BinaryStream stream) {
+            stream.putBoolean(this.canBeChanged);
+            stream.putUnsignedVarInt(type.ordinal());
+            type.write(stream, this);
         }
     }
 }

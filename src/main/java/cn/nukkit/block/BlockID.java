@@ -293,7 +293,7 @@ public interface BlockID {
     int GRAY_GLAZED_TERRACOTTA = 227;
     int SILVER_GLAZED_TERRACOTTA = 228;
     int CYAN_GLAZED_TERRACOTTA = 229;
-    
+
     int BLUE_GLAZED_TERRACOTTA = 231;
     int BROWN_GLAZED_TERRACOTTA = 232;
     int GREEN_GLAZED_TERRACOTTA = 233;
@@ -305,20 +305,21 @@ public interface BlockID {
 
     int CHORUS_PLANT = 240;
     int STAINED_GLASS = 241;
-    
+
     int PODZOL = 243;
     int BEETROOT_BLOCK = 244;
     int STONECUTTER = 245;
     int GLOWING_OBSIDIAN = 246;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERREACTOR = 247;
     int NETHER_REACTOR = NETHERREACTOR;
-
+    int INFO_UPDATE = 248;
+    int INFO_UPDATE2 = 249;
     int PISTON_EXTENSION = 250;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int MOVING_BLOCK = PISTON_EXTENSION;
 
     int OBSERVER = 251;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int STRUCTURE_BLOCK = 252;
-    
+
     @PowerNukkitOnly int PRISMARINE_STAIRS = 257;
     @PowerNukkitOnly int DARK_PRISMARINE_STAIRS = 258;
     @PowerNukkitOnly int PRISMARINE_BRICKS_STAIRS = 259;
