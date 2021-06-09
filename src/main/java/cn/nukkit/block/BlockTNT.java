@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.item.Item;
@@ -28,6 +29,10 @@ import javax.annotation.Nullable;
  */
 @PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
 public class BlockTNT extends BlockSolid implements RedstoneComponent {
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BooleanBlockProperty EXPLODE_ON_BREAK = new BooleanBlockProperty("explode_bit", true);
 
     public BlockTNT() {
     }
