@@ -6,6 +6,10 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCauldron;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.IntBlockProperty;
+import cn.nukkit.blockproperty.value.CauldronLiquid;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.item.*;
@@ -26,6 +30,18 @@ import java.util.Map;
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<BlockEntityCauldron> {
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final IntBlockProperty FILL_LEVEL = new IntBlockProperty("fill_level", false, 6);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final ArrayBlockProperty<CauldronLiquid> LIQUID = new ArrayBlockProperty<>("cauldron_liquid", false, CauldronLiquid.class);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BlockProperties PROPERTIES = new BlockProperties(FILL_LEVEL, LIQUID);
 
     public BlockCauldron() {
         super(0);
