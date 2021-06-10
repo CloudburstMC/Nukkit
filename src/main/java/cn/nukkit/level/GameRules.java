@@ -1,5 +1,6 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BinaryStream;
 import com.google.common.base.Preconditions;
@@ -214,10 +215,12 @@ public class GameRules {
             this.value = value;
         }
 
+        @Since("FUTURE")
         public boolean isCanBeChanged() {
             return this.canBeChanged;
         }
 
+        @Since("FUTURE")
         public void setCanBeChanged(boolean canBeChanged) {
             this.canBeChanged = canBeChanged;
         }
