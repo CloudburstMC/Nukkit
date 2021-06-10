@@ -23,11 +23,15 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.ByteOrder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -342,22 +346,21 @@ public class Item implements Cloneable, BlockID, ItemID {
 
     private static final ArrayList<Item> creative = new ArrayList<>();
 
-    @SuppressWarnings("unchecked")
     private static void initCreativeItems() {
         clearCreativeItems();
 
-        Config config = new Config(Config.JSON);
-        config.load(Server.class.getClassLoader().getResourceAsStream("creativeitems.json"));
-        List<Map> list = config.getMapList("items");
+        JsonArray itemsArray;
+        try (InputStream stream = Server.class.getClassLoader().getResourceAsStream("creative_items.json")) {
+            itemsArray = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject().getAsJsonArray("items");
+        } catch (Exception e) {
+            throw new AssertionError("Error loading required block states!");
+        }
 
-        for (Map map : list) {
-            try {
-                Item item = fromJson(map, true);
-                if (item != null) {
-                    addCreativeItem(item);
-                }
-            } catch (Exception e) {
-                MainLogger.getLogger().logException(e);
+        for (JsonElement element : itemsArray) {
+            Item item = RuntimeItems.parseCreativeItem(element.getAsJsonObject(), true);
+            if (item != null && !item.getName().equals(UNKNOWN_STR)) {
+                // Add only implemented items
+                addCreativeItem(item);
             }
         }
     }

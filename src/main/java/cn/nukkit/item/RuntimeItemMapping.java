@@ -10,12 +10,14 @@ import com.google.gson.JsonParser;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+@Log4j2
 public class RuntimeItemMapping {
 
     private final Int2ObjectMap<LegacyEntry> runtime2Legacy = new Int2ObjectOpenHashMap<>();
@@ -54,6 +56,7 @@ public class RuntimeItemMapping {
             } else {
                 legacyId = RuntimeItems.getLegacyIdFromLegacyString(identifier);
                 if (legacyId == -1) {
+                    log.trace("Unable to find legacyId for " + identifier);
                     continue;
                 }
             }
@@ -100,7 +103,7 @@ public class RuntimeItemMapping {
         return runtimeEntry;
     }
 
-    public LegacyEntry toLegacy(String identifier) {
+    public LegacyEntry fromIdentifier(String identifier) {
         return this.identifier2Legacy.get(identifier);
     }
 

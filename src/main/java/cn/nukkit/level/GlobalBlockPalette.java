@@ -64,4 +64,8 @@ public class GlobalBlockPalette {
     public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
         return getOrCreateRuntimeId(legacyId >> 4, legacyId & 0xf);
     }
+
+    public static int getLegacyFullId(int runtimeId) {
+        return runtimeIdToLegacy.get(runtimeId);
+    }
 }
