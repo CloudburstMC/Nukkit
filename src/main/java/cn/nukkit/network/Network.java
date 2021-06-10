@@ -469,5 +469,8 @@ public class Network {
         this.registerPacket(ProtocolInfo.UPDATE_PLAYER_GAME_TYPE_PACKET, UpdatePlayerGameTypePacket.class);
         this.registerPacket(ProtocolInfo.FILTER_TEXT_PACKET, FilterTextPacket.class);
         this.registerPacket(ProtocolInfo.ITEM_COMPONENT_PACKET, ItemComponentPacket.class);
+        this.registerPacket(ProtocolInfo.ADD_VOLUME_ENTITY, AddVolumeEntityPacket.class);
+        this.registerPacket(ProtocolInfo.REMOVE_VOLUME_ENTITY, AddVolumeEntityPacket.class);
+        this.registerPacket(ProtocolInfo.ADD_VOLUME_ENTITY, SyncEntityPropertyPacket.class);
     }
 }
