@@ -129,6 +129,7 @@ public class CraftingManager {
     private void loadRecipes(Config config) {
         List<Map> recipes = config.getMapList("recipes");
         log.info("Loading recipes...");
+        toNextRecipe:
         for (Map<String, Object> recipe : recipes) {
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
@@ -146,7 +147,11 @@ public class CraftingManager {
                         Map<String, Object> first = outputs.get(0);
                         List<Item> sorted = new ArrayList<>();
                         for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
-                            sorted.add(parseRecipeItem(ingredient));
+                            Item recipeItem = parseRecipeItem(ingredient);
+                            if (recipeItem.isNull()) {
+                                continue toNextRecipe;
+                            }
+                            sorted.add(recipeItem);
                         }
                         // Bake sorted list
                         sorted.sort(recipeComparator);
@@ -154,15 +159,19 @@ public class CraftingManager {
                         String recipeId = (String) recipe.get("id");
                         int priority = Utils.toInt(recipe.get("priority"));
 
+                        Item result = parseRecipeItem(first);
+                        if (result.isNull()) {
+                            continue toNextRecipe;
+                        }
                         switch (craftingBlock) {
                             case "crafting_table":
-                                this.registerRecipe(new ShapelessRecipe(recipeId, priority, parseRecipeItem(first), sorted));
+                                this.registerRecipe(new ShapelessRecipe(recipeId, priority, result, sorted));
                                 break;
                             case "stonecutter":
-                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, parseRecipeItem(first), sorted.get(0)));
+                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, result, sorted.get(0)));
                                 break;
                             case "cartography_table":
-                                this.registerRecipe(new CartographyRecipe(recipeId, priority, parseRecipeItem(first), sorted));
+                                this.registerRecipe(new CartographyRecipe(recipeId, priority, result, sorted));
                                 break;
                         }
                         break;
@@ -183,18 +192,28 @@ public class CraftingManager {
                         for (Map.Entry<String, Map<String, Object>> ingredientEntry : input.entrySet()) {
                             char ingredientChar = ingredientEntry.getKey().charAt(0);
                             Item ingredient = parseRecipeItem(ingredientEntry.getValue());
-
+                            if (ingredient.isNull()) {
+                                continue toNextRecipe;
+                            }
                             ingredients.put(ingredientChar, ingredient);
                         }
 
                         for (Map<String, Object> data : outputs) {
-                            extraResults.add(parseRecipeItem(data));
+                            Item output = parseRecipeItem(data);
+                            if (output.isNull()) {
+                                continue toNextRecipe;
+                            }
+                            extraResults.add(output);
                         }
 
                         recipeId = (String) recipe.get("id");
                         priority = Utils.toInt(recipe.get("priority"));
 
-                        this.registerRecipe(new ShapedRecipe(recipeId, priority, parseRecipeItem(first), shape, ingredients, extraResults));
+                        Item primaryResult = parseRecipeItem(first);
+                        if (primaryResult.isNull()) {
+                            continue toNextRecipe;
+                        }
+                        this.registerRecipe(new ShapedRecipe(recipeId, priority, primaryResult, shape, ingredients, extraResults));
                         break;
                     case 2:
                     case 3:
@@ -206,12 +225,18 @@ public class CraftingManager {
                         }
                         Map<String, Object> resultMap = (Map) recipe.get("output");
                         Item resultItem = parseRecipeItem(resultMap);
+                        if (resultItem.isNull()) {
+                            continue toNextRecipe;
+                        }
                         Item inputItem;
                         try {
                             Map<String, Object> inputMap = (Map) recipe.get("input");
                             inputItem = parseRecipeItem(inputMap);
                         } catch (Exception old) {
                             inputItem = Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1);
+                        }
+                        if (inputItem.isNull()) {
+                            continue toNextRecipe;
                         }
                         switch (craftingBlock) {
                             case "furnace":
