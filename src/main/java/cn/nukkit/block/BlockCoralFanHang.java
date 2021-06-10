@@ -27,7 +27,7 @@ public class BlockCoralFanHang extends BlockCoralFan implements Faceable {
     @Since("FUTURE")
     public static final ArrayBlockProperty<BlockFace> HANG_DIRECTION = new ArrayBlockProperty<>("coral_direction", false,
             new BlockFace[]{BlockFace.WEST, BlockFace.EAST, BlockFace.NORTH, BlockFace.SOUTH}
-    );
+    ).ordinal(true);
 
     @PowerNukkitOnly
     @Since("FUTURE")
