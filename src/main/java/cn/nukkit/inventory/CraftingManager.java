@@ -129,11 +129,6 @@ public class CraftingManager {
     private void loadRecipes(Config config) {
         List<Map> recipes = config.getMapList("recipes");
         log.info("Loading recipes...");
-        if (true) {
-            // No! Not yet!
-            log.warn("Recipes are disabled in this version!");
-            return;
-        }
         for (Map<String, Object> recipe : recipes) {
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
@@ -151,7 +146,7 @@ public class CraftingManager {
                         Map<String, Object> first = outputs.get(0);
                         List<Item> sorted = new ArrayList<>();
                         for (Map<String, Object> ingredient : ((List<Map>) recipe.get("input"))) {
-                            sorted.add(Item.fromJsonNetworkId(ingredient));
+                            sorted.add(parseRecipeItem(ingredient));
                         }
                         // Bake sorted list
                         sorted.sort(recipeComparator);
@@ -161,13 +156,13 @@ public class CraftingManager {
 
                         switch (craftingBlock) {
                             case "crafting_table":
-                                this.registerRecipe(new ShapelessRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted));
+                                this.registerRecipe(new ShapelessRecipe(recipeId, priority, parseRecipeItem(first), sorted));
                                 break;
                             case "stonecutter":
-                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, Item.fromJson(first), sorted.get(0)));
+                                this.registerRecipe(new StonecutterRecipe(recipeId, priority, parseRecipeItem(first), sorted.get(0)));
                                 break;
                             case "cartography_table":
-                                this.registerRecipe(new CartographyRecipe(recipeId, priority, Item.fromJsonNetworkId(first), sorted));
+                                this.registerRecipe(new CartographyRecipe(recipeId, priority, parseRecipeItem(first), sorted));
                                 break;
                         }
                         break;
@@ -187,19 +182,19 @@ public class CraftingManager {
                         Map<String, Map<String, Object>> input = (Map) recipe.get("input");
                         for (Map.Entry<String, Map<String, Object>> ingredientEntry : input.entrySet()) {
                             char ingredientChar = ingredientEntry.getKey().charAt(0);
-                            Item ingredient = Item.fromJsonNetworkId(ingredientEntry.getValue());
+                            Item ingredient = parseRecipeItem(ingredientEntry.getValue());
 
                             ingredients.put(ingredientChar, ingredient);
                         }
 
                         for (Map<String, Object> data : outputs) {
-                            extraResults.add(Item.fromJsonNetworkId(data));
+                            extraResults.add(parseRecipeItem(data));
                         }
 
                         recipeId = (String) recipe.get("id");
                         priority = Utils.toInt(recipe.get("priority"));
 
-                        this.registerRecipe(new ShapedRecipe(recipeId, priority, Item.fromJsonNetworkId(first), shape, ingredients, extraResults));
+                        this.registerRecipe(new ShapedRecipe(recipeId, priority, parseRecipeItem(first), shape, ingredients, extraResults));
                         break;
                     case 2:
                     case 3:
@@ -210,11 +205,11 @@ public class CraftingManager {
                             continue;
                         }
                         Map<String, Object> resultMap = (Map) recipe.get("output");
-                        Item resultItem = Item.fromJsonNetworkId(resultMap);
+                        Item resultItem = parseRecipeItem(resultMap);
                         Item inputItem;
                         try {
                             Map<String, Object> inputMap = (Map) recipe.get("input");
-                            inputItem = Item.fromJsonNetworkId(inputMap);
+                            inputItem = parseRecipeItem(inputMap);
                         } catch (Exception old) {
                             inputItem = Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1);
                         }
@@ -249,32 +244,28 @@ public class CraftingManager {
 
         RuntimeItemMapping runtimeMapping = RuntimeItems.getRuntimeMapping();
         for (Map potionMix : potionMixes) {
-            int fromPotionId = ((Number) potionMix.get("inputId")).intValue(); // gson returns doubles...
+            String fromPotionId = potionMix.get("inputId").toString();
             int fromPotionMeta = ((Number) potionMix.get("inputMeta")).intValue();
-            int ingredient = ((Number) potionMix.get("reagentId")).intValue();
+            String ingredient = potionMix.get("reagentId").toString();
             int ingredientMeta = ((Number) potionMix.get("reagentMeta")).intValue();
-            int toPotionId = ((Number) potionMix.get("outputId")).intValue();
+            String toPotionId = potionMix.get("outputId").toString();
             int toPotionMeta = ((Number) potionMix.get("outputMeta")).intValue();
 
-            fromPotionId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(fromPotionId));
-            ingredient = RuntimeItems.getId(runtimeMapping.getLegacyFullId(ingredient));
-            toPotionId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(toPotionId));
-
-            registerBrewingRecipe(new BrewingRecipe(Item.get(fromPotionId, fromPotionMeta), Item.get(ingredient, ingredientMeta), Item.get(toPotionId, toPotionMeta)));
+            registerBrewingRecipe(new BrewingRecipe(
+                    Item.fromString(fromPotionId+":"+fromPotionMeta),
+                    Item.fromString(ingredient+":"+ingredientMeta),
+                    Item.fromString(toPotionId+":"+toPotionMeta)
+            ));
         }
 
         List<Map> containerMixes = config.getMapList("containerMixes");
 
         for (Map containerMix : containerMixes) {
-            int fromItemId = ((Number) containerMix.get("inputId")).intValue();
-            int ingredient = ((Number) containerMix.get("reagentId")).intValue();
-            int toItemId = ((Number) containerMix.get("outputId")).intValue();
+            String fromItemId = containerMix.get("inputId").toString();
+            String ingredient = containerMix.get("reagentId").toString();
+            String toItemId = containerMix.get("outputId").toString();
 
-            fromItemId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(fromItemId));
-            ingredient = RuntimeItems.getId(runtimeMapping.getLegacyFullId(ingredient));
-            toItemId = RuntimeItems.getId(runtimeMapping.getLegacyFullId(toItemId));
-
-            registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
+            registerContainerRecipe(new ContainerRecipe(Item.fromString(fromItemId), Item.fromString(ingredient), Item.fromString(toItemId)));
         }
         
         // Allow to rename without crafting 
@@ -284,6 +275,28 @@ public class CraftingManager {
         registerCartographyRecipe(new CartographyRecipe(Item.get(ItemID.MAP, 3), Collections.singletonList(Item.get(ItemID.MAP, 3))));
         registerCartographyRecipe(new CartographyRecipe(Item.get(ItemID.MAP, 4), Collections.singletonList(Item.get(ItemID.MAP, 4))));
         registerCartographyRecipe(new CartographyRecipe(Item.get(ItemID.MAP, 5), Collections.singletonList(Item.get(ItemID.MAP, 5))));
+    }
+
+    private Item parseRecipeItem(Map<String, Object> data) {
+        String nbt = (String) data.get("nbt_b64");
+        byte[] nbtBytes = nbt != null ? Base64.getDecoder().decode(nbt) : EmptyArrays.EMPTY_BYTES;
+
+        String id = data.get("id").toString();
+        int count = data.containsKey("count")? ((Number)data.get("count")).intValue() : 1;
+        Item item;
+        if (data.containsKey("damage")) {
+            int meta = Utils.toInt(data.get("damage"));
+            if (meta == Short.MAX_VALUE) {
+                item = Item.fromString(id).createFuzzyCraftingRecipe();
+            } else {
+                item = Item.fromString(id+":"+meta);
+            }
+        } else {
+            item = Item.fromString(id);
+        }
+        item.setCompoundTag(nbtBytes);
+        item.setCount(count);
+        return item;
     }
 
     public void rebuildPacket() {

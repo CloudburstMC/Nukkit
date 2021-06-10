@@ -471,6 +471,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.ITEM_COMPONENT_PACKET, ItemComponentPacket.class);
         this.registerPacket(ProtocolInfo.ADD_VOLUME_ENTITY, AddVolumeEntityPacket.class);
         this.registerPacket(ProtocolInfo.REMOVE_VOLUME_ENTITY, AddVolumeEntityPacket.class);
-        this.registerPacket(ProtocolInfo.ADD_VOLUME_ENTITY, SyncEntityPropertyPacket.class);
+        this.registerPacket(ProtocolInfo.SYNC_ENTITY_PROPERTY, SyncEntityPropertyPacket.class);
     }
 }

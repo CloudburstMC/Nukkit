@@ -737,22 +737,6 @@ public class Item implements Cloneable, BlockID, ItemID {
         return get(id, Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
 
-    private static Item fromJsonStringId(Map<String, Object> data) {
-        String nbt = (String) data.get("nbt_b64");
-        byte[] nbtBytes = nbt != null ? Base64.getDecoder().decode(nbt) : EmptyArrays.EMPTY_BYTES;
-
-        String id = data.get("id").toString();
-        Item item;
-        if (data.containsKey("damage")) {
-            int meta = Utils.toInt(data.get("damage"));
-            item = fromString(id+":"+meta);
-        } else {
-            item = fromString(id);
-        }
-        item.setCompoundTag(nbtBytes);
-        return item;
-    }
-
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static Item fromJsonNetworkId(Map<String, Object> data) {
