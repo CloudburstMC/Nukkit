@@ -32,6 +32,11 @@ public final class CommonBlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final IntBlockProperty REDSTONE_SIGNAL = new IntBlockProperty("redstone_signal", false, 15);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BlockProperties REDSTONE_SIGNAL_BLOCK_PROPERTY = new BlockProperties(REDSTONE_SIGNAL);
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final BooleanBlockProperty UPPER_BLOCK = new BooleanBlockProperty("upper_block_bit", false);
@@ -44,6 +49,10 @@ public final class CommonBlockProperties {
             BlockFace.NORTH, BlockFace.SOUTH,
             BlockFace.WEST, BlockFace.EAST,
     }).ordinal(true);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BlockProperties FACING_DIRECTION_BLOCK_PROPERTIES = new BlockProperties(FACING_DIRECTION);
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")

@@ -3,6 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemString;
@@ -13,10 +16,28 @@ import cn.nukkit.math.BlockFace;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
+
 /**
  * @author CreeperFace
  */
 public class BlockTripWire extends BlockTransparentMeta {
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BooleanBlockProperty ATTACHED = new BooleanBlockProperty("attached_bit", false);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BooleanBlockProperty DISARMED = new BooleanBlockProperty("disarmed_bit", false);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BooleanBlockProperty SUSPENDED = new BooleanBlockProperty("suspended_bit", false);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BlockProperties PROPERTIES = new BlockProperties(POWERED, SUSPENDED, ATTACHED, DISARMED, DIRECTION);
 
     public BlockTripWire(int meta) {
         super(meta);
@@ -29,6 +50,14 @@ public class BlockTripWire extends BlockTransparentMeta {
     @Override
     public int getId() {
         return TRIPWIRE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
