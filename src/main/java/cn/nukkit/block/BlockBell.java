@@ -9,7 +9,7 @@ import cn.nukkit.blockentity.BlockEntityBell;
 import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
-import cn.nukkit.blockproperty.value.BellAttachmentType;
+import cn.nukkit.blockproperty.value.AttachmentType;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.projectile.EntityArrow;
@@ -37,7 +37,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.TOGGLE;
 public class BlockBell extends BlockTransparentMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityBell> {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public static final BlockProperty<BellAttachmentType> ATTACHMENT_TYPE = new ArrayBlockProperty<>("attachment", false, BellAttachmentType.class);
+    public static final BlockProperty<AttachmentType> ATTACHMENT_TYPE = new ArrayBlockProperty<>("attachment", false, AttachmentType.class);
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -111,7 +111,7 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
         return BlockEntity.BELL;
     }
 
-    private boolean isConnectedTo(BlockFace connectedFace, BellAttachmentType attachmentType, BlockFace blockFace) {
+    private boolean isConnectedTo(BlockFace connectedFace, AttachmentType attachmentType, BlockFace blockFace) {
         BlockFace.Axis faceAxis = connectedFace.getAxis();
         switch (attachmentType) {
             case STANDING:
@@ -133,7 +133,7 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-        BellAttachmentType attachmentType = getBellAttachmentType();
+        AttachmentType attachmentType = getBellAttachmentType();
         BlockFace blockFace = getBlockFace();
         boolean north = this.isConnectedTo(BlockFace.NORTH, attachmentType, blockFace);
         boolean south = this.isConnectedTo(BlockFace.SOUTH, attachmentType, blockFace);
@@ -389,19 +389,19 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
         BlockFace playerDirection = player != null? player.getDirection() : BlockFace.EAST;
         switch (face) {
             case UP:
-                setBellAttachmentType(BellAttachmentType.STANDING);
+                setBellAttachmentType(AttachmentType.STANDING);
                 setBlockFace(playerDirection.getOpposite());
                 break;
             case DOWN:
-                setBellAttachmentType(BellAttachmentType.HANGING);
+                setBellAttachmentType(AttachmentType.HANGING);
                 setBlockFace(playerDirection.getOpposite());
                 break;
             default:
                 setBlockFace(face);
                 if (checkSupport(block.getSide(face), face.getOpposite())) {
-                    setBellAttachmentType(BellAttachmentType.MULTIPLE);
+                    setBellAttachmentType(AttachmentType.MULTIPLE);
                 } else {
-                    setBellAttachmentType(BellAttachmentType.SIDE);
+                    setBellAttachmentType(AttachmentType.SIDE);
                 }
         }
         if (!checkSupport()) {
@@ -435,14 +435,14 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public BellAttachmentType getBellAttachmentType() {
+    public AttachmentType getBellAttachmentType() {
         return getPropertyValue(ATTACHMENT_TYPE);
     }
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public void setBellAttachmentType(BellAttachmentType bellAttachmentType) {
-        setPropertyValue(ATTACHMENT_TYPE, bellAttachmentType);
+    public void setBellAttachmentType(AttachmentType attachmentType) {
+        setPropertyValue(ATTACHMENT_TYPE, attachmentType);
     }
     
     @Deprecated
@@ -454,7 +454,7 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
     @Deprecated
     @DeprecationDetails(since = "1.4.0.0-PN", reason = "Magic values.", replaceWith = "setBellAttachmentType(BellAttachmentType)")
     public void setAttachmentType(int attachmentType) {
-        setBellAttachmentType(BellAttachmentType.values()[attachmentType]);
+        setBellAttachmentType(AttachmentType.values()[attachmentType]);
     }
 
     @PowerNukkitOnly

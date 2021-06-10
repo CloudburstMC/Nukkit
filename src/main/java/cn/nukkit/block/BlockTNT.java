@@ -37,7 +37,11 @@ public class BlockTNT extends BlockSolid implements RedstoneComponent {
 
     @PowerNukkitOnly
     @Since("FUTURE")
-    public static final BlockProperties PROPERTIES = new BlockProperties(EXPLODE_ON_BREAK);
+    public static final BooleanBlockProperty ALLOW_UNDERWATER = new BooleanBlockProperty("allow_underwater_bit", false);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BlockProperties PROPERTIES = new BlockProperties(EXPLODE_ON_BREAK, ALLOW_UNDERWATER);
 
     public BlockTNT() {
     }

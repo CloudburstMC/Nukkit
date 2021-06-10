@@ -159,7 +159,7 @@ public class BlockStateRegistry {
             propertyMap.put(tag.getName(), tag.parseValue().toString());
         }
 
-        String blockName = block.getString("name");
+        String blockName = block.getString("name").toLowerCase(Locale.ENGLISH);
         Preconditions.checkArgument(!blockName.isEmpty(), "Couldn't find the block name!");
         StringBuilder stateId = new StringBuilder(blockName);
         propertyMap.forEach((name, value) -> stateId.append(';').append(name).append('=').append(value));
@@ -199,7 +199,7 @@ public class BlockStateRegistry {
     
     @Nullable
     private BlockState buildStateFromCompound(CompoundTag block) {
-        String name = block.getString("name");
+        String name = block.getString("name").toLowerCase(Locale.ENGLISH);
         Integer id = getBlockId(name);
         if (id == null) {
             return null;

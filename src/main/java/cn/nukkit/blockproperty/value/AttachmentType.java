@@ -27,7 +27,7 @@ import cn.nukkit.api.Since;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-public enum BellAttachmentType {
+public enum AttachmentType {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     STANDING,

@@ -1,12 +1,16 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.SpongeType;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.CloudParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.LevelEventPacket;
@@ -21,6 +25,14 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author Angelic47 (Nukkit Project)
  */
 public class BlockSponge extends BlockSolidMeta {
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final ArrayBlockProperty<SpongeType> SPONGE_TYPE = new ArrayBlockProperty<>("sponge_type", true, SpongeType.class);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final BlockProperties PROPERTIES = new BlockProperties(SPONGE_TYPE);
 
     public static final int DRY = 0;
     public static final int WET = 1;
@@ -40,6 +52,14 @@ public class BlockSponge extends BlockSolidMeta {
     @Override
     public int getId() {
         return SPONGE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

@@ -3,6 +3,7 @@ package cn.nukkit.blockproperty;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
+import cn.nukkit.blockproperty.value.ChiselType;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.DyeColor;
 
@@ -32,6 +33,7 @@ public final class CommonBlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final IntBlockProperty REDSTONE_SIGNAL = new IntBlockProperty("redstone_signal", false, 15);
+    public static final BooleanBlockProperty PERMANENTLY_DEAD = new BooleanBlockProperty("dead_bit", true);
 
     @PowerNukkitOnly
     @Since("FUTURE")
@@ -49,6 +51,14 @@ public final class CommonBlockProperties {
             BlockFace.NORTH, BlockFace.SOUTH,
             BlockFace.WEST, BlockFace.EAST,
     }).ordinal(true);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final ArrayBlockProperty<ChiselType> CHISEL_TYPE = new ArrayBlockProperty<>("chisel_type", true, ChiselType.class);
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static final IntBlockProperty AGE_5 = new IntBlockProperty("age", false, 5);
 
     @PowerNukkitOnly
     @Since("FUTURE")

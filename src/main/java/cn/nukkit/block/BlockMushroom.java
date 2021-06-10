@@ -1,10 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.api.PowerNukkitOnly;
-import cn.nukkit.api.Since;
-import cn.nukkit.blockproperty.BlockProperties;
-import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.event.level.StructureGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
@@ -21,28 +17,12 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class BlockMushroom extends BlockFlowable {
 
-    @PowerNukkitOnly
-    @Since("FUTURE")
-    public static final BooleanBlockProperty HUGE_MUSHROOM = new BooleanBlockProperty("huge_mushroom_bits", true);
-
-    @PowerNukkitOnly
-    @Since("FUTURE")
-    public static final BlockProperties PROPERTIES = new BlockProperties(HUGE_MUSHROOM);
-
     public BlockMushroom() {
         this(0);
     }
 
     public BlockMushroom(int meta) {
         super(0);
-    }
-
-    @Since("1.4.0.0-PN")
-    @PowerNukkitOnly
-    @Nonnull
-    @Override
-    public BlockProperties getProperties() {
-        return PROPERTIES;
     }
 
     @Override

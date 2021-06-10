@@ -129,6 +129,11 @@ public class CraftingManager {
     private void loadRecipes(Config config) {
         List<Map> recipes = config.getMapList("recipes");
         log.info("Loading recipes...");
+        if (true) {
+            // No! Not yet!
+            log.warn("Recipes are disabled in this version!");
+            return;
+        }
         for (Map<String, Object> recipe : recipes) {
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
