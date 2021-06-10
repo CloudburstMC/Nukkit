@@ -16,7 +16,6 @@ import cn.nukkit.math.BlockFace;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
 
 /**
@@ -37,7 +36,7 @@ public class BlockTripWire extends BlockTransparentMeta {
 
     @PowerNukkitOnly
     @Since("FUTURE")
-    public static final BlockProperties PROPERTIES = new BlockProperties(POWERED, SUSPENDED, ATTACHED, DISARMED, DIRECTION);
+    public static final BlockProperties PROPERTIES = new BlockProperties(POWERED, SUSPENDED, ATTACHED, DISARMED);
 
     public BlockTripWire(int meta) {
         super(meta);
