@@ -21,7 +21,7 @@ public class BlockCoralFanHang extends BlockCoralFan implements Faceable {
     @Since("FUTURE")
     public static final ArrayBlockProperty<CoralType> HANG1_TYPE = new ArrayBlockProperty<>("coral_hang_type_bit", true,
             new CoralType[]{CoralType.BLUE, CoralType.PINK}
-    );
+    ).ordinal(true);
 
     @PowerNukkitOnly
     @Since("FUTURE")

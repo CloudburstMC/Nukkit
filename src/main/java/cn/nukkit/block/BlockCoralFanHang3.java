@@ -16,7 +16,7 @@ public class BlockCoralFanHang3 extends BlockCoralFanHang {
     @Since("FUTURE")
     public static final ArrayBlockProperty<CoralType> HANG3_TYPE = new ArrayBlockProperty<>("coral_hang_type_bit", true,
             new CoralType[]{CoralType.YELLOW}
-    );
+    ).ordinal(true);
 
     @PowerNukkitOnly
     @Since("FUTURE")
