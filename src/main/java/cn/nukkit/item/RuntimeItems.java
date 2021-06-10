@@ -54,7 +54,7 @@ public class RuntimeItems {
         Map<String, Integer> namespaceNetworkMap = new LinkedHashMap<>();
         Int2ObjectMap<String> networkNamespaceMap = new Int2ObjectOpenHashMap<>();
         for (Entry entry : entries) {
-            paletteBuffer.putString(entry.name);
+            paletteBuffer.putString(entry.name.replace("minecraft:", ""));
             paletteBuffer.putLShort(entry.id);
             paletteBuffer.putBoolean(false); // Component item
             namespaceNetworkMap.put(entry.name, entry.id);
