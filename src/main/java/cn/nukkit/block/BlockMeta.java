@@ -4,7 +4,6 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.annotation.Nonnull;
 
@@ -35,9 +34,7 @@ public abstract class BlockMeta extends Block {
     @PowerNukkitOnly
     @Nonnull
     @Override
-    public BlockProperties getProperties() {
-        throw new NotImplementedException();
-    }
+    public abstract BlockProperties getProperties();
 
     //    /**
 //     * A backward-compatibility properties definition that accepts any values that can be stored in the amount of bits

@@ -58,7 +58,7 @@ public final class CommonBlockProperties {
 
     @PowerNukkitOnly
     @Since("FUTURE")
-    public static final IntBlockProperty AGE_5 = new IntBlockProperty("age", false, 5);
+    public static final IntBlockProperty AGE_15 = new IntBlockProperty("age", false, 15);
 
     @PowerNukkitOnly
     @Since("FUTURE")

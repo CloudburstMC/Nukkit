@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
@@ -24,7 +25,7 @@ public class BlockSugarcane extends BlockFlowable {
 
     @PowerNukkitOnly
     @Since("FUTURE")
-    public static final IntBlockProperty AGE = new IntBlockProperty("age", false, 15);
+    public static final IntBlockProperty AGE = CommonBlockProperties.AGE_15;
 
     @PowerNukkitOnly
     @Since("FUTURE")

@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 public class BlockCactus extends BlockTransparentMeta {
     @PowerNukkitOnly
     @Since("FUTURE")
-    public static final BlockProperties PROPERTIES = new BlockProperties(CommonBlockProperties.AGE_5);
+    public static final BlockProperties PROPERTIES = new BlockProperties(CommonBlockProperties.AGE_15);
 
     public BlockCactus(int meta) {
         super(meta);
