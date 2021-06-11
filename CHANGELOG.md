@@ -846,3 +846,4 @@ Fixes several anvil issues.
 [#1119]: https://github.com/PowerNukkit/PowerNukkit/issues/1119
 [#1120]: https://github.com/PowerNukkit/PowerNukkit/issues/1120
 [#1122]: https://github.com/PowerNukkit/PowerNukkit/issues/1122
+[#1132]: https://github.com/PowerNukkit/PowerNukkit/issues/1132
