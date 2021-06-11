@@ -17,13 +17,9 @@ public class TickSyncPacket extends DataPacket {
     @Since("FUTURE")
     public static final byte NETWORK_ID = ProtocolInfo.TICK_SYNC_PACKET;
     
-    @PowerNukkitOnly
-    @Since("FUTURE")
-    public long requestTimestamp;
+    private long requestTimestamp;
     
-    @PowerNukkitOnly
-    @Since("FUTURE")
-    public long responseTimestamp;
+    private long responseTimestamp;
     
     @Override
     public byte pid() {
@@ -41,5 +37,29 @@ public class TickSyncPacket extends DataPacket {
         this.reset();
         this.putLLong(this.requestTimestamp);
         this.putLLong(this.responseTimestamp);
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public long getRequestTimestamp() {
+        return requestTimestamp;
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public void setRequestTimestamp(long requestTimestamp) {
+        this.requestTimestamp = requestTimestamp;
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public long getResponseTimestamp() {
+        return responseTimestamp;
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public void setResponseTimestamp(long responseTimestamp) {
+        this.responseTimestamp = responseTimestamp;
     }
 }

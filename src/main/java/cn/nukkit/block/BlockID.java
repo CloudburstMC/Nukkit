@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
@@ -312,8 +313,17 @@ public interface BlockID {
     int GLOWING_OBSIDIAN = 246;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int NETHERREACTOR = 247;
     int NETHER_REACTOR = NETHERREACTOR;
+
+    @Since("1.5.0.0-PN") @Deprecated @DeprecationDetails(by = "PowerNukkit",
+            reason = "This was added by Cloudburst Nukkit, but it is a tecnical block, avoid usinig it.",
+            since = "1.5.0.0-PN")
     int INFO_UPDATE = 248;
+
+    @Since("1.5.0.0-PN") @Deprecated @DeprecationDetails(by = "PowerNukkit",
+            reason = "This was added by Cloudburst Nukkit, but it is a tecnical block, avoid usinig it.",
+            since = "1.5.0.0-PN")
     int INFO_UPDATE2 = 249;
+
     int PISTON_EXTENSION = 250;
     @Since("1.4.0.0-PN") @PowerNukkitOnly int MOVING_BLOCK = PISTON_EXTENSION;
 

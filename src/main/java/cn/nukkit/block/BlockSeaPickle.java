@@ -23,9 +23,16 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @PowerNukkitOnly
 public class BlockSeaPickle extends BlockFlowable {
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty DEAD = new BooleanBlockProperty("dead_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty CLUSTER_COUNT = new IntBlockProperty("cluster_count", false, 3);
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(CLUSTER_COUNT, DEAD);
 
     @PowerNukkitOnly

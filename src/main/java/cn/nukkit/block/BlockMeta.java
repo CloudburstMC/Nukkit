@@ -35,18 +35,4 @@ public abstract class BlockMeta extends Block {
     @Nonnull
     @Override
     public abstract BlockProperties getProperties();
-
-    //    /**
-//     * A backward-compatibility properties definition that accepts any values that can be stored in the amount of bits
-//     * specified by {@link Block#DATA_BITS}.
-//     * <p>Implementations can change the returned properties to restrict only valid values and make complete use
-//     * of the block state system.</p>
-//     */
-//    @Since("1.4.0.0-PN")
-//    @Nonnull
-//    @PowerNukkitOnly
-//    @Override
-//    public BlockProperties getProperties() {
-//        return CommonBlockProperties.LEGACY_PROPERTIES;
-//    }
 }

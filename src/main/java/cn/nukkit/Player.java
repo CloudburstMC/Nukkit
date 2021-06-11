@@ -4028,8 +4028,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     TickSyncPacket tickSyncPacket = (TickSyncPacket) packet;
                     
                     TickSyncPacket tickSyncPacketToClient = new TickSyncPacket();
-                    tickSyncPacketToClient.requestTimestamp = tickSyncPacket.requestTimestamp;
-                    tickSyncPacketToClient.responseTimestamp = (long) this.getServer().getTick();
+                    tickSyncPacketToClient.setRequestTimestamp(tickSyncPacket.getRequestTimestamp());
+                    tickSyncPacketToClient.setResponseTimestamp(this.getServer().getTick());
                     this.dataPacketImmediately(tickSyncPacketToClient);
                     break;
                 default:

@@ -250,6 +250,7 @@ public class GameRules {
             return (Float) value;
         }
 
+        @Since("FUTURE")
         public void write(BinaryStream stream) {
             stream.putBoolean(this.canBeChanged);
             stream.putUnsignedVarInt(type.ordinal());

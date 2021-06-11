@@ -133,7 +133,7 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-        AttachmentType attachmentType = getBellAttachmentType();
+        AttachmentType attachmentType = getAttachment();
         BlockFace blockFace = getBlockFace();
         boolean north = this.isConnectedTo(BlockFace.NORTH, attachmentType, blockFace);
         boolean south = this.isConnectedTo(BlockFace.SOUTH, attachmentType, blockFace);
@@ -251,7 +251,7 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
                 hitFace = blockFace;
             }
         }
-        switch (getBellAttachmentType()) {
+        switch (getAttachment()) {
             case STANDING:
                 if (hitFace.getAxis() != blockFace.getAxis()) {
                     return false;
@@ -287,7 +287,7 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean checkSupport() {
-        switch (getBellAttachmentType()) {
+        switch (getAttachment()) {
             case STANDING:
                 if (checkSupport(down(), BlockFace.UP)) {
                     return true;
@@ -389,19 +389,19 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
         BlockFace playerDirection = player != null? player.getDirection() : BlockFace.EAST;
         switch (face) {
             case UP:
-                setBellAttachmentType(AttachmentType.STANDING);
+                setAttachment(AttachmentType.STANDING);
                 setBlockFace(playerDirection.getOpposite());
                 break;
             case DOWN:
-                setBellAttachmentType(AttachmentType.HANGING);
+                setAttachment(AttachmentType.HANGING);
                 setBlockFace(playerDirection.getOpposite());
                 break;
             default:
                 setBlockFace(face);
                 if (checkSupport(block.getSide(face), face.getOpposite())) {
-                    setBellAttachmentType(AttachmentType.MULTIPLE);
+                    setAttachment(AttachmentType.MULTIPLE);
                 } else {
-                    setBellAttachmentType(AttachmentType.SIDE);
+                    setAttachment(AttachmentType.SIDE);
                 }
         }
         if (!checkSupport()) {
@@ -434,27 +434,27 @@ public class BlockBell extends BlockTransparentMeta implements RedstoneComponent
     }
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public AttachmentType getBellAttachmentType() {
+    @Since("1.5.0.0-PN")
+    public AttachmentType getAttachment() {
         return getPropertyValue(ATTACHMENT_TYPE);
     }
     
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public void setBellAttachmentType(AttachmentType attachmentType) {
+    @Since("1.5.0.0-PN")
+    public void setAttachment(AttachmentType attachmentType) {
         setPropertyValue(ATTACHMENT_TYPE, attachmentType);
     }
     
     @Deprecated
-    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Magic values.", replaceWith = "getBellAttachmentType()")
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Magic values.", replaceWith = "getAttachment()")
     public int getAttachmentType() {
-        return getBellAttachmentType().ordinal();
+        return getAttachment().ordinal();
     }
 
     @Deprecated
-    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Magic values.", replaceWith = "setBellAttachmentType(BellAttachmentType)")
+    @DeprecationDetails(since = "1.4.0.0-PN", reason = "Magic values.", replaceWith = "setAttachment(AttachmentType)")
     public void setAttachmentType(int attachmentType) {
-        setBellAttachmentType(AttachmentType.values()[attachmentType]);
+        setAttachment(AttachmentType.values()[attachmentType]);
     }
 
     @PowerNukkitOnly

@@ -22,6 +22,8 @@ public final class CommonBlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final IntBlockProperty REDSTONE_SIGNAL = new IntBlockProperty("redstone_signal", false, 15);
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty PERMANENTLY_DEAD = new BooleanBlockProperty("dead_bit", true);
 
     @PowerNukkitOnly
