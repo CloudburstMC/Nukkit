@@ -9,6 +9,10 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.5.1.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
 Click the link above to see the future.
 
+### Changed
+- [#1107] Guava version from `29.0` to `30.1.1`
+- [#1107] SnakeYAML version from `1.26` to `1.28`
+
 ### Fixes
 - [#1119] `TickSyncPacket` was not registered 
 - [#1120] Entities sometimes gets invisible for some players
@@ -843,6 +847,7 @@ Fixes several anvil issues.
 [#959]: https://github.com/PowerNukkit/PowerNukkit/issues/959
 [#960]: https://github.com/PowerNukkit/PowerNukkit/issues/960
 [#990]: https://github.com/PowerNukkit/PowerNukkit/issues/990
+[#1107]: https://github.com/PowerNukkit/PowerNukkit/issues/1107
 [#1119]: https://github.com/PowerNukkit/PowerNukkit/issues/1119
 [#1120]: https://github.com/PowerNukkit/PowerNukkit/issues/1120
 [#1122]: https://github.com/PowerNukkit/PowerNukkit/issues/1122
