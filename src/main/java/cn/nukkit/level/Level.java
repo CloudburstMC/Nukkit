@@ -831,7 +831,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void checkTime() {
         if (!this.stopTime && this.gameRules.getBoolean(GameRule.DO_DAYLIGHT_CYCLE)) {
-            this.time += tickRate;
+            this.time = (this.time + 1) % TIME_FULL;
         }
     }
 
@@ -843,7 +843,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void sendTime() {
-        sendTime(this.players.values().toArray(Player.EMPTY_ARRAY));
+        this.sendTime(this.players.values().toArray(Player.EMPTY_ARRAY));
     }
 
     public GameRules getGameRules() {
@@ -857,8 +857,7 @@ public class Level implements ChunkManager, Metadatable {
 
         updateBlockLight(lightQueue);
         this.checkTime();
-
-        if (currentTick % 1200 == 0) { // Send time to client every 60 seconds to make sure it stay in sync
+        if (currentTick % (30 * 20) == 0) {
             this.sendTime();
         }
 
