@@ -6,11 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version, so we have a better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.5.0.1-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
+## [Unreleased 1.5.1.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
 Click the link above to see the future.
 
 ### Fixes
 - [#1119] `TickSyncPacket` was not registered 
+- [#1120] Entities sometimes gets invisible for some players
+- [#1122] Backward compatibility with plugins setting full bark logs with 17:13
+- [#1132] You don't dismount the vehicle when you teleport, causing you to glitch
 
 ## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
 This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
@@ -841,3 +844,5 @@ Fixes several anvil issues.
 [#960]: https://github.com/PowerNukkit/PowerNukkit/issues/960
 [#990]: https://github.com/PowerNukkit/PowerNukkit/issues/990
 [#1119]: https://github.com/PowerNukkit/PowerNukkit/issues/1119
+[#1120]: https://github.com/PowerNukkit/PowerNukkit/issues/1120
+[#1122]: https://github.com/PowerNukkit/PowerNukkit/issues/1122
