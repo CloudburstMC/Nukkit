@@ -4,6 +4,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.item.*;
+import cn.nukkit.item.RuntimeItemMapping.LegacyEntry;
+import cn.nukkit.item.RuntimeItemMapping.RuntimeEntry;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.level.GlobalBlockPalette;
@@ -374,29 +376,29 @@ public class BinaryStream {
     }
 
     public Item getSlot() {
-        int id = getVarInt();
-        if (id == 0) {
+        int runtimeId = this.getVarInt();
+        if (runtimeId == 0) {
             return Item.get(0, 0, 0);
         }
 
-        int count = getLShort();
-        int damage = (int) getUnsignedVarInt();
+        int count = this.getLShort();
+        int damage = (int) this.getUnsignedVarInt();
 
-        int fullId = RuntimeItems.getRuntimeMapping().getLegacyFullId(id);
-        id = RuntimeItems.getId(fullId);
+        RuntimeItemMapping mapping = RuntimeItems.getMapping();
+        LegacyEntry legacyEntry = mapping.fromRuntime(runtimeId);
 
-        /*boolean hasData = RuntimeItems.hasData(fullId); // Unnecessary when the damage is read from NBT
-        if (hasData) {
-            damage = RuntimeItems.getData(fullId);
-        }*/
-
-        if (getBoolean()) { // hasNetId
-            getVarInt(); // netId
+        int id = legacyEntry.getLegacyId();
+        if (legacyEntry.isHasDamage()) {
+            damage = legacyEntry.getDamage();
         }
 
-        getVarInt(); // blockRuntimeId
+        if (this.getBoolean()) { // hasNetId
+            this.getVarInt(); // netId
+        }
 
-        byte[] bytes = getByteArray();
+        this.getVarInt(); // blockRuntimeId
+
+        byte[] bytes = this.getByteArray();
         ByteBuf buf = AbstractByteBufAllocator.DEFAULT.ioBuffer(bytes.length);
         buf.writeBytes(bytes);
 
@@ -484,32 +486,28 @@ public class BinaryStream {
 
     public void putSlot(Item item, boolean instanceItem) {
         if (item == null || item.getId() == 0) {
-            putByte((byte) 0);
+            this.putByte((byte) 0);
             return;
         }
 
-        int networkFullId = RuntimeItems.getRuntimeMapping().getNetworkFullId(item);
-        int networkId = RuntimeItems.getNetworkId(networkFullId);
+        RuntimeItemMapping mapping = RuntimeItems.getMapping();
+        RuntimeEntry runtimeEntry = mapping.toRuntime(item.getId(), item.getDamage());
+        int runtimeId = runtimeEntry.getRuntimeId();
+        int damage = runtimeEntry.isHasDamage() ? 0 : item.getDamage();
 
-        putVarInt(networkId);
-        putLShort(item.getCount());
+        this.putVarInt(runtimeId);
+        this.putLShort(item.getCount());
 
-        boolean useLegacyData = false;
-        if (item.getId() > 256) { // Not a block
-            if (item instanceof ItemDurable || !RuntimeItems.hasData(networkFullId)) {
-                useLegacyData = true;
-            }
-        }
-        putUnsignedVarInt(useLegacyData ? item.getDamage() : 0);
+        this.putUnsignedVarInt(damage);
 
         if (!instanceItem) {
-            putBoolean(true);
-            putVarInt(0); //TODO
+            this.putBoolean(true);
+            this.putVarInt(0); //TODO
         }
 
         Block block = item.getBlockUnsafe();
-        int runtimeId = block == null ? 0 : GlobalBlockPalette.getOrCreateRuntimeId(block.getId(), block.getDamage());
-        putVarInt(runtimeId);
+        int blockRuntimeId = block == null ? 0 : GlobalBlockPalette.getOrCreateRuntimeId(block.getId(), block.getDamage());
+        this.putVarInt(blockRuntimeId);
 
         ByteBuf userDataBuf = ByteBufAllocator.DEFAULT.ioBuffer();
         try (LittleEndianByteBufOutputStream stream = new LittleEndianByteBufOutputStream(userDataBuf)) {
@@ -563,18 +561,19 @@ public class BinaryStream {
     }
 
     public Item getRecipeIngredient() {
-        int networkId = this.getVarInt();
-        if (networkId == 0) {
+        int runtimeId = this.getVarInt();
+        if (runtimeId == 0) {
             return Item.get(0, 0, 0);
         }
 
-        int legacyFullId = RuntimeItems.getRuntimeMapping().getLegacyFullId(networkId);
-        int id = RuntimeItems.getId(legacyFullId);
-        boolean hasData = RuntimeItems.hasData(legacyFullId);
+        RuntimeItemMapping mapping = RuntimeItems.getMapping();
+        LegacyEntry legacyEntry = mapping.fromRuntime(runtimeId);
 
+        int id = legacyEntry.getLegacyId();
         int damage = this.getVarInt();
-        if (hasData) {
-            damage = RuntimeItems.getData(legacyFullId);
+
+        if (legacyEntry.isHasDamage()) {
+            damage = legacyEntry.getDamage();
         } else if (damage == 0x7fff) {
             damage = -1;
         }
@@ -583,22 +582,27 @@ public class BinaryStream {
         return Item.get(id, damage, count);
     }
 
-    public void putRecipeIngredient(Item ingredient) {
-        if (ingredient == null || ingredient.getId() == 0) {
+    public void putRecipeIngredient(Item item) {
+        if (item == null || item.getId() == 0) {
             this.putVarInt(0);
             return;
         }
 
-        int networkFullId = RuntimeItems.getRuntimeMapping().getNetworkFullId(ingredient);
-        int networkId = RuntimeItems.getNetworkId(networkFullId);
-        int damage = ingredient.hasMeta() ? ingredient.getDamage() : 0x7fff;
-        if (RuntimeItems.hasData(networkFullId)) {
-            damage = 0;
-        }
+        RuntimeItemMapping mapping = RuntimeItems.getMapping();
+        int runtimeId, damage;
 
-        this.putVarInt(networkId);
+        if (!item.hasMeta()) {
+            RuntimeEntry runtimeEntry = mapping.toRuntime(item.getId(), 0);
+            runtimeId = runtimeEntry.getRuntimeId();
+            damage = 0x7fff;
+        } else {
+            RuntimeEntry runtimeEntry = mapping.toRuntime(item.getId(), item.getDamage());
+            runtimeId = runtimeEntry.getRuntimeId();
+            damage = runtimeEntry.isHasDamage() ? 0 : item.getDamage();
+        }
+        this.putVarInt(runtimeId);
         this.putVarInt(damage);
-        this.putVarInt(ingredient.getCount());
+        this.putVarInt(item.getCount());
     }
 
     private List<String> extractStringList(Item item, String tagName) {
@@ -716,7 +720,7 @@ public class BinaryStream {
         Map<GameRule, GameRules.Value> rules = gameRules.getGameRules();
         this.putUnsignedVarInt(rules.size());
         rules.forEach((gameRule, value) -> {
-            putString(gameRule.getName().toLowerCase());
+            this.putString(gameRule.getName().toLowerCase());
             value.write(this);
         });
     }
