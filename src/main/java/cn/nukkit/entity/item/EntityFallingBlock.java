@@ -1,5 +1,7 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLava;
 import cn.nukkit.block.BlockLiquid;
@@ -225,5 +227,11 @@ public class EntityFallingBlock extends Entity {
     @Override
     public boolean canBeMovedByCurrents() {
         return false;
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "Falling Block";
     }
 }

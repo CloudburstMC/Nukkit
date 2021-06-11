@@ -3,6 +3,8 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.LongEntityData;
@@ -308,5 +310,11 @@ public class EntityFishingHook extends EntityProjectile {
         if (entity.attack(ev)) {
             setDataProperty(new LongEntityData(DATA_TARGET_EID, entity.getId()));
         }
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "Fishing Hook";
     }
 }

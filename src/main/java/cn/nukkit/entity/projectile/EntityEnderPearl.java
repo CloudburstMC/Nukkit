@@ -1,6 +1,8 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -13,6 +15,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
 public class EntityEnderPearl extends EntityProjectile {
+
     public static final int NETWORK_ID = 87;
 
     @Override
@@ -105,5 +108,11 @@ public class EntityEnderPearl extends EntityProjectile {
         }
         this.level.addLevelEvent(this, LevelEventPacket.EVENT_PARTICLE_ENDERMAN_TELEPORT);
         this.level.addLevelEvent(this.shootingEntity.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_PORTAL);
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "Ender Pearl";
     }
 }

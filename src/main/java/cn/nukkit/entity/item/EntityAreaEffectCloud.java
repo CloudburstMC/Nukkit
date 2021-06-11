@@ -1,5 +1,7 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.FloatEntityData;
@@ -20,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EntityAreaEffectCloud extends Entity {
+
     public static final int NETWORK_ID = 95;
     
     protected int reapplicationDelay;
@@ -406,5 +409,10 @@ public class EntityAreaEffectCloud extends Entity {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
+    }
+    
+    @Override
+    public String getName() {
+        return "Area Effect Cloud";
     }
 }
