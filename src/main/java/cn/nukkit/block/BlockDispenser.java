@@ -7,6 +7,8 @@ import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDispenser;
 import cn.nukkit.blockentity.BlockEntityEjectable;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.dispenser.DropperDispenseBehavior;
@@ -34,6 +36,8 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
+
 /**
  * @author CreeperFace
  * @since 15.4.2017
@@ -41,6 +45,14 @@ import java.util.concurrent.ThreadLocalRandom;
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 @PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
 public class BlockDispenser extends BlockSolidMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityEjectable> {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty TRIGGERED = new BooleanBlockProperty("triggered_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(FACING_DIRECTION, TRIGGERED);
 
     public BlockDispenser() {
         this(0);
@@ -63,6 +75,14 @@ public class BlockDispenser extends BlockSolidMeta implements RedstoneComponent,
     @Override
     public int getId() {
         return DISPENSER;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @PowerNukkitOnly

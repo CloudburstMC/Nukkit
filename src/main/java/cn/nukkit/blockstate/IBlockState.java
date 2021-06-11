@@ -209,7 +209,7 @@ public interface IBlockState {
     @Since("1.4.0.0-PN")
     @Nonnull
     default String getLegacyStateId() {
-        return getPersistenceName()+";nukkit-legacy="+getDataStorage();
+        return getPersistenceName()+";nukkit-unknown="+getDataStorage();
     }
 
     @PowerNukkitOnly

@@ -6,13 +6,16 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityCauldron;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.IntBlockProperty;
+import cn.nukkit.blockproperty.value.CauldronLiquid;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.item.*;
 import cn.nukkit.level.Sound;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.MathHelper;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
@@ -27,6 +30,18 @@ import java.util.Map;
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<BlockEntityCauldron> {
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final IntBlockProperty FILL_LEVEL = new IntBlockProperty("fill_level", false, 6);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final ArrayBlockProperty<CauldronLiquid> LIQUID = new ArrayBlockProperty<>("cauldron_liquid", false, CauldronLiquid.class);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(FILL_LEVEL, LIQUID);
+
     public BlockCauldron() {
         super(0);
     }
@@ -38,6 +53,14 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
     @Override
     public int getId() {
         return CAULDRON_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @PowerNukkitOnly
@@ -81,20 +104,19 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
     }
 
     public boolean isFull() {
-        return (this.getDamage() & 0x06) == 0x06;
+        return getFillLevel() == FILL_LEVEL.getMaxValue();
     }
 
     public boolean isEmpty() {
-        return this.getDamage() == 0x00;
+        return getFillLevel() == FILL_LEVEL.getMinValue();
     }
     
     public int getFillLevel() {
-        return (getDamage() & 0x6) >> 1;
+        return getIntValue(FILL_LEVEL);
     }
     
     public void setFillLevel(int fillLevel) {
-        fillLevel = MathHelper.clamp(fillLevel, 0, 3);
-        setDamage(fillLevel << 1);
+        setIntValue(FILL_LEVEL, fillLevel);
     }
 
     @Override
@@ -120,10 +142,10 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         replaceBucket(bucket, player, ev.getItem());
-                        this.setFillLevel(0);//empty
+                        this.setFillLevel(FILL_LEVEL.getMinValue());//empty
                         this.level.setBlock(this, this, true);
                         cauldron.clearCustomColor();
-                        this.getLevel().addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_WATER);
+                        this.getLevel().addLevelEvent(this.add(0.5, 0.375 + getFillLevel() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_WATER);
                     }
                 } else if (bucket.isWater() || bucket.isLava()) {
                     if (isFull() && !cauldron.isCustomColor() && !cauldron.hasPotion() && item.getDamage() == 8) {
@@ -139,14 +161,14 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                         if (cauldron.hasPotion()) {//if has potion
                             clearWithFizz(cauldron);
                         } else if (bucket.isWater()) { //water bucket
-                            this.setFillLevel(3);//fill
+                            this.setFillLevel(FILL_LEVEL.getMaxValue());//fill
                             cauldron.clearCustomColor();
                             this.level.setBlock(this, this, true);
                             this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.CAULDRON_FILLWATER);
                         } else { // lava bucket
                             if (isEmpty()) {
                                 BlockCauldronLava cauldronLava = new BlockCauldronLava(0xE);
-                                cauldronLava.setFillLevel(3);
+                                cauldronLava.setFillLevel(FILL_LEVEL.getMaxValue());
                                 this.level.setBlock(this, cauldronLava, true, true);
                                 cauldron.clearCustomColor();
                                 cauldron.setType(BlockEntityCauldron.PotionType.LAVA);
@@ -200,7 +222,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     item.setCompoundTag(compoundTag);
                     player.getInventory().setItemInHand(item);
                     
-                    setFillLevel(getFillLevel() - 1);
+                    setFillLevel(FILL_LEVEL.clamp(getFillLevel() - 2));
                     this.level.setBlock(this, this, true, true);
                     this.level.addSound(add(0.5, 0.5, 0.5), Sound.CAULDRON_DYEARMOR);
                 } else {
@@ -217,7 +239,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     item.setCompoundTag(compoundTag);
                     player.getInventory().setItemInHand(item);
                     
-                    setFillLevel(getFillLevel() - 1);
+                    setFillLevel(FILL_LEVEL.clamp(getFillLevel() - 2));
                     this.level.setBlock(this, this, true, true);
                     this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.CAULDRON_TAKEWATER);
                 }
@@ -239,19 +261,19 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     cauldron.setPotionId(item.getDamage());
                 }
                 
-                cauldron.setPotionType(
-                        item.getId() == ItemID.POTION? BlockEntityCauldron.POTION_TYPE_NORMAL :
-                                item.getId() == ItemID.SPLASH_POTION? BlockEntityCauldron.POTION_TYPE_SPLASH :
-                                        BlockEntityCauldron.POTION_TYPE_LINGERING
+                cauldron.setType(
+                        item.getId() == ItemID.POTION? BlockEntityCauldron.PotionType.NORMAL :
+                                item.getId() == ItemID.SPLASH_POTION? BlockEntityCauldron.PotionType.SPLASH :
+                                        BlockEntityCauldron.PotionType.LINGERING
                 );
                 cauldron.spawnToAll();
                 
-                setFillLevel(getFillLevel() + 1);
+                setFillLevel(FILL_LEVEL.clamp(getFillLevel() + 2));
                 this.level.setBlock(this, this, true);
     
                 consumePotion(item, player);
     
-                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_FILL_POTION);
+                this.level.addLevelEvent(this.add(0.5, 0.375 + getFillLevel() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_FILL_POTION);
                 break;
             case ItemID.GLASS_BOTTLE:
                 if (isEmpty()) {
@@ -264,21 +286,21 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                 if (meta == 0) {
                     potion = new ItemPotion();
                 } else {
-                    switch (cauldron.getPotionType()) {
-                        case BlockEntityCauldron.POTION_TYPE_SPLASH:
+                    switch (cauldron.getType()) {
+                        case SPLASH:
                             potion = new ItemPotionSplash(meta);
                             break;
-                        case BlockEntityCauldron.POTION_TYPE_LINGERING:
+                        case LINGERING:
                             potion = new ItemPotionLingering(meta);
                             break;
-                        case BlockEntityCauldron.POTION_TYPE_NORMAL:
+                        case NORMAL:
                         default:
                             potion = new ItemPotion(meta);
                             break;
                     }
                 }
 
-                setFillLevel(getFillLevel() - 1);
+                setFillLevel(FILL_LEVEL.clamp(getFillLevel() - 2));
                 if (isEmpty()) {
                     cauldron.setPotionId(-1);//reset potion
                     cauldron.clearCustomColor();
@@ -301,7 +323,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     }
                 }
 
-                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_POTION);
+                this.level.addLevelEvent(this.add(0.5, 0.375 + getFillLevel() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_POTION);
                 break;
             case ItemID.BANNER:
                 if (isEmpty() || cauldron.isCustomColor() || cauldron.hasPotion()) {
@@ -330,7 +352,7 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
                     }
                 }
                 
-                setFillLevel(getFillLevel() - 1);
+                setFillLevel(FILL_LEVEL.clamp(getFillLevel() - 2));
                 this.level.setBlock(this, this, true, true);
                 this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.CAULDRON_TAKEWATER);
                 
@@ -403,9 +425,9 @@ public class BlockCauldron extends BlockSolidMeta implements BlockEntityHolder<B
 
     @PowerNukkitOnly
     public void clearWithFizz(BlockEntityCauldron cauldron) {
-        this.setFillLevel(0);//empty
+        this.setFillLevel(FILL_LEVEL.getMinValue());//empty
         cauldron.setPotionId(-1);//reset potion
-        cauldron.setSplashPotion(false);
+        cauldron.setType(BlockEntityCauldron.PotionType.NORMAL);
         cauldron.clearCustomColor();
         this.level.setBlock(this, new BlockCauldron(0), true);
         this.level.addSound(this.add(0.5, 0, 0.5), Sound.RANDOM_FIZZ);

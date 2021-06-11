@@ -3,6 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.event.block.BlockFromToEvent;
@@ -22,6 +24,14 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BlockBubbleColumn extends BlockTransparentMeta {
 
     @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty DRAG_DOWN = new BooleanBlockProperty("drag_down", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DRAG_DOWN);
+
+    @PowerNukkitOnly
     public BlockBubbleColumn() {
         this(0);
     }
@@ -34,6 +44,14 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
     @Override
     public int getId() {
         return BUBBLE_COLUMN;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

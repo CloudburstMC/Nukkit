@@ -1144,12 +1144,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockProperties getProperties() {
-        int id = getId();
-        if (id >= 0 && id < hasMeta.length && !hasMeta[id]) {
-            return CommonBlockProperties.EMPTY_PROPERTIES;
-        } else {
-            return CommonBlockProperties.LEGACY_PROPERTIES;
-        }
+        return CommonBlockProperties.EMPTY_PROPERTIES;
     }
     
     @PowerNukkitOnly

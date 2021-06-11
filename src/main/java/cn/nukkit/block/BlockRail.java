@@ -45,7 +45,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
             STRAIGHT_NORTH_SOUTH, STRAIGHT_EAST_WEST,
             ASCENDING_EAST, ASCENDING_WEST,
             ASCENDING_NORTH, ASCENDING_SOUTH
-    });
+    }).ordinal(true);
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -55,7 +55,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
             ASCENDING_NORTH, ASCENDING_SOUTH,
             CURVED_SOUTH_EAST, CURVED_SOUTH_WEST,
             CURVED_NORTH_WEST, CURVED_NORTH_EAST
-    });
+    }).ordinal(true);
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")

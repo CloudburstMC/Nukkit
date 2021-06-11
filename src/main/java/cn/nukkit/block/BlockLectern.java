@@ -6,6 +6,7 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityLectern;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.LecternDropBookEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
@@ -22,8 +23,15 @@ import cn.nukkit.utils.RedstoneComponent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
+
 @PowerNukkitOnly
 public class BlockLectern extends BlockTransparentMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityLectern> {
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, POWERED);
+
     @PowerNukkitOnly
     public BlockLectern() {
         this(0);
@@ -42,6 +50,14 @@ public class BlockLectern extends BlockTransparentMeta implements RedstoneCompon
     @Override
     public int getId() {
         return LECTERN;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Since("1.4.0.0-PN")

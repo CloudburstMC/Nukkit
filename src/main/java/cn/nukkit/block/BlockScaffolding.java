@@ -3,6 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
+import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFallingBlock;
 import cn.nukkit.item.Item;
@@ -20,6 +23,18 @@ import javax.annotation.Nonnull;
 public class BlockScaffolding extends BlockFallableMeta {
 
     @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty STABILITY_CHECK = new BooleanBlockProperty("stability_check", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final IntBlockProperty STABILITY = new IntBlockProperty("stability", false, 7);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(STABILITY, STABILITY_CHECK);
+
+    @PowerNukkitOnly
     public BlockScaffolding() {
         // Does nothing
     }
@@ -32,6 +47,14 @@ public class BlockScaffolding extends BlockFallableMeta {
     @Override
     public int getId() {
         return SCAFFOLDING;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

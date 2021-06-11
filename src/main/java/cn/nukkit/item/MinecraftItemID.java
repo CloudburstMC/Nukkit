@@ -935,7 +935,7 @@ public enum MinecraftItemID {
     @PowerNukkitOnly @Since("1.4.0.0-PN") DONKEY_SPAWN_EGG,
     @PowerNukkitOnly @Since("1.4.0.0-PN") PURPLE_DYE,
     @PowerNukkitOnly @Since("1.4.0.0-PN") BIRCH_BOAT,
-    @PowerNukkitOnly @Since("1.4.0.0-PN") DEBUG_STICK(false, true),
+    //@PowerNukkitOnly @Since("1.4.0.0-PN") DEBUG_STICK(false, true),
     @PowerNukkitOnly @Since("1.4.0.0-PN") ENDERMAN_SPAWN_EGG,
     @PowerNukkitOnly @Since("1.4.0.0-PN") CHICKEN_SPAWN_EGG,
     @PowerNukkitOnly @Since("1.4.0.0-PN") SHULKER_SPAWN_EGG,

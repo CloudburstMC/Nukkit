@@ -1,15 +1,11 @@
 package cn.nukkit.command.data;
 
 import cn.nukkit.api.Since;
-import cn.nukkit.block.BlockID;
-import cn.nukkit.item.MinecraftItemID;
 import com.google.common.collect.ImmutableList;
 
-import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * @author CreeperFace
@@ -30,19 +26,19 @@ public class CommandEnum {
     public static final CommandEnum ENUM_ITEM;
 
     static {
-        ImmutableList.Builder<String> blocks = ImmutableList.builder();
+        /*ImmutableList.Builder<String> blocks = ImmutableList.builder();
         for (Field field : BlockID.class.getDeclaredFields()) {
             blocks.add(field.getName().toLowerCase());
-        }
-        ENUM_BLOCK = new CommandEnum("Block", blocks.build());
+        }*/
+        ENUM_BLOCK = new CommandEnum("Block", /*blocks.build()*/ Collections.emptyList());
 
-        ENUM_ITEM = new CommandEnum("Item", ImmutableList.copyOf(Arrays.stream(MinecraftItemID.values())
+        ENUM_ITEM = new CommandEnum("Item", /*ImmutableList.copyOf(Arrays.stream(MinecraftItemID.values())
             .filter(it -> !it.isTechnical())
             .filter(it -> !it.isEducationEdition())
-            .flatMap(it -> Stream.of(Stream.of(it.getNamespacedId())/*, Arrays.stream(it.getAliases())*/).flatMap(Function.identity()))
+            .flatMap(it -> Stream.of(Stream.of(it.getNamespacedId())*//*, Arrays.stream(it.getAliases())*//*).flatMap(Function.identity()))
             .map(it-> it.substring(10).toLowerCase())
             .toArray(String[]::new)
-        ));
+        )*/ Collections.emptyList());
     }
 
     private String name;
