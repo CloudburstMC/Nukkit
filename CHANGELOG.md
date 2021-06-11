@@ -12,6 +12,7 @@ Click the link above to see the future.
 ### Changed
 - [#1107] Guava version from `29.0` to `30.1.1`
 - [#1107] SnakeYAML version from `1.26` to `1.28`
+- [#1134] Update the Chinese, Russian, and Turkish translations. Thank you for your contributions!
 
 ### Fixes
 - [#1119] `TickSyncPacket` was not registered 
@@ -20,6 +21,7 @@ Click the link above to see the future.
 - [#1132] You don't dismount the vehicle when you teleport, causing you to glitch
 - [#1103] The output message of the `/enchant` command
 - [#1100] Abrupt Time Change
+- [#1130] Soul Campfire and End Crystal were rendering as other items in the inventory
 
 ## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
 This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
@@ -855,4 +857,6 @@ Fixes several anvil issues.
 [#1119]: https://github.com/PowerNukkit/PowerNukkit/issues/1119
 [#1120]: https://github.com/PowerNukkit/PowerNukkit/issues/1120
 [#1122]: https://github.com/PowerNukkit/PowerNukkit/issues/1122
+[#1130]: https://github.com/PowerNukkit/PowerNukkit/issues/1130
 [#1132]: https://github.com/PowerNukkit/PowerNukkit/issues/1132
+[#1134]: https://github.com/PowerNukkit/PowerNukkit/issues/1134
