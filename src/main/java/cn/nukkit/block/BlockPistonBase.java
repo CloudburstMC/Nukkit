@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 public abstract class BlockPistonBase extends BlockSolidMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityPistonArm> {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = CommonBlockProperties.FACING_DIRECTION_BLOCK_PROPERTIES;
 
     public boolean sticky;

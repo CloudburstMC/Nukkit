@@ -32,7 +32,7 @@ public class BlockVine extends BlockTransparentMeta {
     private static final IntBlockProperty VINE_DIRECTION_BITS = new IntBlockProperty("vine_direction_bits", false, 15);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(VINE_DIRECTION_BITS);
 
     public BlockVine(int meta) {

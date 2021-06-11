@@ -25,19 +25,19 @@ import java.util.Map;
 
 public class BlockBrewingStand extends BlockSolidMeta {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty HAS_POTION_A = new BooleanBlockProperty("brewing_stand_slot_a_bit", false);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty HAS_POTION_B = new BooleanBlockProperty("brewing_stand_slot_b_bit", false);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty HAS_POTION_C = new BooleanBlockProperty("brewing_stand_slot_c_bit", false);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(HAS_POTION_A, HAS_POTION_B, HAS_POTION_C);
 
     public BlockBrewingStand() {

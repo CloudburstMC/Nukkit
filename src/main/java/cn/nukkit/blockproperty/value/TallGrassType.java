@@ -4,10 +4,10 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 public enum TallGrassType {
-    @Since("FUTURE") @PowerNukkitOnly DEFAULT,
-    @Since("FUTURE") @PowerNukkitOnly TALL,
-    @Since("FUTURE") @PowerNukkitOnly FERN,
-    @Since("FUTURE") @PowerNukkitOnly SNOW
+    @Since("1.5.0.0-PN") @PowerNukkitOnly DEFAULT,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly TALL,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly FERN,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly SNOW
 }

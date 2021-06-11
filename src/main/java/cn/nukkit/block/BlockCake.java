@@ -21,11 +21,11 @@ import javax.annotation.Nullable;
 public class BlockCake extends BlockTransparentMeta {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty BITES = new IntBlockProperty("bite_counter", false, 6);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(BITES);
 
     public BlockCake(int meta) {

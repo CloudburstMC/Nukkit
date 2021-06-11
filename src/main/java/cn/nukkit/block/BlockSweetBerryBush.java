@@ -27,7 +27,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @PowerNukkitOnly
 public class BlockSweetBerryBush extends BlockFlowable {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(BlockCrops.GROWTH);
 
     @PowerNukkitOnly

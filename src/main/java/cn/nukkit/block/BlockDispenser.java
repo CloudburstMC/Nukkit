@@ -47,11 +47,11 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
 public class BlockDispenser extends BlockSolidMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityEjectable> {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty TRIGGERED = new BooleanBlockProperty("triggered_bit", false);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(FACING_DIRECTION, TRIGGERED);
 
     public BlockDispenser() {

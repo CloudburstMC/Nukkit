@@ -4,12 +4,12 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 public enum MonsterEggStoneType {
-    @Since("FUTURE") @PowerNukkitOnly STONE,
-    @Since("FUTURE") @PowerNukkitOnly COBBLESTONE,
-    @Since("FUTURE") @PowerNukkitOnly STONE_BRICK,
-    @Since("FUTURE") @PowerNukkitOnly MOSSY_STONE_BRICK,
-    @Since("FUTURE") @PowerNukkitOnly CRACKED_STONE_BRICK,
-    @Since("FUTURE") @PowerNukkitOnly CHISELED_STONE_BRICK
+    @Since("1.5.0.0-PN") @PowerNukkitOnly STONE,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly COBBLESTONE,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly STONE_BRICK,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly MOSSY_STONE_BRICK,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly CRACKED_STONE_BRICK,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly CHISELED_STONE_BRICK
 }

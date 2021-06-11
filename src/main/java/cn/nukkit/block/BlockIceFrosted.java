@@ -16,11 +16,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BlockIceFrosted extends BlockTransparentMeta {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty AGE = new IntBlockProperty("age", false, 3);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(AGE);
 
     public BlockIceFrosted() {

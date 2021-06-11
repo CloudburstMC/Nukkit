@@ -27,7 +27,7 @@ public class BlockNetherPortal extends BlockFlowable implements Faceable {
     );
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(PORTAL_AXIS);
 
     public BlockNetherPortal() {

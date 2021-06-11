@@ -11,32 +11,32 @@ import lombok.AllArgsConstructor;
  */
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 @AllArgsConstructor
 public enum PrismarineBlockType {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     DEFAULT("Prismarine", BlockColor.CYAN_BLOCK_COLOR),
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     DARK("Dark Prismarine", BlockColor.DIAMOND_BLOCK_COLOR),
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     BRICKS("Prismarine Bricks", BlockColor.DIAMOND_BLOCK_COLOR);
 
     private final String englishName;
     private final BlockColor color;
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public String getEnglishName() {
         return englishName;
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public BlockColor getColor() {
         return color;
     }

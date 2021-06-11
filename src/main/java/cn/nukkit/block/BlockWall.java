@@ -115,7 +115,7 @@ public class BlockWall extends BlockWallBase {
         @PowerNukkitOnly @Since("1.3.0.0-PN") BRICK(RED_BLOCK_COLOR),
         @PowerNukkitOnly @Since("1.3.0.0-PN") STONE_BRICK,
         @PowerNukkitOnly @Since("1.3.0.0-PN") MOSSY_STONE_BRICK,
-        @PowerNukkitOnly @Since("FUTURE") END_BRICK(SAND_BLOCK_COLOR),
+        @PowerNukkitOnly @Since("1.5.0.0-PN") END_BRICK(SAND_BLOCK_COLOR),
         @PowerNukkitOnly @Since("1.3.0.0-PN") NETHER_BRICK(NETHERRACK_BLOCK_COLOR),
         @PowerNukkitOnly @Since("1.3.0.0-PN") PRISMARINE(CYAN_BLOCK_COLOR),
         @PowerNukkitOnly @Since("1.3.0.0-PN") RED_SANDSTONE(ORANGE_BLOCK_COLOR),

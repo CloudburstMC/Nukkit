@@ -30,18 +30,18 @@ import static cn.nukkit.block.BlockSapling.AGED;
 public class BlockBamboo extends BlockTransparentMeta {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final ArrayBlockProperty<BambooStalkThickness> STALK_THICKNESS = new ArrayBlockProperty<>(
             "bamboo_stalk_thickness", false, BambooStalkThickness.class
     );
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final ArrayBlockProperty<BambooLeafSize> LEAF_SIZE = new ArrayBlockProperty<>(
             "bamboo_leaf_size", false, BambooLeafSize.class);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(STALK_THICKNESS, LEAF_SIZE, AGED);
 
     public @PowerNukkitOnly static final int LEAF_SIZE_NONE = 0;
@@ -275,13 +275,13 @@ public class BlockBamboo extends BlockTransparentMeta {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public BambooStalkThickness getBambooStalkThickness() {
         return getPropertyValue(STALK_THICKNESS);
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setBambooStalkThickness(@Nonnull BambooStalkThickness value) {
         setPropertyValue(STALK_THICKNESS, value);
     }
@@ -293,19 +293,19 @@ public class BlockBamboo extends BlockTransparentMeta {
 
     @PowerNukkitOnly
     @Deprecated
-    @DeprecationDetails(by = "PowerNukkit", since = "FUTURE", replaceWith = "getBambooLeafSize", reason = "magic values")
+    @DeprecationDetails(by = "PowerNukkit", since = "1.5.0.0-PN", replaceWith = "getBambooLeafSize", reason = "magic values")
     public int getLeafSize() {
         return getBambooLeafSize().ordinal();
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public BambooLeafSize getBambooLeafSize() {
         return getPropertyValue(LEAF_SIZE);
     }
 
     @Deprecated
-    @DeprecationDetails(by = "PowerNukkit", since = "FUTURE", replaceWith = "getBambooLeafSize", reason = "magic values")
+    @DeprecationDetails(by = "PowerNukkit", since = "1.5.0.0-PN", replaceWith = "getBambooLeafSize", reason = "magic values")
     @PowerNukkitOnly
     public void setLeafSize(int leafSize) {
         leafSize = MathHelper.clamp(leafSize, LEAF_SIZE_NONE, LEAF_SIZE_LARGE) & 0b11;

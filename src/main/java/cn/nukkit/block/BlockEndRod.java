@@ -22,7 +22,7 @@ import javax.annotation.Nullable;
  */
 public class BlockEndRod extends BlockTransparentMeta implements Faceable {
 
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     @PowerNukkitOnly
     public static final BlockProperties PROPERTIES = CommonBlockProperties.FACING_DIRECTION_BLOCK_PROPERTIES;
 

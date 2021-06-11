@@ -13,13 +13,13 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.PERMANENTLY_DEAD;
 @PowerNukkitOnly
 public class BlockCoralFanHang3 extends BlockCoralFanHang {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final ArrayBlockProperty<CoralType> HANG3_TYPE = new ArrayBlockProperty<>("coral_hang_type_bit", true,
             new CoralType[]{CoralType.YELLOW}
     ).ordinal(true);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(HANG3_TYPE, PERMANENTLY_DEAD, HANG_DIRECTION);
 
     @PowerNukkitOnly

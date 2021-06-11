@@ -18,11 +18,11 @@ import java.util.Map;
 public class BlockChorusFlower extends BlockTransparent {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty AGE = new IntBlockProperty("age", false, 5);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(AGE);
 
     public BlockChorusFlower() {

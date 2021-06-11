@@ -23,19 +23,19 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
  */
 public class BlockTripWire extends BlockTransparentMeta {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty ATTACHED = new BooleanBlockProperty("attached_bit", false);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty DISARMED = new BooleanBlockProperty("disarmed_bit", false);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty SUSPENDED = new BooleanBlockProperty("suspended_bit", false);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(POWERED, SUSPENDED, ATTACHED, DISARMED);
 
     public BlockTripWire(int meta) {

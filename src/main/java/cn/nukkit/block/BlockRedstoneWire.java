@@ -29,7 +29,7 @@ import java.util.Set;
 @PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
 public class BlockRedstoneWire extends BlockFlowable implements RedstoneComponent {
 
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     @PowerNukkitOnly
     public static final BlockProperties PROPERTIES = CommonBlockProperties.REDSTONE_SIGNAL_BLOCK_PROPERTY;
 

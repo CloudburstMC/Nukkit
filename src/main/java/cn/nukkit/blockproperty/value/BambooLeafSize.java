@@ -4,9 +4,9 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 public enum BambooLeafSize {
-    @Since("FUTURE") @PowerNukkitOnly NO_LEAVES,
-    @Since("FUTURE") @PowerNukkitOnly SMALL_LEAVES,
-    @Since("FUTURE") @PowerNukkitOnly LARGE_LEAVES
+    @Since("1.5.0.0-PN") @PowerNukkitOnly NO_LEAVES,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly SMALL_LEAVES,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly LARGE_LEAVES
 }

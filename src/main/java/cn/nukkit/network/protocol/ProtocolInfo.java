@@ -181,9 +181,9 @@ public interface ProtocolInfo {
     @Since("1.4.0.0-PN") byte ITEM_COMPONENT_PACKET = (byte) 0xa2;
     @Since("1.4.0.0-PN") byte FILTER_TEXT_PACKET = (byte) 0xa3;
     @Since("1.4.0.0-PN") byte CLIENTBOUND_DEBUG_RENDERER_PACKET = (byte) 0xa4;
-    @Since("FUTURE") @PowerNukkitOnly byte SYNC_ENTITY_PROPERTY = (byte) 0xa5;
-    @Since("FUTURE") @PowerNukkitOnly byte ADD_VOLUME_ENTITY = (byte) 0xa6;
-    @Since("FUTURE") @PowerNukkitOnly byte REMOVE_VOLUME_ENTITY = (byte) 0xa7;
+    @Since("1.5.0.0-PN") @PowerNukkitOnly byte SYNC_ENTITY_PROPERTY = (byte) 0xa5;
+    @Since("1.5.0.0-PN") @PowerNukkitOnly byte ADD_VOLUME_ENTITY = (byte) 0xa6;
+    @Since("1.5.0.0-PN") @PowerNukkitOnly byte REMOVE_VOLUME_ENTITY = (byte) 0xa7;
 
     byte BATCH_PACKET = (byte) 0xff;
 }

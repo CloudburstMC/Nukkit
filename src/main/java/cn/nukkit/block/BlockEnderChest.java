@@ -27,7 +27,7 @@ import java.util.Set;
 public class BlockEnderChest extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityEnderChest> {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = BlockChest.PROPERTIES;
 
     private final Set<Player> viewers = new HashSet<>();

@@ -805,7 +805,7 @@ public class BinaryStream {
 
     @SneakyThrows(IOException.class)
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public CompoundTag getTag() {
         ByteArrayInputStream is = new ByteArrayInputStream(buffer, offset, buffer.length);
         int initial = is.available();
@@ -818,7 +818,7 @@ public class BinaryStream {
 
     @SneakyThrows(IOException.class)
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void putTag(CompoundTag tag) {
         put(NBTIO.write(tag));
     }

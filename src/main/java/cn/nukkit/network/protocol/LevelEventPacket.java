@@ -50,9 +50,9 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_ARMOR_STAND_HIT = 1061;
     public static final int EVENT_SOUND_ARMOR_STAND_FALL = 1062;
     public static final int EVENT_SOUND_ARMOR_STAND_PLACE = 1063;
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_SOUND_POINTED_DRIPSTONE_LAND = 1064;
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_SOUND_DYE_USED = 1065;
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_SOUND_INK_SACE_USED = 1066;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_SOUND_POINTED_DRIPSTONE_LAND = 1064;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_SOUND_DYE_USED = 1065;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_SOUND_INK_SACE_USED = 1066;
 
     public static final int EVENT_GUARDIAN_CURSE = 2006;
 
@@ -63,13 +63,13 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_PARTICLE_ENDERMAN_TELEPORT = 2013;
     public static final int EVENT_PARTICLE_PUNCH_BLOCK = 2014;
 
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_PARTICLE_VIBRATION_SIGNAL = 2027;
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_PARTICLE_DRIPSTONE_DRIP = 2028;
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_PARTICLE_FIZZ_EFFECT = 2029;
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_PARTICLE_WAX_ON = 2030;
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_PARTICLE_WAX_OFF = 2031;
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_PARTICLE_SCRAPE = 2032;
-    @PowerNukkitOnly @Since("FUTURE") public static final int EVENT_PARTICLE_ELECTRIC_SPARK = 2033;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_PARTICLE_VIBRATION_SIGNAL = 2027;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_PARTICLE_DRIPSTONE_DRIP = 2028;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_PARTICLE_FIZZ_EFFECT = 2029;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_PARTICLE_WAX_ON = 2030;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_PARTICLE_WAX_OFF = 2031;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_PARTICLE_SCRAPE = 2032;
+    @PowerNukkitOnly @Since("1.5.0.0-PN") public static final int EVENT_PARTICLE_ELECTRIC_SPARK = 2033;
 
     public static final int EVENT_SOUND_BUTTON_CLICK = 3500;
     public static final int EVENT_SOUND_EXPLODE = 3501;
@@ -99,8 +99,8 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_CAULDRON_FILL_POTION = 3504;
     public static final int EVENT_SOUND_CAULDRON_FILL_WATER = 3506;
 
-    @Since("FUTURE") @PowerNukkitOnly public static final int EVENT_SOUND_CAULDRON_FILL_POWDER_SNOW = 3514;
-    @Since("FUTURE") @PowerNukkitOnly public static final int EVENT_SOUND_CAULDRON_TAKE_POWDER_SNOW = 3515;
+    @Since("1.5.0.0-PN") @PowerNukkitOnly public static final int EVENT_SOUND_CAULDRON_FILL_POWDER_SNOW = 3514;
+    @Since("1.5.0.0-PN") @PowerNukkitOnly public static final int EVENT_SOUND_CAULDRON_TAKE_POWDER_SNOW = 3515;
 
     public static final int EVENT_BLOCK_START_BREAK = 3600;
     public static final int EVENT_BLOCK_STOP_BREAK = 3601;

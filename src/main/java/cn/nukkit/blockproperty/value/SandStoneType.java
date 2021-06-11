@@ -10,29 +10,29 @@ import lombok.AllArgsConstructor;
  */
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 @AllArgsConstructor
 public enum SandStoneType {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     DEFAULT("Sandstone"),
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     HEIROGLYPHS("Chiseled Sandstone"),
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     CUT("Cut Sandstone"),
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     SMOOTH("Smooth Sandstone");
 
     private final String englishName;
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public String getEnglishName() {
         return englishName;
     }

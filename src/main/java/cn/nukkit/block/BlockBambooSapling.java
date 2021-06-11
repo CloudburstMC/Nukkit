@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BlockBambooSapling extends BlockFlowable {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = BlockSapling.PROPERTIES;
 
     @PowerNukkitOnly

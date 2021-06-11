@@ -4,9 +4,9 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 public enum CauldronLiquid {
-    @Since("FUTURE") @PowerNukkitOnly WATER,
-    @Since("FUTURE") @PowerNukkitOnly LAVA,
-    @Since("FUTURE") @PowerNukkitOnly POWDER_SNOW,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly WATER,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly LAVA,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly POWDER_SNOW,
 }

@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
  */
 public class BlockCarpet extends BlockFlowable {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = CommonBlockProperties.COLOR_BLOCK_PROPERTIES;
 
     public BlockCarpet() {
@@ -127,7 +127,7 @@ public class BlockCarpet extends BlockFlowable {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setDyeColor(@Nonnull DyeColor color) {
         setPropertyValue(CommonBlockProperties.COLOR, color);
     }

@@ -23,15 +23,15 @@ import javax.annotation.Nonnull;
 public class BlockScaffolding extends BlockFallableMeta {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty STABILITY_CHECK = new BooleanBlockProperty("stability_check", false);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty STABILITY = new IntBlockProperty("stability", false, 7);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(STABILITY, STABILITY_CHECK);
 
     @PowerNukkitOnly

@@ -29,7 +29,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
 public class BlockTripWireHook extends BlockTransparentMeta implements RedstoneComponent {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, ATTACHED, POWERED);
 
     public BlockTripWireHook() {

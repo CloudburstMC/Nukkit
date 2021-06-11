@@ -24,11 +24,11 @@ import javax.annotation.Nonnull;
 public class BlockSugarcane extends BlockFlowable {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty AGE = CommonBlockProperties.AGE_15;
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(AGE);
 
     public BlockSugarcane() {

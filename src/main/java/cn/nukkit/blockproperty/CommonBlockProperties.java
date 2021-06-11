@@ -27,7 +27,7 @@ public final class CommonBlockProperties {
     public static final BooleanBlockProperty PERMANENTLY_DEAD = new BooleanBlockProperty("dead_bit", true);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties REDSTONE_SIGNAL_BLOCK_PROPERTY = new BlockProperties(REDSTONE_SIGNAL);
 
     @PowerNukkitOnly
@@ -44,15 +44,15 @@ public final class CommonBlockProperties {
     }).ordinal(true);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final ArrayBlockProperty<ChiselType> CHISEL_TYPE = new ArrayBlockProperty<>("chisel_type", true, ChiselType.class);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty AGE_15 = new IntBlockProperty("age", false, 15);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties FACING_DIRECTION_BLOCK_PROPERTIES = new BlockProperties(FACING_DIRECTION);
 
     @PowerNukkitOnly
@@ -74,7 +74,7 @@ public final class CommonBlockProperties {
     public static final IntBlockProperty DEPRECATED = new IntBlockProperty("deprecated", false, 3);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperty<DyeColor> COLOR = new ArrayBlockProperty<>("color", true, new DyeColor[] {
             DyeColor.WHITE, DyeColor.ORANGE, DyeColor.MAGENTA, DyeColor.LIGHT_BLUE, DyeColor.YELLOW, DyeColor.LIME, DyeColor.PINK,
             DyeColor.GRAY, DyeColor.LIGHT_GRAY, DyeColor.CYAN, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BROWN,
@@ -85,7 +85,7 @@ public final class CommonBlockProperties {
     });
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties COLOR_BLOCK_PROPERTIES = new BlockProperties(COLOR);
 
     private CommonBlockProperties() {

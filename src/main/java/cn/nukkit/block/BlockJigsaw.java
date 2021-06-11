@@ -18,7 +18,7 @@ public class BlockJigsaw extends BlockSolidMeta implements Faceable {
     private static final IntBlockProperty ROTATION = new IntBlockProperty("rotation", false, 3);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(FACING_DIRECTION, ROTATION);
 
     @PowerNukkitOnly

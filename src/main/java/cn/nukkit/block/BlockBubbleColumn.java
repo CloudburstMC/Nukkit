@@ -24,11 +24,11 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BlockBubbleColumn extends BlockTransparentMeta {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BooleanBlockProperty DRAG_DOWN = new BooleanBlockProperty("drag_down", false);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(DRAG_DOWN);
 
     @PowerNukkitOnly

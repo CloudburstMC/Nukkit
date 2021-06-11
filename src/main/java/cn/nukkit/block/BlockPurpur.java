@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
 public class BlockPurpur extends BlockSolidMeta {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = BlockQuartz.PROPERTIES;
 
     public static final int PURPUR_NORMAL = 0;

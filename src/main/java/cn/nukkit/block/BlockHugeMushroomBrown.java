@@ -19,11 +19,11 @@ import javax.annotation.Nonnull;
 public class BlockHugeMushroomBrown extends BlockSolidMeta {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty HUGE_MUSHROOM = new IntBlockProperty("huge_mushroom_bits", true, 15);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(HUGE_MUSHROOM);
 
     public BlockHugeMushroomBrown() {

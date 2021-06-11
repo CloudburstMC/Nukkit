@@ -21,11 +21,11 @@ import javax.annotation.Nonnull;
  */
 public class BlockFarmland extends BlockTransparentMeta {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty MOISTURIZED_AMOUNT = new IntBlockProperty("moisturized_amount", false, 7);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(MOISTURIZED_AMOUNT);
 
     public BlockFarmland() {

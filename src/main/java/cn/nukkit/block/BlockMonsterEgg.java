@@ -11,12 +11,12 @@ import javax.annotation.Nonnull;
 
 public class BlockMonsterEgg extends BlockSolidMeta {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final ArrayBlockProperty<MonsterEggStoneType> MONSTER_EGG_STONE_TYPE = new ArrayBlockProperty<>(
             "monster_egg_stone_type", true, MonsterEggStoneType.class);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(MONSTER_EGG_STONE_TYPE);
 
     public static final int STONE = 0;
@@ -57,14 +57,14 @@ public class BlockMonsterEgg extends BlockSolidMeta {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     @Nonnull
     public MonsterEggStoneType getMonsterEggStoneType() {
         return getPropertyValue(MONSTER_EGG_STONE_TYPE);
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setMonsterEggStoneType(@Nonnull MonsterEggStoneType value) {
         setPropertyValue(MONSTER_EGG_STONE_TYPE, value);
     }

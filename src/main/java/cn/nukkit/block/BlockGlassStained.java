@@ -18,7 +18,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.COLOR;
 public class BlockGlassStained extends BlockGlass {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = CommonBlockProperties.COLOR_BLOCK_PROPERTIES;
 
     public BlockGlassStained() {
@@ -60,7 +60,7 @@ public class BlockGlassStained extends BlockGlass {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setDyeColor(@Nonnull DyeColor color) {
         setPropertyValue(COLOR, color);
     }

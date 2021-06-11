@@ -18,11 +18,11 @@ import javax.annotation.Nonnull;
 public class BlockSand extends BlockFallableMeta {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final ArrayBlockProperty<SandType> SAND_TYPE = new ArrayBlockProperty<>("sand_type", true, SandType.class);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(SAND_TYPE);
 
     public static final int DEFAULT = 0;

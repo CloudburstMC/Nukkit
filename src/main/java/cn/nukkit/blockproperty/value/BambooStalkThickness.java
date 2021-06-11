@@ -4,8 +4,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 public enum BambooStalkThickness {
-    @Since("FUTURE") @PowerNukkitOnly THIN,
-    @Since("FUTURE") @PowerNukkitOnly THICK
+    @Since("1.5.0.0-PN") @PowerNukkitOnly THIN,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly THICK
 }

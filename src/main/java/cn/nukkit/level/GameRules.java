@@ -215,12 +215,12 @@ public class GameRules {
             this.value = value;
         }
 
-        @Since("FUTURE")
+        @Since("1.5.0.0-PN")
         public boolean isCanBeChanged() {
             return this.canBeChanged;
         }
 
-        @Since("FUTURE")
+        @Since("1.5.0.0-PN")
         public void setCanBeChanged(boolean canBeChanged) {
             this.canBeChanged = canBeChanged;
         }
@@ -250,7 +250,7 @@ public class GameRules {
             return (Float) value;
         }
 
-        @Since("FUTURE")
+        @Since("1.5.0.0-PN")
         public void write(BinaryStream stream) {
             stream.putBoolean(this.canBeChanged);
             stream.putUnsignedVarInt(type.ordinal());

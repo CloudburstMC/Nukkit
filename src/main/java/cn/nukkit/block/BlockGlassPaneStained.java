@@ -16,7 +16,7 @@ import javax.annotation.Nonnull;
 public class BlockGlassPaneStained extends BlockGlassPane {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = CommonBlockProperties.COLOR_BLOCK_PROPERTIES;
 
     public BlockGlassPaneStained() {

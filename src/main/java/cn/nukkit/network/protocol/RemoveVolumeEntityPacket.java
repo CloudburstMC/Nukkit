@@ -4,10 +4,10 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 public class RemoveVolumeEntityPacket extends DataPacket {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final byte NETWORK_ID = ProtocolInfo.REMOVE_VOLUME_ENTITY;
 
     private long id;
@@ -29,13 +29,13 @@ public class RemoveVolumeEntityPacket extends DataPacket {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public long getId() {
         return id;
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setId(long id) {
         this.id = id;
     }

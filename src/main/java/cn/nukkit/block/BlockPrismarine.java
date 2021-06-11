@@ -15,21 +15,21 @@ import javax.annotation.Nonnull;
 
 public class BlockPrismarine extends BlockSolidMeta {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperty<PrismarineBlockType> PRISMARINE_BLOCK_TYPE = new ArrayBlockProperty<>("prismarine_block_type", true, PrismarineBlockType.class);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(PRISMARINE_BLOCK_TYPE);
 
     @Deprecated
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getPrismarineBlockType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getPrismarineBlockType()", reason = "Use the BlockProperty API instead")
     public static final int NORMAL = 0;
 
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getPrismarineBlockType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getPrismarineBlockType()", reason = "Use the BlockProperty API instead")
     public static final int DARK = 1;
 
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getPrismarineBlockType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getPrismarineBlockType()", reason = "Use the BlockProperty API instead")
     public static final int BRICKS = 2;
 
     public BlockPrismarine() {
@@ -46,7 +46,7 @@ public class BlockPrismarine extends BlockSolidMeta {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -74,13 +74,13 @@ public class BlockPrismarine extends BlockSolidMeta {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setPrismarineBlockType(PrismarineBlockType prismarineBlockType) {
         setPropertyValue(PRISMARINE_BLOCK_TYPE, prismarineBlockType);
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public PrismarineBlockType getPrismarineBlockType() {
         return getPropertyValue(PRISMARINE_BLOCK_TYPE);
     }

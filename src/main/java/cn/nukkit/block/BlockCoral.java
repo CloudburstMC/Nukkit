@@ -21,11 +21,11 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.PERMANENTLY_DEAD;
 @PowerNukkitOnly
 public class BlockCoral extends BlockFlowable {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final ArrayBlockProperty<CoralType> COLOR = new ArrayBlockProperty<>("coral_color", true, CoralType.class);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(COLOR, PERMANENTLY_DEAD);
 
     @PowerNukkitOnly public static final int TYPE_TUBE = 0;

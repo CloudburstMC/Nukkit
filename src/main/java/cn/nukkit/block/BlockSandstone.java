@@ -19,23 +19,23 @@ import javax.annotation.Nonnull;
  */
 public class BlockSandstone extends BlockSolidMeta {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperty<SandStoneType> SAND_STONE_TYPE = new ArrayBlockProperty<>("sand_stone_type", true, SandStoneType.class);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(SAND_STONE_TYPE);
 
     @Deprecated
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getSandstoneBlockType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getSandstoneBlockType()", reason = "Use the BlockProperty API instead")
     public static final int NORMAL = 0;
 
     @Deprecated
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getSandstoneBlockType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getSandstoneBlockType()", reason = "Use the BlockProperty API instead")
     public static final int CHISELED = 1;
 
     @Deprecated
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getSandstoneBlockType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getSandstoneBlockType()", reason = "Use the BlockProperty API instead")
     public static final int SMOOTH = 2;
 
     public BlockSandstone() {
@@ -52,7 +52,7 @@ public class BlockSandstone extends BlockSolidMeta {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -60,7 +60,7 @@ public class BlockSandstone extends BlockSolidMeta {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setSandstoneType(SandStoneType sandStoneType) {
         setPropertyValue(SAND_STONE_TYPE, sandStoneType);
     }

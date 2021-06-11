@@ -136,7 +136,7 @@ public class IntBlockProperty extends BlockProperty<Integer> {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public int clamp(int value) {
         return NukkitMath.clamp(value, getMinValue(), getMaxValue());
     }

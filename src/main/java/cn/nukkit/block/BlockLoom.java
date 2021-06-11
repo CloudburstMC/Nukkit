@@ -22,7 +22,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 public class BlockLoom extends BlockSolidMeta implements Faceable {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION);
 
     @PowerNukkitOnly
@@ -104,13 +104,13 @@ public class BlockLoom extends BlockSolidMeta implements Faceable {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     @Override
     public BlockFace getBlockFace() {
         return getPropertyValue(DIRECTION);
     }
 
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     @PowerNukkitOnly
     @Override
     public void setBlockFace(BlockFace face) {

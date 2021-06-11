@@ -29,7 +29,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
 @PowerNukkitOnly
 public class BlockLectern extends BlockTransparentMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityLectern> {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, POWERED);
 
     @PowerNukkitOnly

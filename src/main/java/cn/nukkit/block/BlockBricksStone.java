@@ -17,27 +17,27 @@ import javax.annotation.Nonnull;
  */
 public class BlockBricksStone extends BlockSolidMeta {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperty<StoneBrickType> STONE_BRICK_TYPE = new ArrayBlockProperty<>("stone_brick_type", true, StoneBrickType.class);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(STONE_BRICK_TYPE);
 
     @Deprecated
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getStoneBrickType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getStoneBrickType()", reason = "Use the BlockProperty API instead")
     public static final int NORMAL = 0;
 
     @Deprecated
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getStoneBrickType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getStoneBrickType()", reason = "Use the BlockProperty API instead")
     public static final int MOSSY = 1;
 
     @Deprecated
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getStoneBrickType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getStoneBrickType()", reason = "Use the BlockProperty API instead")
     public static final int CRACKED = 2;
 
     @Deprecated
-    @DeprecationDetails(since = "FUTURE", replaceWith = "getStoneBrickType()", reason = "Use the BlockProperty API instead")
+    @DeprecationDetails(since = "1.5.0.0-PN", replaceWith = "getStoneBrickType()", reason = "Use the BlockProperty API instead")
     public static final int CHISELED = 3;
 
     public BlockBricksStone() {
@@ -54,7 +54,7 @@ public class BlockBricksStone extends BlockSolidMeta {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     @Nonnull
     @Override
     public BlockProperties getProperties() {
@@ -72,13 +72,13 @@ public class BlockBricksStone extends BlockSolidMeta {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setBrickStoneType(StoneBrickType stoneBrickType) {
         setPropertyValue(STONE_BRICK_TYPE, stoneBrickType);
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public StoneBrickType getStoneBrickType() {
         return getPropertyValue(STONE_BRICK_TYPE);
     }

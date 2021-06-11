@@ -12,11 +12,11 @@ import javax.annotation.Nonnull;
 @PowerNukkitOnly
 public class BlockLight extends BlockTransparentMeta {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final IntBlockProperty LIGHT_LEVEL = new IntBlockProperty("block_light_level", true, 15);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(LIGHT_LEVEL);
 
     @PowerNukkitOnly

@@ -27,7 +27,7 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.*;
 public class BlockBarrel extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityBarrel> {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(FACING_DIRECTION, OPEN);
 
     @PowerNukkitOnly

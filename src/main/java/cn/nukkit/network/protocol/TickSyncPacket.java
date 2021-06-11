@@ -9,12 +9,12 @@ import lombok.ToString;
  * @author GoodLucky777
  */
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 @ToString
 public class TickSyncPacket extends DataPacket {
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final byte NETWORK_ID = ProtocolInfo.TICK_SYNC_PACKET;
     
     private long requestTimestamp;
@@ -40,25 +40,25 @@ public class TickSyncPacket extends DataPacket {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public long getRequestTimestamp() {
         return requestTimestamp;
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setRequestTimestamp(long requestTimestamp) {
         this.requestTimestamp = requestTimestamp;
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public long getResponseTimestamp() {
         return responseTimestamp;
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public void setResponseTimestamp(long responseTimestamp) {
         this.responseTimestamp = responseTimestamp;
     }

@@ -4,8 +4,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.0.0-PN")
 public enum SandType {
-    @Since("FUTURE") @PowerNukkitOnly NORMAL,
-    @Since("FUTURE") @PowerNukkitOnly RED
+    @Since("1.5.0.0-PN") @PowerNukkitOnly NORMAL,
+    @Since("1.5.0.0-PN") @PowerNukkitOnly RED
 }

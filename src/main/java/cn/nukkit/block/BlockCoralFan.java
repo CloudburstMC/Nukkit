@@ -21,13 +21,13 @@ import static cn.nukkit.block.BlockCoral.COLOR;
 @PowerNukkitOnly
 public class BlockCoralFan extends BlockFlowable implements Faceable {
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final ArrayBlockProperty<BlockFace.Axis> FAN_DIRECTION = new ArrayBlockProperty<>("coral_fan_direction", false,
             new BlockFace.Axis[]{BlockFace.Axis.X, BlockFace.Axis.Z}
     ).ordinal(true);
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(COLOR, FAN_DIRECTION);
 
     @PowerNukkitOnly
