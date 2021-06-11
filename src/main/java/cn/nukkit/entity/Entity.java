@@ -2495,6 +2495,11 @@ public abstract class Entity extends Location implements Metadatable {
             to = ev.getTo();
         }
 
+        Entity riding = getRiding();
+        if (riding != null && !riding.dismountEntity(this)) {
+            return false;
+        }
+
         this.ySize = 0;
 
         this.setMotion(this.temporalVector.setComponents(0, 0, 0));
