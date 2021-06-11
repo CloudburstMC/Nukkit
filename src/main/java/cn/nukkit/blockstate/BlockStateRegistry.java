@@ -8,7 +8,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.blockproperty.BlockProperties;
-import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -47,8 +46,7 @@ public class BlockStateRegistry {
     public final int BIG_META_MASK = 0xFFFFFFFF;
     private final ExecutorService asyncStateRemover = Executors.newSingleThreadExecutor();
     private final Pattern BLOCK_ID_NAME_PATTERN = Pattern.compile("^blockid:(\\d+)$"); 
-    private final Set<String> LEGACY_NAME_SET = Collections.singleton(CommonBlockProperties.LEGACY_PROPERTY_NAME);
-    
+
     private final Registration updateBlockRegistration;
 
     private final Map<BlockState, Registration> blockStateRegistration = new ConcurrentHashMap<>();
@@ -247,13 +245,8 @@ public class BlockStateRegistry {
                 return new Registration(state, airRegistration.runtimeId, null);
             }
         }
-        
-        Registration registration;
-        if (state.getPropertyNames().equals(LEGACY_NAME_SET)) {
-            registration = logDiscoveryError(state);
-        } else {
-            registration = findRegistrationByStateId(state);
-        }
+
+        Registration registration = findRegistrationByStateId(state);
         removeStateIdsAsync(registration);
         return registration;
     }

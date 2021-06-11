@@ -4,10 +4,12 @@ import cn.nukkit.Server;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
-import cn.nukkit.item.RuntimeItemMapping;
-import cn.nukkit.item.RuntimeItems;
+import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockUnknown;
+import cn.nukkit.blockproperty.exception.BlockPropertyNotFoundException;
+import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.BlockStateRegistry;
+import cn.nukkit.item.*;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.network.protocol.DataPacket;
@@ -306,21 +308,75 @@ public class CraftingManager {
         String nbt = (String) data.get("nbt_b64");
         byte[] nbtBytes = nbt != null ? Base64.getDecoder().decode(nbt) : EmptyArrays.EMPTY_BYTES;
 
-        String id = data.get("id").toString();
         int count = data.containsKey("count")? ((Number)data.get("count")).intValue() : 1;
+        Integer legacyId = null;
+        if (data.containsKey("legacyId")) {
+            legacyId = Utils.toInt(data.get("legacyId"));
+        }
+
         Item item;
+        if (data.containsKey("blockRuntimeId")) {
+            int blockRuntimeId = Utils.toInt(data.get("blockRuntimeId"));
+            try {
+                BlockState state = BlockStateRegistry.getBlockStateByRuntimeId(blockRuntimeId);
+                if (state == null || state.equals(BlockState.AIR)) {
+                    return Item.getBlock(BlockID.AIR);
+                }
+                if (state.getProperties().equals(BlockUnknown.PROPERTIES)) {
+                    return Item.getBlock(BlockID.AIR);
+                }
+                item = state.asItemBlock(count);
+                item.setCompoundTag(nbtBytes);
+                return item;
+            } catch (BlockPropertyNotFoundException e) {
+                log.debug("Failed to load the block runtime id {}", blockRuntimeId, e);
+            }
+        }
+
+        if (legacyId != null && legacyId > 255) {
+            try {
+                int fullId = RuntimeItems.getRuntimeMapping().getLegacyFullId(legacyId);
+                int itemId = RuntimeItems.getId(fullId);
+                Integer meta = null;
+                if (RuntimeItems.hasData(fullId)) {
+                    meta = RuntimeItems.getData(fullId);
+                }
+
+                boolean fuzzy = false;
+                if (data.containsKey("damage")) {
+                    int damage = Utils.toInt(data.get("damage"));
+                    if (damage == Short.MAX_VALUE) {
+                        fuzzy = true;
+                    } else if (meta == null) {
+                        meta = damage;
+                    }
+                }
+
+                item = Item.get(itemId, meta == null ? 0 : meta, count);
+                if (fuzzy) {
+                    item = item.createFuzzyCraftingRecipe();
+                }
+
+                item.setCompoundTag(nbtBytes);
+                return item;
+            } catch (IllegalArgumentException e) {
+                log.debug("Failed to load a crafting recipe item, attempting to load by string id", e);
+            }
+        }
+
+        String id = data.get("id").toString();
         if (data.containsKey("damage")) {
             int meta = Utils.toInt(data.get("damage"));
             if (meta == Short.MAX_VALUE) {
                 item = Item.fromString(id).createFuzzyCraftingRecipe();
             } else {
-                item = Item.fromString(id+":"+meta);
+                item = Item.fromString(id + ":" + meta);
             }
         } else {
             item = Item.fromString(id);
         }
-        item.setCompoundTag(nbtBytes);
         item.setCount(count);
+        item.setCompoundTag(nbtBytes);
         return item;
     }
 

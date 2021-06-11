@@ -2,7 +2,6 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.value.ChiselType;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.DyeColor;
@@ -12,17 +11,7 @@ import cn.nukkit.utils.DyeColor;
 public final class CommonBlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public static final String LEGACY_PROPERTY_NAME = "nukkit-legacy";
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
     public static final BlockProperties EMPTY_PROPERTIES = new BlockProperties();
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public static final BlockProperties LEGACY_PROPERTIES = new BlockProperties(new IntBlockProperty(LEGACY_PROPERTY_NAME, true, Block.DATA_MASK));
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public static final BlockProperties LEGACY_BIG_PROPERTIES = new BlockProperties(new UnsignedIntBlockProperty(LEGACY_PROPERTY_NAME, true, 0xFFFFFFFF));
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
