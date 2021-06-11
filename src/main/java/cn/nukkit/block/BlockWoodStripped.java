@@ -41,7 +41,7 @@ public abstract class BlockWoodStripped extends BlockWood {
 
     @Override
     public String getName() {
-        return "Stripped " + getWoodType() + " Log";
+        return "Stripped " + super.getName();
     }
 
     @Override
