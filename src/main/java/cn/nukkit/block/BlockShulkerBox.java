@@ -16,6 +16,10 @@ import javax.annotation.Nonnull;
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
 public class BlockShulkerBox extends BlockUndyedShulkerBox {
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = CommonBlockProperties.COLOR_BLOCK_PROPERTIES;
+
     public BlockShulkerBox() {
         // Does nothing
     }
@@ -31,7 +35,7 @@ public class BlockShulkerBox extends BlockUndyedShulkerBox {
     @Nonnull
     @Override
     public BlockProperties getProperties() {
-        return CommonBlockProperties.LEGACY_PROPERTIES;
+        return PROPERTIES;
     }
 
     @Override

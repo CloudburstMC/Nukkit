@@ -1,6 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -10,6 +14,14 @@ import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockIceFrosted extends BlockTransparentMeta {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final IntBlockProperty AGE = new IntBlockProperty("age", false, 3);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(AGE);
 
     public BlockIceFrosted() {
         this(0);
@@ -22,6 +34,14 @@ public class BlockIceFrosted extends BlockTransparentMeta {
     @Override
     public int getId() {
         return ICE_FROSTED;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

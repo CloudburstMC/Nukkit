@@ -44,6 +44,28 @@ public interface IMutableBlockState extends IBlockState {
             throw new UnsupportedOperationException();
         }
     }
+
+    /**
+     * Replace all matching states of this block state with the same states of the given block state.
+     * But giving opportunity to return a new instance of this mutable state if needed.
+     *
+     * <p>States that doesn't exists in the other state are ignored.
+     * <p>Only properties that matches each other will be copied, for example, if this state have an age property
+     * going from 0 to 7 and the other have an age from 0 to 15, the age property won't change.
+     * <p>If the implementation recognizes that the given state does not match the current set of properties
+     * and needs an update, it may update and return a new state with a different block id and different set
+     * of properties that represent the expected visual state. The this change can be detected with an {@code ==} operation.
+     * @throws UnsupportedOperationException If the state is from a different block id and property copying isn't supported by the implementation
+     * @throws InvalidBlockStateException If the given storage has invalid data properties
+     * @param state The states that will have the properties copied.
+     */
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Nonnull
+    default IMutableBlockState forState(@Nonnull IBlockState state) throws InvalidBlockStateException {
+        setState(state);
+        return this;
+    }
     
     /**
      * @throws InvalidBlockStateException If the given storage has invalid data properties

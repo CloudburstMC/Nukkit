@@ -150,16 +150,18 @@ public class BlockDoublePlant extends BlockFlowable {
 
         return false;
     }
-    
+
     private boolean isSupportValid(Block support) {
         switch (support.getId()) {
             case GRASS:
             case DIRT:
+            case PODZOL:
+            case FARMLAND:
                 return true;
             default:
                 return false;
         }
-    } 
+    }
 
     @Override
     public boolean onBreak(Item item) {
@@ -181,8 +183,8 @@ public class BlockDoublePlant extends BlockFlowable {
         }
 
         switch (getDoublePlantType()) {
-            case TALL_GRASS:
-            case LARGE_FERN:
+            case GRASS:
+            case FERN:
                 boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
                 if (item.isShears()) {
                     //todo enchantment
@@ -225,9 +227,9 @@ public class BlockDoublePlant extends BlockFlowable {
         if (item.isFertilizer()) { //Bone meal
             switch (getDoublePlantType()) {
                 case SUNFLOWER:
-                case LILAC:
-                case ROSE_BUSH:
-                case PEONY:
+                case SYRINGA:
+                case ROSE:
+                case PAEONIA:
                     if (player != null && (player.gamemode & 0x01) == 0) {
                         item.count--;
                     }

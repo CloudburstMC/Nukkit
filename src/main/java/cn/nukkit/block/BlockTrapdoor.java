@@ -46,12 +46,16 @@ public class BlockTrapdoor extends BlockTransparentMeta implements RedstoneCompo
     // and gives the vanilla behavior; no idea how to make this better :d
     private static final List<Location> manualOverrides = new ArrayList<>();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<BlockFace> TRAPDOOR_DIRECTION = new ArrayBlockProperty<>("direction", false, new BlockFace[] {
             // It's basically weirdo_direction but renamed
             BlockFace.EAST, BlockFace.WEST,
             BlockFace.SOUTH, BlockFace.NORTH
     }).ordinal(true);
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(TRAPDOOR_DIRECTION, UPSIDE_DOWN, OPEN);
 
     private static final AxisAlignedBB[] boundingBoxDamage = new AxisAlignedBB[0x1 << PROPERTIES.getBitSize()];

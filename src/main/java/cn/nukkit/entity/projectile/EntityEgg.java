@@ -1,5 +1,7 @@
 package cn.nukkit.entity.projectile;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.ItemEgg;
 import cn.nukkit.level.format.FullChunk;
@@ -12,6 +14,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author MagicDroidX (Nukkit Project)
  */
 public class EntityEgg extends EntityProjectile {
+
     public static final int NETWORK_ID = 82;
 
     @Override
@@ -75,5 +78,11 @@ public class EntityEgg extends EntityProjectile {
         for (int i = 0; i < particles; i++) {
             level.addParticle(new ItemBreakParticle(this, egg));
         }
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "Egg";
     }
 }

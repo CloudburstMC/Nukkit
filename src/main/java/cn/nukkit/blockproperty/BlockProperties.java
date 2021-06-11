@@ -2,6 +2,7 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.exception.BlockPropertyNotFoundException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.blockstate.*;
@@ -166,7 +167,7 @@ public final class BlockProperties {
     public RegisteredBlockProperty requireRegisteredProperty(String propertyName) {
         RegisteredBlockProperty registry = byName.get(propertyName);
         if (registry == null) {
-            throw new NoSuchElementException("The property "+propertyName+" was not found");
+            throw new BlockPropertyNotFoundException(propertyName, this);
         }
         return registry;
     }
@@ -593,22 +594,30 @@ public final class BlockProperties {
         return (Boolean) registry.property.getValue(currentMeta, registry.offset);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int getBitSize() {
         return bitSize;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void forEach(ObjIntConsumer<BlockProperty<?>> consumer) {
         for (RegisteredBlockProperty registry : byName.values()) {
             consumer.accept(registry.property, registry.offset);
         }
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void forEach(Consumer<BlockProperty<?>> consumer) {
         for (RegisteredBlockProperty registry : byName.values()) {
             consumer.accept(registry.property);
         }
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public <R> R reduce(R identity, TriFunction<BlockProperty<?>, Integer, R, R> accumulator) {
         R result = identity;
         for (RegisteredBlockProperty registry : byName.values()) {
@@ -617,6 +626,8 @@ public final class BlockProperties {
         return result;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int reduceInt(int identity, ToIntTriFunctionTwoInts<BlockProperty<?>> accumulator) {
         int result = identity;
         for (RegisteredBlockProperty registry : byName.values()) {
@@ -625,6 +636,8 @@ public final class BlockProperties {
         return result;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public long reduceLong(long identity, ToLongTriFunctionOneIntOneLong<BlockProperty<?>> accumulator) {
         long result = identity;
         for (RegisteredBlockProperty registry : byName.values()) {
@@ -633,6 +646,8 @@ public final class BlockProperties {
         return result;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public List<String> getItemPropertyNames() {
         List<String> itemProperties = new ArrayList<>(byName.size());

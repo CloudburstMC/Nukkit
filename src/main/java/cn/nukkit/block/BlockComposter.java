@@ -10,7 +10,6 @@ import cn.nukkit.event.block.ComposterEmptyEvent;
 import cn.nukkit.event.block.ComposterFillEvent;
 import cn.nukkit.item.*;
 import cn.nukkit.level.Sound;
-import cn.nukkit.math.MathHelper;
 import cn.nukkit.utils.DyeColor;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
@@ -18,10 +17,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Random;
 
+@PowerNukkitOnly
 public class BlockComposter extends BlockSolidMeta implements ItemID {
 
     private static Int2IntOpenHashMap compostableItems = new Int2IntOpenHashMap();
-    private static final IntBlockProperty COMPOSTER_FILL_LEVEL = new IntBlockProperty("composter_fill_level", false, 8);
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final IntBlockProperty COMPOSTER_FILL_LEVEL = new IntBlockProperty("composter_fill_level", false, 8);
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(COMPOSTER_FILL_LEVEL);
     static {
         registerDefaults();
@@ -35,10 +39,12 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         return PROPERTIES;
     }
 
+    @PowerNukkitOnly
     public BlockComposter() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockComposter(int meta) {
         super(meta);
     }
@@ -94,6 +100,7 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         return getPropertyValue(COMPOSTER_FILL_LEVEL);
     }
 
+    @PowerNukkitOnly
     public boolean incrementLevel() {
         int fillLevel = getPropertyValue(COMPOSTER_FILL_LEVEL) + 1;
         setPropertyValue(COMPOSTER_FILL_LEVEL, fillLevel);
@@ -101,10 +108,12 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         return fillLevel == 8;
     }
 
+    @PowerNukkitOnly
     public boolean isFull() {
         return getPropertyValue(COMPOSTER_FILL_LEVEL) == 8;
     }
 
+    @PowerNukkitOnly
     public boolean isEmpty() {
         return getPropertyValue(COMPOSTER_FILL_LEVEL) == 0;
     }
@@ -158,10 +167,12 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         return true;
     }
 
+    @PowerNukkitOnly
     public Item empty() {
         return empty(null, null);
     }
 
+    @PowerNukkitOnly
     public Item empty(@Nullable Item item, @Nullable Player player) {
         ComposterEmptyEvent event = new ComposterEmptyEvent(this, player, item, new ItemDye(DyeColor.WHITE), 0);
         this.level.getServer().getPluginManager().callEvent(event);
@@ -177,30 +188,36 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         return null;
     }
 
+    @PowerNukkitOnly
     public static void registerItem(int chance, int itemId) {
         registerItem(chance, itemId, 0);
     }
 
+    @PowerNukkitOnly
     public static void registerItem(int chance, int itemId, int meta) {
         compostableItems.put(itemId << 6 | meta & 0x3F, chance);
     }
 
+    @PowerNukkitOnly
     public static void registerItems(int chance, int... itemIds) {
         for (int itemId : itemIds) {
             registerItem(chance, itemId, 0);
         }
     }
 
+    @PowerNukkitOnly
     public static void registerBlocks(int chance, int... blockIds) {
         for (int blockId : blockIds) {
             registerBlock(chance, blockId, 0);
         }
     }
 
+    @PowerNukkitOnly
     public static void registerBlock(int chance, int blockId) {
         registerBlock(chance, blockId, 0);
     }
 
+    @PowerNukkitOnly
     public static void registerBlock(int chance, int blockId, int meta) {
         if (blockId > 255) {
             blockId = 255 - blockId;
@@ -208,10 +225,12 @@ public class BlockComposter extends BlockSolidMeta implements ItemID {
         registerItem(chance, blockId, meta);
     }
 
+    @PowerNukkitOnly
     public static void register(int chance, Item item) {
         registerItem(chance, item.getId(), item.getDamage());
     }
 
+    @PowerNukkitOnly
     public static int getChance(Item item) {
         int chance = compostableItems.get(item.getId() << 6 | item.getDamage());
         if (chance == 0) {

@@ -6,7 +6,6 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.ChunkSection;
-import lombok.RequiredArgsConstructor;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.DEPRECATED;
 import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
@@ -16,10 +15,15 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.PILLAR_AXIS;
  */
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-@RequiredArgsConstructor
 public class StemStrippedUpdater implements Updater {
     private final ChunkSection section;
     private final BlockProperties oldProperties = new BlockProperties(PILLAR_AXIS, DEPRECATED);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public StemStrippedUpdater(ChunkSection section) {
+        this.section = section;
+    }
 
     @Override
     public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {

@@ -24,12 +24,15 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 
 @PowerNukkitOnly
 public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityBeehive> {
-    public static final IntBlockProperty HONEY_LEVEL = new IntBlockProperty("honey_level", false, 5);
-    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, HONEY_LEVEL);
+    public @PowerNukkitOnly static final IntBlockProperty HONEY_LEVEL = new IntBlockProperty("honey_level", false, 5);
+    public @PowerNukkitOnly static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, HONEY_LEVEL);
+
+    @PowerNukkitOnly
     public BlockBeehive() {
         this(0);
     }
 
+    @PowerNukkitOnly
     protected BlockBeehive(int meta) {
         super(meta);
     }
@@ -142,18 +145,21 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntit
     public boolean canBeActivated() {
         return true;
     }
-    
+
+    @PowerNukkitOnly
     public void honeyCollected(Player player) {
         honeyCollected(player, level.getServer().getDifficulty() > 0 && !player.isCreative());
     }
-    
+
+    @PowerNukkitOnly
     public void honeyCollected(Player player, boolean angerBees) {
         setHoneyLevel(0);
         if (down().getId() != CAMPFIRE_BLOCK && angerBees) {
             angerBees(player);
         }
     }
-    
+
+    @PowerNukkitOnly
     public void angerBees(Player player) {
         BlockEntityBeehive beehive = getBlockEntity();
         if (beehive != null) {
@@ -225,18 +231,22 @@ public class BlockBeehive extends BlockSolidMeta implements Faceable, BlockEntit
         setPropertyValue(DIRECTION, face);
     }
 
+    @PowerNukkitOnly
     public void setHoneyLevel(int honeyLevel) {
         setPropertyValue(HONEY_LEVEL, honeyLevel);
     }
 
+    @PowerNukkitOnly
     public int getHoneyLevel() {
         return getPropertyValue(HONEY_LEVEL);
     }
 
+    @PowerNukkitOnly
     public boolean isEmpty() {
         return getHoneyLevel() == HONEY_LEVEL.getMinValue();
     }
 
+    @PowerNukkitOnly
     public boolean isFull() {
         return getPropertyValue(HONEY_LEVEL) == HONEY_LEVEL.getMaxValue();
     }

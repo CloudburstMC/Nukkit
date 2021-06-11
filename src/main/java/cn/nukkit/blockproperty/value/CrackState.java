@@ -26,7 +26,9 @@ public enum CrackState {
         }
     };
     private static final CrackState[] VALUES = values();
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nullable
     public CrackState getNext() {
         return VALUES[ordinal() + 1];

@@ -3,6 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -16,11 +18,19 @@ import cn.nukkit.utils.RedstoneComponent;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static cn.nukkit.block.BlockTripWire.ATTACHED;
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
+
 /**
  * @author CreeperFace
  */
 @PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
 public class BlockTripWireHook extends BlockTransparentMeta implements RedstoneComponent {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, ATTACHED, POWERED);
 
     public BlockTripWireHook() {
         this(0);
@@ -38,6 +48,14 @@ public class BlockTripWireHook extends BlockTransparentMeta implements RedstoneC
     @Override
     public int getId() {
         return TRIPWIRE_HOOK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     public BlockFace getFacing() {

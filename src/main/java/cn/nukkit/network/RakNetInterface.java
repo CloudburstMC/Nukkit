@@ -2,8 +2,6 @@ package cn.nukkit.network;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.api.PowerNukkitOnly;
-import cn.nukkit.api.Since;
 import cn.nukkit.event.player.PlayerCreationEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.network.protocol.BatchPacket;
@@ -350,8 +348,6 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             this.raknet.send(byteBuf);
         }
         
-        @PowerNukkitOnly
-        @Since("1.4.0.0-PN")
         private void sendPacketImmediately(DataPacket packet) {
             BinaryStream batched = new BinaryStream();
             Preconditions.checkArgument(!(packet instanceof BatchPacket), "Cannot batch BatchPacket");

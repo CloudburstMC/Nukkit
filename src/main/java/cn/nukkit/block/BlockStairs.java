@@ -21,12 +21,19 @@ import javax.annotation.Nullable;
  * @author MagicDroidX (Nukkit Project)
  */
 public abstract class BlockStairs extends BlockTransparentMeta implements Faceable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BooleanBlockProperty UPSIDE_DOWN = new BooleanBlockProperty("upside_down_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<BlockFace> STAIRS_DIRECTION = new ArrayBlockProperty<>("weirdo_direction", false, new BlockFace[]{
             BlockFace.EAST, BlockFace.WEST,
             BlockFace.SOUTH, BlockFace.NORTH
     }).ordinal(true);
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(STAIRS_DIRECTION, UPSIDE_DOWN);
     
 
@@ -147,7 +154,9 @@ public abstract class BlockStairs extends BlockTransparentMeta implements Faceab
     public int getWaterloggingLevel() {
         return 1;
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setUpsideDown(boolean upsideDown) {
         setBooleanValue(UPSIDE_DOWN, upsideDown);
     }

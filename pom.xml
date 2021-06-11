@@ -14,7 +14,7 @@
     Upstream is the NukkitX major version
     PN is a indicator that software is running PowerNukkit, it must be present both in releases and snapshot versions
     -->
-    <version>1.4.0.0-PN-SNAPSHOT</version>
+    <version>1.5.1.0-PN-SNAPSHOT</version>
 
     <inceptionYear>2020</inceptionYear>
     <organization>
@@ -130,7 +130,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>29.0-jre</version>
+            <version>30.1.1-jre</version>
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
@@ -148,7 +148,7 @@
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.16</version>
+            <version>1.28</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

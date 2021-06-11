@@ -6,10 +6,12 @@ import cn.nukkit.item.ItemBirchSign;
 
 @PowerNukkitOnly
 public class BlockBirchWallSign extends BlockWallSign {
+    @PowerNukkitOnly
     public BlockBirchWallSign() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockBirchWallSign(int meta) {
         super(meta);
     }

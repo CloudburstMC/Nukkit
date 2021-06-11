@@ -15,17 +15,23 @@ public class PlayerToggleSpinAttackEvent extends PlayerEvent implements Cancella
 
     private static final HandlerList handlers = new HandlerList();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static HandlerList getHandlers() {
         return handlers;
     }
 
     private final boolean isSpinAttacking;
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public PlayerToggleSpinAttackEvent(Player player, boolean isSpinAttacking) {
         this.player = player;
         this.isSpinAttacking = isSpinAttacking;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean isSpinAttacking() {
         return this.isSpinAttacking;
     }

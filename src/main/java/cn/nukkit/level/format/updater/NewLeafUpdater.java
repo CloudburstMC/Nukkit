@@ -1,17 +1,22 @@
 package cn.nukkit.level.format.updater;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.ChunkSection;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-@RequiredArgsConstructor
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class NewLeafUpdater implements Updater {
     private final ChunkSection section;
-    @Getter @Setter
     private boolean forceOldSystem;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public NewLeafUpdater(ChunkSection section) {
+        this.section = section;
+    }
 
     @Override
     public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
@@ -61,5 +66,17 @@ public class NewLeafUpdater implements Updater {
             }
         }
         return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isForceOldSystem() {
+        return this.forceOldSystem;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setForceOldSystem(boolean forceOldSystem) {
+        this.forceOldSystem = forceOldSystem;
     }
 }

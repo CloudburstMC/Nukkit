@@ -3,6 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
@@ -30,6 +33,14 @@ public class BlockRedstone extends BlockSolidMeta implements RedstoneComponent {
     @Override
     public int getId() {
         return REDSTONE_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return CommonBlockProperties.EMPTY_PROPERTIES;
     }
 
     @Override

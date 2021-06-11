@@ -232,7 +232,7 @@ public class Network {
         }
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public void processBatch(byte[] payload, Collection<DataPacket> packets) throws ProtocolException {
         byte[] data;
         try {
@@ -308,14 +308,14 @@ public class Network {
     }
 
     @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", 
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "Cloudburst Nukkit", 
             reason = "Changed the id to int without backward compatibility", 
             replaceWith = "getPacket(int id)")
     public DataPacket getPacket(byte id) {
         return getPacket((int) id);
     }
     
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public DataPacket getPacket(int id) {
         Class<? extends DataPacket> clazz = this.packetPool[id];
         if (clazz != null) {
@@ -469,5 +469,9 @@ public class Network {
         this.registerPacket(ProtocolInfo.UPDATE_PLAYER_GAME_TYPE_PACKET, UpdatePlayerGameTypePacket.class);
         this.registerPacket(ProtocolInfo.FILTER_TEXT_PACKET, FilterTextPacket.class);
         this.registerPacket(ProtocolInfo.ITEM_COMPONENT_PACKET, ItemComponentPacket.class);
+        this.registerPacket(ProtocolInfo.ADD_VOLUME_ENTITY, AddVolumeEntityPacket.class);
+        this.registerPacket(ProtocolInfo.REMOVE_VOLUME_ENTITY, RemoveVolumeEntityPacket.class);
+        this.registerPacket(ProtocolInfo.SYNC_ENTITY_PROPERTY, SyncEntityPropertyPacket.class);
+        this.registerPacket(ProtocolInfo.TICK_SYNC_PACKET, TickSyncPacket.class);
     }
 }

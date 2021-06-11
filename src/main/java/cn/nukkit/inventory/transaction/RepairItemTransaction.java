@@ -21,7 +21,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Since("1.3.2.0-PN")
+@Since("1.4.0.0-PN")
 public class RepairItemTransaction extends InventoryTransaction {
 
     private Item inputItem;
@@ -30,7 +30,7 @@ public class RepairItemTransaction extends InventoryTransaction {
 
     private int cost;
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public RepairItemTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
     }
@@ -372,27 +372,27 @@ public class RepairItemTransaction extends InventoryTransaction {
         return false;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public Item getInputItem() {
         return this.inputItem;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public Item getMaterialItem() {
         return this.materialItem;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public Item getOutputItem() {
         return this.outputItem;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getCost() {
         return this.cost;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static boolean checkForRepairItemPart(List<InventoryAction> actions) {
         for (InventoryAction action : actions) {
             if (action instanceof RepairItemAction) {

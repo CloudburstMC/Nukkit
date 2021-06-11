@@ -42,8 +42,8 @@ public class EmptyChunkSection implements ChunkSection {
         Arrays.fill(EMPTY_SKY_LIGHT_ARR, (byte) 255);
     }
     
-    public static final byte[] EMPTY_ID_ARRAY = new byte[4096];
-    public static final byte[] EMPTY_DATA_ARRAY = EMPTY_2KB;
+    @Since("1.4.0.0-PN") @PowerNukkitOnly public static final byte[] EMPTY_ID_ARRAY = new byte[4096];
+    @Since("1.4.0.0-PN") @PowerNukkitOnly public static final byte[] EMPTY_DATA_ARRAY = EMPTY_2KB;
     private static final byte[] EMPTY_CHUNK_DATA;
     static {
         BinaryStream stream = new BinaryStream();

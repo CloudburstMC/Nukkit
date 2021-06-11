@@ -39,6 +39,7 @@ public class BlockVinesTwisting extends BlockVinesNether {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockVinesTwisting() {
+        // Does nothing
     }
 
     /**

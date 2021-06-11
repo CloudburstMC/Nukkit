@@ -44,7 +44,7 @@ public class BlockStates {
             //noinspection UnstableApiUsage
             byte[] bytes = ByteStreams.toByteArray(stream);
             //noinspection unchecked
-            tag = (ListTag<CompoundTag>) NBTIO.readTag(new ByteArrayInputStream(bytes), ByteOrder.LITTLE_ENDIAN, false);
+            tag = (ListTag<CompoundTag>) NBTIO.readTag(new ByteArrayInputStream(bytes), ByteOrder.BIG_ENDIAN, false);
             
             Map<CompoundTag, CompoundTag> fullMap = new LinkedHashMap<>();
             
