@@ -1,7 +1,6 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
-import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
@@ -9,8 +8,10 @@ import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.blockproperty.exception.BlockPropertyNotFoundException;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.blockstate.BlockStateRegistry;
-import cn.nukkit.item.*;
-import cn.nukkit.network.protocol.BatchPacket;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
+import cn.nukkit.item.RuntimeItemMapping;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.utils.BinaryStream;
@@ -38,11 +39,8 @@ public class CraftingManager {
 
     public final Collection<Recipe> recipes = new ArrayDeque<>();
 
-    @Deprecated
-    @DeprecationDetails(since = "1.4.0.0-PN", by = "Cloudburst Nukkit", reason = "Field signature change from BatchPacket to DataPacket",
-        replaceWith = "getCraftingPacket() to be safer", toBeRemovedAt = "1.5.0.0-PN")
-    public static BatchPacket packet = null;
-    private static DataPacket packet0 = null;
+    @Since("1.5.0.0-PN")
+    public static DataPacket packet = null;
     
     
     protected final Map<Integer, Map<UUID, ShapedRecipe>> shapedRecipes = new Int2ObjectOpenHashMap<>();
@@ -79,7 +77,7 @@ public class CraftingManager {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static DataPacket getCraftingPacket() {
-        return packet0;
+        return packet;
     }
 
     public CraftingManager() {
@@ -433,7 +431,6 @@ public class CraftingManager {
         pk.tryEncode();
         // TODO: find out whats wrong with compression
         packet = pk.compress(Deflater.BEST_COMPRESSION);
-        packet0 = pk;
     }
 
     public Collection<Recipe> getRecipes() {

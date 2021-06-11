@@ -30,6 +30,7 @@ This version works with Minecraft `1.16.221`!
 - `BlockMeta`, `BlockSolidMeta`, and `BlockFallableMeta` now have `getProperties` abstract.
 - `CommonBlockProperties.LEGACY_PROPERTY_NAME`, `LEGACY_PROPERTIES`, and `LEGACY_BIG_PROPERTIES` were removed.
 - `MinecraftItemID.DEBUG_STICK` was removed.
+- All deprecated stuff marked to be removed at this version was removed. Except `AnvilDamageEvent.getDamage()`.
 
 ### Deprecated
 - This is a reminder that numeric block meta are deprecated. Use the specifc block API to make modifications. Come to Discord if you have questions.
