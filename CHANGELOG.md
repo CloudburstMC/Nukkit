@@ -9,6 +9,9 @@ Nukkit 1.X and 2.X.
 ## [Unreleased 1.5.0.1-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
 Click the link above to see the future.
 
+### Fixes
+- [#1119] `TickSyncPacket` was not registered 
+
 ## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
 This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
 
@@ -837,3 +840,4 @@ Fixes several anvil issues.
 [#959]: https://github.com/PowerNukkit/PowerNukkit/issues/959
 [#960]: https://github.com/PowerNukkit/PowerNukkit/issues/960
 [#990]: https://github.com/PowerNukkit/PowerNukkit/issues/990
+[#1119]: https://github.com/PowerNukkit/PowerNukkit/issues/1119
