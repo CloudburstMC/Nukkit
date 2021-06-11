@@ -216,7 +216,23 @@ public class BlockStateRegistry {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public int getRuntimeId(BlockState state) {
-        return getRegistration(state).runtimeId;
+        return getRegistration(convertToNewState(state)).runtimeId;
+    }
+
+    private BlockState convertToNewState(BlockState oldState) {
+        int exactInt;
+        switch (oldState.getBlockId()) {
+            // Check OldWoodBarkUpdater.java and https://minecraft.fandom.com/wiki/Log#Metadata
+            // The Only bark variant is replaced in the client side to minecraft:wood with the same wood type
+            case BlockID.LOG:
+            case BlockID.LOG2:
+                if (oldState.getBitSize() == 4 && ((exactInt = oldState.getExactIntStorage()) & 0b1100) == 0b1100) {
+                    int increment = oldState.getBlockId() == BlockID.LOG? 0b000 : 0b100;
+                    return BlockState.of(BlockID.WOOD_BARK, (exactInt & 0b11) + increment);
+                }
+                break;
+        }
+        return oldState;
     }
 
     private Registration getRegistration(BlockState state) {

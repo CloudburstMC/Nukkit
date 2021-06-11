@@ -1,6 +1,7 @@
 package cn.nukkit.blockstate;
 
 import cn.nukkit.block.*;
+import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.test.LogLevelAdjuster;
@@ -33,6 +34,16 @@ class IBlockStateTest {
     @AfterAll
     static void afterAll() {
         logLevelAdjuster.restoreLevels();
+    }
+
+    @Test
+    void githubIssue1122() {
+        BlockState state = BlockState.of(17, 13);
+        assertEquals(BlockState.of(WOOD_BARK).withProperty(WoodType.PROPERTY, WoodType.SPRUCE).getRuntimeId(),
+                state.getRuntimeId());
+
+        Block bark = state.getBlock();
+        assertEquals(BlockWoodBark.class, bark.getClass());
     }
 
     @Test

@@ -1939,6 +1939,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         getMutableState().setState(state);
     }
 
+    @Since("FUTURE")
+    @PowerNukkitOnly
+    @Override
+    @Nonnull
+    public Block forState(@Nonnull IBlockState state) throws InvalidBlockStateException {
+        return (Block) IMutableBlockState.super.forState(state);
+    }
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
