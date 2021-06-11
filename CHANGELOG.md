@@ -19,6 +19,7 @@ Click the link above to see the future.
 - [#1122] Backward compatibility with plugins setting full bark logs with 17:13
 - [#1132] You don't dismount the vehicle when you teleport, causing you to glitch
 - [#1103] The output message of the `/enchant` command
+- [#1100] Abrupt Time Change
 
 ## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
 This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
@@ -848,6 +849,7 @@ Fixes several anvil issues.
 [#959]: https://github.com/PowerNukkit/PowerNukkit/issues/959
 [#960]: https://github.com/PowerNukkit/PowerNukkit/issues/960
 [#990]: https://github.com/PowerNukkit/PowerNukkit/issues/990
+[#1100]: https://github.com/PowerNukkit/PowerNukkit/issues/1100
 [#1103]: https://github.com/PowerNukkit/PowerNukkit/issues/1103
 [#1107]: https://github.com/PowerNukkit/PowerNukkit/issues/1107
 [#1119]: https://github.com/PowerNukkit/PowerNukkit/issues/1119
