@@ -1,6 +1,7 @@
 package cn.nukkit.blockstate;
 
 import cn.nukkit.block.*;
+import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.test.LogLevelAdjuster;
@@ -33,6 +34,16 @@ class IBlockStateTest {
     @AfterAll
     static void afterAll() {
         logLevelAdjuster.restoreLevels();
+    }
+
+    @Test
+    void githubIssue1122() {
+        BlockState state = BlockState.of(17, 13);
+        assertEquals(BlockState.of(WOOD_BARK).withProperty(WoodType.PROPERTY, WoodType.SPRUCE).getRuntimeId(),
+                state.getRuntimeId());
+
+        Block bark = state.getBlock();
+        assertEquals(BlockWoodBark.class, bark.getClass());
     }
 
     @Test
@@ -71,14 +82,14 @@ class IBlockStateTest {
         Block block = Block.get(CRIMSON_PLANKS);
         assertEquals("minecraft:crimson_planks", block.getStateId());
 
-        int fakeId = Block.MAX_BLOCK_ID - 1;
+        /*int fakeId = Block.MAX_BLOCK_ID - 1;
         Block fake = Block.get(fakeId);
         assertThat(fake).isInstanceOf(BlockUnknown.class);
-        assertEquals("blockid:"+ fakeId +";nukkit-legacy=0", fake.getStateId());
+        assertEquals("blockid:"+ fakeId +";nukkit-unknown=0", fake.getStateId());
         
         assertEquals("blockid:"+fakeId, BlockStateRegistry.getPersistenceName(fakeId));
         assertEquals("blockid:10000", BlockStateRegistry.getPersistenceName(10_000));
-        assertEquals(80000, BlockStateRegistry.getBlockId("blockid:80000"));
+        assertEquals(80000, BlockStateRegistry.getBlockId("blockid:80000"));*/
     }
     
     @Test

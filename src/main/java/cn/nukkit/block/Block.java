@@ -1144,12 +1144,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockProperties getProperties() {
-        int id = getId();
-        if (id >= 0 && id < hasMeta.length && !hasMeta[id]) {
-            return CommonBlockProperties.EMPTY_PROPERTIES;
-        } else {
-            return CommonBlockProperties.LEGACY_PROPERTIES;
-        }
+        return CommonBlockProperties.EMPTY_PROPERTIES;
     }
     
     @PowerNukkitOnly
@@ -1942,6 +1937,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             return;
         }
         getMutableState().setState(state);
+    }
+
+    @Since("FUTURE")
+    @PowerNukkitOnly
+    @Override
+    @Nonnull
+    public Block forState(@Nonnull IBlockState state) throws InvalidBlockStateException {
+        return (Block) IMutableBlockState.super.forState(state);
     }
 
     @PowerNukkitOnly

@@ -47,7 +47,7 @@ public class BlockTurtleEgg extends BlockFlowable {
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public static final ArrayBlockProperty<CrackState> CRACK_STATE = new ArrayBlockProperty<>("crack_state", false, CrackState.class);
+    public static final ArrayBlockProperty<CrackState> CRACK_STATE = new ArrayBlockProperty<>("cracked_state", false, CrackState.class);
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")

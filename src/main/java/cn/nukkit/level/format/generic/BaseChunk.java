@@ -35,13 +35,6 @@ import java.util.stream.Stream;
  */
 @Log4j2
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
-    @PowerNukkitOnly("Needed for level backward compatibility")
-    @Since("1.3.0.0-PN")
-    @Deprecated
-    @DeprecationDetails(reason = "It's not a constant value and was moved to ChunkUpdater", replaceWith = "ChunkUpdater.getContentVersion()", 
-            toBeRemovedAt = "1.5.0.0-PN", since = "1.4.0.0-PN")
-    public static final int CONTENT_VERSION = ChunkUpdater.getCurrentContentVersion();
-    
     private boolean delayPaletteUpdates;
 
     protected ChunkSection[] sections;

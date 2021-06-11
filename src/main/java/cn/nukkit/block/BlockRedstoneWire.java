@@ -2,6 +2,10 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.redstone.RedstoneUpdateEvent;
 import cn.nukkit.item.Item;
@@ -25,6 +29,10 @@ import java.util.Set;
 @PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
 public class BlockRedstoneWire extends BlockFlowable implements RedstoneComponent {
 
+    @Since("1.5.0.0-PN")
+    @PowerNukkitOnly
+    public static final BlockProperties PROPERTIES = CommonBlockProperties.REDSTONE_SIGNAL_BLOCK_PROPERTY;
+
     private boolean canProvidePower = true;
     private final Set<Vector3> blocksNeedingUpdate = new HashSet<>();
 
@@ -44,6 +52,14 @@ public class BlockRedstoneWire extends BlockFlowable implements RedstoneComponen
     @Override
     public int getId() {
         return REDSTONE_WIRE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Removed unneeded replaceable check")

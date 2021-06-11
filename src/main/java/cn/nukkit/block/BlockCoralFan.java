@@ -2,6 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -13,8 +16,20 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.block.BlockCoral.COLOR;
+
 @PowerNukkitOnly
 public class BlockCoralFan extends BlockFlowable implements Faceable {
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final ArrayBlockProperty<BlockFace.Axis> FAN_DIRECTION = new ArrayBlockProperty<>("coral_fan_direction", false,
+            new BlockFace.Axis[]{BlockFace.Axis.X, BlockFace.Axis.Z}
+    ).ordinal(true);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(COLOR, FAN_DIRECTION);
+
     @PowerNukkitOnly
     public BlockCoralFan() {
         this(0);
@@ -29,7 +44,15 @@ public class BlockCoralFan extends BlockFlowable implements Faceable {
     public int getId() {
         return CORAL_FAN;
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
     @Override
     public String getName() {
         String[] names = new String[] {

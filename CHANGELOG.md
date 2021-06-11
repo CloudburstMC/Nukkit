@@ -6,14 +6,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version, so we have a better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
+## [Unreleased 1.5.0.1-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
 Click the link above to see the future.
+
+## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
+This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
+
+The new changes will be implemented in `1.5.1.0-PN` and onwards.
+
+This version works with Minecraft `1.16.221`!
+
+### Breaking change!
+***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!***
+
+- `BlockWall.WallType.END_STONE_BRICK` was renamed to `END_BRICK` to match the property
+- Custom blocks now have to implement `Block.getProperties()` if they need to have custom meta.
+- `BlockCauldron.getFillLevel()` and it's setter now range from 0 to 6. Glass bottle remove/add 2 levels instead of one now.
+- The creative inventory file format has changed
+- The recipes file format has changed
+- `BellAttachmentType` was renamed to `AttachmentType`
+- `BlockBell.getBellAttachmentType` and `BlockBell.setBellAttachmentType` were renamed to `get/setAttachment`.
+- `DoublePlantType` enum had the entries changed to match the property values.
+- `BlockMeta`, `BlockSolidMeta`, and `BlockFallableMeta` now have `getProperties` abstract.
+- `CommonBlockProperties.LEGACY_PROPERTY_NAME`, `LEGACY_PROPERTIES`, and `LEGACY_BIG_PROPERTIES` were removed.
+- `MinecraftItemID.DEBUG_STICK` was removed.
+- All deprecated stuff marked to be removed at this version was removed. Except `AnvilDamageEvent.getDamage()`.
+
+### Deprecated
+- This is a reminder that numeric block meta are deprecated. Use the specifc block API to make modifications. Come to Discord if you have questions.
+- A lot of duplicated BlockIDs are being deprecated, follow the `replaceBy` instructions to use the right ones.
+
+### Changed
+- All blocks are now using the new block state system.
+- We are no longer using `runtime_block_states.dat` and `runtime+block_states_overrides.dat`, we are now using `canonical_block_states.nbt` from [pmmp/BedrockData](https://github.com/pmmp/BedrockData)
+- `BlockProperties.requireRegisteredProperty` now throws `BlockPropertyNotFoundException` instead of `NoSuchElementException` when the prop is not found.
+- Some `Entity` magic values have changed
+- Game rules now have a flag to determine if it can be changed.
+
+#### Added
+- Event to handle player fishing by plugins. `PlayerFishEvent`.
+- 3 new packets: `AddVolumeEntityPacket`, `RemoveVolumeEntityPacket`, and `SyncEntityPropertyPacket`
+
+### Fixes
+- Issues with crafting recipes involving charcoal and dyes and ink_sac related items
+
+## [1.4.0.0-PN] - 2021-05-31 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
+It's finally here! A stable version of the Nether update! Supporting almost all blocks and items!
+
+It works with Minecraft `1.16.221`!
 
 ### Breaking change!
 ***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!***
 
 - Many `final` constants are no longer constants, they are now marked with `dynamic` due to constant changes on updates
 - The size of the block data bits changed back from `6` to `4` to fix backward compatibility with Nukkit plugins
+- New chunk content versioning! Don't keep changing versions back and forth, or you will end up with having some odd block states!
 
 ### Deprecated
 - All usage of the numeric block damage system is now deprecated, new code should use the new block state system
@@ -634,7 +681,9 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
 [discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.5-PN...bleeding
+[Unreleased 1.5.0.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.5.0.0-PN...bleeding
+[1.5.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.4.0.0-PN...v1.5.0.0-PN
+[1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.5-PN...v1.4.0.0-PN
 [1.3.1.5-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.4-PN...v1.3.1.5-PN
 [1.3.1.4-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.3-PN...v1.3.1.4-PN
 [1.3.1.3-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.2-PN...v1.3.1.3-PN
