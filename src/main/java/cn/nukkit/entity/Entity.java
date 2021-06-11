@@ -2272,10 +2272,12 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void respawnToAll() {
-        for (Player player : this.hasSpawned.values()) {
+        Collection<Player> players = new ArrayList<>(this.hasSpawned.values());
+        this.hasSpawned.clear();
+
+        for (Player player : players) {
             this.spawnTo(player);
         }
-        this.hasSpawned.clear();
     }
 
     public void spawnToAll() {
