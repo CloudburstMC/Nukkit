@@ -15,6 +15,10 @@ import javax.annotation.Nonnull;
  */
 public class BlockGlassPaneStained extends BlockGlassPane {
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = CommonBlockProperties.COLOR_BLOCK_PROPERTIES;
+
     public BlockGlassPaneStained() {
         // Does nothing
     }
@@ -30,7 +34,7 @@ public class BlockGlassPaneStained extends BlockGlassPane {
     @Nonnull
     @Override
     public BlockProperties getProperties() {
-        return CommonBlockProperties.LEGACY_PROPERTIES;
+        return PROPERTIES;
     }
 
     @Override

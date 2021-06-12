@@ -1,6 +1,8 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -126,7 +128,7 @@ public class EntityXPOrb extends Entity {
                 if (this.pickupDelay < 0) {
                     this.pickupDelay = 0;
                 }
-            } else {
+            }/* else { // Done in Player#checkNearEntities
                 for (Entity entity : this.level.getCollidingEntities(this.boundingBox, this)) {
                     if (entity instanceof Player) {
                         if (((Player) entity).pickupEntity(this, false)) {
@@ -134,7 +136,7 @@ public class EntityXPOrb extends Entity {
                         }
                     }
                 }
-            }
+            }*/
 
             this.motionY -= this.getGravity();
 
@@ -143,15 +145,20 @@ public class EntityXPOrb extends Entity {
             }
 
             if (this.closestPlayer == null || this.closestPlayer.distanceSquared(this) > 64.0D) {
-                for (Player p : level.getPlayers().values()) {
-                    if (!p.isSpectator() && p.distance(this) <= 8) {
-                        this.closestPlayer = p;
-                        break;
+                this.closestPlayer = null;
+                double closestDistance = 0.0D;
+                for (Player p : this.getViewers().values()) {
+                    if (!p.isSpectator() && p.spawned && p.isAlive()) {
+                        double d = p.distanceSquared(this);
+                        if (d <= 64.0D && (this.closestPlayer == null || d < closestDistance)) {
+                            this.closestPlayer = p;
+                            closestDistance = d;
+                        }
                     }
                 }
             }
 
-            if (this.closestPlayer != null && this.closestPlayer.isSpectator()) {
+            if (this.closestPlayer != null && (this.closestPlayer.isSpectator() || !this.closestPlayer.spawned || !this.closestPlayer.isAlive())) {
                 this.closestPlayer = null;
             }
 
@@ -258,5 +265,11 @@ public class EntityXPOrb extends Entity {
         }
 
         return result;
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "Experience Orb";
     }
 }

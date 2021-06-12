@@ -1,13 +1,17 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
 
+@PowerNukkitOnly
 public class BlockCoralFanDead extends BlockCoralFan {
+    @PowerNukkitOnly
     public BlockCoralFanDead() {
         this(0);
     }
-    
+
+    @PowerNukkitOnly
     public BlockCoralFanDead(int meta) {
         super(meta);
     }

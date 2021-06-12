@@ -1,7 +1,6 @@
 package cn.nukkit.level.format.anvil;
 
 import cn.nukkit.Player;
-import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.Entity;
@@ -16,6 +15,7 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.BlockUpdateEntry;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.Zlib;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
@@ -28,6 +28,7 @@ import java.util.*;
 /**
  * @author MagicDroidX (Nukkit Project)
  */
+@Log4j2
 public class Chunk extends BaseChunk {
 
     protected long inhabitedTime;
@@ -235,7 +236,7 @@ public class Chunk extends BaseChunk {
 
             return new Chunk(provider, chunk.getCompound("Level"));
         } catch (Exception e) {
-            Server.getInstance().getLogger().logException(e);
+            log.error("An error has occurred while parsing a chunk from {}", provider.getName(), e);
             return null;
         }
     }

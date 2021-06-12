@@ -6,10 +6,12 @@ import cn.nukkit.item.ItemSpruceSign;
 
 @PowerNukkitOnly
 public class BlockSpruceWallSign extends BlockWallSign {
+    @PowerNukkitOnly
     public BlockSpruceWallSign() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockSpruceWallSign(int meta) {
         super(meta);
     }

@@ -26,6 +26,7 @@ import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
@@ -43,6 +44,29 @@ public abstract class BlockCropsStem extends BlockCrops implements Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(GROWTH, FACING_DIRECTION);
+
+    //https://minecraft.gamepedia.com/Melon_Seeds#Breaking
+    private static final double[][] dropChances = new double[][]{
+            {.8130,.1742,.0124,.0003}, //0
+            {.6510,.3004,.0462,.0024}, //1
+            {.5120,.3840,.0960,.0080}, //2
+            {.3944,.4302,.1564,.0190}, //3
+            {.2913,.4444,.2222,.0370}, //4
+            {.2160,.4320,.2880,.0640}, //5
+            {.1517,.3982,.3484,.1016}, //6
+            {.1016,.3484,.3982,.1517}  //7
+    };
+    
+    static {
+        for (double[] dropChance : dropChances) {
+            double last = dropChance[0];
+            for (int i = 1; i < dropChance.length; i++) {
+                last += dropChance[i];
+                assert last <= 1.0;
+                dropChance[i] = last;
+            }
+        }
+    }
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -76,18 +100,6 @@ public abstract class BlockCropsStem extends BlockCrops implements Faceable {
     @Override
     public void setBlockFace(BlockFace face) {
         setPropertyValue(FACING_DIRECTION, face);
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public int getGrowth() {
-        return getIntValue(GROWTH);
-    }
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public void setGrowth(int growth) {
-        setIntValue(GROWTH, growth);
     }
 
     @Override
@@ -164,8 +176,20 @@ public abstract class BlockCropsStem extends BlockCrops implements Faceable {
 
     @Override
     public Item[] getDrops(Item item) {
+        double[] dropChance = dropChances[NukkitMath.clamp(getGrowth(), 0, dropChances.length)];
+        
+        double dice = ThreadLocalRandom.current().nextDouble();
+        int count = 0;
+        while (dice > dropChance[count]) {
+            count++;
+        }
+        
+        if (count == 0) {
+            return Item.EMPTY_ARRAY;
+        }
+        
         return new Item[]{
-                Item.get(getSeedsId(), 0, ThreadLocalRandom.current().nextInt(4))
+                Item.get(getSeedsId(), 0, count)
         };
     }
 

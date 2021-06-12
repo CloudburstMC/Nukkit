@@ -1,6 +1,7 @@
 package cn.nukkit.item;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.utils.BinaryStream;
 import com.google.gson.Gson;
@@ -12,6 +13,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,8 +24,11 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-@Since("1.3.2.0-PN")
+import static com.google.common.base.Verify.verify;
+
+@Since("1.4.0.0-PN")
 @UtilityClass
+@Log4j2
 public class RuntimeItems {
 
     private static final Gson GSON = new Gson();
@@ -32,7 +37,7 @@ public class RuntimeItems {
     private static final RuntimeItemMapping itemPalette;
 
     static {
-        Server.getInstance().getLogger().debug("Loading runtime items...");
+        log.debug("Loading runtime items...");
         InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_item_ids.json");
         if (stream == null) {
             throw new AssertionError("Unable to load runtime_item_ids.json");
@@ -49,7 +54,7 @@ public class RuntimeItems {
         Map<String, Integer> namespaceNetworkMap = new LinkedHashMap<>();
         Int2ObjectMap<String> networkNamespaceMap = new Int2ObjectOpenHashMap<>();
         for (Entry entry : entries) {
-            paletteBuffer.putString(entry.name);
+            paletteBuffer.putString(entry.name.replace("minecraft:", ""));
             paletteBuffer.putLShort(entry.id);
             paletteBuffer.putBoolean(false); // Component item
             namespaceNetworkMap.put(entry.name, entry.id);
@@ -57,8 +62,14 @@ public class RuntimeItems {
             if (entry.oldId != null) {
                 boolean hasData = entry.oldData != null;
                 int fullId = getFullId(entry.oldId, hasData ? entry.oldData : 0);
-                legacyNetworkMap.put(fullId, (entry.id << 1) | (hasData ? 1 : 0));
-                networkLegacyMap.put(entry.id, fullId | (hasData ? 1 : 0));
+                if (entry.deprecated != Boolean.TRUE) {
+                    verify(legacyNetworkMap.put(fullId, (entry.id << 1) | (hasData ? 1 : 0)) == 0,
+                            "Conflict while registering an item runtime id!"
+                    );
+                }
+                verify(networkLegacyMap.put(entry.id, fullId | (hasData ? 1 : 0)) == 0,
+                        "Conflict while registering an item runtime id!"
+                );
             }
         }
 
@@ -67,32 +78,32 @@ public class RuntimeItems {
                 namespaceNetworkMap, networkNamespaceMap);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static RuntimeItemMapping getRuntimeMapping() {
         return itemPalette;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int getId(int fullId) {
         return (short) (fullId >> 16);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int getData(int fullId) {
         return ((fullId >> 1) & 0x7fff);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int getFullId(int id, int data) {
         return (((short) id) << 16) | ((data & 0x7fff) << 1);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static int getNetworkId(int networkFullId) {
         return networkFullId >> 1;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static boolean hasData(int id) {
         return (id & 0x1) != 0;
     }
@@ -104,5 +115,8 @@ public class RuntimeItems {
         int id;
         Integer oldId;
         Integer oldData;
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
+        Boolean deprecated;
     }
 }

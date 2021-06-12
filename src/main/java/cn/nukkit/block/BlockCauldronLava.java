@@ -22,10 +22,12 @@ import javax.annotation.Nonnull;
 
 @PowerNukkitOnly
 public class BlockCauldronLava extends BlockCauldron {
+    @PowerNukkitOnly
     public BlockCauldronLava() {
         this(0x8);
     }
-    
+
+    @PowerNukkitOnly
     public BlockCauldronLava(int meta) {
         super(meta);
     }
@@ -53,11 +55,6 @@ public class BlockCauldronLava extends BlockCauldron {
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
         return shrink(0.3, 0.3, 0.3);
-    }
-    
-    @Override
-    public boolean isEmpty() {
-        return (getDamage() & 0x7) == 0;
     }
     
     @Override
@@ -108,7 +105,7 @@ public class BlockCauldronLava extends BlockCauldron {
                     this.level.getServer().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         replaceBucket(bucket, player, ev.getItem());
-                        this.setFillLevel(0);//empty
+                        this.setFillLevel(FILL_LEVEL.getMinValue());//empty
                         this.level.setBlock(this, new BlockCauldron(0), true);
                         cauldron.clearCustomColor();
                         this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.BUCKET_FILL_LAVA);
@@ -126,7 +123,7 @@ public class BlockCauldronLava extends BlockCauldron {
                         if (cauldron.hasPotion()) {//if has potion
                             clearWithFizz(cauldron);
                         } else if (bucket.isLava()) { //lava bucket
-                            this.setFillLevel(5);//fill
+                            this.setFillLevel(FILL_LEVEL.getMaxValue());//fill
                             cauldron.clearCustomColor();
                             this.level.setBlock(this, this, true);
                             this.getLevel().addSound(this.add(0.5, 1, 0.5), Sound.BUCKET_EMPTY_LAVA);

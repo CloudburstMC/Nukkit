@@ -36,7 +36,7 @@ public class EntityCreeper extends EntityMob {
 
     @Override
     public float getHeight() {
-        return 1.7f;
+        return 1.8f;
     }
 
     public EntityCreeper(FullChunk chunk, CompoundTag nbt) {

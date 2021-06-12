@@ -47,6 +47,7 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
+import cn.nukkit.metrics.NukkitMetrics;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
@@ -250,6 +251,8 @@ public class Server {
     private boolean allowNether;
 
     private final Thread currentThread;
+    
+    private final long launchTime;
 
     private Watchdog watchdog;
 
@@ -276,9 +279,11 @@ public class Server {
             throw new IOException("Failed to delete " + tempDir);
         }
         instance = this;
-        CraftingManager.packet = new BatchPacket();
-        CraftingManager.packet.payload = EmptyArrays.EMPTY_BYTES;
-        
+        launchTime = System.currentTimeMillis();
+        BatchPacket batchPacket = new BatchPacket();
+        batchPacket.payload = EmptyArrays.EMPTY_BYTES;
+        CraftingManager.packet = batchPacket;
+
         currentThread = Thread.currentThread();
         File abs = tempDir.getAbsoluteFile();
         filePath = abs.getPath();
@@ -311,6 +316,7 @@ public class Server {
 
     Server(final String filePath, String dataPath, String pluginPath, String predefinedLanguage) {
         Preconditions.checkState(instance == null, "Already initialized!");
+        launchTime = System.currentTimeMillis();
         currentThread = Thread.currentThread(); // Saves the current thread instance as a reference, used in Server#isPrimaryThread()
         instance = this;
 
@@ -339,7 +345,7 @@ public class Server {
         //todo: VersionString 现在不必要
 
         if (!new File(this.dataPath + "nukkit.yml").exists()) {
-            this.getLogger().info(TextFormat.GREEN + "Welcome! Please choose a language first!");
+            log.info(TextFormat.GREEN + "Welcome! Please choose a language first!");
             String languagesCommaList;
             try {
                 InputStream languageList = this.getClass().getClassLoader().getResourceAsStream("lang/language.list");
@@ -348,7 +354,7 @@ public class Server {
                 }
                 String[] lines = Utils.readFile(languageList).split("\n");
                 for (String line : lines) {
-                    this.getLogger().info(line);
+                    log.info(line);
                 }
                 languagesCommaList = Stream.of(lines)
                         .filter(line-> !line.isEmpty())
@@ -363,7 +369,7 @@ public class Server {
             while (language == null) {
                 String lang;
                 if (predefinedLanguage != null) {
-                    log.info("Trying to load language from predefined language: " + predefinedLanguage);
+                    log.info("Trying to load language from predefined language: {}", predefinedLanguage);
                     lang = predefinedLanguage;
                 } else {
                     lang = this.console.readLine();
@@ -373,7 +379,7 @@ public class Server {
                 if (conf != null) {
                     language = lang;
                 } else if(predefinedLanguage != null) {
-                    log.warn("No language found for predefined language: " + predefinedLanguage + ", please choose a valid language");
+                    log.warn("No language found for predefined language: {}, please choose a valid language", predefinedLanguage);
                     predefinedLanguage = null;
                 }
             }
@@ -537,6 +543,7 @@ public class Server {
                 put("auto-save", true);
                 put("force-resources", false);
                 put("xbox-auth", true);
+                put("disable-auto-bug-report", false);
             }
         });
 
@@ -626,6 +633,9 @@ public class Server {
         this.consoleSender = new ConsoleCommandSender();
         this.commandMap = new SimpleCommandMap(this);
 
+        // Initialize metrics
+        NukkitMetrics.startNow(this);
+
         this.registerEntities();
         this.registerBlockEntities();
 
@@ -663,11 +673,11 @@ public class Server {
         this.network.registerInterface(new RakNetInterface(this));
         
         try {
-            getLogger().debug("Loading position tracking service");
+            log.debug("Loading position tracking service");
             this.positionTrackingService = new PositionTrackingService(new File(Nukkit.DATA_PATH, "services/position_tracking_db"));
             //getScheduler().scheduleRepeatingTask(null, positionTrackingService::forceRecheckAllPlayers, 20 * 5);
         } catch (IOException e) {
-            getLogger().emergency("Failed to start the Position Tracking DB service!", e);
+            log.fatal("Failed to start the Position Tracking DB service!", e);
         }
         
         this.pluginManager.loadPowerNukkitPlugins();
@@ -694,7 +704,7 @@ public class Server {
                     } catch (Exception e2) {
                         seed = System.currentTimeMillis();
                         e2.addSuppressed(e);
-                        log.warn("Failed to load the world seed for \""+name+"\". Generating a random seed", e2);
+                        log.warn("Failed to load the world seed for \"{}\". Generating a random seed", name, e2);
                     }
                 }
 
@@ -718,7 +728,7 @@ public class Server {
         if (this.getDefaultLevel() == null) {
             String defaultName = this.getPropertyString("level-name", "world");
             if (defaultName == null || defaultName.trim().isEmpty()) {
-                this.getLogger().warning("level-name cannot be null, using default");
+                log.warn("level-name cannot be null, using default");
                 defaultName = "world";
                 this.setPropertyString("level-name", defaultName);
             }
@@ -740,7 +750,7 @@ public class Server {
         this.properties.save(true);
 
         if (this.getDefaultLevel() == null) {
-            this.getLogger().emergency(this.getLanguage().translateString("nukkit.level.defaultError"));
+            log.fatal(this.getLanguage().translateString("nukkit.level.defaultError"));
             this.forceShutdown();
 
             return;
@@ -847,14 +857,14 @@ public class Server {
         }
     }
 
-    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit", 
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "Cloudburst Nukkit", 
             reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
     @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets) {
         this.batchPackets(players, packets, false);
     }
 
-    @DeprecationDetails(since = "1.3.2.0-PN", by = "Cloudburst Nukkit",
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "Cloudburst Nukkit",
             reason = "Packet management was refactored, batching is done automatically near the RakNet layer")
     @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
@@ -873,7 +883,7 @@ public class Server {
         for (int i = 0; i < packets.length; i++) {
             DataPacket p = packets[i];
             int idx = i * 2;
-            if (!p.isEncoded) p.encode();
+            p.tryEncode();
             byte[] buf = p.getBuffer();
             payload[idx] = Binary.writeUnsignedVarInt(buf.length);
             payload[idx + 1] = buf;
@@ -935,8 +945,8 @@ public class Server {
     public boolean dispatchCommand(CommandSender sender, String commandLine) throws ServerException {
         // First we need to check if this command is on the main thread or not, if not, warn the user
         if (!this.isPrimaryThread()) {
-            getLogger().warning("Command Dispatched Async: " + commandLine);
-            getLogger().warning("Please notify author of plugin causing this execution to fix this bug!", new Throwable());
+            log.warn("Command Dispatched Async: {}\nPlease notify author of plugin causing this execution to fix this bug!", commandLine, 
+                    new ConcurrentModificationException("Command Dispatched Async: "+commandLine));
 
             this.scheduler.scheduleTask(null, () -> dispatchCommand(sender, commandLine));
             return true;
@@ -1026,30 +1036,30 @@ public class Server {
                 player.close(player.getLeaveMessage(), this.getConfig("settings.shutdown-message", "Server closed"));
             }
 
-            this.getLogger().debug("Disabling all plugins");
+            log.debug("Disabling all plugins");
             this.pluginManager.disablePlugins();
 
-            this.getLogger().debug("Removing event handlers");
+            log.debug("Removing event handlers");
             HandlerList.unregisterAll();
 
-            this.getLogger().debug("Stopping all tasks");
+            log.debug("Stopping all tasks");
             this.scheduler.cancelAllTasks();
             this.scheduler.mainThreadHeartbeat(Integer.MAX_VALUE);
 
-            this.getLogger().debug("Unloading all levels");
+            log.debug("Unloading all levels");
             for (Level level : this.levelArray) {
                 this.unloadLevel(level, true);
             }
 
             if (positionTrackingService != null) {
-                this.getLogger().debug("Closing position tracking service");
+                log.debug("Closing position tracking service");
                 positionTrackingService.close();
             }
 
-            this.getLogger().debug("Closing console");
+            log.debug("Closing console");
             this.consoleThread.interrupt();
 
-            this.getLogger().debug("Stopping network interfaces");
+            log.debug("Stopping network interfaces");
             for (SourceInterface interfaz : this.network.getInterfaces()) {
                 interfaz.shutdown();
                 this.network.unregisterInterface(interfaz);
@@ -1059,7 +1069,7 @@ public class Server {
                 nameLookup.close();
             }
 
-            this.getLogger().debug("Disabling timings");
+            log.debug("Disabling timings");
             Timings.stopServer();
             //todo other things
         } catch (Exception e) {
@@ -1155,12 +1165,11 @@ public class Server {
                         }
                     }
                 } catch (RuntimeException e) {
-                    this.getLogger().logException(e);
+                    log.error("A RuntimeException happened while ticking the server", e);
                 }
             }
         } catch (Throwable e) {
-            log.fatal("Exception happened while ticking server", e);
-            log.fatal(Utils.getAllThreadDumps());
+            log.fatal("Exception happened while ticking server\n{}", Utils.getAllThreadDumps(), e);
         }
     }
 
@@ -1229,7 +1238,7 @@ public class Server {
         Server.broadcastPacket(players, pk);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public void removePlayerListData(UUID uuid, Player player) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_REMOVE;
@@ -1293,14 +1302,14 @@ public class Server {
                         if (r > this.baseTickRate) {
                             level.tickRateCounter = level.getTickRate();
                         }
-                        this.getLogger().debug("Raising level \"" + level.getName() + "\" tick rate to " + (19 -level.getTickRate()) + " ticks");
+                        log.debug("Raising level \"{}\" tick rate to {} ticks", level.getName(), level.getTickRate());
                     } else if (tickMs >= 50) {
                         if (level.getTickRate() == this.baseTickRate) {
                             level.setTickRate(Math.max(this.baseTickRate + 1, Math.min(this.autoTickRateLimit, tickMs / 50)));
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + (19 - level.getTickRate()) + " ticks");
+                            log.debug("Level \"{}\" took {}ms, setting tick rate to {} ticks", level.getName(), NukkitMath.round(tickMs, 2), level.getTickRate());
                         } else if ((tickMs / level.getTickRate()) >= 50 && level.getTickRate() < this.autoTickRateLimit) {
                             level.setTickRate(level.getTickRate() + 1);
-                            this.getLogger().debug("Level \"" + level.getName() + "\" took " + NukkitMath.round(tickMs, 2) + "ms, setting tick rate to " + (19 - level.getTickRate()) + " ticks");
+                            log.debug("Level \"{}\" took {}ms, setting tick rate to {} ticks", level.getName(), NukkitMath.round(tickMs, 2), level.getTickRate());
                         }
                         level.tickRateCounter = level.getTickRate();
                     }
@@ -1339,7 +1348,7 @@ public class Server {
             try {
                 Thread.sleep(Math.max(5, -time - 25));
             } catch (InterruptedException e) {
-                Server.getInstance().getLogger().logException(e);
+                log.debug("The thread {} got interrupted", Thread.currentThread().getName(), e);
             }
         }
 
@@ -1670,17 +1679,26 @@ public class Server {
     }
 
     public String getMotd() {
-        return this.getPropertyString("motd", "A Nukkit Powered Server");
+        return this.getPropertyString("motd", "PowerNukkit Server");
     }
 
     public String getSubMotd() {
-        return this.getPropertyString("sub-motd", "https://nukkitx.com");
+        String subMotd = this.getPropertyString("sub-motd", "https://powernukkit.org");
+        if (subMotd.isEmpty()) {
+            subMotd = "https://powernukkit.org"; // The client doesn't allow empty sub-motd in 1.16.210
+        }
+        return subMotd;
     }
 
     public boolean getForceResources() {
         return this.getPropertyBoolean("force-resources", false);
     }
 
+    @Deprecated
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Use your own logger, sharing loggers makes bug analyses harder.",
+            replaceWith = "@Log4j2 annotation in the class and use the `log` static field that is generated by lombok, " +
+                    "also make sure to log the exception as the last argument, don't concatenate it or use it as parameter replacement. " +
+                    "Just put it as last argument and SLF4J will understand that the log message was caused by that exception/throwable.")
     public MainLogger getLogger() {
         return MainLogger.getLogger();
     }
@@ -1842,14 +1860,13 @@ public class Server {
                 return NBTIO.readCompressed(dataStream.get());
             }
         } catch (IOException e) {
-            log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
-            log.throwing(e);
+            log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name), e);
         } finally {
             if (dataStream.isPresent()) {
                 try {
                     dataStream.get().close();
                 } catch (IOException e) {
-                    log.throwing(e);
+                    log.catching(e);
                 }
             }
         }
@@ -2196,7 +2213,7 @@ public class Server {
             level.initLevel();
             level.setTickRate(this.baseTickRate);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, Utils.getExceptionMessage(e)}));
+            log.error(this.getLanguage().translateString("nukkit.level.generationError", new String[]{name, Utils.getExceptionMessage(e)}), e);
             return false;
         }
 
@@ -2500,6 +2517,7 @@ public class Server {
         Entity.registerEntity("Silverfish", EntitySilverfish.class);
         Entity.registerEntity("Skeleton", EntitySkeleton.class);
         Entity.registerEntity("Slime", EntitySlime.class);
+        Entity.registerEntity("IronGolem", EntityIronGolem.class);
         Entity.registerEntity("SnowGolem", EntitySnowGolem.class);
         Entity.registerEntity("Spider", EntitySpider.class);
         Entity.registerEntity("Stray", EntityStray.class);
@@ -2555,6 +2573,7 @@ public class Server {
         Entity.registerEntity("ThrownPotion", EntityPotion.class);
         Entity.registerEntity("ThrownTrident", EntityThrownTrident.class);
         Entity.registerEntity("XpOrb", EntityXPOrb.class);
+        Entity.registerEntity("ArmorStand", EntityArmorStand.class);
 
         Entity.registerEntity("Human", EntityHuman.class, true);
         //Vehicle
@@ -2649,6 +2668,12 @@ public class Server {
     @Since("1.4.0.0-PN")
     public boolean isCheckMovement(){
         return checkMovement;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public long getLaunchTime() {
+        return launchTime;
     }
 
     private class ConsoleThread extends Thread implements InterruptibleThread {

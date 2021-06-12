@@ -6,10 +6,12 @@ import cn.nukkit.item.ItemDarkOakSign;
 
 @PowerNukkitOnly
 public class BlockDarkOakWallSign extends BlockWallSign {
+    @PowerNukkitOnly
     public BlockDarkOakWallSign() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockDarkOakWallSign(int meta) {
         super(meta);
     }

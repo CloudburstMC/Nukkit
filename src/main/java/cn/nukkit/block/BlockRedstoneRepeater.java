@@ -14,9 +14,15 @@ import javax.annotation.Nonnull;
 
 import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public abstract class BlockRedstoneRepeater extends BlockRedstoneDiode {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected static final IntBlockProperty REPEATER_DELAY = new IntBlockProperty("repeater_delay", false, 3);
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(
             DIRECTION,
             REPEATER_DELAY
@@ -30,6 +36,8 @@ public abstract class BlockRedstoneRepeater extends BlockRedstoneDiode {
         return PROPERTIES;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockRedstoneRepeater() {
         super(0);
     }
@@ -84,7 +92,7 @@ public abstract class BlockRedstoneRepeater extends BlockRedstoneDiode {
 
     @Override
     protected int getDelay() {
-        return (1 + (getPropertyValue(REPEATER_DELAY) >> 2)) * 2;
+        return (1 + getIntValue(REPEATER_DELAY)) * 2;
     }
 
     @Override

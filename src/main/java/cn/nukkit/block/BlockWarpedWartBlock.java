@@ -9,6 +9,12 @@ import cn.nukkit.utils.BlockColor;
 @Since("1.4.0.0-PN")
 public class BlockWarpedWartBlock extends BlockSolid {
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockWarpedWartBlock() {
+        // Does nothing
+    }
+
     @Override
     public String getName() {
         return "Warped Wart Block";

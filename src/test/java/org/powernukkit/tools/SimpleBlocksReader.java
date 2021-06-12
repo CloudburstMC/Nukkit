@@ -42,19 +42,21 @@ public class SimpleBlocksReader {
             }
 
             //noinspection unchecked
-            tags = (ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.LITTLE_ENDIAN, false);
+            tags = (ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.BIG_ENDIAN, false);
         } catch (IOException e) {
             throw new AssertionError(e);
         }
 
         SortedMap<String, SortedMap<String, SortedSet<String>>> states = new TreeMap<>(humanStringComparator);
 
-        for (CompoundTag state : tags.getAll()) {
-            CompoundTag block = state.getCompound("block");
+        for (CompoundTag block : tags.getAll()) {
             String name = block.getString("name");
+            if (name.contains("warped_trapdoor")) {
+                System.out.println();
+            }
             CompoundTag statesCompound = block.getCompound("states");
             if (statesCompound.isEmpty()) {
-                states.put(name, Collections.emptySortedMap());
+                states.computeIfAbsent(name, k-> new TreeMap<>(humanStringComparator));
             } else {
                 SortedMap<String, SortedSet<String>> registeredProperties = states.computeIfAbsent(name, k-> new TreeMap<>(humanStringComparator));
                 for (Tag tag : statesCompound.getAllTags()) {

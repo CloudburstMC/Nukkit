@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.inventory.GrindstoneInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -16,8 +17,16 @@ import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
 
+import static cn.nukkit.block.BlockBell.ATTACHMENT_TYPE;
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+
 @PowerNukkitOnly
 public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, ATTACHMENT_TYPE);
+
     @PowerNukkitOnly
     public static final int TYPE_ATTACHMENT_STANDING = 0;
     @PowerNukkitOnly
@@ -40,6 +49,14 @@ public class BlockGrindstone extends BlockTransparentMeta implements Faceable {
     @Override
     public int getId() {
         return GRINDSTONE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

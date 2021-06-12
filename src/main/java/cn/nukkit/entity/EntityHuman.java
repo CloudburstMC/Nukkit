@@ -108,6 +108,11 @@ public class EntityHuman extends EntityHumanType {
                 if (skinTag.contains("ModelId")) {
                     newSkin.setSkinId(skinTag.getString("ModelId"));
                 }
+
+                if (skinTag.contains("PlayFabID")) {
+                    newSkin.setPlayFabId(skinTag.getString("PlayFabID"));
+                }
+
                 if (skinTag.contains("Data")) {
                     byte[] data = skinTag.getByteArray("Data");
                     if (skinTag.contains("SkinImageWidth") && skinTag.contains("SkinImageHeight")) {
@@ -269,6 +274,10 @@ public class EntityHuman extends EntityHumanType {
                             .putList(colors));
                 }
             }
+
+            if (!this.getSkin().getPlayFabId().isEmpty()) {
+                skinTag.putString("PlayFabID", this.getSkin().getPlayFabId());
+            }
             this.namedTag.putCompound("Skin", skinTag);
         }
     }
@@ -288,7 +297,7 @@ public class EntityHuman extends EntityHumanType {
             }
 
             if (this instanceof Player)
-                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
+                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), ((Player) this).getDisplayName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
             else
                 this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, new Player[]{player});
 

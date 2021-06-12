@@ -254,10 +254,16 @@ public interface FullChunk extends Cloneable {
 
     void setChanged(boolean changed);
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     boolean isBlockChangeAllowed(int x, int y, int z);
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     List<Block> findBorders(int x, int z);
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     boolean isBlockedByBorder(int x, int z);
 }

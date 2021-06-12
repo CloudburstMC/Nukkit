@@ -1,23 +1,26 @@
 package cn.nukkit.blockproperty.value;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.utils.BlockColor;
-import lombok.Getter;
 
+import javax.annotation.Nonnull;
+
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public enum StoneSlab1Type {
-    SMOOTH_STONE("Smooth Stone"),
-    SANDSTONE(BlockColor.SAND_BLOCK_COLOR),
-    WOOD(BlockColor.WOOD_BLOCK_COLOR),
-    COBBLESTONE,
-    BRICK,
-    STONE_BRICK("Stone Brick"),
-    QUARTZ(BlockColor.QUARTZ_BLOCK_COLOR),
-    NETHER_BRICK(BlockColor.NETHERRACK_BLOCK_COLOR, "Nether Brick");
-    public static final ArrayBlockProperty<StoneSlab1Type> PROPERTY = new ArrayBlockProperty<>("stone_slab_type", true, values());
-    @Getter
+    @PowerNukkitOnly @Since("1.4.0.0-PN") SMOOTH_STONE("Smooth Stone"),
+    @PowerNukkitOnly @Since("1.4.0.0-PN") SANDSTONE(BlockColor.SAND_BLOCK_COLOR),
+    @PowerNukkitOnly @Since("1.4.0.0-PN") WOOD(BlockColor.WOOD_BLOCK_COLOR),
+    @PowerNukkitOnly @Since("1.4.0.0-PN") COBBLESTONE,
+    @PowerNukkitOnly @Since("1.4.0.0-PN") BRICK,
+    @PowerNukkitOnly @Since("1.4.0.0-PN") STONE_BRICK("Stone Brick"),
+    @PowerNukkitOnly @Since("1.4.0.0-PN") QUARTZ(BlockColor.QUARTZ_BLOCK_COLOR),
+    @PowerNukkitOnly @Since("1.4.0.0-PN") NETHER_BRICK(BlockColor.NETHERRACK_BLOCK_COLOR, "Nether Brick");
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final ArrayBlockProperty<StoneSlab1Type> PROPERTY = new ArrayBlockProperty<>("stone_slab_type", true, values());
     private final BlockColor color;
 
-    @Getter
     private final String englishName;
 
     StoneSlab1Type() {
@@ -37,5 +40,19 @@ public enum StoneSlab1Type {
     StoneSlab1Type(BlockColor color, String name) {
         this.color = color;
         englishName = name;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public BlockColor getColor() {
+        return this.color;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
+    public String getEnglishName() {
+        return this.englishName;
     }
 }

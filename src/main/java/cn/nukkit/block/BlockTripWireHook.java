@@ -1,22 +1,36 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static cn.nukkit.block.BlockTripWire.ATTACHED;
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
+
 /**
  * @author CreeperFace
  */
-public class BlockTripWireHook extends BlockTransparentMeta {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public class BlockTripWireHook extends BlockTransparentMeta implements RedstoneComponent {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, ATTACHED, POWERED);
 
     public BlockTripWireHook() {
         this(0);
@@ -34,6 +48,14 @@ public class BlockTripWireHook extends BlockTransparentMeta {
     @Override
     public int getId() {
         return TRIPWIRE_HOOK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     public BlockFace getFacing() {
@@ -85,8 +107,8 @@ public class BlockTripWireHook extends BlockTransparentMeta {
         }
 
         if (powered) {
-            this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
+            updateAroundRedstone();
+            RedstoneComponent.updateAroundRedstone(this.getSide(getFacing().getOpposite()));
         }
 
         return true;
@@ -98,7 +120,7 @@ public class BlockTripWireHook extends BlockTransparentMeta {
         }
 
         BlockFace facing = getFacing();
-        Vector3 v = this.getLocation();
+        Position position = this.getLocation();
         boolean attached = isAttached();
         boolean powered = isPowered();
         boolean canConnect = !onBreak;
@@ -107,7 +129,7 @@ public class BlockTripWireHook extends BlockTransparentMeta {
         Block[] blocks = new Block[42];
 
         for (int i = 1; i < 42; ++i) {
-            Vector3 vector = v.getSide(facing, i);
+            Vector3 vector = position.getSide(facing, i);
             Block b = this.level.getBlock(vector);
 
             if (b instanceof BlockTripWireHook) {
@@ -147,30 +169,30 @@ public class BlockTripWireHook extends BlockTransparentMeta {
 
 
         if (distance > 0) {
-            Vector3 vec = v.getSide(facing, distance);
+            Position p = position.getSide(facing, distance);
             BlockFace face = facing.getOpposite();
             hook.setFace(face);
-            this.level.setBlock(vec, hook, true, false);
-            this.level.updateAroundRedstone(vec, null);
-            this.level.updateAroundRedstone(vec.getSide(face.getOpposite()), null);
-            this.addSound(vec, canConnect, nextPowered, attached, powered);
+            this.level.setBlock(p, hook, true, false);
+            RedstoneComponent.updateAroundRedstone(p);
+            RedstoneComponent.updateAroundRedstone(p.getSide(face.getOpposite()));
+            this.addSound(p, canConnect, nextPowered, attached, powered);
         }
 
-        this.addSound(v, canConnect, nextPowered, attached, powered);
+        this.addSound(position, canConnect, nextPowered, attached, powered);
 
         if (!onBreak) {
             hook.setFace(facing);
-            this.level.setBlock(v, hook, true, false);
+            this.level.setBlock(position, hook, true, false);
 
             if (updateAround) {
-                this.level.updateAroundRedstone(v, null);
-                this.level.updateAroundRedstone(v.getSide(facing.getOpposite()), null);
+                updateAroundRedstone();
+                RedstoneComponent.updateAroundRedstone(position.getSide(facing.getOpposite()));
             }
         }
 
         if (attached != canConnect) {
             for (int i = 1; i < distance; i++) {
-                Vector3 vc = v.getSide(facing, i);
+                Vector3 vc = position.getSide(facing, i);
                 block = blocks[i];
 
                 if (block != null && this.level.getBlockIdAt(vc.getFloorX(), vc.getFloorY(), vc.getFloorZ()) != Block.AIR) {

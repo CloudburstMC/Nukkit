@@ -1,11 +1,13 @@
 package cn.nukkit;
 
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.utils.ServerKiller;
 import com.google.common.base.Preconditions;
 import io.netty.util.ResourceLeakDetector;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
+import io.sentry.Sentry;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
@@ -17,7 +19,17 @@ import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
+
+import static cn.nukkit.utils.Utils.dynamic;
 
 /*
  * `_   _       _    _    _ _
@@ -42,8 +54,8 @@ public class Nukkit {
     public final static Properties GIT_INFO = getGitInfo();
     public final static String VERSION = getVersion();
     public final static String GIT_COMMIT = getGitCommit();
-    public final static String API_VERSION = "1.0.11";
-    public final static String CODENAME = "PowerNukkit";
+    public final static String API_VERSION = dynamic("1.0.12");
+    public final static String CODENAME = dynamic("PowerNukkit");
     @Deprecated
     public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
     @Deprecated
@@ -59,6 +71,73 @@ public class Nukkit {
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
+        AtomicBoolean disableSentry = new AtomicBoolean(false);
+        Sentry.init(options -> {
+            options.setDsn("https://a99f9e0c50424fff9f96feb2fd94c22f:6891b003c5874fa4bf407fe45035e3f1@o505263.ingest.sentry.io/5593371");
+            options.setRelease(getVersion()+"-"+getGitCommit());
+            options.setBeforeSend((event, hint)-> {
+                if (disableSentry.get()) {
+                    return null;
+                }
+                
+                try {
+                    Server sv = Server.getInstance();
+                    event.setExtra("players", sv.getOnlinePlayers().size());
+                    Map<Integer, cn.nukkit.level.Level> levels = sv.getLevels();
+                    event.setExtra("levels", levels.size());
+                    event.setExtra("chunks", levels.values().stream().mapToInt(l -> l.getChunks().size()).sum());
+                    event.setExtra("tiles", levels.values().stream().mapToInt(l -> l.getBlockEntities().size()).sum());
+                    event.setExtra("entities", levels.values().stream().mapToInt(l -> l.getEntities().length).sum());
+                } catch (Exception e) {
+                    log.debug("Failed to add player/level/chunk/tiles/entities information", e);
+                }
+
+                try {
+                    Runtime runtime = Runtime.getRuntime();
+                    double totalMB = NukkitMath.round(((double) runtime.totalMemory()) / 1024 / 1024, 2);
+                    double usedMB = NukkitMath.round((double) (runtime.totalMemory() - runtime.freeMemory()) / 1024 / 1024, 2);
+                    double maxMB = NukkitMath.round(((double) runtime.maxMemory()) / 1024 / 1024, 2);
+                    double usage = usedMB / maxMB * 100;
+                    
+                    event.setExtra("memTotal", totalMB);
+                    event.setExtra("memUsed", usedMB);
+                    event.setExtra("memMax", maxMB);
+                    event.setExtra("memUsage", usage);
+                } catch (Exception e) {
+                    log.debug("Failed to add memory information", e);
+                }
+                
+                try {
+                    event.setModules(
+                            Server.getInstance().getPluginManager().getPlugins().entrySet().stream()
+                                    .map(entry -> new SimpleEntry<>(
+                                            entry.getKey(), 
+                                            entry.getValue().getDescription().getVersion()
+                                    )).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+                    );
+                } catch (Exception e) {
+                    log.debug("Failed to grab the list of enabled plugins", e);
+                }
+                return event;
+            });
+        });
+        
+        disableSentry.set(Boolean.parseBoolean(System.getProperty("disableSentry", "false")));
+        Path propertiesPath = Paths.get(DATA_PATH, "server.properties");
+        if (!disableSentry.get() && Files.isRegularFile(propertiesPath)) {
+            Properties properties = new Properties();
+            try (FileReader reader = new FileReader(propertiesPath.toFile())) {
+                properties.load(reader);
+                String value = properties.getProperty("disable-auto-bug-report", "false");
+                if (value.equalsIgnoreCase("on") || value.equals("1")) {
+                    value = "true";
+                }
+                disableSentry.set(Boolean.parseBoolean(value.toLowerCase(Locale.ENGLISH)));
+            } catch (IOException e) {
+                log.error("Failed to load server.properties to check disable-auto-bug-report.", e);
+            }
+        }
+        
         // Force IPv4 since Nukkit is not compatible with IPv6
         System.setProperty("java.net.preferIPv4Stack" , "true");
         System.setProperty("log4j.skipJansi", "false");
@@ -119,7 +198,7 @@ public class Nukkit {
             }
             new Server(PATH, DATA_PATH, PLUGIN_PATH, language);
         } catch (Throwable t) {
-            log.throwing(t);
+            log.catching(t);
         }
 
         if (TITLE) {

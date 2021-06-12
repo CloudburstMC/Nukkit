@@ -50,6 +50,8 @@ public class PositionTrackingService implements Closeable {
      * @param folder The folder that will hold the position tracking db files
      * @throws FileNotFoundException If the folder does not exists and can't be created 
      */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public PositionTrackingService(File folder) throws FileNotFoundException {
         if (!folder.isDirectory() && !folder.mkdirs()) {
             throw new FileNotFoundException("Failed to create the folder "+folder);
@@ -227,7 +229,7 @@ public class PositionTrackingService implements Closeable {
                             toRemove.computeIfAbsent(player, p -> new IntArrayList(2)).add(trackingHandler);
                         }
                     } catch (IOException e) {
-                        log.error("Failed to update the tracking handler "+trackingHandler+" for player "+player.getName(), e);
+                        log.error("Failed to update the tracking handler {} for player {}", trackingHandler, player.getName(), e);
                     }
                 });
             }
@@ -281,7 +283,7 @@ public class PositionTrackingService implements Closeable {
                                 startTracking(player, trackingHandle, false);
                             }
                         } catch (IOException e) {
-                            log.error("Failed to get the position of the tracking handler "+trackingHandle, e);
+                            log.error("Failed to get the position of the tracking handler {}", trackingHandle, e);
                         }
                     }
                 }
@@ -302,7 +304,7 @@ public class PositionTrackingService implements Closeable {
                             toRemove.add(trackingHandler);
                         }
                     } catch (IOException e) {
-                        log.error("Failed to update the tracking handler "+trackingHandler+" for player "+player.getName(), e);
+                        log.error("Failed to update the tracking handler {} for player {}", trackingHandler, player.getName(), e);
                     }
                 });
             }

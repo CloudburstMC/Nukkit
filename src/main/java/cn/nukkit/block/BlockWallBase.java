@@ -9,6 +9,7 @@ import cn.nukkit.blockproperty.ArrayBlockProperty;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
+import cn.nukkit.blockproperty.value.AttachmentType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
@@ -31,10 +32,24 @@ import static cn.nukkit.math.VectorMath.calculateFace;
 @Since("1.4.0.0-PN")
 @Log4j2
 public abstract class BlockWallBase extends BlockTransparentMeta implements BlockConnectable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<WallConnectionType> WALL_CONNECTION_TYPE_SOUTH = new ArrayBlockProperty<>("wall_connection_type_south", false, WallConnectionType .class);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<WallConnectionType> WALL_CONNECTION_TYPE_WEST = new ArrayBlockProperty<>("wall_connection_type_west", false, WallConnectionType .class);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<WallConnectionType> WALL_CONNECTION_TYPE_NORTH = new ArrayBlockProperty<>("wall_connection_type_north", false, WallConnectionType .class);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<WallConnectionType> WALL_CONNECTION_TYPE_EAST = new ArrayBlockProperty<>("wall_connection_type_east", false, WallConnectionType .class);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BooleanBlockProperty WALL_POST_BIT = new BooleanBlockProperty("wall_post_bit", false);
 
     @PowerNukkitOnly
@@ -50,6 +65,8 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     private static final double MIN_POST_BB =  5.0/16;
     private static final double MAX_POST_BB = 11.0/16;
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockWallBase(int meta) {
         super(meta);
     }
@@ -67,7 +84,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         return false;
     }
 
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     @Override
     public boolean isSolid(BlockFace side) {
@@ -99,7 +116,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
             // If the bell is standing and follow the path, make it tall
             case BELL:
                 BlockBell bell = (BlockBell) above;
-                return bell.getAttachmentType() == BlockBell.TYPE_ATTACHMENT_STANDING
+                return bell.getAttachment() == AttachmentType.STANDING
                         && bell.getBlockFace().getAxis() != face.getAxis();
             default:
                 if (above instanceof BlockWallBase) {
@@ -143,7 +160,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean autoConfigureState() {
         final Number previousMeta = getDataStorage();
 
@@ -157,7 +174,8 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
                 try {
                     connect(blockFace, above, false);
                 } catch (RuntimeException e) {
-                    log.error("Failed to connect the block "+this+" at "+getLocation()+" to "+blockFace+" which is "+side+" at "+side.getLocation());
+                    log.error("Failed to connect the block {} at {} to {} which is {} at {}", 
+                            this, getLocation(), blockFace, side, side.getLocation(), e);
                     throw e;
                 }
             } else {
@@ -170,7 +188,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         return !getDataStorage().equals(previousMeta);
     }
 
-    @PowerNukkitDifference(info = "Will connect as expected", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Will connect as expected", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
@@ -182,7 +200,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         return 0;
     }
 
-    @PowerNukkitDifference(info = "Will be placed on the right state", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Will be placed on the right state", since = "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, @Nullable Player player) {
         autoConfigureState();
@@ -190,19 +208,19 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean isWallPost() {
         return getBooleanValue(WALL_POST_BIT);
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public void setWallPost(boolean wallPost) {
         setBooleanValue(WALL_POST_BIT, wallPost);
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public void clearConnections() {
         setPropertyValue(WALL_CONNECTION_TYPE_EAST, WallConnectionType.NONE);
         setPropertyValue(WALL_CONNECTION_TYPE_WEST, WallConnectionType.NONE);
@@ -211,7 +229,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public Map<BlockFace, WallConnectionType> getWallConnections() {
         EnumMap<BlockFace, WallConnectionType> connections = new EnumMap<>(BlockFace.class);
         for (BlockFace blockFace : BlockFace.Plane.HORIZONTAL) {
@@ -224,7 +242,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public WallConnectionType getConnectionType(BlockFace blockFace) {
         switch (blockFace) {
             case NORTH:
@@ -242,7 +260,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
 
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean setConnection(BlockFace blockFace, WallConnectionType type) {
         switch (blockFace) {
             case NORTH:
@@ -266,7 +284,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
      * @return true if it should be a post
      */
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public void autoUpdatePostFlag() {
         setWallPost(recheckPostConditions(up(1, 0)));
     }
@@ -320,7 +338,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
             // If the bell is standing and don't follow the path, make it a post
             case BELL:
                 BlockBell bell = (BlockBell) above;
-                if (bell.getAttachmentType() == BlockBell.TYPE_ATTACHMENT_STANDING
+                if (bell.getAttachment() == AttachmentType.STANDING
                         && bell.getBlockFace().getAxis() == axis) {
                     return true;
                 }
@@ -378,7 +396,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean isSameHeightStraight() {
         Map<BlockFace, WallConnectionType> connections = getWallConnections();
         if (connections.size() != 2) {
@@ -392,13 +410,13 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean connect(BlockFace blockFace) {
         return connect(blockFace, true);
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean connect(BlockFace blockFace, boolean recheckPost) {
         if (blockFace.getHorizontalIndex() < 0) {
             return false;
@@ -420,7 +438,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     public boolean disconnect(BlockFace blockFace) {
         if (blockFace.getHorizontalIndex() < 0) {
             return false;
@@ -464,7 +482,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
         );
     }
 
-    @PowerNukkitDifference(info = "Will connect to glass panes, iron bars and fence gates", since = "1.3.0.0-PN")
+    @PowerNukkitDifference(info = "Will connect to glass panes, iron bars and fence gates", since = "1.4.0.0-PN")
     @Override
     public boolean canConnect(Block block) {
         switch (block.getId()) {
@@ -494,7 +512,7 @@ public abstract class BlockWallBase extends BlockTransparentMeta implements Bloc
     }
 
     @PowerNukkitOnly
-    @Since("1.3.0.0-PN")
+    @Since("1.4.0.0-PN")
     @Override
     public boolean isConnected(BlockFace face) {
         return getConnectionType(face) != WallConnectionType.NONE;

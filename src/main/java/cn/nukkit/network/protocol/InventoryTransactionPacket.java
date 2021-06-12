@@ -40,7 +40,7 @@ public class InventoryTransactionPacket extends DataPacket {
     public int transactionType;
     public NetworkInventoryAction[] actions;
     public TransactionData transactionData;
-    @Since("1.3.0.0-PN") public boolean hasNetworkIds;
+
     @Since("1.3.0.0-PN") public int legacyRequestId;
 
     /**
@@ -49,6 +49,7 @@ public class InventoryTransactionPacket extends DataPacket {
      */
     public boolean isCraftingPart = false;
     @Since("1.3.1.0-PN") public boolean isEnchantingPart = false;
+    @Since("1.4.0.0-PN") public boolean isRepairItemPart = false;
 
     @Override
     public byte pid() {
@@ -61,7 +62,6 @@ public class InventoryTransactionPacket extends DataPacket {
         this.putVarInt(this.legacyRequestId);
         //TODO legacySlot array
         this.putUnsignedVarInt(this.transactionType);
-        this.putBoolean(this.hasNetworkIds);
         this.putUnsignedVarInt(this.actions.length);
         for (NetworkInventoryAction action : this.actions) {
             action.write(this);
@@ -120,8 +120,6 @@ public class InventoryTransactionPacket extends DataPacket {
         }
 
         this.transactionType = (int) this.getUnsignedVarInt();
-
-        this.hasNetworkIds = this.getBoolean();
 
         int length = (int) this.getUnsignedVarInt();
         Collection<NetworkInventoryAction> actions = new ArrayDeque<>();

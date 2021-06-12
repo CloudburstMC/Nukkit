@@ -1,6 +1,5 @@
 package cn.nukkit.level.format.updater;
 
-import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
@@ -9,10 +8,12 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.generic.BaseChunk;
 import lombok.experimental.UtilityClass;
+import lombok.extern.log4j.Log4j2;
 
 @PowerNukkitOnly
-@Since("1.3.0.0-PN")
+@Since("1.4.0.0-PN")
 @UtilityClass
+@Log4j2
 public class ChunkUpdater {
     /**
      * Version history:
@@ -25,13 +26,15 @@ public class ChunkUpdater {
      *     <dt>8</dt><dd>Sync beehive and bee_nest parallel changes</dd>
      *     <dt>9</dt><dd>Re-render cobblestone walls to connect to glass, stained glass, and other wall types like border and blackstone wall</dd>
      *     <dt>10</dt><dd>Re-render snow layers to make them cover grass blocks and fix leaves2 issue: https://github.com/PowerNukkit/PowerNukkit/issues/482</dd>
+     *     <dt>11</dt><dd>The debug block property was removed from stripped_warped_hyphae, stripped_warped_stem, stripped_crimson_hyphae, and stripped_crimson_stem</dd>
+     *     <dt>12</dt><dd>Upgraded the block frame data values to match the vanilla data, allowing to place up and down and have map</dd>
      * </dl>
      */
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @SuppressWarnings("java:S3400")
     public int getCurrentContentVersion() {
-        return 10;
+        return 12;
     }
 
     @PowerNukkitOnly
@@ -56,11 +59,29 @@ public class ChunkUpdater {
             if (section.getContentVersion() == 9) {
                 updated = upgradeSnowLayersFromV9toV10(level, chunk, updated, section);
             }
+            if (section.getContentVersion() == 10) {
+                updated = upgradeStrippedStemsFromV10toV11(chunk, updated, section);
+            }
+            if (section.getContentVersion() == 11) {
+                updated = upgradeFrameFromV11toV12(chunk, section, updated);
+            }
         }
 
         if (updated) {
             chunk.setChanged();
         }
+    }
+
+    private static boolean upgradeFrameFromV11toV12(BaseChunk chunk, ChunkSection section, boolean updated) {
+        updated = walk(chunk, section, new FrameUpdater(section)) || updated;
+        section.setContentVersion(12);
+        return updated;
+    }
+
+    private boolean upgradeStrippedStemsFromV10toV11(BaseChunk chunk, boolean updated, ChunkSection section) {
+        updated = walk(chunk, section, new StemStrippedUpdater(section)) || updated;
+        section.setContentVersion(11);
+        return updated;
     }
 
     private boolean upgradeWallsFromV8toV9(Level level, BaseChunk chunk, boolean updated, ChunkSection section) {
@@ -89,6 +110,7 @@ public class ChunkUpdater {
     private boolean updateToV8FromV0toV5(Level level, BaseChunk chunk, boolean updated, ChunkSection section, int contentVersion) {
         WallUpdater wallUpdater = new WallUpdater(level, section);
         boolean sectionUpdated = walk(chunk, section, new GroupedUpdaters(
+                new StemStrippedUpdater(section),
                 new MesaBiomeUpdater(section),
                 new NewLeafUpdater(section),
                 new BeehiveUpdater(section, true),
@@ -108,7 +130,7 @@ public class ChunkUpdater {
                 int x = chunk.getX() << 4 | 0x6;
                 int y = section.getY() << 4 | 0x6;
                 int z = chunk.getZ() << 4 | 0x6;
-                Server.getInstance().getLogger().warning("The chunk section at x:"+x+", y:"+y+", z:"+z+" failed to complete the backward compatibility update 1 after "+attempts+" attempts");
+                log.error("The chunk section at x:{}, y:{}, z:{} failed to complete the backward compatibility update 1 after {} attempts", x, y, z, attempts);
                 break;
             }
             sectionUpdated = walk(chunk, section, wallUpdater);

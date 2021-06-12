@@ -1,6 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -14,12 +17,19 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+@PowerNukkitOnly
 public class BlockBambooSapling extends BlockFlowable {
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = BlockSapling.PROPERTIES;
+
+    @PowerNukkitOnly
     public BlockBambooSapling() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockBambooSapling(int meta) {
         super(meta);
     }
@@ -27,6 +37,14 @@ public class BlockBambooSapling extends BlockFlowable {
     @Override
     public int getId() {
         return BAMBOO_SAPLING;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -118,6 +136,7 @@ public class BlockBambooSapling extends BlockFlowable {
         return false;
     }
 
+    @PowerNukkitOnly
     public boolean grow(Block up) {
         BlockBamboo bamboo = new BlockBamboo();
         bamboo.x = x;
@@ -137,10 +156,12 @@ public class BlockBambooSapling extends BlockFlowable {
         return 5;
     }
 
+    @PowerNukkitOnly
     public int getAge() {
         return getDamage() & 0x1;
     }
 
+    @PowerNukkitOnly
     public void setAge(int age) {
         age = MathHelper.clamp(age, 0, 1) & 0x1;
         setDamage(getDamage() & (DATA_MASK ^ 0x1) | age);

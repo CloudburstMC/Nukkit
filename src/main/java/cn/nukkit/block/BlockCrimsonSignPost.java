@@ -3,14 +3,19 @@ package cn.nukkit.block;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemCrimsonSign;
+import cn.nukkit.item.ItemID;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockCrimsonSignPost extends BlockSignPost {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockCrimsonSignPost() {
+        // Does nothing
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockCrimsonSignPost(int meta) {
         super(meta);
     }
@@ -32,7 +37,7 @@ public class BlockCrimsonSignPost extends BlockSignPost {
 
     @Override
     public Item toItem() {
-        return new ItemCrimsonSign();
+        return Item.get(ItemID.CRIMSON_SIGN);
     }
     
     @Override

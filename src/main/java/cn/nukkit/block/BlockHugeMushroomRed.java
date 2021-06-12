@@ -1,16 +1,25 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
 
+import javax.annotation.Nonnull;
+
 /**
  * @author Pub4Game
  * @since 28.01.2016
  */
 public class BlockHugeMushroomRed extends BlockSolidMeta {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = BlockHugeMushroomBrown.PROPERTIES;
 
     public BlockHugeMushroomRed() {
         this(0);
@@ -28,6 +37,14 @@ public class BlockHugeMushroomRed extends BlockSolidMeta {
     @Override
     public int getId() {
         return RED_MUSHROOM_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

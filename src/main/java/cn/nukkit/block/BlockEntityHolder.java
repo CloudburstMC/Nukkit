@@ -11,7 +11,6 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.LevelException;
-import cn.nukkit.utils.MainLogger;
 import jdk.nashorn.internal.objects.annotations.Getter;
 
 import javax.annotation.Nonnull;
@@ -163,7 +162,7 @@ public interface BlockEntityHolder<E extends BlockEntity> {
             try {
                 return holder.createBlockEntity(initialData, args);
             } catch (Exception e) {
-                MainLogger.getLogger().warning("Failed to create block entity "+holder.getBlockEntityType()+" at "+holder.getLocation(), e);
+                Loggers.logBlocKEntityHolder.warn("Failed to create block entity {} at {} at ", holder.getBlockEntityType(), holder.getLocation(), e);
                 level.setBlock(layer0, 0, layer0, direct, update);
                 level.setBlock(layer1, 1, layer1, direct, update);
                 throw e;
@@ -173,6 +172,8 @@ public interface BlockEntityHolder<E extends BlockEntity> {
         return null;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     default Block getBlock() {
         if (this instanceof Position) {
             return ((Position) this).getLevelBlock();

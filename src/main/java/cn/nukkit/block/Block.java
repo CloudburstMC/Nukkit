@@ -7,6 +7,7 @@ import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockstate.*;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -23,6 +24,7 @@ import cn.nukkit.metadata.Metadatable;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.InvalidBlockDamageException;
 import com.google.common.base.Preconditions;
 import lombok.extern.log4j.Log4j2;
 
@@ -568,7 +570,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             list[SOUL_LANTERN] = BlockSoulLantern.class; //524
             list[NETHERITE_BLOCK] = BlockNetheriteBlock.class; //525
             list[ANCIENT_DERBRIS] = BlockAncientDebris.class; //526
-            //list[RESPAWN_ANCHOR] = Block<Name>.class; //527
+            list[RESPAWN_ANCHOR] = BlockRespawnAnchor.class; //527
             list[BLACKSTONE] = BlockBlackstone.class; //528
             list[POLISHED_BLACKSTONE_BRICKS] = BlockBricksBlackstonePolished.class; //529
             list[POLISHED_BLACKSTONE_BRICK_STAIRS] = BlockStairsBrickBlackstonePolished.class; //530
@@ -625,8 +627,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                                     }
                                 } catch (InvocationTargetException wrapper) {
                                     Throwable uncaught = wrapper.getTargetException();
-                                    if (!(uncaught instanceof InvalidBlockStateException)) {
-                                        log.error("Error while registering " + c.getName()+" with meta "+data, uncaught);
+                                    if (!(uncaught instanceof InvalidBlockDamageException)) {
+                                        log.error("Error while registering {} with meta {}", c.getName(), data, uncaught);
                                     }
                                     b = new BlockUnknown(id, data);
                                 }
@@ -640,7 +642,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                             }
                         }
                     } catch (Exception e) {
-                        log.error("Error while registering " + c.getName(), e);
+                        log.error("Error while registering {}", c.getName(), e);
                         for (int data = 0; data < DATA_SIZE; ++data) {
                             fullList[(id << DATA_BITS) | data] = new BlockUnknown(id, data);
                         }
@@ -878,7 +880,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                         if (exception != null) {
                             exception.addSuppressed(e);
                         } else {
-                            log.error("Error while registering " + blockClass.getName()+" with meta "+data, exception);
+                            log.error("Error while registering {} with meta {}", blockClass.getName(), data, exception);
                         }
                     }
                 }
@@ -957,6 +959,12 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
+    public int onTouch(@Nullable Player player, PlayerInteractEvent.Action action) {
+        return onUpdate(Level.BLOCK_UPDATE_TOUCH);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void onNeighborChange(@Nonnull BlockFace side) {
         
     }
@@ -974,6 +982,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     public void afterRemoval(Block newBlock, boolean update) {
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean isSoulSpeedCompatible() {
         return false;
     }
@@ -1134,12 +1144,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public BlockProperties getProperties() {
-        int id = getId();
-        if (id >= 0 && id < hasMeta.length && !hasMeta[id]) {
-            return CommonBlockProperties.EMPTY_PROPERTIES;
-        } else {
-            return CommonBlockProperties.LEGACY_PROPERTIES;
-        }
+        return CommonBlockProperties.EMPTY_PROPERTIES;
     }
     
     @PowerNukkitOnly
@@ -1203,7 +1208,15 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     private static double toolBreakTimeBonus0(int toolType, int toolTier, int blockId) {
-        if (toolType == ItemTool.TYPE_SWORD) return blockId == Block.COBWEB ? 15.0 : 1.0;
+        if (toolType == ItemTool.TYPE_SWORD){
+            if (blockId == BlockID.COBWEB) {
+                return 15.0;
+            }
+            if (blockId == BlockID.BAMBOO) {
+                return 30.0;
+            }
+            return 1.0;
+        }
         if (toolType == ItemTool.TYPE_SHEARS) {
             if (blockId == Block.WOOL || blockId == LEAVES || blockId == LEAVES2) {
                 return 5.0;
@@ -1260,6 +1273,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         if((blockId == LEAVES && item.isHoe()) ||
            (blockId == LEAVES2 && item.isHoe())){
             return (blockToolType == ItemTool.TYPE_SHEARS && item.isHoe());
+        } else if (blockId == BAMBOO  && item.isSword()) {
+            return (blockToolType == ItemTool.TYPE_AXE && item.isSword());
         } else return (blockToolType == ItemTool.TYPE_SWORD && item.isSword()) ||
                 (blockToolType == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
                 (blockToolType == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
@@ -1285,12 +1300,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     @Nonnull
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public double calculateBreakTime(@Nonnull Item item) {
         return calculateBreakTime(item, null);
     }
 
     @Nonnull
     @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public double calculateBreakTime(@Nonnull Item item, @Nullable Player player) {
         double seconds = 0;
         double blockHardness = getHardness();
@@ -1922,6 +1939,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         getMutableState().setState(state);
     }
 
+    @Since("FUTURE")
+    @PowerNukkitOnly
+    @Override
+    @Nonnull
+    public Block forState(@Nonnull IBlockState state) throws InvalidBlockStateException {
+        return (Block) IMutableBlockState.super.forState(state);
+    }
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Override
@@ -2105,10 +2130,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return true;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public final boolean isBlockChangeAllowed() {
         return getChunk().isBlockChangeAllowed(getFloorX() & 0xF, getFloorY(), getFloorZ() & 0xF);
     }
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public final boolean isBlockChangeAllowed(@Nullable Player player) {
         if (isBlockChangeAllowed()) {
             return true;
@@ -2151,5 +2180,25 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     @Since("1.4.0.0-PN")
     public int getItemMaxStackSize() {
         return 64;
+    }
+
+    /**
+     * Check if a block is getting powered threw a block or directly.
+     * @return if the gets powered.
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Used so often, why not create own method here?", since = "1.4.0.0-PN")
+    public boolean isGettingPower() {
+        if (!this.level.getServer().isRedstoneEnabled()) return false;
+
+        for (BlockFace side : BlockFace.values()) {
+            Block b = this.getSide(side).getLevelBlock();
+
+            if (this.level.isSidePowered(b.getLocation(), side)) {
+                return true;
+            }
+        }
+        return this.level.isBlockPowered(this.getLocation());
     }
 }

@@ -35,13 +35,16 @@ public class BigIntegerMutableBlockState extends MutableBlockState {
     private static final Set<Class<?>> LONG_COMPATIBLE_CLASSES = new HashSet<>(Arrays.asList(
             Long.class, Integer.class, Short.class, Byte.class));
     private BigInteger storage;
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BigIntegerMutableBlockState(int blockId, BlockProperties properties, BigInteger state) {
         super(blockId, properties);
         this.storage = state;
     }
 
-
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BigIntegerMutableBlockState(int blockId, BlockProperties properties) {
         this(blockId, properties, BigInteger.ZERO);
     }

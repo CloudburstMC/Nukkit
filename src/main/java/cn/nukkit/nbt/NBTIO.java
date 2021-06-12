@@ -78,14 +78,15 @@ public class NBTIO {
     
     @SuppressWarnings("deprecation")
     private static Item fixAlphaItem(int id, int damage, int count) {
-        if (damage != 0) {
-            return null;
-        }
         PNAlphaItemID badAlphaId = PNAlphaItemID.getBadAlphaId(id);
         if (badAlphaId == null) {
             return null;
         }
-        return badAlphaId.getMinecraftItemId().get(count);
+        Item recovered = badAlphaId.getMinecraftItemId().get(count);
+        if (damage != 0) {
+            recovered.setDamage(damage);
+        }
+        return recovered;
     }
 
     public static CompoundTag read(File file) throws IOException {

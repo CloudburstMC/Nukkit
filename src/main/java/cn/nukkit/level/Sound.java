@@ -8,11 +8,21 @@ import cn.nukkit.api.Since;
  * @author CreeperFace
  */
 public enum Sound {
+    @Since("1.4.0.0-PN") AMBIENT_BASALT_DELTAS_ADDITIONS("ambient.basalt_deltas.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_BASALT_DELTAS_LOOP("ambient.basalt_deltas.loop"),
     AMBIENT_BASALT_DELTAS_MOOD("ambient.basalt_deltas.mood"),
     AMBIENT_CAVE("ambient.cave"),
+    @Since("1.4.0.0-PN") AMBIENT_CRIMSON_FOREST_ADDITIONS("ambient.crimson_forest.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_CRIMSON_FOREST_LOOP("ambient.crimson_forest.loop"),
     AMBIENT_CRIMSON_FOREST_MOOD("ambient.crimson_forest.mood"),
+    @Since("1.4.0.0-PN") AMBIENT_NETHER_WASTES_ADDITIONS("ambient.nether_wastes.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_NETHER_WASTES_LOOP("ambient.nether_wastes.loop"),
     AMBIENT_NETHER_WASTES_MOOD("ambient.nether_wastes.mood"),
+    @Since("1.4.0.0-PN") AMBIENT_SOULSAND_VALLEY_ADDITIONS("ambient.soulsand_valley.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_SOULSAND_VALLEY_LOOP("ambient.soulsand_valley.loop"),
     AMBIENT_SOULSAND_VALLEY_MOOD("ambient.soulsand_valley.mood"),
+    @Since("1.4.0.0-PN") AMBIENT_WARPED_FOREST_ADDITIONS("ambient.warped_forest.additions"),
+    @Since("1.4.0.0-PN") AMBIENT_WARPED_FOREST_LOOP("ambient.warped_forest.loop"),
     AMBIENT_WARPED_FOREST_MOOD("ambient.warped_forest.mood"),
     AMBIENT_WEATHER_LIGHTNING_IMPACT("ambient.weather.lightning.impact"),
     AMBIENT_WEATHER_RAIN("ambient.weather.rain"),
@@ -23,7 +33,7 @@ public enum Sound {
     ARMOR_EQUIP_GOLD("armor.equip_gold"),
     ARMOR_EQUIP_IRON("armor.equip_iron"),
     ARMOR_EQUIP_LEATHER("armor.equip_leather"),
-    @Since("1.3.2.0-PN") ARMOR_EQUIP_NETHERITE("armor.equip_netherite"),
+    @Since("1.4.0.0-PN") ARMOR_EQUIP_NETHERITE("armor.equip_netherite"),
     BEACON_ACTIVATE("beacon.activate"),
     BEACON_AMBIENT("beacon.ambient"),
     BEACON_DEACTIVATE("beacon.deactivate"),
@@ -477,7 +487,7 @@ public enum Sound {
     MOB_PARROT_STEP("mob.parrot.step"),
     MOB_PHANTOM_BITE("mob.phantom.bite"),
     MOB_PHANTOM_DEATH("mob.phantom.death"),
-    @Since("1.3.2.0-PN") MOB_PHANTOM_FLAP("mob.phantom.flap"),
+    @Since("1.4.0.0-PN") MOB_PHANTOM_FLAP("mob.phantom.flap"),
     MOB_PHANTOM_HURT("mob.phantom.hurt"),
     MOB_PHANTOM_IDLE("mob.phantom.idle"),
     MOB_PHANTOM_SWOOP("mob.phantom.swoop"),
@@ -495,12 +505,12 @@ public enum Sound {
     MOB_PIGLIN_JEALOUS("mob.piglin.jealous"),
     MOB_PIGLIN_RETREAT("mob.piglin.retreat"),
     MOB_PIGLIN_STEP("mob.piglin.step"),
-    @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_AMBIENT("mob.piglin_brute.ambient"),
-    @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_ANGRY("mob.piglin_brute.angry"),
-    @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_CONVERTED_TO_ZOMBIFIED("mob.piglin_brute.converted_to_zombified"),
-    @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_DEATH("mob.piglin_brute.death"),
-    @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_HURT("mob.piglin_brute.hurt"),
-    @Since("1.3.2.0-PN") MOB_PIGLIN_BRUTE_STEP("mob.piglin_brute.step"),
+    @Since("1.4.0.0-PN") MOB_PIGLIN_BRUTE_AMBIENT("mob.piglin_brute.ambient"),
+    @Since("1.4.0.0-PN") MOB_PIGLIN_BRUTE_ANGRY("mob.piglin_brute.angry"),
+    @Since("1.4.0.0-PN") MOB_PIGLIN_BRUTE_CONVERTED_TO_ZOMBIFIED("mob.piglin_brute.converted_to_zombified"),
+    @Since("1.4.0.0-PN") MOB_PIGLIN_BRUTE_DEATH("mob.piglin_brute.death"),
+    @Since("1.4.0.0-PN") MOB_PIGLIN_BRUTE_HURT("mob.piglin_brute.hurt"),
+    @Since("1.4.0.0-PN") MOB_PIGLIN_BRUTE_STEP("mob.piglin_brute.step"),
     MOB_PILLAGER_CELEBRATE("mob.pillager.celebrate"),
     MOB_PILLAGER_DEATH("mob.pillager.death"),
     MOB_PILLAGER_HURT("mob.pillager.hurt"),
@@ -624,18 +634,18 @@ public enum Sound {
     MOB_WOLF_SHAKE("mob.wolf.shake"),
     MOB_WOLF_STEP("mob.wolf.step"),
     MOB_WOLF_WHINE("mob.wolf.whine"),
-    @Since("1.3.2.0-PN") MOB_ZOGLIN_ANGRY("mob.zoglin.angry"),
-    @Since("1.3.2.0-PN") MOB_ZOGLIN_ATTACK("mob.zoglin.attack"),
+    @Since("1.4.0.0-PN") MOB_ZOGLIN_ANGRY("mob.zoglin.angry"),
+    @Since("1.4.0.0-PN") MOB_ZOGLIN_ATTACK("mob.zoglin.attack"),
     
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Nukkit")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Removed from Nukkit")
     @PowerNukkitOnly("Re-added for backward compatibility. Actual removal reason is unknown.")
     MOB_ZOGLIN_BOOST("mob.zoglin.boost"),
     
     MOB_ZOGLIN_DEATH("mob.zoglin.death"),
-    @Since("1.3.2.0-PN") MOB_ZOGLIN_HURT("mob.zoglin.hurt"),
-    @Since("1.3.2.0-PN") MOB_ZOGLIN_IDLE("mob.zoglin.idle"),
+    @Since("1.4.0.0-PN") MOB_ZOGLIN_HURT("mob.zoglin.hurt"),
+    @Since("1.4.0.0-PN") MOB_ZOGLIN_IDLE("mob.zoglin.idle"),
     
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Nukkit")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Removed from Nukkit")
     @PowerNukkitOnly("Re-added for backward compatibility. Actual removal reason is unknown.")
     MOB_ZOGLIN_SAY("mob.zoglin.say"),
     
@@ -735,23 +745,23 @@ public enum Sound {
     RECORD_STRAD("record.strad"),
     RECORD_WAIT("record.wait"),
 
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Nukkit")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Removed from Nukkit")
     @PowerNukkitOnly("Re-added for backward compatibility. Actual removal reason is unknown.")
     BLOCK_LECTERN_PLACE("block.lectern.place"),
 
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Nukkit")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Removed from Nukkit")
     @PowerNukkitOnly("Re-added for backward compatibility. Actual removal reason is unknown.")
     BLOCK_LECTERN_BREAK("block.lectern.break"),
 
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Nukkit")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Removed from Nukkit")
     @PowerNukkitOnly("Re-added for backward compatibility. Actual removal reason is unknown.")
     BLOCK_LECTERN_HIT("block.lectern.hit"),
 
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Nukkit")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Removed from Nukkit")
     @PowerNukkitOnly("Re-added for backward compatibility. Actual removal reason is unknown.")
     BLOCK_LECTERN_STEP("block.lectern.step"),
 
-    @Deprecated @DeprecationDetails(since = "1.3.2.0-PN", reason = "Removed from Nukkit")
+    @Deprecated @DeprecationDetails(since = "1.4.0.0-PN", reason = "Removed from Nukkit")
     @PowerNukkitOnly("Re-added for backward compatibility. Actual removal reason is unknown.")
     BLOCK_LECTERN_FALL("block.lectern.fall"),
     
@@ -760,6 +770,8 @@ public enum Sound {
     RESPAWN_ANCHOR_CHARGE("respawn_anchor.charge"),
     RESPAWN_ANCHOR_DEPLETE("respawn_anchor.deplete"),
     RESPAWN_ANCHOR_SET_SPAWN("respawn_anchor.set_spawn"),
+    @Since("1.4.0.0-PN") SIGN_DYE_USE("sign.dye.use"),
+    @Since("1.4.0.0-PN") SIGN_INK_SAC_USE("sign.ink_sac.use"),
     SMITHING_TABLE_USE("smithing_table.use"),
     STEP_ANCIENT_DEBRIS("step.ancient_debris"),
     STEP_BASALT("step.basalt"),

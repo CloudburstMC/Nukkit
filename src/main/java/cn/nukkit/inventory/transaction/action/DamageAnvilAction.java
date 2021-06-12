@@ -9,7 +9,9 @@ import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Sound;
+import lombok.ToString;
 
+@ToString(callSuper = true)
 public class DamageAnvilAction extends InventoryAction {
     
     private final AnvilInventory anvil;

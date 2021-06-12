@@ -1,5 +1,6 @@
 package cn.nukkit.level;
 
+import cn.nukkit.api.Since;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BinaryStream;
 import com.google.common.base.Preconditions;
@@ -200,6 +201,7 @@ public class GameRules {
     public static class Value<T> {
         private final Type type;
         private T value;
+        private boolean canBeChanged;
 
         public Value(Type type, T value) {
             this.type = type;
@@ -213,8 +215,18 @@ public class GameRules {
             this.value = value;
         }
 
+        @Since("1.5.0.0-PN")
+        public boolean isCanBeChanged() {
+            return this.canBeChanged;
+        }
+
+        @Since("1.5.0.0-PN")
+        public void setCanBeChanged(boolean canBeChanged) {
+            this.canBeChanged = canBeChanged;
+        }
+
         public Type getType() {
-            return type;
+            return this.type;
         }
 
         private boolean getValueAsBoolean() {
@@ -238,9 +250,11 @@ public class GameRules {
             return (Float) value;
         }
 
-        public void write(BinaryStream pk) {
-            pk.putUnsignedVarInt(type.ordinal());
-            type.write(pk, this);
+        @Since("1.5.0.0-PN")
+        public void write(BinaryStream stream) {
+            stream.putBoolean(this.canBeChanged);
+            stream.putUnsignedVarInt(type.ordinal());
+            type.write(stream, this);
         }
     }
 }

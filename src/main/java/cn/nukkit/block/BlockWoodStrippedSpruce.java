@@ -1,12 +1,16 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.blockproperty.value.WoodType;
 
+@PowerNukkitOnly
 public class BlockWoodStrippedSpruce extends BlockWoodStripped {
+    @PowerNukkitOnly
     public BlockWoodStrippedSpruce() {
         this(0);
     }
-    
+
+    @PowerNukkitOnly
     public BlockWoodStrippedSpruce(int meta) {
         super(meta);
     }

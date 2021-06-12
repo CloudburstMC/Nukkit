@@ -1,15 +1,23 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDoorCrimson;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.utils.BlockColor;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockDoorCrimson extends BlockDoorWood {
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockDoorCrimson() {
         this(0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockDoorCrimson(int meta) {
         super(meta);
     }
@@ -26,7 +34,7 @@ public class BlockDoorCrimson extends BlockDoorWood {
 
     @Override
     public Item toItem() {
-        return new ItemDoorCrimson();
+        return Item.get(ItemID.CRIMSON_DOOR);
     }
 
     @Override

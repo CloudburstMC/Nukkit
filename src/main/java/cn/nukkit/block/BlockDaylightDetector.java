@@ -6,14 +6,16 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDaylightDetector;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 
@@ -22,7 +24,12 @@ import javax.annotation.Nonnull;
  * @since 2015/11/22
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockDaylightDetector extends BlockTransparentMeta implements BlockEntityHolder<BlockEntityDaylightDetector> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public class BlockDaylightDetector extends BlockTransparentMeta implements RedstoneComponent, BlockEntityHolder<BlockEntityDaylightDetector> {
+
+    @Since("1.5.0.0-PN")
+    @PowerNukkitOnly
+    public static final BlockProperties PROPERTIES = CommonBlockProperties.REDSTONE_SIGNAL_BLOCK_PROPERTY;
 
     public BlockDaylightDetector() {
         // Does nothing
@@ -31,6 +38,14 @@ public class BlockDaylightDetector extends BlockTransparentMeta implements Block
     @Override
     public int getId() {
         return DAYLIGHT_DETECTOR;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -109,7 +124,7 @@ public class BlockDaylightDetector extends BlockTransparentMeta implements Block
     public boolean onBreak(Item item) {
         if (super.onBreak(item)) {
             if (getLevel().getDimension() == Level.DIMENSION_OVERWORLD) {
-                getLevel().updateAroundRedstone(new Vector3(x, y, z), null);
+                updateAroundRedstone();
             }
             return true;
         }
@@ -151,7 +166,7 @@ public class BlockDaylightDetector extends BlockTransparentMeta implements Block
 
         if (i != getLevel().getBlockDataAt(getFloorX(), getFloorY(), getFloorZ())) {
             getLevel().setBlockDataAt(getFloorX(), getFloorY(), getFloorZ(), i);
-            getLevel().updateAroundRedstone(this, null);
+            updateAroundRedstone();
         }
     }
 }

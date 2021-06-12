@@ -1,5 +1,7 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -23,9 +25,9 @@ public class EntityHorse extends EntityAnimal {
     @Override
     public float getWidth() {
         if (this.isBaby()) {
-            return 0.6982f;
+            return 0.7f;
         }
-        return 1.3965f;
+        return 1.4f;
     }
 
     @Override
@@ -45,5 +47,11 @@ public class EntityHorse extends EntityAnimal {
     @Override
     public Item[] getDrops() {
         return new Item[]{Item.get(Item.LEATHER)};
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "Horse";
     }
 }

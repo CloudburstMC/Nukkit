@@ -31,7 +31,11 @@ public abstract class EntityProjectile extends Entity {
     public static final int DATA_SHOOTER_ID = 17;
 
     public Entity shootingEntity = null;
-
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean hasAge = true;
+    
     protected double getDamage() {
         return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
     }
@@ -59,7 +63,7 @@ public abstract class EntityProjectile extends Entity {
     }
 
     @PowerNukkitOnly("Allows to modify the damage based on the entity being damaged")
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getResultDamage(@Nullable Entity entity) {
         return getResultDamage();
     }
@@ -118,7 +122,7 @@ public abstract class EntityProjectile extends Entity {
 
         this.setMaxHealth(1);
         this.setHealth(1);
-        if (this.namedTag.contains("Age")) {
+        if (this.namedTag.contains("Age") && this.hasAge) {
             this.age = this.namedTag.getShort("Age");
         }
     }
@@ -131,7 +135,9 @@ public abstract class EntityProjectile extends Entity {
     @Override
     public void saveNBT() {
         super.saveNBT();
-        this.namedTag.putShort("Age", this.age);
+        if (this.hasAge) {
+            this.namedTag.putShort("Age", this.age);
+        }
     }
 
     @PowerNukkitOnly
@@ -270,5 +276,17 @@ public abstract class EntityProjectile extends Entity {
     @PowerNukkitOnly
     protected void addHitEffect() {
 
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean hasAge() {
+        return hasAge;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setAge(boolean hasAge) {
+        this.hasAge = hasAge;
     }
 }

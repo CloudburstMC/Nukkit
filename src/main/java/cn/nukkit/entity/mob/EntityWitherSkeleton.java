@@ -28,17 +28,17 @@ public class EntityWitherSkeleton extends EntityMob implements EntitySmite {
 
     @Override
     public float getWidth() {
-        return 0.7f;
+        return 0.72f;
     }
 
     @Override
     public float getHeight() {
-        return 2.4f;
+        return 2.01f;
     }
 
     @Override
     public String getName() {
-        return "WitherSkeleton";
+        return "Wither Skeleton";
     }
 
     @Override

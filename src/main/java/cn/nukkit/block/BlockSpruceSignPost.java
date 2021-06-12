@@ -6,9 +6,11 @@ import cn.nukkit.item.ItemSpruceSign;
 
 @PowerNukkitOnly
 public class BlockSpruceSignPost extends BlockSignPost {
+    @PowerNukkitOnly
     public BlockSpruceSignPost() {
     }
 
+    @PowerNukkitOnly
     public BlockSpruceSignPost(int meta) {
         super(meta);
     }

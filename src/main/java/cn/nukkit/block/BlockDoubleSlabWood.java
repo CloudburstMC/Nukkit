@@ -39,10 +39,14 @@ public class BlockDoubleSlabWood extends BlockDoubleSlabBase {
         return BlockSlabWood.PROPERTIES;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public WoodType getWoodType() {
         return getPropertyValue(WoodType.PROPERTY);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void setWoodType(WoodType type) {
         setPropertyValue(WoodType.PROPERTY, type);
     }

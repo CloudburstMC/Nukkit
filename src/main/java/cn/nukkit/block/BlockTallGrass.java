@@ -2,6 +2,12 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.DoublePlantType;
+import cn.nukkit.blockproperty.value.TallGrassType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
@@ -21,6 +27,14 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockTallGrass extends BlockFlowable {
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final ArrayBlockProperty<TallGrassType> TALL_GRASS_TYPE = new ArrayBlockProperty<>("tall_grass_type", true, TallGrassType.class);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(TALL_GRASS_TYPE);
+
     public BlockTallGrass() {
         this(1);
     }
@@ -32,6 +46,14 @@ public class BlockTallGrass extends BlockFlowable {
     @Override
     public int getId() {
         return TALL_GRASS;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -92,29 +114,36 @@ public class BlockTallGrass extends BlockFlowable {
             Block up = this.up();
 
             if (up.getId() == AIR) {
-                int meta;
+                DoublePlantType type;
 
                 switch (this.getDamage()) {
                     case 0:
                     case 1:
-                        meta = BlockDoublePlant.TALL_GRASS;
+                        type = DoublePlantType.GRASS;
                         break;
                     case 2:
                     case 3:
-                        meta = BlockDoublePlant.LARGE_FERN;
+                        type = DoublePlantType.FERN;
                         break;
                     default:
-                        meta = -1;
+                        type = null;
                 }
 
-                if (meta != -1) {
-                    if (player != null && (player.gamemode & 0x01) == 0) {
+                if (type != null) {
+                    if (player != null && !player.isCreative()) {
                         item.count--;
                     }
 
+                    BlockDoublePlant doublePlant = (BlockDoublePlant) Block.get(BlockID.DOUBLE_PLANT);
+                    doublePlant.setDoublePlantType(type);
+                    doublePlant.setTopHalf(false);
+
                     this.level.addParticle(new BoneMealParticle(this));
-                    this.level.setBlock(this, get(DOUBLE_PLANT, meta), true, false);
-                    this.level.setBlock(up, get(DOUBLE_PLANT, meta ^ BlockDoublePlant.TOP_HALF_BITMASK), true);
+                    this.level.setBlock(this, doublePlant, true, false);
+
+                    doublePlant.setTopHalf(true);
+                    this.level.setBlock(up, doublePlant, true);
+                    this.level.updateAround(this);
                 }
             }
 

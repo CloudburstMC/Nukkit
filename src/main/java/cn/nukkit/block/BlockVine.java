@@ -3,6 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.event.block.BlockSpreadEvent;
@@ -15,17 +17,23 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.EnumSet;
+import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Pub4Game
  * @since 15.01.2016
  */
 public class BlockVine extends BlockTransparentMeta {
+    private static final IntBlockProperty VINE_DIRECTION_BITS = new IntBlockProperty("vine_direction_bits", false, 15);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(VINE_DIRECTION_BITS);
 
     public BlockVine(int meta) {
         super(meta);
@@ -43,6 +51,14 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public int getId() {
         return VINE;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -188,12 +204,22 @@ public class BlockVine extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!this.getSide(getFace()).isSolid()) {
-                Block up = this.up();
-                if (up.getId() != this.getId() || up.getDamage() != this.getDamage()) {
-                    this.getLevel().useBreakOn(this, null, null, true);
-                    return Level.BLOCK_UPDATE_NORMAL;
+            Block up = this.up();
+            Set<BlockFace> upFaces = up instanceof BlockVine ? ((BlockVine) up).getFaces() : null;
+            Set<BlockFace> faces = this.getFaces();
+            for (BlockFace face : BlockFace.Plane.HORIZONTAL) {
+                if (!this.getSide(face).isSolid() && (upFaces == null || !upFaces.contains(face))) {
+                    faces.remove(face);
                 }
+            }
+            if (faces.isEmpty() && !up.isSolid()) {
+                this.getLevel().useBreakOn(this, null, null, true);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
+            int meta = getMetaFromFaces(faces);
+            if (meta != this.getDamage()) {
+                this.level.setBlock(this, Block.get(VINE, meta), true);
+                return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             Random random = ThreadLocalRandom.current();
@@ -306,19 +332,35 @@ public class BlockVine extends BlockTransparentMeta {
         }
     }
 
-    private BlockFace getFace() {
+    private Set<BlockFace> getFaces() {
+        Set<BlockFace> faces = EnumSet.noneOf(BlockFace.class);
+
         int meta = this.getDamage();
         if ((meta & 1) > 0) {
-            return BlockFace.SOUTH;
-        } else if ((meta & 2) > 0) {
-            return BlockFace.WEST;
-        } else if ((meta & 4) > 0) {
-            return BlockFace.NORTH;
-        } else if ((meta & 8) > 0) {
-            return BlockFace.EAST;
+            faces.add(BlockFace.SOUTH);
+        }
+        if ((meta & 2) > 0) {
+            faces.add(BlockFace.WEST);
+        }
+        if ((meta & 4) > 0) {
+            faces.add(BlockFace.NORTH);
+        }
+        if ((meta & 8) > 0) {
+            faces.add(BlockFace.EAST);
         }
 
-        return BlockFace.UP;
+        return faces;
+    }
+
+    private static int getMetaFromFaces(Set<BlockFace> faces) {
+        int meta = 0;
+
+        for (BlockFace face : faces) {
+            meta |= getMetaFromFace(face);
+
+        }
+
+        return meta;
     }
 
     private static int getMetaFromFace(BlockFace face) {

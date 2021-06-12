@@ -3,7 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.ClientboundMapItemDataPacket;
-import cn.nukkit.utils.MainLogger;
+import lombok.extern.log4j.Log4j2;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -17,6 +17,7 @@ import java.io.IOException;
  * @author CreeperFace
  * @since 18.3.2017
  */
+@Log4j2
 public class ItemMap extends Item {
 
     public static int mapCount = 0;
@@ -67,7 +68,7 @@ public class ItemMap extends Item {
 
             this.getNamedTag().putByteArray("Colors", baos.toByteArray());
         } catch (IOException e) {
-            MainLogger.getLogger().logException(e);
+            log.error("Error while adding an image to an ItemMap", e);
         }
     }
 
@@ -77,7 +78,7 @@ public class ItemMap extends Item {
             image = ImageIO.read(new ByteArrayInputStream(data));
             return image;
         } catch (IOException e) {
-            MainLogger.getLogger().logException(e);
+            log.error("Error while loading an image of an ItemMap from NBT", e);
         }
 
         return null;

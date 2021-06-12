@@ -8,7 +8,6 @@ import cn.nukkit.api.Unsigned;
 import cn.nukkit.block.Block;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
-import cn.nukkit.blockproperty.UnknownRuntimeIdException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
@@ -38,6 +37,8 @@ import static cn.nukkit.blockstate.Loggers.logIBlockState;
 @Since("1.4.0.0-PN")
 @ParametersAreNonnullByDefault
 public interface IBlockState {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnegative
     int getBlockId();
 
@@ -208,7 +209,7 @@ public interface IBlockState {
     @Since("1.4.0.0-PN")
     @Nonnull
     default String getLegacyStateId() {
-        return getPersistenceName()+";nukkit-legacy="+getDataStorage();
+        return getPersistenceName()+";nukkit-unknown="+getDataStorage();
     }
 
     @PowerNukkitOnly
@@ -224,8 +225,7 @@ public interface IBlockState {
     @Nonnull
     default Block getBlock() {
         Block block = Block.get(getBlockId());
-        block.setState(this);
-        return block;
+        return block.forState(this);
     }
 
     /**
@@ -274,8 +274,7 @@ public interface IBlockState {
         BlockState currentState = getCurrentState();
         try {
             if (currentState.isCachedValidationValid()) {
-                block.setState(currentState);
-                return block;
+                return block.forState(currentState);
             }
         } catch (Exception e) {
             logIBlockState.error("Unexpected error while trying to set the cached valid state to the block. State: {}, Block: {}", currentState, block, e);
@@ -484,13 +483,6 @@ public interface IBlockState {
     @Since("1.4.0.0-PN")
     @Nonnull
     default ItemBlock asItemBlock(int count) {
-        BlockState currentState = getCurrentState();
-        BlockState itemState = currentState.forItem();
-        int runtimeId = itemState.getRuntimeId();
-        if (runtimeId == BlockStateRegistry.getUpdateBlockRegistration() && !"minecraft:info_update".equals(itemState.getPersistenceName())) {
-            throw new UnknownRuntimeIdException("The current block state can't be represented as an item. State: "+currentState+", Item: "+itemState);
-        }
-        Block block = itemState.getBlock();
-        return new ItemBlock(block, itemState.getExactIntStorage(), count);
+        return getCurrentState().asItemBlock(count);
     }
 }

@@ -7,8 +7,12 @@ import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDispenser;
 import cn.nukkit.blockentity.BlockEntityEjectable;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.dispenser.DispenseBehavior;
 import cn.nukkit.dispenser.DispenseBehaviorRegister;
+import cn.nukkit.dispenser.DropperDispenseBehavior;
+import cn.nukkit.dispenser.FlintAndSteelDispenseBehavior;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
@@ -16,22 +20,39 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
+
+import static cn.nukkit.blockproperty.CommonBlockProperties.FACING_DIRECTION;
 
 /**
  * @author CreeperFace
  * @since 15.4.2017
  */
 @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Implements BlockEntityHolder only in PowerNukkit")
-public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEntityHolder<BlockEntityEjectable> {
+@PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
+public class BlockDispenser extends BlockSolidMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityEjectable> {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty TRIGGERED = new BooleanBlockProperty("triggered_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(FACING_DIRECTION, TRIGGERED);
 
     public BlockDispenser() {
         this(0);
@@ -56,12 +77,30 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         return DISPENSER;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
     @Override
     public String getBlockEntityType() {
         return BlockEntity.DISPENSER;
+    }
+
+    @Override
+    public double getHardness() {
+        return 3.5;
+    }
+
+    @Override
+    public double getResistance() {
+        return 3.5;
     }
 
     @Since("1.4.0.0-PN")
@@ -124,6 +163,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         return true;
     }
 
+    @PowerNukkitDifference(info = "BlockData is implemented.", since = "1.4.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (player != null) {
@@ -141,10 +181,24 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
                 this.setDamage(player.getHorizontalFacing().getOpposite().getIndex());
             }
         }
+
+        CompoundTag nbt = new CompoundTag().putList(new ListTag<>("Items"));
+
+        if (item.hasCustomName()) {
+            nbt.putString("CustomName", item.getCustomName());
+        }
+
+        if (item.hasCustomBlockData()) {
+            Map<String, Tag> customData = item.getCustomBlockData().getTags();
+            for (Map.Entry<String, Tag> tag : customData.entrySet()) {
+                nbt.put(tag.getKey(), tag.getValue());
+            }
+        }
         
-        return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
+        return BlockEntityHolder.setBlockAndCreateEntity(this, true, true, nbt) != null;
     }
 
+    @PowerNukkitDifference(info = "Disables the triggered state, when the block is no longer powered + use #isGettingPower() method.", since = "1.4.0.0-PN")
     @Override
     public int onUpdate(int type) {
         if (!this.level.getServer().isRedstoneEnabled()) {
@@ -152,21 +206,19 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         }
 
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
-            this.setTriggered(false);
-            this.level.setBlock(this, this, false, false);
+            this.dispense();
 
-            dispense();
             return type;
-        } else if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            Vector3 pos = this.add(0);
+        } else if (type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_NORMAL) {
+            boolean triggered = this.isTriggered();
 
-            boolean powered = level.isBlockPowered(pos) || level.isBlockPowered(pos.up());
-            boolean triggered = isTriggered();
-
-            if (powered && !triggered) {
+            if (this.isGettingPower() && !triggered) {
                 this.setTriggered(true);
                 this.level.setBlock(this, this, false, false);
                 level.scheduleUpdate(this, this, 4);
+            } else if (!this.isGettingPower() && triggered) {
+                this.setTriggered(false);
+                this.level.setBlock(this, this, false, false);
             }
 
             return type;
@@ -175,6 +227,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         return 0;
     }
 
+    @PowerNukkitDifference(info = "Trigger observer on dispense fail (with #setDirty()).", since = "1.4.0.0-PN")
     public void dispense() {
         InventoryHolder blockEntity = getBlockEntity();
 
@@ -206,16 +259,13 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
         pk.z = 0.5f + facing.getZOffset() * 0.7f;
 
         if (target == null) {
-            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK_FAIL;
-            pk.data = 1200;
-
-            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
+            this.level.addSound(this, Sound.RANDOM_CLICK, 1.0f, 1.2f);
+            getBlockEntity().setDirty();
             return;
         } else {
-            pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
-            pk.data = 1000;
-
-            this.level.addChunkPacket(getChunkX(), getChunkZ(), pk.clone());
+            if (!(getDispenseBehavior(target) instanceof DropperDispenseBehavior)
+                    && !(getDispenseBehavior(target) instanceof FlintAndSteelDispenseBehavior))
+                this.level.addSound(this, Sound.RANDOM_CLICK, 1.0f, 1.0f);
         }
 
         pk.evid = LevelEventPacket.EVENT_PARTICLE_SHOOT;
@@ -227,9 +277,6 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable, BlockEnt
 
         DispenseBehavior behavior = getDispenseBehavior(target);
         Item result = behavior.dispense(this, facing, target);
-
-
-        pk.evid = LevelEventPacket.EVENT_SOUND_CLICK;
 
         target.count--;
         inv.setItem(slot, target);

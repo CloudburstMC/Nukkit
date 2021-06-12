@@ -14,6 +14,7 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -23,7 +24,8 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.OPEN;
 /**
  * @author Nukkit Project Team
  */
-public class BlockLever extends BlockFlowable implements Faceable {
+@PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
+public class BlockLever extends BlockFlowable implements RedstoneComponent, Faceable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public static final ArrayBlockProperty<LeverOrientation> LEVER_DIRECTION = new ArrayBlockProperty<>("lever_direction", false,
@@ -107,20 +109,15 @@ public class BlockLever extends BlockFlowable implements Faceable {
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isPowerOn() ? 15 : 0, isPowerOn() ? 0 : 15));
         toggleBooleanProperty(OPEN);
 
-        boolean redstone = this.level.getServer().isRedstoneEnabled();
-
         this.getLevel().setBlock(this, this, false, true);
         this.getLevel().addSound(this, Sound.RANDOM_CLICK, 0.8f, isPowerOn() ? 0.58f : 0.5f );
 
         LeverOrientation orientation = getLeverOrientation();
         BlockFace face = orientation.getFacing();
 
-        if (redstone) {
-            Block target = this.getSide(face.getOpposite());
-            target.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
-
-            this.level.updateAroundRedstone(this.getLocation(), isPowerOn() ? face.getOpposite() : null);
-            this.level.updateAroundRedstone(target.getLocation(), isPowerOn() ? face : null);
+        if (this.level.getServer().isRedstoneEnabled()) {
+            updateAroundRedstone();
+            RedstoneComponent.updateAroundRedstone(getSide(face.getOpposite()), face);
         }
         return true;
     }
@@ -186,12 +183,18 @@ public class BlockLever extends BlockFlowable implements Faceable {
     }
 
     @Override
+    @PowerNukkitDifference(info = "Update redstone", since = "1.4.0.0-PN")
     public boolean onBreak(Item item) {
         this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
 
         if (isPowerOn()) {
             BlockFace face = getLeverOrientation().getFacing();
             this.level.updateAround(this.getLocation().getSide(face.getOpposite()));
+
+            if (level.getServer().isRedstoneEnabled()) {
+                updateAroundRedstone();
+                RedstoneComponent.updateAroundRedstone(getSide(face.getOpposite()), face);
+            }
         }
         return true;
     }

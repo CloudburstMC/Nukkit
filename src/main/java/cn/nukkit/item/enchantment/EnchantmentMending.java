@@ -5,13 +5,12 @@ package cn.nukkit.item.enchantment;
  */
 public class EnchantmentMending extends Enchantment {
     protected EnchantmentMending() {
-
-        super(ID_MENDING, "mending", 2, EnchantmentType.ALL);
+        super(ID_MENDING, "mending", Rarity.RARE, EnchantmentType.BREAKABLE);
     }
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return 25 + (level - 1) * 9;
+        return 25 * level;
     }
 
     @Override
@@ -20,10 +19,7 @@ public class EnchantmentMending extends Enchantment {
     }
 
     @Override
-    public int getMaxLevel() { return 1; }
-
-    @Override
-    public boolean isCompatibleWith(Enchantment enchantment) {
-        return super.isCompatibleWith(enchantment) && enchantment.id != ID_BOW_INFINITY;
+    public boolean checkCompatibility(Enchantment enchantment) {
+        return super.checkCompatibility(enchantment) && enchantment.id != ID_BOW_INFINITY;
     }
 }

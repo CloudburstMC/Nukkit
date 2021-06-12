@@ -69,7 +69,7 @@ public class BannerPattern {
         PATTERN_SKULL("sku"),
         PATTERN_FLOWER("flo"),
         PATTERN_MOJANG("moj"),
-        @Since("1.3.2.0-PN") @PowerNukkitOnly PATTERN_SNOUT("pig");
+        @Since("1.4.0.0-PN") @PowerNukkitOnly PATTERN_SNOUT("pig");
 
         private final static Map<String, Type> BY_NAME = new HashMap<>();
 

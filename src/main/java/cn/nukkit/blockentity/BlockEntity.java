@@ -12,25 +12,28 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author MagicDroidX
  */
+@Log4j2
 public abstract class BlockEntity extends Position {
     //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
     public static final String CHEST = "Chest";
     public static final String ENDER_CHEST = "EnderChest";
     public static final String FURNACE = "Furnace";
-    public static final String BLAST_FURNACE = "BlastFurnace";
-    public static final String SMOKER = "Smoker";
+    @PowerNukkitOnly public static final String BLAST_FURNACE = "BlastFurnace";
+    @PowerNukkitOnly public static final String SMOKER = "Smoker";
     public static final String SIGN = "Sign";
     public static final String MOB_SPAWNER = "MobSpawner";
     public static final String ENCHANT_TABLE = "EnchantTable";
@@ -50,23 +53,17 @@ public abstract class BlockEntity extends Position {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
-    public static final String LECTERN = "Lectern";
-    public static final String BEEHIVE = "Beehive";
-    public static final String CONDUIT = "Conduit";
-    public static final String BARREL = "Barrel";
-    public static final String CAMPFIRE = "Campfire";
-    public static final String BELL = "Bell";
-    public static final String DISPENSER = "Dispenser";
-    public static final String DROPPER = "Dropper";
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public static final String NETHER_REACTOR = "NetherReactor";
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public static final String LODESTONE = "Lodestone";
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public static final String TARGET = "Target";
+    @PowerNukkitOnly public static final String LECTERN = "Lectern";
+    @PowerNukkitOnly public static final String BEEHIVE = "Beehive";
+    @PowerNukkitOnly public static final String CONDUIT = "Conduit";
+    @PowerNukkitOnly public static final String BARREL = "Barrel";
+    @PowerNukkitOnly public static final String CAMPFIRE = "Campfire";
+    @PowerNukkitOnly public static final String BELL = "Bell";
+    @PowerNukkitOnly public static final String DISPENSER = "Dispenser";
+    @PowerNukkitOnly public static final String DROPPER = "Dropper";
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final String NETHER_REACTOR = "NetherReactor";
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final String LODESTONE = "Lodestone";
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final String TARGET = "Target";
 
 
     public static long count = 1;
@@ -136,12 +133,9 @@ public abstract class BlockEntity extends Position {
         type = type.replaceFirst("BlockEntity", ""); //TODO: Remove this after the first release
         BlockEntity blockEntity = null;
 
-        if (knownBlockEntities.containsKey(type)) {
-            Class<? extends BlockEntity> clazz = knownBlockEntities.get(type);
-
-            if (clazz == null) {
-                return null;
-            }
+        Class<? extends BlockEntity> clazz = knownBlockEntities.get(type);
+        if (clazz != null) {
+            List<Exception> exceptions = null;
 
             for (Constructor constructor : clazz.getConstructors()) {
                 if (blockEntity != null) {
@@ -165,11 +159,26 @@ public abstract class BlockEntity extends Position {
 
                     }
                 } catch (Exception e) {
-                    MainLogger.getLogger().logException(e);
+                    if (exceptions == null) {
+                        exceptions = new ArrayList<>();
+                    }
+                    exceptions.add(e);
                 }
 
             }
+            if (blockEntity == null) {
+                Exception cause = new IllegalArgumentException("Could not create a block entity of type "+type, exceptions != null && exceptions.size() > 0? exceptions.get(0) : null);
+                if (exceptions != null && exceptions.size() > 1) {
+                    for (int i = 1; i < exceptions.size(); i++) {
+                        cause.addSuppressed(exceptions.get(i));
+                    }
+                }
+                log.error("Could not create a block entity of type {} with {} args", type, args == null? 0 : args.length, cause);
+            }
+        } else {
+            log.debug("Block entity type {} is unknown", type);
         }
+
 
         return blockEntity;
     }

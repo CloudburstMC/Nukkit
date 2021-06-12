@@ -19,15 +19,15 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     public static final int TIER_CHAIN = 3;
     public static final int TIER_GOLD = 4;
     public static final int TIER_DIAMOND = 5;
-    @Since("1.3.2.0-PN") public static final int TIER_NETHERITE = 6;
+    @Since("1.4.0.0-PN") public static final int TIER_NETHERITE = 6;
     
     @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", 
+    @DeprecationDetails(since = "1.4.0.0-PN", 
             reason = "The value of this 'constant' is unstable, it may change if new tiers gets added. Refrain from using it. " +
                     "Changes in this value will not be considered as an API breaking change and will not affect code that " +
                     "is already compiled."
     )
-    public static final int TIER_OTHER = 7;
+    public static final int TIER_OTHER = 1000;
 
     public ItemArmor(int id) {
         super(id);
@@ -59,25 +59,30 @@ abstract public class ItemArmor extends Item implements ItemDurable {
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
         boolean equip = false;
-        if (this.isHelmet() && player.getInventory().getHelmet().isNull()) {
+        Item oldSlotItem = Item.get(AIR);
+        if (this.isHelmet()) {
+            oldSlotItem = player.getInventory().getHelmet();
             if (player.getInventory().setHelmet(this)) {
                 equip = true;
             }
-        } else if (this.isChestplate() && player.getInventory().getChestplate().isNull()) {
+        } else if (this.isChestplate()) {
+            oldSlotItem = player.getInventory().getChestplate();
             if (player.getInventory().setChestplate(this)) {
                 equip = true;
             }
-        } else if (this.isLeggings() && player.getInventory().getLeggings().isNull()) {
+        } else if (this.isLeggings()) {
+            oldSlotItem = player.getInventory().getLeggings();
             if (player.getInventory().setLeggings(this)) {
                 equip = true;
             }
-        } else if (this.isBoots() && player.getInventory().getBoots().isNull()) {
+        } else if (this.isBoots()) {
+            oldSlotItem = player.getInventory().getBoots();
             if (player.getInventory().setBoots(this)) {
                 equip = true;
             }
         }
         if (equip) {
-            player.getInventory().clear(player.getInventory().getHeldItemIndex());
+            player.getInventory().setItem(player.getInventory().getHeldItemIndex(), oldSlotItem);
             switch (this.getTier()) {
                 case TIER_CHAIN:
                     player.getLevel().addSound(player, Sound.ARMOR_EQUIP_CHAIN);

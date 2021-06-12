@@ -4,8 +4,11 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBrewingStand;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBrewingStand;
@@ -21,6 +24,21 @@ import javax.annotation.Nonnull;
 import java.util.Map;
 
 public class BlockBrewingStand extends BlockSolidMeta {
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty HAS_POTION_A = new BooleanBlockProperty("brewing_stand_slot_a_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty HAS_POTION_B = new BooleanBlockProperty("brewing_stand_slot_b_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty HAS_POTION_C = new BooleanBlockProperty("brewing_stand_slot_c_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(HAS_POTION_A, HAS_POTION_B, HAS_POTION_C);
 
     public BlockBrewingStand() {
         this(0);
@@ -64,6 +82,14 @@ public class BlockBrewingStand extends BlockSolidMeta {
     @Override
     public int getId() {
         return BREWING_STAND_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

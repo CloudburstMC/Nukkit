@@ -1,12 +1,15 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityLectern;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.event.block.LecternDropBookEvent;
+import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
@@ -15,16 +18,26 @@ import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.RedstoneComponent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+import static cn.nukkit.blockproperty.CommonBlockProperties.POWERED;
+
 @PowerNukkitOnly
-public class BlockLectern extends BlockTransparentMeta implements Faceable, BlockEntityHolder<BlockEntityLectern> {
+public class BlockLectern extends BlockTransparentMeta implements RedstoneComponent, Faceable, BlockEntityHolder<BlockEntityLectern> {
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, POWERED);
+
+    @PowerNukkitOnly
     public BlockLectern() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockLectern(int meta) {
         super(meta);
     }
@@ -37,6 +50,14 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
     @Override
     public int getId() {
         return LECTERN;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Since("1.4.0.0-PN")
@@ -126,6 +147,16 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
         return BlockEntityHolder.setBlockAndCreateEntity(this) != null;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public int onTouch(@Nullable Player player, Action action) {
+        if (action == Action.LEFT_CLICK_BLOCK && (player == null || (!player.isCreative() && !player.isSpectator()))) {
+            dropBook(player);
+        }
+        return super.onTouch(player, action);
+    }
+
     @Override
     public boolean onActivate(@Nonnull Item item, @Nullable Player player) {
         BlockEntityLectern lectern = getOrCreateBlockEntity();
@@ -155,10 +186,12 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
         return true;
     }
 
+    @PowerNukkitOnly
     public boolean isActivated() {
         return (this.getDamage() & 0x04) == 0x04;
     }
 
+    @PowerNukkitOnly
     public void setActivated(boolean activated) {
         if (activated) {
             setDamage(getDamage() | 0x04);
@@ -167,6 +200,7 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
         }
     }
 
+    @PowerNukkitDifference(info = "Down side is strongly powered.", since = "1.4.0.0-PN")
     public void executeRedstonePulse() {
         if (isActivated()) {
             level.cancelSheduledUpdate(this, this);
@@ -179,7 +213,8 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
         level.setBlock(this, this, true, false);
         level.addSound(this.add(0.5, 0.5, 0.5), Sound.ITEM_BOOK_PAGE_TURN);
 
-        level.updateAroundRedstone(this, null);
+        updateAroundRedstone();
+        RedstoneComponent.updateAroundRedstone(getSide(BlockFace.DOWN), BlockFace.UP);
     }
 
     @Override
@@ -188,11 +223,13 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
     }
 
     @Override
-    public int getStrongPower(BlockFace side) {
-        return 0;
+    @PowerNukkitDifference(info = "Down side is strongly powered.", since = "1.4.0.0-PN")
+    public int getStrongPower(BlockFace face) {
+        return face == BlockFace.DOWN ? this.getWeakPower(face) : 0;
     }
 
     @Override
+    @PowerNukkitDifference(info = "Down side is strongly powered.", since = "1.4.0.0-PN")
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (isActivated()) {
@@ -200,7 +237,8 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
 
                 setActivated(false);
                 level.setBlock(this, this, true, false);
-                level.updateAroundRedstone(this, null);
+                updateAroundRedstone();
+                RedstoneComponent.updateAroundRedstone(getSide(BlockFace.DOWN), BlockFace.UP);
             }
 
             return Level.BLOCK_UPDATE_SCHEDULED;
@@ -214,6 +252,7 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable, Bloc
         return BlockColor.WOOD_BLOCK_COLOR;
     }
 
+    @PowerNukkitOnly
     public void dropBook(Player player) {
         BlockEntityLectern lectern = getBlockEntity();
         if (lectern == null) {
