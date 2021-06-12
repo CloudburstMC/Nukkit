@@ -14,6 +14,7 @@ import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.item.enchantment.sideeffect.SideEffect;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
@@ -28,6 +29,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
@@ -988,6 +990,17 @@ public class Item implements Cloneable, BlockID, ItemID {
         }
 
         return enchantments.toArray(Enchantment.EMPTY_ARRAY);
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Nonnull
+    public SideEffect[] getAttackSideEffects(@Nonnull Entity attacker, @Nonnull Entity entity) {
+        return Arrays.stream(getEnchantments())
+                .flatMap(enchantment -> Arrays.stream(enchantment.getAttackSideEffects(attacker, entity)))
+                .filter(Objects::nonNull)
+                .toArray(SideEffect[]::new)
+        ;
     }
 
     @Since("1.4.0.0-PN")

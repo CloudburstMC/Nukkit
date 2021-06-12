@@ -21,6 +21,7 @@ import cn.nukkit.item.enchantment.loot.EnchantmentLootDigging;
 import cn.nukkit.item.enchantment.loot.EnchantmentLootFishing;
 import cn.nukkit.item.enchantment.loot.EnchantmentLootWeapon;
 import cn.nukkit.item.enchantment.protection.*;
+import cn.nukkit.item.enchantment.sideeffect.SideEffect;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentChanneling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentImpaling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentLoyalty;
@@ -363,10 +364,6 @@ public abstract class Enchantment implements Cloneable {
     public double getDamageBonus(Entity entity) {
         return 0;
     }
-    
-    public void doPreAttack(Entity attacker, Entity entity) {
-
-    }
 
     public void doPostAttack(Entity attacker, Entity entity) {
 
@@ -420,6 +417,13 @@ public abstract class Enchantment implements Cloneable {
 
     public boolean isMajor() {
         return false;
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Nonnull
+    public SideEffect[] getAttackSideEffects(@Nonnull Entity attacker, @Nonnull Entity entity) {
+        return SideEffect.EMPTY_ARRAY;
     }
 
     @Override
