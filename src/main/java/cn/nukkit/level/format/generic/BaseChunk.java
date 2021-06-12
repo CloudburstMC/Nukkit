@@ -395,12 +395,12 @@ public abstract class BaseChunk extends BaseFullChunk implements Chunk {
     @Since("1.4.0.0-PN")
     @Override
     public boolean setBlockStateAt(int x, int y, int z, int layer, BlockState state) {
-        return setBlockStateAtLayer(x, y, z, layer, state);
+        return setBlockStateAtLayer(x & 0xF, y, z & 0XF, layer, state);
     }
 
     @Override
     public BlockState getBlockStateAt(int x, int y, int z, int layer) {
-        return getBlockState(x, y, z, layer);
+        return getBlockState(x & 0xF, y, z & 0xF, layer);
     }
 
     @Override
