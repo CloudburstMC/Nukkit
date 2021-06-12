@@ -22,7 +22,9 @@ Click the link above to see the future.
 - [#1103] The output message of the `/enchant` command
 - [#1100] Abrupt Time Change
 - [#1130] Soul Campfire and End Crystal were rendering as other items in the inventory
+- [#1139] Backward compatibility with some custom world generators
 - [#702] Burning arrow and rain will make a lot of particles
+- [#625] If you instant kill a mob with fire aspect enchant tool, it will not give fire aspect drops
 
 ## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
 This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
@@ -839,6 +841,7 @@ Fixes several anvil issues.
 [#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
 [#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475
 [#544]: https://github.com/PowerNukkit/PowerNukkit/issues/544
+[#625]: https://github.com/PowerNukkit/PowerNukkit/issues/625
 [#702]: https://github.com/PowerNukkit/PowerNukkit/issues/702
 [#765]: https://github.com/PowerNukkit/PowerNukkit/issues/765
 [#766]: https://github.com/PowerNukkit/PowerNukkit/issues/766
@@ -862,3 +865,4 @@ Fixes several anvil issues.
 [#1130]: https://github.com/PowerNukkit/PowerNukkit/issues/1130
 [#1132]: https://github.com/PowerNukkit/PowerNukkit/issues/1132
 [#1134]: https://github.com/PowerNukkit/PowerNukkit/issues/1134
+[#1139]: https://github.com/PowerNukkit/PowerNukkit/issues/1139
