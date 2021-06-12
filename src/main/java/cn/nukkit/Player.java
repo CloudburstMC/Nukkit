@@ -43,6 +43,7 @@ import cn.nukkit.inventory.transaction.data.UseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
 import cn.nukkit.item.*;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.item.enchantment.sideeffect.SideEffect;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
@@ -3831,6 +3832,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     }
 
                                     EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage);
+                                    entityDamageByEntityEvent.setSideEffects(item.getAttackSideEffects(this, target));
                                     if (this.isSpectator()) entityDamageByEntityEvent.setCancelled();
                                     if ((target instanceof Player) && !this.level.getGameRules().getBoolean(GameRule.PVP)) {
                                         entityDamageByEntityEvent.setCancelled();
@@ -3852,6 +3854,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         if (target instanceof EntityLiving) {
                                             ((EntityLiving) target).postAttack(this);
                                         }
+                                    }
+
+                                    for (SideEffect sideEffect : entityDamageByEntityEvent.getSideEffects()) {
+                                        sideEffect.doPostAttack(this, entityDamageByEntityEvent, target);
                                     }
 
                                     for (Enchantment enchantment : item.getEnchantments()) {

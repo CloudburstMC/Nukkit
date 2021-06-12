@@ -20,6 +20,7 @@ import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.item.enchantment.sideeffect.SideEffect;
 import cn.nukkit.level.*;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.*;
@@ -1221,7 +1222,10 @@ public abstract class Entity extends Location implements Metadatable {
                 }
             }
         }
-
+        Entity attacker = source instanceof EntityDamageByEntityEvent? ((EntityDamageByEntityEvent) source).getDamager() : null;
+        for (SideEffect sideEffect : source.getSideEffects()) {
+            sideEffect.doPreHealthChange(this, source, attacker);
+        }
         setHealth(newHealth);
         return true;
     }
