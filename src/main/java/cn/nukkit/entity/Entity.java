@@ -1739,7 +1739,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean isOnFire() {
-        return this.fireTicks > 0;
+        return !this.fireProof && this.fireTicks > 0;
     }
 
     public void setOnFire(int seconds) {
