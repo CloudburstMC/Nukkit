@@ -9,10 +9,10 @@ import cn.nukkit.item.enchantment.sideeffect.SideEffect;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.EventException;
 import com.google.common.collect.ImmutableMap;
+import lombok.var;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -149,15 +149,11 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     @PowerNukkitOnly
     @Since("FUTURE")
     public void addSideEffects(@Nonnull SideEffect... sideEffects) {
-        this.sideEffects = Stream
-                .of(
-                        Arrays.stream(this.sideEffects),
-                        Arrays.stream(sideEffects)
-                                .filter(Objects::nonNull)
-                                .map(SideEffect::clone)
-                )
-                .flatMap(Function.identity())
-                .toArray(SideEffect[]::new);
+        var safeStream = Arrays.stream(sideEffects)
+                .filter(Objects::nonNull)
+                .map(SideEffect::clone);
+
+        this.sideEffects = Stream.concat(Arrays.stream(this.sideEffects), safeStream).toArray(SideEffect[]::new);
     }
 
     @PowerNukkitOnly
