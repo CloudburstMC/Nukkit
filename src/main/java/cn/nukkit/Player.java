@@ -3841,7 +3841,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     }
                                     
                                     for (Enchantment enchantment : item.getEnchantments()) {
-                                        enchantment.doPostAttack(this, target);
+                                        enchantment.doPreAttack(this, target);
                                     }
 
                                     try {
@@ -3855,6 +3855,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         if (target instanceof EntityLiving) {
                                             ((EntityLiving) target).postAttack(this);
                                         }
+                                    }
+                                    
+                                    for (Enchantment enchantment : item.getEnchantments()) {
+                                        enchantment.doPostAttack(this, target);
                                     }
 
                                     if (item.isTool() && this.isSurvival()) {

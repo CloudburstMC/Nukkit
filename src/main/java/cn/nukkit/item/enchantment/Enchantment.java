@@ -363,6 +363,10 @@ public abstract class Enchantment implements Cloneable {
     public double getDamageBonus(Entity entity) {
         return 0;
     }
+    
+    public void doPreAttack(Entity attacker, Entity entity) {
+
+    }
 
     public void doPostAttack(Entity attacker, Entity entity) {
 
