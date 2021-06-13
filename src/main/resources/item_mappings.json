@@ -120,6 +120,8 @@
     "125": "minecraft:strider_spawn_egg",
     "126": "minecraft:zoglin_spawn_egg",
     "127": "minecraft:piglin_brute_spawn_egg",
-    "128": "minecraft:goat_spawn_egg"
+    "128": "minecraft:goat_spawn_egg",
+    "129": "minecraft:glow_squid_spawn_egg",
+    "130": "minecraft:axolotl_spawn_egg"
   }
 }
