@@ -4799,9 +4799,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void setFoodEnabled(boolean foodEnabled) {
-        if (foodEnabled == true) {
-            System.out.println(12);
-        }
         this.foodEnabled = foodEnabled;
     }
 
