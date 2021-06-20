@@ -171,12 +171,15 @@ public class PlayerFood {
     }
 
     public void updateFoodExpLevel(double use) {
-        if (!this.getPlayer().isFoodEnabled()) return;
         if (Server.getInstance().getDifficulty() == 0) return;
         if (this.getPlayer().hasEffect(Effect.SATURATION)) return;
         this.foodExpLevel += use;
         if (this.foodExpLevel > 4) {
-            this.useHunger(1);
+            if (!this.getPlayer().isFoodEnabled()) {
+                this.sendFoodLevel();
+            } else {
+                this.useHunger(1);
+            }
             this.foodExpLevel = 0;
         }
     }

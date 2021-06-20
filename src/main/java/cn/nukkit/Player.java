@@ -4171,6 +4171,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         ((Player) damager).getFoodData().updateFoodExpLevel(0.3);
                     }
                 }
+                this.getFoodData().updateFoodExpLevel(0.1);
                 EntityEventPacket pk = new EntityEventPacket();
                 pk.eid = this.id;
                 pk.event = EntityEventPacket.HURT_ANIMATION;
