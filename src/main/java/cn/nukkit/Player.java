@@ -1638,7 +1638,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.entityBaseTick(tickDiff);
 
-            if (this.getHealth() < this.getMaxHealth() && this.level.getGameRules().getBoolean(GameRule.NATURAL_REGENERATION)) {
+            if (this.getHealth() < this.getMaxHealth() && !this.server.isHardcore() && this.level.getGameRules().getBoolean(GameRule.NATURAL_REGENERATION)) {
                 if (this.getServer().getDifficulty() == 0) {
                     if (this.ticksLived % 20 == 0) {
                         this.heal(1);
