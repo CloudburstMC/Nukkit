@@ -26,6 +26,7 @@ Click the link above to see the future.
 - [#702] Burning arrow and rain will make a lot of particles
 - [#625] If you instant kill a mob with fire aspect enchant tool, it will not give fire aspect drops
 - [#979] Fixes an issue where the players could not hear each other walking
+- [#576] Swmming in a 1x1 tunnel of water was causing suffocation damage by the block above the player
 
 ## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
 This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
@@ -842,6 +843,7 @@ Fixes several anvil issues.
 [#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
 [#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475
 [#544]: https://github.com/PowerNukkit/PowerNukkit/issues/544
+[#576]: https://github.com/PowerNukkit/PowerNukkit/issues/576
 [#625]: https://github.com/PowerNukkit/PowerNukkit/issues/625
 [#702]: https://github.com/PowerNukkit/PowerNukkit/issues/702
 [#765]: https://github.com/PowerNukkit/PowerNukkit/issues/765
