@@ -2,16 +2,28 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+
+/**
+ * @implNote Faceable since FUTURE
+ */
 @PowerNukkitOnly
-public class BlockLoom extends BlockSolidMeta {
+public class BlockLoom extends BlockSolidMeta implements Faceable {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION);
 
     @PowerNukkitOnly
     public BlockLoom() {
@@ -26,6 +38,14 @@ public class BlockLoom extends BlockSolidMeta {
     @Override
     public int getId() {
         return LOOM;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -77,9 +97,23 @@ public class BlockLoom extends BlockSolidMeta {
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
         if (player != null) {
-            setDamage(player.getDirection().getOpposite().getHorizontalIndex());
+            setBlockFace(player.getDirection().getOpposite());
         }
         this.level.setBlock(this, this, true, true);
         return true;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    @Override
+    public BlockFace getBlockFace() {
+        return getPropertyValue(DIRECTION);
+    }
+
+    @Since("1.5.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(DIRECTION, face);
     }
 }

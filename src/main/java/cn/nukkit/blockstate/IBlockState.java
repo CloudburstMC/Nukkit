@@ -209,7 +209,7 @@ public interface IBlockState {
     @Since("1.4.0.0-PN")
     @Nonnull
     default String getLegacyStateId() {
-        return getPersistenceName()+";nukkit-legacy="+getDataStorage();
+        return getPersistenceName()+";nukkit-unknown="+getDataStorage();
     }
 
     @PowerNukkitOnly
@@ -225,8 +225,7 @@ public interface IBlockState {
     @Nonnull
     default Block getBlock() {
         Block block = Block.get(getBlockId());
-        block.setState(this);
-        return block;
+        return block.forState(this);
     }
 
     /**
@@ -275,8 +274,7 @@ public interface IBlockState {
         BlockState currentState = getCurrentState();
         try {
             if (currentState.isCachedValidationValid()) {
-                block.setState(currentState);
-                return block;
+                return block.forState(currentState);
             }
         } catch (Exception e) {
             logIBlockState.error("Unexpected error while trying to set the cached valid state to the block. State: {}, Block: {}", currentState, block, e);

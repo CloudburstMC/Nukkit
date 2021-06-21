@@ -86,7 +86,7 @@ public class EnchantCommand extends VanillaCommand {
             inventory.setItemInHand(clone);
             player.giveItem(enchanted);
         }
-        Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success"));
+        Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success", args[1]));
         return true;
     }
 

@@ -47,7 +47,7 @@ public class OverridesUpdater {
             }
 
             //noinspection unchecked
-            ListTag<CompoundTag> tags = (ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.LITTLE_ENDIAN, false);
+            ListTag<CompoundTag> tags = (ListTag<CompoundTag>) NBTIO.readTag(stream, ByteOrder.BIG_ENDIAN, false);
             for (CompoundTag tag : tags.getAll()) {
                 originalTags.put(tag.getCompound("block").remove("version"), tag);
             }

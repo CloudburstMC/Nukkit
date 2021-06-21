@@ -95,7 +95,7 @@ public class AnvilDamageEvent extends BlockFadeEvent implements Cancellable {
             since = "1.4.0.0-PN", by = "PowerNukkit",
             reason = "NukkitX added the class and made getCause() return an enum with a different name.",
             replaceWith = "getDamageCause()",
-            toBeRemovedAt = "1.5.0.0-PN"
+            toBeRemovedAt = "1.6.0.0-PN"
     )
     public Cause getCause() {
         return convert(cause);

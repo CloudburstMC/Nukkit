@@ -3,6 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -17,6 +19,10 @@ import javax.annotation.Nonnull;
  * @since 2015/11/24
  */
 public class BlockCarpet extends BlockFlowable {
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = CommonBlockProperties.COLOR_BLOCK_PROPERTIES;
+
     public BlockCarpet() {
         this(0);
     }
@@ -32,6 +38,12 @@ public class BlockCarpet extends BlockFlowable {
     @Override
     public int getId() {
         return CARPET;
+    }
+
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -107,11 +119,17 @@ public class BlockCarpet extends BlockFlowable {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return getDyeColor().getColor();
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return getPropertyValue(CommonBlockProperties.COLOR);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setDyeColor(@Nonnull DyeColor color) {
+        setPropertyValue(CommonBlockProperties.COLOR, color);
     }
 
 }

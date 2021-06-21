@@ -8,6 +8,8 @@ import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BlockProperty;
 import cn.nukkit.blockproperty.value.WoodType;
 import cn.nukkit.blockstate.BlockState;
+import cn.nukkit.blockstate.IBlockState;
+import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
@@ -80,7 +82,31 @@ public class BlockWood extends BlockLog {
     
     @Override
     public String getName() {
-        return getWoodType().getEnglishName() + " Wood";
+        return getWoodType().getEnglishName() + " Log";
+    }
+
+    @Since("FUTURE")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public Block forState(@Nonnull IBlockState state) throws InvalidBlockStateException {
+        int id = getId();
+        if (id != LOG && id != LOG2) {
+            return super.forState(state);
+        }
+
+        id = state.getBlockId();
+        if (id != LOG && id != LOG2 || state.getBitSize() != 4) {
+            return super.forState(state);
+        }
+
+        int exactInt = state.getExactIntStorage();
+        if ((exactInt & 0b1100) == 0b1100) {
+            int increment = state.getBlockId() == BlockID.LOG? 0b000 : 0b100;
+            return BlockState.of(BlockID.WOOD_BARK, (exactInt & 0b11) + increment).getBlock(this, layer);
+        }
+
+        return super.forState(state);
     }
 
     @Override

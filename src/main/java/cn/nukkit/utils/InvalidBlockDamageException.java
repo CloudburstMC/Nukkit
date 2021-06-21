@@ -3,7 +3,7 @@ package cn.nukkit.utils;
 import cn.nukkit.api.DeprecationDetails;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
-import cn.nukkit.blockproperty.CommonBlockProperties;
+import cn.nukkit.block.BlockUnknown;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import lombok.EqualsAndHashCode;
 
@@ -20,7 +20,7 @@ public class InvalidBlockDamageException extends InvalidBlockPropertyMetaExcepti
     @PowerNukkitOnly
     @Since("1.3.0.0-PN")
     public InvalidBlockDamageException(int blockId, int damage, int before) {
-        super(CommonBlockProperties.LEGACY_PROPERTIES.getBlockProperty(CommonBlockProperties.LEGACY_PROPERTY_NAME),
+        super(BlockUnknown.UNKNOWN,
                 before, damage,
                 "Invalid block-meta combination. New: "+blockId+":"+damage+", Before: "+blockId+":"+before);
         this.blockId = blockId;

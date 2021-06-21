@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.item.Item;
@@ -29,6 +31,18 @@ import javax.annotation.Nullable;
 @PowerNukkitDifference(info = "Implements RedstoneComponent.", since = "1.4.0.0-PN")
 public class BlockTNT extends BlockSolid implements RedstoneComponent {
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty EXPLODE_ON_BREAK = new BooleanBlockProperty("explode_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty ALLOW_UNDERWATER = new BooleanBlockProperty("allow_underwater_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(EXPLODE_ON_BREAK, ALLOW_UNDERWATER);
+
     public BlockTNT() {
     }
 
@@ -40,6 +54,14 @@ public class BlockTNT extends BlockSolid implements RedstoneComponent {
     @Override
     public int getId() {
         return TNT;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

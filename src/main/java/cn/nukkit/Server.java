@@ -280,9 +280,10 @@ public class Server {
         }
         instance = this;
         launchTime = System.currentTimeMillis();
-        CraftingManager.packet = new BatchPacket();
-        CraftingManager.packet.payload = EmptyArrays.EMPTY_BYTES;
-        
+        BatchPacket batchPacket = new BatchPacket();
+        batchPacket.payload = EmptyArrays.EMPTY_BYTES;
+        CraftingManager.packet = batchPacket;
+
         currentThread = Thread.currentThread();
         File abs = tempDir.getAbsoluteFile();
         filePath = abs.getPath();
