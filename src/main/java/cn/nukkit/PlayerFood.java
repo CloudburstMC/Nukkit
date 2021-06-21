@@ -176,6 +176,7 @@ public class PlayerFood {
         this.foodExpLevel += use;
         if (this.foodExpLevel > 4) {
             if (!this.getPlayer().isFoodEnabled()) {
+                // Hack to get around the client reducing food despite us not sending the attribute
                 this.sendFoodLevel();
             } else {
                 this.useHunger(1);
