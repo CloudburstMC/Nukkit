@@ -39,7 +39,7 @@ public class EntityZombiePigman extends EntityMob implements EntitySmite {
 
     @Override
     public String getName() {
-        return "ZombiePigman";
+        return "Zombified Piglin";
     }
 
     @Override

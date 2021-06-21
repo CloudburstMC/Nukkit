@@ -1,14 +1,19 @@
 package cn.nukkit.event.entity;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.item.enchantment.sideeffect.SideEffect;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.EventException;
 import com.google.common.collect.ImmutableMap;
+import lombok.var;
 
-import java.util.EnumMap;
-import java.util.Map;
+import javax.annotation.Nonnull;
+import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -25,6 +30,8 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
 
     private final Map<DamageModifier, Float> modifiers;
     private final Map<DamageModifier, Float> originals;
+
+    private SideEffect[] sideEffects = SideEffect.EMPTY_ARRAY;
 
     public EntityDamageEvent(Entity entity, DamageCause cause, float damage) {
         this(entity, cause, new EnumMap<DamageModifier, Float>(DamageModifier.class) {
@@ -107,6 +114,52 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     
     public void setAttackCooldown(int attackCooldown) {
         this.attackCooldown = attackCooldown;
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Nonnull
+    public SideEffect[] getSideEffects() {
+        SideEffect[] sideEffects = this.sideEffects;
+        if (sideEffects.length == 0) {
+            return sideEffects;
+        }
+        return Arrays.stream(sideEffects)
+                .map(SideEffect::clone)
+                .toArray(SideEffect[]::new)
+        ;
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public void setSideEffects(@Nonnull SideEffect... sideEffects) {
+        this.sideEffects = Arrays.stream(sideEffects)
+                .filter(Objects::nonNull)
+                .map(SideEffect::clone)
+                .toArray(SideEffect[]::new)
+        ;
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public void setSideEffects(@Nonnull Collection<SideEffect> sideEffects) {
+        this.setSideEffects(sideEffects.toArray(SideEffect.EMPTY_ARRAY));
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public void addSideEffects(@Nonnull SideEffect... sideEffects) {
+        var safeStream = Arrays.stream(sideEffects)
+                .filter(Objects::nonNull)
+                .map(SideEffect::clone);
+
+        this.sideEffects = Stream.concat(Arrays.stream(this.sideEffects), safeStream).toArray(SideEffect[]::new);
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public void addSideEffects(@Nonnull Collection<SideEffect> sideEffects) {
+        this.addSideEffects(sideEffects.toArray(SideEffect.EMPTY_ARRAY));
     }
 
     public boolean canBeReducedByArmor() {

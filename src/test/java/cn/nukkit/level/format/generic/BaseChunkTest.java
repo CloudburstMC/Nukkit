@@ -36,7 +36,43 @@ class BaseChunkTest {
         chunk.setProvider(anvil);
         chunk.providerClass = Anvil.class;
     }
-    
+
+    /**
+     * Cloudburst Nukkit don't validate xyz, instead, it uses only the 4 least significant bits. We must do the same.
+     */
+    @Test
+    void github1138() {
+        chunk.setBlockAt(0x10, 0, 0, BlockID.BEDROCK);
+        assertEquals(BlockID.BEDROCK, chunk.getBlockId(0, 0, 0));
+        chunk.setBlockAt(0, 0, 0, BlockID.AIR);
+        assertEquals(BlockID.AIR, chunk.getBlockId(0, 0, 0));
+
+        chunk.setBlockAt(0, 0x10, 0, BlockID.BEDROCK);
+        assertEquals(BlockID.BEDROCK, chunk.getBlockId(0, 0x10, 0));
+        chunk.setBlockAt(0, 0x10, 0, BlockID.AIR);
+        assertEquals(BlockID.AIR, chunk.getBlockId(0, 0x10, 0));
+
+        chunk.setBlockAt(0, 0, 0x10, BlockID.BEDROCK);
+        assertEquals(BlockID.BEDROCK, chunk.getBlockId(0, 0, 0));
+        chunk.setBlockAt(0, 0, 0, BlockID.AIR);
+        assertEquals(BlockID.AIR, chunk.getBlockId(0, 0, 0));
+
+        chunk.setBlockAt(0x13, 0, 0, BlockID.BEDROCK);
+        assertEquals(BlockID.BEDROCK, chunk.getBlockId(3, 0, 0));
+        chunk.setBlockAt(3, 0, 0, BlockID.AIR);
+        assertEquals(BlockID.AIR, chunk.getBlockId(3, 0, 0));
+
+        chunk.setBlockAt(0, 0x13, 0, BlockID.BEDROCK);
+        assertEquals(BlockID.BEDROCK, chunk.getBlockId(0, 0x13, 0));
+        chunk.setBlockAt(0, 0x13, 0, BlockID.AIR);
+        assertEquals(BlockID.AIR, chunk.getBlockId(0, 0x13, 0));
+
+        chunk.setBlockAt(0, 0, 0x13, BlockID.BEDROCK);
+        assertEquals(BlockID.BEDROCK, chunk.getBlockId(0, 0, 3));
+        chunk.setBlockAt(0, 0, 3, BlockID.AIR);
+        assertEquals(BlockID.AIR, chunk.getBlockId(0, 0, 3));
+    }
+
     @Test
     void isBlockChangeAllowed() {
         BlockState allow = BlockState.of(BlockID.ALLOW);
