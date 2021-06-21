@@ -5,7 +5,7 @@ package cn.nukkit.item.enchantment;
  */
 public class EnchantmentWaterWorker extends Enchantment {
     protected EnchantmentWaterWorker() {
-        super(ID_WATER_WORKER, "waterWorker", 2, EnchantmentType.ARMOR_HEAD);
+        super(ID_WATER_WORKER, "waterWorker", Rarity.RARE, EnchantmentType.ARMOR_HEAD);
     }
 
     @Override
@@ -16,10 +16,5 @@ public class EnchantmentWaterWorker extends Enchantment {
     @Override
     public int getMaxEnchantAbility(int level) {
         return this.getMinEnchantAbility(level) + 40;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return 1;
     }
 }

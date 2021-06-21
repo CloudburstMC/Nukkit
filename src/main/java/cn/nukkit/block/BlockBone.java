@@ -3,6 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
@@ -11,10 +13,29 @@ import cn.nukkit.utils.Faceable;
 
 import javax.annotation.Nonnull;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.DEPRECATED;
+
 /**
  * @author CreeperFace
  */
 public class BlockBone extends BlockSolidMeta implements Faceable {
+    private static final ArrayBlockProperty<String> SPECIAL_PILLAR_AXIS = new ArrayBlockProperty<>("pillar_axis", false,
+        new String[] {
+                "y",
+                "unused1",
+                "unused2",
+                "unused3",
+                "x",
+                "unused5",
+                "unused6",
+                "unused7",
+                "z",
+        }
+    );
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(SPECIAL_PILLAR_AXIS, DEPRECATED);
 
     private static final int[] FACES = {
             0,
@@ -36,6 +57,14 @@ public class BlockBone extends BlockSolidMeta implements Faceable {
     @Override
     public int getId() {
         return BONE_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

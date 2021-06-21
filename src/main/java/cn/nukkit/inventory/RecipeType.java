@@ -1,5 +1,8 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 public enum RecipeType {
     SHAPELESS(0),
     SHAPED(1),
@@ -9,17 +12,19 @@ public enum RecipeType {
     SHULKER_BOX(5),
     SHAPELESS_CHEMISTRY(6),
     SHAPED_CHEMISTRY(7),
-    BLAST_FURNACE(2),
-    BLAST_FURNACE_DATA(3),
-    SMOKER(2),
-    SMOKER_DATA(3),
-    CAMPFIRE(2),
-    CAMPFIRE_DATA(3),
-    STONECUTTER(0),
-    CARTOGRAPHY(0),
-    REPAIR(-1);
+    @PowerNukkitOnly BLAST_FURNACE(2),
+    @PowerNukkitOnly BLAST_FURNACE_DATA(3),
+    @PowerNukkitOnly SMOKER(2),
+    @PowerNukkitOnly SMOKER_DATA(3),
+    @PowerNukkitOnly CAMPFIRE(2),
+    @PowerNukkitOnly CAMPFIRE_DATA(3),
+    @PowerNukkitOnly STONECUTTER(0),
+    @PowerNukkitOnly CARTOGRAPHY(0),
+    @PowerNukkitOnly REPAIR(-1),
+    @PowerNukkitOnly @Since("1.4.0.0-PN") SMITHING(-1)
+    ;
 
-    public final int networkType;
+    @PowerNukkitOnly public final int networkType;
 
     RecipeType(int networkType) {
         this.networkType = networkType;

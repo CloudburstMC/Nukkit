@@ -99,7 +99,23 @@ public final class ArrayBlockProperty<E extends Serializable> extends BlockPrope
     public ArrayBlockProperty(String name, boolean exportedToItem, Class<E> enumClass) {
         this(name, exportedToItem, enumClass.getEnumConstants());
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public ArrayBlockProperty<E> copy() {
+        return new ArrayBlockProperty<>(getName(), isExportedToItem(), universe, getBitSize(), getPersistenceName(), isOrdinal(), persistenceNames);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public ArrayBlockProperty<E> exportingToItems(boolean exportedToItem) {
+        return new ArrayBlockProperty<>(getName(), exportedToItem, universe, getBitSize(), getPersistenceName(), isOrdinal(), persistenceNames);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public ArrayBlockProperty<E> ordinal(boolean ordinal) {
         if (ordinal == this.ordinal) {
             return this;
@@ -202,6 +218,8 @@ public final class ArrayBlockProperty<E extends Serializable> extends BlockPrope
         return universe.clone();
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public boolean isOrdinal() {
         return ordinal;
     }

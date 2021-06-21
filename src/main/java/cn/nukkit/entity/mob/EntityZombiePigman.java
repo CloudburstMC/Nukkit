@@ -34,12 +34,12 @@ public class EntityZombiePigman extends EntityMob implements EntitySmite {
 
     @Override
     public float getHeight() {
-        return 1.95f;
+        return 1.9f;
     }
 
     @Override
     public String getName() {
-        return "ZombiePigman";
+        return "Zombified Piglin";
     }
 
     @Override

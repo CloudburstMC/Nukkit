@@ -1,6 +1,5 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.block.BlockID;
@@ -16,8 +15,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -109,6 +106,10 @@ public class EntityItem extends Entity {
         this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY, true);
 
+        if (this.item.isLavaResistant()) {
+            this.fireProof = true; // Netherite items are fireproof
+        }
+
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
     }
 
@@ -116,12 +117,12 @@ public class EntityItem extends Entity {
     @Override
     public boolean attack(EntityDamageEvent source) {
         if (item != null && item.isLavaResistant() && (
-                source.getCause() == DamageCause.LAVA || 
-                        source.getCause() == DamageCause.FIRE || 
+                source.getCause() == DamageCause.LAVA ||
+                        source.getCause() == DamageCause.FIRE ||
                         source.getCause() == DamageCause.FIRE_TICK)) {
             return false;
         }
-        
+
         return (source.getCause() == DamageCause.VOID ||
                 source.getCause() == DamageCause.CONTACT ||
                 source.getCause() == DamageCause.FIRE_TICK ||
@@ -179,7 +180,7 @@ public class EntityItem extends Entity {
 
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
-        boolean lavaResistant = item != null && item.isLavaResistant();
+        boolean lavaResistant = fireProof || item != null && item.isLavaResistant();
 
         if (!lavaResistant && (isInsideOfFire() || isInsideOfLava())) {
             this.kill();
@@ -191,7 +192,7 @@ public class EntityItem extends Entity {
                 if (this.pickupDelay < 0) {
                     this.pickupDelay = 0;
                 }
-            } else {
+            }/* else { // Done in Player#checkNearEntities
                 for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(1, 0.5, 1), this)) {
                     if (entity instanceof Player) {
                         if (((Player) entity).pickupEntity(this, true)) {
@@ -199,18 +200,24 @@ public class EntityItem extends Entity {
                         }
                     }
                 }
-            }
-            
-            if (lavaResistant && getCollisionBlocks().stream().anyMatch(b-> b.getId() == BlockID.LAVA || b.getId() == BlockID.STILL_LAVA)) {
-                this.motionY = this.getGravity() * 4;
-                ThreadLocalRandom random = ThreadLocalRandom.current();
-                this.motionZ = (random.nextDouble() - 0.5) * getGravity() * 6;
-                this.motionX = (random.nextDouble() - 0.5) * getGravity() * 6;
-            } else if (this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == BlockID.WATER 
-                    || this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z) == BlockID.STILL_WATER) {
+            }*/
+
+            int bid = this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z, 0);
+            if (bid == BlockID.WATER || bid == BlockID.STILL_WATER
+                || (bid = this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z, 1)) == BlockID.WATER
+                || bid == BlockID.STILL_WATER
+            ) {
                 //item is fully in water or in still water
                 this.motionY -= this.getGravity() * -0.015;
-            } else if (this.isInsideOfWater()) {
+            } else if (lavaResistant && (
+                    this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z, 0) == BlockID.LAVA
+                            || this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z, 0) == BlockID.STILL_LAVA
+                            || this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z, 1) == BlockID.LAVA
+                            || this.level.getBlockIdAt((int) this.x, (int) this.boundingBox.getMaxY(), (int) this.z, 1) == BlockID.STILL_LAVA
+            )) {
+                //item is fully in lava or in still lava
+                this.motionY -= this.getGravity() * -0.015;
+            } else if (this.isInsideOfWater() || lavaResistant && this.isInsideOfLava()) {
                 this.motionY = this.getGravity() - 0.06; //item is going up in water, don't let it go back down too fast
             } else {
                 this.motionY -= this.getGravity(); //item is not in water

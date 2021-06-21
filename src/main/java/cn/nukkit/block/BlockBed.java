@@ -9,16 +9,19 @@ import cn.nukkit.blockentity.BlockEntityBed;
 import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.item.EntityPrimedTNT;
+import cn.nukkit.event.block.BlockExplosionPrimeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBed;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.level.Explosion;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
@@ -125,56 +128,82 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
     @Override
     public boolean onActivate(@Nonnull Item item, Player player) {
 
-        if (!(this.level.getDimension() == Level.DIMENSION_OVERWORLD)) {
-            CompoundTag tag = EntityPrimedTNT.getDefaultNBT(this).putShort("Fuse", 0);
-            new EntityPrimedTNT(this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), tag);
-            return true;
-        }
-
         BlockFace dir = getBlockFace();
+
+        boolean shouldExplode = this.level.getDimension() != Level.DIMENSION_OVERWORLD;
+        boolean willExplode = shouldExplode && this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES);
         
-        Block b;
+        Block head;
         if (isHeadPiece()) {
-            b = this;
+            head = this;
         } else {
-            b = getSide(dir);
-            if (b.getId() != getId() || !((BlockBed) b).isHeadPiece() || !((BlockBed) b).getBlockFace().equals(dir)) {
-                if (player != null) {
+            head = getSide(dir);
+            if (head.getId() != getId() || !((BlockBed) head).isHeadPiece() || !((BlockBed) head).getBlockFace().equals(dir)) {
+                if (player != null && !willExplode) {
                     player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.notValid"));
                 }
-
-                return true;
+                
+                if (!shouldExplode) {
+                    return true;
+                }
             }
         }
 
         BlockFace footPart = dir.getOpposite();
-        if (player != null) {
-            AxisAlignedBB accessArea = new SimpleAxisAlignedBB(b.x - 2, b.y - 5.5, b.z - 2, b.x + 3, b.y + 2.5, b.z + 3)
-                    .addCoord(footPart.getXOffset(), 0, footPart.getZOffset());
-            
-            if (!accessArea.isVectorInside(player)) {
-                player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.tooFar"));
+
+        if (shouldExplode) {
+            if (!willExplode) {
+                return true;
+            }
+
+            BlockExplosionPrimeEvent event = new BlockExplosionPrimeEvent(this, 5);
+            event.setIncendiary(true);
+            if (event.isCancelled()) {
                 return true;
             }
             
-            Location spawn = Location.fromObject(b.add(0.5, 0.5, 0.5), player.getLevel(), player.getYaw(), player.getPitch());
-            if (!player.getSpawn().equals(spawn)) {
-                player.setSpawn(spawn);
+            level.setBlock(this, get(AIR), false, false);
+            onBreak(Item.getBlock(BlockID.AIR));
+            level.updateAround(this);
+
+            Explosion explosion = new Explosion(this, event.getForce(), this);
+            explosion.setFireChance(event.getFireChance());
+            if (event.isBlockBreaking()) {
+                explosion.explodeA();
             }
-            player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.respawnSet"));
+            explosion.explodeB();
+            return true;
         }
+
+        if (player == null || !player.hasEffect(Effect.CONDUIT_POWER) && getLevelBlockAtLayer(1) instanceof BlockWater) {
+            return true;
+        }
+
+        AxisAlignedBB accessArea = new SimpleAxisAlignedBB(head.x - 2, head.y - 5.5, head.z - 2, head.x + 3, head.y + 2.5, head.z + 3)
+                .addCoord(footPart.getXOffset(), 0, footPart.getZOffset());
+
+        if (!accessArea.isVectorInside(player)) {
+            player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.tooFar"));
+            return true;
+        }
+
+        Location spawn = Location.fromObject(head.add(0.5, 0.5, 0.5), player.getLevel(), player.getYaw(), player.getPitch());
+        if (!player.getSpawn().equals(spawn)) {
+            player.setSpawn(spawn);
+        }
+        player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.respawnSet"));
 
         int time = this.getLevel().getTime() % Level.TIME_FULL;
 
         boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
 
-        if (player != null && !isNight) {
+        if (!isNight) {
             player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.noSleep"));
             return true;
         }
 
-        if (player != null && !player.isCreative()) {
-            AxisAlignedBB checkMonsterArea = new SimpleAxisAlignedBB(b.x - 8, b.y - 6.5, b.z - 8, b.x + 9, b.y + 5.5, b.z + 9)
+        if (!player.isCreative()) {
+            AxisAlignedBB checkMonsterArea = new SimpleAxisAlignedBB(head.x - 8, head.y - 6.5, head.z - 8, head.x + 9, head.y + 5.5, head.z + 9)
                     .addCoord(footPart.getXOffset(), 0, footPart.getZOffset());
 
             for (Entity entity : this.level.getCollidingEntities(checkMonsterArea)) {
@@ -186,10 +215,9 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
             }
         }
 
-        if (player != null && !player.sleepOn(b)) {
+        if (!player.sleepOn(head)) {
             player.sendMessage(new TranslationContainer(TextFormat.GRAY + "%tile.bed.occupied"));
         }
-
 
         return true;
     }
@@ -333,8 +361,60 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
         return false;
     }
 
+    @PowerNukkitOnly("In Cloudburst Nukkit, the clone returns Object, which is a different signature!")
+    @Since("1.4.0.0-PN")
     @Override
     public BlockBed clone() {
         return (BlockBed) super.clone();
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isBedValid() {
+        BlockFace dir = getBlockFace();
+        Block head;
+        Block foot;
+        if (isHeadPiece()) {
+            head = this;
+            foot = getSide(dir.getOpposite());
+        } else {
+            head = getSide(dir);
+            foot = this;
+        }
+        
+        return head.getId() == foot.getId() 
+                && ((BlockBed) head).isHeadPiece() && ((BlockBed) head).getBlockFace().equals(dir)
+                && !((BlockBed) foot).isHeadPiece() && ((BlockBed) foot).getBlockFace().equals(dir);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public BlockBed getHeadPart() {
+        if (isHeadPiece()) {
+            return this;
+        }
+        BlockFace dir = getBlockFace();
+        Block head = getSide(dir);
+        if (head.getId() == getId() && ((BlockBed) head).isHeadPiece() && ((BlockBed) head).getBlockFace().equals(dir)) {
+            return (BlockBed) head;
+        }
+        return null;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nullable
+    public BlockBed getFootPart() {
+        if (!isHeadPiece()) {
+            return this;
+        }
+        
+        BlockFace dir = getBlockFace();
+        Block foot = getSide(dir.getOpposite());
+        if (foot.getId() == getId() && !((BlockBed) foot).isHeadPiece() && ((BlockBed) foot).getBlockFace().equals(dir)) {
+            return (BlockBed) foot;
+        }
+        return null;
     }
 }

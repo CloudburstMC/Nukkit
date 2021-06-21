@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
-import cn.nukkit.blockproperty.CommonBlockProperties;
 
 import javax.annotation.Nonnull;
 
@@ -28,7 +27,5 @@ public abstract class BlockFallableMeta extends BlockFallable {
     @Nonnull
     @PowerNukkitOnly
     @Override
-    public BlockProperties getProperties() {
-        return CommonBlockProperties.LEGACY_PROPERTIES;
-    }
+    public abstract BlockProperties getProperties();
 }

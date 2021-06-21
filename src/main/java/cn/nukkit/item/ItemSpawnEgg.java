@@ -34,6 +34,8 @@ public class ItemSpawnEgg extends Item {
         super(SPAWN_EGG, meta, count, "Spawn EntityEgg");
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected ItemSpawnEgg(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
@@ -45,6 +47,10 @@ public class ItemSpawnEgg extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
+        if (player.isAdventure()) {
+            return false;
+        }
+
         FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
 
         if (chunk == null) {
@@ -89,14 +95,14 @@ public class ItemSpawnEgg extends Item {
         return false;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     @PowerNukkitOnly
     public Item getLegacySpawnEgg() {
         return Item.get(SPAWN_EGG, getEntityNetworkId(), getCount(), getCompoundTag());
     }
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getEntityNetworkId() {
         return this.meta;
     }

@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -7,9 +8,10 @@ import cn.nukkit.utils.BlockColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-
+@PowerNukkitOnly
 public class BlockSeaLantern extends BlockTransparent {
 
+    @PowerNukkitOnly
     public BlockSeaLantern() {
         // Does Nothing
     }

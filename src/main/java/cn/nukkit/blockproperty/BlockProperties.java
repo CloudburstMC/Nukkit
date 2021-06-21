@@ -2,6 +2,7 @@ package cn.nukkit.blockproperty;
 
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.exception.BlockPropertyNotFoundException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.blockproperty.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.blockstate.*;
@@ -26,6 +27,7 @@ import java.util.function.ObjIntConsumer;
 public final class BlockProperties {
     private final Map<String, RegisteredBlockProperty> byName;
     private final int bitSize;
+    private final BlockProperties itemBlockProperties;
 
     /**
      * @throws IllegalArgumentException If there are validation failures
@@ -33,6 +35,20 @@ public final class BlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0")
     public BlockProperties(BlockProperty<?>... properties) {
+        this(null, properties);
+    }
+
+    /**
+     * @throws IllegalArgumentException If there are validation failures
+     */
+    @PowerNukkitOnly
+    @Since("1.4.0.0")
+    public BlockProperties(@Nullable BlockProperties itemBlockProperties, BlockProperty<?>... properties) {
+        if (itemBlockProperties == null) {
+            this.itemBlockProperties = this;
+        } else {
+            this.itemBlockProperties = itemBlockProperties;
+        }
         Map<String, RegisteredBlockProperty> registry = new LinkedHashMap<>(properties.length);
         Map<String, RegisteredBlockProperty> byPersistenceName = new LinkedHashMap<>(properties.length);
         int offset = 0;
@@ -61,6 +77,13 @@ public final class BlockProperties {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     @Nonnull
+    public BlockProperties getItemBlockProperties() {
+        return itemBlockProperties;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    @Nonnull
     public MutableBlockState createMutableState(int blockId) {
         if (bitSize == 0) {
             return new ZeroMutableBlockState(blockId, this);
@@ -79,6 +102,16 @@ public final class BlockProperties {
     @Since("1.4.0.0-PN")
     public boolean contains(String propertyName) {
         return byName.containsKey(propertyName);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean contains(BlockProperty<?> property) {
+        RegisteredBlockProperty registry = byName.get(property.getName());
+        if (registry == null) {
+            return false;
+        }
+        return registry.getProperty().getValueClass().equals(property.getValueClass());
     }
 
     /**
@@ -134,7 +167,7 @@ public final class BlockProperties {
     public RegisteredBlockProperty requireRegisteredProperty(String propertyName) {
         RegisteredBlockProperty registry = byName.get(propertyName);
         if (registry == null) {
-            throw new NoSuchElementException("The property "+propertyName+" was not found");
+            throw new BlockPropertyNotFoundException(propertyName, this);
         }
         return registry;
     }
@@ -561,22 +594,30 @@ public final class BlockProperties {
         return (Boolean) registry.property.getValue(currentMeta, registry.offset);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int getBitSize() {
         return bitSize;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void forEach(ObjIntConsumer<BlockProperty<?>> consumer) {
         for (RegisteredBlockProperty registry : byName.values()) {
             consumer.accept(registry.property, registry.offset);
         }
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public void forEach(Consumer<BlockProperty<?>> consumer) {
         for (RegisteredBlockProperty registry : byName.values()) {
             consumer.accept(registry.property);
         }
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public <R> R reduce(R identity, TriFunction<BlockProperty<?>, Integer, R, R> accumulator) {
         R result = identity;
         for (RegisteredBlockProperty registry : byName.values()) {
@@ -585,6 +626,8 @@ public final class BlockProperties {
         return result;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public int reduceInt(int identity, ToIntTriFunctionTwoInts<BlockProperty<?>> accumulator) {
         int result = identity;
         for (RegisteredBlockProperty registry : byName.values()) {
@@ -593,6 +636,8 @@ public final class BlockProperties {
         return result;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public long reduceLong(long identity, ToLongTriFunctionOneIntOneLong<BlockProperty<?>> accumulator) {
         long result = identity;
         for (RegisteredBlockProperty registry : byName.values()) {
@@ -601,6 +646,8 @@ public final class BlockProperties {
         return result;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     @Nonnull
     public List<String> getItemPropertyNames() {
         List<String> itemProperties = new ArrayList<>(byName.size());

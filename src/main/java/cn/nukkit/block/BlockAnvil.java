@@ -3,9 +3,13 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BlockProperty;
+import cn.nukkit.blockproperty.value.AnvilDamage;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
@@ -17,27 +21,23 @@ import cn.nukkit.utils.Faceable;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+
 /**
  * @author Pub4Game
  * @since 27.12.2015
  */
-@PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable")
+@PowerNukkitDifference(info = "Extends BlockFallableMeta instead of BlockFallable", since = "1.4.0.0-PN")
 public class BlockAnvil extends BlockFallableMeta implements Faceable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperty<AnvilDamage> DAMAGE = new ArrayBlockProperty<>("damage", false, AnvilDamage.class);
 
-    private static final String[] NAMES = new String[]{
-            "Anvil",
-            "Anvil",
-            "Anvil",
-            "Anvil",
-            "Slighty Damaged Anvil",
-            "Slighty Damaged Anvil",
-            "Slighty Damaged Anvil",
-            "Slighty Damaged Anvil",
-            "Very Damaged Anvil",
-            "Very Damaged Anvil",
-            "Very Damaged Anvil",
-            "Very Damaged Anvil"
-    };
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(
+        DIRECTION.exportingToItems(true), DAMAGE.exportingToItems(true)
+    );
 
     public BlockAnvil() {
         // Does nothing
@@ -50,6 +50,26 @@ public class BlockAnvil extends BlockFallableMeta implements Faceable {
     @Override
     public int getId() {
         return ANVIL;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    public AnvilDamage getAnvilDamage() {
+        return getPropertyValue(DAMAGE);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    public void setAnvilDamage(AnvilDamage anvilDamage) {
+        setPropertyValue(DAMAGE, anvilDamage);
     }
 
     @Override
@@ -85,21 +105,14 @@ public class BlockAnvil extends BlockFallableMeta implements Faceable {
 
     @Override
     public String getName() {
-        return NAMES[this.getDamage() > 11 ? 0 : this.getDamage()];
+        return getAnvilDamage().getEnglishName();
     }
 
     @PowerNukkitDifference(info = "Just like sand, it can now be placed anywhere and removed the sound for the player who placed, was duplicated", since = "1.3.0.0-PN")
     @Override
     public boolean place(@Nonnull Item item, @Nonnull Block block, @Nonnull Block target, @Nonnull BlockFace face, double fx, double fy, double fz, Player player) {
-        int damage = this.getDamage();
-        int[] faces = {1, 2, 3, 0};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-        if (damage >= 4 && damage <= 7) {
-            this.setDamage(this.getDamage() | 0x04);
-        } else if (damage >= 8 && damage <= 11) {
-            this.setDamage(this.getDamage() | 0x08);
-        }
-        this.getLevel().setBlock(block, this, true);
+        setBlockFace(player != null? player.getDirection().rotateY() : BlockFace.SOUTH);
+        this.getLevel().setBlock(this, this, true);
         if (player == null) {
             this.getLevel().addSound(this, Sound.RANDOM_ANVIL_LAND, 1, 0.8F);
         } else {
@@ -121,18 +134,6 @@ public class BlockAnvil extends BlockFallableMeta implements Faceable {
     }
 
     @Override
-    public Item toItem() {
-        int damage = this.getDamage();
-        if (damage >= 4 && damage <= 7) {
-            return new ItemBlock(this, this.getDamage() & 0x04);
-        } else if (damage >= 8 && damage <= 11) {
-            return new ItemBlock(this, this.getDamage() & 0x08);
-        } else {
-            return new ItemBlock(this);
-        }
-    }
-
-    @Override
     public int getToolTier() {
         return ItemTool.TIER_WOODEN;
     }
@@ -147,9 +148,16 @@ public class BlockAnvil extends BlockFallableMeta implements Faceable {
         return false;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public void setBlockFace(BlockFace face) {
+        setPropertyValue(DIRECTION, face);
+    }
+
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return getPropertyValue(DIRECTION);
     }
 
     @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Fixed the returned bounding box")

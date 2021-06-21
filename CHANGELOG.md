@@ -6,74 +6,230 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version, so we have a better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.4.0.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
+## [Unreleased 1.5.0.1-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
 Click the link above to see the future.
 
-## 1.4.0.0-PN-ALPHA.2 - 2020-11-22
-This changelog is still being worked on.
+## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
+This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
 
-## 1.4.0.0-PN-ALPHA.1 - 2020-11-21
-This changelog is still being worked on.
+The new changes will be implemented in `1.5.1.0-PN` and onwards.
 
-## 1.3.2.0-PN-ALPHA.4 - Future
+This version works with Minecraft `1.16.221`!
+
+### Breaking change!
+***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!***
+
+- `BlockWall.WallType.END_STONE_BRICK` was renamed to `END_BRICK` to match the property
+- Custom blocks now have to implement `Block.getProperties()` if they need to have custom meta.
+- `BlockCauldron.getFillLevel()` and it's setter now range from 0 to 6. Glass bottle remove/add 2 levels instead of one now.
+- The creative inventory file format has changed
+- The recipes file format has changed
+- `BellAttachmentType` was renamed to `AttachmentType`
+- `BlockBell.getBellAttachmentType` and `BlockBell.setBellAttachmentType` were renamed to `get/setAttachment`.
+- `DoublePlantType` enum had the entries changed to match the property values.
+- `BlockMeta`, `BlockSolidMeta`, and `BlockFallableMeta` now have `getProperties` abstract.
+- `CommonBlockProperties.LEGACY_PROPERTY_NAME`, `LEGACY_PROPERTIES`, and `LEGACY_BIG_PROPERTIES` were removed.
+- `MinecraftItemID.DEBUG_STICK` was removed.
+- All deprecated stuff marked to be removed at this version was removed. Except `AnvilDamageEvent.getDamage()`.
+
+### Deprecated
+- This is a reminder that numeric block meta are deprecated. Use the specifc block API to make modifications. Come to Discord if you have questions.
+- A lot of duplicated BlockIDs are being deprecated, follow the `replaceBy` instructions to use the right ones.
+
+### Changed
+- All blocks are now using the new block state system.
+- We are no longer using `runtime_block_states.dat` and `runtime+block_states_overrides.dat`, we are now using `canonical_block_states.nbt` from [pmmp/BedrockData](https://github.com/pmmp/BedrockData)
+- `BlockProperties.requireRegisteredProperty` now throws `BlockPropertyNotFoundException` instead of `NoSuchElementException` when the prop is not found.
+- Some `Entity` magic values have changed
+- Game rules now have a flag to determine if it can be changed.
+
+#### Added
+- Event to handle player fishing by plugins. `PlayerFishEvent`.
+- 3 new packets: `AddVolumeEntityPacket`, `RemoveVolumeEntityPacket`, and `SyncEntityPropertyPacket`
 
 ### Fixes
-- [#882] _Alpha Bug_: Fixes random disconnection issues
-- [#902] _Alpha Bug_: Packets being encoded in netty threads causing random network issues
+- Issues with crafting recipes involving charcoal and dyes and ink_sac related items
+
+## [1.4.0.0-PN] - 2021-05-31 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/15?closed=1))
+It's finally here! A stable version of the Nether update! Supporting almost all blocks and items!
+
+It works with Minecraft `1.16.221`!
+
+### Breaking change!
+***This version supports a new major Minecraft version, some plugin sources might need to be updated or recompiled!***
+
+- Many `final` constants are no longer constants, they are now marked with `dynamic` due to constant changes on updates
+- The size of the block data bits changed back from `6` to `4` to fix backward compatibility with Nukkit plugins
+- New chunk content versioning! Don't keep changing versions back and forth, or you will end up with having some odd block states!
+
+### Deprecated
+- All usage of the numeric block damage system is now deprecated, new code should use the new block state system
+- Direct usage of static mutable arrays in the Block class are now deprecated, use the getters and API methods instead
+- Avoid using `Item.get` to get ItemBlocks! Use `Item.getBlock` or use `MinecraftItemID.<the-id>.get` instead!
+
+### Fixes
+- [#857] Items in wrong tabs of the creative inventory and at the side of crafting grid screens
+- [#959] Give command not working correctly when using a namespace, like in `/give minecraft:dirt`
 - [#902] NetherPortal block can't be destroyed by liquid flow
 - [#902] Lava doesn't turn concrete powder into concrete
-
-### Added
-- [#917] Adds automatic bug reports using Sentry, can be opted out in `server.properties`
-
-## 1.3.2.0-PN-ALPHA.3 - 2020-12-12
-
-### Fixes
-- _Alpha Bug_: Fixes entities from the MobPlugin going into the ground (compatibility issue)
 - [#770] Bamboo not dropping when broken, were also affecting blocks with id > 255
 - [#765] Unsafe level.dat writes could lead to world corruption
 - [#766] Error saving region files with content over 2 GB
-- [#776] _Alpha Bug_: Grindstone can't remove enchants
 - [#777] Falling block falling though scaffolds
-- [#778] _Alpha Bug_: Compatibility fix: Unable to change MobPlugin spawner with eggs
 - [#778] Unable to get `minecraft:mob_spawner` with `/give Nick mob_spawner`
 - Snowballs not damaging blazes
 - Issues with the geometry of player and human entities
 - Hay bale not reducing fall damage
 - Lapis ore drops with enchanted pickaxes
+- Break time calculations
+- A lot of block placement rules
+- A lot of item drop rules
+- Mixing potions, water, lava, and dyes in cauldrons
+- Many boat issues
+- Many dispenser issues
+- Some duplication issues
+- Enchantment level of the enchantments
+- Many other issues not listed here
 
 ### Added
+- Block state system and API with backward compatibility to the legacy numeric block damage system
+- [#917] Adds automatic bug reports using Sentry, can be opted out in `server.properties`
 - API to get how long the player has been awake
 - New APIs to detect the type of bucket, dye, spawn egg, coal, and a few others
 - A `MinecraftItemID` API for simpler version independent vanilla item creation
+- Shield mechanics
+- Trident mechanics
+- Many new API classes and methods not listed here
+- Emerald ore generation
+
+#### Blocks
+- Allow
+- Deny
+- Structure Void
+- Nether Reactor Core
+- Structure Block
+- Lodestone
+- Crimson Roots
+- Warped Woots
+- Warped Wart Block
+- Crimson Fungus
+- Warped Fungus
+- Shroomlight
+- Weeping Vines
+- Crimson Nylium
+- Warped Nylium
+- Basalt
+- Polished Basalt
+- Soul Soil
+- Soul Fire
+- Nether Sprouts Block
+- Target
+- Stripped Crimson/Warped Stem
+- Crimson/Warped Planks
+- Crimson/Warped Door
+- Crimson/Warped Trapdoor
+- Crimson/Warped Sign
+- Crimson/Warped Stairs
+- Crimson/Warped Fences
+- Crimson/Warped Fence Gate
+- Crimson/Warped Button
+- Crimson/Warped Pressure Plate
+- Crimson/Warped Slab
+- Soul Torch
+- Soul Lantern
+- Netherite Block
+- Ancient Derbirs
+- Respawn Anchor
+- Blackstone
+- Polished Blackstone Bricks
+- Polished Blackstone Bricks Stairs
+- Blackstone Stairs
+- Blackstone Wall
+- Polished Blackstone Bricks Wall
+- Chiseled Polished Blackstone
+- Cracked Polished Blackstone Bricks
+- Gilded Blackstone
+- Blackstone Slab
+- Polished Blackstone Brick Slab
+- Chain Block
+- Twisting Vines
+- Nether Gold Ore
+- Crying Obsidian
+- Soul Campfire
+- Polished Blackstone
+- Polished Blackstone Stairs
+- Polished Blackstone Slab
+- Polished Blackstone Pressure Plate
+- Polished Blackstone Button
+- Polished Blackstone Wall
+- Warped/Crimson Hyphae
+- Stripped Warped/Crimson Hyphae
+- Chiseled Nether Bricks
+- Cracked Nether Bricks
+- Quartz Bricks
+
+#### Items
+- Rabbit Hide
+- Lead
+- Popped Chorus Fruit
+- Dragon Breath
+- Iron Nugget
+- Crossbow (shooting is not implemented)
+- Lodestone
+- Netherite Ingot
+- Netherite Sword
+- Netherite Shovel
+- Netherite Pickaxe
+- Netherite Axe
+- Netherite Hoe
+- Netherite Helmet
+- Netherite Chestplate
+- Netherite Leggings
+- Netherite Boots
+- Netherite Scrap
+- Warped Fungus On A Stick
+- Record Pigstep
+- Nether Sprouts
+
+#### Entities
+- Armor Stand
+- Iron Golem
+- Snow Golem
+- Piglin Brute
+- Fox
+- NPC (Edu)
+
+#### Enchantments
+- Multishot
+- Piercing
+- Quick Charge
+- Soul Speed
+
+#### Effects
+- Bad Omen
+- Village Hero
+
+#### Potions
+- Slowness II Extended
+- Slowness IV
 
 ### Changed
-- Changed the protocol version to support Minecraft Bedrock Edition 1.16.201
-- [#765] The `ServerBrand` tag in the `level.dat` file will be set to `PowerNukkit` now 
+- Translations updated. Help us to translate PowerNukkit at https://translate.powernukkit.org
+- The block system was revamped
+- Optimized the RAM memory usage
+- Many hard-coded block, item, and entity instantiation were replaced to dynamic calls, allowing plugins to use custom classes
+- [#765] The `ServerBrand` tag in the `level.dat` file will be set to `PowerNukkit` now
 - [#776] Grindstone won't reset the repair cost anymore
 - Packet batching is now handled near the RakNet layer
 - Removed extra data from chunk encoding
 - The sound enum has been updated
-- _Alpha Bug_: Reversed the addition of new item ids for every item, the "new ids" should revert to the old id on load
 - Bucket with fish can no longer interact with cauldrons
 - The /give command now support all current vanilla namespaced ids
 - Updated the raknet dependency from 1.6.15-PN2 to 1.6.25-PN
-
-## 1.3.2.0-PN-ALPHA.2 - 2020-11-21
-
-### Fixes
-- _Alpha Bug_: Some blocks were still dropping the old `minecraft:dye`
-- _Alpha Bug_: Drinking milk would give the player a hardcoded `ItemBucket`
-- _Alpha Bug_: Boat entities should drop the correct item now
-
-### Changed
-- Translations updated. Help us to translate PowerNukkit at https://translate.powernukkit.org
-
-## 1.3.2.0-PN-ALPHA.1 - 2020-11-20
-This changelog is still being worked on.
-
-This version pulls all changes from Cloudburst Nukkit into PowerNukkit 1.3, bringing a lot of fixes, new issues,
-and support for Minecraft 1.16.100
+- Improved the `/debugpaste` command, it saves the paste locally now, to upload the paste use `/debugpaste upload` or `/debugpaste upload last`
+- Many commands were improved
+- Improved javadocs
+- Improved the bed behaviour
 
 ## [1.3.1.5-PN] - 2020-09-01
 Fixes a critical duplication exploit.
@@ -525,7 +681,9 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
 [discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.5-PN...bleeding
+[Unreleased 1.5.0.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.5.0.0-PN...bleeding
+[1.5.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.4.0.0-PN...v1.5.0.0-PN
+[1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.5-PN...v1.4.0.0-PN
 [1.3.1.5-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.4-PN...v1.3.1.5-PN
 [1.3.1.4-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.3-PN...v1.3.1.4-PN
 [1.3.1.3-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.2-PN...v1.3.1.3-PN
@@ -672,6 +830,10 @@ Fixes several anvil issues.
 [#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
 [#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
+[#857]: https://github.com/PowerNukkit/PowerNukkit/issues/857
 [#882]: https://github.com/PowerNukkit/PowerNukkit/issues/882
 [#902]: https://github.com/PowerNukkit/PowerNukkit/issues/902
 [#917]: https://github.com/PowerNukkit/PowerNukkit/issues/917
+[#959]: https://github.com/PowerNukkit/PowerNukkit/issues/959
+[#960]: https://github.com/PowerNukkit/PowerNukkit/issues/960
+[#990]: https://github.com/PowerNukkit/PowerNukkit/issues/990

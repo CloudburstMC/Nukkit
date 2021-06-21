@@ -94,14 +94,6 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
         private final List<EnchantData> enchants2;
         private final String enchantName;
         private final int enchantNetId;
-
-        @PowerNukkitOnly("Does not exists in NukkitX anymore. Keeping for backward compatibility to allow smother version transition.")
-        @Deprecated @DeprecationDetails(since = "1.3.1.0-PN",
-                reason = "Renamed to minLevel by NukkitX", 
-                replaceWith = "getMinLevel()", toBeRemovedAt = "1.4.0.0-PN")
-        public int getCost() {
-            return getMinLevel();
-        }
     }
 
     @Since("1.3.0.0-PN")

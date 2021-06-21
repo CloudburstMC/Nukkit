@@ -39,12 +39,14 @@ public class ItemBlock extends Item {
                 block = BlockState.of(blockId, blockMeta).getBlock();
                 log.info("An invalid ItemBlock for {} was set to a valid meta {} and it is now safe again", block.getPersistenceName(), meta);
             } else {
-                block.setDataStorageFromInt(blockMeta);
+                block.setDataStorageFromItemBlockMeta(blockMeta);
+                name = block.getName();
             }
         } catch (InvalidBlockStateException e) {
             log.warn("An ItemBlock for {} was set to have meta {}"+
                     " but this value is not valid. The item stack is now unsafe.", block.getPersistenceName(), meta, e);
             block = new BlockUnknown(blockId, blockMeta);
+            name = block.getName();
             return;
         }
 

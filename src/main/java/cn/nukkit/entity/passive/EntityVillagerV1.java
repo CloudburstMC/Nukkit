@@ -35,9 +35,9 @@ public class EntityVillagerV1 extends EntityCreature implements EntityNPC, Entit
     @Override
     public float getHeight() {
         if (this.isBaby()) {
-            return 0.9f;
+            return 0.95f;
         }
-        return 1.8f;
+        return 1.9f;
     }
 
     @Override

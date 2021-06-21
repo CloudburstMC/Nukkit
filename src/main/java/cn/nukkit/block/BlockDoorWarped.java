@@ -1,15 +1,23 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDoorWarped;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.utils.BlockColor;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockDoorWarped extends BlockDoorWood {
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockDoorWarped() {
         this(0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockDoorWarped(int meta) {
         super(meta);
     }
@@ -26,7 +34,7 @@ public class BlockDoorWarped extends BlockDoorWood {
 
     @Override
     public Item toItem() {
-        return new ItemDoorWarped();
+        return Item.get(ItemID.WARPED_DOOR);
     }
 
     @Override

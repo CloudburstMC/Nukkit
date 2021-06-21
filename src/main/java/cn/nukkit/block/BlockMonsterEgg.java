@@ -1,8 +1,24 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.MonsterEggStoneType;
 import cn.nukkit.item.Item;
 
+import javax.annotation.Nonnull;
+
 public class BlockMonsterEgg extends BlockSolidMeta {
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final ArrayBlockProperty<MonsterEggStoneType> MONSTER_EGG_STONE_TYPE = new ArrayBlockProperty<>(
+            "monster_egg_stone_type", true, MonsterEggStoneType.class);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(MONSTER_EGG_STONE_TYPE);
+
     public static final int STONE = 0;
     public static final int COBBLESTONE = 1;
     public static final int STONE_BRICK = 2;
@@ -30,6 +46,27 @@ public class BlockMonsterEgg extends BlockSolidMeta {
     @Override
     public int getId() {
         return MONSTER_EGG;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    @Nonnull
+    public MonsterEggStoneType getMonsterEggStoneType() {
+        return getPropertyValue(MONSTER_EGG_STONE_TYPE);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setMonsterEggStoneType(@Nonnull MonsterEggStoneType value) {
+        setPropertyValue(MONSTER_EGG_STONE_TYPE, value);
     }
 
     @Override

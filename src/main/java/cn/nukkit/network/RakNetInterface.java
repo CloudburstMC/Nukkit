@@ -216,8 +216,12 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         NukkitRakNetSession session = this.sessions.get(player.getSocketAddress());
 
         if (session != null) {
-            //packet.tryEncode(); TODO Attempting to solve PowerNukkit#887 by sending a clone
-            session.outbound.offer(packet.clone());
+            packet.tryEncode();
+            if (!immediate) {
+                session.outbound.offer(packet.clone());
+            } else {
+                session.sendPacketImmediately(packet.clone());
+            }
         }
 
         return null;
@@ -255,7 +259,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     private class NukkitRakNetSession implements RakNetSessionListener {
         private final RakNetServerSession raknet;
         private final Queue<DataPacket> inbound = PlatformDependent.newSpscQueue();
-        private final Queue<DataPacket> outbound = PlatformDependent.newSpscQueue();
+        private final Queue<DataPacket> outbound = PlatformDependent.newMpscQueue();
         private String disconnectReason = null;
         private Player player;
 
@@ -342,6 +346,24 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             byteBuf.writeByte(0xfe);
             byteBuf.writeBytes(payload);
             this.raknet.send(byteBuf);
+        }
+        
+        private void sendPacketImmediately(DataPacket packet) {
+            BinaryStream batched = new BinaryStream();
+            Preconditions.checkArgument(!(packet instanceof BatchPacket), "Cannot batch BatchPacket");
+            Preconditions.checkState(packet.isEncoded, "Packet should have already been encoded");
+            byte[] buf = packet.getBuffer();
+            batched.putUnsignedVarInt(buf.length);
+            batched.put(buf);
+            try {
+                byte[] payload = Network.deflateRaw(batched.getBuffer(), network.getServer().networkCompressionLevel);
+                ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer(1 + payload.length);
+                byteBuf.writeByte(0xfe);
+                byteBuf.writeBytes(payload);
+                this.raknet.send(byteBuf, RakNetPriority.IMMEDIATE);
+            } catch (Exception e) {
+                log.error("Error occured while sending a packet immediately", e);
+            }
         }
     }
 }

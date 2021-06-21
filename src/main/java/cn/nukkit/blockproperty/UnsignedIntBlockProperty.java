@@ -52,7 +52,21 @@ public class UnsignedIntBlockProperty extends BlockProperty<Integer> {
     public UnsignedIntBlockProperty(String name, boolean exportedToItem, int maxValue) {
         this(name, exportedToItem, maxValue, 0);
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public UnsignedIntBlockProperty copy() {
+        return new UnsignedIntBlockProperty(getName(), isExportedToItem(), (int)getMaxValue(), (int)getMinValue(), getBitSize(), getPersistenceName());
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Override
+    public UnsignedIntBlockProperty exportingToItems(boolean exportedToItem) {
+        return new UnsignedIntBlockProperty(getName(), exportedToItem, (int)getMaxValue(), (int)getMinValue(), getBitSize(), getPersistenceName());
+    }
+
     private static long removeSign(int value) {
         return (long)value & 0xFFFFFFFFL;
     }

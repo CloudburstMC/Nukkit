@@ -60,7 +60,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     protected float movementSpeed = 0.1f;
 
-    protected int turtleTicks = 200;
+    protected int turtleTicks = 0;
 
     @Override
     protected void initEntity() {
@@ -217,18 +217,17 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
     public boolean entityBaseTick(int tickDiff) {
         Timings.livingEntityBaseTickTimer.startTiming();
         boolean isBreathing = !this.isInsideOfWater();
-        if (this instanceof Player && (((Player) this).isCreative() || ((Player) this).isSpectator())) {
-            isBreathing = true;
-        }
 
         if (this instanceof Player) {
-            if (!isBreathing && ((Player) this).getInventory().getHelmet() instanceof ItemTurtleShell) {
-                if (turtleTicks > 0) {
-                    isBreathing = true;
-                    turtleTicks--;
-                }
-            } else {
+            if (isBreathing && ((Player) this).getInventory().getHelmet() instanceof ItemTurtleShell) {
                 turtleTicks = 200;
+            } else if (turtleTicks > 0) {
+                isBreathing = true;
+                turtleTicks--;
+            }
+
+            if ((((Player) this).isCreative() || ((Player) this).isSpectator())) {
+                isBreathing = true;
             }
         }
         
@@ -243,7 +242,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                 this.attack(new EntityDamageEvent(this, DamageCause.SUFFOCATION, 1));
             }
 
-            if (this.isOnLadder() || this.hasEffect(Effect.LEVITATION)) {
+            if (this.isOnLadder() || this.hasEffect(Effect.LEVITATION) || this.hasEffect(Effect.SLOW_FALLING)) {
                 this.resetFallDistance();
             }
 
@@ -408,6 +407,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         this.setDataProperty(new ShortEntityData(DATA_AIR, ticks));
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected boolean blockedByShield(EntityDamageEvent source) {
         Entity damager = null;
         if (source instanceof EntityDamageByChildEntityEvent) {
@@ -459,6 +460,18 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     public void setBlocking(boolean value) {
         this.setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_BLOCKING, value);
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public boolean isPersistent() {
+        return namedTag.containsByte("Persistent") && namedTag.getBoolean("Persistent");
+    }
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public void setPersistent(boolean persistent) {
+        namedTag.putBoolean("Persistent", persistent);
     }
 
     @PowerNukkitOnly

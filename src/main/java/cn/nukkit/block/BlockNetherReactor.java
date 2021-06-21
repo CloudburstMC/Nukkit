@@ -20,6 +20,8 @@ import javax.annotation.Nullable;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockNetherReactor extends BlockSolid implements BlockEntityHolder<BlockEntityNetherReactor> {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockNetherReactor() {
         // Does nothing
     }

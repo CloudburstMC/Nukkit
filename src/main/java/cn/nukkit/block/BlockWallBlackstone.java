@@ -5,11 +5,17 @@ import cn.nukkit.api.Since;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockWallBlackstone extends BlockWallBase {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockWallBlackstone() {
         this(0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockWallBlackstone(int meta) {
         super(meta);
     }

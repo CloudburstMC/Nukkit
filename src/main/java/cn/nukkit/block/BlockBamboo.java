@@ -1,6 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.BambooLeafSize;
+import cn.nukkit.blockproperty.value.BambooStalkThickness;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -17,16 +24,36 @@ import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.block.BlockSapling.AGED;
+
+@PowerNukkitOnly
 public class BlockBamboo extends BlockTransparentMeta {
 
-    public static final int LEAF_SIZE_NONE = 0;
-    public static final int LEAF_SIZE_SMALL = 1;
-    public static final int LEAF_SIZE_LARGE = 2;
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final ArrayBlockProperty<BambooStalkThickness> STALK_THICKNESS = new ArrayBlockProperty<>(
+            "bamboo_stalk_thickness", false, BambooStalkThickness.class
+    );
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final ArrayBlockProperty<BambooLeafSize> LEAF_SIZE = new ArrayBlockProperty<>(
+            "bamboo_leaf_size", false, BambooLeafSize.class);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(STALK_THICKNESS, LEAF_SIZE, AGED);
+
+    public @PowerNukkitOnly static final int LEAF_SIZE_NONE = 0;
+    public @PowerNukkitOnly static final int LEAF_SIZE_SMALL = 1;
+    public @PowerNukkitOnly static final int LEAF_SIZE_LARGE = 2;
+
+    @PowerNukkitOnly
     public BlockBamboo() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockBamboo(int meta) {
         super(meta);
     }
@@ -34,6 +61,14 @@ public class BlockBamboo extends BlockTransparentMeta {
     @Override
     public int getId() {
         return BAMBOO;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -60,6 +95,7 @@ public class BlockBamboo extends BlockTransparentMeta {
         return 0;
     }
 
+    @PowerNukkitOnly
     public boolean grow(Block up) {
         BlockBamboo newState = new BlockBamboo();
         if (isThick()) {
@@ -82,6 +118,7 @@ public class BlockBamboo extends BlockTransparentMeta {
         return false;
     }
 
+    @PowerNukkitOnly
     public int countHeight() {
         int count = 0;
         Optional<Block> opt;
@@ -227,12 +264,26 @@ public class BlockBamboo extends BlockTransparentMeta {
         return 5;
     }
 
+    @PowerNukkitOnly
     public boolean isThick() {
-        return (getDamage() & 0x1) == 0x1;
+        return getBambooStalkThickness().equals(BambooStalkThickness.THICK);
     }
 
+    @PowerNukkitOnly
     public void setThick(boolean thick) {
-        setDamage(getDamage() & (DATA_MASK ^ 0x1) | (thick? 0x1 : 0x0));
+        setBambooStalkThickness(thick? BambooStalkThickness.THICK : BambooStalkThickness.THIN);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public BambooStalkThickness getBambooStalkThickness() {
+        return getPropertyValue(STALK_THICKNESS);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setBambooStalkThickness(@Nonnull BambooStalkThickness value) {
+        setPropertyValue(STALK_THICKNESS, value);
     }
 
     @Override
@@ -240,24 +291,25 @@ public class BlockBamboo extends BlockTransparentMeta {
         return ItemTool.TYPE_AXE;
     }
 
+    @PowerNukkitOnly
+    @Deprecated
+    @DeprecationDetails(by = "PowerNukkit", since = "1.5.0.0-PN", replaceWith = "getBambooLeafSize", reason = "magic values")
     public int getLeafSize() {
-        return (getDamage() >> 1) & 0x3;
+        return getBambooLeafSize().ordinal();
     }
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public BambooLeafSize getBambooLeafSize() {
+        return getPropertyValue(LEAF_SIZE);
+    }
+
+    @Deprecated
+    @DeprecationDetails(by = "PowerNukkit", since = "1.5.0.0-PN", replaceWith = "getBambooLeafSize", reason = "magic values")
+    @PowerNukkitOnly
     public void setLeafSize(int leafSize) {
         leafSize = MathHelper.clamp(leafSize, LEAF_SIZE_NONE, LEAF_SIZE_LARGE) & 0b11;
         setDamage(getDamage() & (DATA_MASK ^ 0b110) | (leafSize << 1));
-    }
-
-    @Override
-    public double getBreakTime(Item item, Player player) {
-        double breakTime = super.getBreakTime(item, player);
-
-        if (item.isSword()) {
-            breakTime /= 30;
-        }
-
-        return breakTime;
     }
 
     @Override
@@ -318,12 +370,14 @@ public class BlockBamboo extends BlockTransparentMeta {
         return false;
     }
 
+    @PowerNukkitOnly
     public int getAge() {
-        return (getDamage() & 0x8) >> 3;
+        return getBooleanValue(AGED)? 1 : 0;
     }
 
+    @PowerNukkitOnly
     public void setAge(int age) {
-        age = MathHelper.clamp(age, 0, 1) << 3;
-        setDamage(getDamage() & (DATA_MASK ^ 0b1000) | age);
+        age = MathHelper.clamp(age, 0, 1);
+        setBooleanValue(AGED, age == 1);
     }
 }

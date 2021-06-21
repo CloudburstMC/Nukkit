@@ -19,7 +19,9 @@ public class BlockPlanks extends BlockSolidMeta {
     public static final int JUNGLE = 3;
     public static final int ACACIA = 4;
     public static final int DARK_OAK = 5;
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(WoodType.PROPERTY);
 
 

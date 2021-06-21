@@ -6,6 +6,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityDaylightDetector;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -25,6 +27,10 @@ import javax.annotation.Nonnull;
 @PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
 public class BlockDaylightDetector extends BlockTransparentMeta implements RedstoneComponent, BlockEntityHolder<BlockEntityDaylightDetector> {
 
+    @Since("1.5.0.0-PN")
+    @PowerNukkitOnly
+    public static final BlockProperties PROPERTIES = CommonBlockProperties.REDSTONE_SIGNAL_BLOCK_PROPERTY;
+
     public BlockDaylightDetector() {
         // Does nothing
     }
@@ -32,6 +38,14 @@ public class BlockDaylightDetector extends BlockTransparentMeta implements Redst
     @Override
     public int getId() {
         return DAYLIGHT_DETECTOR;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

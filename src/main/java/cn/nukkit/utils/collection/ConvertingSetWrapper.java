@@ -38,6 +38,8 @@ public class ConvertingSetWrapper<V1, V2> extends AbstractSet<V1> {
     private final Function<V2, V1> reverseConverter;
     private final Set<V2> proxied;
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public ConvertingSetWrapper(Set<V2> proxied, Function<V1, V2> converter, Function<V2, V1> reverseConverter) {
         this.proxied = proxied;
         this.converter = converter;

@@ -63,7 +63,7 @@ public abstract class EntityProjectile extends Entity {
     }
 
     @PowerNukkitOnly("Allows to modify the damage based on the entity being damaged")
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getResultDamage(@Nullable Entity entity) {
         return getResultDamage();
     }

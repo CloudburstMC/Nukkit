@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
@@ -162,6 +163,12 @@ public class EntityPotion extends EntityProjectile {
 
         this.timing.stopTiming();
         return hasUpdate;
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "Potion";
     }
     
     @Since("1.4.0.0-PN")

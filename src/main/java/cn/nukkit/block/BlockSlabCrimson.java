@@ -9,12 +9,18 @@ import cn.nukkit.utils.BlockColor;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class BlockSlabCrimson extends BlockSlab {
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockSlabCrimson() {
         this(0);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockSlabCrimson(int meta) {
         super(meta, CRIMSON_DOUBLE_SLAB);
     }

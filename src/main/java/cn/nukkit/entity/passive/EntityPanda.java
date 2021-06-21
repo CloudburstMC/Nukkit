@@ -1,5 +1,7 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -17,23 +19,24 @@ public class EntityPanda extends EntityAnimal {
     }
 
     @Override
-    public float getLength() {
-        return 1.825f;
-    }
-
-    @Override
     public float getWidth() {
-        return 1.125f;
+        return 1.7f;
     }
 
     @Override
     public float getHeight() {
-        return 1.25f;
+        return 1.5f;
     }
 
     @Override
     public void initEntity() {
         super.initEntity();
         this.setMaxHealth(20);
+    }
+    
+    
+    @Override
+    public String getName() {
+        return "Panda";
     }
 }

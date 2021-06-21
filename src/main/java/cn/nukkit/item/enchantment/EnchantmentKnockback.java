@@ -5,7 +5,7 @@ package cn.nukkit.item.enchantment;
  */
 public class EnchantmentKnockback extends Enchantment {
     protected EnchantmentKnockback() {
-        super(ID_KNOCKBACK, "knockback", 5, EnchantmentType.SWORD);
+        super(ID_KNOCKBACK, "knockback", Rarity.UNCOMMON, EnchantmentType.SWORD);
     }
 
     @Override
@@ -15,7 +15,7 @@ public class EnchantmentKnockback extends Enchantment {
 
     @Override
     public int getMaxEnchantAbility(int level) {
-        return this.getMinEnchantAbility(level) + 50;
+        return super.getMinEnchantAbility(level) + 50;
     }
 
     @Override

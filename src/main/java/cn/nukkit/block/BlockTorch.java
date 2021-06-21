@@ -14,7 +14,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
-import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -24,7 +24,12 @@ import javax.annotation.Nullable;
  * @since 2015/12/2
  */
 public class BlockTorch extends BlockFlowable implements Faceable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<TorchAttachment> TORCH_FACING_DIRECTION = new ArrayBlockProperty<>("torch_facing_direction", false, TorchAttachment.class);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperties PROPERTIES = new BlockProperties(TORCH_FACING_DIRECTION);
 
     public BlockTorch() {
@@ -154,30 +159,27 @@ public class BlockTorch extends BlockFlowable implements Faceable {
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    @Getter
+    @RequiredArgsConstructor
     public enum TorchAttachment {
-        UNKNOWN, WEST, EAST, NORTH, SOUTH, TOP;
+        @PowerNukkitOnly @Since("1.4.0.0-PN") UNKNOWN(BlockFace.UP),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") WEST(BlockFace.EAST),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") EAST(BlockFace.WEST),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") NORTH(BlockFace.SOUTH),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") SOUTH(BlockFace.NORTH),
+        @PowerNukkitOnly @Since("1.4.0.0-PN") TOP(BlockFace.UP);
+        private final BlockFace torchDirection;
 
         /**
          * The direction that the flame is pointing.
          */
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
         public BlockFace getTorchDirection() {
-            switch (this) {
-                default:
-                case UNKNOWN:
-                case TOP:
-                    return BlockFace.UP;
-                case EAST:
-                    return BlockFace.WEST;
-                case WEST:
-                    return BlockFace.EAST;
-                case SOUTH:
-                    return BlockFace.NORTH;
-                case NORTH:
-                    return BlockFace.SOUTH;
-            }
+            return torchDirection;
         }
-        
+
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
         @Nullable
         public static TorchAttachment getByTorchDirection(@Nonnull BlockFace face) {
             switch (face) {
@@ -200,6 +202,8 @@ public class BlockTorch extends BlockFlowable implements Faceable {
         /**
          * The direction that is touching the attached block.
          */
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
         @Nonnull
         public BlockFace getAttachedFace() {
             switch (this) {
@@ -217,7 +221,9 @@ public class BlockTorch extends BlockFlowable implements Faceable {
                     return BlockFace.NORTH;
             }
         }
-        
+
+        @PowerNukkitOnly
+        @Since("1.4.0.0-PN")
         @Nullable
         public static TorchAttachment getByAttachedFace(@Nonnull BlockFace face) {
             switch (face) {

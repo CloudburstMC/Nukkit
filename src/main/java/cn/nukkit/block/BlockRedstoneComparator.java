@@ -6,6 +6,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityComparator;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemRedstoneComparator;
 import cn.nukkit.level.Level;
@@ -19,6 +21,8 @@ import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.DIRECTION;
+
 /**
  * @author CreeperFace
  */
@@ -27,12 +31,32 @@ import javax.annotation.Nonnull;
 @Log4j2
 public abstract class BlockRedstoneComparator extends BlockRedstoneDiode implements RedstoneComponent, BlockEntityHolder<BlockEntityComparator> {
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty OUTPUT_LIT = new BooleanBlockProperty("output_lit_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BooleanBlockProperty OUTPUT_SUBTRACT = new BooleanBlockProperty("output_subtract_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(DIRECTION, OUTPUT_SUBTRACT, OUTPUT_LIT);
+
     public BlockRedstoneComparator() {
         this(0);
     }
 
     public BlockRedstoneComparator(int meta) {
         super(meta);
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Since("1.4.0.0-PN")
