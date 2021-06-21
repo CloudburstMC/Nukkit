@@ -25,6 +25,7 @@ Click the link above to see the future.
 - [#1139] Backward compatibility with some custom world generators
 - [#702] Burning arrow and rain will make a lot of particles
 - [#625] If you instant kill a mob with fire aspect enchant tool, it will not give fire aspect drops
+- [#979] Fixes an issue where the players could not hear each other walking
 
 ## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
 This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
@@ -855,6 +856,7 @@ Fixes several anvil issues.
 [#917]: https://github.com/PowerNukkit/PowerNukkit/issues/917
 [#959]: https://github.com/PowerNukkit/PowerNukkit/issues/959
 [#960]: https://github.com/PowerNukkit/PowerNukkit/issues/960
+[#979]: https://github.com/PowerNukkit/PowerNukkit/issues/979
 [#990]: https://github.com/PowerNukkit/PowerNukkit/issues/990
 [#1100]: https://github.com/PowerNukkit/PowerNukkit/issues/1100
 [#1103]: https://github.com/PowerNukkit/PowerNukkit/issues/1103
