@@ -103,6 +103,7 @@ public class PlayerFood {
             float newSfl = sfl - amount;
             if (newSfl < 0) newSfl = 0;
             this.setFoodSaturationLevel(newSfl);
+            this.sendFoodLevel();
         } else {
             this.setLevel(foodLevel - amount);
         }

@@ -1650,6 +1650,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (this.ticksLived % 80 == 0 && this.getFoodData().getLevel() >= 18) {
                     this.heal(1);
+                    if (this.getServer().getDifficulty() > 0) {
+                        this.getFoodData().updateFoodExpLevel(0.6);
+                    }
                 }
             }
 
@@ -4174,12 +4177,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         ((Player) damager).getFoodData().updateFoodExpLevel(0.1);
                     }
                 }
-                this.getFoodData().updateFoodExpLevel(0.1);
                 EntityEventPacket pk = new EntityEventPacket();
                 pk.eid = this.id;
                 pk.event = EntityEventPacket.HURT_ANIMATION;
                 this.dataPacket(pk);
             }
+            this.getFoodData().updateFoodExpLevel(0.1);
             return true;
         } else {
             return false;
