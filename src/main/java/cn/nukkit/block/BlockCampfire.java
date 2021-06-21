@@ -113,7 +113,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[] { new ItemCoal(1, 2) };
+        return new Item[] { MinecraftItemID.CHARCOAL.get(2) };
     }
 
     @Override
@@ -173,11 +173,9 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
     public void onEntityCollide(Entity entity) {
         if (!isExtinguished()) {
             entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 1));
-        } else {
-            if (entity.isOnFire()) {
-                setExtinguished(false);
-                level.setBlock(this, this, true);
-            }
+        } else if (entity.isOnFire()) {
+            setExtinguished(false);
+            level.setBlock(this, this, true);
         }
     }
 
@@ -218,22 +216,13 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
                 this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
                 itemUsed = true;
             }
-        } else {
-            if (item.getId() == ItemID.FLINT_AND_STEEL) {
-                item.useOn(this);
-                setExtinguished(false);
-                this.level.setBlock(this, this, true, true);
-                campfire.scheduleUpdate();
-                this.level.addSound(this, Sound.FIRE_IGNITE);
-                itemUsed = true;
-            } else if (item.getEnchantment(Enchantment.ID_FIRE_ASPECT) != null) {
-                item.useOn(this);
-                setExtinguished(false);
-                this.level.setBlock(this, this, true, true);
-                campfire.scheduleUpdate();
-                this.level.addSound(this, Sound.FIRE_IGNITE);
-                itemUsed = true;
-            }
+        } else if (item.getId() == ItemID.FLINT_AND_STEEL || item.getEnchantment(Enchantment.ID_FIRE_ASPECT) != null) {
+            item.useOn(this);
+            setExtinguished(false);
+            this.level.setBlock(this, this, true, true);
+            campfire.scheduleUpdate();
+            this.level.addSound(this, Sound.FIRE_IGNITE);
+            itemUsed = true;
         }
 
         Item cloned = item.clone();
@@ -260,7 +249,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
             level.setBlock(this, this, true);
             return true;
         } else if (projectile instanceof EntityPotion && !isExtinguished()) {
-            if (((EntityPotion) projectile).getPotionId() == 0) {
+            if (((EntityPotion) projectile).potionId == 0) {
                 setExtinguished(true);
                 level.setBlock(this, this, true);
                 return true;
