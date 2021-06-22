@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
@@ -10,6 +11,8 @@ import cn.nukkit.blockproperty.BooleanBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPotion;
 import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.event.entity.EntityCombustByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.inventory.CampfireInventory;
@@ -26,6 +29,7 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 import lombok.extern.log4j.Log4j2;
@@ -171,12 +175,32 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
 
     @Override
     public void onEntityCollide(Entity entity) {
-        if (!isExtinguished()) {
-            entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 1));
-        } else if (entity.isOnFire()) {
-            setExtinguished(false);
-            level.setBlock(this, this, true);
+        if (isExtinguished()) {
+            if (entity.isOnFire()) {
+                setExtinguished(false);
+                level.setBlock(this, this, true);
+            }
+            return;
         }
+
+        if(entity.hasEffect(Effect.FIRE_RESISTANCE)
+            || entity instanceof EntityProjectile
+            || !entity.attack(getDamageEvent(entity))
+            || !entity.isAlive()) {
+            return;
+        }
+        
+        EntityCombustByBlockEvent ev = new EntityCombustByBlockEvent(this, entity, 8);
+        Server.getInstance().getPluginManager().callEvent(ev);
+        if (!ev.isCancelled() && entity.isAlive()) {
+            entity.setOnFire(ev.getDuration());
+        }
+    }
+    
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    protected EntityDamageEvent getDamageEvent(Entity entity) {
+        return new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 1);
     }
 
     @Override

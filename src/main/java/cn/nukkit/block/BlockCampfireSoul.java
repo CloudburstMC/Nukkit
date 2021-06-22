@@ -49,10 +49,10 @@ public class BlockCampfireSoul extends BlockCampfire {
         return new Item[] { MinecraftItemID.SOUL_SOIL.get(1) };
     }
     
+    @Since("FUTURE")
+    @PowerNukkitOnly
     @Override
-    public void onEntityCollide(Entity entity) {
-        if (!isExtinguished()) {
-            entity.attack(new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 2));
-        }
+    protected EntityDamageEvent getDamageEvent(Entity entity) {
+        return new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 2);
     }
 }
