@@ -337,6 +337,6 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
 
     @Override
     public boolean canBePushed() {
-        return false;
+        return true;
     }
 }
