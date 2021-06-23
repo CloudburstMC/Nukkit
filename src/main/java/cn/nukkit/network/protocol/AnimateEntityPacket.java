@@ -1,21 +1,28 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author IWareQ
  */
+ @PowerNukkitOnly
+@Since("FUTURE")
 public class AnimateEntityPacket extends DataPacket {
 
+	@PowerNukkitOnly
+    @Since("FUTURE")
     public static final byte NETWORK_ID = ProtocolInfo.ANIMATE_ENTITY_PACKET;
 
-    public String animation;
-    public String nextState;
-    public String stopExpression;
-    public String controller;
-    public float blendOutTime;
-    public List<Long> entityRuntimeIds = new ArrayList<>();
+    private String animation;
+    private String nextState;
+    private String stopExpression;
+    private String controller;
+    private float blendOutTime;
+    private List<Long> entityRuntimeIds = new ArrayList<>();
 
     @Override
     public void decode() {
@@ -46,5 +53,77 @@ public class AnimateEntityPacket extends DataPacket {
     @Override
     public byte pid() {
         return NETWORK_ID;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setAnimation(String animation) {
+        this.animation = animation;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public String getAnimation() {
+        return this.animation;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setNextState(String nextState) {
+        this.nextState = nextState;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public String getNextState() {
+        return this.nextState;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setStopExpression(String stopExpression) {
+        this.stopExpression = stopExpression;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public String getStopExpression() {
+        return this.stopExpression;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setController(String controller) {
+        this.controller = controller;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public String getController() {
+        return this.controller;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setBlendOutTime(String blendOutTime) {
+        this.blendOutTime = blendOutTime;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public String getBlendOutTime() {
+        return this.blendOutTime;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setEntityRuntimeIds(List<Long> entityRuntimeIds) {
+        this.entityRuntimeIds = entityRuntimeIds;
+    }
+    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public String getEntityRuntimeIds() {
+        return this.entityRuntimeIds;
     }
 }
