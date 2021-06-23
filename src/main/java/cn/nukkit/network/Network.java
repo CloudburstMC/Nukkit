@@ -473,5 +473,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.REMOVE_VOLUME_ENTITY, RemoveVolumeEntityPacket.class);
         this.registerPacket(ProtocolInfo.SYNC_ENTITY_PROPERTY, SyncEntityPropertyPacket.class);
         this.registerPacket(ProtocolInfo.TICK_SYNC_PACKET, TickSyncPacket.class);
+        this.registerPacket(ProtocolInfo.ANIMATE_ENTITY_PACKET, AnimateEntityPacket.class);
     }
 }
