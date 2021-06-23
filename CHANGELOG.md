@@ -14,6 +14,9 @@ Click the link above to see the future.
 - [#1107] SnakeYAML version from `1.26` to `1.28`
 - [#1134] Update the Chinese, Russian, and Turkish translations. Thank you for your contributions!
 
+### Added
+- [#1146] Added implementation for `AnimateEntityPacket`
+
 ### Fixes
 - [#1119] `TickSyncPacket` was not registered 
 - [#1120] Entities sometimes gets invisible for some players
@@ -870,3 +873,4 @@ Fixes several anvil issues.
 [#1132]: https://github.com/PowerNukkit/PowerNukkit/issues/1132
 [#1134]: https://github.com/PowerNukkit/PowerNukkit/issues/1134
 [#1139]: https://github.com/PowerNukkit/PowerNukkit/issues/1139
+[#1146]: https://github.com/PowerNukkit/PowerNukkit/issues/1146
