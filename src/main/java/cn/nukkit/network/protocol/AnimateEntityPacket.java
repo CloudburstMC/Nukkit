@@ -105,13 +105,13 @@ public class AnimateEntityPacket extends DataPacket {
     
     @PowerNukkitOnly
     @Since("1.5.0.0-PN")
-    public void setBlendOutTime(String blendOutTime) {
+    public void setBlendOutTime(float blendOutTime) {
         this.blendOutTime = blendOutTime;
     }
     
     @PowerNukkitOnly
     @Since("1.5.0.0-PN")
-    public String getBlendOutTime() {
+    public float getBlendOutTime() {
         return this.blendOutTime;
     }
     
@@ -123,7 +123,7 @@ public class AnimateEntityPacket extends DataPacket {
     
     @PowerNukkitOnly
     @Since("1.5.0.0-PN")
-    public String getEntityRuntimeIds() {
+    public List<Long> getEntityRuntimeIds() {
         return this.entityRuntimeIds;
     }
 }
