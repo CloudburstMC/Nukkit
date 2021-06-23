@@ -15,7 +15,7 @@ public class AnimateEntityPacket extends DataPacket {
     public String stopExpression;
     public String controller;
     public float blendOutTime;
-    public List<Integer> entityRuntimeIds = new ArrayList<>();
+    public List<Long> entityRuntimeIds = new ArrayList<>();
 
     @Override
     public void decode() {
@@ -24,8 +24,8 @@ public class AnimateEntityPacket extends DataPacket {
 		this.stopExpression = this.getString();
 		this.controller = this.getString();
 		this.blendOutTime = this.getLFloat();
-		for (int i = 0, len = this.getUnsignedVarInt(); i < len; i++) {
-			this.entityRuntimeIds(this.getEntityRuntimeId());
+		for (int i = 0, len = (int) this.getUnsignedVarInt(); i < len; i++) {
+			this.entityRuntimeIds.add(this.getEntityRuntimeId());
 		}
     }
 
@@ -38,7 +38,7 @@ public class AnimateEntityPacket extends DataPacket {
 		this.putString(this.controller);
 		this.putLFloat(this.blendOutTime);
 		this.putUnsignedVarInt(this.entityRuntimeIds.size());
-		for (int entityRuntimeId : this.entityRuntimeIds){
+		for (long entityRuntimeId : this.entityRuntimeIds){
 			this.putEntityRuntimeId(entityRuntimeId);
 		}
     }
