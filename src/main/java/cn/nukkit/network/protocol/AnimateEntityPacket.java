@@ -14,7 +14,7 @@ public class AnimateEntityPacket extends DataPacket {
     public String nextState;
     public String stopExpression;
     public String controller;
-    public String blendOutTime;
+    public float blendOutTime;
     public List<Integer> entityRuntimeIds = new ArrayList<>();
 
     @Override
