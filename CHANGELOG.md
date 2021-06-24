@@ -713,7 +713,7 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
 [discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.5.0.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.5.0.0-PN...bleeding
+[Unreleased 1.5.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.5.0.0-PN...bleeding
 [1.5.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.4.0.0-PN...v1.5.0.0-PN
 [1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.5-PN...v1.4.0.0-PN
 [1.3.1.5-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.4-PN...v1.3.1.5-PN
