@@ -726,8 +726,12 @@ public class BinaryStream {
 
     public void putGameRules(GameRules gameRules) {
         Map<GameRule, GameRules.Value> rules = gameRules.getGameRules();
-        this.putUnsignedVarInt(rules.size());
+        this.putUnsignedVarInt(rules.size() - 1);
         rules.forEach((gameRule, value) -> {
+            //noinspection deprecation
+            if (gameRule == GameRule.SHOW_DEATH_MESSAGE) {
+                return;
+            }
             this.putString(gameRule.getName().toLowerCase());
             value.write(this);
         });
