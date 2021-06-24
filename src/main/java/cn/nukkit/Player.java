@@ -4467,6 +4467,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Override
+    public String getStaticName() {
+        return "Player";
+    }
+    
+    @Override
     public String getName() {
         return this.username;
     }

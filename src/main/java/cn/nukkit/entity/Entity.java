@@ -36,6 +36,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.ChunkException;
+import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
@@ -1086,12 +1087,38 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    /**
+     * The name that actually represent this entity, ignoring name tags. 
+     */
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public String getStaticName() {
+        return this.getSaveId();
+    }
+
+    /**
+     * Similar to {@link #getName()}, but if the name is blank or empty it returns the static name instead.
+     */
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public final String getNonBlankName() {
+        String name = getName();
+        if (!TextFormat.clean(name).trim().isEmpty()) {
+            return name;
+        } else {
+            return getStaticName();
+        }
+    }
+
+    /**
+     * The current name used by this entity in the name tag, or the static name if the entity don't have nametag.
+     */
     @Nonnull
     public String getName() {
         if (this.hasCustomName()) {
             return this.getNameTag();
         } else {
-            return this.getSaveId();
+            return this.getStaticName();
         }
     }
 

@@ -105,10 +105,12 @@ public class EntityExpBottle extends EntityProjectile {
     protected void addHitEffect() {
         this.getLevel().addSound(this, Sound.RANDOM_GLASS);
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getStaticName() {
         return "Bottle o' Enchanting";
     }
 }
