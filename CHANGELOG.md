@@ -14,17 +14,20 @@ Click the link above to see the future.
 - [#1107] SnakeYAML version from `1.26` to `1.28`
 - [#1134] Update the Chinese, Russian, and Turkish translations. Thank you for your contributions!
 - [#1149] Update the Spanish, and Russian translations. Also improved the message whena plugin is not found. Thank you for your contributions!
-- [#783]: Campfire now drop 2 charcoal always
-- [#783]: Soul campfire now drops 1 soul sand
-- [#783]: Soul campfire now deal double the damage that normal campfires deals
-- [#783]: Campfire and Soul campfire now deal damage even the entity is sneaking
-- [#783]: Campfire and Soul campfire now breaks when pushed by piston
+- [#1150] The `show_death_message` gamerule was renamed to `show_death_messages`. A backward compatibility code will keep the old one working, but it's now deprecated.
+- [#783] Campfire now drop 2 charcoal always
+- [#783] Soul campfire now drops 1 soul sand
+- [#783] Soul campfire now deal double the damage that normal campfires deals
+- [#783] Campfire and Soul campfire now deal damage even the entity is sneaking
+- [#783] Campfire and Soul campfire now breaks when pushed by piston
 
 ### Added
 - [#1146] Added implementation for `AnimateEntityPacket`
-- [#783]: Campfire and Soul Campfire can now be lit by burning entities stepping on it
-- [#783]: Campfire and Soul Campfire can now be unlit by throwing a splash water bottle on it
-- [#783]: Campfire and Soul Campfire can now lit by using an item enchanted with fire aspect
+- [#1150] The `freeze_damage` gamerule 
+- [#1150] Mappings for Goat, Glow Squid, and Axolotl entities and spawn eggs
+- [#783] Campfire and Soul Campfire can now be lit by burning entities stepping on it
+- [#783] Campfire and Soul Campfire can now be unlit by throwing a splash water bottle on it
+- [#783] Campfire and Soul Campfire can now lit by using an item enchanted with fire aspect
 
 ### Fixes
 - [#1119] `TickSyncPacket` was not registered 
@@ -887,3 +890,4 @@ Fixes several anvil issues.
 [#1146]: https://github.com/PowerNukkit/PowerNukkit/issues/1146
 [#1147]: https://github.com/PowerNukkit/PowerNukkit/issues/1147
 [#1149]: https://github.com/PowerNukkit/PowerNukkit/issues/1149
+[#1150]: https://github.com/PowerNukkit/PowerNukkit/issues/1150
