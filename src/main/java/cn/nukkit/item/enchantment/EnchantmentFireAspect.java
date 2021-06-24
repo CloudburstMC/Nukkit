@@ -1,7 +1,13 @@
 package cn.nukkit.item.enchantment;
 
+import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityCombustByEntityEvent;
+import cn.nukkit.item.enchantment.sideeffect.SideEffect;
+import cn.nukkit.item.enchantment.sideeffect.SideEffectCombust;
+
+import javax.annotation.Nonnull;
 
 /**
  * @author MagicDroidX (Nukkit Project)
@@ -26,13 +32,18 @@ public class EnchantmentFireAspect extends Enchantment {
         return 2;
     }
 
+    @PowerNukkitDifference(since = "FUTURE", info = "The entity combustion code was moved to SideEffectCombust, obtained by getAttackSideEffects(Entity, Entity)")
     @Override
     public void doPostAttack(Entity attacker, Entity entity) {
-        int duration = Math.max(entity.fireTicks / 20, getLevel() * 4);
+        super.doPostAttack(attacker, entity);
+    }
 
-        EntityCombustByEntityEvent ev = new EntityCombustByEntityEvent(attacker, entity, duration);
-
-        if (!ev.isCancelled())
-            entity.setOnFire(ev.getDuration());
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Nonnull
+    public SideEffect[] getAttackSideEffects(@Nonnull Entity attacker, @Nonnull Entity entity) {
+        return new SideEffect[]{
+                new SideEffectCombust(Math.max(entity.fireTicks / 20, getLevel() * 4))
+        };
     }
 }

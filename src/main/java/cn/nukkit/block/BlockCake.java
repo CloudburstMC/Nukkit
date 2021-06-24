@@ -2,6 +2,9 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemCake;
 import cn.nukkit.item.food.Food;
@@ -16,6 +19,14 @@ import javax.annotation.Nullable;
  * @author Nukkit Project Team
  */
 public class BlockCake extends BlockTransparentMeta {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final IntBlockProperty BITES = new IntBlockProperty("bite_counter", false, 6);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(BITES);
 
     public BlockCake(int meta) {
         super(meta);
@@ -33,6 +44,14 @@ public class BlockCake extends BlockTransparentMeta {
     @Override
     public int getId() {
         return CAKE_BLOCK;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

@@ -8,6 +8,13 @@ import cn.nukkit.utils.BlockColor;
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
 public class BlockBlackstone extends BlockSolid {
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public BlockBlackstone() {
+        // Does nothing
+    }
+
     @Override
     public int getId() {
         return BLACKSTONE;

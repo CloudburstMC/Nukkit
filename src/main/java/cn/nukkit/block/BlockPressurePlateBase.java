@@ -5,6 +5,7 @@ import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.block.BlockRedstoneEvent;
@@ -31,7 +32,9 @@ import static cn.nukkit.blockproperty.CommonBlockProperties.REDSTONE_SIGNAL;
  */
 @PowerNukkitDifference(info = "Implements RedstoneComponent and uses methods from it.", since = "1.4.0.0-PN")
 public abstract class BlockPressurePlateBase extends BlockFlowable implements RedstoneComponent {
-    public static final BlockProperties PROPERTIES = new BlockProperties(REDSTONE_SIGNAL);
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public static final BlockProperties PROPERTIES = CommonBlockProperties.REDSTONE_SIGNAL_BLOCK_PROPERTY;
 
     protected float onPitch;
     protected float offPitch;

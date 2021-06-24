@@ -26,22 +26,22 @@ import cn.nukkit.api.Since;
  * @since 2020-10-10
  */
 @PowerNukkitOnly
-@Since("1.4.0.0-PN")
-public enum BellAttachmentType {
+@Since("1.5.0.0-PN")
+public enum AttachmentType {
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
+    @Since("1.5.0.0-PN")
     STANDING,
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
+    @Since("1.5.0.0-PN")
     HANGING,
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
+    @Since("1.5.0.0-PN")
     SIDE,
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
+    @Since("1.5.0.0-PN")
     MULTIPLE;
     
 }

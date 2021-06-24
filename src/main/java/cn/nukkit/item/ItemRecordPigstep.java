@@ -5,20 +5,20 @@ import cn.nukkit.api.Since;
 /**
  * @author PetteriM1
  */
-@Since("1.3.2.0-PN")
+@Since("1.4.0.0-PN")
 public class ItemRecordPigstep extends ItemRecord {
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public ItemRecordPigstep() {
         this(0, 1);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public ItemRecordPigstep(Integer meta) {
         this(meta, 1);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public ItemRecordPigstep(Integer meta, int count) {
         super(RECORD_PIGSTEP, meta, count);
     }

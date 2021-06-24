@@ -9,11 +9,17 @@ import cn.nukkit.utils.DyeColor;
 
 import javax.annotation.Nonnull;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.COLOR;
+
 /**
  * @author CreeperFace
  * @since 7.8.2017
  */
 public class BlockGlassStained extends BlockGlass {
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = CommonBlockProperties.COLOR_BLOCK_PROPERTIES;
 
     public BlockGlassStained() {
         // Does nothing
@@ -30,7 +36,7 @@ public class BlockGlassStained extends BlockGlass {
     @Nonnull
     @Override
     public BlockProperties getProperties() {
-        return CommonBlockProperties.LEGACY_PROPERTIES;
+        return PROPERTIES;
     }
 
     @Override
@@ -45,11 +51,18 @@ public class BlockGlassStained extends BlockGlass {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.getByWoolData(getDamage()).getColor();
+        return getDyeColor().getColor();
     }
 
+    @Nonnull
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return getPropertyValue(COLOR);
+    }
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void setDyeColor(@Nonnull DyeColor color) {
+        setPropertyValue(COLOR, color);
     }
 
     @Override

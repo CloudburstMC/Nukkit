@@ -3,6 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
@@ -22,6 +25,9 @@ import javax.annotation.Nullable;
  * @author Nukkit Project Team
  */
 public class BlockCactus extends BlockTransparentMeta {
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(CommonBlockProperties.AGE_15);
 
     public BlockCactus(int meta) {
         super(meta);
@@ -34,6 +40,14 @@ public class BlockCactus extends BlockTransparentMeta {
     @Override
     public int getId() {
         return CACTUS;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override

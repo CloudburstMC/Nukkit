@@ -1,13 +1,16 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.block.Block;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.Skin;
-import cn.nukkit.item.*;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDurable;
+import cn.nukkit.item.ItemID;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3f;
@@ -22,9 +25,10 @@ import io.netty.buffer.AbstractByteBufAllocator;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.internal.EmptyArrays;
+import lombok.SneakyThrows;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -722,9 +726,13 @@ public class BinaryStream {
 
     public void putGameRules(GameRules gameRules) {
         Map<GameRule, GameRules.Value> rules = gameRules.getGameRules();
-        this.putUnsignedVarInt(rules.size());
+        this.putUnsignedVarInt(rules.size() - 1);
         rules.forEach((gameRule, value) -> {
-            putString(gameRule.getName().toLowerCase());
+            //noinspection deprecation
+            if (gameRule == GameRule.SHOW_DEATH_MESSAGE) {
+                return;
+            }
+            this.putString(gameRule.getName().toLowerCase());
             value.write(this);
         });
     }
@@ -797,6 +805,26 @@ public class BinaryStream {
 
     public boolean feof() {
         return this.offset < 0 || this.offset >= this.buffer.length;
+    }
+
+    @SneakyThrows(IOException.class)
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public CompoundTag getTag() {
+        ByteArrayInputStream is = new ByteArrayInputStream(buffer, offset, buffer.length);
+        int initial = is.available();
+        try {
+            return NBTIO.read(is);
+        } finally {
+            offset += is.available() - initial;
+        }
+    }
+
+    @SneakyThrows(IOException.class)
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public void putTag(CompoundTag tag) {
+        put(NBTIO.write(tag));
     }
 
     private void ensureCapacity(int minCapacity) {

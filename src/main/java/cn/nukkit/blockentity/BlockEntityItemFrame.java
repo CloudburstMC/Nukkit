@@ -7,9 +7,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.MinecraftItemID;
+import cn.nukkit.item.*;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
@@ -102,16 +100,26 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         if (!this.namedTag.contains("Item")) {
             this.setItem(new ItemBlock(Block.get(BlockID.AIR)), false);
         }
-        CompoundTag item = namedTag.getCompound("Item").copy();
-        item.setName("Item");
+        Item item = getItem();
         CompoundTag tag = new CompoundTag()
                 .putString("id", BlockEntity.ITEM_FRAME)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-        if (item.getShort("id") != Item.AIR) {
-            tag.putCompound("Item", item)
+        if (!item.isNull()) {
+            CompoundTag itemTag = NBTIO.putItemHelper(item);
+            int networkFullId = item.getNetworkFullId();
+            int networkDamage = (networkFullId & 0x1) == 0x1? 0 : item.getDamage();
+            String namespacedId = RuntimeItems.getRuntimeMapping().getNamespacedIdByNetworkId(
+                    RuntimeItems.getNetworkId(networkFullId)
+            );
+            if (namespacedId != null) {
+                itemTag.remove("id");
+                itemTag.putShort("Damage", networkDamage);
+                itemTag.putString("Name", namespacedId);
+            }
+            tag.putCompound("Item", itemTag)
                     .putByte("ItemRotation", this.getItemRotation());
         }
         return tag;

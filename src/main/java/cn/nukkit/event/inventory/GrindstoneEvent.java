@@ -50,7 +50,7 @@ public class GrindstoneEvent extends InventoryEvent implements Cancellable {
     private final @Nonnull Player player;
 
     @PowerNukkitOnly
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public GrindstoneEvent(GrindstoneInventory inventory, @Nonnull Item firstItem, @Nonnull Item resultItem, @Nonnull Item secondItem, int cost, @Nonnull Player player) {
         super(inventory);
         this.firstItem = firstItem;

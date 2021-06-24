@@ -1,13 +1,21 @@
 package cn.nukkit.block;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.utils.BlockColor;
 
+@Since("1.4.0.0-PN")
+@PowerNukkitOnly
 public class BlockHyphaeStrippedWarped extends BlockStemStripped {
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockHyphaeStrippedWarped() {
         this(0);
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     public BlockHyphaeStrippedWarped(int meta) {
         super(meta);
     }

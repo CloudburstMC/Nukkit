@@ -5,14 +5,18 @@ import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.ChunkSection;
-import lombok.RequiredArgsConstructor;
 
 @PowerNukkitOnly
 @Since("1.4.0.0-PN")
-@RequiredArgsConstructor
 public class MesaBiomeUpdater implements Updater {
     private final ChunkSection section;
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public MesaBiomeUpdater(ChunkSection section) {
+        this.section = section;
+    }
+
     @SuppressWarnings("deprecation")
     @Override
     public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {

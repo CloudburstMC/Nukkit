@@ -1,6 +1,8 @@
 package cn.nukkit.level.format.updater;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockWall;
@@ -9,14 +11,21 @@ import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.blockstate.exception.InvalidBlockStateException;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.ChunkSection;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
+import org.apache.logging.log4j.Logger;
 
-@RequiredArgsConstructor
-@Log4j2
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 class WallUpdater implements Updater {
+    private static final Logger log = org.apache.logging.log4j.LogManager.getLogger(WallUpdater.class);
     private final Level level;
     private final ChunkSection section;
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public WallUpdater(Level level, ChunkSection section) {
+        this.level = level;
+        this.section = section;
+    }
 
     @Override
     public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {

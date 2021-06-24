@@ -172,6 +172,8 @@ public interface BlockEntityHolder<E extends BlockEntity> {
         return null;
     }
 
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
     default Block getBlock() {
         if (this instanceof Position) {
             return ((Position) this).getLevelBlock();
