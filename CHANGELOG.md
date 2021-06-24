@@ -14,9 +14,17 @@ Click the link above to see the future.
 - [#1107] SnakeYAML version from `1.26` to `1.28`
 - [#1134] Update the Chinese, Russian, and Turkish translations. Thank you for your contributions!
 - [#1149] Update the Spanish, and Russian translations. Also improved the message whena plugin is not found. Thank you for your contributions!
+- [#783]: Campfire now drop 2 charcoal always
+- [#783]: Soul campfire now drops 1 soul sand
+- [#783]: Soul campfire now deal double the damage that normal campfires deals
+- [#783]: Campfire and Soul campfire now deal damage even the entity is sneaking
+- [#783]: Campfire and Soul campfire now breaks when pushed by piston
 
 ### Added
 - [#1146] Added implementation for `AnimateEntityPacket`
+- [#783]: Campfire and Soul Campfire can now be lit by burning entities stepping on it
+- [#783]: Campfire and Soul Campfire can now be unlit by throwing a splash water bottle on it
+- [#783]: Campfire and Soul Campfire can now lit by using an item enchanted with fire aspect
 
 ### Fixes
 - [#1119] `TickSyncPacket` was not registered 
@@ -857,6 +865,7 @@ Fixes several anvil issues.
 [#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
 [#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
+[#783]: https://github.com/PowerNukkit/PowerNukkit/issues/783
 [#857]: https://github.com/PowerNukkit/PowerNukkit/issues/857
 [#882]: https://github.com/PowerNukkit/PowerNukkit/issues/882
 [#902]: https://github.com/PowerNukkit/PowerNukkit/issues/902
