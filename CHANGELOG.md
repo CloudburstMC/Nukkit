@@ -26,6 +26,7 @@ Click the link above to see the future.
 - [#1100] Abrupt Time Change
 - [#1130] Soul Campfire and End Crystal were rendering as other items in the inventory
 - [#1139] Backward compatibility with some custom world generators
+- [#1147] Sharpness damage calculation
 - [#702] Burning arrow and rain will make a lot of particles
 - [#625] If you instant kill a mob with fire aspect enchant tool, it will not give fire aspect drops
 - [#979] Fixes an issue where the players could not hear each other walking
@@ -874,3 +875,4 @@ Fixes several anvil issues.
 [#1134]: https://github.com/PowerNukkit/PowerNukkit/issues/1134
 [#1139]: https://github.com/PowerNukkit/PowerNukkit/issues/1139
 [#1146]: https://github.com/PowerNukkit/PowerNukkit/issues/1146
+[#1147]: https://github.com/PowerNukkit/PowerNukkit/issues/1147
