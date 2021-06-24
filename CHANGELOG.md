@@ -15,6 +15,7 @@ Click the link above to see the future.
 - [#1134] Update the Chinese, Russian, and Turkish translations. Thank you for your contributions!
 - [#1149] Update the Spanish, and Russian translations. Also improved the message whena plugin is not found. Thank you for your contributions!
 - [#1150] The `show_death_message` gamerule was renamed to `show_death_messages`. A backward compatibility code will keep the old one working, but it's now deprecated.
+- [#1151] Improved `/setworldspaw` auto completion
 - [#783] Campfire now drop 2 charcoal always
 - [#783] Soul campfire now drops 1 soul sand
 - [#783] Soul campfire now deal double the damage that normal campfires deals
@@ -891,3 +892,4 @@ Fixes several anvil issues.
 [#1147]: https://github.com/PowerNukkit/PowerNukkit/issues/1147
 [#1149]: https://github.com/PowerNukkit/PowerNukkit/issues/1149
 [#1150]: https://github.com/PowerNukkit/PowerNukkit/issues/1150
+[#1151]: https://github.com/PowerNukkit/PowerNukkit/issues/1151
