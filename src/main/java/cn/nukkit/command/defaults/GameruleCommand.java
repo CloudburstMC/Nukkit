@@ -29,6 +29,10 @@ public class GameruleCommand extends VanillaCommand {
         List<String> unknownGameRules = new ArrayList<>();
 
         rules.getGameRules().forEach((rule, value) -> {
+            //noinspection deprecation
+            if (rule == GameRule.SHOW_DEATH_MESSAGE) {
+                return;
+            }
             switch (value.getType()) {
                 case BOOLEAN:
                     boolGameRules.add(rule.getName().toLowerCase());

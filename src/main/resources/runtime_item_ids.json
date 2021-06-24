@@ -4085,6 +4085,24 @@
     "oldData": 127
   },
   {
+    "name": "minecraft:axolotl_spawn_egg",
+    "id": 500,
+    "oldId": 383,
+    "oldData": 130
+  },
+  {
+    "name": "minecraft:goat_spawn_egg",
+    "id": 501,
+    "oldId": 383,
+    "oldData": 128
+  },
+  {
+    "name": "minecraft:glow_squid_spawn_egg",
+    "id": 502,
+    "oldId": 383,
+    "oldData": 129
+  },
+  {
     "name": "minecraft:experience_bottle",
     "id": 508,
     "oldId": 384

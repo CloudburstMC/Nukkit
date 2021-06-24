@@ -7,6 +7,7 @@ import cn.nukkit.api.Since;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.command.SimpleCommandMap;
 import cn.nukkit.event.*;
+import cn.nukkit.lang.BaseLang;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.permission.Permission;
 import cn.nukkit.utils.PluginException;
@@ -266,8 +267,9 @@ public class PluginManager {
                             if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
                                 dependencies.get(name).remove(dependency);
                             } else if (!plugins.containsKey(dependency)) {
-                                log.fatal(this.server.getLanguage().translateString("nukkit" +
-                                        ".plugin.loadError", name, "%nukkit.plugin.unknownDependency", dependency));
+                                BaseLang language = this.server.getLanguage();
+                                String cause = language.translateString("nukkit.plugin.missingDependency", dependency);
+                                log.fatal(language.translateString("nukkit.plugin.loadError", new String[]{name, cause}));
                                 break;
                             }
                         }
