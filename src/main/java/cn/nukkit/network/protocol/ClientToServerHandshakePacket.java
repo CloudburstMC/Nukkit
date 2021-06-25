@@ -12,11 +12,11 @@ public class ClientToServerHandshakePacket extends DataPacket {
 
     @Override
     public void decode() {
-        //no content
+    	//No decode
     }
 
     @Override
     public void encode() {
-
+    	//No encode
     }
 }
