@@ -4,10 +4,13 @@ import cn.nukkit.blockstate.BlockState;
 import cn.nukkit.level.format.anvil.ChunkSection;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.powernukkit.tests.junit.jupiter.PowerNukkitExtension;
 
 import static cn.nukkit.block.BlockID.LEAVES2;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ExtendWith(PowerNukkitExtension.class)
 class NewLeafUpdaterTest {
     final ChunkSection section = new ChunkSection(0);
     final int x = 5;
