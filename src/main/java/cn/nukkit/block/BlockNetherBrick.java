@@ -1,55 +1,26 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemTool;
-import cn.nukkit.utils.BlockColor;
+import cn.nukkit.api.DeprecationDetails;
+import cn.nukkit.api.PowerNukkitDifference;
 
 /**
  * @author xtypr
  * @since 2015/12/7
  */
-public class BlockNetherBrick extends BlockSolid {
-
+@Deprecated
+@DeprecationDetails(since = "FUTURE", by = "PowerNukkit", 
+        reason = "Duplicated of BlockBricksNether and the other one is used instead of this one.",
+        replaceWith = "BlockBricksNether"
+)
+@PowerNukkitDifference(since = "FUTURE", extendsOnlyInPowerNukkit = BlockBricksNether.class, insteadOf = BlockSolid.class)
+@SuppressWarnings({"DeprecatedIsStillUsed", "java:S1133"})
+public class BlockNetherBrick extends BlockBricksNether {
+    @Deprecated
+    @DeprecationDetails(since = "FUTURE", by = "PowerNukkit",
+            reason = "Duplicated of BlockBricksNether and the other one is used instead of this one.",
+            replaceWith = "BlockBricksNether"
+    )
     public BlockNetherBrick() {
-    }
-
-    @Override
-    public String getName() {
-        return "Nether Bricks";
-    }
-
-    @Override
-    public int getId() {
-        return NETHER_BRICKS;
-    }
-
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_PICKAXE;
-    }
-
-    @Override
-    public double getHardness() {
-        return 2;
-    }
-
-    @Override
-    public double getResistance() {
-        return 10;
-    }
-
-    @Override
-    public int getToolTier() {
-        return ItemTool.TIER_WOODEN;
-    }
-
-    @Override
-    public BlockColor getColor() {
-        return BlockColor.NETHERRACK_BLOCK_COLOR;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
+        // Does nothing
     }
 }
