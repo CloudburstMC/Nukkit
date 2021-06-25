@@ -4,10 +4,14 @@ import lombok.ToString;
 
 @ToString
 public class TransferPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.TRANSFER_PACKET;
 
-    public String address; // Server address
-    public int port = 19132; // Server port
+    public String address;
+    public int port = 19132;
+
+    @Override
+    public byte pid() {
+        return ProtocolInfo.TRANSFER_PACKET;
+    }
 
     @Override
     public void decode() {
@@ -18,12 +22,7 @@ public class TransferPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putString(address);
-        this.putLShort(port);
-    }
-
-    @Override
-    public byte pid() {
-        return ProtocolInfo.TRANSFER_PACKET;
+        this.putString(this.address);
+        this.putLShort(this.port);
     }
 }
