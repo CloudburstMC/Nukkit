@@ -428,7 +428,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.PURCHASE_RECEIPT_PACKET, PurchaseReceiptPacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_SKIN_PACKET, PlayerSkinPacket.class);
         this.registerPacket(ProtocolInfo.SUB_CLIENT_LOGIN_PACKET, SubClientLoginPacket.class);
-        //TODO: INITIATE_WEB_SOCKET_CONNECTION_PACKET
+        this.registerPacket(ProtocolInfo.INITIATE_WEB_SOCKET_CONNECTION_PACKET, InitiateWebSocketConnectionPacket.class);
         this.registerPacket(ProtocolInfo.SET_LAST_HURT_BY_PACKET, SetLastHurtByPacket.class);
         this.registerPacket(ProtocolInfo.BOOK_EDIT_PACKET, BookEditPacket.class);
         this.registerPacket(ProtocolInfo.NPC_REQUEST_PACKET, NpcRequestPacket.class);
@@ -457,7 +457,8 @@ public class Network {
         this.registerPacket(ProtocolInfo.CLIENT_CACHE_STATUS_PACKET, ClientCacheStatusPacket.class);
         this.registerPacket(ProtocolInfo.ON_SCREEN_TEXTURE_ANIMATION_PACKET, OnScreenTextureAnimationPacket.class);
         this.registerPacket(ProtocolInfo.MAP_CREATE_LOCKED_COPY_PACKET, MapCreateLockedCopyPacket.class);
-        
+        //TODO: STRUCTURE_TEMPLATE_DATA_REQUEST_PACKET
+        //TODO: STRUCTURE_TEMPLATE_DATA_RESPONSE_PACKET
         
         
         
