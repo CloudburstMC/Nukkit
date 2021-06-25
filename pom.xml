@@ -343,6 +343,7 @@
                 </dependencies>
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
+                    <trimStackTrace>false</trimStackTrace>
                 </configuration>
             </plugin>
             <plugin>
