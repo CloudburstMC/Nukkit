@@ -47,7 +47,7 @@ public class SetScoreboardIdentityPacket extends DataPacket {
     
     public static class SetScoreboardIdentityEntry {
 
-        public int scoreboardId;
+        public long scoreboardId;
         public long entityUniqueId;
     }
 }

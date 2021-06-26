@@ -11,28 +11,29 @@ import lombok.ToString;
  */
 @ToString
 public class AddItemEntityPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.ADD_ITEM_ENTITY_PACKET;
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
 
     public long entityUniqueId;
     public long entityRuntimeId;
     public Item item;
-    public float x;
-    public float y;
-    public float z;
-    public float speedX;
-    public float speedY;
-    public float speedZ;
-    public EntityMetadata metadata = new EntityMetadata();
+    public Vector3f position;
+    public Vector3f motion;
+    public EntityMetadata entityMetadata = new EntityMetadata();
     public boolean isFromFishing = false;
 
     @Override
-    public void decode() {
+    public byte pid() {
+        return ProtocolInfo.ADD_ITEM_ENTITY_PACKET;
+    }
 
+    @Override
+    public void decode() {
+    	this.entityUniqueId = this.getEntityUniqueId();
+		this.entityRuntimeId = this.getEntityRuntimeId();
+		//TODO: this.item
+		this.position = this.getVector3f();
+		this.motion = this.getVector3f();
+		this.entityMetadata = this.getEntityMetadata();
+		this.isFromFishing = this.getBoolean();
     }
 
     @Override
@@ -41,9 +42,9 @@ public class AddItemEntityPacket extends DataPacket {
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
         this.putSlot(this.item);
-        this.putVector3f(this.x, this.y, this.z);
-        this.putVector3f(this.speedX, this.speedY, this.speedZ);
-        this.put(Binary.writeMetadata(metadata));
+        this.putVector3f(this.position);
+        this.putVector3f(this.motion);
+        this.put(Binary.writeMetadata(entityMetadata));
         this.putBoolean(this.isFromFishing);
     }
 }

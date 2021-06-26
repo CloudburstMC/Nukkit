@@ -23,6 +23,6 @@ public class SettingsCommandPacket extends DataPacket {
     public void encode() {
     	this.reset();
         this.putString(this.command);
-		this.putBool(this.suppressOutput);
+		this.putBoolean(this.suppressOutput);
     }
 }

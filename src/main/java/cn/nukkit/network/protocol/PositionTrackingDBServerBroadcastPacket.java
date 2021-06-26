@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.ToString;
 
 @ToString

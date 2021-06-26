@@ -14,12 +14,12 @@ public class SetDefaultGameTypePacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.gamemode = this.getVerInt();
+    	this.gamemode = this.getVarInt();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(this.gamemode);
+        this.putVarInt(this.gamemode);
     }
 }
