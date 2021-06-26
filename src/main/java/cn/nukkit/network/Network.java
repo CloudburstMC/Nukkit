@@ -480,114 +480,16 @@ public class Network {
         this.registerPacket(ProtocolInfo.EMOTE_LIST_PACKET, EmoteListPacket.class);
         //TODO: POSITION_TRACKING_D_B_SERVER_BROADCAST_PACKET
         this.registerPacket(ProtocolInfo.POSITION_TRACKING_D_B_CLIENT_REQUEST_PACKET, PositionTrackingDBClientRequestPacket.class);
-        
-        
-        
-        
-        
-        
-        
-
-        this.registerPacket(ProtocolInfo.ADD_ENTITY_PACKET, AddEntityPacket.class);
-        this.registerPacket(ProtocolInfo.ADD_ITEM_ENTITY_PACKET, AddItemEntityPacket.class);
-        this.registerPacket(ProtocolInfo.ADD_PAINTING_PACKET, AddPaintingPacket.class);
-        this.registerPacket(ProtocolInfo.ADD_PLAYER_PACKET, AddPlayerPacket.class);
-        
-        this.registerPacket(ProtocolInfo.ANIMATE_PACKET, AnimatePacket.class);
-        
-        
-        this.registerPacket(ProtocolInfo.BATCH_PACKET, BatchPacket.class);
-        
-        this.registerPacket(ProtocolInfo.BLOCK_EVENT_PACKET, BlockEventPacket.class);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        this.registerPacket(ProtocolInfo.DISCONNECT_PACKET, DisconnectPacket.class);
-        this.registerPacket(ProtocolInfo.ENTITY_EVENT_PACKET, EntityEventPacket.class);
-        this.registerPacket(ProtocolInfo.ENTITY_FALL_PACKET, EntityFallPacket.class);
-        
-        
-        
-        
-        
-        
-        
-        
-        this.registerPacket(ProtocolInfo.LEVEL_EVENT_PACKET, LevelEventPacket.class);
-        this.registerPacket(ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V1, LevelSoundEventPacketV1.class);
-        this.registerPacket(ProtocolInfo.LOGIN_PACKET, LoginPacket.class);
-        
-        
-        
-        
-        this.registerPacket(ProtocolInfo.MOVE_ENTITY_ABSOLUTE_PACKET, MoveEntityAbsolutePacket.class);
-        this.registerPacket(ProtocolInfo.MOVE_PLAYER_PACKET, MovePlayerPacket.class);
-        
-        
-        
-        
-        
-        this.registerPacket(ProtocolInfo.PLAY_STATUS_PACKET, PlayStatusPacket.class);
-        this.registerPacket(ProtocolInfo.REMOVE_ENTITY_PACKET, RemoveEntityPacket.class);
-        
-        this.registerPacket(ProtocolInfo.RESOURCE_PACKS_INFO_PACKET, ResourcePacksInfoPacket.class);
-        this.registerPacket(ProtocolInfo.RESOURCE_PACK_STACK_PACKET, ResourcePackStackPacket.class);
-        this.registerPacket(ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET, ResourcePackClientResponsePacket.class);
-        
-        
-        
-        this.registerPacket(ProtocolInfo.RIDER_JUMP_PACKET, RiderJumpPacket.class);
-        
-        
-        
-        
-
-        
-        
-        this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
-        this.registerPacket(ProtocolInfo.SET_TIME_PACKET, SetTimePacket.class);
-        
-        
-        
-        this.registerPacket(ProtocolInfo.START_GAME_PACKET, StartGamePacket.class);
-        this.registerPacket(ProtocolInfo.TAKE_ITEM_ENTITY_PACKET, TakeItemEntityPacket.class);
-        this.registerPacket(ProtocolInfo.TEXT_PACKET, TextPacket.class);
-        this.registerPacket(ProtocolInfo.UPDATE_ATTRIBUTES_PACKET, UpdateAttributesPacket.class);
-        this.registerPacket(ProtocolInfo.UPDATE_BLOCK_PACKET, UpdateBlockPacket.class);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        this.registerPacket(ProtocolInfo.COMPLETED_USING_ITEM_PACKET, CompletedUsingItemPacket.class);
-        
-        
         this.registerPacket(ProtocolInfo.DEBUG_INFO_PACKET, DebugInfoPacket.class);
-        
         this.registerPacket(ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET, PacketViolationWarningPacket.class);
-        
-        
-        
+        //TODO: MOTION_PREDICTION_HINTS_PACKET
+        //TODO: ANIMATE_ENTITY_PACKET
+        //TODO: CAMERA_SHAKE_PACKET
+        //TODO: PLAYER_FOG_PACKET
+        //TODO: CORRECT_PLAYER_MOVE_PREDICTION_PACKET
+        //TODO: ITEM_COMPONENT_PACKET
         this.registerPacket(ProtocolInfo.FILTER_TEXT_PACKET, FilterTextPacket.class);
+        //TODO: CLIENTBOUND_DEBUG_RENDERER_PACKET
+        this.registerPacket(ProtocolInfo.BATCH_PACKET, BatchPacket.class);
     }
 }
