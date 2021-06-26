@@ -8,21 +8,28 @@ import lombok.ToString;
 @ToString
 public class SetEntityLinkPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_LINK_PACKET;
-
     public static final byte TYPE_REMOVE = 0;
     public static final byte TYPE_RIDE = 1;
     public static final byte TYPE_PASSENGER = 2;
 
-    public long vehicleUniqueId; //from
-    public long riderUniqueId; //to
+    public long vehicleUniqueId; //From
+    public long riderUniqueId; //To
     public byte type;
-    public byte immediate;
-    public boolean riderInitiated = false;
+    public boolean immediate;
+    public boolean riderInitiated;
+
+    @Override
+    public byte pid() {
+        return ProtocolInfo.SET_ENTITY_LINK_PACKET;
+    }
 
     @Override
     public void decode() {
-
+    	this.vehicleUniqueId = this.getEntityUniqueId();
+        this.riderUniqueId = this.getEntityUniqueId();
+        this.type = this.getByte();
+        this.immediate = this.getBoolean();
+        this.riderInitiated = this.getBoolean();
     }
 
     @Override
@@ -31,12 +38,7 @@ public class SetEntityLinkPacket extends DataPacket {
         this.putEntityUniqueId(this.vehicleUniqueId);
         this.putEntityUniqueId(this.riderUniqueId);
         this.putByte(this.type);
-        this.putByte(this.immediate);
+        this.putBoolean(this.immediate);
         this.putBoolean(this.riderInitiated);
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 }
