@@ -10,27 +10,28 @@ import lombok.ToString;
  */
 @ToString
 public class SetEntityDataPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_DATA_PACKET;
+
+    public long entityRuntimeId;
+    public EntityMetadata entityMetadata;
+    public long tick;
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.SET_ENTITY_DATA_PACKET;
     }
-
-    public long eid;
-    public EntityMetadata metadata;
-    public long frame;
 
     @Override
     public void decode() {
-
+    	this.entityRuntimeId = this.getEntityRuntimeId();
+        this.entityMetadata = Binary.readMetadata(this.getByteArray());
+		this.tick = this.getUnsignedVarLong();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.eid);
-        this.put(Binary.writeMetadata(this.metadata));
-        this.putUnsignedVarLong(this.frame);
+        this.put(Binary.writeMetadata(this.entityMetadata));
+        this.putUnsignedVarLong(this.tick);
     }
 }

@@ -9,7 +9,6 @@ import lombok.ToString;
  */
 @ToString
 public class SetEntityMotionPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_MOTION_PACKET;
 
     public long entityRuntimeId;
     public Vector3f motion;
