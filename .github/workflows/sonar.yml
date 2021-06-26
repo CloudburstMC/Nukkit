@@ -35,4 +35,3 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B verify -Dmaven.javadoc.skip=true -Dgpg.skip=true -DskipTests=false -Denforcer.skip=true --no-transfer-progress org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
-        

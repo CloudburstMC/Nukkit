@@ -325,10 +325,16 @@
             </plugin>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
+                    <!-- The semantics of this option are reversed, see MCOMPILER-209. -->
+                    <useIncrementalCompilation>false</useIncrementalCompilation>
+                    <compilerArgs>
+                        <!-- Prevents recompilation due to missing package-info.class, see MCOMPILER-205 -->
+                        <arg>-Xpkginfo:always</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
             <plugin>
@@ -508,17 +514,18 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <!-- The semantics of this option are reversed, see MCOMPILER-209. -->
-                    <useIncrementalCompilation>false</useIncrementalCompilation>
-                    <compilerArgs>
-                        <!-- Prevents recompilation due to missing package-info.class, see MCOMPILER-205 -->
-                        <arg>-Xpkginfo:always</arg>
-                    </compilerArgs>
-                </configuration>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>4.2.3</version>
+                <executions>
+                    <execution>
+                        <id>spotbugs</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>spotbugs</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -537,23 +544,6 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
-                    <!--<execution>
-                        <id>jacoco-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <limits>
-                                        <limit>
-                                            <minimum>0.9</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>-->
                 </executions>
             </plugin>
         </plugins>
