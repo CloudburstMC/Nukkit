@@ -12,7 +12,7 @@ public class NpcRequestPacket extends DataPacket {
 	public static final byte REQUEST_SET_SKIN = 4;
 	public static final byte REQUEST_SET_INTERACTION_TEXT = 5;
 
-	public long entityId;
+	public long entityRuntimeId;
 	public byte requestType;
 	public String commandString;
 	public byte actionType;
@@ -24,7 +24,7 @@ public class NpcRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.entityId = this.getEntityRuntimeId();
+        this.entityRuntimeId = this.getEntityRuntimeId();
         this.requestType = this.getByte();
         this.commandString = this.getString();
         this.actionType = this.getByte();
@@ -33,7 +33,7 @@ public class NpcRequestPacket extends DataPacket {
     @Override
     public void encode() {
     	this.reset();
-        this.putEntityRuntimeId(this.entityId);
+        this.putEntityRuntimeId(this.entityRuntimeId);
         this.putByte(this.requestType);
         this.putString(this.commandString);
         this.putByte(this.actionType);

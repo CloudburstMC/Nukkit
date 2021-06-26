@@ -6,7 +6,7 @@ import lombok.ToString;
 public class NetworkStackLatencyPacket extends DataPacket {
 
     public long timestamp;
-    public boolean unknownBool;
+    public boolean needResponse;
 
     @Override
     public byte pid() {
@@ -15,13 +15,14 @@ public class NetworkStackLatencyPacket extends DataPacket {
 
     @Override
     public void decode() {
-        timestamp = this.getLLong();
+        this.timestamp = this.getLLong();
+		this.needResponse = this.getBoolean();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putLLong(timestamp);
-        this.putBoolean(unknownBool);
+        this.putLLong(this.timestamp);
+        this.putBoolean(this.needResponse);
     }
 }
