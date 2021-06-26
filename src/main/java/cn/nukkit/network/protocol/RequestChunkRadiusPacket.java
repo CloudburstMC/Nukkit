@@ -9,9 +9,12 @@ import lombok.ToString;
 @ToString
 public class RequestChunkRadiusPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET;
-
     public int radius;
+
+    @Override
+    public byte pid() {
+        return ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET;
+    }
 
     @Override
     public void decode() {
@@ -20,12 +23,7 @@ public class RequestChunkRadiusPacket extends DataPacket {
 
     @Override
     public void encode() {
-
+    	this.reset();
+        this.putVarInt(this.radius);
     }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
 }
