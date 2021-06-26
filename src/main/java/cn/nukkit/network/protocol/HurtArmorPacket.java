@@ -8,14 +8,18 @@ import lombok.ToString;
 @ToString
 public class HurtArmorPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.HURT_ARMOR_PACKET;
-
     public int cause;
     public int damage;
 
     @Override
-    public void decode() {
+    public byte pid() {
+        return ProtocolInfo.HURT_ARMOR_PACKET;
+    }
 
+    @Override
+    public void decode() {
+    	this.cause = this.getVarInt();
+		this.damage = this.getVarInt();
     }
 
     @Override
@@ -24,10 +28,4 @@ public class HurtArmorPacket extends DataPacket {
         this.putVarInt(this.cause);
         this.putVarInt(this.damage);
     }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
 }

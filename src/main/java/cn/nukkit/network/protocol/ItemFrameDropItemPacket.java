@@ -9,11 +9,14 @@ import lombok.ToString;
 @ToString
 public class ItemFrameDropItemPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET;
-
     public int x;
     public int y;
     public int z;
+
+    @Override
+    public byte pid() {
+        return ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET;
+    }
 
     @Override
     public void decode() {
@@ -25,11 +28,7 @@ public class ItemFrameDropItemPacket extends DataPacket {
 
     @Override
     public void encode() {
-
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
+    	this.reset();
+    	this.putBlockVector3(this.x, this.y, this.z);
     }
 }
