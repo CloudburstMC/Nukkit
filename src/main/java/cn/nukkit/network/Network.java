@@ -466,8 +466,9 @@ public class Network {
         this.registerPacket(ProtocolInfo.EMOTE_PACKET, EmotePacket.class);
         this.registerPacket(ProtocolInfo.MULTIPLAYER_SETTINGS_PACKET, MultiplayerSettingsPacket.class);
         this.registerPacket(ProtocolInfo.SETTINGS_COMMAND_PACKET, SettingsCommandPacket.class);
-        
-        
+        this.registerPacket(ProtocolInfo.ANVIL_DAMAGE_PACKET, AnvilDamagePacket.class);
+        this.registerPacket(ProtocolInfo.COMPLETED_USING_ITEM_PACKET, CompletedUsingItemPacket.class);
+        this.registerPacket(ProtocolInfo.NETWORK_SETTINGS_PACKET, NetworkSettingsPacket.class);
         
         
         
@@ -486,7 +487,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.ADD_PLAYER_PACKET, AddPlayerPacket.class);
         
         this.registerPacket(ProtocolInfo.ANIMATE_PACKET, AnimatePacket.class);
-        this.registerPacket(ProtocolInfo.ANVIL_DAMAGE_PACKET, AnvilDamagePacket.class);
+        
         
         this.registerPacket(ProtocolInfo.BATCH_PACKET, BatchPacket.class);
         
