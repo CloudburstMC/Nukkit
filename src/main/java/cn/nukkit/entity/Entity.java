@@ -37,10 +37,13 @@ import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.TextFormat;
+import cn.nukkit.utils.Utils;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
 import co.aikar.timings.TimingsHistory;
 import com.google.common.collect.Iterables;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+import it.unimi.dsi.fastutil.ints.IntCollection;
 import lombok.extern.log4j.Log4j2;
 
 import javax.annotation.Nonnull;
@@ -997,6 +1000,50 @@ public abstract class Entity extends Location implements Metadatable {
         knownEntities.put(name, clazz);
         shortNames.put(clazz.getSimpleName(), name);
         return true;
+    }
+    
+    @Nonnull
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static IntCollection getKnownEntityIds() {
+        return knownEntities.keySet().stream()
+                .filter(Utils::isNumeric)
+                .mapToInt(Integer::parseInt)
+                .collect(IntArrayList::new, IntArrayList::add, IntArrayList::addAll);
+    }
+
+    @Nonnull
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static List<String> getSaveIds() {
+        return new ArrayList<>(shortNames.values());
+    }
+
+    @Nonnull
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static OptionalInt getSaveId(String id) {
+        Class<? extends Entity> entityClass = knownEntities.get(id);
+        if (entityClass == null) {
+            return OptionalInt.empty();
+        }
+        return knownEntities.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(entityClass))
+                .map(Map.Entry::getKey)
+                .filter(Utils::isNumeric)
+                .mapToInt(Integer::parseInt)
+                .findFirst();
+    }
+
+    @Nullable
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static String getSaveId(int id) {
+        Class<? extends Entity> entityClass = knownEntities.get(Integer.toString(id));
+        if (entityClass == null) {
+            return null;
+        }
+        return shortNames.get(entityClass.getSimpleName());
     }
 
     @Nonnull

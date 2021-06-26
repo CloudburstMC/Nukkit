@@ -299,7 +299,13 @@ public class EntityItem extends Entity {
 
     @Override
     public String getName() {
-        return this.hasCustomName() ? this.getNameTag() : item.count+"x "+(this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
+        if (this.hasCustomName()) {
+            return getNameTag();
+        }
+        if (item == null) {
+            return getStaticName();
+        }
+        return item.count + "x " + (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
     }
 
     public Item getItem() {
