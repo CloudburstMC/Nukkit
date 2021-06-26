@@ -13,7 +13,7 @@ RUN apt-get -y update && \
 FROM arm64v8/openjdk:8-jre-slim AS run
 LABEL maintainer="Chris Fordham <chris@fordham.id.au>"
 COPY --from=build /usr/local/src/nukkit/target/nukkit-1.0-SNAPSHOT.jar /opt/nukkit/nukkit.jar
-COPY nukkit.yml.default /etc/opt/nukkit/nukkit.yml
+COPY release-script/nukkit.default.yml /etc/opt/nukkit/nukkit.yml
 RUN useradd --user-group \
             --no-create-home \
             --home-dir /var/opt/nukkit \

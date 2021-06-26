@@ -551,23 +551,6 @@
                             <goal>report</goal>
                         </goals>
                     </execution>
-                    <!--<execution>
-                        <id>jacoco-check</id>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <rule>
-                                    <limits>
-                                        <limit>
-                                            <minimum>0.9</minimum>
-                                        </limit>
-                                    </limits>
-                                </rule>
-                            </rules>
-                        </configuration>
-                    </execution>-->
                 </executions>
             </plugin>
         </plugins>
