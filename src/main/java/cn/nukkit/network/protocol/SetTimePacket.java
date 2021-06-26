@@ -8,18 +8,17 @@ import lombok.ToString;
  */
 @ToString
 public class SetTimePacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SET_TIME_PACKET;
 
     public int time;
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.SET_TIME_PACKET;
     }
 
     @Override
     public void decode() {
-
+    	this.time = this.getVarInt();
     }
 
     @Override
@@ -27,5 +26,4 @@ public class SetTimePacket extends DataPacket {
         this.reset();
         this.putVarInt(this.time);
     }
-
 }
