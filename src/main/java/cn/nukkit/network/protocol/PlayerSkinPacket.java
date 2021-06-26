@@ -20,22 +20,22 @@ public class PlayerSkinPacket extends DataPacket {
 
     @Override
     public void decode() {
-        uuid = getUUID();
-        skin = getSkin();
-        newSkinName = getString();
-        oldSkinName = getString();
-        if (!feof()) { // -facepalm-
-            skin.setTrusted(getBoolean());
+        this.uuid = this.getUUID();
+        this.skin = this.getSkin();
+        this.newSkinName = this.getString();
+        this.oldSkinName = this.getString();
+        if (!this.feof()) { // -facepalm-
+            this.skin.setTrusted(this.getBoolean());
         }
     }
 
     @Override
     public void encode() {
-        reset();
-        putUUID(uuid);
-        putSkin(skin);
-        putString(newSkinName);
-        putString(oldSkinName);
-        putBoolean(skin.isTrusted());
+        this.reset();
+        this.putUUID(this.uuid);
+        this.putSkin(this.skin);
+        this.putString(this.newSkinName);
+        this.putString(this.oldSkinName);
+        this.putBoolean(this.skin.isTrusted());
     }
 }

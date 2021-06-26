@@ -11,78 +11,78 @@ import java.util.UUID;
 @ToString
 public class PlayerListPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_LIST_PACKET;
-
     public static final byte TYPE_ADD = 0;
     public static final byte TYPE_REMOVE = 1;
 
     public byte type;
-    public Entry[] entries = new Entry[0];
+    public List<PlayerListEntry> playerListEntries = new ArrayList<>();
+
+    @Override
+    public byte pid() {
+        return ProtocolInfo.PLAYER_LIST_PACKET;
+    }
 
     @Override
     public void decode() {
-
+    	this.type = this.getByte();
+		for (int i = 0, count = this.getUnsignedVarInt(); i < count; i++) {
+			PlayerListEntry playerListEntry = new PlayerListEntry();
+			playerListEntry.uuid = this.getUUID();
+			if (this.type == TYPE_ADD) {
+				playerListEntry.entityUniqueId = this.getEntityUniqueId();
+				playerListEntry.username = this.getString();
+				playerListEntry.xboxUserId = this.getString();
+				playerListEntry.platformChatId = this.getString();
+				playerListEntry.buildPlatform = this.getLInt();
+				playerListEntry.skin = this.getSkin();
+				playerListEntry.isTeacher = this.getBoolean();
+				playerListEntry.isHost = this.getBoolean();
+			}
+			this.playerListEntries.add(playerListEntry);
+		}
+		if (this.type == TYPE_ADD) {
+			for (PlayerListEntry playerListEntry : this.playerListEntries) {
+				playerListEntry.skin.setTrusted(this.getBoolean());
+			}
+		}
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putByte(this.type);
-        this.putUnsignedVarInt(this.entries.length);
-        for (Entry entry : this.entries) {
-            this.putUUID(entry.uuid);
-            if (type == TYPE_ADD) {
-                this.putVarLong(entry.entityId);
-                this.putString(entry.name);
-                this.putString(entry.xboxUserId);
-                this.putString(entry.platformChatId);
-                this.putLInt(entry.buildPlatform);
-                this.putSkin(entry.skin);
-                this.putBoolean(entry.isTeacher);
-                this.putBoolean(entry.isHost);
-            }
-        }
-
-        if (type == TYPE_ADD) {
-            for (Entry entry : this.entries) {
-                this.putBoolean(true);
-            }
-        }
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
+		this.putUnsignedVarInt(this.playerListEntries.size());
+		for (PlayerListEntry playerListEntry : this.playerListEntries) {
+			this.putUUID(playerListEntry.uuid);
+			if (this.type == TYPE_ADD) {
+				this.putEntityUniqueId(playerListEntry.entityUniqueId);
+				this.putString(playerListEntry.username);
+				this.putString(playerListEntry.xboxUserId);
+				this.putString(playerListEntry.platformChatId);
+				this.putLInt(playerListEntry.buildPlatform);
+				this.putSkin(playerListEntry.skin);
+				this.putBool(playerListEntry.isTeacher);
+				this.putBool(playerListEntry.isHost);
+			}
+		}
+		if(this.type == TYPE_ADD){
+			for (PlayerListEntry playerListEntry : this.playerListEntries) {
+				this.putBoolean(playerListEntry.skin.isTrusted());
+			}
+		}
     }
 
     @ToString
-    public static class Entry {
-
-        public final UUID uuid;
-        public long entityId = 0;
-        public String name = "";
-        public String xboxUserId = ""; //TODO
-        public String platformChatId = ""; //TODO
+    public static class PlayerListEntry {
+    	
+        public UUID uuid;
+        public long entityUniqueId;
+        public String username;
+        public String xboxUserId;
+        public String platformChatId;
         public int buildPlatform = -1;
         public Skin skin;
         public boolean isTeacher;
-        public boolean isHost;
-
-        public Entry(UUID uuid) {
-            this.uuid = uuid;
-        }
-
-        public Entry(UUID uuid, long entityId, String name, Skin skin) {
-            this(uuid, entityId, name, skin, "");
-        }
-
-        public Entry(UUID uuid, long entityId, String name, Skin skin, String xboxUserId) {
-            this.uuid = uuid;
-            this.entityId = entityId;
-            this.name = name;
-            this.skin = skin;
-            this.xboxUserId = xboxUserId == null ? "" : xboxUserId;
-        }
+        public boolean isHost
     }
-
 }
