@@ -463,6 +463,11 @@ public class Network {
         //TODO: CLIENT_CACHE_BLOB_STATUS_PACKET
         //TODO: CLIENT_CACHE_MISS_RESPONSE_PACKET
         this.registerPacket(ProtocolInfo.EDUCATION_SETTINGS_PACKET, EducationSettingsPacket.class);
+        this.registerPacket(ProtocolInfo.EMOTE_PACKET, EmotePacket.class);
+        this.registerPacket(ProtocolInfo.MULTIPLAYER_SETTINGS_PACKET, MultiplayerSettingsPacket.class);
+        
+        
+        
         
         
         
@@ -563,7 +568,7 @@ public class Network {
         
         
         
-        this.registerPacket(ProtocolInfo.EMOTE_PACKET, EmotePacket.class);
+        
         
         this.registerPacket(ProtocolInfo.COMPLETED_USING_ITEM_PACKET, CompletedUsingItemPacket.class);
         this.registerPacket(ProtocolInfo.CODE_BUILDER_PACKET, CodeBuilderPacket.class);
