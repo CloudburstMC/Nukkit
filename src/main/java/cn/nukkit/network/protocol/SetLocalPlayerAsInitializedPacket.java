@@ -5,7 +5,7 @@ import lombok.ToString;
 @ToString
 public class SetLocalPlayerAsInitializedPacket extends DataPacket {
 
-    public long entityRuntimeId;
+    public long playerRuntimeId;
 
     @Override
     public byte pid() {
@@ -14,12 +14,12 @@ public class SetLocalPlayerAsInitializedPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.playerRuntimeId = this.getEntityRuntimeId();
     }
 
     @Override
     public void encode() {
-    	this.restore()
-        this.putEntityRuntimeId(this.entityRuntimeId);
+        this.reset();
+        this.putEntityRuntimeId(this.playerRuntimeId);
     }
 }

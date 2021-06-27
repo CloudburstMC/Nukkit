@@ -2,7 +2,7 @@ package cn.nukkit.utils;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.data.Skin;
+import cn.nukkit.entity.data.*;
 import cn.nukkit.item.*;
 import cn.nukkit.item.RuntimeItemMapping.LegacyEntry;
 import cn.nukkit.item.RuntimeItemMapping.RuntimeEntry;
@@ -19,6 +19,7 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.LittleEndianByteBufInputStream;
 import cn.nukkit.network.LittleEndianByteBufOutputStream;
 import cn.nukkit.network.protocol.types.EntityLink;
+import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 import io.netty.buffer.AbstractByteBufAllocator;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -609,6 +610,107 @@ public class BinaryStream {
         this.putVarInt(item.getCount());
     }
 
+    public EntityMetadata getMetadata() {
+        EntityMetadata entityMetadata = new EntityMetadata();
+        for (int i = 0, count = this.getUnsignedVarInt(); i < count; i++) {
+            int key = (int) this.getUnsignedVarInt();
+            int type = (int) this.getUnsignedVarInt();
+            EntityData value = null;
+            switch (type) {
+                case Entity.DATA_TYPE_BYTE:
+                    value = new ByteEntityData(key, this.getByte());
+                    break;
+                case Entity.DATA_TYPE_SHORT:
+                    value = new ShortEntityData(key, this.getLShort());
+                    break;
+                case Entity.DATA_TYPE_INT:
+                    value = new IntEntityData(key, this.getVarInt());
+                    break;
+                case Entity.DATA_TYPE_FLOAT:
+                    value = new FloatEntityData(key, this.getLFloat());
+                    break;
+                case Entity.DATA_TYPE_STRING:
+                    value = new StringEntityData(key, this.getString());
+                    break;
+                case Entity.DATA_TYPE_NBT:
+                    int offset = this.getOffset();
+                    FastByteArrayInputStream fbais = new FastByteArrayInputStream(this.get());
+                    try {
+                        CompoundTag namedTag = NBTIO.read(fbais, ByteOrder.LITTLE_ENDIAN, true);
+                        value = new NBTEntityData(key, namedTag);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    this.setOffset(offset + (int) fbais.position());
+                    break;
+                case Entity.DATA_TYPE_POS:
+                    BlockVector3 v3 = this.getSignedBlockPosition();
+                    value = new IntPositionEntityData(key, v3.x, v3.y, v3.z);
+                    break;
+                case Entity.DATA_TYPE_LONG:
+                    value = new LongEntityData(key, this.getVarLong());
+                    break;
+                case Entity.DATA_TYPE_VECTOR3F:
+                    value = new Vector3fEntityData(key, this.getVector3f());
+                    break;
+            }
+            if (value != null) entityMetadata.put(value);
+        }
+        return entityMetadata;
+    }
+
+    public void putMetadata(EntityMetadata metadata) {
+        Map<Integer, EntityData> map = metadata.getMap();
+        this.putUnsignedVarInt(map.size());
+        for (int id : map.keySet()) {
+            EntityData d = map.get(id);
+            this.putUnsignedVarInt(id);
+            this.putUnsignedVarInt(d.getType());
+            switch (d.getType()) {
+                case Entity.DATA_TYPE_BYTE:
+                    this.putByte(((ByteEntityData) d).getData().byteValue());
+                    break;
+                case Entity.DATA_TYPE_SHORT:
+                    this.putLShort(((ShortEntityData) d).getData());
+                    break;
+                case Entity.DATA_TYPE_INT:
+                    this.putVarInt(((IntEntityData) d).getData());
+                    break;
+                case Entity.DATA_TYPE_FLOAT:
+                    this.putLFloat(((FloatEntityData) d).getData());
+                    break;
+                case Entity.DATA_TYPE_STRING:
+                    String s = ((StringEntityData) d).getData();
+                    this.putUnsignedVarInt(s.getBytes(StandardCharsets.UTF_8).length);
+                    this.put(s.getBytes(StandardCharsets.UTF_8));
+                    break;
+                case Entity.DATA_TYPE_NBT:
+                    NBTEntityData slot = (NBTEntityData) d;
+                    try {
+                        this.put(NBTIO.write(slot.getData(), ByteOrder.LITTLE_ENDIAN, true));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    break;
+                case Entity.DATA_TYPE_POS:
+                    IntPositionEntityData pos = (IntPositionEntityData) d;
+                    this.putVarInt(pos.x);
+                    this.putVarInt(pos.y);
+                    this.putVarInt(pos.z);
+                    break;
+                case Entity.DATA_TYPE_LONG:
+                    this.putVarLong(((LongEntityData) d).getData());
+                    break;
+                case Entity.DATA_TYPE_VECTOR3F:
+                    Vector3fEntityData v3data = (Vector3fEntityData) d;
+                    this.putLFloat(v3data.x);
+                    this.putLFloat(v3data.y);
+                    this.putLFloat(v3data.z);
+                    break;
+            }
+        }
+    }
+
     private List<String> extractStringList(Item item, String tagName) {
         CompoundTag namedTag = item.getNamedTag();
         if (namedTag == null) {
@@ -684,6 +786,12 @@ public class BinaryStream {
 
     public BlockVector3 getBlockVector3() {
         return new BlockVector3(this.getVarInt(), (int) this.getUnsignedVarInt(), this.getVarInt());
+    }
+
+    public BlockVector3 getBlockVector3(int x, int y, int z) {
+        x = this.getVarInt();
+        y = (int) this.getUnsignedVarInt();
+        z = this.getVarInt();
     }
 
     public BlockVector3 getSignedBlockPosition() {

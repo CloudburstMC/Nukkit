@@ -12,7 +12,7 @@ public class StructureTemplateDataRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	//TODO
+        //TODO
     }
 
     @Override

@@ -20,14 +20,14 @@ public class SetEntityMotionPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.entityRuntimeId = this.getEntityRuntimeId();
-		this.motion = this.getVector3f();
+        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.motion = this.getVector3f();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.entityRuntimeId);
-		this.putVector3f(this.motion);
+        this.putVector3f(this.motion);
     }
 }

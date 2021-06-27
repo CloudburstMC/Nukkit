@@ -1,7 +1,6 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.data.EntityMetadata;
-import cn.nukkit.utils.Binary;
 import lombok.ToString;
 
 /**
@@ -22,16 +21,16 @@ public class SetEntityDataPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.entityRuntimeId = this.getEntityRuntimeId();
-        this.entityMetadata = Binary.readMetadata(this.getByteArray());
-		this.tick = this.getUnsignedVarLong();
+        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.entityMetadata = this.getMetadata();
+        this.tick = this.getUnsignedVarLong();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.eid);
-        this.put(Binary.writeMetadata(this.entityMetadata));
+        this.putEntityRuntimeId(this.entityRuntimeId);
+        this.putMetadata(this.entityMetadata);
         this.putUnsignedVarLong(this.tick);
     }
 }

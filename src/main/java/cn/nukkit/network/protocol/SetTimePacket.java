@@ -18,7 +18,7 @@ public class SetTimePacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.time = this.getVarInt();
+        this.time = this.getVarInt();
     }
 
     @Override

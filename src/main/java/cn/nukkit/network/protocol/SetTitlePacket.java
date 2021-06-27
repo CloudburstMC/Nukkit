@@ -7,7 +7,6 @@ import lombok.ToString;
  */
 @ToString
 public class SetTitlePacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.SET_TITLE_PACKET;
 
     public static final int TYPE_CLEAR = 0;
     public static final int TYPE_RESET = 1;
@@ -24,7 +23,7 @@ public class SetTitlePacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.SET_TITLE_PACKET;
     }
 
     @Override
@@ -39,10 +38,10 @@ public class SetTitlePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(type);
-        this.putString(text);
-        this.putVarInt(fadeInTime);
-        this.putVarInt(stayTime);
-        this.putVarInt(fadeOutTime);
+        this.putVarInt(this.type);
+        this.putString(this.text);
+        this.putVarInt(this.fadeInTime);
+        this.putVarInt(this.stayTime);
+        this.putVarInt(this.fadeOutTime);
     }
 }

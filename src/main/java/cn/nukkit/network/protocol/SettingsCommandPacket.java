@@ -5,8 +5,8 @@ import lombok.ToString;
 @ToString
 public class SettingsCommandPacket extends DataPacket {
 
-	public String command;
-	public boolean suppressOutput;
+    public String command;
+    public boolean suppressOutput;
 
     @Override
     public byte pid() {
@@ -15,14 +15,14 @@ public class SettingsCommandPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.command = this.getString();
-		this.suppressOutput = this.getBoolean();
+        this.command = this.getString();
+        this.suppressOutput = this.getBoolean();
     }
 
     @Override
     public void encode() {
-    	this.reset();
+        this.reset();
         this.putString(this.command);
-		this.putBoolean(this.suppressOutput);
+        this.putBoolean(this.suppressOutput);
     }
 }

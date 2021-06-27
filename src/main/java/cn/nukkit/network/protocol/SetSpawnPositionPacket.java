@@ -13,9 +13,13 @@ public class SetSpawnPositionPacket extends DataPacket {
     public static final int TYPE_WORLD_SPAWN = 1;
 
     public int spawnType;
-    public BlockVector3 position;
-    public BlockVector3 position2;
+    public int x;
+    public int y;
+    public int z;
     public int dimensionId = 0;
+    public int x2;
+    public int y2;
+    public int z2;
 
     @Override
     public byte pid() {
@@ -24,18 +28,18 @@ public class SetSpawnPositionPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.spawnType = this.getVarInt();
-		this.position = this.getBlockVector3();
-		this.dimensionId = this.getVarInt();
-		this.position2 = this.getBlockVector3();
+        this.spawnType = this.getVarInt();
+        this.getBlockVector3(this.x, this.y, this.z);
+        this.dimensionId = this.getVarInt();
+        this.getBlockVector3(this.x2, this.y2, this.z2);
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putVarInt(this.spawnType);
-		this.putBlockVector3(this.position);
-		this.putVarInt(this.dimensionId);
-		this.putBlockVector3(this.position2);
+        this.putBlockVector3(this.x, this.y, this.z);
+        this.putVarInt(this.dimensionId);
+        this.putBlockVector3(this.x2, this.y2, this.z2);
     }
 }
