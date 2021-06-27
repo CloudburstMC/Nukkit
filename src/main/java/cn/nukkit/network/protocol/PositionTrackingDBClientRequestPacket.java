@@ -5,10 +5,10 @@ import lombok.ToString;
 @ToString
 public class PositionTrackingDBClientRequestPacket extends DataPacket {
 
-	public static final byte ACTION_QUERY = 0;
+    public static final byte ACTION_QUERY = 0;
 
-	public byte action;
-	public int trackingId;
+    public byte action;
+    public int trackingId;
 
     @Override
     public byte pid() {
@@ -17,14 +17,14 @@ public class PositionTrackingDBClientRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.action = this.getByte();
-		this.trackingId = this.getVarInt();
+        this.action = this.getByte();
+        this.trackingId = this.getVarInt();
     }
 
     @Override
     public void encode() {
-    	this.reset();
+        this.reset();
         this.putByte(this.action);
-		this.putVarInt(this.trackingId);
+        this.putVarInt(this.trackingId);
     }
 }

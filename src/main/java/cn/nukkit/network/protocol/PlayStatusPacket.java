@@ -26,7 +26,7 @@ public class PlayStatusPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.status = this.getInt();
+        this.status = this.getInt();
     }
 
     @Override

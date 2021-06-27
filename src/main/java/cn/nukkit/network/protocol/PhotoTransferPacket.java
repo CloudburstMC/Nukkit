@@ -5,9 +5,9 @@ import lombok.ToString;
 @ToString
 public class PhotoTransferPacket extends DataPacket {
 
-	public String photoName;
-	public String photoData;
-	public String bookId; //Photos are stored in a sibling directory to the games folder (screenshots/(some UUID)/bookID/example.png)
+    public String photoName;
+    public String photoData;
+    public String bookId; //Photos are stored in a sibling directory to the games folder (screenshots/(some UUID)/bookID/example.png)
 
     @Override
     public byte pid() {
@@ -16,16 +16,16 @@ public class PhotoTransferPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.photoName = this.getString();
-		this.photoData = this.getString();
-		this.bookId = this.getString();
+        this.photoName = this.getString();
+        this.photoData = this.getString();
+        this.bookId = this.getString();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putString(this.photoName);
-		this.putString(this.photoData);
-		this.putString(this.bookId);
+        this.putString(this.photoData);
+        this.putString(this.bookId);
     }
 }
