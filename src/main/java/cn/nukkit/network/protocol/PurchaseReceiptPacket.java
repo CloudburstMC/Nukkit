@@ -2,13 +2,10 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @ToString
 public class PurchaseReceiptPacket extends DataPacket {
 
-    public List<String> receipts = new ArrayList<>();
+    public String[] receipts = new String[0]
 
     @Override
     public byte pid() {
@@ -17,8 +14,10 @@ public class PurchaseReceiptPacket extends DataPacket {
 
     @Override
     public void decode() {
-        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
-            this.receipts.add(this.getString());
+        int count = (int) this.getUnsignedVarInt();
+        this.receipts = new String[count];
+        for (int i = 0; i < count; i++) {
+            this.receipts[i] = this.getString();
         }
     }
 

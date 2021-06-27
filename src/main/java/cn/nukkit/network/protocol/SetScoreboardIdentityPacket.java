@@ -20,6 +20,7 @@ public class SetScoreboardIdentityPacket extends DataPacket {
     public void decode() {
         this.type = this.getByte();
         int count = (int) this.getUnsignedVarInt();
+        this.entries = new SetScoreboardIdentityEntry[count];
         for (int i = 0; i < count; i++) {
             SetScoreboardIdentityEntry setScoreboardIdentityEntry = new SetScoreboardIdentityEntry();
             setScoreboardIdentityEntry.scoreboardId = this.getVarLong();
@@ -34,7 +35,7 @@ public class SetScoreboardIdentityPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte(this.type);
-        this.putUnsignedVarInt(this.setScoreboardIdentityEntries.length);
+        this.putUnsignedVarInt(this.entries.length);
         for (SetScoreboardIdentityEntry setScoreboardIdentityEntry : this.entries) {
             this.putVarLong(setScoreboardIdentityEntry.scoreboardId);
             if (this.type == TYPE_REGISTER_IDENTITY) {

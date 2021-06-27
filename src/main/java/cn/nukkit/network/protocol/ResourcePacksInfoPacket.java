@@ -20,7 +20,9 @@ public class ResourcePacksInfoPacket extends DataPacket {
     public void decode() {
         this.mustAccept = this.getBoolean();
         this.hasScripts = this.getBoolean();
-        for (int i = 0, count = this.getLShort(); i < count; i++) {
+        int count = this.getLShort();
+        this.behaviourPackEntries = new ResourcePack[count];
+        for (int i = 0; i < count; i++) {
             this.getString();
             this.getString();
             this.getLLong();
@@ -30,7 +32,9 @@ public class ResourcePacksInfoPacket extends DataPacket {
             this.getBoolean();
             //TODO
         }
-        for (int i = 0, count = this.getLShort(); i < count; i++) {
+        count = this.getLShort();
+        this.resourcePackEntries = new ResourcePack[count];
+        for (int i = 0; i < count; i++) {
             this.getString();
             this.getString();
             this.getLLong();
