@@ -9,13 +9,6 @@ import lombok.ToString;
 @ToString
 public class TextPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.TEXT_PACKET;
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
     public static final byte TYPE_RAW = 0;
     public static final byte TYPE_CHAT = 1;
     public static final byte TYPE_TRANSLATION = 2;
@@ -37,9 +30,14 @@ public class TextPacket extends DataPacket {
     public String platformChatId = "";
 
     @Override
+    public byte pid() {
+        return ProtocolInfo.TEXT_PACKET;
+    }
+
+    @Override
     public void decode() {
         this.type = (byte) getByte();
-        this.isLocalized = this.getBoolean() || type == TYPE_TRANSLATION;
+        this.isLocalized = this.getBoolean() || this.type == TYPE_TRANSLATION;
         switch (type) {
             case TYPE_CHAT:
             case TYPE_WHISPER:
@@ -52,7 +50,6 @@ public class TextPacket extends DataPacket {
             case TYPE_OBJECT_WHISPER:
                 this.message = this.getString();
                 break;
-
             case TYPE_TRANSLATION:
             case TYPE_POPUP:
             case TYPE_JUKEBOX_POPUP:
@@ -80,7 +77,6 @@ public class TextPacket extends DataPacket {
             case TYPE_OBJECT_WHISPER:
                 this.putString(this.message);
                 break;
-
             case TYPE_TRANSLATION:
             case TYPE_POPUP:
             case TYPE_JUKEBOX_POPUP:

@@ -8,27 +8,24 @@ import lombok.ToString;
 @ToString
 public class TakeItemEntityPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.TAKE_ITEM_ENTITY_PACKET;
+    public long targetRuntimeId;
+    public long entityRuntimeId;
 
-    public long entityId;
-    public long target;
+    @Override
+    public byte pid() {
+        return ProtocolInfo.TAKE_ITEM_ENTITY_PACKET;
+    }
 
     @Override
     public void decode() {
-        this.target = this.getEntityRuntimeId();
-        this.entityId = this.getEntityRuntimeId();
+        this.targetRuntimeId = this.getEntityRuntimeId();
+        this.entityRuntimeId = this.getEntityRuntimeId();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.target);
-        this.putEntityRuntimeId(this.entityId);
+        this.putEntityRuntimeId(this.targetRuntimeId);
+        this.putEntityRuntimeId(this.entityRuntimeId);
     }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
 }

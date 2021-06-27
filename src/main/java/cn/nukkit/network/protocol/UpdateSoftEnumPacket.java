@@ -24,7 +24,7 @@ public class UpdateSoftEnumPacket extends DataPacket {
     @Override
     public void decode() {
         this.enumName = this.getString();
-        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
+        for (int i = 0, count = this.getUnsignedVarInt(); i < count; i++) {
             this.values.add(this.getString());
         }
         this.type = this.getByte();
