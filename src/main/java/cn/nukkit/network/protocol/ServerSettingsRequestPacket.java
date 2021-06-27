@@ -12,11 +12,11 @@ public class ServerSettingsRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	//No decode
+        //No decode
     }
 
     @Override
     public void encode() {
-    	//No encode
+        //No encode
     }
 }

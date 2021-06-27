@@ -14,12 +14,12 @@ public class ServerToClientHandshakePacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.jwt = this.getString();
+        this.jwt = this.getString();
     }
 
     @Override
     public void encode() {
-    	this.reset();
-    	this.putString(this.jwt);
+        this.reset();
+        this.putString(this.jwt);
     }
 }

@@ -22,7 +22,7 @@ public class SetScoreboardIdentityPacket extends DataPacket {
     @Override
     public void decode() {
         this.type = this.getByte();
-        for (int i = 0, count = this.getUnsignedVarInt(); i < count; i++) {
+        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
             SetScoreboardIdentityEntry setScoreboardIdentityEntry = new SetScoreboardIdentityEntry();
             setScoreboardIdentityEntry.scoreboardId = this.getVarLong();
             if (this.type == TYPE_REGISTER_IDENTITY) {
