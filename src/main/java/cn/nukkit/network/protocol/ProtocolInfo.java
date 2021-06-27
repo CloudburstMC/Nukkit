@@ -77,7 +77,7 @@ public interface ProtocolInfo {
     byte ADVENTURE_SETTINGS_PACKET = 0x37;
     byte BLOCK_ENTITY_DATA_PACKET = 0x38;
     byte PLAYER_INPUT_PACKET = 0x39;
-    byte FULL_CHUNK_DATA_PACKET = 0x3a;
+    byte LEVEL_CHUNK_PACKET = 0x3a;
     byte SET_COMMANDS_ENABLED_PACKET = 0x3b;
     byte SET_DIFFICULTY_PACKET = 0x3c;
     byte CHANGE_DIMENSION_PACKET = 0x3d;

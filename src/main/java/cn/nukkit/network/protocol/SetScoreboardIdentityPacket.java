@@ -2,9 +2,6 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @ToString
 public class SetScoreboardIdentityPacket extends DataPacket {
 
@@ -12,7 +9,7 @@ public class SetScoreboardIdentityPacket extends DataPacket {
     public static final byte TYPE_CLEAR_IDENTITY = 1;
 
     public byte type;
-    public List<SetScoreboardIdentityEntry> entries = new ArrayList<>();
+    public SetScoreboardIdentityEntry[] entries = new SetScoreboardIdentityEntry[0]
 
     @Override
     public byte pid() {
@@ -22,13 +19,14 @@ public class SetScoreboardIdentityPacket extends DataPacket {
     @Override
     public void decode() {
         this.type = this.getByte();
-        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
+        int count = (int) this.getUnsignedVarInt();
+        for (int i = 0; i < count; i++) {
             SetScoreboardIdentityEntry setScoreboardIdentityEntry = new SetScoreboardIdentityEntry();
             setScoreboardIdentityEntry.scoreboardId = this.getVarLong();
             if (this.type == TYPE_REGISTER_IDENTITY) {
                 setScoreboardIdentityEntry.entityUniqueId = this.getEntityUniqueId();
             }
-            this.entries.add(setScoreboardIdentityEntry)
+            this.entries[i] = setScoreboardIdentityEntry;
         }
     }
 
@@ -36,7 +34,7 @@ public class SetScoreboardIdentityPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte(this.type);
-        this.putUnsignedVarInt(this.setScoreboardIdentityEntries.size());
+        this.putUnsignedVarInt(this.setScoreboardIdentityEntries.length);
         for (SetScoreboardIdentityEntry setScoreboardIdentityEntry : this.entries) {
             this.putVarLong(setScoreboardIdentityEntry.scoreboardId);
             if (this.type == TYPE_REGISTER_IDENTITY) {

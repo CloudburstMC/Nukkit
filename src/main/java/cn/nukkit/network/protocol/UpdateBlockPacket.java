@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.BlockVector3;
 import lombok.ToString;
 
 /**
@@ -36,13 +35,10 @@ public class UpdateBlockPacket extends DataPacket {
 
     @Override
     public void decode() {
-        BlockVector3 blockVector3 = this.getBlockVector3();
-        this.x = blockVector3.getX();
-        this.y = blockVector3.getY();
-        this.z = blockVector3.getZ();
-        this.blockRuntimeId = this.getUnsignedVarInt();
-        this.flags = this.getUnsignedVarInt();
-        this.dataLayer = this.getUnsignedVarInt();
+        this.getBlockVector3(this.x, this.y, this.z);
+        this.blockRuntimeId = (int) this.getUnsignedVarInt();
+        this.flags = (int) this.getUnsignedVarInt();
+        this.dataLayer = (int) this.getUnsignedVarInt();
     }
 
     @Override
@@ -55,6 +51,7 @@ public class UpdateBlockPacket extends DataPacket {
     }
 
     public static class Entry {
+
         public final int x;
         public final int y;
         public final int z;

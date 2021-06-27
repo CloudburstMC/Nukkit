@@ -9,12 +9,6 @@ import lombok.ToString;
  */
 @ToString
 public class InventoryContentPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.INVENTORY_CONTENT_PACKET;
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
 
     public static final int SPECIAL_INVENTORY = 0;
     public static final int SPECIAL_OFFHAND = 0x77;
@@ -23,34 +17,31 @@ public class InventoryContentPacket extends DataPacket {
     public static final int SPECIAL_HOTBAR = 0x7a;
     public static final int SPECIAL_FIXED_INVENTORY = 0x7b;
 
-    public int inventoryId;
-    public Item[] slots = new Item[0];
+    public int windowId;
+    public Item[] items = new Item[0];
 
     @Override
-    public DataPacket clean() {
-        this.slots = new Item[0];
-        return super.clean();
+    public byte pid() {
+        return ProtocolInfo.INVENTORY_CONTENT_PACKET;
     }
 
     @Override
     public void decode() {
-
+        this.windowId = (int) this.getUnsignedVarInt();
+        int count = (int) this.getUnsignedVarInt();
+        this.items = new Item[count];
+        for (int i = 0; i < count; i++) {
+            this.items[i] = this.getSlot();
+        }
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(this.inventoryId);
-        this.putUnsignedVarInt(this.slots.length);
-        for (Item slot : this.slots) {
-            this.putSlot(slot);
+        this.putUnsignedVarInt(this.windowId);
+        this.putUnsignedVarInt(this.items.length);
+        for (Item item : this.items) {
+            this.putSlot(item);
         }
-    }
-
-    @Override
-    public InventoryContentPacket clone() {
-        InventoryContentPacket pk = (InventoryContentPacket) super.clone();
-        pk.slots = this.slots.clone();
-        return pk;
     }
 }
