@@ -8,21 +8,21 @@ import lombok.ToString;
 @ToString
 public class MapInfoRequestPacket extends DataPacket {
 
-    public long mapId;
+	public long mapUniqueId;
 
-    @Override
-    public byte pid() {
-        return ProtocolInfo.MAP_INFO_REQUEST_PACKET;
-    }
+	@Override
+	public byte pid() {
+		return ProtocolInfo.MAP_INFO_REQUEST_PACKET;
+	}
 
-    @Override
-    public void decode() {
-        this.mapId = this.getEntityUniqueId();
-    }
+	@Override
+	public void decode() {
+		this.mapUniqueId = this.getEntityUniqueId();
+	}
 
-    @Override
-    public void encode() {
-    	this.reset();
-        this.putEntityUniqueId(this.mapId);
-    }
+	@Override
+	public void encode() {
+		this.reset();
+		this.putEntityUniqueId(this.mapUniqueId);
+	}
 }

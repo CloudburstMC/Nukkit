@@ -5,10 +5,10 @@ import lombok.ToString;
 @ToString
 public class NetworkSettingsPacket extends DataPacket {
 
-	public static final short COMPRESS_NOTHING = 0;
-	public static final short COMPRESS_EVERYTHING = 1;
+    public static final int COMPRESS_NOTHING = 0;
+    public static final int COMPRESS_EVERYTHING = 1;
 
-	public short compressionThreshold;
+    public int compressionThreshold;
 
     @Override
     public byte pid() {
@@ -17,12 +17,12 @@ public class NetworkSettingsPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.compressionThreshold = this.getLShort();
+        this.compressionThreshold = this.getLShort();
     }
 
     @Override
     public void encode() {
-    	this.reset();
+        this.reset();
         this.putLShort(this.compressionThreshold);
     }
 }

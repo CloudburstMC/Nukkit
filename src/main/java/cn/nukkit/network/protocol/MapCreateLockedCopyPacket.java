@@ -1,9 +1,12 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+@ToString
 public class MapCreateLockedCopyPacket extends DataPacket {
 
-    public long originalMapId;
-    public long newMapId;
+    public long mapUniqueId;
+    public long newMapUniqueId;
 
     @Override
     public byte pid() {
@@ -12,14 +15,14 @@ public class MapCreateLockedCopyPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.originalMapId = this.getEntityUniqueId();
-		this.newMapId = this.getEntityUniqueId();
+        this.mapUniqueId = this.getEntityUniqueId();
+        this.newMapUniqueId = this.getEntityUniqueId();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityUniqueId(this.originalMapId);
-		this.putEntityUniqueId(this.newMapId);
+        this.putEntityUniqueId(this.mapUniqueId);
+        this.putEntityUniqueId(this.newMapUniqueId);
     }
 }

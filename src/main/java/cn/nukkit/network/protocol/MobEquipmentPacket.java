@@ -10,16 +10,16 @@ import lombok.ToString;
 @ToString
 public class MobEquipmentPacket extends DataPacket {
 
-    @Override
-    public byte pid() {
-        return ProtocolInfo.MOB_EQUIPMENT_PACKET;
-    }
-
     public long entityRuntimeId;
     public Item item;
     public byte inventorySlot;
     public byte hotbarSlot;
     public byte windowId;
+
+    @Override
+    public byte pid() {
+        return ProtocolInfo.MOB_EQUIPMENT_PACKET;
+    }
 
     @Override
     public void decode() {
