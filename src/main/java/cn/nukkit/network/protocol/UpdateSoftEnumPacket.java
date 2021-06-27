@@ -9,12 +9,12 @@ import java.util.List;
 public class UpdateSoftEnumPacket extends DataPacket {
 
     public static final byte TYPE_ADD = 0;
-	public static final byte TYPE_REMOVE = 1;
-	public static final byte TYPE_SET = 2;
+    public static final byte TYPE_REMOVE = 1;
+    public static final byte TYPE_SET = 2;
 
-	public String enumName;
-	public List<String> values = new ArrayList<>();
-	public byte type;
+    public String enumName;
+    public List<String> values = new ArrayList<>();
+    public byte type;
 
     @Override
     public byte pid() {
@@ -23,21 +23,21 @@ public class UpdateSoftEnumPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.enumName = this.getString();
-		for (int i = 0, count = this.getUnsignedVarInt(); i < count; i++) {
-			this.values.add(this.getString());
-		}
-		this.type = this.getByte();
+        this.enumName = this.getString();
+        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
+            this.values.add(this.getString());
+        }
+        this.type = this.getByte();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putString(this.enumName);
-		this.putUnsignedVarInt(this.values.size());
-		for (String value : this.values) {
-			this.putString(value);
-		}
-		this.putByte(this.type);
+        this.putUnsignedVarInt(this.values.size());
+        for (String value : this.values) {
+            this.putString(value);
+        }
+        this.putByte(this.type);
     }
 }

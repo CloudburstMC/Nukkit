@@ -9,39 +9,25 @@ import lombok.ToString;
 @ToString
 public class UpdateAttributesPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_ATTRIBUTES_PACKET;
-
+    public long entityRuntimeId;
     public Attribute[] entries;
-    public long entityId;
-    public long frame;
+    public long tick;
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.UPDATE_ATTRIBUTES_PACKET;
     }
 
     public void decode() {
-
+        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.entries = this.getAttributeList();
+        this.tick = this.getUnsignedVarLong();
     }
 
     public void encode() {
         this.reset();
-
-        this.putEntityRuntimeId(this.entityId);
-
-        if (this.entries == null) {
-            this.putUnsignedVarInt(0);
-        } else {
-            this.putUnsignedVarInt(this.entries.length);
-            for (Attribute entry : this.entries) {
-                this.putLFloat(entry.getMinValue());
-                this.putLFloat(entry.getMaxValue());
-                this.putLFloat(entry.getValue());
-                this.putLFloat(entry.getDefaultValue());
-                this.putString(entry.getName());
-            }
-        }
-        this.putUnsignedVarInt(this.frame);
+        this.putEntityRuntimeId(this.entityRuntimeId);
+        this.putAttributeList(this.entries);
+        this.putUnsignedVarLong(this.tick);
     }
-
 }

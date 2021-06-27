@@ -12,7 +12,7 @@ public class UpdateBlockPropertiesPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	//TODO
+        //TODO
     }
 
     @Override
