@@ -10,12 +10,14 @@ import lombok.ToString;
 @ToString
 public class AnimatePacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.ANIMATE_PACKET;
-
-
     public long eid;
     public Action action;
     public float rowingTime;
+
+    @Override
+    public byte pid() {
+        return ProtocolInfo.ANIMATE_PACKET;
+    }
 
     @Override
     public void decode() {
@@ -34,11 +36,6 @@ public class AnimatePacket extends DataPacket {
         if (this.action == Action.ROW_RIGHT || this.action == Action.ROW_LEFT) {
             this.putLFloat(this.rowingTime);
         }
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 
     public enum Action {

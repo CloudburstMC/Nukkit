@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.BlockVector3;
+import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.ToString;
 
 /**
@@ -9,31 +10,30 @@ import lombok.ToString;
  */
 @ToString(exclude = "namedTag")
 public class BlockEntityDataPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.BLOCK_ENTITY_DATA_PACKET;
 
     public int x;
     public int y;
     public int z;
-    public byte[] namedTag;
+    public CompoundTag namedTag;
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.BLOCK_ENTITY_DATA_PACKET;
     }
 
     @Override
     public void decode() {
-        BlockVector3 v = this.getBlockVector3();
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
-        this.namedTag = this.get();
+        BlockVector3 blockVector3 = this.getBlockVector3();
+        this.x = blockVector3.getX();
+        this.y = blockVector3.getY();
+        this.z = blockVector3.getZ();
+        this.namedTag = this.getCompoundTag();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putBlockVector3(this.x, this.y, this.z);
-        this.put(this.namedTag);
+        this.putCompoundTag(this.namedTag);
     }
 }

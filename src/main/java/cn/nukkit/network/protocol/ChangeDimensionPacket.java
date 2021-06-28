@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
 /**
@@ -9,31 +10,27 @@ import lombok.ToString;
 @ToString
 public class ChangeDimensionPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.CHANGE_DIMENSION_PACKET;
-
-    public int dimension;
-
-    public float x;
-    public float y;
-    public float z;
-
+    public int dimensionId;
+    public Vector3f position;
     public boolean respawn;
 
     @Override
-    public void decode() {
+    public byte pid() {
+        return ProtocolInfo.CHANGE_DIMENSION_PACKET;
+    }
 
+    @Override
+    public void decode() {
+        this.dimensionId = this.getVarInt();
+        this.position = this.getVector3f();
+        this.respawn = this.getBoolean();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putVarInt(this.dimension);
-        this.putVector3f(this.x, this.y, this.z);
+        this.putVector3f(this.position);
         this.putBoolean(this.respawn);
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 }
