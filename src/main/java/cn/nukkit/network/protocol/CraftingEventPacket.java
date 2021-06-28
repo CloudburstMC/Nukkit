@@ -12,8 +12,6 @@ import java.util.UUID;
 @ToString
 public class CraftingEventPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.CRAFTING_EVENT_PACKET;
-
     public static final int TYPE_SHAPELESS = 0;
     public static final int TYPE_SHAPED = 1;
     public static final int TYPE_FURNACE = 2;
@@ -21,31 +19,39 @@ public class CraftingEventPacket extends DataPacket {
     public static final int TYPE_MULTI = 4;
     public static final int TYPE_SHULKER_BOX = 5;
 
-    public int windowId;
+    public byte windowId;
     public int type;
     public UUID id;
+    public Item[] input = new Item[0];
+    public Item[] output = new Item[0];
 
-    public Item[] input;
-    public Item[] output;
+    @Override
+    public byte pid() {
+        return ProtocolInfo.CRAFTING_EVENT_PACKET;
+    }
 
     @Override
     public void decode() {
         this.windowId = this.getByte();
-        this.type = (int) this.getUnsignedVarInt();
+        this.type = this.getVarInt();
         this.id = this.getUUID();
-
         this.input = this.getArray(Item.class, BinaryStream::getSlot);
         this.output = this.getArray(Item.class, BinaryStream::getSlot);
     }
 
     @Override
     public void encode() {
-
+        this.reset();
+        this.putByte(this.windowId);
+        this.putVarInt(this.type);
+        this.putUUID(this.id);
+        this.putUnsignedVarInt(this.input.length);
+        for (Item item : this.input) {
+            this.putSlot(item);
+        }
+        this.putUnsignedVarInt(this.output.length);
+        for (Item item : this.output) {
+            this.putSlot(item);
+        }
     }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
 }

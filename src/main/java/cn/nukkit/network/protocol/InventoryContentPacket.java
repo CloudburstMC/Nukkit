@@ -17,7 +17,7 @@ public class InventoryContentPacket extends DataPacket {
     public static final int SPECIAL_HOTBAR = 0x7a;
     public static final int SPECIAL_FIXED_INVENTORY = 0x7b;
 
-    public int windowId;
+    public int inventoryId;
     public Item[] items = new Item[0];
 
     @Override
@@ -27,7 +27,7 @@ public class InventoryContentPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.windowId = (int) this.getUnsignedVarInt();
+        this.inventoryId = (int) this.getUnsignedVarInt();
         int count = (int) this.getUnsignedVarInt();
         this.items = new Item[count];
         for (int i = 0; i < count; i++) {
@@ -38,7 +38,7 @@ public class InventoryContentPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(this.windowId);
+        this.putUnsignedVarInt(this.inventoryId);
         this.putUnsignedVarInt(this.items.length);
         for (Item item : this.items) {
             this.putSlot(item);

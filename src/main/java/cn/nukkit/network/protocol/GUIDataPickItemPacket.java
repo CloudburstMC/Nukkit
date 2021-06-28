@@ -7,7 +7,7 @@ public class GuiDataPickItemPacket extends DataPacket {
 
     public String itemDescription;
     public String itemEffects;
-	public int hotbarSlot;
+    public int hotbarSlot;
 
     @Override
     public byte pid() {
@@ -17,15 +17,15 @@ public class GuiDataPickItemPacket extends DataPacket {
     @Override
     public void decode() {
         this.itemDescription = this.getString();
-		this.itemEffects = this.getString();
-		this.hotbarSlot = this.getLInt();
+        this.itemEffects = this.getString();
+        this.hotbarSlot = this.getLInt();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putString(this.itemDescription);
-		this.putString(this.itemEffects);
-		this.putLInt(this.hotbarSlot);
+        this.putString(this.itemEffects);
+        this.putLInt(this.hotbarSlot);
     }
 }

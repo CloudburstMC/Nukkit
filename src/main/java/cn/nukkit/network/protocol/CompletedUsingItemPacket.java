@@ -5,8 +5,6 @@ import lombok.ToString;
 @ToString
 public class CompletedUsingItemPacket extends DataPacket {
 
-    public static final byte NETWORK_ID = ProtocolInfo.COMPLETED_USING_ITEM_PACKET;
-
     public static final int ACTION_UNKNOWN = -1;
     public static final int ACTION_EQUIP_ARMOR = 0;
     public static final int ACTION_EAT = 1;
@@ -27,20 +25,21 @@ public class CompletedUsingItemPacket extends DataPacket {
     public int itemId;
     public int action;
 
-
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.COMPLETED_USING_ITEM_PACKET;
     }
 
     @Override
     public void decode() {
+        this.itemId = this.getLShort();
+        this.action = this.getLInt();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putLShort(itemId);
-        this.putLInt(action);
+        this.putLShort(this.itemId);
+        this.putLInt(this.action);
     }
 }

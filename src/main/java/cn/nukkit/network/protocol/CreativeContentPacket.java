@@ -5,25 +5,28 @@ import lombok.ToString;
 
 @ToString
 public class CreativeContentPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.CREATIVE_CONTENT_PACKET;
 
     public Item[] entries = new Item[0];
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.CREATIVE_CONTENT_PACKET;
     }
 
     @Override
     public void decode() {
-
+        int count = (int) this.getUnsignedVarInt();
+        this.entries = new Item[count];
+        for (int i = 0; i < count; i++) {
+            this.entries[i] = this.getSlot();
+        }
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(entries.length);
-        for (int i = 0; i < entries.length; i++) {
+        this.putUnsignedVarInt(this.entries.length);
+        for (int i = 0; i < this.entries.length; i++) {
             this.putUnsignedVarInt(i + 1);
             this.putSlot(entries[i], true);
         }

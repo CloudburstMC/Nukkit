@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.BlockVector3;
 import lombok.ToString;
 
 @ToString
@@ -13,13 +12,13 @@ public class CommandBlockUpdatePacket extends DataPacket {
     public int commandBlockMode;
     public boolean isRedstoneMode;
     public boolean isConditional;
-    public long minecartEid;
+    public long minecartRuntimeId;
     public String command;
     public String lastOutput;
     public String name;
     public boolean shouldTrackOutput;
     public int tickDelay;
-	public boolean executeOnFirstTick;
+    public boolean executeOnFirstTick;
 
     @Override
     public byte pid() {
@@ -30,22 +29,19 @@ public class CommandBlockUpdatePacket extends DataPacket {
     public void decode() {
         this.isBlock = this.getBoolean();
         if (this.isBlock) {
-            BlockVector3 blockVector3 = this.getBlockVector3();
-            this.x = blockVector3.getX();
-            this.y = blockVector3.getY();
-            this.z = blockVector3.getZ();
+            this.getBlockVector3(this.x, this.y, this.z);
             this.commandBlockMode = (int) this.getUnsignedVarInt();
             this.isRedstoneMode = this.getBoolean();
             this.isConditional = this.getBoolean();
         } else {
-            this.minecartEid = this.getEntityRuntimeId();
+            this.minecartRuntimeId = this.getEntityRuntimeId();
         }
         this.command = this.getString();
         this.lastOutput = this.getString();
         this.name = this.getString();
         this.shouldTrackOutput = this.getBoolean();
         this.tickDelay = this.getLInt();
-		this.executeOnFirstTick = this.getBoolean();
+        this.executeOnFirstTick = this.getBoolean();
     }
 
     @Override
@@ -58,7 +54,7 @@ public class CommandBlockUpdatePacket extends DataPacket {
             this.putBoolean(this.isRedstoneMode);
             this.putBoolean(this.isConditional);
         } else {
-            this.putEntityRuntimeId(this.minecartEid);
+            this.putEntityRuntimeId(this.minecartRuntimeId);
         }
         this.putString(this.command);
         this.putString(this.lastOutput);

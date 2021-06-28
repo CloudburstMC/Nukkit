@@ -1,6 +1,6 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
 @ToString
@@ -18,16 +18,16 @@ public class PlayerAuthInputPacket extends DataPacket {
 
     public float pitch;
     public float yaw;
-    public Vector3 position;
+    public Vector3f position;
     public float moveX;
     public float moveZ;
     public float headYaw;
     public long inputFlags;
     public int inputMode;
     public int playMode;
-    public Vector3 vrGazeDirection = null;
+    public Vector3f vrGazeDirection = null;
     public long tick;
-    public Vector3 delta;
+    public Vector3f delta;
 
     @Override
     public byte pid() {
@@ -38,7 +38,7 @@ public class PlayerAuthInputPacket extends DataPacket {
     public void decode() {
         this.pitch = this.getFloat();
         this.yaw = this.getFloat();
-        this.position = this.getVector3();
+        this.position = this.getVector3f();
         this.moveX = this.getFloat();
         this.moveZ = this.getFloat();
         this.headYaw = this.getFloat();
@@ -46,10 +46,10 @@ public class PlayerAuthInputPacket extends DataPacket {
         this.inputMode = (int) this.getUnsignedVarInt();
         this.playMode = (int) this.getUnsignedVarInt();
         if (this.playMode == VR) {
-            this.vrGazeDirection = this.getVector3();
+            this.vrGazeDirection = this.getVector3f();
         }
         this.tick = this.getUnsignedVarLong();
-        this.delta = this.getVector3();
+        this.delta = this.getVector3f();
     }
 
     @Override
@@ -57,7 +57,7 @@ public class PlayerAuthInputPacket extends DataPacket {
         this.reset();
         this.putFloat(this.pitch);
         this.putFloat(this.yaw);
-        this.putVector3(this.position);
+        this.putVector3f(this.position);
         this.putFloat(this.moveX);
         this.putFloat(this.moveZ);
         this.putFloat(this.headYaw);

@@ -19,17 +19,17 @@ public class DisconnectPacket extends DataPacket {
     @Override
     public void decode() {
         this.hideDisconnectionScreen = this.getBoolean();
-		if (!this.hideDisconnectionScreen) {
-			this.message = this.getString();
-		}
+        if (!this.hideDisconnectionScreen) {
+            this.message = this.getString();
+        }
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putBoolean(this.hideDisconnectionScreen);
-		if (!this.hideDisconnectionScreen) {
-			this.putString(this.message);
-		}
+        if (!this.hideDisconnectionScreen) {
+            this.putString(this.message);
+        }
     }
 }

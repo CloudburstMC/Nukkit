@@ -4,14 +4,13 @@ import lombok.ToString;
 
 @ToString
 public class CodeBuilderPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.CODE_BUILDER_PACKET;
 
-    public boolean isOpening;
     public String url = "";
+    public boolean isOpening;
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.CODE_BUILDER_PACKET;
     }
 
     @Override

@@ -5,8 +5,8 @@ import lombok.ToString;
 @ToString
 public class EntityPickRequestPacket extends DataPacket {
 
-    public long entityId;
-	public byte hotbarSlot;
+    public long entityRuntimeId;
+    public byte hotbarSlot;
 
     @Override
     public byte pid() {
@@ -15,14 +15,14 @@ public class EntityPickRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.entityId = this.getEntityRuntimeId();
+        this.entityRuntimeId = this.getEntityRuntimeId();
         this.hotbarSlot = this.getByte();
     }
 
     @Override
     public void encode() {
-    	this.reset();
-        this.putEntityRuntimeId(this.entityId);
+        this.reset();
+        this.putEntityRuntimeId(this.entityRuntimeId);
         this.putByte(this.hotbarSlot);
     }
 }

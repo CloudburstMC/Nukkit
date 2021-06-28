@@ -1,13 +1,15 @@
 package cn.nukkit.network.protocol;
 
+import lombok.ToString;
+
+@ToString
 public class ClientCacheStatusPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.CLIENT_CACHE_STATUS_PACKET;
 
     public boolean supported;
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.CLIENT_CACHE_STATUS_PACKET;
     }
 
     @Override

@@ -16,13 +16,13 @@ public class DebugInfoPacket extends DataPacket {
     @Override
     public void decode() {
         this.entityUniqueId = this.getEntityUniqueId();
-		this.data = this.getString();
+        this.data = this.getString();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putEntityUniqueId(this.entityUniqueId);
-		this.putString(this.data);
+        this.putString(this.data);
     }
 }
