@@ -40,6 +40,22 @@ public class Vector3 implements Cloneable {
         return this.z;
     }
 
+    public Vector3 setX(double x) {
+        this.x = x;
+        return this;
+    }
+
+    public Vector3 setY(double y) {
+        this.y = y;
+        return this;
+    }
+
+    public Vector3 setZ(double z) {
+        this.z = z;
+        return this;
+    }
+
+
     public int getFloorX() {
         return (int) Math.floor(this.x);
     }
@@ -224,6 +240,11 @@ public class Vector3 implements Cloneable {
         return this.maxPlainDistance(x.x, x.z);
     }
 
+    /**
+     * Calculates the Length of this Vector
+     *
+     * @return The Length of this Vector.
+     */
     public double length() {
         return Math.sqrt(this.lengthSquared());
     }
@@ -240,16 +261,38 @@ public class Vector3 implements Cloneable {
         return new Vector3(0, 0, 0);
     }
 
+    /**
+     * Scalar Product of this Vector and the Vector supplied.
+     *
+     * @param v Vector to calculate the scalar product to.
+     * @return Scalar Product
+     */
     public double dot(Vector3 v) {
         return this.x * v.x + this.y * v.y + this.z * v.z;
     }
 
+    /**
+     * Calculates the cross product of this Vector and the given Vector
+     *
+     * @param v the vector to calculate the cross product with.
+     * @return a Vector at right angle to this and other
+     */
     public Vector3 cross(Vector3 v) {
         return new Vector3(
                 this.y * v.z - this.z * v.y,
                 this.z * v.x - this.x * v.z,
                 this.x * v.y - this.y * v.x
         );
+    }
+
+    /**
+     * Calculates the angle between this and the supplied Vector.
+     *
+     * @param v the Vector to calculate the angle to.
+     * @return the Angle between the two Vectors.
+     */
+    public Angle angleBetween(Vector3 v) {
+        return Angle.fromRadian(Math.acos(Math.min(Math.max(this.normalize().dot(v.normalize()), -1.0d), 1.0d)));
     }
 
     /**

@@ -33,6 +33,21 @@ public class BlockVector3 implements Cloneable {
         return this.z;
     }
 
+    public BlockVector3 setX(int x) {
+        this.x = x;
+        return this;
+    }
+
+    public BlockVector3 setY(int y) {
+        this.y = y;
+        return this;
+    }
+
+    public BlockVector3 setZ(int z) {
+        this.z = z;
+        return this;
+    }
+
     public Vector3 add(double x) {
         return this.add(x, 0, 0);
     }
