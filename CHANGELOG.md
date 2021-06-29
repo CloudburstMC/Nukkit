@@ -40,6 +40,7 @@ Click the link above to see the future.
 - [#1130] Soul Campfire and End Crystal were rendering as other items in the inventory
 - [#1139] Backward compatibility with some custom world generators
 - [#1147] Sharpness damage calculation
+- [#1170] Cobwebs are now breakable by using shears
 - [#702] Burning arrow and rain will make a lot of particles
 - [#625] If you instant kill a mob with fire aspect enchant tool, it will not give fire aspect drops
 - [#979] Fixes an issue where the players could not hear each other walking
@@ -893,3 +894,4 @@ Fixes several anvil issues.
 [#1149]: https://github.com/PowerNukkit/PowerNukkit/issues/1149
 [#1150]: https://github.com/PowerNukkit/PowerNukkit/issues/1150
 [#1151]: https://github.com/PowerNukkit/PowerNukkit/issues/1151
+[#1170]: https://github.com/PowerNukkit/PowerNukkit/issues/1170
