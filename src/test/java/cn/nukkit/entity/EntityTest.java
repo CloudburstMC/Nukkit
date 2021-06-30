@@ -20,6 +20,7 @@ package cn.nukkit.entity;
 
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.math.Vector3;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,7 +54,8 @@ class EntityTest {
 
     @BeforeEach
     void setUp() {
-        lenient().when(chunk.getProvider()).thenReturn(level.getProvider());
+        LevelProvider provider = level.getProvider();
+        lenient().when(chunk.getProvider()).thenReturn(provider);
     }
 
     @ParameterizedTest
