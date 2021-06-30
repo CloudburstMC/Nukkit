@@ -33,10 +33,12 @@ public class EntityPanda extends EntityAnimal {
         super.initEntity();
         this.setMaxHealth(20);
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Panda";
     }
 }

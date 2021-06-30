@@ -185,10 +185,12 @@ public class EntityFirework extends Entity {
     public float getHeight() {
         return 0.25f;
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Firework Rocket";
     }
 }

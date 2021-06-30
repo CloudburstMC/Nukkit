@@ -219,6 +219,13 @@ public class EntityHuman extends EntityHumanType {
         super.initEntity();
     }
 
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Override
+    public String getOriginalName() {
+        return "Human";
+    }
+    
     @Override
     public String getName() {
         return this.getNameTag();

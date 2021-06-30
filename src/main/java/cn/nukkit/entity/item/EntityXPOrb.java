@@ -266,10 +266,12 @@ public class EntityXPOrb extends Entity {
 
         return result;
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Experience Orb";
     }
 }

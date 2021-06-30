@@ -581,10 +581,12 @@ public class EntityBoat extends EntityVehicle {
         this.woodID = variant;
         this.dataProperties.putInt(DATA_VARIANT, variant);
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Boat";
     }
 }

@@ -311,10 +311,12 @@ public class EntityFishingHook extends EntityProjectile {
             setDataProperty(new LongEntityData(DATA_TARGET_EID, entity.getId()));
         }
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Fishing Hook";
     }
 }

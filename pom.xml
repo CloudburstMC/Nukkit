@@ -24,19 +24,19 @@
 
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/PowerNukkit/PowerNukkit-Natives/issues</url>
+        <url>https://github.com/PowerNukkit/PowerNukkit/issues</url>
     </issueManagement>
 
     <scm>
         <connection>scm:git:https://github.com/PowerNukkit/PowerNukkit.git</connection>
-        <developerConnection>scm:git:ssh://github.com:PowerNukkit/PowerNukkit.git</developerConnection>
+        <developerConnection>scm:git:ssh://git@github.com:PowerNukkit/PowerNukkit.git</developerConnection>
         <url>https://github.com/PowerNukkit/PowerNukkit</url>
     </scm>
 
     <licenses>
         <license>
             <name>GNU General Public License, Version 3</name>
-            <url>http://www.gnu.org/licenses/gpl-3.0.html</url>
+            <url>https://www.gnu.org/licenses/gpl-3.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -71,12 +71,14 @@
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <junit.jupiter.version>5.4.2</junit.jupiter.version>
-        <junit.platform.version>1.1.0</junit.platform.version>
+        <junit.jupiter.version>5.7.2</junit.jupiter.version>
+        <mockito.version>3.11.2</mockito.version>
         <log4j2.version>2.13.3</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jline.version>3.9.0</jline.version>
         <skipTests>true</skipTests>
+        <skipGpg>true</skipGpg>
         <sonar.projectKey>PowerNukkit_PowerNukkit</sonar.projectKey>
         <sonar.organization>powernukkit</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
@@ -117,12 +119,16 @@
             <artifactId>powernukkit-tests-junit5</artifactId>
             <version>0.1.0</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-params</artifactId>
-            <version>${junit.jupiter.version}</version>
-            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter-engine</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-junit-jupiter</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.powernukkit.fastutil</groupId>
@@ -201,9 +207,21 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-params</artifactId>
+            <version>${junit.jupiter.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.3.3</version>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -290,6 +308,10 @@
             <version>3.0.2</version>
         </dependency>
     </dependencies>
+    
+    <ciManagement>
+        <url>https://builds.powernukkit.org/buildConfiguration/PowerNukkit_Snapshots</url>
+    </ciManagement>
 
     <build>
         <resources>
@@ -339,18 +361,36 @@
             </plugin>
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.19</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>${junit.platform.version}</version>
-                    </dependency>
-                </dependencies>
+                <version>2.22.2</version>
                 <configuration>
                     <skipTests>${skipTests}</skipTests>
                     <trimStackTrace>false</trimStackTrace>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.9.1</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.9.1</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.apache.maven.doxia</groupId>
+                        <artifactId>doxia-module-xhtml</artifactId>
+                        <version>1.9.1</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <generateSitemap>true</generateSitemap>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>3.1.2</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -512,6 +552,9 @@
                         </goals>
                     </execution>
                 </executions>
+                <configuration>
+                    <skip>${skipGpg}</skip>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>com.github.spotbugs</groupId>
@@ -546,6 +589,66 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+                <executions>
+                    <execution>
+                        <!-- Copy the readme file to the site source files so that a page is generated from it. -->
+                        <id>copy-readme</id>
+                        <phase>pre-site</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/generated-site/markdown</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${basedir}</directory>
+                                    <includes>
+                                        <include>README.md</include>
+                                        <include>CHANGELOG.md</include>
+                                    </includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <!--<plugin>
+                <groupId>org.spf4j</groupId>
+                <artifactId>spf4j-jdiff-maven-plugin</artifactId>
+                <version>8.9.0</version>
+                <configuration>
+                    <javadocExecutable>${project.basedir}/release-script/jdiff-javadoc.bat</javadocExecutable>
+                    <versionRange>[1.1.1.1-PN,1.2.0.2-PN],[1.2.0.2-PN,1.2.1.0-PN],[1.2.1.0-PN,1.3.0.1-PN],[1.3.0.1-PN,1.3.1.5-PN],[1.3.1.5-PN,1.4.0.0-PN],[1.4.0.0-PN,1.5.0.0-PN],[1.5.0.0-PN,)</versionRange>
+                </configuration>
+            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <source>8</source>
+                    <doclint>none</doclint>
+                    <quiet>true</quiet>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <id>html</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

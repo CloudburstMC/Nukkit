@@ -48,10 +48,12 @@ public class EntityMule extends EntityAnimal {
         super.initEntity();
         this.setMaxHealth(15);
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Mule";
     }
 }
