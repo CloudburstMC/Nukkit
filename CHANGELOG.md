@@ -21,6 +21,7 @@ Click the link above to see the future.
 - [#783] Soul campfire now deal double the damage that normal campfires deals
 - [#783] Campfire and Soul campfire now deal damage even the entity is sneaking
 - [#783] Campfire and Soul campfire now breaks when pushed by piston
+- [#669] Improved the output of the `/kill @e` command
 
 ### Added
 - [#1146] Added implementation for `AnimateEntityPacket`
@@ -29,6 +30,7 @@ Click the link above to see the future.
 - [#783] Campfire and Soul Campfire can now be lit by burning entities stepping on it
 - [#783] Campfire and Soul Campfire can now be unlit by throwing a splash water bottle on it
 - [#783] Campfire and Soul Campfire can now lit by using an item enchanted with fire aspect
+- [#669] New API methods to get the name of the entity for display
 
 ### Fixes
 - [#1119] `TickSyncPacket` was not registered 
@@ -863,6 +865,7 @@ Fixes several anvil issues.
 [#544]: https://github.com/PowerNukkit/PowerNukkit/issues/544
 [#576]: https://github.com/PowerNukkit/PowerNukkit/issues/576
 [#625]: https://github.com/PowerNukkit/PowerNukkit/issues/625
+[#669]: https://github.com/PowerNukkit/PowerNukkit/issues/669
 [#702]: https://github.com/PowerNukkit/PowerNukkit/issues/702
 [#765]: https://github.com/PowerNukkit/PowerNukkit/issues/765
 [#766]: https://github.com/PowerNukkit/PowerNukkit/issues/766
