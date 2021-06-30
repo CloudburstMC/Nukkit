@@ -6004,7 +6004,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
     
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
+    @Since("1.5.1.0-PN")
     public void completeUsingItem(int itemId, int action) {
         CompletedUsingItemPacket pk = new CompletedUsingItemPacket();
         pk.itemId = itemId;
