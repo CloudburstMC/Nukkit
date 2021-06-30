@@ -99,9 +99,8 @@ public class EntityFirework extends Entity {
             hasUpdate = true;
             if (this.fireworkAge >= this.lifetime) {
                 EntityEventPacket pk = new EntityEventPacket();
-                pk.data = 0;
-                pk.event = EntityEventPacket.FIREWORK_EXPLOSION;
-                pk.eid = this.getId();
+                pk.entityRuntimeId = this.getId();
+                pk.event = EntityEventPacket.EVENT_FIREWORK_EXPLOSION;
 
                 level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LARGE_BLAST, -1, NETWORK_ID);
 

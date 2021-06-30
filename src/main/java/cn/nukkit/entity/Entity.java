@@ -1026,12 +1026,12 @@ public abstract class Entity extends Location implements Metadatable {
     public void sendPotionEffects(Player player) {
         for (Effect effect : this.effects.values()) {
             MobEffectPacket pk = new MobEffectPacket();
-            pk.eid = this.getId();
+            pk.entityRuntimeId = this.getId();
             pk.effectId = effect.getId();
             pk.amplifier = effect.getAmplifier();
             pk.particles = effect.isVisible();
             pk.duration = effect.getDuration();
-            pk.eventId = MobEffectPacket.EVENT_ADD;
+            pk.event = MobEffectPacket.EVENT_ADD;
 
             player.dataPacket(pk);
         }
@@ -1072,7 +1072,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void despawnFrom(Player player) {
         if (this.hasSpawned.containsKey(player.getLoaderId())) {
             RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.eid = this.getId();
+            pk.entityUniqueId = this.getId();
             player.dataPacket(pk);
             this.hasSpawned.remove(player.getLoaderId());
         }
@@ -1120,8 +1120,8 @@ public abstract class Entity extends Location implements Metadatable {
                     this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
 
                     EntityEventPacket pk = new EntityEventPacket();
-                    pk.eid = this.getId();
-                    pk.event = EntityEventPacket.CONSUME_TOTEM;
+                    pk.entityRuntimeId = this.getId();
+                    pk.event = EntityEventPacket.EVENT_CONSUME_TOTEM;
                     p.dataPacket(pk);
 
                     source.setCancelled(true);

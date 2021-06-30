@@ -24,7 +24,7 @@ public class PurchaseReceiptPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(this.receipts.size());
+        this.putUnsignedVarInt(this.receipts.length);
         for (String receipt : this.receipts) {
             this.putString(receipt);
         }

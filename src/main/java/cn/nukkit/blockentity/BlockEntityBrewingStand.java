@@ -280,7 +280,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         for (Player p : this.inventory.getViewers()) {
             int windowId = p.getWindowId(this.inventory);
             if (windowId > 0) {
-                pk.windowId = windowId;
+                pk.windowId = (byte) windowId;
 
                 pk.property = ContainerSetDataPacket.PROPERTY_BREWING_STAND_FUEL_AMOUNT;
                 pk.value = this.fuelAmount;
@@ -301,7 +301,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         for (Player p : this.inventory.getViewers()) {
             int windowId = p.getWindowId(this.inventory);
             if (windowId > 0) {
-                pk.windowId = windowId;
+                pk.windowId = (byte) windowId;
 
                 p.dataPacket(pk);
             }

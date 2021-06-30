@@ -16,7 +16,7 @@ import java.util.UUID;
 public class AddPlayerPacket extends DataPacket {
 
     public UUID uuid;
-    public String username;
+    public String username = "";
     public long entityUniqueId;
     public long entityRuntimeId;
     public String platformChatId = "";
@@ -30,12 +30,12 @@ public class AddPlayerPacket extends DataPacket {
     public EntityLink[] entries = new EntityLink[0]
     public String deviceId = "";
     public int buildPlatform = -1;
-    public int unknownUnsignedVarInt1;
-    public int unknownUnsignedVarInt2;
-    public int unknownUnsignedVarInt3;
-    public int unknownUnsignedVarInt4;
-    public int unknownUnsignedVarInt5;
-    public long unknownLLong;
+    public int unknownUnsignedVarInt1 = 0;
+    public int unknownUnsignedVarInt2 = 0;
+    public int unknownUnsignedVarInt3 = 0;
+    public int unknownUnsignedVarInt4 = 0;
+    public int unknownUnsignedVarInt5 = 0;
+    public long unknownLLong = 0L;
 
     @Override
     public byte pid() {
@@ -56,7 +56,7 @@ public class AddPlayerPacket extends DataPacket {
         this.headYaw = this.getLFloat();
         this.item = this.getSlot();
         this.entityMetadata = this.getEntityMetadata();
-        this.unknownUnsignedVarInt1 = this.getUnsignedVarInt();
+        this.unknownUnsignedVarInt1 = this.getUnsignedVarInt(); //TODO: Adventure settings
         this.unknownUnsignedVarInt2 = this.getUnsignedVarInt();
         this.unknownUnsignedVarInt3 = this.getUnsignedVarInt();
         this.unknownUnsignedVarInt4 = this.getUnsignedVarInt();

@@ -2,9 +2,6 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * author: MagicDroidX
  * Nukkit Project
@@ -16,8 +13,8 @@ public class LevelChunkPacket extends DataPacket {
     public int chunkZ;
     public int subChunkCount;
     public boolean cacheEnabled;
-    public List<Long> blobIds = new ArrayList<>();
-    public String data;
+    public Long[] blobIds = new Long[0];
+    public byte[] data;
 
     @Override
     public byte pid() {
@@ -31,11 +28,13 @@ public class LevelChunkPacket extends DataPacket {
         this.subChunkCount = (int) this.getUnsignedVarInt();
         this.cacheEnabled = this.getBoolean();
         if (this.cacheEnabled) {
-            for (int i =  0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
-                this.blobIds.add(this.getLLong());
+            int count = (int) this.getUnsignedVarInt();
+            this.blobIds = new Long[count];
+            for (int i = 0; i < count; i++) {
+                this.blobIds[i] = this.getLLong();
             }
         }
-        this.data = this.getString();
+        this.data = this.getByteArray();
     }
 
     @Override
@@ -46,11 +45,11 @@ public class LevelChunkPacket extends DataPacket {
         this.putUnsignedVarInt(this.subChunkCount);
         this.putBoolean(this.cacheEnabled);
         if (this.cacheEnabled) {
-            this.putUnsignedVarInt(this.blobIds.size());
+            this.putUnsignedVarInt(this.blobIds.length);
             for (long blobId : this.blobIds) {
                 this.putLLong(blobId);
             }
         }
-        this.putString(this.data);
+        this.putByteArray(this.data);
     }
 }

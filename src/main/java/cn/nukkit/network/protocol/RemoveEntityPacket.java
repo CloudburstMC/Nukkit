@@ -9,7 +9,7 @@ import lombok.ToString;
 @ToString
 public class RemoveEntityPacket extends DataPacket {
 
-    public int entityNetworkId;
+    public long entityUniqueId;
 
     @Override
     public byte pid() {
@@ -18,12 +18,12 @@ public class RemoveEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.entityNetworkId = (int) this.getUnsignedVarInt();
+        this.entityUniqueId = this.getEntityUniqueId();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(this.entityNetworkId);
+        this.putEntityUniqueId(this.entityUniqueId);
     }
 }

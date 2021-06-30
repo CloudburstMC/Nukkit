@@ -1,6 +1,7 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
@@ -22,10 +23,8 @@ public class MobSpawnParticle extends Particle {
     @Override
     public DataPacket[] encode() {
         LevelEventPacket packet = new LevelEventPacket();
-        packet.evid = LevelEventPacket.EVENT_PARTICLE_SPAWN;
-        packet.x = (float) this.x;
-        packet.y = (float) this.y;
-        packet.z = (float) this.z;
+        packet.event = LevelEventPacket.EVENT_PARTICLE_SPAWN;
+        packet.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
         packet.data = (this.width & 0xff) + ((this.height & 0xff) << 8);
 
         return new DataPacket[]{packet};

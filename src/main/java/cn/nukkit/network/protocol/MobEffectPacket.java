@@ -14,11 +14,11 @@ public class MobEffectPacket extends DataPacket {
     public static final byte EVENT_REMOVE = 3;
 
     public long entityRuntimeId;
-    public byte eventId;
+    public byte event;
     public int effectId;
-    public int amplifier = 0;
+    public int amplifier;
     public boolean particles = true;
-    public int duration = 0;
+    public int duration;
 
     @Override
     public byte pid() {

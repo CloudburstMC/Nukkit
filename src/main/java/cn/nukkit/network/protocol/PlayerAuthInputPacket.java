@@ -6,16 +6,6 @@ import lombok.ToString;
 @ToString
 public class PlayerAuthInputPacket extends DataPacket {
 
-    public static final int NORMAL = 0;
-    public static final int TEASER = 1;
-    public static final int SCREEN = 2;
-    public static final int VIEWER = 3;
-    public static final int VR = 4;
-    public static final int PLACEMENT = 5;
-    public static final int LIVING_ROOM = 6;
-    public static final int EXIT_LEVEL = 7;
-    public static final int EXIT_LEVEL_LIVING_ROOM = 8;
-
     public float pitch;
     public float yaw;
     public Vector3f position;
@@ -24,7 +14,7 @@ public class PlayerAuthInputPacket extends DataPacket {
     public float headYaw;
     public long inputFlags;
     public int inputMode;
-    public int playMode;
+    public PlayMode playMode;
     public Vector3f vrGazeDirection = null;
     public long tick;
     public Vector3f delta;
@@ -44,8 +34,8 @@ public class PlayerAuthInputPacket extends DataPacket {
         this.headYaw = this.getFloat();
         this.inputFlags = this.getUnsignedVarLong();
         this.inputMode = (int) this.getUnsignedVarInt();
-        this.playMode = (int) this.getUnsignedVarInt();
-        if (this.playMode == VR) {
+        this.playMode = PlayMode.values()[(int) this.getUnsignedVarInt()];
+        if (this.playMode == PlayMode.VR) {
             this.vrGazeDirection = this.getVector3f();
         }
         this.tick = this.getUnsignedVarLong();
@@ -63,11 +53,24 @@ public class PlayerAuthInputPacket extends DataPacket {
         this.putFloat(this.headYaw);
         this.putUnsignedVarLong(this.inputFlags);
         this.putUnsignedVarInt(this.inputMode);
-        this.putUnsignedVarInt(this.playMode);
-        if (this.playMode == VR) {
+        this.putUnsignedVarInt(this.playMode.ordinal());
+        if (this.playMode == PlayMode.VR) {
             this.putVector3(this.vrGazeDirection);
         }
         this.putUnsignedVarLong(this.tick);
         this.putVector3(this.delta);
+    }
+
+    public static enum PlayMode {
+
+        NORMAL,
+        TEASER,
+        SCREEN,
+        VIEWER,
+        VR,
+        PLACEMENT,
+        LIVING_ROOM,
+        EXIT_LEVEL,
+        EXIT_LEVEL_LIVING_ROOM
     }
 }

@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.math.BlockVector3;
 import lombok.ToString;
 
 /**
@@ -19,7 +20,10 @@ public class ItemFrameDropItemPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.getBlockVector3(this.x, this.y, this.z);
+        BlockVector3 blockVector3 = this.getBlockVector3();
+        this.x = blockVector3.getX();
+        this.y = blockVector3.getY();
+        this.z = blockVector3.getZ();
     }
 
     @Override

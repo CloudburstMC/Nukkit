@@ -12,11 +12,11 @@ public class ClientCacheBlobStatusPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	//TODO
+        //TODO
     }
 
     @Override
     public void encode() {
-    	//TODO
+        //TODO
     }
 }

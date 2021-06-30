@@ -28,15 +28,13 @@ public class PlayerEnderChestInventory extends BaseInventory {
         }
         super.onOpen(who);
         ContainerOpenPacket containerOpenPacket = new ContainerOpenPacket();
-        containerOpenPacket.windowId = who.getWindowId(this);
-        containerOpenPacket.type = this.getType().getNetworkType();
+        containerOpenPacket.windowId = (byte) who.getWindowId(this);
+        containerOpenPacket.type = (byte) this.getType().getNetworkType();
         BlockEnderChest chest = who.getViewingEnderChest();
         if (chest != null) {
             containerOpenPacket.x = (int) chest.getX();
             containerOpenPacket.y = (int) chest.getY();
             containerOpenPacket.z = (int) chest.getZ();
-        } else {
-            containerOpenPacket.x = containerOpenPacket.y = containerOpenPacket.z = 0;
         }
 
         who.dataPacket(containerOpenPacket);
@@ -48,8 +46,8 @@ public class PlayerEnderChestInventory extends BaseInventory {
             blockEventPacket.x = (int) chest.getX();
             blockEventPacket.y = (int) chest.getY();
             blockEventPacket.z = (int) chest.getZ();
-            blockEventPacket.case1 = 1;
-            blockEventPacket.case2 = 2;
+            blockEventPacket.eventType = 1;
+            blockEventPacket.eventData = 2;
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
@@ -62,8 +60,8 @@ public class PlayerEnderChestInventory extends BaseInventory {
     @Override
     public void onClose(Player who) {
         ContainerClosePacket containerClosePacket = new ContainerClosePacket();
-        containerClosePacket.windowId = who.getWindowId(this);
-        containerClosePacket.wasServerInitiated = who.getClosingWindowId() != containerClosePacket.windowId;
+        containerClosePacket.windowId = (byte) who.getWindowId(this);
+        containerClosePacket.wasServerInitiated = who.getClosingWindowId() != (int) containerClosePacket.windowId;
         who.dataPacket(containerClosePacket);
         super.onClose(who);
 
@@ -73,8 +71,8 @@ public class PlayerEnderChestInventory extends BaseInventory {
             blockEventPacket.x = (int) chest.getX();
             blockEventPacket.y = (int) chest.getY();
             blockEventPacket.z = (int) chest.getZ();
-            blockEventPacket.case1 = 1;
-            blockEventPacket.case2 = 0;
+            blockEventPacket.eventType = 1;
+            blockEventPacket.eventData = 0;
 
             Level level = this.getHolder().getLevel();
             if (level != null) {

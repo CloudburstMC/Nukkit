@@ -1,6 +1,7 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.entity.data.IntPositionEntityData;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.level.format.FullChunk;
@@ -305,16 +306,12 @@ public class EntityHuman extends EntityHumanType {
             pk.username = this.getName();
             pk.entityUniqueId = this.getId();
             pk.entityRuntimeId = this.getId();
-            pk.x = (float) this.x;
-            pk.y = (float) this.y;
-            pk.z = (float) this.z;
-            pk.speedX = (float) this.motionX;
-            pk.speedY = (float) this.motionY;
-            pk.speedZ = (float) this.motionZ;
-            pk.yaw = (float) this.yaw;
+            pk.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
+            pk.motion = new Vector3f((float) this.motionX, (float) this.motionY, (float) this.motionZ);
             pk.pitch = (float) this.pitch;
+            pk.yaw = (float) this.yaw;
             pk.item = this.getInventory().getItemInHand();
-            pk.metadata = this.dataProperties;
+            pk.entityMetadata = this.dataProperties;
             player.dataPacket(pk);
 
             this.inventory.sendArmorContents(player);
@@ -341,7 +338,7 @@ public class EntityHuman extends EntityHumanType {
         if (this.hasSpawned.containsKey(player.getLoaderId())) {
 
             RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.eid = this.getId();
+            pk.entityUniqueId = this.getId();
             player.dataPacket(pk);
             this.hasSpawned.remove(player.getLoaderId());
         }

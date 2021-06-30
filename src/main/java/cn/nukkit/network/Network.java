@@ -478,7 +478,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.CODE_BUILDER_PACKET, CodeBuilderPacket.class);
         this.registerPacket(ProtocolInfo.UPDATE_PLAYER_GAME_TYPE_PACKET, UpdatePlayerGameTypePacket.class);
         this.registerPacket(ProtocolInfo.EMOTE_LIST_PACKET, EmoteListPacket.class);
-        //TODO: POSITION_TRACKING_D_B_SERVER_BROADCAST_PACKET
+        this.registerPacket(ProtocolInfo.POSITION_TRACKING_D_B_SERVER_BROADCAST_PACKET, PositionTrackingDBServerBroadcastPacket.class);
         this.registerPacket(ProtocolInfo.POSITION_TRACKING_D_B_CLIENT_REQUEST_PACKET, PositionTrackingDBClientRequestPacket.class);
         this.registerPacket(ProtocolInfo.DEBUG_INFO_PACKET, DebugInfoPacket.class);
         this.registerPacket(ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET, PacketViolationWarningPacket.class);

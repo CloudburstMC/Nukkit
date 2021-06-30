@@ -21,20 +21,17 @@ public class MobArmorEquipmentPacket extends DataPacket {
     @Override
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
-        this.slots = new Item[4];
-        this.slots[0] = this.getSlot();
-        this.slots[1] = this.getSlot();
-        this.slots[2] = this.getSlot();
-        this.slots[3] = this.getSlot();
+        for (int i = 0; i < 4; i++) {
+            this.slots[i] = this.getSlot();
+        }
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.entityRuntimeId);
-        this.putSlot(this.slots[0]);
-        this.putSlot(this.slots[1]);
-        this.putSlot(this.slots[2]);
-        this.putSlot(this.slots[3]);
+        for (Item slot this.slots) {
+            this.putSlot(slot);
+        }
     }
 }

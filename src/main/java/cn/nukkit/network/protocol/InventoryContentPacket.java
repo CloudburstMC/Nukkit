@@ -18,7 +18,7 @@ public class InventoryContentPacket extends DataPacket {
     public static final int SPECIAL_FIXED_INVENTORY = 0x7b;
 
     public int inventoryId;
-    public Item[] items = new Item[0];
+    public Item[] slots = new Item[0];
 
     @Override
     public byte pid() {
@@ -29,7 +29,7 @@ public class InventoryContentPacket extends DataPacket {
     public void decode() {
         this.inventoryId = (int) this.getUnsignedVarInt();
         int count = (int) this.getUnsignedVarInt();
-        this.items = new Item[count];
+        this.slots = new Item[count];
         for (int i = 0; i < count; i++) {
             this.items[i] = this.getSlot();
         }
@@ -39,7 +39,7 @@ public class InventoryContentPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putUnsignedVarInt(this.inventoryId);
-        this.putUnsignedVarInt(this.items.length);
+        this.putUnsignedVarInt(this.slots.length);
         for (Item item : this.items) {
             this.putSlot(item);
         }

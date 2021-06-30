@@ -244,15 +244,15 @@ public class Effect implements Cloneable {
             Player player = (Player) entity;
 
             MobEffectPacket pk = new MobEffectPacket();
-            pk.eid = entity.getId();
+            pk.entityRuntimeId= entity.getId();
             pk.effectId = this.getId();
             pk.amplifier = this.getAmplifier();
             pk.particles = this.isVisible();
             pk.duration = this.getDuration();
             if (oldEffect != null) {
-                pk.eventId = MobEffectPacket.EVENT_MODIFY;
+                pk.event = MobEffectPacket.EVENT_MODIFY;
             } else {
-                pk.eventId = MobEffectPacket.EVENT_ADD;
+                pk.event = MobEffectPacket.EVENT_ADD;
             }
 
             player.dataPacket(pk);
@@ -286,9 +286,9 @@ public class Effect implements Cloneable {
     public void remove(Entity entity) {
         if (entity instanceof Player) {
             MobEffectPacket pk = new MobEffectPacket();
-            pk.eid = entity.getId();
+            pk.entityRuntimeId = entity.getId();
             pk.effectId = this.getId();
-            pk.eventId = MobEffectPacket.EVENT_REMOVE;
+            pk.event = MobEffectPacket.EVENT_REMOVE;
 
             ((Player) entity).dataPacket(pk);
 

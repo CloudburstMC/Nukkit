@@ -60,7 +60,7 @@ public class AdventureSettingsPacket extends DataPacket {
         this.commandPermission = this.getUnsignedVarInt();
         this.flags2 = this.getUnsignedVarInt();
         this.playerPermission = this.getUnsignedVarInt();
-        this.customFlags = this.etUnsignedVarInt();
+        this.customFlags = this.getUnsignedVarInt();
         this.entityUniqueId = this.getLLong();
     }
 

@@ -7,6 +7,7 @@ import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.SmokeParticle;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 
@@ -81,10 +82,8 @@ public class BlockSponge extends BlockSolidMeta {
 
             for (int i = 0; i < 4; i++) {
                 LevelEventPacket packet = new LevelEventPacket();
-                packet.evid = LevelEventPacket.EVENT_PARTICLE_DESTROY;
-                packet.x = (float) block.getX() + 0.5f;
-                packet.y = (float) block.getY() + 1f;
-                packet.z = (float) block.getZ() + 0.5f;
+                packet.event = LevelEventPacket.EVENT_PARTICLE_DESTROY;
+                packet.position = new Vector3f((float) block.getX() + 0.5f, (float) block.getY() + 1f, (float) block.getZ() + 0.5f);
                 packet.data = GlobalBlockPalette.getOrCreateRuntimeId(BlockID.WATER, 0);
                 level.addChunkPacket(getChunkX(), getChunkZ(), packet);
             }

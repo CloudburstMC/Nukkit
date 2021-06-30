@@ -50,12 +50,12 @@ public class BlockCraftingTable extends BlockSolid {
             player.craftingType = Player.CRAFTING_BIG;
             player.setCraftingGrid(player.getUIInventory().getBigCraftingGrid());
             ContainerOpenPacket pk = new ContainerOpenPacket();
-            pk.windowId = -1;
-            pk.type = 1;
+            pk.windowId = (byte) -1;
+            pk.type = (byte) 1;
             pk.x = (int) x;
             pk.y = (int) y;
             pk.z = (int) z;
-            pk.entityId = player.getId();
+            pk.entityUniqueId = player.getId();
             player.dataPacket(pk);
         }
         return true;
