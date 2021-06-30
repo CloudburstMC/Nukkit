@@ -43,7 +43,7 @@ public class EntitySpider extends EntityMob implements EntityArthropod {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Spider";
     }
 

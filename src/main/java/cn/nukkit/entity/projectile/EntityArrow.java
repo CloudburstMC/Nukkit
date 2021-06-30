@@ -202,7 +202,7 @@ public class EntityArrow extends EntityProjectile {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Arrow";
     }
 }

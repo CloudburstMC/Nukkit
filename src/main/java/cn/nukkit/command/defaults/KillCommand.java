@@ -60,7 +60,7 @@ public class KillCommand extends VanillaCommand {
                 for (Level level : Server.getInstance().getLevels().values()) {
                     for (Entity entity : level.getEntities()) {
                         if (!(entity instanceof Player)) {
-                            joiner.add(entity.getNonBlankName());
+                            joiner.add(entity.getVisibleName());
                             entity.close();
                         }
                     }

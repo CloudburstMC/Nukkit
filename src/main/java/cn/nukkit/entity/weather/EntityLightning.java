@@ -155,7 +155,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Lightning Bolt";
     }
 }

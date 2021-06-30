@@ -39,7 +39,7 @@ public class EntityVillager extends EntityCreature implements EntityNPC, EntityA
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Villager";
     }
 

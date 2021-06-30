@@ -293,7 +293,7 @@ public class EntityItem extends Entity {
     @Since("FUTURE")
     @PowerNukkitOnly
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Item";
     }
 
@@ -303,7 +303,7 @@ public class EntityItem extends Entity {
             return getNameTag();
         }
         if (item == null) {
-            return getStaticName();
+            return getOriginalName();
         }
         return item.count + "x " + (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
     }

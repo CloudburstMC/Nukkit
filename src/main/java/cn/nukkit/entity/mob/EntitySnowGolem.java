@@ -23,7 +23,7 @@ public class EntitySnowGolem extends EntityMob {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Snow Golem";
     }
 

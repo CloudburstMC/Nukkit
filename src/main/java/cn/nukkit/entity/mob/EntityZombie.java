@@ -43,7 +43,7 @@ public class EntityZombie extends EntityMob implements EntitySmite {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Zombie";
     }
 

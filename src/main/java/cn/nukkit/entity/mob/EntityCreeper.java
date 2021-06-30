@@ -86,7 +86,7 @@ public class EntityCreeper extends EntityMob {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Creeper";
     }
 

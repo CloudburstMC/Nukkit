@@ -53,7 +53,7 @@ public class EntitySkeletonHorse extends EntityAnimal implements EntitySmite {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Skeleton Horse";
     }
 }

@@ -122,7 +122,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return getType().getName();
     }
 

@@ -48,7 +48,7 @@ public class EntitySquid extends EntityWaterAnimal {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Squid";
     }
 }

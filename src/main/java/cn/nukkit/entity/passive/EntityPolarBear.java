@@ -53,7 +53,7 @@ public class EntityPolarBear extends EntityAnimal {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Polar Bear";
     }
 }

@@ -60,7 +60,7 @@ public class EntityPotionLingering extends EntityPotion {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Lingering Potion";
     }
 }

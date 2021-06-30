@@ -30,7 +30,7 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return getType().getName();
     }
 

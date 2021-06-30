@@ -586,7 +586,7 @@ public class EntityBoat extends EntityVehicle {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Boat";
     }
 }

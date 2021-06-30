@@ -233,7 +233,7 @@ public class EntityFallingBlock extends Entity {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Falling Block";
     }
 }

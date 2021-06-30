@@ -271,7 +271,7 @@ public class EntityXPOrb extends Entity {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Experience Orb";
     }
 }

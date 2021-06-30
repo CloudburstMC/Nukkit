@@ -222,7 +222,7 @@ public class EntityHuman extends EntityHumanType {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Human";
     }
     

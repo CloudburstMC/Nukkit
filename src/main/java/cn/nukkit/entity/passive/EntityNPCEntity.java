@@ -52,7 +52,7 @@ public class EntityNPCEntity extends EntityLiving implements EntityNPC, EntityIn
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "NPC";
     }
 

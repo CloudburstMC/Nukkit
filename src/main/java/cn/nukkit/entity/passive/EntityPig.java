@@ -42,7 +42,7 @@ public class EntityPig extends EntityAnimal {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Pig";
     }
 

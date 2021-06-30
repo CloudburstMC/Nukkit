@@ -24,7 +24,7 @@ public class EntityPufferfish extends EntityAnimal {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Pufferfish";
     }
 

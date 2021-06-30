@@ -44,7 +44,7 @@ public class EntityPiglin extends EntityMob implements EntityAgeable {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Piglin";
     }
 

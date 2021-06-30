@@ -1135,11 +1135,11 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     /**
-     * The name that actually represent this entity, ignoring name tags. 
+     * The name that English name of the type of this entity. 
      */
     @PowerNukkitOnly
     @Since("FUTURE")
-    public String getStaticName() {
+    public String getOriginalName() {
         return this.getSaveId();
     }
 
@@ -1148,12 +1148,12 @@ public abstract class Entity extends Location implements Metadatable {
      */
     @PowerNukkitOnly
     @Since("FUTURE")
-    public final String getNonBlankName() {
+    public final String getVisibleName() {
         String name = getName();
         if (!TextFormat.clean(name).trim().isEmpty()) {
             return name;
         } else {
-            return getStaticName();
+            return getOriginalName();
         }
     }
 
@@ -1165,7 +1165,7 @@ public abstract class Entity extends Location implements Metadatable {
         if (this.hasCustomName()) {
             return this.getNameTag();
         } else {
-            return this.getStaticName();
+            return this.getOriginalName();
         }
     }
 

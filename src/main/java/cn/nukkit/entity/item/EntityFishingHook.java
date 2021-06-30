@@ -316,7 +316,7 @@ public class EntityFishingHook extends EntityProjectile {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Fishing Hook";
     }
 }

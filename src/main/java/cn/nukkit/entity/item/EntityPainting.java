@@ -203,7 +203,7 @@ public class EntityPainting extends EntityHanging {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Painting";
     }
 }

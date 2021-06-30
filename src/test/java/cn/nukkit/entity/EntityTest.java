@@ -64,27 +64,27 @@ class EntityTest {
         }
         entity = createEntity(id);
         assertNotNull(entity, ()-> "Entity " + Entity.getSaveId(id));
-        assertNotNull(entity.getStaticName(), "Static Name");
-        String staticName = entity.getStaticName();
+        assertNotNull(entity.getOriginalName(), "Static Name");
+        String staticName = entity.getOriginalName();
         assertEquals(staticName, entity.getName());
         assertFalse(entity.hasCustomName(), "Should not have custom");
-        assertEquals(entity.getName(), entity.getNonBlankName());
+        assertEquals(entity.getName(), entity.getVisibleName());
         
         if (entity instanceof EntityNameable) {
             EntityNameable nameable = (EntityNameable) entity;
             nameable.setNameTag("Customized");
             assertTrue(entity.hasCustomName(), "Should have custom");
-            assertNotNull(entity.getStaticName(), "Static name should not be null");
-            assertEquals(staticName, entity.getStaticName(), "Static name should not change");
+            assertNotNull(entity.getOriginalName(), "Static name should not be null");
+            assertEquals(staticName, entity.getOriginalName(), "Static name should not change");
             assertEquals("Customized", entity.getName());
-            assertNotEquals(entity.getName(), entity.getStaticName());
+            assertNotEquals(entity.getName(), entity.getOriginalName());
             
             nameable.setNameTag(" ");
             assertTrue(entity.hasCustomName());
-            assertNotNull(entity.getStaticName());
+            assertNotNull(entity.getOriginalName());
             assertEquals(" ", entity.getName());
-            assertNotEquals(entity.getName(), entity.getStaticName());
-            assertEquals(entity.getStaticName(), entity.getNonBlankName());
+            assertNotEquals(entity.getName(), entity.getOriginalName());
+            assertEquals(entity.getOriginalName(), entity.getVisibleName());
         }
     }
 

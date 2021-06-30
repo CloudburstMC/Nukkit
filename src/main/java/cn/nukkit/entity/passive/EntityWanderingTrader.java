@@ -27,7 +27,7 @@ public class EntityWanderingTrader extends EntityCreature implements EntityNPC {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Wandering Trader";
     }
 

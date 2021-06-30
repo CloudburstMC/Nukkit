@@ -31,7 +31,7 @@ public class EntityGuardian extends EntityMob {
     @PowerNukkitOnly
     @Since("FUTURE")
     @Override
-    public String getStaticName() {
+    public String getOriginalName() {
         return "Guardian";
     }
 
