@@ -29,7 +29,7 @@ public class AddItemEntityPacket extends DataPacket {
     public void decode() {
     	this.entityUniqueId = this.getEntityUniqueId();
 		this.entityRuntimeId = this.getEntityRuntimeId();
-		this.item = this.getSlot();
+		//TODO: this.item
 		this.position = this.getVector3f();
 		this.motion = this.getVector3f();
 		this.entityMetadata = this.getEntityMetadata();

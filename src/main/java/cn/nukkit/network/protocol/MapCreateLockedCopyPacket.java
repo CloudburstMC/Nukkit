@@ -12,14 +12,14 @@ public class MapCreateLockedCopyPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.originalMapId = this.getEntityUniqueId();
-		this.newMapId = this.getEntityUniqueId();
+        this.originalMapId = this.getVarLong();
+        this.newMapId = this.getVarLong();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityUniqueId(this.originalMapId);
-		this.putEntityUniqueId(this.newMapId);
+        this.putVarLong(this.originalMapId);
+        this.putVarLong(this.newMapId);
     }
 }

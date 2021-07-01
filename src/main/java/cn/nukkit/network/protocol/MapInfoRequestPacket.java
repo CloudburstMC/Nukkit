@@ -7,7 +7,6 @@ import lombok.ToString;
  */
 @ToString
 public class MapInfoRequestPacket extends DataPacket {
-
     public long mapId;
 
     @Override
@@ -17,12 +16,11 @@ public class MapInfoRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.mapId = this.getEntityUniqueId();
+        mapId = this.getEntityUniqueId();
     }
 
     @Override
     public void encode() {
-    	this.reset();
-        this.putEntityUniqueId(this.mapId);
+
     }
 }

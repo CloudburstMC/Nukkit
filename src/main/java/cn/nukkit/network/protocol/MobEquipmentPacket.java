@@ -9,21 +9,22 @@ import lombok.ToString;
  */
 @ToString
 public class MobEquipmentPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.MOB_EQUIPMENT_PACKET;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.MOB_EQUIPMENT_PACKET;
+        return NETWORK_ID;
     }
 
-    public long entityRuntimeId;
+    public long eid;
     public Item item;
-    public byte inventorySlot;
-    public byte hotbarSlot;
-    public byte windowId;
+    public int inventorySlot;
+    public int hotbarSlot;
+    public int windowId;
 
     @Override
     public void decode() {
-        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.eid = this.getEntityRuntimeId(); //EntityRuntimeID
         this.item = this.getSlot();
         this.inventorySlot = this.getByte();
         this.hotbarSlot = this.getByte();
@@ -33,10 +34,10 @@ public class MobEquipmentPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.entityRuntimeId);
+        this.putEntityRuntimeId(this.eid); //EntityRuntimeID
         this.putSlot(this.item);
-        this.putByte(this.inventorySlot);
-        this.putByte(this.hotbarSlot);
-        this.putByte(this.windowId);
+        this.putByte((byte) this.inventorySlot);
+        this.putByte((byte) this.hotbarSlot);
+        this.putByte((byte) this.windowId);
     }
 }

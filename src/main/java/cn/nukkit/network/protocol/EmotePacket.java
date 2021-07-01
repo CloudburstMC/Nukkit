@@ -4,28 +4,28 @@ import lombok.ToString;
 
 @ToString
 public class EmotePacket extends DataPacket {
-
-    public long entityRuntimeId;
-    public String emoteId;
+    public static final byte NETWORK_ID = ProtocolInfo.EMOTE_PACKET;
+    public long runtimeId;
+    public String emoteID;
     public byte flags;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.EMOTE_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-        this.entityRuntimeId = this.getEntityRuntimeId();
-		this.emoteId = this.getString();
-		this.flags = this.getByte();
+        this.runtimeId = this.getEntityRuntimeId();
+        this.emoteID = this.getString();
+        this.flags = (byte) this.getByte();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.entityRuntimeId);
-		this.putString(this.emoteId);
-		this.putByte(this.flags);
+        this.putEntityRuntimeId(this.runtimeId);
+        this.putString(this.emoteID);
+        this.putByte(flags);
     }
 }

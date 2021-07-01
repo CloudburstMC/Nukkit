@@ -4,25 +4,26 @@ import lombok.ToString;
 
 @ToString
 public class EntityFallPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.ENTITY_FALL_PACKET;
 
-    public long entityRuntimeId;
+    public long eid;
     public float fallDistance;
     public boolean unknown;
-    
-    @Override
-    public byte pid() {
-        return ProtocolInfo.ENTITY_FALL_PACKET;
-    }
 
     @Override
     public void decode() {
-        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.eid = this.getEntityRuntimeId();
         this.fallDistance = this.getLFloat();
         this.unknown = this.getBoolean();
     }
 
     @Override
     public void encode() {
-    	//TODO
+
+    }
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
     }
 }

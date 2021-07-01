@@ -5,12 +5,14 @@ import lombok.ToString;
 @ToString
 public class FilterTextPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.FILTER_TEXT_PACKET;
+
     public String text;
     public boolean fromServer;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.FILTER_TEXT_PACKET;
+        return NETWORK_ID;
     }
 
     @Override

@@ -13,7 +13,7 @@ public class MobEffectPacket extends DataPacket {
     public static final byte EVENT_MODIFY = 2;
     public static final byte EVENT_REMOVE = 3;
 
-    public long entityRuntimeId;
+    public long entityId;
     public byte eventId;
     public int effectId;
     public int amplifier = 0;
@@ -27,7 +27,7 @@ public class MobEffectPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.entityRuntimeId = this.getEntityRuntimeId();
+    	this.entityId = this.getEntityRuntimeId();
 		this.eventId = this.getByte();
 		this.effectId = this.getVarInt();
 		this.amplifier = this.getVarInt();
@@ -38,7 +38,7 @@ public class MobEffectPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.entityRuntimeId);
+        this.putEntityRuntimeId(this.entityId);
         this.putByte(this.eventId);
         this.putVarInt(this.effectId);
         this.putVarInt(this.amplifier);

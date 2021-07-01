@@ -31,7 +31,7 @@ public class PlayerInputPacket extends DataPacket {
     	this.reset();
         this.putLFloat(this.motionX);
 		this.putLFloat(this.motionY);
-		this.putBoolean(this.jumping);
-		this.putBoolean(this.sneaking);
+		this.putBool(this.jumping);
+		this.putBool(this.sneaking);
     }
 }
