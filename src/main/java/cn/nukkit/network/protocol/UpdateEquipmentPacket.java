@@ -18,11 +18,11 @@ public class UpdateEquipmentPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.windowId = this.getByte();
-        this.windowType = this.getByte();
-        this.windowSlotCount = this.getVarInt();
-        this.entityId = this.getEntityUniqueId();
-        //TODO: this.namedTag
+    	this.windowId = this.getByte();
+		this.windowType = this.getByte();
+		this.windowSlotCount = this.getVarInt();
+		this.entityId = this.getEntityUniqueId();
+		//this.namedTag idk
     }
 
     @Override
@@ -30,8 +30,8 @@ public class UpdateEquipmentPacket extends DataPacket {
         this.reset();
         this.putByte(this.windowId);
         this.putByte(this.windowType);
-        this.putVarInt(this.windowSlotCount);
-        this.putEntityUniqueId(this.entityId);
-        this.put(this.namedTag);
+		this.putVarInt(this.windowSlotCount);
+		this.putEntityUniqueId(this.entityId);
+		this.put(this.namedTag);
     }
 }

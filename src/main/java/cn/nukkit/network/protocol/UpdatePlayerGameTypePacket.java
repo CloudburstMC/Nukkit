@@ -4,30 +4,30 @@ import lombok.ToString;
 
 @ToString
 public class UpdatePlayerGameTypePacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_PLAYER_GAME_TYPE_PACKET;
 
     public GameType gameType;
-    public long playerUniqueId;
+    public long entityId;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.UPDATE_PLAYER_GAME_TYPE_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-        this.gameType = GameType.fromById(this.getVarInt());
-        this.playerUniqueId = this.getEntityUniqueId();
+        this.gameType = GameType.from(this.getVarInt());
+        this.entityId = this.getVarLong();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putVarInt(this.gameType.ordinal());
-        this.putEntityUniqueId(this.playerUniqueId);
+        this.putVarLong(entityId);
     }
 
     public enum GameType {
-
         SURVIVAL,
         CREATIVE,
         ADVENTURE,
@@ -38,7 +38,7 @@ public class UpdatePlayerGameTypePacket extends DataPacket {
 
         private static final GameType[] VALUES = values();
 
-        public static GameType fromById(int id) {
+        public static GameType from(int id) {
             return VALUES[id];
         }
     }
