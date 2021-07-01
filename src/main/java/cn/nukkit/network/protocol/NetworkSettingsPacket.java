@@ -17,12 +17,12 @@ public class NetworkSettingsPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.compressionThreshold = this.getLShort();
+    	this.compressionThreshold = this.getShort();
     }
 
     @Override
     public void encode() {
     	this.reset();
-        this.putLShort(this.compressionThreshold);
+        this.putShort(this.compressionThreshold);
     }
 }

@@ -9,12 +9,13 @@ import java.util.List;
 
 @ToString
 public class PlayerEnchantOptionsPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ENCHANT_OPTIONS_PACKET;
 
     public final List<EnchantOptionData> options = new ArrayList<>();
 
     @Override
     public byte pid() {
-        return ProtocolInfo.PLAYER_ENCHANT_OPTIONS_PACKET;
+        return NETWORK_ID;
     }
 
     @Override

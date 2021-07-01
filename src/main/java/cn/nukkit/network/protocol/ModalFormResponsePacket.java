@@ -5,8 +5,8 @@ import lombok.ToString;
 @ToString
 public class ModalFormResponsePacket extends DataPacket {
 
-    public long formId;
-    public String formData;
+    public int formId;
+    public String data;
 
     @Override
     public byte pid() {
@@ -15,14 +15,12 @@ public class ModalFormResponsePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.formId = this.getUnsignedVarInt();
-		this.formData = this.getString();
+        this.formId = this.getVarInt();
+        this.data = this.getString(); //Data will be null if player close form without submit (by cross button or ESC)
     }
 
     @Override
     public void encode() {
-    	this.reset();
-    	this.putUnsignedVarInt(this.formId);
-		this.putString(this.formData);
+
     }
 }

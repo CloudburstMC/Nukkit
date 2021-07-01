@@ -43,8 +43,8 @@ public class PlayerAuthInputPacket extends DataPacket {
 		this.moveZ = this.getFloat();
 		this.headYaw = this.getFloat();
 		this.inputFlags = this.getUnsignedVarLong();
-		this.inputMode = (int) this.getUnsignedVarInt();
-		this.playMode = (int) this.getUnsignedVarInt();
+		this.inputMode = this.getUnsignedVarInt();
+		this.playMode = this.getUnsignedVarInt();
 		if (this.playMode == VR) {
 			this.vrGazeDirection = this.getVector3();
 		}

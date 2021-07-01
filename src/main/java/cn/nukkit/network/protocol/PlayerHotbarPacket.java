@@ -7,7 +7,8 @@ import lombok.ToString;
 public class PlayerHotbarPacket extends DataPacket {
 
     public int selectedHotbarSlot;
-    public byte windowId = ContainerIds.INVENTORY;
+    public int windowId = ContainerIds.INVENTORY;
+
     public boolean selectHotbarSlot = true;
 
     @Override
@@ -17,7 +18,7 @@ public class PlayerHotbarPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.selectedHotbarSlot = this.getUnsignedVarInt();
+        this.selectedHotbarSlot = (int) this.getUnsignedVarInt();
         this.windowId = this.getByte();
         this.selectHotbarSlot = this.getBoolean();
     }
@@ -26,7 +27,7 @@ public class PlayerHotbarPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putUnsignedVarInt(this.selectedHotbarSlot);
-        this.putByte(this.windowId);
+        this.putByte((byte) this.windowId);
         this.putBoolean(this.selectHotbarSlot);
     }
 }
