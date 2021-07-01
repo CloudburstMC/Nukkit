@@ -17,8 +17,8 @@ public class PurchaseReceiptPacket extends DataPacket {
 
     @Override
     public void decode() {
-        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
-            this.receipts.add(this.getString());
+    	for (int i = 0, count = this.getUnsignedVarInt(); i < count; i++) {
+    	    this.receipts.add(this.getString());
         }
     }
 

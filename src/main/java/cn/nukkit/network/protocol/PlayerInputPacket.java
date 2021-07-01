@@ -12,7 +12,7 @@ public class PlayerInputPacket extends DataPacket {
     public float motionY;
     public boolean jumping;
     public boolean sneaking;
-
+    
     @Override
     public byte pid() {
         return ProtocolInfo.PLAYER_INPUT_PACKET;
@@ -28,10 +28,10 @@ public class PlayerInputPacket extends DataPacket {
 
     @Override
     public void encode() {
-        this.reset();
+    	this.reset();
         this.putLFloat(this.motionX);
-        this.putLFloat(this.motionY);
-        this.putBoolean(this.jumping);
-        this.putBoolean(this.sneaking);
+		this.putLFloat(this.motionY);
+		this.putBoolean(this.jumping);
+		this.putBoolean(this.sneaking);
     }
 }
