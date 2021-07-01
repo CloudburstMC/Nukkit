@@ -15,7 +15,7 @@ public class ShowStoreOfferPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.offerId = this.getString();
+    	this.offerId = this.getString();
         this.showAll = this.getBoolean();
     }
 

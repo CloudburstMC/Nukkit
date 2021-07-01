@@ -14,7 +14,7 @@ public class SetHealthPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.health = this.getVarInt();
+    	this.health = this.getVarInt();
     }
 
     @Override

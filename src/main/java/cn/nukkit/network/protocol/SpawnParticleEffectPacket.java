@@ -7,7 +7,7 @@ import lombok.ToString;
 public class SpawnParticleEffectPacket extends DataPacket {
 
     public byte dimensionId;
-    public long entityUniqueId = -1L;
+    public long entityUniqueId = -1
     public Vector3f position;
     public String particleName;
 
@@ -18,18 +18,18 @@ public class SpawnParticleEffectPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.dimensionId = this.getByte();
-        this.entityUniqueId = this.getEntityUniqueId();
-        this.position = this.getVector3f();
-        this.particleName = this.getString();
+    	this.dimensionId = this.getByte();
+		this.entityUniqueId = this.getEntityUniqueId();
+		this.position = this.getVector3f();
+		this.particleName = this.getString();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putByte(this.dimensionId);
-        this.putEntityUniqueId(this.entityUniqueId);
-        this.putVector3f(this.position);
-        this.putString(this.particleName);
+		this.putEntityUniqueId(this.entityUniqueId);
+		this.putVector3f(this.position);
+		this.putString(this.particleName);
     }
 }

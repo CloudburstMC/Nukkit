@@ -5,7 +5,7 @@ import lombok.ToString;
 @ToString
 public class SetLastHurtByPacket extends DataPacket {
 
-    public int entityType;
+	public int entityType;
 
     @Override
     public byte pid() {
@@ -14,12 +14,12 @@ public class SetLastHurtByPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.entityType = this.getVarInt();
+    	this.entityType = this.getVarInt();
     }
 
     @Override
     public void encode() {
-        this.reset();
-        this.putVarInt(this.entityType);
+    	this.reset();
+    	this.putVarInt(this.entityType);
     }
 }
