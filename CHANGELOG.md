@@ -13,7 +13,7 @@ Click the link above to see the future.
 - [#1107] Guava version from `29.0` to `30.1.1`
 - [#1107] SnakeYAML version from `1.26` to `1.28`
 - [#1134] Update the Chinese, Russian, and Turkish translations. Thank you for your contributions!
-- [#1149] Update the Spanish, and Russian translations. Also improved the message whena plugin is not found. Thank you for your contributions!
+- [#1149] Update the Spanish, and Russian translations. Also improved the message when a plugin is not found. Thank you for your contributions!
 - [#1150] The `show_death_message` gamerule was renamed to `show_death_messages`. A backward compatibility code will keep the old one working, but it's now deprecated.
 - [#1151] Improved `/setworldspaw` auto completion
 - [#783] Campfire now drop 2 charcoal always
