@@ -7,29 +7,26 @@ import java.util.UUID;
 @ToString(exclude = "sha256")
 public class ResourcePackDataInfoPacket extends DataPacket {
 
-    public static final byte TYPE_INVALID = 0;
-    public static final byte TYPE_ADDON = 1;
-    public static final byte TYPE_CACHED = 2;
-    public static final byte TYPE_COPY_PROTECTED = 3;
-    public static final byte TYPE_BEHAVIOR = 4;
-    public static final byte TYPE_PERSONA_PIECE = 5;
-    public static final byte TYPE_RESOURCE = 6;
-    public static final byte TYPE_SKINS = 7;
-    public static final byte TYPE_WORLD_TEMPLATE = 8;
-    public static final byte TYPE_COUNT = 9;
+    public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_DATA_INFO_PACKET;
+
+    public static final int TYPE_INVALID = 0;
+    public static final int TYPE_ADDON = 1;
+    public static final int TYPE_CACHED = 2;
+    public static final int TYPE_COPY_PROTECTED = 3;
+    public static final int TYPE_BEHAVIOR = 4;
+    public static final int TYPE_PERSONA_PIECE = 5;
+    public static final int TYPE_RESOURCE = 6;
+    public static final int TYPE_SKINS = 7;
+    public static final int TYPE_WORLD_TEMPLATE = 8;
+    public static final int TYPE_COUNT = 9;
 
     public UUID packId;
     public int maxChunkSize;
     public int chunkCount;
     public long compressedPackSize;
     public byte[] sha256;
-    public boolean isPremium = false;
-    public byte packType = TYPE_RESOURCE;
-
-    @Override
-    public byte pid() {
-        return ProtocolInfo.RESOURCE_PACK_DATA_INFO_PACKET;
-    }
+    public boolean premium;
+    public int type = TYPE_RESOURCE;
 
     @Override
     public void decode() {
@@ -38,8 +35,8 @@ public class ResourcePackDataInfoPacket extends DataPacket {
         this.chunkCount = this.getLInt();
         this.compressedPackSize = this.getLLong();
         this.sha256 = this.getByteArray();
-        this.isPremium = this.getBoolean();
-        this.packType = this.getByte();
+        this.premium = this.getBoolean();
+        this.type = this.getByte();
     }
 
     @Override
@@ -50,7 +47,12 @@ public class ResourcePackDataInfoPacket extends DataPacket {
         this.putLInt(this.chunkCount);
         this.putLLong(this.compressedPackSize);
         this.putByteArray(this.sha256);
-        this.putBoolean(this.isPremium);
-        this.putByte(this.packType);
+        this.putBoolean(this.premium);
+        this.putByte((byte) this.type);
+    }
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
     }
 }

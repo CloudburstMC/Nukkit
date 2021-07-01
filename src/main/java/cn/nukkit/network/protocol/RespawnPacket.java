@@ -9,22 +9,24 @@ import lombok.ToString;
 @ToString
 public class RespawnPacket extends DataPacket {
 
-    public static final byte STATE_SEARCHING_FOR_SPAWN = 0;
-    public static final byte STATE_READY_TO_SPAWN = 1;
-    public static final byte STATE_CLIENT_READY_TO_SPAWN = 2;
+    public static final byte NETWORK_ID = ProtocolInfo.RESPAWN_PACKET;
 
-    public Vector3f position;
-    public byte respawnState = STATE_SEARCHING_FOR_SPAWN;
-    public long entityRuntimeId;
+    public static final int STATE_SEARCHING_FOR_SPAWN = 0;
+    public static final int STATE_READY_TO_SPAWN = 1;
+    public static final int STATE_CLIENT_READY_TO_SPAWN = 2;
 
-    @Override
-    public byte pid() {
-        return ProtocolInfo.RESPAWN_PACKET;
-    }
+    public float x;
+    public float y;
+    public float z;
+    public int respawnState = STATE_SEARCHING_FOR_SPAWN;
+    public long runtimeEntityId;
 
     @Override
     public void decode() {
-        this.position = this.getVector3f();
+        Vector3f v = this.getVector3f();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
         this.respawnState = this.getByte();
         this.runtimeEntityId = this.getEntityRuntimeId();
     }
@@ -32,8 +34,14 @@ public class RespawnPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVector3f(this.position);
-        this.putByte(this.respawnState);
-        this.putEntityRuntimeId(this.runtimeEntityId);
+        this.putVector3f(this.x, this.y, this.z);
+        this.putByte((byte) respawnState);
+        this.putEntityRuntimeId(runtimeEntityId);
     }
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
+
 }

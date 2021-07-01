@@ -8,12 +8,9 @@ import lombok.ToString;
 @ToString
 public class SetDifficultyPacket extends DataPacket {
 
-    public int difficulty;
+    public static final byte NETWORK_ID = ProtocolInfo.SET_DIFFICULTY_PACKET;
 
-    @Override
-    public byte pid() {
-        return ProtocolInfo.SET_DIFFICULTY_PACKET;
-    }
+    public int difficulty;
 
     @Override
     public void decode() {
@@ -25,4 +22,10 @@ public class SetDifficultyPacket extends DataPacket {
         this.reset();
         this.putUnsignedVarInt(this.difficulty);
     }
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
+
 }

@@ -7,13 +7,10 @@ import java.util.UUID;
 @ToString
 public class ResourcePackChunkRequestPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET;
+
     public UUID packId;
     public int chunkIndex;
-
-    @Override
-    public byte pid() {
-        return ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET;
-    }
 
     @Override
     public void decode() {
@@ -26,5 +23,10 @@ public class ResourcePackChunkRequestPacket extends DataPacket {
         this.reset();
         this.putString(this.packId.toString());
         this.putLInt(this.chunkIndex);
+    }
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
     }
 }

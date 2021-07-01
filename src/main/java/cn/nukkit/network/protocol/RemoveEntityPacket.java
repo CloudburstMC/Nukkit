@@ -18,7 +18,7 @@ public class RemoveEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.entityNetworkId = (int) this.getUnsignedVarInt();
+    	this.entityNetworkId = this.getUnsignedVarInt();
     }
 
     @Override

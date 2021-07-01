@@ -5,7 +5,7 @@ import lombok.ToString;
 @ToString
 public class SetDefaultGameTypePacket extends DataPacket {
 
-    public int gamemode;
+	public int gamemode;
 
     @Override
     public byte pid() {
@@ -14,7 +14,7 @@ public class SetDefaultGameTypePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.gamemode = this.getVarInt();
+    	this.gamemode = this.getVarInt();
     }
 
     @Override
