@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
 /**
@@ -11,24 +10,25 @@ import lombok.ToString;
 public class SetEntityMotionPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.SET_ENTITY_MOTION_PACKET;
 
-    public long entityRuntimeId;
-    public Vector3f motion;
+    public long eid;
+    public float motionX;
+    public float motionY;
+    public float motionZ;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.SET_ENTITY_MOTION_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-    	this.entityRuntimeId = this.getEntityRuntimeId();
-		this.motion = this.getVector3f();
+
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.entityRuntimeId);
-		this.putVector3(this.motion);
+        this.putEntityRuntimeId(this.eid);
+        this.putVector3f(this.motionX, this.motionY, this.motionZ);
     }
 }
