@@ -16,7 +16,7 @@ public class NetworkStackLatencyPacket extends DataPacket {
     @Override
     public void decode() {
         this.timestamp = this.getLLong();
-        this.needResponse = this.getBoolean();
+		this.needResponse = this.getBoolean();
     }
 
     @Override

@@ -9,60 +9,68 @@ import lombok.ToString;
 @ToString
 public class MovePlayerPacket extends DataPacket {
 
-    public static final byte MODE_NORMAL = 0;
-    public static final byte MODE_RESET = 1;
-    public static final byte MODE_TELEPORT = 2;
-    public static final byte MODE_PITCH = 3; //Facepalm Mojang
+    public static final byte NETWORK_ID = ProtocolInfo.MOVE_PLAYER_PACKET;
 
-    public long entityRuntimeId;
-    public Vector3f position;
-    public float pitch;
+    public static final int MODE_NORMAL = 0;
+    public static final int MODE_RESET = 1;
+    public static final int MODE_TELEPORT = 2;
+    public static final int MODE_PITCH = 3; //facepalm Mojang
+
+    public long eid;
+    public float x;
+    public float y;
+    public float z;
     public float yaw;
     public float headYaw;
-    public byte mode = MODE_NORMAL;
+    public float pitch;
+    public int mode = MODE_NORMAL;
     public boolean onGround;
-    public long ridingRuntimeId;
-    public int teleportCause = 0;
-    public int teleportItem = 0;
-    public long tick;
-
-    @Override
-    public byte pid() {
-        return ProtocolInfo.MOVE_PLAYER_PACKET;
-    }
+    public long ridingEid;
+    public int int1 = 0;
+    public int int2 = 0;
+    public long frame;
 
     @Override
     public void decode() {
-        this.entityRuntimeId = this.getEntityRuntimeId();
-        this.position = this.getVector3f();
+        this.eid = this.getEntityRuntimeId();
+        Vector3f v = this.getVector3f();
+        this.x = v.x;
+        this.y = v.y;
+        this.z = v.z;
         this.pitch = this.getLFloat();
         this.yaw = this.getLFloat();
         this.headYaw = this.getLFloat();
         this.mode = this.getByte();
         this.onGround = this.getBoolean();
-        this.ridingRuntimeId = this.getEntityRuntimeId();
+        this.ridingEid = this.getEntityRuntimeId();
         if (this.mode == MODE_TELEPORT) {
-            this.teleportCause = this.getLInt();
-            this.teleportItem = this.getLInt();
+            this.int1 = this.getLInt();
+            this.int2 = this.getLInt();
         }
-        this.tick = this.getUnsignedVarLong();
+        this.frame = this.getUnsignedVarLong();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.entityRuntimeId);
-        this.putVector3f(this.position);
+        this.putEntityRuntimeId(this.eid);
+        this.putVector3f(this.x, this.y, this.z);
         this.putLFloat(this.pitch);
         this.putLFloat(this.yaw);
         this.putLFloat(this.headYaw);
-        this.putByte(this.mode);
+        this.putByte((byte) this.mode);
         this.putBoolean(this.onGround);
-        this.putEntityRuntimeId(this.ridingRuntimeId);
+        this.putEntityRuntimeId(this.ridingEid);
         if (this.mode == MODE_TELEPORT) {
-            this.putLInt(this.teleportCause);
-            this.putLInt(this.teleportItem);
+            this.putLInt(this.int1);
+            this.putLInt(this.int2);
         }
-        this.putUnsignedVarLong(this.tick);
+        this.putUnsignedVarLong(this.frame);
     }
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
+
 }
