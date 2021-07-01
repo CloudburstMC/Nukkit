@@ -438,7 +438,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.SERVER_SETTINGS_REQUEST_PACKET, ServerSettingsRequestPacket.class);
         this.registerPacket(ProtocolInfo.SERVER_SETTINGS_RESPONSE_PACKET, ServerSettingsResponsePacket.class);
         this.registerPacket(ProtocolInfo.SHOW_PROFILE_PACKET, ShowProfilePacket.class);
-        this.registerPacket(ProtocolInfo.SET_DEFAULT_GAME_TYPE_PACKET, SetDefaultGameTypePacket.java);
         
         
         
