@@ -26,7 +26,6 @@ import cn.nukkit.item.ItemID;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -51,9 +50,10 @@ public class EntityIronGolem extends EntityMob {
         return NETWORK_ID;
     }
 
-    @Nonnull
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Iron Golem";
     }
 

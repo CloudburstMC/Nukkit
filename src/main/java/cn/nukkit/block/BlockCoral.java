@@ -2,6 +2,10 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.value.CoralType;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -12,17 +16,30 @@ import cn.nukkit.utils.BlockColor;
 import javax.annotation.Nonnull;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static cn.nukkit.blockproperty.CommonBlockProperties.PERMANENTLY_DEAD;
+
+@PowerNukkitOnly
 public class BlockCoral extends BlockFlowable {
-    public static final int TYPE_TUBE = 0;
-    public static final int TYPE_BRAIN = 1;
-    public static final int TYPE_BUBBLE = 2;
-    public static final int TYPE_FIRE = 3;
-    public static final int TYPE_HORN = 4;
-    
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final ArrayBlockProperty<CoralType> COLOR = new ArrayBlockProperty<>("coral_color", true, CoralType.class);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(COLOR, PERMANENTLY_DEAD);
+
+    @PowerNukkitOnly public static final int TYPE_TUBE = 0;
+    @PowerNukkitOnly public static final int TYPE_BRAIN = 1;
+    @PowerNukkitOnly public static final int TYPE_BUBBLE = 2;
+    @PowerNukkitOnly public static final int TYPE_FIRE = 3;
+    @PowerNukkitOnly public static final int TYPE_HORN = 4;
+
+    @PowerNukkitOnly
     public BlockCoral() {
         this(0);
     }
-    
+
+    @PowerNukkitOnly
     public BlockCoral(int meta) {
         super(meta);
     }
@@ -31,11 +48,21 @@ public class BlockCoral extends BlockFlowable {
     public int getId() {
         return CORAL;
     }
-    
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
+    }
+
+    @PowerNukkitOnly
     public boolean isDead() {
         return (getDamage() & 0x8) == 0x8;
     }
-    
+
+    @PowerNukkitOnly
     public void setDead(boolean dead) {
         if (dead) {
             setDamage(getDamage() | 0x8);

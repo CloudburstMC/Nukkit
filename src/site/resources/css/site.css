@@ -16,32 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package cn.nukkit.blockproperty.value;
-
-import cn.nukkit.api.PowerNukkitOnly;
-import cn.nukkit.api.Since;
-
-/**
- * @author joserobjr
- * @since 2020-10-10
- */
-@PowerNukkitOnly
-@Since("1.4.0.0-PN")
-public enum BellAttachmentType {
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    STANDING,
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    HANGING,
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    SIDE,
-
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    MULTIPLE;
-    
+a.externalLink[href^=https], a.externalLink[href^=http], a.externalLink {
+    background: inherit !important;
+    padding-right: inherit !important;
 }

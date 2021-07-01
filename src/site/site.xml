@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!--
+  ~ https://PowerNukkit.org - The Nukkit you know but Powerful!
+  ~ Copyright (C) 2020  José Roberto de Araújo Júnior
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<project xmlns="http://maven.apache.org/DECORATION/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/DECORATION/1.1.0 http://maven.apache.org/xsd/decoration-1.1.0.xsd">
+
+    <!--<bannerLeft>
+        <name>PowerNukkit</name>
+    </bannerLeft>
+    <body>
+        <menu name="Overview">
+            <item name="Introduction" href="index.html"/>
+            <item name="Usage" href="usage.html"/>
+            <item name="Goals" href="plugin-info.html"/>
+        </menu>
+        <menu name="Examples">
+            <item name="Sample JDiff Report" href="/spf4j-core/apidocs/changes.html"/>
+        </menu>
+    </body>-->
+    <bannerLeft>
+        <name>PowerNukkit</name>
+        <src>img/powernukkit-small.png</src>
+        <href>http://www.powernukkit.org</href>
+    </bannerLeft>
+    <body>
+        <links>
+            <item name="PowerNukkit" href="https://www.powernukkit.org"/>
+        </links>
+        <breadcrumbs>
+            <item name="PowerNukkit" href="https://www.powernukkit.org"/>
+        </breadcrumbs>
+        <menu name="Overview">
+            <item name="Introduction" href="README.html"/>
+            <item name="Usage" href="README.html#Creating_Plugins"/>
+            <item name="Change log" href="CHANGELOG.html"/>
+            <item name="JavaDocs" href="https://devs.powernukkit.org/#javadoc"/>
+        </menu>
+        <menu name="Resources">
+            <item name="Main Website" href="https://www.powernukkit.org"/>
+            <item name="Devs Website" href="https://devs.powernukkit.org"/>
+            <item name="Forums" href="https://discuss.powernukkit.org"/>
+            <item name="Discord" href="https://www.powernukkit.org/discord"/>
+        </menu>
+        <menu name="Downloads">
+            <item name="Recommended build" href="https://www.powernukkit.org/recommended" />
+            <item name="Releases" href="https://www.powernukkit.org/releases" />
+            <item name="Snapshots" href="https://builds.powernukkit.org/buildConfiguration/PowerNukkit_Snapshots#all-projects" />
+        </menu>
+        <menu ref="reports" inherit="bottom" />
+    </body>
+    <skin>
+        <groupId>org.apache.maven.skins</groupId>
+        <artifactId>maven-fluido-skin</artifactId>
+        <version>1.9</version>
+    </skin>
+    <custom>
+        <fluidoSkin>
+            <topBarEnabled>false</topBarEnabled>
+            <sideBarEnabled>true</sideBarEnabled>
+            <topBarContainerStyle>width: 90%;</topBarContainerStyle>
+        </fluidoSkin>
+    </custom>
+
+</project>

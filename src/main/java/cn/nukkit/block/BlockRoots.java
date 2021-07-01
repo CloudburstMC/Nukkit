@@ -11,7 +11,11 @@ import cn.nukkit.math.BlockFace;
 
 import javax.annotation.Nonnull;
 
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public abstract class BlockRoots extends BlockFlowable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected BlockRoots() {
         super(0);
     }
@@ -38,6 +42,8 @@ public abstract class BlockRoots extends BlockFlowable {
         return isSupportValid() && super.place(item, block, target, face, fx, fy, fz, player);
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected boolean isSupportValid() {
         switch (down().getId()) {
             case WARPED_NYLIUM:

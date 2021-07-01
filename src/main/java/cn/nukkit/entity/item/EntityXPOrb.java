@@ -1,6 +1,8 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -263,5 +265,13 @@ public class EntityXPOrb extends Entity {
         }
 
         return result;
+    }
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Override
+    public String getOriginalName() {
+        return "Experience Orb";
     }
 }

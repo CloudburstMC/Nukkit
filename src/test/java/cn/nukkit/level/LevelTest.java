@@ -10,6 +10,7 @@ import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.generator.Flat;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.test.LogLevelAdjuster;
+import co.aikar.timings.Timings;
 import org.iq80.leveldb.util.FileUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -56,6 +57,7 @@ class LevelTest {
         levelFolder = new File(server.getDataPath(), "worlds/TestLevel");
         String path = levelFolder.getAbsolutePath()+File.separator;
         Anvil.generate(path, "TestLevel", 0, Flat.class);
+        Timings.isTimingsEnabled(); // Initialize timings to avoid concurrent updates on initialization
         level = new Level(server, "TestLevel", path, Anvil.class);
         level.setAutoSave(true);
         

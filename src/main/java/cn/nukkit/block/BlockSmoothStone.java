@@ -1,10 +1,12 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.item.ItemTool;
 
+@PowerNukkitOnly
 public class BlockSmoothStone extends BlockSolid {
-    
+
+    @PowerNukkitOnly
     public BlockSmoothStone() {
     }
     

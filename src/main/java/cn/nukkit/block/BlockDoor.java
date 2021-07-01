@@ -45,7 +45,12 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Redstone
     // and gives the vanilla behavior; no idea how to make this better :d
     private static final List<Location> manualOverrides = new ArrayList<>();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BooleanBlockProperty DOOR_HINGE = new BooleanBlockProperty("door_hinge_bit", false);
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<BlockFace> DOOR_DIRECTION = new ArrayBlockProperty<>("direction", false, new BlockFace[]{
             BlockFace.EAST, BlockFace.SOUTH,
             BlockFace.WEST, BlockFace.NORTH

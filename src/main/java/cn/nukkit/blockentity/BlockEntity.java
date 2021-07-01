@@ -32,8 +32,8 @@ public abstract class BlockEntity extends Position {
     public static final String CHEST = "Chest";
     public static final String ENDER_CHEST = "EnderChest";
     public static final String FURNACE = "Furnace";
-    public static final String BLAST_FURNACE = "BlastFurnace";
-    public static final String SMOKER = "Smoker";
+    @PowerNukkitOnly public static final String BLAST_FURNACE = "BlastFurnace";
+    @PowerNukkitOnly public static final String SMOKER = "Smoker";
     public static final String SIGN = "Sign";
     public static final String MOB_SPAWNER = "MobSpawner";
     public static final String ENCHANT_TABLE = "EnchantTable";
@@ -53,23 +53,17 @@ public abstract class BlockEntity extends Position {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
-    public static final String LECTERN = "Lectern";
-    public static final String BEEHIVE = "Beehive";
-    public static final String CONDUIT = "Conduit";
-    public static final String BARREL = "Barrel";
-    public static final String CAMPFIRE = "Campfire";
-    public static final String BELL = "Bell";
-    public static final String DISPENSER = "Dispenser";
-    public static final String DROPPER = "Dropper";
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public static final String NETHER_REACTOR = "NetherReactor";
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public static final String LODESTONE = "Lodestone";
-    @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
-    public static final String TARGET = "Target";
+    @PowerNukkitOnly public static final String LECTERN = "Lectern";
+    @PowerNukkitOnly public static final String BEEHIVE = "Beehive";
+    @PowerNukkitOnly public static final String CONDUIT = "Conduit";
+    @PowerNukkitOnly public static final String BARREL = "Barrel";
+    @PowerNukkitOnly public static final String CAMPFIRE = "Campfire";
+    @PowerNukkitOnly public static final String BELL = "Bell";
+    @PowerNukkitOnly public static final String DISPENSER = "Dispenser";
+    @PowerNukkitOnly public static final String DROPPER = "Dropper";
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final String NETHER_REACTOR = "NetherReactor";
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final String LODESTONE = "Lodestone";
+    @PowerNukkitOnly @Since("1.4.0.0-PN") public static final String TARGET = "Target";
 
 
     public static long count = 1;

@@ -361,6 +361,8 @@ public class BlockBed extends BlockTransparentMeta implements Faceable, BlockEnt
         return false;
     }
 
+    @PowerNukkitOnly("In Cloudburst Nukkit, the clone returns Object, which is a different signature!")
+    @Since("1.4.0.0-PN")
     @Override
     public BlockBed clone() {
         return (BlockBed) super.clone();

@@ -1,5 +1,7 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -30,5 +32,13 @@ public class EntityPanda extends EntityAnimal {
     public void initEntity() {
         super.initEntity();
         this.setMaxHealth(20);
+    }
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Override
+    public String getOriginalName() {
+        return "Panda";
     }
 }

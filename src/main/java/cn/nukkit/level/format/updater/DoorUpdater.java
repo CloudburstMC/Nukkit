@@ -1,5 +1,7 @@
 package cn.nukkit.level.format.updater;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockDoor;
 import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockstate.BlockState;
@@ -7,11 +9,11 @@ import cn.nukkit.blockstate.BlockStateRegistry;
 import cn.nukkit.blockstate.MutableBlockState;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.level.format.ChunkSection;
-import lombok.RequiredArgsConstructor;
 
 import static cn.nukkit.block.BlockID.*;
 
-@RequiredArgsConstructor
+@PowerNukkitOnly
+@Since("1.4.0.0-PN")
 public class DoorUpdater implements Updater {
     private static final int DOOR_OPEN_BIT = 0x04;
     private static final int DOOR_TOP_BIT = 0x08;
@@ -19,7 +21,14 @@ public class DoorUpdater implements Updater {
     
     private final Chunk chunk;
     private final ChunkSection section;
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
+    public DoorUpdater(Chunk chunk, ChunkSection section) {
+        this.chunk = chunk;
+        this.section = section;
+    }
+
     @Override
     public boolean update(int offsetX, int offsetY, int offsetZ, int x, int y, int z, BlockState state) {
         switch (state.getBlockId()) {

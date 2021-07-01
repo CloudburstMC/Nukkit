@@ -137,8 +137,10 @@ public class EntityThrownTrident extends EntityProjectile {
         super(chunk, nbt, shootingEntity);
     }
     
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Trident";
     }
     

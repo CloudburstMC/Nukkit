@@ -4,6 +4,8 @@ import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import lombok.RequiredArgsConstructor;
 
+import javax.annotation.Nonnull;
+
 @Since("1.4.0.0-PN")
 @PowerNukkitOnly
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public enum StructureBlockType {
 
     @Since("1.4.0.0-PN")
     @PowerNukkitOnly
+    @Nonnull
     public String getEnglishName() {
         return englishName;
     }

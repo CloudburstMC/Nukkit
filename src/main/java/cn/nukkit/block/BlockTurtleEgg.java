@@ -39,13 +39,15 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @PowerNukkitOnly
 public class BlockTurtleEgg extends BlockFlowable {
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static final BlockProperty<Integer> EGG_COUNT = new ArrayBlockProperty<>("turtle_egg_count", false,
             new Integer[]{1,2,3,4}, 2, "turtle_egg_count", false,
             new String[]{"one_egg", "two_egg", "three_egg", "four_egg"});
     
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public static final ArrayBlockProperty<CrackState> CRACK_STATE = new ArrayBlockProperty<>("crack_state", false, CrackState.class);
+    public static final ArrayBlockProperty<CrackState> CRACK_STATE = new ArrayBlockProperty<>("cracked_state", false, CrackState.class);
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -61,10 +63,12 @@ public class BlockTurtleEgg extends BlockFlowable {
     @DeprecationDetails(since = "1.4.0.0-PN", reason = "New property system", replaceWith = "CrackState.MAX_CRACKED")
     public static final int CRACK_STATE_MAX_CRACKED = 2;
 
+    @PowerNukkitOnly
     public BlockTurtleEgg() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockTurtleEgg(int meta) {
         super(meta);
     }
@@ -92,7 +96,8 @@ public class BlockTurtleEgg extends BlockFlowable {
     public CrackState getCracks() {
         return getPropertyValue(CRACK_STATE);
     }
-    
+
+    @PowerNukkitOnly
     public void setCracks(@Nullable CrackState cracks) {
         setPropertyValue(CRACK_STATE, cracks);
     }

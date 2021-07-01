@@ -1,6 +1,7 @@
 package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockBeehive;
@@ -119,5 +120,13 @@ public class EntityBee extends EntityAnimal {
     @Since("1.1.1.0-PN")
     public void setAngry(Player player) {
     
+    }
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Override
+    public String getOriginalName() {
+        return "Bee";
     }
 }

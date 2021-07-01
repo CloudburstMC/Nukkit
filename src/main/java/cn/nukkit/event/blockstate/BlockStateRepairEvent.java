@@ -14,16 +14,22 @@ import cn.nukkit.event.HandlerList;
 public class BlockStateRepairEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public static HandlerList getHandlers() {
         return handlers;
     }
     
     private final BlockStateRepair repair;
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockStateRepairEvent(BlockStateRepair repair) {
         this.repair = repair;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     public BlockStateRepair getRepair() {
         return repair;
     }

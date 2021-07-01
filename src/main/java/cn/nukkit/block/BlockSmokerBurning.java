@@ -11,10 +11,12 @@ import javax.annotation.Nonnull;
 
 @PowerNukkitOnly
 public class BlockSmokerBurning extends BlockFurnaceBurning {
+    @PowerNukkitOnly
     public BlockSmokerBurning() {
         this(0);
     }
 
+    @PowerNukkitOnly
     public BlockSmokerBurning(int meta) {
         super(meta);
     }

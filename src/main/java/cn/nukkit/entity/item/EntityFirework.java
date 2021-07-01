@@ -2,6 +2,8 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
@@ -182,5 +184,13 @@ public class EntityFirework extends Entity {
     @Override
     public float getHeight() {
         return 0.25f;
+    }
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Override
+    public String getOriginalName() {
+        return "Firework Rocket";
     }
 }

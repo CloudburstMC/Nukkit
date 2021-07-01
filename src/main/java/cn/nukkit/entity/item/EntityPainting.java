@@ -1,6 +1,8 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntityPistonArm;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHanging;
@@ -195,5 +197,13 @@ public class EntityPainting extends EntityHanging {
             this.width = width;
             this.height = height;
         }
+    }
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Override
+    public String getOriginalName() {
+        return "Painting";
     }
 }

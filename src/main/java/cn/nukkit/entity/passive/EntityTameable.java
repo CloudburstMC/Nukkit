@@ -74,11 +74,6 @@ public abstract class EntityTameable extends EntityAnimal implements EntityOwnab
         return getServer().getPlayer(getOwnerName());
     }
 
-    @Override
-    public String getName() {
-        return getNameTag();
-    }
-
     public boolean isTamed() {
         return (getDataPropertyByte(DATA_TAMED_FLAG) & 4) != 0;
     }

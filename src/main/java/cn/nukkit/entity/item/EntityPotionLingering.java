@@ -1,5 +1,7 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -52,5 +54,13 @@ public class EntityPotionLingering extends EntityPotion {
             entity.cloudEffects.add(effect.setDuration(1).setVisible(false).setAmbient(false));
             entity.spawnToAll();
         }
+    }
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Override
+    public String getOriginalName() {
+        return "Lingering Potion";
     }
 }

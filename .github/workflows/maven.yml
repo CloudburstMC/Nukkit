@@ -24,7 +24,7 @@ jobs:
         with:
           java-version: 1.8
       - name: Build with Maven
-        run: mvn -B package -Darguments="-Dmaven.javadoc.skip=true"
+        run: mvn -B package -DskipTests=false -Darguments="-Dmaven.javadoc.skip=true"
       - name: Rename artifacts
         run: mv target/powernukkit-*-shaded.jar target/powernukkit.jar
       - name: Archive artifacts

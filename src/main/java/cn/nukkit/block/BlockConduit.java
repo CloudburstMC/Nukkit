@@ -16,6 +16,7 @@ import javax.annotation.Nullable;
 
 @PowerNukkitOnly
 public class BlockConduit extends BlockTransparent implements BlockEntityHolder<BlockEntityConduit> {
+    @PowerNukkitOnly
     public BlockConduit() {
         // Does nothing
     }

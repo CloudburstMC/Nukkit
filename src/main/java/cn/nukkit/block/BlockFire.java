@@ -5,6 +5,7 @@ import cn.nukkit.api.PowerNukkitDifference;
 import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.blockproperty.BlockProperties;
+import cn.nukkit.blockproperty.CommonBlockProperties;
 import cn.nukkit.blockproperty.IntBlockProperty;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
@@ -34,7 +35,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class BlockFire extends BlockFlowable {
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
-    public static final IntBlockProperty FIRE_AGE = new IntBlockProperty("age", false, 15);
+    public static final IntBlockProperty FIRE_AGE = CommonBlockProperties.AGE_15;
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")

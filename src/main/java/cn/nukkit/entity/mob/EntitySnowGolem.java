@@ -1,17 +1,18 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.api.PowerNukkitOnly;
 import cn.nukkit.api.Since;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-@Since("1.3.2.0-PN")
+@Since("1.4.0.0-PN")
 public class EntitySnowGolem extends EntityMob {
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public EntitySnowGolem(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public static final int NETWORK_ID = 21;
 
     @Override
@@ -19,8 +20,10 @@ public class EntitySnowGolem extends EntityMob {
         return NETWORK_ID;
     }
 
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Snow Golem";
     }
 

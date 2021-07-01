@@ -25,9 +25,9 @@ import java.util.stream.Stream;
  */
 public class AnvilInventory extends FakeBlockUIComponent {
 
-    @Since("1.3.2.0-PN") public static final int ANVIL_INPUT_UI_SLOT = 1;
-    @Since("1.3.2.0-PN") public static final int ANVIL_MATERIAL_UI_SLOT = 2;
-    @Since("1.3.2.0-PN") public static final int ANVIL_OUTPUT_UI_SLOT = CREATED_ITEM_OUTPUT_UI_SLOT;
+    @Since("1.4.0.0-PN") public static final int ANVIL_INPUT_UI_SLOT = 1;
+    @Since("1.4.0.0-PN") public static final int ANVIL_MATERIAL_UI_SLOT = 2;
+    @Since("1.4.0.0-PN") public static final int ANVIL_OUTPUT_UI_SLOT = CREATED_ITEM_OUTPUT_UI_SLOT;
 
     @PowerNukkitOnly public static final int OFFSET = 1;
     public static final int TARGET = 0;
@@ -58,7 +58,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
      */
     
     @Deprecated
-    @DeprecationDetails(since = "1.3.2.0-PN", by = "PowerNukkit", reason = "Experimenting the new implementation by Nukkit")
+    @DeprecationDetails(since = "1.4.0.0-PN", by = "PowerNukkit", reason = "Experimenting the new implementation by Nukkit")
     public void updateResult() {
         Item target = getFirstItem();
         Item sacrifice = getSecondItem();
@@ -300,14 +300,14 @@ public class AnvilInventory extends FakeBlockUIComponent {
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(
             reason = "NukkitX added the samething with other name.",
-            by = "PowerNukkit", since = "1.3.2.0-PN",
+            by = "PowerNukkit", since = "1.4.0.0-PN",
             replaceWith = "getInputSlot()"
     )
     public Item getFirstItem() {
         return getItem(TARGET);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public Item getInputSlot() {
         return this.getItem(TARGET);
     }
@@ -315,14 +315,14 @@ public class AnvilInventory extends FakeBlockUIComponent {
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(
             reason = "NukkitX added the samething with other name.",
-            by = "PowerNukkit", since = "1.3.2.0-PN",
+            by = "PowerNukkit", since = "1.4.0.0-PN",
             replaceWith = "getMaterialSlot()"
     )
     public Item getSecondItem() {
         return getItem(SACRIFICE);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public Item getMaterialSlot() {
         return this.getItem(SACRIFICE);
     }
@@ -330,7 +330,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(
             reason = "NukkitX added the samething with other name.",
-            by = "PowerNukkit", since = "1.3.2.0-PN",
+            by = "PowerNukkit", since = "1.4.0.0-PN",
             replaceWith = "getOutputSlot()"
     )
     public Item getResult() {
@@ -338,7 +338,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
         return getOutputSlot();
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public Item getOutputSlot() {
         return this.getItem(RESULT);
     }
@@ -394,7 +394,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(
             reason = "NukkitX added the samething with other name.",
-            by = "PowerNukkit", since = "1.3.2.0-PN",
+            by = "PowerNukkit", since = "1.4.0.0-PN",
             replaceWith = "getCost()"
     )
     public int getLevelCost() {
@@ -404,19 +404,19 @@ public class AnvilInventory extends FakeBlockUIComponent {
     @PowerNukkitOnly
     @Deprecated @DeprecationDetails(
             reason = "NukkitX added the samething with other name.",
-            by = "PowerNukkit", since = "1.3.2.0-PN",
+            by = "PowerNukkit", since = "1.4.0.0-PN",
             replaceWith = "setCost(int)"
     )
     protected void setLevelCost(int levelCost) {
         setCost(levelCost);
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public int getCost() {
         return this.cost;
     }
 
-    @Since("1.3.2.0-PN")
+    @Since("1.4.0.0-PN")
     public void setCost(int cost) {
         this.cost = cost;
     }

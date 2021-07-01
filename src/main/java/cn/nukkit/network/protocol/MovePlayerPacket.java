@@ -29,7 +29,7 @@ public class MovePlayerPacket extends DataPacket {
     public long ridingEid;
     public int int1 = 0;
     public int int2 = 0;
-    @Since("1.3.2.0-PN") public long frame;
+    @Since("1.4.0.0-PN") public long frame;
 
     @Override
     public void decode() {

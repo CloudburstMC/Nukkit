@@ -2,8 +2,7 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitOnly;
-import cn.nukkit.api.PowerNukkitDifference;
-import cn.nukkit.block.Block;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -243,7 +242,8 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         return false;
     }
 
-    @PowerNukkitDifference(since = "1.4.0.0-PN", info = "Won't damage items that has negative max durability (not damageable)")
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected Item damageArmor(Item armor, Entity damager) {
         if (armor.hasEnchantments()) {
             if (damager != null) {

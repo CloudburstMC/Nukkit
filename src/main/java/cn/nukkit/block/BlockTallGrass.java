@@ -2,7 +2,12 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
+import cn.nukkit.blockproperty.ArrayBlockProperty;
+import cn.nukkit.blockproperty.BlockProperties;
 import cn.nukkit.blockproperty.value.DoublePlantType;
+import cn.nukkit.blockproperty.value.TallGrassType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
@@ -22,6 +27,14 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockTallGrass extends BlockFlowable {
 
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final ArrayBlockProperty<TallGrassType> TALL_GRASS_TYPE = new ArrayBlockProperty<>("tall_grass_type", true, TallGrassType.class);
+
+    @PowerNukkitOnly
+    @Since("1.5.0.0-PN")
+    public static final BlockProperties PROPERTIES = new BlockProperties(TALL_GRASS_TYPE);
+
     public BlockTallGrass() {
         this(1);
     }
@@ -33,6 +46,14 @@ public class BlockTallGrass extends BlockFlowable {
     @Override
     public int getId() {
         return TALL_GRASS;
+    }
+
+    @Since("1.4.0.0-PN")
+    @PowerNukkitOnly
+    @Nonnull
+    @Override
+    public BlockProperties getProperties() {
+        return PROPERTIES;
     }
 
     @Override
@@ -98,11 +119,11 @@ public class BlockTallGrass extends BlockFlowable {
                 switch (this.getDamage()) {
                     case 0:
                     case 1:
-                        type = DoublePlantType.TALL_GRASS;
+                        type = DoublePlantType.GRASS;
                         break;
                     case 2:
                     case 3:
-                        type = DoublePlantType.LARGE_FERN;
+                        type = DoublePlantType.FERN;
                         break;
                     default:
                         type = null;

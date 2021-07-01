@@ -1,5 +1,7 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -45,5 +47,13 @@ public class EntityPolarBear extends EntityAnimal {
     @Override
     public Item[] getDrops() {
         return new Item[]{Item.get(Item.RAW_FISH), Item.get(Item.RAW_SALMON)};
+    }
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    @Override
+    public String getOriginalName() {
+        return "Polar Bear";
     }
 }

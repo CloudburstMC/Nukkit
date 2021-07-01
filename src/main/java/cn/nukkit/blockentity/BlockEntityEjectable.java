@@ -29,7 +29,9 @@ public abstract class BlockEntityEjectable  extends BlockEntitySpawnable impleme
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     protected abstract EjectableInventory createInventory();
-    
+
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected abstract String getBlockEntityName();
 
     @Override
@@ -52,6 +54,8 @@ public abstract class BlockEntityEjectable  extends BlockEntitySpawnable impleme
         return 9;
     }
 
+    @PowerNukkitOnly
+    @Since("1.4.0.0-PN")
     protected int getSlotIndex(int index) {
         ListTag<CompoundTag> list = this.namedTag.getList("Items", CompoundTag.class);
         for (int i = 0; i < list.size(); i++) {
