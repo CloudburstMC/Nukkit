@@ -460,9 +460,6 @@ public class Network {
         //TODO: STRUCTURE_TEMPLATE_DATA_REQUEST_PACKET
         //TODO: STRUCTURE_TEMPLATE_DATA_RESPONSE_PACKET
         //TODO: UPDATE_BLOCK_PROPERTIES_PACKET
-        //TODO: CLIENT_CACHE_BLOB_STATUS_PACKET
-        //TODO: CLIENT_CACHE_MISS_RESPONSE_PACKET
-        this.registerPacket(ProtocolInfo.EDUCATION_SETTINGS_PACKET, EducationSettingsPacket.class);
         
         
         
