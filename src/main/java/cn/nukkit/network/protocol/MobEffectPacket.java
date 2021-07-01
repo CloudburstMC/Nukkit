@@ -33,7 +33,7 @@ public class MobEffectPacket extends DataPacket {
 		this.eventId = this.getByte();
 		this.effectId = this.getVarInt();
 		this.amplifier = this.getVarInt();
-		this.particles = this.getBoolean();
+		this.particles = this.getBool();
 		this.duration = this.getVarInt();
     }
 
