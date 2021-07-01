@@ -18,12 +18,12 @@ public class SimpleEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.eventId = this.getLShort();
+    	this.eventId = this.getShort();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putLShort(this.eventId);
+        this.putShort(this.eventId);
     }
 }

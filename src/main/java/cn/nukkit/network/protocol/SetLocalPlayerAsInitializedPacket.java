@@ -6,21 +6,20 @@ import lombok.ToString;
 public class SetLocalPlayerAsInitializedPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET;
 
-    public long entityRuntimeId;
+    public long eid;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-        $this->entityRuntimeId = $this->getEntityRuntimeId();
+        eid = this.getUnsignedVarLong();
     }
 
     @Override
     public void encode() {
-    	this.restore()
-        $this->putEntityRuntimeId($this->entityRuntimeId);
+        this.putUnsignedVarLong(eid);
     }
 }

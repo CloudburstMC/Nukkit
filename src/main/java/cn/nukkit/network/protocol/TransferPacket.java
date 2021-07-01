@@ -6,7 +6,7 @@ import lombok.ToString;
 public class TransferPacket extends DataPacket {
 
     public String address;
-    public short port = 19132;
+    public int port = 19132;
 
     @Override
     public byte pid() {
@@ -16,7 +16,7 @@ public class TransferPacket extends DataPacket {
     @Override
     public void decode() {
         this.address = this.getString();
-        this.port = this.getLShort();
+        this.port = (short) this.getLShort();
     }
 
     @Override
