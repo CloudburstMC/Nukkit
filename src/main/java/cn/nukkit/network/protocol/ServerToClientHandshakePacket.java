@@ -10,16 +10,17 @@ public class ServerToClientHandshakePacket extends DataPacket {
         return ProtocolInfo.SERVER_TO_CLIENT_HANDSHAKE_PACKET;
     }
 
-    public String jwt;
+    public String publicKey;
+    public String serverToken;
+    public String privateKey;
 
     @Override
     public void decode() {
-    	this.jwt = this.getString();
+
     }
 
     @Override
     public void encode() {
-    	this.reset();
-    	this.putString(this.jwt);
+        //TODO
     }
 }
