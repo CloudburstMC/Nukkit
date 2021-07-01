@@ -7,8 +7,13 @@ import lombok.ToString;
 @ToString
 public class CommandOutputPacket extends DataPacket {
 
+    public static final byte TYPE_LAST = 1;
+    public static final byte TYPE_SILENT = 2;
+    public static final byte TYPE_ALL = 3;
+    public static final byte TYPE_DATA_SET = 4;
+
     public CommandOriginData commandOriginData;
-    public OutputType outputType;
+    public byte outputType;
     public int successCount;
     public CommandOutputMessage[] entries = new CommandOutputMessage[0];
     public String unknownString;
@@ -21,14 +26,14 @@ public class CommandOutputPacket extends DataPacket {
     @Override
     public void decode() {
         this.commandOriginData = this.getCommandOriginData();
-        this.outputType = OutputType.values()[this.getByte() - 1];
+        this.outputType = this.getByte();
         this.successCount = (int) this.getUnsignedVarInt();
         int count = (int) this.getUnsignedVarInt();
         this.entries = new CommandOutputMessage[count];
         for (int i = 0; i < count; i++) {
             this.entries[i] = this.getCommandOutputMessage();
         }
-        if (this.outputType == OutputType.DATA_SET) {
+        if (this.outputType == TYPE_DATA_SET) {
             this.unknownString = this.getString();
         }
     }
@@ -36,13 +41,13 @@ public class CommandOutputPacket extends DataPacket {
     @Override
     public void encode() {
         this.putCommandOriginData(this.commandOriginData);
-        this.putByte((byte) this.outputType.ordinal());
+        this.putByte(this.outputType);
         this.putUnsignedVarInt(this.successCount);
         this.putUnsignedVarInt(this.entries.length);
         for (CommandOutputMessage entry : this.entries) {
             this.putCommandOutputMessage(entry);
         }
-        if (this.outputType == OutputType.DATA_SET) {
+        if (this.outputType == TYPE_DATA_SET) {
             this.putString(this.unknownString);
         }
     }
@@ -66,13 +71,5 @@ public class CommandOutputPacket extends DataPacket {
         for (String parameter : commandOutputMessage.parameters) {
             this.putString(parameter);
         }
-    }
-
-    public enum OutputType {
-
-        LAST,
-        SILENT,
-        ALL,
-        DATA_SET
     }
 }

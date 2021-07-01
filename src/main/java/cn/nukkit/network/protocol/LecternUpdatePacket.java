@@ -30,6 +30,6 @@ public class LecternUpdatePacket extends DataPacket {
         this.putByte(this.page);
         this.putByte(this.totalPages);
         this.putBlockVector3(this.blockPosition);
-        this.putBoolean(this.dropBook);
+        this.putBool(this.dropBook);
     }
 }

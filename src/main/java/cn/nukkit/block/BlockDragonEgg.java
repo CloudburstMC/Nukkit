@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.event.block.BlockFromToEvent;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 
@@ -70,9 +69,11 @@ public class BlockDragonEgg extends BlockFallable {
                 int diffY = this.getFloorY() - to.getFloorY();
                 int diffZ = this.getFloorZ() - to.getFloorZ();
                 LevelEventPacket pk = new LevelEventPacket();
-                pk.event = LevelEventPacket.EVENT_PARTICLE_DRAGON_EGG_TELEPORT;
+                pk.evid = LevelEventPacket.EVENT_PARTICLE_DRAGON_EGG_TELEPORT;
                 pk.data = (((((Math.abs(diffX) << 16) | (Math.abs(diffY) << 8)) | Math.abs(diffZ)) | ((diffX < 0 ? 1 : 0) << 24)) | ((diffY < 0 ? 1 : 0) << 25)) | ((diffZ < 0 ? 1 : 0) << 26);
-                pk.position = new Vector3f((float) this.getFloorX(), (float) this.getFloorY(), (float) this.getFloorZ());
+                pk.x = this.getFloorX();
+                pk.y = this.getFloorY();
+                pk.z = this.getFloorZ();
                 this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
                 this.getLevel().setBlock(this, get(AIR), true);
                 this.getLevel().setBlock(to, this, true);

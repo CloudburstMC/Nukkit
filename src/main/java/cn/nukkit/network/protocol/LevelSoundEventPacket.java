@@ -157,7 +157,7 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_IMITATE_ELDER_GUARDIAN = 148;
     public static final int SOUND_IMITATE_ENDER_DRAGON = 149;
     public static final int SOUND_IMITATE_ENDERMAN = 150;
-    //TODO: 151
+
     public static final int SOUND_IMITATE_EVOCATION_ILLAGER = 152;
     public static final int SOUND_IMITATE_GHAST = 153;
     public static final int SOUND_IMITATE_HUSK = 154;
@@ -201,7 +201,7 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_LT_REACTION_BLEACH = 192;
     public static final int SOUND_LT_REACTION_EPASTE = 193;
     public static final int SOUND_LT_REACTION_EPASTE2 = 194;
-    //TODO: 195-198
+
     public static final int SOUND_LT_REACTION_FERTILIZER = 199;
     public static final int SOUND_LT_REACTION_FIREBALL = 200;
     public static final int SOUND_LT_REACTION_MGSALT = 201;
@@ -225,7 +225,7 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_HURT_BABY = 219;
     public static final int SOUND_DEATH_BABY = 220;
     public static final int SOUND_STEP_BABY = 221;
-    //TODO: 222
+
     public static final int SOUND_BORN = 223;
     public static final int SOUND_BLOCK_TURTLE_EGG_BREAK = 224;
     public static final int SOUND_BLOCK_TURTLE_EGG_CRACK = 225;
@@ -340,7 +340,7 @@ public class LevelSoundEventPacket extends DataPacket {
         return ProtocolInfo.LEVEL_SOUND_EVENT_PACKET;
     }
 
-    public int sound;
+    public int soundId;
     public Vextor3f position;
     public int extraData = -1;
     public String entityIdentifier;

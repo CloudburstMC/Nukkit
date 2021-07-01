@@ -26,10 +26,7 @@ public class ContainerOpenPacket extends DataPacket {
     public void decode() {
         this.windowId = this.getByte();
         this.type = this.getByte();
-        BlockVector3 blockVector3 = this.getBlockVector3();
-        this.x = blockVector3.getX();
-        this.y = blockVector3.getY();
-        this.z = blockVector3.getZ();
+        this.getBlockVector3(this.x, this.y, this.z);
         this.entityUniqueId = this.getEntityUniqueId();
     }
 

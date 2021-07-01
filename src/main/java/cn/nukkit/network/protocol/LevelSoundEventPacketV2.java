@@ -6,7 +6,7 @@ import lombok.ToString;
 @ToString
 public class LevelSoundEventPacketV2 extends LevelSoundEventPacket {
 
-    public byte sound;
+    public byte soundId;
     public Vextor3f position;
     public int extraData = -1;
     public String entityIdentifier;

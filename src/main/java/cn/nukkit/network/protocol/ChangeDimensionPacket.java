@@ -12,7 +12,7 @@ public class ChangeDimensionPacket extends DataPacket {
 
     public int dimensionId;
     public Vector3f position;
-    public boolean respawn = false;
+    public boolean respawn;
 
     @Override
     public byte pid() {

@@ -8,7 +8,16 @@ import lombok.ToString;
 @ToString
 public class PlayStatusPacket extends DataPacket {
 
-    public Status status;
+    public static final int LOGIN_SUCCESS = 0;
+    public static final int LOGIN_FAILED_CLIENT = 1;
+    public static final int LOGIN_FAILED_SERVER = 2;
+    public static final int PLAYER_SPAWN = 3;
+    public static final int LOGIN_FAILED_INVALID_TENANT = 4;
+    public static final int LOGIN_FAILED_VANILLA_EDU = 5;
+    public static final int LOGIN_FAILED_EDU_VANILLA = 6;
+    public static final int LOGIN_FAILED_SERVER_FULL = 7;
+
+    public int status;
 
     @Override
     public byte pid() {
@@ -17,23 +26,12 @@ public class PlayStatusPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.status = Status.values()[this.getInt()];
+        this.status = this.getInt();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putInt(this.status.ordinal());
-    }
-
-    public static enum Status {
-
-        LOGIN_SUCCESS,
-        LOGIN_FAILED_CLIENT,
-        LOGIN_FAILED_SERVER,
-        PLAYER_SPAWN,
-        LOGIN_FAILED_INVALID_TENANT,
-        LOGIN_FAILED_VANILLA_EDUCATION,
-        LOGIN_FAILED_SERVER_FULL
+        this.putInt(this.status);
     }
 }

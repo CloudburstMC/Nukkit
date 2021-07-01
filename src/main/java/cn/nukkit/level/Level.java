@@ -467,7 +467,7 @@ public class Level implements ChunkManager, Metadatable {
         Preconditions.checkArgument(pitch >= 0, "Sound pitch must be higher than 0");
 
         PlaySoundPacket packet = new PlaySoundPacket();
-        packet.soundName = sound.getSound();
+        packet.name = sound.getSound();
         packet.volume = volume;
         packet.pitch = pitch;
         packet.x = pos.getFloorX();
@@ -487,8 +487,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addLevelEvent(Vector3 pos, int event, int data) {
         LevelEventPacket pk = new LevelEventPacket();
-        pk.event = event;
-        pk.position = new Vector3f((float) pos.x, (float) pos.y, (float) pos.z);
+        pk.evid = event;
+        pk.x = (float) pos.x;
+        pk.y = (float) pos.y;
+        pk.z = (float) pos.z;
         pk.data = data;
 
         addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
@@ -523,7 +525,9 @@ public class Level implements ChunkManager, Metadatable {
         pk.sound = type;
         pk.extraData = data;
         pk.entityIdentifier = identifier;
-        pk.position = pos.asVector3f();
+        pk.x = (float) pos.x;
+        pk.y = (float) pos.y;
+        pk.z = (float) pos.z;
         pk.isGlobal = isGlobal;
         pk.isBabyMob = isBaby;
 
@@ -1004,8 +1008,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public void sendBlockExtraData(int x, int y, int z, int id, int data, Player[] players) {
         LevelEventPacket pk = new LevelEventPacket();
-        pk.event = LevelEventPacket.EVENT_SET_DATA;
-        pk.position = new Vector3f(x + 0.5f, y + 0.5f, z + 0.5f);
+        pk.evid = LevelEventPacket.EVENT_SET_DATA;
+        pk.x = x + 0.5f;
+        pk.y = y + 0.5f;
+        pk.z = z + 0.5f;
         pk.data = (data << 8) | id;
 
         Server.broadcastPacket(players, pk);
@@ -3260,8 +3266,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addPlayerMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MovePlayerPacket pk = new MovePlayerPacket();
-        pk.entityRuntimeId = entity.getId();
-        pk.position = new Vector3f((float) x, (float) y, (float) z);
+        pk.eid = entity.getId();
+        pk.x = (float) x;
+        pk.y = (float) y;
+        pk.z = (float) z;
         pk.yaw = (float) yaw;
         pk.headYaw = (float) headYaw;
         pk.pitch = (float) pitch;
@@ -3271,12 +3279,14 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addEntityMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
-        pk.entityRuntimeId = entity.getId();
-        pk.flags = entity.onGround ? MoveEntityAbsolutePacket.FLAG_GROUND : 0;
-        pk.position = new Vector3f((float) x, (float) y, (float) z);
+        pk.eid = entity.getId();
+        pk.x = (float) x;
+        pk.y = (float) y;
+        pk.z = (float) z;
         pk.yaw = (float) yaw;
         pk.headYaw = (float) headYaw;
         pk.pitch = (float) pitch;
+        pk.onGround = entity.onGround;
 
         Server.broadcastPacket(entity.getViewers().values(), pk);
     }
@@ -3299,12 +3309,12 @@ public class Level implements ChunkManager, Metadatable {
         // These numbers are from Minecraft
 
         if (raining) {
-            pk.event = LevelEventPacket.EVENT_START_RAIN;
+            pk.evid = LevelEventPacket.EVENT_START_RAIN;
             int time = ThreadLocalRandom.current().nextInt(12000) + 12000;
             pk.data = time;
             setRainTime(time);
         } else {
-            pk.event = LevelEventPacket.EVENT_STOP_RAIN;
+            pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
             setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
@@ -3342,12 +3352,12 @@ public class Level implements ChunkManager, Metadatable {
         LevelEventPacket pk = new LevelEventPacket();
         // These numbers are from Minecraft
         if (thundering) {
-            pk.event = LevelEventPacket.EVENT_START_THUNDER;
+            pk.evid = LevelEventPacket.EVENT_START_THUNDER;
             int time = ThreadLocalRandom.current().nextInt(12000) + 3600;
             pk.data = time;
             setThunderTime(time);
         } else {
-            pk.event = LevelEventPacket.EVENT_STOP_THUNDER;
+            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
             setThunderTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
@@ -3372,19 +3382,19 @@ public class Level implements ChunkManager, Metadatable {
         LevelEventPacket pk = new LevelEventPacket();
 
         if (this.isRaining()) {
-            pk.event = LevelEventPacket.EVENT_START_RAIN;
+            pk.evid = LevelEventPacket.EVENT_START_RAIN;
             pk.data = this.rainTime;
         } else {
-            pk.event = LevelEventPacket.EVENT_STOP_RAIN;
+            pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
         }
 
         Server.broadcastPacket(players, pk);
 
         if (this.isThundering()) {
-            pk.event = LevelEventPacket.EVENT_START_THUNDER;
+            pk.evid = LevelEventPacket.EVENT_START_THUNDER;
             pk.data = this.thunderTime;
         } else {
-            pk.event = LevelEventPacket.EVENT_STOP_THUNDER;
+            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
         }
 
         Server.broadcastPacket(players, pk);

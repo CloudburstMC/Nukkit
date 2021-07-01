@@ -67,10 +67,10 @@ public class PlayerOffhandInventory extends BaseInventory {
 
     private MobEquipmentPacket createMobEquipmentPacket(Item item) {
         MobEquipmentPacket pk = new MobEquipmentPacket();
-        pk.entityRuntimeId = this.getHolder().getId();
+        pk.eid = this.getHolder().getId();
         pk.item = item;
-        pk.inventorySlot = (byte) 1;
-        pk.windowId = (byte) ContainerIds.OFFHAND;
+        pk.inventorySlot = 1;
+        pk.windowId = ContainerIds.OFFHAND;
         pk.tryEncode();
         return pk;
     }

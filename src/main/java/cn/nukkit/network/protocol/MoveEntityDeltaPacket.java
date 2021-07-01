@@ -8,8 +8,8 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public static final int FLAG_HAS_X = 0b01;
     public static final int FLAG_HAS_Y = 0b10;
     public static final int FLAG_HAS_Z = 0b100;
-    public static final int FLAG_HAS_YAW = 0b1000;
-    public static final int FLAG_HAS_HEADYAW = 0b10000;
+    public static final int FLAG_HAS_YAW= 0b1000;
+    public static final int FLAG_HAS_HEADYAW= 0b10000;
     public static final int FLAG_HAS_PITCH = 0b100000;
     public static final int FLAG_GROUND = 0b1000000;
     public static final int FLAG_TELEPORT = 0b10000000;
@@ -17,12 +17,12 @@ public class MoveEntityDeltaPacket extends DataPacket {
 
     public long entityRuntimeId;
     public int flags;
-    public float x;
-    public float y;
-    public float z;
-    public double yaw;
-    public double headYaw;
-    public double pitch;
+    public float x = 0f;
+    public float y = 0f;
+    public float z = 0f;
+    public double yaw = 0d;
+    public double headYaw = 0d;
+    public double pitch = 0d;
 
     @Override
     public byte pid() {
@@ -33,9 +33,9 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
         this.flags = this.getLShort();
-        this.x = this.getCoordinate(FLAG_HAS_X);
-        this.y = this.getCoordinate(FLAG_HAS_Y);
-        this.z = this.getCoordinate(FLAG_HAS_Z);
+        this.xPos = this.getCoordinate(FLAG_HAS_X);
+        this.yPos = this.getCoordinate(FLAG_HAS_Y);
+        this.zPos = this.getCoordinate(FLAG_HAS_Z);
         this.yaw = this.getRotation(FLAG_HAS_YAW);
         this.headYaw = this.getRotation(FLAG_HAS_HEADYAW);
         this.pitch = this.getRotation(FLAG_HAS_PITCH);
@@ -75,7 +75,7 @@ public class MoveEntityDeltaPacket extends DataPacket {
 
     private void putRotation(int flag, double value) {
         if ((this.flags & flag) != 0) {
-            this.putByte((byte)(value / (360d / 256d)));
+            this.putByte((byte) (value / (360d / 256d)));
         }
     }
 }

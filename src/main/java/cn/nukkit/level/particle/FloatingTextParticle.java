@@ -7,7 +7,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.SerializedImage;
 import com.google.common.base.Strings;
@@ -122,7 +121,7 @@ public class FloatingTextParticle extends Particle {
             this.entityId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
         } else {
             RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.entityUniqueId = this.entityId;
+            pk.eid = this.entityId;
 
             packets.add(pk);
         }
@@ -137,14 +136,19 @@ public class FloatingTextParticle extends Particle {
 
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = uuid;
+            pk.username = "";
             pk.entityUniqueId = this.entityId;
             pk.entityRuntimeId = this.entityId;
-            pk.position = new Vector3f((float) this.x, (float) (this.y - 0.75), (float) this.z);
-            pk.motion = new Vector3f();
-            pk.pitch = 0;
+            pk.x = (float) this.x;
+            pk.y = (float) (this.y - 0.75);
+            pk.z = (float) this.z;
+            pk.speedX = 0;
+            pk.speedY = 0;
+            pk.speedZ = 0;
             pk.yaw = 0;
+            pk.pitch = 0;
+            pk.metadata = this.metadata;
             pk.item = Item.get(Item.AIR);
-            pk.entityMetadata = this.metadata;
             packets.add(pk);
 
             PlayerListPacket playerRemove = new PlayerListPacket();

@@ -15,7 +15,7 @@ public class MoveEntityAbsolutePacket extends DataPacket {
     public static final byte FLAG_FORCE_MOVE_LOCAL_ENTITY = 0x04;
 
     public long entityRuntimeId;
-    public byte flags;
+    public byte flags = 0;
     public Vector3f position;
     public double yaw;
     public double headYaw;

@@ -10,7 +10,7 @@ import lombok.ToString;
 public class ContainerClosePacket extends DataPacket {
 
     public byte windowId;
-    public boolean wasServerInitiated = true;
+    public boolean wasServerInitiated = false;
 
     @Override
     public byte pid() {

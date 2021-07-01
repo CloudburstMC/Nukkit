@@ -220,8 +220,8 @@ public class BlockNoteblock extends BlockSolid {
         pk.x = this.getFloorX();
         pk.y = this.getFloorY();
         pk.z = this.getFloorZ();
-        pk.eventType = instrument.ordinal();
-        pk.eventData = this.getStrength();
+        pk.case1 = instrument.ordinal();
+        pk.case2 = this.getStrength();
         this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
     }
 

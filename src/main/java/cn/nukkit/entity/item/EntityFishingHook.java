@@ -156,18 +156,18 @@ public class EntityFishingHook extends EntityProjectile {
 
     public void fishBites() {
         EntityEventPacket pk = new EntityEventPacket();
-        pk.entityRuntimeId = this.getId();
-        pk.event = EntityEventPacket.EVENT_FISH_HOOK_HOOK;
+        pk.eid = this.getId();
+        pk.event = EntityEventPacket.FISH_HOOK_HOOK;
         Server.broadcastPacket(this.getViewers().values(), pk);
 
         EntityEventPacket bubblePk = new EntityEventPacket();
-        bubblePk.entityRuntimeId = this.getId();
-        bubblePk.event = EntityEventPacket.EVENT_FISH_HOOK_BUBBLE;
+        bubblePk.eid = this.getId();
+        bubblePk.event = EntityEventPacket.FISH_HOOK_BUBBLE;
         Server.broadcastPacket(this.getViewers().values(), bubblePk);
 
         EntityEventPacket teasePk = new EntityEventPacket();
-        teasePk.entityRuntimeId = this.getId();
-        teasePk.event = EntityEventPacket.EVENT_FISH_HOOK_TEASE;
+        teasePk.eid = this.getId();
+        teasePk.event = EntityEventPacket.FISH_HOOK_TEASE;
         Server.broadcastPacket(this.getViewers().values(), teasePk);
 
         Random random = new Random();

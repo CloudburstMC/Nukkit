@@ -24,7 +24,7 @@ public class PlayerSkinPacket extends DataPacket {
         this.skin = this.getSkin();
         this.newSkinName = this.getString();
         this.oldSkinName = this.getString();
-        if (!this.feof()) { //Facepalm
+        if (!this.feof()) { // -facepalm-
             this.skin.setTrusted(this.getBoolean());
         }
     }

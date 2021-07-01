@@ -8,7 +8,6 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -162,9 +161,9 @@ public class EntityItem extends Entity {
                         entity.close();
                         this.getItem().setCount(newAmount);
                         EntityEventPacket packet = new EntityEventPacket();
-                        packet.entityRuntimeId = getId();
+                        packet.eid = getId();
                         packet.data = newAmount;
-                        packet.event = EntityEventPacket.EVENT_MERGE_ITEMS;
+                        packet.event = EntityEventPacket.MERGE_ITEMS;
                         Server.broadcastPacket(this.getViewers().values(), packet);
                     }
                 }
@@ -300,10 +299,14 @@ public class EntityItem extends Entity {
         AddItemEntityPacket addEntity = new AddItemEntityPacket();
         addEntity.entityUniqueId = this.getId();
         addEntity.entityRuntimeId = this.getId();
+        addEntity.x = (float) this.x;
+        addEntity.y = (float) this.y;
+        addEntity.z = (float) this.z;
+        addEntity.speedX = (float) this.motionX;
+        addEntity.speedY = (float) this.motionY;
+        addEntity.speedZ = (float) this.motionZ;
+        addEntity.metadata = this.dataProperties;
         addEntity.item = this.getItem();
-        addEntity.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
-        addEntity.motion = this.getMotion().asVector3f();
-        addEntity.entityMetadata = this.dataProperties;
         return addEntity;
     }
 

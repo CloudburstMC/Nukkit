@@ -9,7 +9,7 @@ public class SetScoreboardIdentityPacket extends DataPacket {
     public static final byte TYPE_CLEAR_IDENTITY = 1;
 
     public byte type;
-    public Entry[] entries = new Entry[0];
+    public SetScoreboardIdentityEntry[] entries = new SetScoreboardIdentityEntry[0]
 
     @Override
     public byte pid() {
@@ -20,14 +20,14 @@ public class SetScoreboardIdentityPacket extends DataPacket {
     public void decode() {
         this.type = this.getByte();
         int count = (int) this.getUnsignedVarInt();
-        this.entries = new Entry[count];
+        this.entries = new SetScoreboardIdentityEntry[count];
         for (int i = 0; i < count; i++) {
-            Entry entry = new Entry();
-            entry.scoreboardId = this.getVarLong();
+            SetScoreboardIdentityEntry setScoreboardIdentityEntry = new SetScoreboardIdentityEntry();
+            setScoreboardIdentityEntry.scoreboardId = this.getVarLong();
             if (this.type == TYPE_REGISTER_IDENTITY) {
-                entry.entityUniqueId = this.getEntityUniqueId();
+                setScoreboardIdentityEntry.entityUniqueId = this.getEntityUniqueId();
             }
-            this.entries[i] = entry;
+            this.entries[i] = setScoreboardIdentityEntry;
         }
     }
 
@@ -36,15 +36,15 @@ public class SetScoreboardIdentityPacket extends DataPacket {
         this.reset();
         this.putByte(this.type);
         this.putUnsignedVarInt(this.entries.length);
-        for (Entry entry : this.entries) {
-            this.putVarLong(entry.scoreboardId);
+        for (SetScoreboardIdentityEntry setScoreboardIdentityEntry : this.entries) {
+            this.putVarLong(setScoreboardIdentityEntry.scoreboardId);
             if (this.type == TYPE_REGISTER_IDENTITY) {
-                this.putEntityUniqueId(entry.entityUniqueId);
+                this.putEntityUniqueId(setScoreboardIdentityEntry.entityUniqueId);
             }
         }
     }
 
-    public static class Entry {
+    public static class SetScoreboardIdentityEntry {
 
         public long scoreboardId;
         public long entityUniqueId;

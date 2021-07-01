@@ -6,7 +6,7 @@ import lombok.ToString;
 public class ModalFormResponsePacket extends DataPacket {
 
     public int formId;
-    public String data;
+    public String formData;
 
     @Override
     public byte pid() {
@@ -16,13 +16,13 @@ public class ModalFormResponsePacket extends DataPacket {
     @Override
     public void decode() {
         this.formId = (int) this.getUnsignedVarInt();
-        this.data = this.getString();
+        this.formData = this.getString();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putUnsignedVarInt(this.formId);
-        this.putString(this.data);
+        this.putString(this.formData);
     }
 }

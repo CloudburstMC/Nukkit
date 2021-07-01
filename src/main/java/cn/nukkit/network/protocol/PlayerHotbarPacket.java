@@ -7,7 +7,7 @@ import lombok.ToString;
 public class PlayerHotbarPacket extends DataPacket {
 
     public int selectedHotbarSlot;
-    public byte windowId = (byte) ContainerIds.INVENTORY;
+    public byte windowId = ContainerIds.INVENTORY;
     public boolean selectHotbarSlot = true;
 
     @Override

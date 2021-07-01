@@ -2,13 +2,14 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
+import java.util.List;
 import java.util.UUID;
 
 @ToString
 public class EmoteListPacket extends DataPacket {
 
-    public long entityRuntimeId;
-    public UUID[] entries = new UUID[0];
+    public long playerRuntimeId;
+    public final List<UUID> emoteIds = new ArrayList<>();
 
     @Override
     public byte pid() {
@@ -17,20 +18,19 @@ public class EmoteListPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.entityRuntimeId = this.getEntityRuntimeId();
-        int count = (int) this.getUnsignedVarInt();
-        for (int i = 0; i < count; i++) {
-            this.entries[i] = this.getUUID();
+        this.playerRuntimeId = this.getEntityRuntimeId();
+        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
+            this.emoteIds.add(this.getUUID());
         }
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.entityRuntimeId);
-        this.putUnsignedVarInt(this.entries.length);
-        for (UUID entry : this.entries) {
-            this.putUUID(entry);
+        this.putEntityRuntimeId(this.playerEntityRuntimeId);
+        this.putUnsignedVarInt(this.emoteIds.size());
+        for (UUID emoteId : this.emoteIds) {
+            this.putUUID(emoteId);
         }
     }
 }

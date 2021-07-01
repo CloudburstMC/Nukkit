@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.BlockVector3;
 import lombok.ToString;
 
 @ToString
@@ -30,10 +29,7 @@ public class CommandBlockUpdatePacket extends DataPacket {
     public void decode() {
         this.isBlock = this.getBoolean();
         if (this.isBlock) {
-            BlockVector3 blockVector3 = this.getBlockVector3();
-            this.x = blockVector3.getX();
-            this.y = blockVector3.getY();
-            this.z = blockVector3.getZ();
+            this.getBlockVector3(this.x, this.y, this.z);
             this.commandBlockMode = (int) this.getUnsignedVarInt();
             this.isRedstoneMode = this.getBoolean();
             this.isConditional = this.getBoolean();

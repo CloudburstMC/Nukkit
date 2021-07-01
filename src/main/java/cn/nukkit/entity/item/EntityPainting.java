@@ -6,7 +6,6 @@ import cn.nukkit.entity.EntityHanging;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.ItemPainting;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -51,7 +50,9 @@ public class EntityPainting extends EntityHanging {
         AddPaintingPacket addPainting = new AddPaintingPacket();
         addPainting.entityUniqueId = this.getId();
         addPainting.entityRuntimeId = this.getId();
-        addPainting.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
+        addPainting.x = (float) this.x;
+        addPainting.y = (float) this.y;
+        addPainting.z = (float) this.z;
         addPainting.direction = this.getDirection().getHorizontalIndex();
         addPainting.title = this.namedTag.getString("Motive");
         return addPainting;

@@ -22,8 +22,8 @@ public class MovePlayerPacket extends DataPacket {
     public byte mode = MODE_NORMAL;
     public boolean onGround;
     public long ridingRuntimeId;
-    public int teleportCause;
-    public int teleportItem;
+    public int teleportCause = 0;
+    public int teleportItem = 0;
     public long tick;
 
     @Override
