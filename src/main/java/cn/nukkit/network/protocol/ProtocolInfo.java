@@ -167,8 +167,8 @@ public interface ProtocolInfo {
     byte CODE_BUILDER_PACKET = (byte) 0x96;
     byte UPDATE_PLAYER_GAME_TYPE_PACKET = (byte) 0x97;
     byte EMOTE_LIST_PACKET = (byte) 0x98;
-    byte POSITION_TRACKING_D_B_SERVER_BROADCAST_PACKET = (byte) 0x99;
-    byte POSITION_TRACKING_D_B_CLIENT_REQUEST_PACKET = (byte) 0x9a;
+    byte POS_TRACKING_SERVER_BROADCAST_PACKET = (byte) 0x99;
+    byte POS_TRACKING_CLIENT_REQUEST_PACKET = (byte) 0x9a;
     byte DEBUG_INFO_PACKET = (byte) 0x9b;
     byte PACKET_VIOLATION_WARNING_PACKET = (byte) 0x9c;
     byte MOTION_PREDICTION_HINTS_PACKET = (byte) 0x9d;
