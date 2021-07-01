@@ -14,6 +14,8 @@ import java.util.function.ObjIntConsumer;
 @ToString
 public class AvailableCommandsPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
+
     private static final ObjIntConsumer<BinaryStream> WRITE_BYTE = (s, v) -> s.putByte((byte) v);
     private static final ObjIntConsumer<BinaryStream> WRITE_SHORT = BinaryStream::putLShort;
     private static final ObjIntConsumer<BinaryStream> WRITE_INT = BinaryStream::putLInt;
@@ -44,12 +46,12 @@ public class AvailableCommandsPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-    	//TODO
+
     }
 
     @Override

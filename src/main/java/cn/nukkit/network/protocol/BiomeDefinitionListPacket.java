@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 @ToString(exclude = "tag")
 public class BiomeDefinitionListPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.BIOME_DEFINITION_LIST_PACKET;
 
     private static final byte[] TAG;
 
@@ -28,12 +29,11 @@ public class BiomeDefinitionListPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.BIOME_DEFINITION_LIST_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-        this.tag = this.get();
     }
 
     @Override

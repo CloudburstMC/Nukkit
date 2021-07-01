@@ -9,12 +9,14 @@ import lombok.ToString;
 @ToString
 public class AdventureSettingsPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
+
     public static final int PERMISSION_NORMAL = 0;
     public static final int PERMISSION_OPERATOR = 1;
     public static final int PERMISSION_HOST = 2;
     public static final int PERMISSION_AUTOMATION = 3;
     public static final int PERMISSION_ADMIN = 4;
-
+    //TODO: check level 3
     /**
      * This constant is used to identify flags that should be set on the second field. In a sensible world, these
      * flags would all be set on the same packet field, but as of MCPE 1.2, the new abilities flags have for some
@@ -46,22 +48,17 @@ public class AdventureSettingsPacket extends DataPacket {
 
     public long playerPermission = Player.PERMISSION_MEMBER;
 
-    public long customFlags;
+    public long customFlags; //...
 
     public long entityUniqueId; //This is a little-endian long, NOT a var-long. (WTF Mojang)
 
-    @Override
-    public byte pid() {
-        return ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
-    }
-
     public void decode() {
-        this.flags = this.getUnsignedVarInt();
-        this.commandPermission = this.getUnsignedVarInt();
-        this.flags2 = this.getUnsignedVarInt();
-        this.playerPermission = this.getUnsignedVarInt();
-        this.customFlags = this.etUnsignedVarInt();
-        this.entityUniqueId = this.getLLong();
+        this.flags = getUnsignedVarInt();
+        this.commandPermission = getUnsignedVarInt();
+        this.flags2 = getUnsignedVarInt();
+        this.playerPermission = getUnsignedVarInt();
+        this.customFlags = getUnsignedVarInt();
+        this.entityUniqueId = getLLong();
     }
 
     public void encode() {
@@ -97,5 +94,10 @@ public class AdventureSettingsPacket extends DataPacket {
                 this.flags &= ~flag;
             }
         }
+    }
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
     }
 }

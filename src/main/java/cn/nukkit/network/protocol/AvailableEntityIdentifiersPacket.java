@@ -8,6 +8,7 @@ import java.io.InputStream;
 
 @ToString(exclude = {"tag"})
 public class AvailableEntityIdentifiersPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_ENTITY_IDENTIFIERS_PACKET;
 
     private static final byte[] TAG;
 
@@ -28,7 +29,7 @@ public class AvailableEntityIdentifiersPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.AVAILABLE_ENTITY_IDENTIFIERS_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
