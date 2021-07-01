@@ -459,7 +459,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.MAP_CREATE_LOCKED_COPY_PACKET, MapCreateLockedCopyPacket.class);
         //TODO: STRUCTURE_TEMPLATE_DATA_REQUEST_PACKET
         //TODO: STRUCTURE_TEMPLATE_DATA_RESPONSE_PACKET
-        //TODO: UPDATE_BLOCK_PROPERTIES_PACKET
         
         
         
