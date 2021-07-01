@@ -6,8 +6,8 @@ import lombok.ToString;
 @ToString
 public class ResourcePacksInfoPacket extends DataPacket {
 
-    public boolean mustAccept = false;
-    public boolean hasScripts = false;
+    public boolean mustAccept;
+    public boolean hasScripts;
     public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
     public ResourcePack[] resourcePackEntries = new ResourcePack[0];
 
