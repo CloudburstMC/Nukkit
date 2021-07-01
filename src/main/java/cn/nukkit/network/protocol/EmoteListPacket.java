@@ -19,18 +19,18 @@ public class EmoteListPacket extends DataPacket {
     @Override
     public void decode() {
         this.playerRuntimeId = this.getEntityRuntimeId();
-        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
-            this.emoteIds.add(this.getUUID());
-        }
+		for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
+			this.emoteIds.add(this.getUUID());
+		}
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.playerEntityRuntimeId);
-        this.putUnsignedVarInt(this.emoteIds.size());
-        for (UUID emoteId : this.emoteIds) {
-            this.putUUID(emoteId);
-        }
+		this.putUnsignedVarInt(this.emoteIds.size());
+		for (UUID emoteId : this.emoteIds) {
+			this.putUUID(emoteId);
+		}
     }
 }

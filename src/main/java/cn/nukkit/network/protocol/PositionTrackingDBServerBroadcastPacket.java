@@ -23,7 +23,7 @@ public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
     public void decode() {
         this.action = this.getByte();
         this.trackingId = this.getVarInt();
-        this.namedTag = this.getCompoundTag();
+        //TODO: this.namedTag
     }
 
     @Override
@@ -31,6 +31,6 @@ public class PositionTrackingDBServerBroadcastPacket extends DataPacket {
         this.reset();
         this.putByte(this.action);
         this.putVarInt(this.trackingId);
-        this.putCompoundTag(this.namedTag);
+        //TODO: this.namedTag
     }
 }

@@ -12,6 +12,8 @@ import java.util.UUID;
 @ToString
 public class CommandRequestPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.COMMAND_REQUEST_PACKET;
+
     public static final int TYPE_PLAYER = 0;
     public static final int TYPE_COMMAND_BLOCK = 1;
     public static final int TYPE_MINECART_COMMAND_BLOCK = 2;
@@ -25,26 +27,29 @@ public class CommandRequestPacket extends DataPacket {
     public static final int TYPE_INTERNAL = 10;
 
     public String command;
-    public CommandOriginData commandOriginData;
-    public boolean isInternal;
+    public CommandOriginData data;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.COMMAND_REQUEST_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
         this.command = this.getString();
-        this.commandOriginData = this.getCommandOriginData();
-        this.isInternal = this.getBoolean();
+
+        CommandOriginData.Origin type = CommandOriginData.Origin.values()[this.getVarInt()];
+        UUID uuid = this.getUUID();
+        String requestId = this.getString();
+        Long varLong = null;
+        if (type == CommandOriginData.Origin.DEV_CONSOLE || type == CommandOriginData.Origin.TEST) {
+            varLong = this.getVarLong();
+        }
+        this.data = new CommandOriginData(type, uuid, requestId, varLong);
     }
 
     @Override
     public void encode() {
-        this.reset();
-        this.putString(this.command);
-        this.putCommandOriginData(this.commandOriginData);
-        this.putBoolean(this.isInternal);
     }
+
 }

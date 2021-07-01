@@ -18,8 +18,8 @@ public class HurtArmorPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.cause = this.getVarInt();
-        this.damage = this.getVarInt();
+    	this.cause = this.getVarInt();
+		this.damage = this.getVarInt();
     }
 
     @Override

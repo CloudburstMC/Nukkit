@@ -1,8 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import lombok.ToString;
-
-@ToString
 public class OnScreenTextureAnimationPacket extends DataPacket {
 
     public int effectId;

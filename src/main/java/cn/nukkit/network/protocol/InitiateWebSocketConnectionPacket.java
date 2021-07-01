@@ -5,7 +5,7 @@ import lombok.ToString;
 @ToString
 public class InitiateWebSocketConnectionPacket extends DataPacket {
 
-    public String serverUri;
+	public String serverUri;
 
     @Override
     public byte pid() {
@@ -14,7 +14,7 @@ public class InitiateWebSocketConnectionPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.serverUri = this.getString();
+    	this.serverUri = this.getString();
     }
 
     @Override

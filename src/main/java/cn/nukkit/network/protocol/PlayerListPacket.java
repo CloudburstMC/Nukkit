@@ -15,7 +15,7 @@ public class PlayerListPacket extends DataPacket {
     public static final byte TYPE_REMOVE = 1;
 
     public byte type;
-    public PlayerListEntry[] entries = new PlayerListEntry[0]
+    public List<PlayerListEntry> entries = new ArrayList<>();
 
     @Override
     public byte pid() {
@@ -25,9 +25,7 @@ public class PlayerListPacket extends DataPacket {
     @Override
     public void decode() {
         this.type = this.getByte();
-        int count = (int) this.getUnsignedVarInt();
-        this.entries = new PlayerListEntry[count];
-        for (int i = 0; i < count; i++) {
+        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
             PlayerListEntry playerListEntry = new PlayerListEntry();
             playerListEntry.uuid = this.getUUID();
             if (this.type == TYPE_ADD) {
@@ -40,7 +38,7 @@ public class PlayerListPacket extends DataPacket {
                 playerListEntry.isTeacher = this.getBoolean();
                 playerListEntry.isHost = this.getBoolean();
             }
-            this.entries[i] = playerListEntry;
+            this.entries.add(playerListEntry);
         }
         if (this.type == TYPE_ADD) {
             for (PlayerListEntry playerListEntry : this.entries) {
@@ -53,7 +51,7 @@ public class PlayerListPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte(this.type);
-        this.putUnsignedVarInt(this.entries.length);
+        this.putUnsignedVarInt(this.entries.size());
         for (PlayerListEntry playerListEntry : this.entries) {
             this.putUUID(playerListEntry.uuid);
             if (this.type == TYPE_ADD) {

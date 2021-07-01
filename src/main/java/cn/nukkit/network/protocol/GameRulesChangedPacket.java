@@ -19,7 +19,7 @@ public class GameRulesChangedPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.gameRules = this.getGameRules();
+    	this.gameRules = this.getGameRules();
     }
 
     @Override

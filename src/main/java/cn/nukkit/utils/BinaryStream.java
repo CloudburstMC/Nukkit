@@ -18,7 +18,6 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.LittleEndianByteBufInputStream;
 import cn.nukkit.network.LittleEndianByteBufOutputStream;
-import cn.nukkit.network.protocol.types.CommandOriginData;
 import cn.nukkit.network.protocol.types.EntityLink;
 import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 import io.netty.buffer.AbstractByteBufAllocator;
@@ -854,26 +853,6 @@ public class BinaryStream {
             throw new RuntimeException(e);
         }
     }
-
-    public CommandOriginData getCommandOriginData() {
-		CommandOriginData commandOriginData = new CommandOriginData();
-		commandOriginData.type = (int) this.getUnsignedVarInt();
-		commandOriginData.uuid = this.getUUID();
-		commandOriginData.requestId = this.getString();
-		if (commandOriginData.type == CommandOriginData.ORIGIN_DEV_CONSOLE || commandOriginData.type == CommandOriginData.ORIGIN_TEST) {
-			commandOriginData.playerUniqueId = this.getEntityUniqueId();
-		}
-		return commandOriginData;
-	}
-
-    public void putCommandOriginData(CommandOriginData commandOriginData) {
-		this.putUnsignedVarInt(commandOriginData.type);
-		this.putUUID(commandOriginData.uuid);
-		this.putString(commandOriginData.requestId);
-		if (commandOriginData.type == CommandOriginData.ORIGIN_DEV_CONSOLE || commandOriginData.type == CommandOriginData.ORIGIN_TEST) {
-			this.putEntityUniqueId(commandOriginData.playerUniqueId);
-		}
-	}
 
     /**
      * Reads and returns an EntityUniqueID
