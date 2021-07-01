@@ -3,11 +3,9 @@ package cn.nukkit.network.protocol;
 import lombok.ToString;
 
 @ToString
-public class GuiDataPickItemPacket extends DataPacket {
+public class GUIDataPickItemPacket extends DataPacket {
 
-    public String itemDescription;
-    public String itemEffects;
-	public int hotbarSlot;
+    public int hotbarSlot;
 
     @Override
     public byte pid() {
@@ -15,17 +13,13 @@ public class GuiDataPickItemPacket extends DataPacket {
     }
 
     @Override
-    public void decode() {
-        this.itemDescription = this.getString();
-		this.itemEffects = this.getString();
-		this.hotbarSlot = this.getLInt();
+    public void encode() {
+        this.reset();
+        this.putLInt(this.hotbarSlot);
     }
 
     @Override
-    public void encode() {
-        this.reset();
-        this.putString(this.itemDescription);
-		this.putString(this.itemEffects);
-		this.putLInt(this.hotbarSlot);
+    public void decode() {
+        this.hotbarSlot = this.getLInt();
     }
 }
