@@ -465,7 +465,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.EDUCATION_SETTINGS_PACKET, EducationSettingsPacket.class);
         this.registerPacket(ProtocolInfo.EMOTE_PACKET, EmotePacket.class);
         this.registerPacket(ProtocolInfo.MULTIPLAYER_SETTINGS_PACKET, MultiplayerSettingsPacket.class);
-        this.registerPacket(ProtocolInfo.SETTINGS_COMMAND_PACKET, SettingsCommandPacket.class);
         
         
         
