@@ -23,9 +23,8 @@ public class ResourcePackClientResponsePacket extends DataPacket {
     @Override
     public void decode() {
         this.status = this.getByte();
-        int count = this.getLShort();
-        this.packEntries = new Entry[count];
-        for (int i = 0; i < count; i++) {
+        this.packEntries = new Entry[this.getLShort()];
+        for (int i = 0; i < this.packEntries.length; i++) {
             String[] entry = this.getString().split("_");
             this.packEntries[i] = new Entry(UUID.fromString(entry[0]), entry[1]);
         }
