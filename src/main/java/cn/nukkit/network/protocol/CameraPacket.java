@@ -15,14 +15,14 @@ public class CameraPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.cameraId = this.getEntityUniqueId();
-        this.playerId = this.getEntityUniqueId();
+        this.cameraUniqueId = this.getEntityUniqueId();
+        this.playerUniqueId = this.getEntityUniqueId();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityUniqueId(this.cameraId);
-        this.putEntityUniqueId(this.playerId);
+        this.putEntityUniqueId(this.cameraUniqueId);
+        this.putEntityUniqueId(this.playerUniqueId);
     }
 }
