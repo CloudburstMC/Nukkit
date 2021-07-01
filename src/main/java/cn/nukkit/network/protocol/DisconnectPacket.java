@@ -7,20 +7,21 @@ import lombok.ToString;
  */
 @ToString
 public class DisconnectPacket extends DataPacket {
-    public static final byte NETWORK_ID = ProtocolInfo.DISCONNECT_PACKET;
 
     public boolean hideDisconnectionScreen = false;
     public String message;
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.DISCONNECT_PACKET;
     }
 
     @Override
     public void decode() {
         this.hideDisconnectionScreen = this.getBoolean();
-        this.message = this.getString();
+        if (!this.hideDisconnectionScreen) {
+            this.message = this.getString();
+        }
     }
 
     @Override
@@ -31,6 +32,4 @@ public class DisconnectPacket extends DataPacket {
             this.putString(this.message);
         }
     }
-
-
 }
