@@ -428,11 +428,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.PURCHASE_RECEIPT_PACKET, PurchaseReceiptPacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_SKIN_PACKET, PlayerSkinPacket.class);
         this.registerPacket(ProtocolInfo.SUB_CLIENT_LOGIN_PACKET, SubClientLoginPacket.class);
-        //TODO: INITIATE_WEB_SOCKET_CONNECTION_PACKET
-        this.registerPacket(ProtocolInfo.SET_LAST_HURT_BY_PACKET, SetLastHurtByPacket.class);
-        
-        
-        
         
         
         
