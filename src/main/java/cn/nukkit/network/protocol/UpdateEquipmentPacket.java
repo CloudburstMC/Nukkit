@@ -5,11 +5,12 @@ import lombok.ToString;
 @ToString(exclude = "namedtag")
 public class UpdateEquipmentPacket extends DataPacket {
 
-    public byte windowId;
-    public byte windowType;
-    public int windowSlotCount; //TODO: find out what this is (vanilla always sends 0)
-    public long entityId;
-    public byte[] namedTag;
+    public int windowId;
+    public int windowType;
+    public int unknown; //TODO: find out what this is (vanilla always sends 0)
+    public long eid;
+    public byte[] namedtag;
+
 
     @Override
     public byte pid() {
@@ -18,20 +19,15 @@ public class UpdateEquipmentPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.windowId = this.getByte();
-		this.windowType = this.getByte();
-		this.windowSlotCount = this.getVarInt();
-		this.entityId = this.getEntityUniqueId();
-		//this.namedTag idk
+
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.windowId);
-        this.putByte(this.windowType);
-		this.putVarInt(this.windowSlotCount);
-		this.putEntityUniqueId(this.entityId);
-		this.put(this.namedTag);
+        this.putByte((byte) this.windowId);
+        this.putByte((byte) this.windowType);
+        this.putEntityUniqueId(this.eid);
+        this.put(this.namedtag);
     }
 }
