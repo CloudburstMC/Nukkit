@@ -5,8 +5,8 @@ import lombok.ToString;
 @ToString
 public class CameraPacket extends DataPacket {
 
-    public long cameraId;
-    public long playerId;
+    public long cameraUniqueId;
+    public long playerUniqueId;
 
     @Override
     public byte pid() {
@@ -15,8 +15,8 @@ public class CameraPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.cameraUniqueId = this.getEntityUniqueId();
-        this.playerUniqueId = this.getEntityUniqueId();
+        this.cameraUniqueId = this.getVarLong();
+        this.playerUniqueId = this.getVarLong();
     }
 
     @Override
