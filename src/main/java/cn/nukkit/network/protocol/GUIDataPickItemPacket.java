@@ -18,7 +18,7 @@ public class GuiDataPickItemPacket extends DataPacket {
     public void decode() {
         this.itemDescription = this.getString();
 		this.itemEffects = this.getString();
-		this.hotbarSlot = this.getInt();
+		this.hotbarSlot = this.getLInt();
     }
 
     @Override
@@ -26,6 +26,6 @@ public class GuiDataPickItemPacket extends DataPacket {
         this.reset();
         this.putString(this.itemDescription);
 		this.putString(this.itemEffects);
-		this.putInt(this.hotbarSlot);
+		this.putLInt(this.hotbarSlot);
     }
 }

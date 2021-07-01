@@ -15,14 +15,14 @@ public class EntityPickRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.entityId = this.getEntityRuntimeId();
+    	this.entityId = this.getLong();
         this.hotbarSlot = this.getByte();
     }
 
     @Override
     public void encode() {
     	this.reset();
-        this.putEntityRuntimeId(this.entityId);
+        this.putLong(this.entityId);
         this.putByte(this.hotbarSlot);
     }
 }

@@ -8,26 +8,22 @@ import lombok.ToString;
  */
 @ToString
 public class BlockEventPacket extends DataPacket {
+    public static final byte NETWORK_ID = ProtocolInfo.BLOCK_EVENT_PACKET;
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
     public int x;
     public int y;
     public int z;
-    public int eventType;
-    public int eventData;
-
-    @Override
-    public byte pid() {
-        return ProtocolInfo.BLOCK_EVENT_PACKET;
-    }
+    public int case1;
+    public int case2;
 
     @Override
     public void decode() {
-    	BlockVector3 blockVector3 = this.getBlockVector3();
-        this.x = blockVector3.getX();
-        this.y = blockVector3.getY();
-        this.z = blockVector3.getZ();
-		this.eventType = this.getVarInt();
-		this.eventData = this.getVarInt();
+
     }
 
     @Override

@@ -31,7 +31,7 @@ public class EventPacket extends DataPacket {
 	public static final byte TYPE_TARGET_BLOCK_HIT = 23;
 	public static final byte TYPE_PIGLIN_BARTER = 24;
 
-    public long playerRuntimeId;
+    public long playerId;
     public int eventData;
     public byte type;
 
@@ -42,7 +42,7 @@ public class EventPacket extends DataPacket {
 
     @Override
     public void decode() {
-    	this.playerRuntimeId = this.getEntityRuntimeId();
+    	this.playerId = this.getEntityRuntimeId();
 		this.eventData = this.getVarInt();
 		this.type = this.getByte();
     }
@@ -50,7 +50,7 @@ public class EventPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.playerRuntimeId);
+        this.putEntityRuntimeId(this.playerId);
         this.putVarInt(this.eventData);
         this.putByte(this.type);
     }
