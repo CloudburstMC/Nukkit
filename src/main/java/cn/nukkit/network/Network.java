@@ -424,7 +424,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
         this.registerPacket(ProtocolInfo.ADD_BEHAVIOR_TREE_PACKET, AddBehaviorTreePacket.class);
         //TODO: STRUCTURE_BLOCK_UPDATE_PACKET
-        this.registerPacket(ProtocolInfo.SHOW_STORE_OFFER_PACKET, ShowStoreOfferPacket.class);
+        
         
         
         
