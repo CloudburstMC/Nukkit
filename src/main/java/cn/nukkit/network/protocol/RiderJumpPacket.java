@@ -5,21 +5,23 @@ import lombok.ToString;
 @ToString
 public class RiderJumpPacket extends DataPacket {
 
-    public int jumpStrength;
+    public static final byte NETWORK_ID = ProtocolInfo.RIDER_JUMP_PACKET;
+
+    public int unknown;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.RIDER_JUMP_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-        this.jumpStrength = this.getVarInt();
+        this.unknown = this.getVarInt();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(this.jumpStrength);
+        this.putVarInt(this.unknown);
     }
 }

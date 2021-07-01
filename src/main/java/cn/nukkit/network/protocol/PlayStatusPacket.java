@@ -8,6 +8,13 @@ import lombok.ToString;
 @ToString
 public class PlayStatusPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.PLAY_STATUS_PACKET;
+
+    @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
+
     public static final int LOGIN_SUCCESS = 0;
     public static final int LOGIN_FAILED_CLIENT = 1;
     public static final int LOGIN_FAILED_SERVER = 2;
@@ -20,13 +27,8 @@ public class PlayStatusPacket extends DataPacket {
     public int status;
 
     @Override
-    public byte pid() {
-        return ProtocolInfo.PLAY_STATUS_PACKET;
-    }
-
-    @Override
     public void decode() {
-    	this.status = this.getInt();
+
     }
 
     @Override
@@ -34,4 +36,5 @@ public class PlayStatusPacket extends DataPacket {
         this.reset();
         this.putInt(this.status);
     }
+
 }

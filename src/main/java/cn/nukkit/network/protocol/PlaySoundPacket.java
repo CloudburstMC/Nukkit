@@ -1,12 +1,13 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.BlockVector3;
 import lombok.ToString;
 
 @ToString
 public class PlaySoundPacket extends DataPacket {
 
-    public String soundName;
+    public static final byte NETWORK_ID = ProtocolInfo.PLAY_SOUND_PACKET;
+
+    public String name;
     public int x;
     public int y;
     public int z;
@@ -15,18 +16,12 @@ public class PlaySoundPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.PLAY_SOUND_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-    	this.soundName = this.getString();
-		BlockVector3 blockVector3 = this.getBlockVector3();;
-		this.x = blockVector3.getX() / 8;
-		this.y = blockVector3.getY() / 8;
-		this.z = blockVector3.getZ() / 8;
-		this.volume = this.getLFloat();
-		this.pitch = this.getLFloat();
+
     }
 
     @Override

@@ -6,7 +6,7 @@ import lombok.ToString;
 public class ScriptCustomEventPacket extends DataPacket {
     
     public String eventName;
-    public String eventData;
+    public byte[] eventData;
 
     @Override
     public byte pid() {
@@ -16,13 +16,13 @@ public class ScriptCustomEventPacket extends DataPacket {
     @Override
     public void decode() {
         this.eventName = this.getString();
-        this.eventData = this.getString();
+        this.eventData = this.getByteArray();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putString(this.eventName);
-        this.putString(this.eventData);
+        this.putByteArray(this.eventData);
     }
 }
