@@ -5,48 +5,42 @@ import lombok.ToString;
 @ToString
 public class UpdateTradePacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_TRADE_PACKET;
+
     public byte windowId;
-    public byte windowType = 15; //Trading id
-    public int windowSlotCount = 0;
+    public byte windowType = 15; //trading id
+    public int unknownVarInt1; // hardcoded to 0
     public int tradeTier;
-    public long traderUniqueId;
-    public long playerUniqueId;
+    public long trader;
+    public long player;
     public String displayName;
-    public boolean isV2Trading;
+    public boolean screen2;
     public boolean isWilling;
     public byte[] offers;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.UPDATE_TRADE_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-    	this.windowId = this.getByte();
-		this.windowType = this.getByte();
-		this.windowSlotCount = this.getVarInt();
-		this.tradeTier = this.getVarInt();
-		this.traderUniqueId = this.getEntityUniqueId();
-		this.playerUniqueId = this.getEntityUniqueId();
-		this.displayName = this.getString();
-		this.isV2Trading = this.getBoolean();
-		this.isWilling = this.getBoolean();
-		//TODO: this.offers
+
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.windowId);
-		this.putByte(this.windowType);
-		this.putVarInt(this.windowSlotCount);
-		this.putVarInt(this.tradeTier);
-		this.putEntityUniqueId(this.traderUniqueId);
-		this.putEntityUniqueId(this.playerUniqueId);
-		this.putString(this.displayName);
-		this.putBoolean(this.isV2Trading);
-		this.putBoolean(this.isWilling);
-		this.put(this.offers);
+        this.putByte(windowId);
+        this.putByte(windowType);
+        this.putVarInt(unknownVarInt1);
+        this.putVarInt(tradeTier);
+        this.putEntityUniqueId(trader);
+        this.putEntityUniqueId(player);
+        this.putString(displayName);
+        this.putBoolean(screen2);
+        this.putBoolean(isWilling);
+        this.put(this.offers);
     }
+
 }
