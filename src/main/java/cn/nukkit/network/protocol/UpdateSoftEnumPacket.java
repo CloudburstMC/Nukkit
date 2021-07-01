@@ -13,7 +13,7 @@ public class UpdateSoftEnumPacket extends DataPacket {
     public static final byte TYPE_SET = 2;
 
     public String enumName;
-    public String values = new String[0];
+    public List<String> values = new ArrayList<>();
     public byte type;
 
     @Override
@@ -24,9 +24,8 @@ public class UpdateSoftEnumPacket extends DataPacket {
     @Override
     public void decode() {
         this.enumName = this.getString();
-        int count = (int) this.getUnsignedVarInt();
-        for (int i = 0; i < count; i++) {
-            this.values[i] = this.getString();
+        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
+            this.values.add(this.getString());
         }
         this.type = this.getByte();
     }
@@ -35,7 +34,7 @@ public class UpdateSoftEnumPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putString(this.enumName);
-        this.putUnsignedVarInt(this.values.length);
+        this.putUnsignedVarInt(this.values.size());
         for (String value : this.values) {
             this.putString(value);
         }

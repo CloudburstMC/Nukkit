@@ -352,7 +352,7 @@ public class LevelSoundEventPacket extends DataPacket {
         this.sound = (int) this.getUnsignedVarInt();
         this.position = this.getVector3f();
         this.extraData = this.getVarInt();
-        this.entityIdentifier = this.getString();
+        this.entityIdentifier = this.getVarInt();
         this.isBabyMob = this.getBoolean();
         this.isGlobal = this.getBoolean();
     }
@@ -363,7 +363,7 @@ public class LevelSoundEventPacket extends DataPacket {
         this.putUnsignedVarInt(this.sound);
         this.putVector3f(this.position);
         this.putVarInt(this.extraData);
-        this.putString(this.entityIdentifier);
+        this.putVarInt(this.entityIdentifier);
         this.putBoolean(this.isBabyMob);
         this.putBoolean(this.isGlobal);
     }

@@ -1,16 +1,15 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.ToString;
 
-@ToString(exclude = "namedTag")
+@ToString(exclude = "namedtag")
 public class UpdateEquipmentPacket extends DataPacket {
 
     public byte windowId;
     public byte windowType;
     public int windowSlotCount; //TODO: find out what this is (vanilla always sends 0)
     public long entityId;
-    public CompoundTag namedTag;
+    public byte[] namedTag;
 
     @Override
     public byte pid() {
@@ -23,7 +22,7 @@ public class UpdateEquipmentPacket extends DataPacket {
         this.windowType = this.getByte();
         this.windowSlotCount = this.getVarInt();
         this.entityId = this.getEntityUniqueId();
-        this.namedTag = this.getCompoundTag();
+        //TODO: this.namedTag
     }
 
     @Override
@@ -33,6 +32,6 @@ public class UpdateEquipmentPacket extends DataPacket {
         this.putByte(this.windowType);
         this.putVarInt(this.windowSlotCount);
         this.putEntityUniqueId(this.entityId);
-        this.putCompoundTag(this.namedTag);
+        this.put(this.namedTag);
     }
 }

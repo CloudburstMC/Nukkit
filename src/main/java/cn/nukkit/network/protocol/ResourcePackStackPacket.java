@@ -3,6 +3,9 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.resourcepacks.ResourcePack;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ToString
 public class ResourcePackStackPacket extends DataPacket {
 
@@ -10,7 +13,7 @@ public class ResourcePackStackPacket extends DataPacket {
     public ResourcePack[] behaviourPackStack = new ResourcePack[0];
     public ResourcePack[] resourcePackStack = new ResourcePack[0];
     public String gameVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
-    public Experiment[] experiments = new Experiment[0]
+    public List<Experiment> experiments = new ArrayList<>();
     public boolean hasPreviouslyUsedExperiments;
 
     @Override
@@ -21,17 +24,13 @@ public class ResourcePackStackPacket extends DataPacket {
     @Override
     public void decode() {
         this.mustAccept = this.getBoolean();
-        int count = (int) this.getUnsignedVarInt();
-        this.behaviourPackStack = new ResourcePack[count];
-        for (int i = 0; i < count; i++) {
+        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
             this.getString();
             this.getString();
             this.getString();
             //TODO
         }
-        count = (int) this.getUnsignedVarInt();
-        this.resourcePackStack = new ResourcePack[count];
-        for (int i = 0; i < count; i++) {
+        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
             this.getString();
             this.getString();
             this.getString();
@@ -39,13 +38,11 @@ public class ResourcePackStackPacket extends DataPacket {
         }
 
         this.gameVersion = this.getString();
-        count = this.getLInt();
-        this.experiments = new Experiment[count];
-        for (int i = 0; i < count; i++) {
+        for (int i = 0, count = this.getLInt(); i < count; i++) {
             Experiment experiment = new Experiment();
             experiment.experimentName = this.getString();
             experiment.enabled = this.getBoolean();
-            this.experiments[i] = experiment;
+            this.experiments.add(experiment);
         }
         this.hasPreviouslyUsedExperiments = this.getBoolean();
     }
@@ -67,7 +64,7 @@ public class ResourcePackStackPacket extends DataPacket {
             this.putString(""); //TODO: subpack name
         }
         this.putString(this.gameVersion);
-        this.putLInt(this.experiments.length);
+        this.putLInt(this.experiments.size());
         for (Experiment experiment : this.experiments) {
             this.putString(experiment.experimentName);
             this.putBoolean(experiment.enabled);

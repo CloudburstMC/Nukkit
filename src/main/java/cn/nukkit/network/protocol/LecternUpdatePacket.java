@@ -26,10 +26,10 @@ public class LecternUpdatePacket extends DataPacket {
 
     @Override
     public void encode() {
-        this.reset();
-        this.putByte(this.page);
-        this.putByte(this.totalPages);
-        this.putBlockVector3(this.blockPosition);
-        this.putBool(this.dropBook);
+    	this.reset();
+    	this.putByte(this.page);
+		this.putByte(this.totalPages);
+		this.putBlockVector3(this.blockPosition);
+		this.putBool(this.dropBook);
     }
 }
