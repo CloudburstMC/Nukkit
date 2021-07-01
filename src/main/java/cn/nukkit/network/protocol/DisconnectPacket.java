@@ -8,7 +8,7 @@ import lombok.ToString;
 @ToString
 public class DisconnectPacket extends DataPacket {
 
-    public boolean hideDisconnectionScreen = false;
+    public boolean hideDisconnectionScreen;
     public String message;
 
     @Override

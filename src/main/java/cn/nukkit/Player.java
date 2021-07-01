@@ -2187,11 +2187,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 case ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
                     ResourcePackClientResponsePacket responsePacket = (ResourcePackClientResponsePacket) packet;
                     switch (responsePacket.responseStatus) {
-                        case ResourcePackClientResponsePacket.STATUS_REFUSED:
+                        case REFUSED:
                             this.close("", "disconnectionScreen.noReason");
                             break;
-                        case ResourcePackClientResponsePacket.STATUS_SEND_PACKS:
-                            for (ResourcePackClientResponsePacket.Entry entry : responsePacket.packEntries) {
+                        case SEND_PACKS:
+                            for (ResourcePackClientResponsePacket.Entry entry : responsePacket.entries) {
                                 ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(entry.uuid);
                                 if (resourcePack == null) {
                                     this.close("", "disconnectionScreen.resourcePack");
@@ -2207,13 +2207,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.dataPacket(dataInfoPacket);
                             }
                             break;
-                        case ResourcePackClientResponsePacket.STATUS_HAVE_ALL_PACKS:
+                        case HAVE_ALL_PACKS:
                             ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
                             stackPacket.mustAccept = this.server.getForceResources();
                             stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourceStack();
                             this.dataPacket(stackPacket);
                             break;
-                        case ResourcePackClientResponsePacket.STATUS_COMPLETED:
+                        case COMPLETED:
                             this.shouldLogin = true;
 
                             if (this.preLoginEventTask.isFinished()) {
