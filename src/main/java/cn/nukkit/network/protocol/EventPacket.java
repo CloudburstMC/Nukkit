@@ -50,7 +50,7 @@ public class EventPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.playerId);
+        this.putVarLong(this.playerId);
         this.putVarInt(this.eventData);
         this.putByte(this.type);
     }
