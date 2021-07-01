@@ -21,7 +21,7 @@ public class PlaySoundPacket extends DataPacket {
     @Override
     public void decode() {
     	this.soundName = this.getString();
-		BlockVector3 blockVector3 = this.getBlockVector3();
+		BlockVector3 blockVector3 = this.getBlockVector3();;
 		this.x = blockVector3.getX() / 8;
 		this.y = blockVector3.getY() / 8;
 		this.z = blockVector3.getZ() / 8;
