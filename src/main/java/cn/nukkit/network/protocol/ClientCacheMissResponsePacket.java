@@ -7,7 +7,7 @@ public class ClientCacheMissResponsePacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.CLIENT_CACHE_MISS_STATUS_PACKET;
+        return ProtocolInfo.CLIENT_CACHE_BLOB_STATUS_PACKET;
     }
 
     @Override
