@@ -5,7 +5,7 @@ import lombok.ToString;
 @ToString
 public class SubClientLoginPacket extends DataPacket {
 
-    public String connectionRequestData;
+	public String connectionRequestData;
 
     @Override
     public byte pid() {
@@ -14,12 +14,12 @@ public class SubClientLoginPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.connectionRequestData = this.getString();
+    	this.connectionRequestData = this.getString();
     }
 
     @Override
     public void encode() {
-        this.reset();
+    	this.reset();
         this.putString(this.connectionRequestData);
     }
 }
