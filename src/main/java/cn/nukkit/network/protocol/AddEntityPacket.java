@@ -2,13 +2,13 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.EntityMetadata;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
 import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.network.protocol.types.EntityLink;
-import cn.nukkit.utils.Binary;
 import com.google.common.collect.ImmutableMap;
 import lombok.ToString;
 
@@ -18,9 +18,10 @@ import lombok.ToString;
  */
 @ToString
 public class AddEntityPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.ADD_ENTITY_PACKET;
 
-    public static ImmutableMap<Integer, String> LEGACY_IDS = ImmutableMap.<Integer, String>builder()
+    public static final ImmutableMap<Integer, String> LEGACY_IDS = ImmutableMap.<Integer, String>builder()
             .put(51, "minecraft:npc")
             .put(63, "minecraft:player")
             .put(EntityWitherSkeleton.NETWORK_ID, "minecraft:wither_skeleton")
@@ -136,31 +137,40 @@ public class AddEntityPacket extends DataPacket {
             .put(130, "minecraft:axolotl")
             .build();
 
+    public long entityUniqueId;
+    public long entityRuntimeId;
+    public String type;
+    public Vector3f position = new Vector3f();
+    public Vector3f motion = new Vector3f();
+    public float pitch;
+    public float yaw;
+    public float headYaw;
+    public Attribute[] attributes = new Attribute[0];
+    public EntityMetadata entityMetadata = new EntityMetadata();
+    public EntityLink[] entityLinks = new EntityLink[0];
+
     @Override
     public byte pid() {
         return NETWORK_ID;
     }
 
-    public long entityUniqueId;
-    public long entityRuntimeId;
-    public int type;
-    public String id;
-    public float x;
-    public float y;
-    public float z;
-    public float speedX = 0f;
-    public float speedY = 0f;
-    public float speedZ = 0f;
-    public float yaw;
-    public float pitch;
-    public float headYaw;
-    public EntityMetadata metadata = new EntityMetadata();
-    public Attribute[] attributes = new Attribute[0];
-    public EntityLink[] links = new EntityLink[0];
-
     @Override
     public void decode() {
-
+        this.entityUniqueId = this.getEntityUniqueId();
+        this.entityRuntimeId = this.getEntityRuntimeId();
+        this.type = this.getString();
+        this.position = this.getVector3f();
+        this.motion = this.getVector3f();
+        this.pitch = this.getLFloat();
+        this.yaw = this.getLFloat();
+        this.headYaw = this.getLFloat();
+        this.attributes = this.getAttributeList();
+        this.entityMetadata = this.getEntityMetadata();
+        int count = (int) this.getUnsignedVarInt();
+        this.entityLinks = new EntityLink[count];
+        for (int i = 0; i < count; i++) {
+            this.entityLinks[i] = this.getEntityLink();
+        }
     }
 
     @Override
@@ -168,20 +178,18 @@ public class AddEntityPacket extends DataPacket {
         this.reset();
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
-        if (id == null) {
-            id = LEGACY_IDS.get(type);
-        }
-        this.putString(this.id);
-        this.putVector3f(this.x, this.y, this.z);
-        this.putVector3f(this.speedX, this.speedY, this.speedZ);
+        this.putString(this.type);
+        this.putVector3f(this.position);
+        this.putVector3f(this.motion);
         this.putLFloat(this.pitch);
         this.putLFloat(this.yaw);
         this.putLFloat(this.headYaw);
+        this.putUnsignedVarInt(this.attributes.length);
         this.putAttributeList(this.attributes);
-        this.put(Binary.writeMetadata(this.metadata));
-        this.putUnsignedVarInt(this.links.length);
-        for (EntityLink link : links) {
-            putEntityLink(link);
+        this.putEntityMetadata(this.entityMetadata);
+        this.putUnsignedVarInt(this.entityLinks.length);
+        for (EntityLink entityLink : this.entityLinks) {
+            this.putEntityLink(entityLink);
         }
     }
 }

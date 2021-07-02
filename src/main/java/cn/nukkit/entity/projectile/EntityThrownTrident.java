@@ -12,6 +12,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -155,18 +156,14 @@ public class EntityThrownTrident extends EntityProjectile {
     @Override
     public void spawnTo(Player player) {
         AddEntityPacket pk = new AddEntityPacket();
-        pk.type = NETWORK_ID;
+        pk.type = AddEntityPacket.LEGACY_IDS.get(NETWORK_ID);
         pk.entityUniqueId = this.getId();
         pk.entityRuntimeId = this.getId();
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.speedX = (float) this.motionX;
-        pk.speedY = (float) this.motionY;
-        pk.speedZ = (float) this.motionZ;
+        pk.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
+        pk.motion = new Vector3f((float) this.motionX, (float) this.motionY, (float) this.motionZ);
         pk.yaw = (float) this.yaw;
         pk.pitch = (float) this.pitch;
-        pk.metadata = this.dataProperties;
+        pk.entityMetadata = this.dataProperties;
         player.dataPacket(pk);
 
         super.spawnTo(player);

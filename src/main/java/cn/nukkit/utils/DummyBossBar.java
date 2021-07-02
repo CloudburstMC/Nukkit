@@ -3,6 +3,7 @@ package cn.nukkit.utils;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.network.protocol.*;
@@ -127,16 +128,11 @@ public class DummyBossBar {
 
     private void createBossEntity() {
         AddEntityPacket pkAdd = new AddEntityPacket();
-        pkAdd.type = EntityCreeper.NETWORK_ID;
+        pkAdd.type = AddEntityPacket.LEGACY_IDS.get(EntityCreeper.NETWORK_ID);
         pkAdd.entityUniqueId = bossBarId;
         pkAdd.entityRuntimeId = bossBarId;
-        pkAdd.x = (float) player.x;
-        pkAdd.y = (float) -10; // Below the bedrock
-        pkAdd.z = (float) player.z;
-        pkAdd.speedX = 0;
-        pkAdd.speedY = 0;
-        pkAdd.speedZ = 0;
-        pkAdd.metadata = new EntityMetadata()
+        pkAdd.position = new Vector3f((float) player.x, (float) -10, (float) player.z);
+        pkAdd.entityMetadata = new EntityMetadata()
                 // Default Metadata tags
                 .putLong(Entity.DATA_FLAGS, 0)
                 .putShort(Entity.DATA_AIR, 400)
