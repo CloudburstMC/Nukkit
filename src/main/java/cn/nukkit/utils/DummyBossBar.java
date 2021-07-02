@@ -220,7 +220,7 @@ public class DummyBossBar {
 
     private void removeBossEntity() {
         RemoveEntityPacket pkRemove = new RemoveEntityPacket();
-        pkRemove.eid = bossBarId;
+        pkRemove.entityUniqueId = bossBarId;
         player.dataPacket(pkRemove);
     }
 

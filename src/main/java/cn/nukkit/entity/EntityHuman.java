@@ -338,7 +338,7 @@ public class EntityHuman extends EntityHumanType {
         if (this.hasSpawned.containsKey(player.getLoaderId())) {
 
             RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.eid = this.getId();
+            pk.entityUniqueId = this.getId();
             player.dataPacket(pk);
             this.hasSpawned.remove(player.getLoaderId());
         }

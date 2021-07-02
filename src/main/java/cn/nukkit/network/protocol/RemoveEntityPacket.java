@@ -8,23 +8,24 @@ import lombok.ToString;
  */
 @ToString
 public class RemoveEntityPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.REMOVE_ENTITY_PACKET;
 
-    public long eid;
+    public long entityUniqueId;
 
     @Override
     public byte pid() {
-        return NETWORK_ID;
+        return ProtocolInfo.REMOVE_ENTITY_PACKET;
     }
 
     @Override
     public void decode() {
-
+        this.entityUniqueId = this.getEntityUniqueId();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putEntityUniqueId(this.eid);
+        this.putEntityUniqueId(this.entityUniqueId);
     }
 }

@@ -122,7 +122,7 @@ public class FloatingTextParticle extends Particle {
             this.entityId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
         } else {
             RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.eid = this.entityId;
+            pk.entityUniqueId = this.entityId;
 
             packets.add(pk);
         }
