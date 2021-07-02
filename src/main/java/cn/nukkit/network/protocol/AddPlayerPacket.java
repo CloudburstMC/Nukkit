@@ -1,4 +1,4 @@
-package cn.nukkit.network.protocol;#
+package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.item.Item;
