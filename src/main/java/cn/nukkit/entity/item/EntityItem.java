@@ -299,13 +299,9 @@ public class EntityItem extends Entity {
         AddItemEntityPacket addEntity = new AddItemEntityPacket();
         addEntity.entityUniqueId = this.getId();
         addEntity.entityRuntimeId = this.getId();
-        addEntity.x = (float) this.x;
-        addEntity.y = (float) this.y;
-        addEntity.z = (float) this.z;
-        addEntity.speedX = (float) this.motionX;
-        addEntity.speedY = (float) this.motionY;
-        addEntity.speedZ = (float) this.motionZ;
-        addEntity.metadata = this.dataProperties;
+        pk.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
+        pk.motion = new Vector3f((float) this.motionX, (float) this.motionY, (float) this.motionZ);
+        addEntity.entityMetadata = this.dataProperties;
         addEntity.item = this.getItem();
         return addEntity;
     }
