@@ -781,6 +781,23 @@ public class BinaryStream {
         );
     }
 
+    public CompoundTag getCompoundTag() {
+        try {
+            return NBTIO.read(this.getByteArray(), ByteOrder.LITTLE_ENDIAN, true);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return new CompoundTag();
+    }
+
+    public void putCompoundTag(CompoundTag compoundTag) {
+        try {
+            this.put(NBTIO.write(compoundTag, ByteOrder.LITTLE_ENDIAN, true));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public <T> T[] getArray(Class<T> clazz, Function<BinaryStream, T> function) {
         ArrayDeque<T> deque = new ArrayDeque<>();

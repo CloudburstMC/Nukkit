@@ -20,11 +20,6 @@ public class StartGamePacket extends DataPacket {
     public static final int GAME_PUBLISH_SETTING_FRIENDS_OF_FRIENDS = 3;
     public static final int GAME_PUBLISH_SETTING_PUBLIC = 4;
 
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
     public long entityUniqueId;
     public long entityRuntimeId;
     public int playerGamemode;
@@ -81,8 +76,13 @@ public class StartGamePacket extends DataPacket {
     public String multiplayerCorrelationId = "";
 
     @Override
-    public void decode() {
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
+    @Override
+    public void decode() {
+        //TODO
     }
 
     @Override

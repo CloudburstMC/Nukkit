@@ -7,6 +7,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.SerializedImage;
 import com.google.common.base.Strings;
@@ -136,18 +137,10 @@ public class FloatingTextParticle extends Particle {
 
             AddPlayerPacket pk = new AddPlayerPacket();
             pk.uuid = uuid;
-            pk.username = "";
             pk.entityUniqueId = this.entityId;
             pk.entityRuntimeId = this.entityId;
-            pk.x = (float) this.x;
-            pk.y = (float) (this.y - 0.75);
-            pk.z = (float) this.z;
-            pk.speedX = 0;
-            pk.speedY = 0;
-            pk.speedZ = 0;
-            pk.yaw = 0;
-            pk.pitch = 0;
-            pk.metadata = this.metadata;
+            pk.position = new Vector3f((float) this.x, (float) (this.y - 0.75), (float) this.z);
+            pk.entityMetadata = this.metadata;
             pk.item = Item.get(Item.AIR);
             packets.add(pk);
 
