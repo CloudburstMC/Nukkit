@@ -2786,7 +2786,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     TextPacket textPacket = (TextPacket) packet;
 
-                    if (textPacket.type == TextPacket.TYPE_CHAT) {
+                    if (textPacket.type == TextPacket.Type.CHAT) {
                         String chatMessage = textPacket.message;
                         int breakLine = chatMessage.indexOf('\n');
                         // Chat messages shouldn't contain break lines so ignore text afterwards
@@ -3490,7 +3490,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     public void sendMessage(String message) {
         TextPacket pk = new TextPacket();
-        pk.type = TextPacket.TYPE_RAW;
+        pk.type = TextPacket.Type.RAW;
         pk.message = this.server.getLanguage().translateString(message);
         this.dataPacket(pk);
     }
@@ -3511,7 +3511,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void sendTranslation(String message, String[] parameters) {
         TextPacket pk = new TextPacket();
         if (!this.server.isLanguageForced()) {
-            pk.type = TextPacket.TYPE_TRANSLATION;
+            pk.type = TextPacket.Type.TRANSLATION;
             pk.message = this.server.getLanguage().translateString(message, parameters, "nukkit.");
             for (int i = 0; i < parameters.length; i++) {
                 parameters[i] = this.server.getLanguage().translateString(parameters[i], parameters, "nukkit.");
@@ -3519,7 +3519,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
             pk.parameters = parameters;
         } else {
-            pk.type = TextPacket.TYPE_RAW;
+            pk.type = TextPacket.Type.RAW;
             pk.message = this.server.getLanguage().translateString(message, parameters);
         }
         this.dataPacket(pk);
@@ -3531,7 +3531,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendChat(String source, String message) {
         TextPacket pk = new TextPacket();
-        pk.type = TextPacket.TYPE_CHAT;
+        pk.type = TextPacket.Type.CHAT;
         pk.source = source;
         pk.message = this.server.getLanguage().translateString(message);
         this.dataPacket(pk);
@@ -3543,14 +3543,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendPopup(String message, String subtitle) {
         TextPacket pk = new TextPacket();
-        pk.type = TextPacket.TYPE_POPUP;
+        pk.type = TextPacket.Type.POPUP;
         pk.message = message;
         this.dataPacket(pk);
     }
 
     public void sendTip(String message) {
         TextPacket pk = new TextPacket();
-        pk.type = TextPacket.TYPE_TIP;
+        pk.type = TextPacket.Type.TIP;
         pk.message = message;
         this.dataPacket(pk);
     }
