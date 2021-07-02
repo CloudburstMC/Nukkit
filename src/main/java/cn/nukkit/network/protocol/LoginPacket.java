@@ -51,7 +51,7 @@ public class LoginPacket extends DataPacket {
 
     @Override
     public void encode() {
-
+    	//TODO
     }
 
     public int getProtocol() {
