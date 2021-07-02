@@ -4911,8 +4911,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 TakeItemEntityPacket pk = new TakeItemEntityPacket();
-                pk.entityId = this.getId();
-                pk.target = entity.getId();
+                pk.entityRuntimeId = this.getId();
+                pk.targetRumtimeId = entity.getId();
                 Server.broadcastPacket(entity.getViewers().values(), pk);
                 this.dataPacket(pk);
 
@@ -4934,8 +4934,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 TakeItemEntityPacket pk = new TakeItemEntityPacket();
-                pk.entityId = this.getId();
-                pk.target = entity.getId();
+                pk.entityRuntimeId = this.getId();
+                pk.targetRuntimeId = entity.getId();
                 Server.broadcastPacket(entity.getViewers().values(), pk);
                 this.dataPacket(pk);
 
@@ -4970,8 +4970,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
 
                         TakeItemEntityPacket pk = new TakeItemEntityPacket();
-                        pk.entityId = this.getId();
-                        pk.target = entity.getId();
+                        pk.entityRuntimeId = this.getId();
+                        pk.targetRuntimeId = entity.getId();
                         Server.broadcastPacket(entity.getViewers().values(), pk);
                         this.dataPacket(pk);
 
