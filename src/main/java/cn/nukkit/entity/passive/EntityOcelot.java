@@ -1,5 +1,7 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -31,8 +33,10 @@ public class EntityOcelot extends EntityAnimal {
         return 0.7f;
     }
 
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Ocelot";
     }
 

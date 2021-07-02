@@ -2,6 +2,8 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
@@ -117,8 +119,10 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
         level.dropItem(this, new ItemMinecartTNT());
     }
 
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return getType().getName();
     }
 

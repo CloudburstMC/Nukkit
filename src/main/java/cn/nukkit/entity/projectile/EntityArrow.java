@@ -198,10 +198,11 @@ public class EntityArrow extends EntityProjectile {
     public void setPickupMode(int pickupMode) {
         this.pickupMode = pickupMode;
     }
-    
-    
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Arrow";
     }
 }

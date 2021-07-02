@@ -1,6 +1,8 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.weather.EntityLightningStrike;
@@ -81,8 +83,10 @@ public class EntityCreeper extends EntityMob {
         this.setMaxHealth(20);
     }
 
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Creeper";
     }
 

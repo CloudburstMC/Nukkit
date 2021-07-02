@@ -29,7 +29,6 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.SetEntityDataPacket;
 import cn.nukkit.potion.Effect;
 
-import javax.annotation.Nonnull;
 import java.util.Collection;
 
 @PowerNukkitOnly
@@ -436,12 +435,6 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
         level.addSound(this, Sound.MOB_ARMOR_STAND_HIT);
         
         return true;
-    }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return this.hasCustomName() ? this.getNameTag() : "Armor Stand";
     }
 
     @Override

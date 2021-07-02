@@ -2,6 +2,8 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Server;
 import cn.nukkit.api.PowerNukkitDifference;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -288,9 +290,22 @@ public class EntityItem extends Entity {
         }
     }
 
+    @Since("FUTURE")
+    @PowerNukkitOnly
+    @Override
+    public String getOriginalName() {
+        return "Item";
+    }
+
     @Override
     public String getName() {
-        return this.hasCustomName() ? this.getNameTag() : (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
+        if (this.hasCustomName()) {
+            return getNameTag();
+        }
+        if (item == null) {
+            return getOriginalName();
+        }
+        return item.count + "x " + (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
     }
 
     public Item getItem() {

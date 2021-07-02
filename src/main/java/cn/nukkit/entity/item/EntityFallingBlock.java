@@ -228,10 +228,12 @@ public class EntityFallingBlock extends Entity {
     public boolean canBeMovedByCurrents() {
         return false;
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Falling Block";
     }
 }

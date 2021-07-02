@@ -198,10 +198,12 @@ public class EntityPainting extends EntityHanging {
             this.height = height;
         }
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Painting";
     }
 }

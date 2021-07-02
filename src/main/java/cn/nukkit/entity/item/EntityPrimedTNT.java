@@ -180,10 +180,12 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
     public Entity getSource() {
         return source;
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Block of TNT";
     }
 }

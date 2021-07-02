@@ -48,8 +48,10 @@ public class EntityZoglin extends EntityMob implements EntityAgeable {
         return 0.9f;
     }
 
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Zoglin";
     }
 

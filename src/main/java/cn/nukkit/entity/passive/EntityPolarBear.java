@@ -48,10 +48,12 @@ public class EntityPolarBear extends EntityAnimal {
     public Item[] getDrops() {
         return new Item[]{Item.get(Item.RAW_FISH), Item.get(Item.RAW_SALMON)};
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Polar Bear";
     }
 }

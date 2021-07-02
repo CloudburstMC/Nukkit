@@ -1,6 +1,8 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.InventoryHolder;
@@ -24,8 +26,10 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
         setDisplayBlock(Block.get(Block.HOPPER_BLOCK), false);
     }
 
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return getType().getName();
     }
 

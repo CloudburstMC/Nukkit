@@ -1268,7 +1268,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return ItemTool.TYPE_NONE;
     }
 
-    @PowerNukkitDifference(info = "Special condition for the leaves", since = "1.4.0.0-PN")
+    @PowerNukkitDifference(info = "Special condition for the leaves and cobweb", since = "1.4.0.0-PN")
     private static boolean correctTool0(int blockToolType, Item item, int blockId) {
         if((blockId == LEAVES && item.isHoe()) ||
            (blockId == LEAVES2 && item.isHoe())){
@@ -1281,7 +1281,8 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 (blockToolType == ItemTool.TYPE_AXE && item.isAxe()) ||
                 (blockToolType == ItemTool.TYPE_HOE && item.isHoe()) ||
                 (blockToolType == ItemTool.TYPE_SHEARS && item.isShears()) ||
-                blockToolType == ItemTool.TYPE_NONE;
+                blockToolType == ItemTool.TYPE_NONE ||
+                (blockId == COBWEB && item.isShears());
     }
 
     //http://minecraft.gamepedia.com/Breaking

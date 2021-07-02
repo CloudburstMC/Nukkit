@@ -47,8 +47,10 @@ public class EntityHoglin extends EntityMob implements EntityAgeable {
         return 0.9f;
     }
 
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Hoglin";
     }
 

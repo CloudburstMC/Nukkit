@@ -84,7 +84,7 @@ public abstract class Food {
             .addEffect(Effect.getEffect(Effect.NAUSEA).setAmplifier(1).setDuration(15 * 20))
             .addEffect(Effect.getEffect(Effect.POISON).setAmplifier(4).setDuration(60 * 20))
             .addRelative(Item.PUFFERFISH));
-    public static final Food dried_kelp = registerDefaultFood(new FoodNormal(1, 0.6F).addRelative(Item.DRIED_KELP));
+    public static final Food dried_kelp = registerDefaultFood(new FoodNormal(1, 0.6F).addRelative(Item.DRIED_KELP).setEatingTick(16));
     public static final Food sweet_berries = registerDefaultFood(new FoodNormal(2, 0.4F).addRelative(Item.SWEET_BERRIES));
     
     @PowerNukkitOnly
@@ -214,7 +214,24 @@ public abstract class Food {
         this.restoreSaturation = restoreSaturation;
         return this;
     }
-
+    
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    protected int eatingTick = 31;
+    
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public int getEatingTick() {
+        return eatingTick;
+    }
+    
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public Food setEatingTick(int eatingTick) {
+        this.eatingTick = eatingTick;
+        return this;
+    }
+    
     static class NodeIDMeta {
         final int id;
         final int meta;
@@ -233,5 +250,4 @@ public abstract class Food {
             this.plugin = plugin;
         }
     }
-
 }

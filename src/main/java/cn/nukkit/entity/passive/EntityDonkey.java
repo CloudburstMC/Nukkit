@@ -48,10 +48,12 @@ public class EntityDonkey extends EntityAnimal {
     public Item[] getDrops() {
         return new Item[]{Item.get(Item.LEATHER)};
     }
-    
-    
+
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     @Override
-    public String getName() {
+    public String getOriginalName() {
         return "Donkey";
     }
 }
