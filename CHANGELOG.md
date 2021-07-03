@@ -16,6 +16,7 @@ Click the link above to see the future.
 - [#1149] Update the Spanish, and Russian translations. Also improved the message when a plugin is not found. Thank you for your contributions!
 - [#1150] The `show_death_message` gamerule was renamed to `show_death_messages`. A backward compatibility code will keep the old one working, but it's now deprecated.
 - [#1151] Improved `/setworldspaw` auto completion
+- [#1153] Deprecate BlockNetherBrick in favor of BlockBricksNether
 - [#783] Campfire now drop 2 charcoal always
 - [#783] Soul campfire now drops 1 soul sand
 - [#783] Soul campfire now deal double the damage that normal campfires deals
@@ -42,6 +43,7 @@ Click the link above to see the future.
 - [#1130] Soul Campfire and End Crystal were rendering as other items in the inventory
 - [#1139] Backward compatibility with some custom world generators
 - [#1147] Sharpness damage calculation
+- [#1153] Some Sonar Reports
 - [#1170] Cobwebs are now breakable by using shears
 - [#702] Burning arrow and rain will make a lot of particles
 - [#625] If you instant kill a mob with fire aspect enchant tool, it will not give fire aspect drops
