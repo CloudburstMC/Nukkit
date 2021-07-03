@@ -26,6 +26,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.internal.EmptyArrays;
 import lombok.SneakyThrows;
+import lombok.val;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -725,8 +726,8 @@ public class BinaryStream {
     }
 
     public void putGameRules(GameRules gameRules) {
-        Map<GameRule, GameRules.Value> rules = gameRules.getGameRules();
-        this.putUnsignedVarInt(rules.size() - 1);
+        val rules = gameRules.getGameRules();
+        this.putUnsignedVarInt(rules.size() - 1L);
         rules.forEach((gameRule, value) -> {
             //noinspection deprecation
             if (gameRule == GameRule.SHOW_DEATH_MESSAGE) {
