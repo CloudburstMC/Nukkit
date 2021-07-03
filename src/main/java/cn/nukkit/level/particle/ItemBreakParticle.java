@@ -2,6 +2,7 @@ package cn.nukkit.level.particle;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
@@ -21,10 +22,8 @@ public class ItemBreakParticle extends Particle {
     @Override
     public DataPacket[] encode() {
         LevelEventPacket packet = new LevelEventPacket();
-        packet.evid = (short) (LevelEventPacket.EVENT_ADD_PARTICLE_MASK | Particle.TYPE_ITEM_BREAK);
-        packet.x = (float) this.x;
-        packet.y = (float) this.y;
-        packet.z = (float) this.z;
+        packet.event = (short) (LevelEventPacket.EVENT_ADD_PARTICLE_MASK | Particle.TYPE_ITEM_BREAK);
+        pk.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
         packet.data = this.data;
         return new DataPacket[]{packet};
     }
