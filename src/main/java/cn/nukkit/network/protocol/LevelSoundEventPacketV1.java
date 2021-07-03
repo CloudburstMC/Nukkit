@@ -33,7 +33,7 @@ public class LevelSoundEventPacketV1 extends LevelSoundEventPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.soundId);
+        this.putByte(this.sound);
         this.putVector3f(this.position);
         this.putVarInt(this.extraData);
         this.putVarInt(this.entityIdentifier);
