@@ -3266,10 +3266,8 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addPlayerMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MovePlayerPacket pk = new MovePlayerPacket();
-        pk.eid = entity.getId();
-        pk.x = (float) x;
-        pk.y = (float) y;
-        pk.z = (float) z;
+        pk.entityRuntimeId = entity.getId();
+        pk.position = new Vector3f((float) x, (float) y, (float) z);
         pk.yaw = (float) yaw;
         pk.headYaw = (float) headYaw;
         pk.pitch = (float) pitch;
