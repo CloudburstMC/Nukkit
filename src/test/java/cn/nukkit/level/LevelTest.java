@@ -57,7 +57,7 @@ class LevelTest {
         levelFolder = new File(server.getDataPath(), "worlds/TestLevel");
         String path = levelFolder.getAbsolutePath()+File.separator;
         Anvil.generate(path, "TestLevel", 0, Flat.class);
-        Timings.isTimingsEnabled(); // Initialize timings to avoid concurrent updates on initialization
+        Timings.init();
         level = new Level(server, "TestLevel", path, Anvil.class);
         level.setAutoSave(true);
         
