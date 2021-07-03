@@ -352,7 +352,7 @@ public class Network {
         this.registerPacket(ProtocolInfo.ADD_ITEM_ENTITY_PACKET, AddItemEntityPacket.class);
         this.registerPacket(ProtocolInfo.TAKE_ITEM_ENTITY_PACKET, TakeItemEntityPacket.class);
         this.registerPacket(ProtocolInfo.MOVE_ENTITY_ABSOLUTE_PACKET, MoveEntityAbsolutePacket.class);
-        this.registerPacket(ProtocolInfo.MOVE_PLAYER_PACKET, MovePlayerPacket.class);
+        /*this.registerPacket(ProtocolInfo.MOVE_PLAYER_PACKET, MovePlayerPacket.class);
         this.registerPacket(ProtocolInfo.RIDER_JUMP_PACKET, RiderJumpPacket.class);
         this.registerPacket(ProtocolInfo.UPDATE_BLOCK_PACKET, UpdateBlockPacket.class);
         this.registerPacket(ProtocolInfo.ADD_PAINTING_PACKET, AddPaintingPacket.class);
@@ -490,6 +490,6 @@ public class Network {
         //TODO: ITEM_COMPONENT_PACKET
         this.registerPacket(ProtocolInfo.FILTER_TEXT_PACKET, FilterTextPacket.class);
         //TODO: CLIENTBOUND_DEBUG_RENDERER_PACKET
-        this.registerPacket(ProtocolInfo.BATCH_PACKET, BatchPacket.class);
+        this.registerPacket(ProtocolInfo.BATCH_PACKET, BatchPacket.class);*/
     }
 }

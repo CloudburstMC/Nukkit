@@ -201,13 +201,8 @@ public class DummyBossBar {
      */
     public void updateBossEntityPosition() {
         MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
-        pk.eid = this.bossBarId;
-        pk.x = this.player.x;
-        pk.y = -10;
-        pk.z = this.player.z;
-        pk.headYaw = 0;
-        pk.yaw = 0;
-        pk.pitch = 0;
+        pk.entityRuntimeId = this.bossBarId;
+        pk.position = new Vector3f((float) player.x, (float) -10, (float) player.z);
         player.dataPacket(pk);
     }
 
