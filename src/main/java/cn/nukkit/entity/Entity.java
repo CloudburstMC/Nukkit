@@ -1022,12 +1022,12 @@ public abstract class Entity extends Location implements Metadatable {
     public void sendPotionEffects(Player player) {
         for (Effect effect : this.effects.values()) {
             MobEffectPacket pk = new MobEffectPacket();
-            pk.eid = this.getId();
+            pk.entityRuntimeId = this.getId();
             pk.effectId = effect.getId();
             pk.amplifier = effect.getAmplifier();
-            pk.particles = effect.isVisible();
+            pk.enableParticles = effect.isVisible();
             pk.duration = effect.getDuration();
-            pk.eventId = MobEffectPacket.EVENT_ADD;
+            pk.event = MobEffectPacket.EVENT_ADD;
 
             player.dataPacket(pk);
         }
