@@ -119,8 +119,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
             pk1.x = (int) this.left.getHolder().getX();
             pk1.y = (int) this.left.getHolder().getY();
             pk1.z = (int) this.left.getHolder().getZ();
-            pk1.case1 = 1;
-            pk1.case2 = 2;
+            pk1.eventData = 2;
             Level level = this.left.getHolder().getLevel();
             if (level != null) {
                 level.addLevelSoundEvent(this.left.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_CHEST_OPEN);
@@ -131,8 +130,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
             pk2.x = (int) this.right.getHolder().getX();
             pk2.y = (int) this.right.getHolder().getY();
             pk2.z = (int) this.right.getHolder().getZ();
-            pk2.case1 = 1;
-            pk2.case2 = 2;
+            pk2.eventData = 2;
 
             level = this.right.getHolder().getLevel();
             if (level != null) {
@@ -149,8 +147,6 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
             pk1.x = (int) this.right.getHolder().getX();
             pk1.y = (int) this.right.getHolder().getY();
             pk1.z = (int) this.right.getHolder().getZ();
-            pk1.case1 = 1;
-            pk1.case2 = 0;
 
             Level level = this.right.getHolder().getLevel();
             if (level != null) {
@@ -162,8 +158,6 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
             pk2.x = (int) this.left.getHolder().getX();
             pk2.y = (int) this.left.getHolder().getY();
             pk2.z = (int) this.left.getHolder().getZ();
-            pk2.case1 = 1;
-            pk2.case2 = 0;
 
             level = this.left.getHolder().getLevel();
             if (level != null) {

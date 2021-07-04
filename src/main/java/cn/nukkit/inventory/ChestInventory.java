@@ -32,8 +32,7 @@ public class ChestInventory extends ContainerInventory {
             pk.x = (int) this.getHolder().getX();
             pk.y = (int) this.getHolder().getY();
             pk.z = (int) this.getHolder().getZ();
-            pk.case1 = 1;
-            pk.case2 = 2;
+            pk.eventData = 2;
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
@@ -50,8 +49,6 @@ public class ChestInventory extends ContainerInventory {
             pk.x = (int) this.getHolder().getX();
             pk.y = (int) this.getHolder().getY();
             pk.z = (int) this.getHolder().getZ();
-            pk.case1 = 1;
-            pk.case2 = 0;
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
