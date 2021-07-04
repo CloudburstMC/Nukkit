@@ -161,9 +161,9 @@ public class EntityItem extends Entity {
                         entity.close();
                         this.getItem().setCount(newAmount);
                         EntityEventPacket packet = new EntityEventPacket();
-                        packet.eid = getId();
+                        packet.entityRuntimeId = getId();
                         packet.data = newAmount;
-                        packet.event = EntityEventPacket.MERGE_ITEMS;
+                        packet.event = EntityEventPacket.EVENT_MERGE_ITEMS;
                         Server.broadcastPacket(this.getViewers().values(), packet);
                     }
                 }

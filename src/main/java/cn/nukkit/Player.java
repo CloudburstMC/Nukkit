@@ -2738,23 +2738,23 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
                     EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
-                    if (entityEventPacket.event != EntityEventPacket.ENCHANT)
+                    if (entityEventPacket.event != EntityEventPacket.EVENT_ENCHANT)
                         this.craftingType = CRAFTING_SMALL;
                     //this.resetCraftingGridType();
 
 
-                    if (entityEventPacket.event == EntityEventPacket.EATING_ITEM) {
-                        if (entityEventPacket.data == 0 || entityEventPacket.eid != this.id) {
+                    if (entityEventPacket.event == EntityEventPacket.EVENT_EATING_ITEM) {
+                        if (entityEventPacket.data == 0 || entityEventPacket.entityRuntimeId != this.id) {
                             break;
                         }
 
-                        entityEventPacket.eid = this.id;
+                        entityEventPacket.entityRuntimeId = this.id;
                         entityEventPacket.isEncoded = false;
 
                         this.dataPacket(entityEventPacket);
                         Server.broadcastPacket(this.getViewers().values(), entityEventPacket);
-                    } else if (entityEventPacket.event == EntityEventPacket.ENCHANT) {
-                        if (entityEventPacket.eid != this.id) {
+                    } else if (entityEventPacket.event == EntityEventPacket.EVENT_ENCHANT) {
+                        if (entityEventPacket.entityRuntimeId != this.id) {
                             break;
                         }
 
@@ -4173,8 +4173,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                 }
                 EntityEventPacket pk = new EntityEventPacket();
-                pk.eid = this.id;
-                pk.event = EntityEventPacket.HURT_ANIMATION;
+                pk.entityRuntimeId = this.id;
+                pk.event = EntityEventPacket.EVENT_HURT_ANIMATION;
                 this.dataPacket(pk);
             }
             return true;

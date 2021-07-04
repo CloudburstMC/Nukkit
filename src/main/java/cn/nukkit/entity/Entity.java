@@ -1116,8 +1116,8 @@ public abstract class Entity extends Location implements Metadatable {
                     this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
 
                     EntityEventPacket pk = new EntityEventPacket();
-                    pk.eid = this.getId();
-                    pk.event = EntityEventPacket.CONSUME_TOTEM;
+                    pk.entityRuntimeId = this.getId();
+                    pk.event = EntityEventPacket.EVENT_CONSUME_TOTEM;
                     p.dataPacket(pk);
 
                     source.setCancelled(true);
