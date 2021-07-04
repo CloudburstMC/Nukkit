@@ -154,9 +154,9 @@ public class PlayerInventory extends BaseInventory {
         pk.inventorySlot = pk.hotbarSlot = this.getHeldItemIndex();
 
         for (Player player : players) {
-            pk.eid = this.getHolder().getId();
+            pk.entityRuntimeId = this.getHolder().getId();
             if (player.equals(this.getHolder())) {
-                pk.eid = player.getId();
+                pk.entityRuntimeId = player.getId();
                 this.sendSlot(this.getHeldItemIndex(), player);
             }
 
