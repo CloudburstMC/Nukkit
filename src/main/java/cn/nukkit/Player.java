@@ -1588,7 +1588,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendAttributes() {
         UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        pk.entityId = this.getId();
+        pk.entityRuntimeId = this.getId();
         pk.entries = new Attribute[]{
                 Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0),
                 Attribute.getAttribute(Attribute.MAX_HUNGER).setValue(this.getFoodData().getLevel()),
@@ -4028,7 +4028,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.spawned) {
             UpdateAttributesPacket pk = new UpdateAttributesPacket();
             pk.entries = new Attribute[]{attr};
-            pk.entityId = this.id;
+            pk.entityRuntimeId = this.id;
             this.dataPacket(pk);
         }
     }
@@ -4041,7 +4041,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.spawned) {
             UpdateAttributesPacket pk = new UpdateAttributesPacket();
             pk.entries = new Attribute[]{attr};
-            pk.entityId = this.id;
+            pk.entityRuntimeId = this.id;
             this.dataPacket(pk);
         }
     }
@@ -4117,7 +4117,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setAttribute(Attribute attribute) {
         UpdateAttributesPacket pk = new UpdateAttributesPacket();
         pk.entries = new Attribute[]{attribute};
-        pk.entityId = this.id;
+        pk.entityRuntimeId = this.id;
         this.dataPacket(pk);
     }
 

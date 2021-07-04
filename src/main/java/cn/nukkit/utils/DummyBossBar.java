@@ -146,7 +146,7 @@ public class DummyBossBar {
 
     private void sendAttributes() {
         UpdateAttributesPacket pkAttributes = new UpdateAttributesPacket();
-        pkAttributes.entityId = bossBarId;
+        pkAttributes.entityRuntimeId = bossBarId;
         Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH);
         attr.setMaxValue(100); // Max value - We need to change the max value first, or else the "setValue" will return a IllegalArgumentException
         attr.setValue(length); // Entity health
