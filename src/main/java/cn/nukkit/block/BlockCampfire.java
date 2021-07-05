@@ -198,7 +198,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable, Blo
     }
     
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     protected EntityDamageEvent getDamageEvent(Entity entity) {
         return new EntityDamageByBlockEvent(this, entity, EntityDamageEvent.DamageCause.FIRE, 1);
     }

@@ -22,7 +22,7 @@ public enum GameRule {
     DROWNING_DAMAGE("drowningDamage"),
     FALL_DAMAGE("fallDamage"),
     FIRE_DAMAGE("fireDamage"),
-    @Since("FUTURE") FREEZE_DAMAGE("freezeDamage"),
+    @Since("1.5.1.0-PN") FREEZE_DAMAGE("freezeDamage"),
     FUNCTION_COMMAND_LIMIT("functionCommandLimit"),
     KEEP_INVENTORY("keepInventory"),
     MAX_COMMAND_CHAIN_LENGTH("maxCommandChainLength"),
@@ -32,11 +32,11 @@ public enum GameRule {
     RANDOM_TICK_SPEED("randomTickSpeed"),
     SEND_COMMAND_FEEDBACK("sendCommandFeedback"),
     SHOW_COORDINATES("showCoordinates"),
-    @Since("FUTURE") SHOW_DEATH_MESSAGES("showDeathMessages"),
+    @Since("1.5.1.0-PN") SHOW_DEATH_MESSAGES("showDeathMessages"),
 
     @Deprecated
     @PowerNukkitOnly("Renamed to SHOW_DEATH_MESSAGE by NukkitX") 
-    @DeprecationDetails(since = "FUTURE", 
+    @DeprecationDetails(since = "1.5.1.0-PN", 
             reason = "Added by upstream with a different name",
             replaceWith = "SHOW_DEATH_MESSAGES")
     @SuppressWarnings("DeprecatedIsStillUsed")
@@ -92,7 +92,7 @@ public enum GameRule {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public boolean isDeprecated() {
         return deprecated;
     }

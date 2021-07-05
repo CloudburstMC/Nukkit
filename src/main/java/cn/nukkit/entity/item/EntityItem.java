@@ -290,7 +290,7 @@ public class EntityItem extends Entity {
         }
     }
 
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @PowerNukkitOnly
     @Override
     public String getOriginalName() {

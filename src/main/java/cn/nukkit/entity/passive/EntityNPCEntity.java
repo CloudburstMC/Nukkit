@@ -50,7 +50,7 @@ public class EntityNPCEntity extends EntityLiving implements EntityNPC, EntityIn
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @Override
     public String getOriginalName() {
         return "NPC";

@@ -216,17 +216,17 @@ public abstract class Food {
     }
     
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     protected int eatingTick = 31;
     
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public int getEatingTick() {
         return eatingTick;
     }
     
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public Food setEatingTick(int eatingTick) {
         this.eatingTick = eatingTick;
         return this;

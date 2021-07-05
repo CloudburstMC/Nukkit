@@ -52,7 +52,7 @@ public class EntityHuman extends EntityHumanType {
         return 1.8f;
     }
 
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @PowerNukkitOnly
     @Override
     public float getSwimmingHeight() {
@@ -220,7 +220,7 @@ public class EntityHuman extends EntityHumanType {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @Override
     public String getOriginalName() {
         return "Human";

@@ -85,7 +85,7 @@ public class BlockWood extends BlockLog {
         return getWoodType().getEnglishName() + " Log";
     }
 
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @PowerNukkitOnly
     @Nonnull
     @Override

@@ -117,7 +117,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @Nonnull
     public SideEffect[] getSideEffects() {
         SideEffect[] sideEffects = this.sideEffects;
@@ -131,7 +131,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public void setSideEffects(@Nonnull SideEffect... sideEffects) {
         this.sideEffects = Arrays.stream(sideEffects)
                 .filter(Objects::nonNull)
@@ -141,13 +141,13 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public void setSideEffects(@Nonnull Collection<SideEffect> sideEffects) {
         this.setSideEffects(sideEffects.toArray(SideEffect.EMPTY_ARRAY));
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public void addSideEffects(@Nonnull SideEffect... sideEffects) {
         var safeStream = Arrays.stream(sideEffects)
                 .filter(Objects::nonNull)
@@ -157,7 +157,7 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public void addSideEffects(@Nonnull Collection<SideEffect> sideEffects) {
         this.addSideEffects(sideEffects.toArray(SideEffect.EMPTY_ARRAY));
     }

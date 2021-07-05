@@ -25,11 +25,11 @@ public @interface PowerNukkitDifference {
     String since() default "";
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     Class<?> extendsOnlyInPowerNukkit() default Void.class;
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     Class<?> insteadOf() default Void.class;
 
     @Retention(RetentionPolicy.CLASS)

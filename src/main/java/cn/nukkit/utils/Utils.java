@@ -420,7 +420,7 @@ public class Utils {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public static boolean isInteger(String str) {
         if (str == null) {
             return false;

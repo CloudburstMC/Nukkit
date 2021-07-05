@@ -32,14 +32,14 @@ public class EnchantmentFireAspect extends Enchantment {
         return 2;
     }
 
-    @PowerNukkitDifference(since = "FUTURE", info = "The entity combustion code was moved to SideEffectCombust, obtained by getAttackSideEffects(Entity, Entity)")
+    @PowerNukkitDifference(since = "1.5.1.0-PN", info = "The entity combustion code was moved to SideEffectCombust, obtained by getAttackSideEffects(Entity, Entity)")
     @Override
     public void doPostAttack(Entity attacker, Entity entity) {
         super.doPostAttack(attacker, entity);
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @Nonnull
     public SideEffect[] getAttackSideEffects(@Nonnull Entity attacker, @Nonnull Entity entity) {
         return new SideEffect[]{

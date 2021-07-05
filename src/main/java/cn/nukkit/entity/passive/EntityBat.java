@@ -39,7 +39,7 @@ public class EntityBat extends EntityAnimal {
 
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @Override
     public String getOriginalName() {
         return "Bat";

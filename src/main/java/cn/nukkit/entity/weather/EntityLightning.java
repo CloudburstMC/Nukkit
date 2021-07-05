@@ -153,7 +153,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
 
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @Override
     public String getOriginalName() {
         return "Lightning Bolt";

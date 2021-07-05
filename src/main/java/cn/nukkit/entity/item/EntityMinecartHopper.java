@@ -27,7 +27,7 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @Override
     public String getOriginalName() {
         return getType().getName();

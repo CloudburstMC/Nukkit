@@ -420,7 +420,7 @@ public abstract class Enchantment implements Cloneable {
     }
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @Nonnull
     public SideEffect[] getAttackSideEffects(@Nonnull Entity attacker, @Nonnull Entity entity) {
         return SideEffect.EMPTY_ARRAY;

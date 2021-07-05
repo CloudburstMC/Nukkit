@@ -60,7 +60,7 @@ public interface IMutableBlockState extends IBlockState {
      * @param state The states that will have the properties copied.
      */
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @Nonnull
     default IMutableBlockState forState(@Nonnull IBlockState state) throws InvalidBlockStateException {
         setState(state);

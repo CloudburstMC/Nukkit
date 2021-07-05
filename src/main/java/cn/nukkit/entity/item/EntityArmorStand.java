@@ -437,7 +437,7 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
         return true;
     }
 
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @PowerNukkitOnly
     @Override
     public String getOriginalName() {

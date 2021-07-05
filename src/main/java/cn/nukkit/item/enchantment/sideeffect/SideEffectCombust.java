@@ -12,17 +12,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 @PowerNukkitOnly
-@Since("FUTURE")
+@Since("1.5.1.0-PN")
 public class SideEffectCombust implements SideEffect {
     private int duration;
 
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public SideEffectCombust(int duration) {
         this.duration = duration;
     }
 
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @PowerNukkitOnly
     @Override
     public void doPreHealthChange(@Nonnull Entity entity, @Nonnull EntityDamageEvent event, @Nullable Entity attacker) {
@@ -34,19 +34,19 @@ public class SideEffectCombust implements SideEffect {
         }
     }
 
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @PowerNukkitOnly
     public int getDuration() {
         return duration;
     }
 
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @PowerNukkitOnly
     public void setDuration(int duration) {
         this.duration = duration;
     }
 
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     @PowerNukkitOnly
     @SneakyThrows
     @Override

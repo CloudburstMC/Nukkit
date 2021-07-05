@@ -139,7 +139,7 @@ public final class Timings {
      * Initialize the static fields.
      */
     @PowerNukkitOnly
-    @Since("FUTURE")
+    @Since("1.5.1.0-PN")
     public static void init() {
         // code is already executed on <cinit>
     }
