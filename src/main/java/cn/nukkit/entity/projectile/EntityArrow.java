@@ -145,8 +145,7 @@ public class EntityArrow extends EntityProjectile {
         }
 
         if (this.level.isRaining() && this.fireTicks > 0 && this.level.canBlockSeeSky(this)) {
-            this.fireTicks = 0;
-            this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, false);
+            extinguish();
 
             hasUpdate = true;
         }

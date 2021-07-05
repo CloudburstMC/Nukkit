@@ -16,10 +16,20 @@ import java.lang.annotation.*;
 @Documented
 @Repeatable(PowerNukkitDifference.DifferenceList.class)
 public @interface PowerNukkitDifference {
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     String info() default "";
+
+    @PowerNukkitOnly
+    @Since("1.3.0.0-PN")
     String since() default "";
-    
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     Class<?> extendsOnlyInPowerNukkit() default Void.class;
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
     Class<?> insteadOf() default Void.class;
 
     @Retention(RetentionPolicy.CLASS)
