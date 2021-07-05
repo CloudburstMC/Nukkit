@@ -6,8 +6,50 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version, so we have a better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.5.0.1-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
+## [Unreleased 1.5.1.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
 Click the link above to see the future.
+
+### Changed
+- [#1107] Guava version from `29.0` to `30.1.1`
+- [#1107] SnakeYAML version from `1.26` to `1.28`
+- [#1134] Update the Chinese, Russian, and Turkish translations. Thank you for your contributions!
+- [#1149] Update the Spanish, and Russian translations. Also improved the message when a plugin is not found. Thank you for your contributions!
+- [#1177] Update the Portuguese, Chinese, and Polish translations. Also added the key `language.locale` to allow plugin devs to build a `Locale` object
+- [#1150] The `show_death_message` gamerule was renamed to `show_death_messages`. A backward compatibility code will keep the old one working, but it's now deprecated.
+- [#1151] Improved `/setworldspaw` auto completion
+- [#1153] Deprecate BlockNetherBrick in favor of BlockBricksNether
+- [#783] Campfire now drop 2 charcoal always
+- [#783] Soul campfire now drops 1 soul sand
+- [#783] Soul campfire now deal double the damage that normal campfires deals
+- [#783] Campfire and Soul campfire now deal damage even the entity is sneaking
+- [#783] Campfire and Soul campfire now breaks when pushed by piston
+- [#669] Improved the output of the `/kill @e` command
+
+### Added
+- [#1146] Added implementation for `AnimateEntityPacket`
+- [#1150] The `freeze_damage` gamerule 
+- [#1150] Mappings for Goat, Glow Squid, and Axolotl entities and spawn eggs
+- [#783] Campfire and Soul Campfire can now be lit by burning entities stepping on it
+- [#783] Campfire and Soul Campfire can now be unlit by throwing a splash water bottle on it
+- [#783] Campfire and Soul Campfire can now lit by using an item enchanted with fire aspect
+- [#669] New API methods to get the name of the entity for display
+
+### Fixes
+- [#1119] `TickSyncPacket` was not registered 
+- [#1120] Entities sometimes gets invisible for some players
+- [#1122] Backward compatibility with plugins setting full bark logs with 17:13
+- [#1132] You don't dismount the vehicle when you teleport, causing you to glitch
+- [#1103] The output message of the `/enchant` command
+- [#1100] Abrupt Time Change
+- [#1130] Soul Campfire and End Crystal were rendering as other items in the inventory
+- [#1139] Backward compatibility with some custom world generators
+- [#1147] Sharpness damage calculation
+- [#1153] Some Sonar Reports
+- [#1170] Cobwebs are now breakable by using shears
+- [#702] Burning arrow and rain will make a lot of particles
+- [#625] If you instant kill a mob with fire aspect enchant tool, it will not give fire aspect drops
+- [#979] Fixes an issue where the players could not hear each other walking
+- [#576] Swmming in a 1x1 tunnel of water was causing suffocation damage by the block above the player
 
 ## [1.5.0.0-PN] - 2021-06-11 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/26?closed=1))
 This was quick! This new version add protocol support for Minecraft `1.17.0` as if it was `1.16.221`.
@@ -681,7 +723,7 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
 [discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.5.0.1-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.5.0.0-PN...bleeding
+[Unreleased 1.5.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.5.0.0-PN...bleeding
 [1.5.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.4.0.0-PN...v1.5.0.0-PN
 [1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.5-PN...v1.4.0.0-PN
 [1.3.1.5-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.4-PN...v1.3.1.5-PN
@@ -824,16 +866,39 @@ Fixes several anvil issues.
 [#469]: https://github.com/PowerNukkit/PowerNukkit/issues/469
 [#475]: https://github.com/PowerNukkit/PowerNukkit/issues/475
 [#544]: https://github.com/PowerNukkit/PowerNukkit/issues/544
+[#576]: https://github.com/PowerNukkit/PowerNukkit/issues/576
+[#625]: https://github.com/PowerNukkit/PowerNukkit/issues/625
+[#669]: https://github.com/PowerNukkit/PowerNukkit/issues/669
+[#702]: https://github.com/PowerNukkit/PowerNukkit/issues/702
 [#765]: https://github.com/PowerNukkit/PowerNukkit/issues/765
 [#766]: https://github.com/PowerNukkit/PowerNukkit/issues/766
 [#770]: https://github.com/PowerNukkit/PowerNukkit/issues/770
 [#776]: https://github.com/PowerNukkit/PowerNukkit/issues/776
 [#777]: https://github.com/PowerNukkit/PowerNukkit/issues/777
 [#778]: https://github.com/PowerNukkit/PowerNukkit/issues/778
+[#783]: https://github.com/PowerNukkit/PowerNukkit/issues/783
 [#857]: https://github.com/PowerNukkit/PowerNukkit/issues/857
 [#882]: https://github.com/PowerNukkit/PowerNukkit/issues/882
 [#902]: https://github.com/PowerNukkit/PowerNukkit/issues/902
 [#917]: https://github.com/PowerNukkit/PowerNukkit/issues/917
 [#959]: https://github.com/PowerNukkit/PowerNukkit/issues/959
 [#960]: https://github.com/PowerNukkit/PowerNukkit/issues/960
+[#979]: https://github.com/PowerNukkit/PowerNukkit/issues/979
 [#990]: https://github.com/PowerNukkit/PowerNukkit/issues/990
+[#1100]: https://github.com/PowerNukkit/PowerNukkit/issues/1100
+[#1103]: https://github.com/PowerNukkit/PowerNukkit/issues/1103
+[#1107]: https://github.com/PowerNukkit/PowerNukkit/issues/1107
+[#1119]: https://github.com/PowerNukkit/PowerNukkit/issues/1119
+[#1120]: https://github.com/PowerNukkit/PowerNukkit/issues/1120
+[#1122]: https://github.com/PowerNukkit/PowerNukkit/issues/1122
+[#1130]: https://github.com/PowerNukkit/PowerNukkit/issues/1130
+[#1132]: https://github.com/PowerNukkit/PowerNukkit/issues/1132
+[#1134]: https://github.com/PowerNukkit/PowerNukkit/issues/1134
+[#1139]: https://github.com/PowerNukkit/PowerNukkit/issues/1139
+[#1146]: https://github.com/PowerNukkit/PowerNukkit/issues/1146
+[#1147]: https://github.com/PowerNukkit/PowerNukkit/issues/1147
+[#1149]: https://github.com/PowerNukkit/PowerNukkit/issues/1149
+[#1150]: https://github.com/PowerNukkit/PowerNukkit/issues/1150
+[#1151]: https://github.com/PowerNukkit/PowerNukkit/issues/1151
+[#1170]: https://github.com/PowerNukkit/PowerNukkit/issues/1170
+[#1177]: https://github.com/PowerNukkit/PowerNukkit/issues/1177
