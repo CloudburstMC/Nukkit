@@ -420,7 +420,7 @@ public class Utils {
     }
 
     @PowerNukkitOnly
-    @Since("1.4.0.0-PN")
+    @Since("FUTURE")
     public static boolean isNumeric(String str) {
         if (str == null) {
             return false;
