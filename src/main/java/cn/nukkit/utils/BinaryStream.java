@@ -726,13 +726,12 @@ public class BinaryStream {
     }
 
     public void putGameRules(GameRules gameRules) {
-        val rules = gameRules.getGameRules();
-        this.putUnsignedVarInt(rules.size() - 1L);
+        // LinkedHashMap gives mutability and is faster in iteration 
+        val rules = new LinkedHashMap<>(gameRules.getGameRules());
+        rules.keySet().removeIf(GameRule::isDeprecated);
+        
+        this.putUnsignedVarInt(rules.size());
         rules.forEach((gameRule, value) -> {
-            //noinspection deprecation
-            if (gameRule == GameRule.SHOW_DEATH_MESSAGE) {
-                return;
-            }
             this.putString(gameRule.getName().toLowerCase());
             value.write(this);
         });

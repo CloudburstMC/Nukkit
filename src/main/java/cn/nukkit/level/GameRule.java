@@ -33,17 +33,22 @@ public enum GameRule {
     SEND_COMMAND_FEEDBACK("sendCommandFeedback"),
     SHOW_COORDINATES("showCoordinates"),
     @Since("FUTURE") SHOW_DEATH_MESSAGES("showDeathMessages"),
-    @PowerNukkitOnly @Deprecated 
+
+    @Deprecated
+    @PowerNukkitOnly("Renamed to SHOW_DEATH_MESSAGE by NukkitX") 
     @DeprecationDetails(since = "FUTURE", 
             reason = "Added by upstream with a different name",
             replaceWith = "SHOW_DEATH_MESSAGES")
-    SHOW_DEATH_MESSAGE(SHOW_DEATH_MESSAGES.name),
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    SHOW_DEATH_MESSAGE(SHOW_DEATH_MESSAGES.name, true),
+    
     SPAWN_RADIUS("spawnRadius"),
     TNT_EXPLODES("tntExplodes"),
     EXPERIMENTAL_GAMEPLAY("experimentalGameplay"),
     SHOW_TAGS("showTags");
 
     private final String name;
+    private final boolean deprecated;
 
     @PowerNukkitOnly
     @Since("1.4.0.0-PN")
@@ -51,6 +56,12 @@ public enum GameRule {
 
     GameRule(String name) {
         this.name = name;
+        this.deprecated = false;
+    }
+
+    GameRule(String name, boolean deprecated) {
+        this.name = name;
+        this.deprecated = deprecated;
     }
 
     public static Optional<GameRule> parseString(String gameRuleString) {
@@ -78,5 +89,11 @@ public enum GameRule {
 
     public String getName() {
         return name;
+    }
+
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public boolean isDeprecated() {
+        return deprecated;
     }
 }
