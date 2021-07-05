@@ -2630,7 +2630,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void respawnToAll() {
-        Collection<Player> players = new ArrayList<>(this.hasSpawned.values());
+        Player[] players = this.hasSpawned.values().toArray(Player.EMPTY_ARRAY);
         this.hasSpawned.clear();
 
         for (Player player : players) {
