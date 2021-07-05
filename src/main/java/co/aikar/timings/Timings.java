@@ -24,6 +24,8 @@
 package co.aikar.timings;
 
 import cn.nukkit.Server;
+import cn.nukkit.api.PowerNukkitOnly;
+import cn.nukkit.api.Since;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.command.Command;
 import cn.nukkit.entity.Entity;
@@ -131,6 +133,15 @@ public final class Timings {
 
         permissibleCalculationTimer = TimingsManager.getTiming("Permissible Calculation");
         permissionDefaultTimer = TimingsManager.getTiming("Default Permission Calculation");
+    }
+
+    /**
+     * Initialize the static fields.
+     */
+    @PowerNukkitOnly
+    @Since("FUTURE")
+    public static void init() {
+        // code is already executed on <cinit>
     }
 
     public static boolean isTimingsEnabled() {
