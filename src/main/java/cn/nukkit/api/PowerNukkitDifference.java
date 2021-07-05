@@ -16,8 +16,11 @@ import java.lang.annotation.*;
 @Documented
 @Repeatable(PowerNukkitDifference.DifferenceList.class)
 public @interface PowerNukkitDifference {
-    String info();
+    String info() default "";
     String since() default "";
+    
+    Class<?> extendsOnlyInPowerNukkit() default Void.class;
+    Class<?> insteadOf() default Void.class;
 
     @Retention(RetentionPolicy.CLASS)
     @Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.TYPE,

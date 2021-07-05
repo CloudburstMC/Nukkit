@@ -6070,6 +6070,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
     
     @PowerNukkitOnly
+    @Since("FUTURE")
+    public void completeUsingItem(int itemId, int action) {
+        CompletedUsingItemPacket pk = new CompletedUsingItemPacket();
+        pk.itemId = itemId;
+        pk.action = action;
+        this.dataPacket(pk);
+    }
+    
+    @PowerNukkitOnly
     @Since("1.4.0.0-PN")
     public boolean dataPacketImmediately(DataPacket packet) {
         if (!this.connected) {

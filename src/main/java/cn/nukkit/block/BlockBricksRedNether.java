@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
+@SuppressWarnings("deprecation")
 public class BlockBricksRedNether extends BlockNetherBrick {
 
     public BlockBricksRedNether() {
