@@ -2593,7 +2593,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     InteractPacket interactPacket = (InteractPacket) packet;
 
-                    Entity targetEntity = this.level.getEntity(interactPacket.target);
+                    Entity targetEntity = this.level.getEntity(interactPacket.entityRuntimeId);
 
                     if (targetEntity == null || !this.isAlive() || !targetEntity.isAlive()) {
                         break;
@@ -2609,7 +2609,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     switch (interactPacket.action) {
                         case InteractPacket.ACTION_MOUSEOVER:
-                            if (interactPacket.target == 0) {
+                            if (interactPacket.entityRuntimeId == 0) {
                                 break packetswitch;
                             }
                             this.getServer().getPluginManager().callEvent(new PlayerMouseOverEntityEvent(this, targetEntity));
