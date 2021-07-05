@@ -13,7 +13,7 @@ import java.util.List;
 @Since("FUTURE")
 public class AnimateEntityPacket extends DataPacket {
 
-	@PowerNukkitOnly
+    @PowerNukkitOnly
     @Since("FUTURE")
     public static final byte NETWORK_ID = ProtocolInfo.ANIMATE_ENTITY_PACKET;
 
@@ -56,73 +56,73 @@ public class AnimateEntityPacket extends DataPacket {
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public void setAnimation(String animation) {
         this.animation = animation;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public String getAnimation() {
         return this.animation;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public void setNextState(String nextState) {
         this.nextState = nextState;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public String getNextState() {
         return this.nextState;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public void setStopExpression(String stopExpression) {
         this.stopExpression = stopExpression;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public String getStopExpression() {
         return this.stopExpression;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public void setController(String controller) {
         this.controller = controller;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public String getController() {
         return this.controller;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public void setBlendOutTime(float blendOutTime) {
         this.blendOutTime = blendOutTime;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public float getBlendOutTime() {
         return this.blendOutTime;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public void setEntityRuntimeIds(List<Long> entityRuntimeIds) {
         this.entityRuntimeIds = entityRuntimeIds;
     }
     
     @PowerNukkitOnly
-    @Since("1.5.0.0-PN")
+    @Since("FUTURE")
     public List<Long> getEntityRuntimeIds() {
         return this.entityRuntimeIds;
     }

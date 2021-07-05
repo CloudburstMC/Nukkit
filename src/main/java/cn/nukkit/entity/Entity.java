@@ -1007,7 +1007,7 @@ public abstract class Entity extends Location implements Metadatable {
     @Since("FUTURE")
     public static IntCollection getKnownEntityIds() {
         return knownEntities.keySet().stream()
-                .filter(Utils::isNumeric)
+                .filter(Utils::isInteger)
                 .mapToInt(Integer::parseInt)
                 .collect(IntArrayList::new, IntArrayList::add, IntArrayList::addAll);
     }
@@ -1030,7 +1030,7 @@ public abstract class Entity extends Location implements Metadatable {
         return knownEntities.entrySet().stream()
                 .filter(entry -> entry.getValue().equals(entityClass))
                 .map(Map.Entry::getKey)
-                .filter(Utils::isNumeric)
+                .filter(Utils::isInteger)
                 .mapToInt(Integer::parseInt)
                 .findFirst();
     }

@@ -421,7 +421,7 @@ public class Utils {
 
     @PowerNukkitOnly
     @Since("FUTURE")
-    public static boolean isNumeric(String str) {
+    public static boolean isInteger(String str) {
         if (str == null) {
             return false;
         }

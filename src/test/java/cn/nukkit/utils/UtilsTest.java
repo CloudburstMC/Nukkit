@@ -30,12 +30,12 @@ class UtilsTest {
 
     @Test
     void isNumeric() {
-        assertFalse(Utils.isNumeric(null));
-        assertFalse(Utils.isNumeric(""));
-        assertFalse(Utils.isNumeric("-"));
-        assertTrue(Utils.isNumeric("-3"));
-        assertFalse(Utils.isNumeric("-3a"));
-        assertTrue(Utils.isNumeric("5"));
-        assertFalse(Utils.isNumeric("!"));
+        assertFalse(Utils.isInteger(null));
+        assertFalse(Utils.isInteger(""));
+        assertFalse(Utils.isInteger("-"));
+        assertTrue(Utils.isInteger("-3"));
+        assertFalse(Utils.isInteger("-3a"));
+        assertTrue(Utils.isInteger("5"));
+        assertFalse(Utils.isInteger("!"));
     }
 }
