@@ -2372,17 +2372,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 case ProtocolInfo.PLAYER_ACTION_PACKET:
                     PlayerActionPacket playerActionPacket = (PlayerActionPacket) packet;
-                    if (!this.spawned || (!this.isAlive() && playerActionPacket.action != PlayerActionPacket.ACTION_RESPAWN && playerActionPacket.action != PlayerActionPacket.ACTION_DIMENSION_CHANGE_REQUEST)) {
+                    if (!this.spawned || (!this.isAlive() && playerActionPacket.action != PlayerActionPacket.Action.RESPAWN && playerActionPacket.action != PlayerActionPacket.Action.DIMENSION_CHANGE_REQUEST)) {
                         break;
                     }
 
-                    playerActionPacket.entityId = this.id;
+                    playerActionPacket.entityRuntimeId = this.id;
                     Vector3 pos = new Vector3(playerActionPacket.x, playerActionPacket.y, playerActionPacket.z);
                     BlockFace face = BlockFace.fromIndex(playerActionPacket.face);
 
                     actionswitch:
                     switch (playerActionPacket.action) {
-                        case PlayerActionPacket.ACTION_START_BREAK:
+                        case START_BREAK:
                             long currentBreak = System.currentTimeMillis();
                             BlockVector3 currentBreakPosition = new BlockVector3(playerActionPacket.x, playerActionPacket.y, playerActionPacket.z);
                             // HACK: Client spams multiple left clicks so we need to skip them.
@@ -2423,10 +2423,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 double breakTime = Math.ceil(target.getBreakTime(this.inventory.getItemInHand(), this) * 20);
                                 if (breakTime > 0) {
                                     LevelEventPacket pk = new LevelEventPacket();
-                                    pk.evid = LevelEventPacket.EVENT_BLOCK_START_BREAK;
-                                    pk.x = (float) pos.x;
-                                    pk.y = (float) pos.y;
-                                    pk.z = (float) pos.z;
+                                    pk.event = LevelEventPacket.EVENT_BLOCK_START_BREAK;
+                                    pk.position = new Vector3f((float) pos.x, (float) pos.y, (float) pos.z);
                                     pk.data = (int) (65535 / breakTime);
                                     this.getLevel().addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
                                 }
@@ -2437,36 +2435,33 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.lastBreakPosition = currentBreakPosition;
                             break;
 
-                        case PlayerActionPacket.ACTION_ABORT_BREAK:
-                        case PlayerActionPacket.ACTION_STOP_BREAK:
+                        case ABORT_BREAK:
+                        case STOP_BREAK:
                             LevelEventPacket pk = new LevelEventPacket();
-                            pk.evid = LevelEventPacket.EVENT_BLOCK_STOP_BREAK;
-                            pk.x = (float) pos.x;
-                            pk.y = (float) pos.y;
-                            pk.z = (float) pos.z;
-                            pk.data = 0;
+                            pk.event = LevelEventPacket.EVENT_BLOCK_STOP_BREAK;
+                            pk.position = new Vector3f((float) pos.x, (float) pos.y, (float) pos.z);
                             this.getLevel().addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
                             this.breakingBlock = null;
                             break;
-                        case PlayerActionPacket.ACTION_GET_UPDATED_BLOCK:
+                        case UPDATED_BLOCK:
                             //TODO
-                        case PlayerActionPacket.ACTION_DROP_ITEM:
+                        case DROP_ITEM:
                             break; //TODO
-                        case PlayerActionPacket.ACTION_STOP_SLEEPING:
+                        case STOP_SLEEPING:
                             this.stopSleep();
                             break;
-                        case PlayerActionPacket.ACTION_RESPAWN:
+                        case RESPAWN:
                             if (!this.spawned || this.isAlive() || !this.isOnline()) {
                                 break;
                             }
 
                             this.respawn();
                             break;
-                        case PlayerActionPacket.ACTION_JUMP:
+                        case JUMP:
                             PlayerJumpEvent playerJumpEvent = new PlayerJumpEvent(this);
                             this.server.getPluginManager().callEvent(playerJumpEvent);
                             break packetswitch;
-                        case PlayerActionPacket.ACTION_START_SPRINT:
+                        case START_SPRINT:
                             PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, true);
                             this.server.getPluginManager().callEvent(playerToggleSprintEvent);
                             if (playerToggleSprintEvent.isCancelled()) {
@@ -2475,7 +2470,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.setSprinting(true);
                             }
                             break packetswitch;
-                        case PlayerActionPacket.ACTION_STOP_SPRINT:
+                        case STOP_SPRINT:
                             playerToggleSprintEvent = new PlayerToggleSprintEvent(this, false);
                             this.server.getPluginManager().callEvent(playerToggleSprintEvent);
                             if (playerToggleSprintEvent.isCancelled()) {
@@ -2484,7 +2479,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.setSprinting(false);
                             }
                             break packetswitch;
-                        case PlayerActionPacket.ACTION_START_SNEAK:
+                        case START_SNEAK:
                             PlayerToggleSneakEvent playerToggleSneakEvent = new PlayerToggleSneakEvent(this, true);
                             this.server.getPluginManager().callEvent(playerToggleSneakEvent);
                             if (playerToggleSneakEvent.isCancelled()) {
@@ -2493,7 +2488,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.setSneaking(true);
                             }
                             break packetswitch;
-                        case PlayerActionPacket.ACTION_STOP_SNEAK:
+                        case STOP_SNEAK:
                             playerToggleSneakEvent = new PlayerToggleSneakEvent(this, false);
                             this.server.getPluginManager().callEvent(playerToggleSneakEvent);
                             if (playerToggleSneakEvent.isCancelled()) {
@@ -2502,10 +2497,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.setSneaking(false);
                             }
                             break packetswitch;
-                        case PlayerActionPacket.ACTION_DIMENSION_CHANGE_ACK:
+                        case DIMENSION_CHANGE_ACK:
                             this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.Mode.NORMAL);
                             break; //TODO
-                        case PlayerActionPacket.ACTION_START_GLIDE:
+                        case START_GLIDE:
                             PlayerToggleGlideEvent playerToggleGlideEvent = new PlayerToggleGlideEvent(this, true);
                             this.server.getPluginManager().callEvent(playerToggleGlideEvent);
                             if (playerToggleGlideEvent.isCancelled()) {
@@ -2514,7 +2509,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.setGliding(true);
                             }
                             break packetswitch;
-                        case PlayerActionPacket.ACTION_STOP_GLIDE:
+                        case STOP_GLIDE:
                             playerToggleGlideEvent = new PlayerToggleGlideEvent(this, false);
                             this.server.getPluginManager().callEvent(playerToggleGlideEvent);
                             if (playerToggleGlideEvent.isCancelled()) {
@@ -2523,13 +2518,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.setGliding(false);
                             }
                             break packetswitch;
-                        case PlayerActionPacket.ACTION_CONTINUE_BREAK:
+                        case CONTINUE_BREAK:
                             if (this.isBreakingBlock()) {
                                 block = this.level.getBlock(pos);
                                 this.level.addParticle(new PunchBlockParticle(pos, block, face));
                             }
                             break;
-                        case PlayerActionPacket.ACTION_START_SWIMMING:
+                        case START_SWIMMING:
                             PlayerToggleSwimEvent ptse = new PlayerToggleSwimEvent(this, true);
                             this.server.getPluginManager().callEvent(ptse);
 
@@ -2539,7 +2534,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.setSwimming(true);
                             }
                             break;
-                        case PlayerActionPacket.ACTION_STOP_SWIMMING:
+                        case STOP_SWIMMING:
                             ptse = new PlayerToggleSwimEvent(this, false);
                             this.server.getPluginManager().callEvent(ptse);
 
