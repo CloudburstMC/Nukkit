@@ -6,8 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 with an added upstream's major version number in front of the major version, so we have a better distinction from
 Nukkit 1.X and 2.X.
 
-## [Unreleased 1.5.1.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
+## [Unreleased 1.5.2.0-PN] - Future ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/28?closed=1))
 Click the link above to see the future.
+
+## [1.5.1.0-PN] - 2021-07-05 ([Check the milestone](https://github.com/PowerNukkit/PowerNukkit/milestone/22?closed=1))
+Our goal on this version was to fix bugs, and we did it, we fixed a lot of them!
+
+Thank you for the translations!
+Help us to translate PowerNukkit at https://translate.powernukkit.org
+
+Want to talk? 
+Talk to us at https://discuss.powernukkit.org and/or https://powernukkit.org/discord
 
 ### Changed
 - [#1107] Guava version from `29.0` to `30.1.1`
@@ -44,7 +53,7 @@ Click the link above to see the future.
 - [#1130] Soul Campfire and End Crystal were rendering as other items in the inventory
 - [#1139] Backward compatibility with some custom world generators
 - [#1147] Sharpness damage calculation
-- [#1153] Some Sonar Reports
+- [#1153] Some code quality issues reported by sonar
 - [#1170] Cobwebs are now breakable by using shears
 - [#702] Burning arrow and rain will make a lot of particles
 - [#625] If you instant kill a mob with fire aspect enchant tool, it will not give fire aspect drops
@@ -723,7 +732,8 @@ Fixes several anvil issues.
 [updated changelog]:https://github.com/PowerNukkit/PowerNukkit/blob/bleeding/CHANGELOG.md
 [discord guild]: https://powernukkit.org/discord
 
-[Unreleased 1.5.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.5.0.0-PN...bleeding
+[Unreleased 1.5.2.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.5.1.0-PN...bleeding
+[1.5.1.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.5.0.0-PN...v1.5.1.0-PN
 [1.5.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.4.0.0-PN...v1.5.0.0-PN
 [1.4.0.0-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.5-PN...v1.4.0.0-PN
 [1.3.1.5-PN]: https://github.com/PowerNukkit/PowerNukkit/compare/v1.3.1.4-PN...v1.3.1.5-PN
@@ -900,5 +910,6 @@ Fixes several anvil issues.
 [#1149]: https://github.com/PowerNukkit/PowerNukkit/issues/1149
 [#1150]: https://github.com/PowerNukkit/PowerNukkit/issues/1150
 [#1151]: https://github.com/PowerNukkit/PowerNukkit/issues/1151
+[#1153]: https://github.com/PowerNukkit/PowerNukkit/issues/1153
 [#1170]: https://github.com/PowerNukkit/PowerNukkit/issues/1170
 [#1177]: https://github.com/PowerNukkit/PowerNukkit/issues/1177
