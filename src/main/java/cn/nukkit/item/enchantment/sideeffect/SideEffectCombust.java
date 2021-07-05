@@ -46,6 +46,8 @@ public class SideEffectCombust implements SideEffect {
         this.duration = duration;
     }
 
+    @Since("FUTURE")
+    @PowerNukkitOnly
     @SneakyThrows
     @Override
     @Nonnull

@@ -437,6 +437,13 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
         return true;
     }
 
+    @Since("FUTURE")
+    @PowerNukkitOnly
+    @Override
+    public String getOriginalName() {
+        return "Armor Stand";
+    }
+
     @Override
     public boolean entityBaseTick(int tickDiff) {
         boolean hasUpdate = super.entityBaseTick(tickDiff);

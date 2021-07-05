@@ -1272,15 +1272,8 @@ public class Server {
     }
 
     private void checkTickUpdates(int currentTick, long tickTime) {
-        for (Player p : new ArrayList<>(this.players.values())) {
-            /*if (!p.loggedIn && (tickTime - p.creationTime) >= 10000 && p.kick(PlayerKickEvent.Reason.LOGIN_TIMEOUT, "Login timeout")) {
-                continue;
-            }
-
-            client freezes when applying resource packs
-            todo: fix*/
-
-            if (this.alwaysTickPlayers) {
+        if (this.alwaysTickPlayers) {
+            for (Player p : new ArrayList<>(this.players.values())) {
                 p.onUpdate(currentTick);
             }
         }
