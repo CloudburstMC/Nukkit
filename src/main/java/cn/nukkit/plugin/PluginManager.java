@@ -269,7 +269,7 @@ public class PluginManager {
                             } else if (!plugins.containsKey(dependency)) {
                                 BaseLang language = this.server.getLanguage();
                                 String cause = language.translateString("nukkit.plugin.missingDependency", dependency);
-                                log.fatal(language.translateString("nukkit.plugin.loadError", new String[]{name, cause}));
+                                log.fatal(language.translateString("nukkit.plugin.loadError", new String[]{name, cause}, null));
                                 break;
                             }
                         }

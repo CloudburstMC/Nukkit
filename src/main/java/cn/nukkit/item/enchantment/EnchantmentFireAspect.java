@@ -41,6 +41,7 @@ public class EnchantmentFireAspect extends Enchantment {
     @PowerNukkitOnly
     @Since("1.5.1.0-PN")
     @Nonnull
+    @Override
     public SideEffect[] getAttackSideEffects(@Nonnull Entity attacker, @Nonnull Entity entity) {
         return new SideEffect[]{
                 new SideEffectCombust(Math.max(entity.fireTicks / 20, getLevel() * 4))

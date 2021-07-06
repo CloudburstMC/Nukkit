@@ -32,13 +32,15 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     private final Map<DamageModifier, Float> originals;
 
     private SideEffect[] sideEffects = SideEffect.EMPTY_ARRAY;
-
+    
+    private static Map<DamageModifier, Float> createDamageModifierMap(float baseDamage) {
+        Map<DamageModifier, Float> modifiers = new EnumMap<>(DamageModifier.class);
+        modifiers.put(DamageModifier.BASE, baseDamage);
+        return modifiers;
+    }
+    
     public EntityDamageEvent(Entity entity, DamageCause cause, float damage) {
-        this(entity, cause, new EnumMap<DamageModifier, Float>(DamageModifier.class) {
-            {
-                put(DamageModifier.BASE, damage);
-            }
-        });
+        this(entity, cause, createDamageModifierMap(damage));
     }
 
     public EntityDamageEvent(Entity entity, DamageCause cause, Map<DamageModifier, Float> modifiers) {
@@ -52,8 +54,8 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
             throw new EventException("BASE Damage modifier missing");
         }
 
-        if (entity.hasEffect(Effect.DAMAGE_RESISTANCE)) {
-            this.setDamage((float) -(this.getDamage(DamageModifier.BASE) * 0.20 * (entity.getEffect(Effect.DAMAGE_RESISTANCE).getAmplifier() + 1)), DamageModifier.RESISTANCE);
+        if (entity.hasEffect(Effect.RESISTANCE)) {
+            this.setDamage((float) -(this.getDamage(DamageModifier.BASE) * 0.20 * (entity.getEffect(Effect.RESISTANCE).getAmplifier() + 1)), DamageModifier.RESISTANCE);
         }
     }
 
@@ -120,11 +122,11 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     @Since("1.5.1.0-PN")
     @Nonnull
     public SideEffect[] getSideEffects() {
-        SideEffect[] sideEffects = this.sideEffects;
-        if (sideEffects.length == 0) {
-            return sideEffects;
+        SideEffect[] sideEffectsArray = this.sideEffects;
+        if (sideEffectsArray.length == 0) {
+            return sideEffectsArray;
         }
-        return Arrays.stream(sideEffects)
+        return Arrays.stream(sideEffectsArray)
                 .map(SideEffect::clone)
                 .toArray(SideEffect[]::new)
         ;

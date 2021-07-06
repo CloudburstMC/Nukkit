@@ -220,17 +220,14 @@ public class BlockStateRegistry {
     }
 
     private BlockState convertToNewState(BlockState oldState) {
-        int exactInt;
-        switch (oldState.getBlockId()) {
-            // Check OldWoodBarkUpdater.java and https://minecraft.fandom.com/wiki/Log#Metadata
-            // The Only bark variant is replaced in the client side to minecraft:wood with the same wood type
-            case BlockID.LOG:
-            case BlockID.LOG2:
-                if (oldState.getBitSize() == 4 && ((exactInt = oldState.getExactIntStorage()) & 0b1100) == 0b1100) {
-                    int increment = oldState.getBlockId() == BlockID.LOG? 0b000 : 0b100;
-                    return BlockState.of(BlockID.WOOD_BARK, (exactInt & 0b11) + increment);
-                }
-                break;
+        // Check OldWoodBarkUpdater.java and https://minecraft.fandom.com/wiki/Log#Metadata
+        // The Only bark variant is replaced in the client side to minecraft:wood with the same wood type
+        if (oldState.getBitSize() == 4 && (oldState.getBlockId() == BlockID.LOG || oldState.getBlockId() == BlockID.LOG2)) {
+            int exactInt = oldState.getExactIntStorage();
+            if ((exactInt & 0b1100) == 0b1100) {
+                int increment = oldState.getBlockId() == BlockID.LOG ? 0b000 : 0b100;
+                return BlockState.of(BlockID.WOOD_BARK, (exactInt & 0b11) + increment);
+            }
         }
         return oldState;
     }

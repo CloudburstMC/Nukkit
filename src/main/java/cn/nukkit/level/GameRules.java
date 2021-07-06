@@ -29,9 +29,9 @@ public class GameRules {
         gameRules.gameRules.put(COMMAND_BLOCK_OUTPUT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_DAYLIGHT_CYCLE, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_ENTITY_DROPS, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_FIRE_TICK, new Value(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_INSOMNIA, new Value(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_IMMEDIATE_RESPAWN, new Value(Type.BOOLEAN, false));
+        gameRules.gameRules.put(DO_FIRE_TICK, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_INSOMNIA, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_IMMEDIATE_RESPAWN, new Value<>(Type.BOOLEAN, false));
         gameRules.gameRules.put(DO_MOB_LOOT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_MOB_SPAWNING, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_TILE_DROPS, new Value<>(Type.BOOLEAN, true));

@@ -2604,8 +2604,8 @@ public abstract class Entity extends Location implements Metadatable {
             to = ev.getTo();
         }
 
-        Entity riding = getRiding();
-        if (riding != null && !riding.dismountEntity(this)) {
+        Entity currentRide = getRiding();
+        if (currentRide != null && !currentRide.dismountEntity(this)) {
             return false;
         }
 
