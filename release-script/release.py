@@ -147,7 +147,7 @@ try:
             base = docker_tag
             if is_snapshot:
                 base = "bleeding"
-            build_docker(pterodactyl_tag_name(base, java), './pterodactyl-image-java'+java+'.Dockerfile')
+            build_docker(pterodactyl_tag_name(base, java), './docker_pterodactyl-image-java'+java+'.Dockerfile')
 
         if run_docker_build_pterodactyl:
             start_progress("Building pterodactyl images")
