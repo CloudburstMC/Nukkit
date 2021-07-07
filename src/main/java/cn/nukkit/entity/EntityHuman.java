@@ -11,6 +11,7 @@ import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.AddPlayerPacket;
 import cn.nukkit.network.protocol.RemoveEntityPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
+import cn.nukkit.network.protocol.types.EntityLink;
 import cn.nukkit.utils.*;
 
 import java.nio.charset.StandardCharsets;
@@ -319,10 +320,7 @@ public class EntityHuman extends EntityHumanType {
 
             if (this.riding != null) {
                 SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-                pkk.vehicleUniqueId = this.riding.getId();
-                pkk.riderUniqueId = this.getId();
-                pkk.type = 1;
-                pkk.immediate = 1;
+                pkk.entityLink = new EntityLink(this.riding.getId(), this.getId(), EntityLink.Type.RIDER, true, false);
 
                 player.dataPacket(pkk);
             }

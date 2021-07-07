@@ -22,7 +22,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AnimatePacket;
-import cn.nukkit.network.protocol.SetEntityLinkPacket;
+import cn.nukkit.network.protocol.types.EntityLink;
 
 import java.util.ArrayList;
 
@@ -229,7 +229,7 @@ public class EntityBoat extends EntityVehicle {
             super.updatePassengerPosition(ent);
 
             if (sendLinks) {
-                broadcastLinkPacket(ent, SetEntityLinkPacket.TYPE_RIDE);
+                broadcastLinkPacket(ent, EntityLink.Type.RIDE);
             }
         } else if (passengers.size() == 2) {
             if (!((ent = passengers.get(0)) instanceof Player)) { //swap
@@ -246,7 +246,7 @@ public class EntityBoat extends EntityVehicle {
             ent.setSeatPosition(getMountedOffset(ent).add(RIDER_PASSENGER_OFFSET));
             super.updatePassengerPosition(ent);
             if (sendLinks) {
-                broadcastLinkPacket(ent, SetEntityLinkPacket.TYPE_RIDE);
+                broadcastLinkPacket(ent, EntityLink.Type.RIDE);
             }
 
             (ent = this.passengers.get(1)).setSeatPosition(getMountedOffset(ent).add(PASSENGER_OFFSET));
@@ -254,7 +254,7 @@ public class EntityBoat extends EntityVehicle {
             super.updatePassengerPosition(ent);
 
             if (sendLinks) {
-                broadcastLinkPacket(ent, SetEntityLinkPacket.TYPE_PASSENGER);
+                broadcastLinkPacket(ent, EntityLink.Type.PASSENGER);
             }
 
             float yawDiff = ent.getId() % 2 == 0 ? 90 : 270;
@@ -298,10 +298,10 @@ public class EntityBoat extends EntityVehicle {
     @Override
     public boolean mountEntity(Entity entity) {
         boolean player = this.passengers.size() >= 1 && this.passengers.get(0) instanceof Player;
-        byte mode = SetEntityLinkPacket.TYPE_PASSENGER;
+        byte mode = EntityLink.Type.PASSENGER;
 
         if (!player && (entity instanceof Player || this.passengers.size() == 0)) {
-            mode = SetEntityLinkPacket.TYPE_RIDE;
+            mode = EntityLink.Type.RIDE;
         }
 
         boolean r = super.mountEntity(entity, mode);
@@ -314,7 +314,7 @@ public class EntityBoat extends EntityVehicle {
 
             entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, this.passengers.indexOf(entity) == 1 ? -90 : 0));
 
-            //            if(entity instanceof Player && mode == SetEntityLinkPacket.TYPE_RIDE){ //TODO: controlling?
+            //            if(entity instanceof Player && mode == EntityLink.Type.RIDE){ //TODO: controlling?
 //                entity.setDataProperty(new ByteEntityData(DATA_FLAG_WASD_CONTROLLED))
 //            }
         }

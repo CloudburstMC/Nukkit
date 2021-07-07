@@ -38,8 +38,6 @@ import java.lang.reflect.Constructor;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static cn.nukkit.network.protocol.SetEntityLinkPacket.*;
-
 /**
  * @author MagicDroidX
  */
@@ -986,10 +984,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.riding.spawnTo(player);
 
             SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-            pkk.vehicleUniqueId = this.riding.getId();
-            pkk.riderUniqueId = this.getId();
-            pkk.type = 1;
-            pkk.immediate = 1;
+            pkk.entityLink = new EntityLink(this.riding.getId(), this.getId(), EntityLink.Type.RIDER, true, false);
 
             player.dataPacket(pkk);
         }
@@ -1009,7 +1004,7 @@ public abstract class Entity extends Location implements Metadatable {
 
         addEntity.entityLinks = new EntityLink[this.passengers.size()];
         for (int i = 0; i < addEntity.links.length; i++) {
-            addEntity.entityLinks[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.TYPE_RIDER : TYPE_PASSENGER, false, false);
+            addEntity.entityLinks[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.Type.RIDER : EntityLink.Type.PASSENGER, false, false);
         }
 
         return addEntity;
@@ -1494,7 +1489,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean mountEntity(Entity entity) {
-        return mountEntity(entity, TYPE_RIDE);
+        return mountEntity(entity, EntityLink.Type.RIDE);
     }
 
     /**
@@ -1541,7 +1536,7 @@ public abstract class Entity extends Location implements Metadatable {
             return false;
         }
 
-        broadcastLinkPacket(entity, TYPE_REMOVE);
+        broadcastLinkPacket(entity, EntityLink.Type.REMOVE);
 
         // Refurbish the entity
         entity.riding = null;
@@ -1554,11 +1549,9 @@ public abstract class Entity extends Location implements Metadatable {
         return true;
     }
 
-    protected void broadcastLinkPacket(Entity rider, byte type) {
+    protected void broadcastLinkPacket(Entity rider, EntityLink.Type type) {
         SetEntityLinkPacket pk = new SetEntityLinkPacket();
-        pk.vehicleUniqueId = getId();         // To the?
-        pk.riderUniqueId = rider.getId(); // From who?
-        pk.type = type;
+        pk.entityLink = new EntityLink(getId(), rider.getId(), type, false, false);
 
         Server.broadcastPacket(this.hasSpawned.values(), pk);
     }
