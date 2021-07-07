@@ -14,8 +14,14 @@ public class HurtArmorPacket extends DataPacket {
     public int damage;
 
     @Override
-    public void decode() {
+    public byte pid() {
+        return NETWORK_ID;
+    }
 
+    @Override
+    public void decode() {
+        this.cause = this.getVarInt();
+        this.damage = this.getVarInt();
     }
 
     @Override
@@ -24,10 +30,4 @@ public class HurtArmorPacket extends DataPacket {
         this.putVarInt(this.cause);
         this.putVarInt(this.damage);
     }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
-    }
-
 }
