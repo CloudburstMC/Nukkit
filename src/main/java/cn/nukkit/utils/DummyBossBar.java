@@ -208,8 +208,8 @@ public class DummyBossBar {
 
     private void updateBossEntityNameTag() {
         SetEntityDataPacket pk = new SetEntityDataPacket();
-        pk.eid = this.bossBarId;
-        pk.metadata = new EntityMetadata().putString(Entity.DATA_NAMETAG, this.text);
+        pk.entityRuntimeId = this.bossBarId;
+        pk.entityMetadata = new EntityMetadata().putString(Entity.DATA_NAMETAG, this.text);
         player.dataPacket(pk);
     }
 

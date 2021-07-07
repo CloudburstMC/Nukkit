@@ -92,8 +92,8 @@ public class FloatingTextParticle extends Particle {
     private void sendMetadata() {
         if (level != null) {
             SetEntityDataPacket packet = new SetEntityDataPacket();
-            packet.eid = entityId;
-            packet.metadata = metadata;
+            packet.entityRuntimeId = entityId;
+            packet.entityMetadata = metadata;
             level.addChunkPacket(getChunkX(), getChunkZ(), packet);
         }
     }
