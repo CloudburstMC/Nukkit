@@ -16,12 +16,12 @@ public class SetHealthPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.health = this.getVarInt();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(this.health);
+        this.putVarInt(this.health);
     }
 }
