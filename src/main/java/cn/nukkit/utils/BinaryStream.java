@@ -767,7 +767,7 @@ public class BinaryStream {
     public void putEntityLink(EntityLink link) {
         putEntityUniqueId(link.fromEntityUniquieId);
         putEntityUniqueId(link.toEntityUniquieId);
-        putByte(link.type);
+        putByte(link.type.ordinal());
         putBoolean(link.immediate);
         putBoolean(link.riderInitiated);
     }
@@ -776,7 +776,7 @@ public class BinaryStream {
         return new EntityLink(
                 getEntityUniqueId(),
                 getEntityUniqueId(),
-                (byte) getByte(),
+                EntityLink.values()[getByte()],
                 getBoolean(),
                 getBoolean()
         );

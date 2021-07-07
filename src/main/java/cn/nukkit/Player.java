@@ -1112,7 +1112,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
         this.spawnPosition = new Position(pos.x, pos.y, pos.z, level);
         SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
-        pk.spawnType = SetSpawnPositionPacket.TYPE_PLAYER_SPAWN;
+        pk.type = SetSpawnPositionPacket.Type.PLAYER_SPAWN;
         pk.x = (int) this.spawnPosition.x;
         pk.y = (int) this.spawnPosition.y;
         pk.z = (int) this.spawnPosition.z;
@@ -4398,7 +4398,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             if (from.getLevel().getId() != location.getLevel().getId()) { //Different level, update compass position
                 SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
-                pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+                pk.type = SetSpawnPositionPacket.Type.WORLD_SPAWN;
                 Position spawn = location.getLevel().getSpawnLocation();
                 pk.x = spawn.getFloorX();
                 pk.y = spawn.getFloorY();
@@ -4809,7 +4809,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Level oldLevel = this.level;
         if (super.switchLevel(level)) {
             SetSpawnPositionPacket spawnPosition = new SetSpawnPositionPacket();
-            spawnPosition.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+            spawnPosition.type = SetSpawnPositionPacket.Type.WORLD_SPAWN;
             Position spawn = level.getSpawnLocation();
             spawnPosition.x = spawn.getFloorX();
             spawnPosition.y = spawn.getFloorY();
