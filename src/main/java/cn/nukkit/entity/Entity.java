@@ -1443,10 +1443,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     public void addMotion(double motionX, double motionY, double motionZ) {
         SetEntityMotionPacket pk = new SetEntityMotionPacket();
-        pk.eid = this.id;
-        pk.motionX = (float) motionX;
-        pk.motionY = (float) motionY;
-        pk.motionZ = (float) motionZ;
+        pk.entityRuntimeId = this.id;
+        pk.motion = new Vector3f((float) motionX, (float) motionY, (float) motionZ);
 
         Server.broadcastPacket(this.hasSpawned.values(), pk);
     }
