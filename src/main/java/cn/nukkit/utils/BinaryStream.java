@@ -776,7 +776,7 @@ public class BinaryStream {
         return new EntityLink(
                 getEntityUniqueId(),
                 getEntityUniqueId(),
-                EntityLink.values()[getByte()],
+                getByte(),
                 getBoolean(),
                 getBoolean()
         );

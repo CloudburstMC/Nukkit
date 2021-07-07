@@ -16,6 +16,15 @@ public class EntityLink {
         this.riderInitiated = riderInitiated;
     }
 
+
+    public EntityLink(long fromEntityUniquieId, long toEntityUniquieId, byte type, boolean immediate, boolean riderInitiated) {
+        this.fromEntityUniquieId = fromEntityUniquieId;
+        this.toEntityUniquieId = toEntityUniquieId;
+        this.type = Type.values()[type];
+        this.immediate = immediate;
+        this.riderInitiated = riderInitiated;
+    }
+
     public static enum Type {
 
         REMOVE,
