@@ -102,8 +102,6 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
                 } else if (this.right.slots.containsKey(i - this.left.size)) {
                     this.clear(i);
                 }
-            } else if (!this.setItem(i, items.get(i))) {
-                this.clear(i);
             }
         }
     }
