@@ -1131,8 +1131,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.level.sleepTicks = 0;
 
             AnimatePacket pk = new AnimatePacket();
-            pk.eid = this.id;
-            pk.action = AnimatePacket.Action.WAKE_UP;
+            pk.entityRuntimeId = this.id;
+            pk.action = AnimatePacket.ACTION_STOP_SLEEP;
             this.dataPacket(pk);
         }
     }
@@ -2706,11 +2706,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    AnimatePacket.Action animation = animationEvent.getAnimationType();
+                    int animation = animationEvent.getAnimationType();
 
                     switch (animation) {
-                        case ROW_RIGHT:
-                        case ROW_LEFT:
+                        case ACTION_ROW_RIGHT:
+                        case ACTION_ROW_LEFT:
                             if (this.riding instanceof EntityBoat) {
                                 ((EntityBoat) this.riding).onPaddle(animation, ((AnimatePacket) packet).rowingTime);
                             }
@@ -2718,7 +2718,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     AnimatePacket animatePacket = new AnimatePacket();
-                    animatePacket.eid = this.getId();
+                    animatePacket.entityRuntimeId = this.getId();
                     animatePacket.action = animationEvent.getAnimationType();
                     Server.broadcastPacket(this.getViewers().values(), animatePacket);
                     break;

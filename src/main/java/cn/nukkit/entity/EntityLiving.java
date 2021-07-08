@@ -122,8 +122,8 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                 //Critical hit
                 if (damager instanceof Player && !damager.onGround) {
                     AnimatePacket animate = new AnimatePacket();
-                    animate.action = AnimatePacket.Action.CRITICAL_HIT;
-                    animate.eid = getId();
+                    animate.action = AnimatePacket.ACTION_CRITICAL_HIT;
+                    animate.entityRuntimeId= getId();
 
                     this.getLevel().addChunkPacket(damager.getChunkX(), damager.getChunkZ(), animate);
                     this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ATTACK_STRONG);

@@ -357,8 +357,8 @@ public class EntityBoat extends EntityVehicle {
         return entity instanceof Player ? RIDER_PLAYER_OFFSET : RIDER_OFFSET;
     }
 
-    public void onPaddle(AnimatePacket.Action animation, float value) {
-        int propertyId = animation == AnimatePacket.Action.ROW_RIGHT ? DATA_PADDLE_TIME_RIGHT : DATA_PADDLE_TIME_LEFT;
+    public void onPaddle(int animation, float value) {
+        int propertyId = animation == AnimatePacket.ACTION_ROW_RIGHT ? DATA_PADDLE_TIME_RIGHT : DATA_PADDLE_TIME_LEFT;
 
         if (getDataPropertyFloat(propertyId) != value) {
             this.setDataProperty(new FloatEntityData(propertyId, value));

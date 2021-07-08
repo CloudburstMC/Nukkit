@@ -12,18 +12,18 @@ public class PlayerAnimationEvent extends PlayerEvent implements Cancellable {
         return handlers;
     }
 
-    private final AnimatePacket.Action animationType;
+    private final int animationType;
 
     public PlayerAnimationEvent(Player player) {
-        this(player, AnimatePacket.Action.SWING_ARM);
+        this(player, AnimatePacket.ACTION_SWING_ARM);
     }
 
-    public PlayerAnimationEvent(Player player, AnimatePacket.Action animation) {
+    public PlayerAnimationEvent(Player player, int animation) {
         this.player = player;
         this.animationType = animation;
     }
 
-    public AnimatePacket.Action getAnimationType() {
+    public int getAnimationType() {
         return this.animationType;
     }
 }
