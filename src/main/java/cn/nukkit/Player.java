@@ -3321,12 +3321,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
                     RespawnPacket respawnPacket = (RespawnPacket) packet;
-                    if (respawnPacket.respawnState == RespawnPacket.STATE_CLIENT_READY_TO_SPAWN) {
+                    if (respawnPacket.state == RespawnPacket.State.CLIENT_READY_TO_SPAWN) {
                         RespawnPacket respawn1 = new RespawnPacket();
-                        respawn1.x = (float) this.getX();
-                        respawn1.y = (float) this.getY();
-                        respawn1.z = (float) this.getZ();
-                        respawn1.respawnState = RespawnPacket.STATE_READY_TO_SPAWN;
+                        respawn1.position = new Vector3f((float) this.getX(), (float) this.getY(), (float) this.getZ());
+                        respawn1.state = RespawnPacket.State.READY_TO_SPAWN;
                         this.dataPacket(respawn1);
                     }
                     break;
@@ -3958,10 +3956,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             RespawnPacket pk = new RespawnPacket();
             Position pos = this.getSpawn();
-            pk.x = (float) pos.x;
-            pk.y = (float) pos.y;
-            pk.z = (float) pos.z;
-            pk.respawnState = RespawnPacket.STATE_SEARCHING_FOR_SPAWN;
+            pk.position = new Vector3f((float) pos.x, (float) pos.y, (float) pos.z);
+            pk.state = RespawnPacket.State.SEARCHING_FOR_SPAWN;
 
             this.dataPacket(pk);
         }
