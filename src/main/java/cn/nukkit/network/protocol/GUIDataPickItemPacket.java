@@ -5,21 +5,29 @@ import lombok.ToString;
 @ToString
 public class GUIDataPickItemPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_HOTBAR_PACKET;
+
+    public String itemDescription;
+    public String itemEffects;
     public int hotbarSlot;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.GUI_DATA_PICK_ITEM_PACKET;
+        return NETWORK_ID;
+    }
+
+    @Override
+    public void decode() {
+        this.itemDescription = this.getString();
+        this.itemEffects = this.getString();
+        this.hotbarSlot = this.getLInt();
     }
 
     @Override
     public void encode() {
         this.reset();
+        this.putString(this.itemDescription);
+        this.putString(this.itemEffects);
         this.putLInt(this.hotbarSlot);
-    }
-
-    @Override
-    public void decode() {
-        this.hotbarSlot = this.getLInt();
     }
 }
