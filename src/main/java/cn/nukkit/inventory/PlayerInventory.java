@@ -343,8 +343,8 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
                 InventoryContentPacket pk2 = new InventoryContentPacket();
-                pk2.inventoryId = InventoryContentPacket.SPECIAL_ARMOR;
-                pk2.slots = armor;
+                pk2.windowId = InventoryContentPacket.SPECIAL_ARMOR;
+                pk2.items = armor;
                 player.dataPacket(pk2);
             } else {
                 player.dataPacket(pk);
@@ -418,9 +418,9 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public void sendContents(Player[] players) {
         InventoryContentPacket pk = new InventoryContentPacket();
-        pk.slots = new Item[this.getSize()];
+        pk.items = new Item[this.getSize()];
         for (int i = 0; i < this.getSize(); ++i) {
-            pk.slots[i] = this.getItem(i);
+            pk.items[i] = this.getItem(i);
         }
 
         /*//Because PE is stupid and shows 9 less slots than you send it, give it 9 dummy slots so it shows all the REAL slots.
@@ -436,7 +436,7 @@ public class PlayerInventory extends BaseInventory {
                 if (this.getHolder() != player) this.close(player);
                 continue;
             }
-            pk.inventoryId = id;
+            pk.windowId = id;
             player.dataPacket(pk.clone());
 
         }
