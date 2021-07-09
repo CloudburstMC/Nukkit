@@ -538,7 +538,7 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public void sendSlot(int index, Player... players) {
         InventorySlotPacket pk = new InventorySlotPacket();
-        pk.slot = index;
+        pk.inventorySlot = index;
         pk.item = this.getItem(index).clone();
 
         for (Player player : players) {
@@ -547,7 +547,7 @@ public abstract class BaseInventory implements Inventory {
                 this.close(player);
                 continue;
             }
-            pk.inventoryId = id;
+            pk.windowId = id;
             player.dataPacket(pk);
         }
     }

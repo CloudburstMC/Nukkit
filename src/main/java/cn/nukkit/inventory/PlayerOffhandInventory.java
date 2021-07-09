@@ -56,7 +56,7 @@ public class PlayerOffhandInventory extends BaseInventory {
         for (Player player : players) {
             if (player == this.getHolder()) {
                 InventorySlotPacket pk2 = new InventorySlotPacket();
-                pk2.inventoryId = ContainerIds.OFFHAND;
+                pk2.windowId = ContainerIds.OFFHAND;
                 pk2.item = item;
                 player.dataPacket(pk2);
             } else {

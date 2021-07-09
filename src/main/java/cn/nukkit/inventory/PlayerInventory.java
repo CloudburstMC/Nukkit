@@ -391,8 +391,8 @@ public class PlayerInventory extends BaseInventory {
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
                 InventorySlotPacket pk2 = new InventorySlotPacket();
-                pk2.inventoryId = InventoryContentPacket.SPECIAL_ARMOR;
-                pk2.slot = index - this.getSize();
+                pk2.windowId = InventoryContentPacket.SPECIAL_ARMOR;
+                pk2.inventorySlot = index - this.getSize();
                 pk2.item = this.getItem(index);
                 player.dataPacket(pk2);
             } else {
@@ -455,12 +455,12 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public void sendSlot(int index, Player... players) {
         InventorySlotPacket pk = new InventorySlotPacket();
-        pk.slot = index;
+        pk.inventorySlot = index;
         pk.item = this.getItem(index).clone();
 
         for (Player player : players) {
             if (player.equals(this.getHolder())) {
-                pk.inventoryId = ContainerIds.INVENTORY;
+                pk.windowId = ContainerIds.INVENTORY;
                 player.dataPacket(pk);
             } else {
                 int id = player.getWindowId(this);
@@ -468,7 +468,7 @@ public class PlayerInventory extends BaseInventory {
                     this.close(player);
                     continue;
                 }
-                pk.inventoryId = id;
+                pk.windowId = id;
                 player.dataPacket(pk.clone());
             }
         }

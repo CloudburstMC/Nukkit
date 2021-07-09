@@ -42,12 +42,12 @@ public class PlayerUIInventory extends BaseInventory {
     @Override
     public void sendSlot(int index, Player... target) {
         InventorySlotPacket pk = new InventorySlotPacket();
-        pk.slot = index;
+        pk.inventorySlot = index;
         pk.item = this.getItem(index);
 
         for (Player p : target) {
             if (p == this.getHolder()) {
-                pk.inventoryId = ContainerIds.UI;
+                pk.windowId = ContainerIds.UI;
             } else {
                 int id;
 
@@ -55,7 +55,7 @@ public class PlayerUIInventory extends BaseInventory {
                     this.close(p);
                     continue;
                 }
-                pk.inventoryId = id;
+                pk.windowId = id;
             }
             p.dataPacket(pk);
         }

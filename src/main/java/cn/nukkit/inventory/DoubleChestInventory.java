@@ -181,7 +181,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
 
     public void sendSlot(Inventory inv, int index, Player... players) {
         InventorySlotPacket pk = new InventorySlotPacket();
-        pk.slot = inv == this.right ? this.left.getSize() + index : index;
+        pk.inventorySlot = inv == this.right ? this.left.getSize() + index : index;
         pk.item = inv.getItem(index).clone();
 
         for (Player player : players) {
@@ -190,7 +190,7 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
                 this.close(player);
                 continue;
             }
-            pk.inventoryId = id;
+            pk.windowId = id;
             player.dataPacket(pk);
         }
     }
