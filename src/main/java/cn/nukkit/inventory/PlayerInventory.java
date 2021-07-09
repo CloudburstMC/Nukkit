@@ -503,7 +503,7 @@ public class PlayerInventory extends BaseInventory {
         pk.x = who.getFloorX();
         pk.y = who.getFloorY();
         pk.z = who.getFloorZ();
-        pk.entityId = who.getId();
+        pk.entityUniqueId = who.getId();
         who.dataPacket(pk);
     }
 

@@ -42,11 +42,9 @@ public abstract class ContainerInventory extends BaseInventory {
             pk.x = (int) ((Vector3) holder).getX();
             pk.y = (int) ((Vector3) holder).getY();
             pk.z = (int) ((Vector3) holder).getZ();
-        } else {
-            pk.x = pk.y = pk.z = 0;
         }
         if (holder instanceof Entity) {
-            pk.entityId = ((Entity) holder).getId();
+            pk.entityUniqueId = ((Entity) holder).getId();
         }
 
         who.dataPacket(pk);

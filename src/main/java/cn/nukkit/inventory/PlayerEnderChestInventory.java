@@ -35,8 +35,6 @@ public class PlayerEnderChestInventory extends BaseInventory {
             containerOpenPacket.x = (int) chest.getX();
             containerOpenPacket.y = (int) chest.getY();
             containerOpenPacket.z = (int) chest.getZ();
-        } else {
-            containerOpenPacket.x = containerOpenPacket.y = containerOpenPacket.z = 0;
         }
 
         who.dataPacket(containerOpenPacket);

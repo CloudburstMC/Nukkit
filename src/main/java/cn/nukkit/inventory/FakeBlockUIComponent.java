@@ -54,8 +54,6 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
             pk.x = (int) ((Vector3) holder).getX();
             pk.y = (int) ((Vector3) holder).getY();
             pk.z = (int) ((Vector3) holder).getZ();
-        } else {
-            pk.x = pk.y = pk.z = 0;
         }
 
         who.dataPacket(pk);
