@@ -38,11 +38,7 @@ public abstract class BlockEntitySpawnable extends BlockEntity {
         pk.x = (int) this.x;
         pk.y = (int) this.y;
         pk.z = (int) this.z;
-        try {
-            pk.namedTag = NBTIO.write(tag, ByteOrder.LITTLE_ENDIAN, true);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        pk.namedTag = tag;
         player.dataPacket(pk);
     }
 
