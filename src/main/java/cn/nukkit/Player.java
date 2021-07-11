@@ -2872,7 +2872,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Item mapItem = null;
 
                     for (Item item1 : this.inventory.getContents().values()) {
-                        if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.mapId) {
+                        if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.mapUniqueId) {
                             mapItem = item1;
                         }
                     }
@@ -2882,7 +2882,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (be instanceof BlockEntityItemFrame) {
                                 BlockEntityItemFrame itemFrame1 = (BlockEntityItemFrame) be;
 
-                                if (itemFrame1.getItem() instanceof ItemMap && ((ItemMap) itemFrame1.getItem()).getMapId() == pk.mapId) {
+                                if (itemFrame1.getItem() instanceof ItemMap && ((ItemMap) itemFrame1.getItem()).getMapId() == pk.mapUniqueId) {
                                     ((ItemMap) itemFrame1.getItem()).sendImage(this);
                                     break;
                                 }

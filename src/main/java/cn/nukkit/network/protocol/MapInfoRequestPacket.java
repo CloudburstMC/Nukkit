@@ -7,20 +7,24 @@ import lombok.ToString;
  */
 @ToString
 public class MapInfoRequestPacket extends DataPacket {
-    public long mapId;
+
+    public static final byte NETWORK_ID = ProtocolInfo.MAP_INFO_REQUEST_PACKET;
+
+    public long mapUniqueId;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.MAP_INFO_REQUEST_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-        mapId = this.getEntityUniqueId();
+        this.mapUniqueId = this.getEntityUniqueId();
     }
 
     @Override
     public void encode() {
-
+        this.reset();
+        this.putEntityUniqueId(this.mapUniqueId);
     }
 }
