@@ -87,7 +87,7 @@ public class PlayerListPacket extends DataPacket {
         public int buildPlatform = -1;
         public Skin skin;
         public boolean isTeacher;
-        public boolean isHost
+        public boolean isHost;
 
         public Entry(UUID uuid) {
             this.uuid = uuid;
