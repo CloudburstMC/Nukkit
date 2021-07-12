@@ -1677,7 +1677,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void fall(float fallDistance) {
-        if (this.hasEffect(Effect.SLOW_FALLING)) {
+        if ((this.isPlayer && !this.getLevel().getGameRules().getBoolean(GameRule.FALL_DAMAGE)) || this.hasEffect(Effect.SLOW_FALLING)) {
             return;
         }
 
@@ -1685,14 +1685,12 @@ public abstract class Entity extends Location implements Metadatable {
 
         Block down = this.level.getBlock(this.floor().down());
 
-        if(down instanceof BlockHayBale) {
+        if (down instanceof BlockHayBale) {
             damage -= (damage * 0.8f);
         }
 
         if (damage > 0) {
-            if (!this.isPlayer || level.getGameRules().getBoolean(GameRule.FALL_DAMAGE)) {
-                this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
-            }
+            this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
         }
 
         if (fallDistance > 0.75) {
