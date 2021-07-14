@@ -174,11 +174,21 @@ public class GameRules {
             @Override
             void write(BinaryStream pk, Value value) {
             }
+
+            @Override
+            Value read(BinaryStream pk) {
+                return null;
+            }
         },
         BOOLEAN {
             @Override
             void write(BinaryStream pk, Value value) {
                 pk.putBoolean(value.getValueAsBoolean());
+            }
+
+            @Override
+            Value read(BinaryStream pk) {
+                return new Value<>(BOOLEAN, pk.readBoolean());
             }
         },
         INTEGER {
@@ -186,15 +196,27 @@ public class GameRules {
             void write(BinaryStream pk, Value value) {
                 pk.putUnsignedVarInt(value.getValueAsInteger());
             }
+
+            @Override
+            Value read(BinaryStream pk) {
+                return new Value<>(INTEGER, pk.getUnsignedVarInt());
+            }
         },
         FLOAT {
             @Override
             void write(BinaryStream pk, Value value) {
                 pk.putLFloat(value.getValueAsFloat());
             }
+
+            @Override
+            Value read(BinaryStream pk) {
+                return new Value<>(FLOAT, pk.getLFloat());
+            }
         };
 
         abstract void write(BinaryStream pk, Value value);
+
+        abstract Value read(BinaryStream pk);
     }
 
     public static class Value<T> {
@@ -218,8 +240,9 @@ public class GameRules {
             return this.canBeChanged;
         }
 
-        public void setCanBeChanged(boolean canBeChanged) {
+        public Value setCanBeChanged(boolean canBeChanged) {
             this.canBeChanged = canBeChanged;
+            return this;
         }
 
         public Type getType() {

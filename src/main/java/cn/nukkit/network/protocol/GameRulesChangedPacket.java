@@ -9,22 +9,24 @@ import lombok.ToString;
  */
 @ToString
 public class GameRulesChangedPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.GAME_RULES_CHANGED_PACKET;
+
+    public GameRules gameRules;
 
     @Override
     public byte pid() {
         return NETWORK_ID;
     }
 
-    public GameRules gameRules;
-
     @Override
     public void decode() {
+        this.gameRules = this.getGameRules();
     }
 
     @Override
     public void encode() {
         this.reset();
-        putGameRules(gameRules);
+        this.putGameRules(this.gameRules);
     }
 }
