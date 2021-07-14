@@ -726,15 +726,6 @@ public class BinaryStream {
         });
     }
 
-    public GameRules getGameRules() {
-        for (int i = 0; i < (int) this.getUnsignedVarInt(); i++) {
-            Map<GameRule, GameRules.Value> gameRules = new HashMap<>();
-            String ruleName = this.getString();
-            GameRules.Type ruleType = GameRules.Type.values()[(int) this.getUnsignedVarInt()];
-            gameRules.put(new GameRule(ruleName), ruleType.read(this).setCanBeChanged(this.getBoolean()));
-        }
-    }
-
     /**
      * Reads and returns an EntityUniqueID
      *
