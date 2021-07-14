@@ -10,6 +10,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
 
     public boolean mustAccept;
     public boolean hasScripts;
+    public boolean forceServerPacks;
     public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
     public ResourcePack[] resourcePackEntries = new ResourcePack[0];
 
@@ -22,6 +23,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
     public void decode() {
         this.mustAccept = this.getBoolean();
         this.hasScripts = this.getBoolean();
+        this.forceServerPacks = this.getBoolean();
         int count = this.getLShort();
         this.behaviourPackEntries = new ResourcePack[count];
         for (int i = 0; i < count; i++) {
@@ -54,6 +56,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.reset();
         this.putBoolean(this.mustAccept);
         this.putBoolean(this.hasScripts);
+        this.putBoolean(this.forceServerPacks);
         this.putLShort(this.behaviorPackEntries.length);
         for (ResourcePack resourcePack : this.behaviourPackEntries) {
             this.putString(resourcePack.getPackId().toString());
