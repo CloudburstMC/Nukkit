@@ -16,20 +16,21 @@ public class ItemFrameDropItemPacket extends DataPacket {
     public int z;
 
     @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
+
+    @Override
     public void decode() {
-        BlockVector3 v = this.getBlockVector3();
-        this.z = v.z;
-        this.y = v.y;
-        this.x = v.x;
+        BlockVector3 blockVector3 = this.getBlockVector3();
+        this.x = blockVector3.getX();
+        this.y = blockVector3.getY();
+        this.z = blockVector3.getZ();
     }
 
     @Override
     public void encode() {
-
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
+        this.reset();
+        this.putBlockVector3(this.x, this.y, this.z);
     }
 }
