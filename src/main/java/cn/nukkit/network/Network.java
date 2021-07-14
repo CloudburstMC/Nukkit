@@ -490,6 +490,11 @@ public class Network {
         //TODO: ITEM_COMPONENT_PACKET
         this.registerPacket(ProtocolInfo.FILTER_TEXT_PACKET, FilterTextPacket.class);
         //TODO: CLIENTBOUND_DEBUG_RENDERER_PACKET
+        //TODO: SYNC_ENTITY_PROPERTY_PACKET
+        //TODO: ADD_VOLUME_ENTITY_PACKET
+        //TODO: REMOVE_VOLUME_ENTITY_PACKET
+        //TODO: SIMULATION_TYPE_PACKET
+        //TODO: NPC_DIALOGUE_PACKET
         this.registerPacket(ProtocolInfo.BATCH_PACKET, BatchPacket.class);*/
     }
 }
