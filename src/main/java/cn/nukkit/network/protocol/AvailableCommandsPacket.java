@@ -130,7 +130,7 @@ public class AvailableCommandsPacket extends DataPacket {
 
             putString(name);
             putString(data.description);
-            putByte((byte) data.flags);
+            putLShort(data.flags);
             putByte((byte) data.permission);
 
             putLInt(data.aliases == null ? -1 : enums.indexOf(data.aliases));

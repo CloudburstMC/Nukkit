@@ -21,6 +21,8 @@ public class SetTitlePacket extends DataPacket {
     public int fadeInTime = 0;
     public int stayTime = 0;
     public int fadeOutTime = 0;
+    public String xuid = "";
+    public String platformOnlineId = "";
 
     @Override
     public byte pid() {
@@ -34,6 +36,8 @@ public class SetTitlePacket extends DataPacket {
         this.fadeInTime = this.getVarInt();
         this.stayTime = this.getVarInt();
         this.fadeOutTime = this.getVarInt();
+        this.xuid = this.getString();
+        this.platformOnlineId = this.getString();
     }
 
     @Override
@@ -44,5 +48,7 @@ public class SetTitlePacket extends DataPacket {
         this.putVarInt(fadeInTime);
         this.putVarInt(stayTime);
         this.putVarInt(fadeOutTime);
+        this.putString(this.xuid);
+        this.putString(this.platformOnlineId);
     }
 }
