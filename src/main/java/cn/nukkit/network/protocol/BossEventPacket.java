@@ -14,7 +14,6 @@ public class BossEventPacket extends DataPacket {
     public static final int TYPE_SHOW = 0;
     /* C2S: Registers a player to a boss fight. */
     public static final int TYPE_REGISTER_PLAYER = 1;
-    public static final int TYPE_UPDATE = 1;
     /* S2C: Removes the bossbar from the client. */
     public static final int TYPE_HIDE = 2;
     /* C2S: Unregisters a player from a boss fight. */
@@ -28,15 +27,15 @@ public class BossEventPacket extends DataPacket {
     /* S2C: Not implemented :( Intended to alter bar appearance, but these currently produce no effect on clientside whatsoever. */
     public static final int TYPE_TEXTURE = 7;
 
-    public long bossEid;
-    public int type;
-    public long playerEid;
+    public long bossUniqueId;
+    public int eventType;
+    public long playerUniqueId;
     public float healthPercent;
     public String title = "";
-    public short unknown;
+    public int unknownLShort;
     public int color;
     public int overlay;
-    
+
     @Override
     public byte pid() {
         return NETWORK_ID;
@@ -44,18 +43,18 @@ public class BossEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.bossEid = this.getEntityUniqueId();
-        this.type = (int) this.getUnsignedVarInt();
-        switch (this.type) {
+        this.bossUniqueId = this.getEntityUniqueId();
+        this.eventType = (int) this.getUnsignedVarInt();
+        switch (this.eventType) {
             case TYPE_REGISTER_PLAYER:
             case TYPE_UNREGISTER_PLAYER:
-                this.playerEid = this.getEntityUniqueId();
+                this.playerUniqueId = this.getEntityUniqueId();
                 break;
             case TYPE_SHOW:
                 this.title = this.getString();
                 this.healthPercent = this.getLFloat();
             case TYPE_UNKNOWN_6:
-                this.unknown = (short) this.getShort();
+                this.unknownLShort = this.getLShort();
             case TYPE_TEXTURE:
                 this.color = (int) this.getUnsignedVarInt();
                 this.overlay = (int) this.getUnsignedVarInt();
@@ -72,18 +71,18 @@ public class BossEventPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityUniqueId(this.bossEid);
-        this.putUnsignedVarInt(this.type);
-        switch (this.type) {
+        this.putEntityUniqueId(this.bossUniqueId);
+        this.putUnsignedVarInt(this.eventType);
+        switch (this.eventType) {
             case TYPE_REGISTER_PLAYER:
             case TYPE_UNREGISTER_PLAYER:
-                this.putEntityUniqueId(this.playerEid);
+                this.putEntityUniqueId(this.playerUniqueId);
                 break;
             case TYPE_SHOW:
                 this.putString(this.title);
                 this.putLFloat(this.healthPercent);
             case TYPE_UNKNOWN_6:
-                this.putShort(this.unknown);
+                this.putLShort(this.unknownLShort);
             case TYPE_TEXTURE:
                 this.putUnsignedVarInt(this.color);
                 this.putUnsignedVarInt(this.overlay);

@@ -156,8 +156,8 @@ public class DummyBossBar {
 
     private void sendShowBossBar() {
         BossEventPacket pkBoss = new BossEventPacket();
-        pkBoss.bossEid = bossBarId;
-        pkBoss.type = BossEventPacket.TYPE_SHOW;
+        pkBoss.bossUniqueId = bossBarId;
+        pkBoss.eventType = BossEventPacket.TYPE_SHOW;
         pkBoss.title = text;
         pkBoss.healthPercent = this.length / 100;
         player.dataPacket(pkBoss);
@@ -165,23 +165,23 @@ public class DummyBossBar {
 
     private void sendHideBossBar() {
         BossEventPacket pkBoss = new BossEventPacket();
-        pkBoss.bossEid = bossBarId;
-        pkBoss.type = BossEventPacket.TYPE_HIDE;
+        pkBoss.bossUniqueId = bossBarId;
+        pkBoss.eventType = BossEventPacket.TYPE_HIDE;
         player.dataPacket(pkBoss);
     }
 
     private void sendSetBossBarTexture() {
         BossEventPacket pk = new BossEventPacket();
-        pk.bossEid = this.bossBarId;
-        pk.type = BossEventPacket.TYPE_TEXTURE;
+        pk.bossUniqueId = this.bossBarId;
+        pk.eventType = BossEventPacket.TYPE_TEXTURE;
         pk.color = this.getMixedColor();
         player.dataPacket(pk);
     }
 
     private void sendSetBossBarTitle() {
         BossEventPacket pkBoss = new BossEventPacket();
-        pkBoss.bossEid = bossBarId;
-        pkBoss.type = BossEventPacket.TYPE_TITLE;
+        pkBoss.bossUniqueId = bossBarId;
+        pkBoss.eventType = BossEventPacket.TYPE_TITLE;
         pkBoss.title = text;
         pkBoss.healthPercent = this.length / 100;
         player.dataPacket(pkBoss);
@@ -189,8 +189,8 @@ public class DummyBossBar {
 
     private void sendSetBossBarLength() {
         BossEventPacket pkBoss = new BossEventPacket();
-        pkBoss.bossEid = bossBarId;
-        pkBoss.type = BossEventPacket.TYPE_HEALTH_PERCENT;
+        pkBoss.bossUniqueId = bossBarId;
+        pkBoss.eventType = BossEventPacket.TYPE_HEALTH_PERCENT;
         pkBoss.healthPercent = this.length / 100;
         player.dataPacket(pkBoss);
     }
