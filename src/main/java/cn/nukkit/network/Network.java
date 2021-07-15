@@ -406,8 +406,8 @@ public class Network {
         this.registerPacket(ProtocolInfo.CHUNK_RADIUS_UPDATED_PACKET, ChunkRadiusUpdatedPacket.class);
         this.registerPacket(ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET, ItemFrameDropItemPacket.class);
         this.registerPacket(ProtocolInfo.GAME_RULES_CHANGED_PACKET, GameRulesChangedPacket.class);
-        /*this.registerPacket(ProtocolInfo.CAMERA_PACKET, CameraPacket.class);
-        this.registerPacket(ProtocolInfo.BOSS_EVENT_PACKET, BossEventPacket.class);
+        this.registerPacket(ProtocolInfo.CAMERA_PACKET, CameraPacket.class);
+        /*this.registerPacket(ProtocolInfo.BOSS_EVENT_PACKET, BossEventPacket.class);
         this.registerPacket(ProtocolInfo.SHOW_CREDITS_PACKET, ShowCreditsPacket.class);
         this.registerPacket(ProtocolInfo.AVAILABLE_COMMANDS_PACKET, AvailableCommandsPacket.class);
         this.registerPacket(ProtocolInfo.COMMAND_REQUEST_PACKET, CommandRequestPacket.class);
