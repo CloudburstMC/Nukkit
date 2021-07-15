@@ -2831,7 +2831,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     BlockEntity t = this.level.getBlockEntity(pos);
                     if (t instanceof BlockEntitySpawnable) {
-                        CompoundTag nbt = blockEntityDataPacket.namedTag
+                        CompoundTag nbt = blockEntityDataPacket.namedTag;
 
                         if (!((BlockEntitySpawnable) t).updateCompoundTag(nbt, this)) {
                             ((BlockEntitySpawnable) t).spawnTo(this);
