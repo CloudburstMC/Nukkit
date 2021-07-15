@@ -9,6 +9,7 @@ import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
@@ -299,8 +300,8 @@ public class EntityItem extends Entity {
         AddItemEntityPacket addEntity = new AddItemEntityPacket();
         addEntity.entityUniqueId = this.getId();
         addEntity.entityRuntimeId = this.getId();
-        pk.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
-        pk.motion = new Vector3f((float) this.motionX, (float) this.motionY, (float) this.motionZ);
+        addEntity.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
+        addEntity.motion = new Vector3f((float) this.motionX, (float) this.motionY, (float) this.motionZ);
         addEntity.entityMetadata = this.dataProperties;
         addEntity.item = this.getItem();
         return addEntity;

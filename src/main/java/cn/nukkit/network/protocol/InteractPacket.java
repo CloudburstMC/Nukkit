@@ -28,7 +28,7 @@ public class InteractPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.action = this.getByte();
+        this.action = (byte) this.getByte();
         this.entityRuntimeId = this.getEntityRuntimeId();
         if (this.action == ACTION_MOUSEOVER) {
             this.x = this.getLFloat();

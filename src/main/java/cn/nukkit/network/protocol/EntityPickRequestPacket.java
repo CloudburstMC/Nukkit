@@ -18,7 +18,7 @@ public class EntityPickRequestPacket extends DataPacket {
     @Override
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
-        this.hotbarSlot = this.getByte();
+        this.hotbarSlot = (byte) this.getByte();
     }
 
     @Override

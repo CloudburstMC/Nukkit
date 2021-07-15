@@ -320,7 +320,7 @@ public class EntityHuman extends EntityHumanType {
 
             if (this.riding != null) {
                 SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-                pkk.entityLink = new EntityLink(this.riding.getId(), this.getId(), EntityLink.Type.RIDER, true, false);
+                pkk.entityLink = new EntityLink(this.riding.getId(), this.getId(), EntityLink.Type.RIDE, true, false);
 
                 player.dataPacket(pkk);
             }

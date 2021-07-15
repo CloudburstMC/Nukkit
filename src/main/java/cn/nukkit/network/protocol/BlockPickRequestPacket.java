@@ -26,7 +26,7 @@ public class BlockPickRequestPacket extends DataPacket {
         this.y = blockVector3.getY();
         this.z = blockVector3.getZ();
         this.addUserData = this.getBoolean();
-        this.selectedSlot = this.getByte();
+        this.selectedSlot = (byte) this.getByte();
     }
 
     @Override

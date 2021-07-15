@@ -26,12 +26,11 @@ public class PlayerListPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.type = this.getByte();
+        this.type = (byte) this.getByte();
         int count = (int) this.getUnsignedVarInt();
         this.entries = new Entry[count];
         for (int i = 0; i < count; i++) {
-            Entry entry = new Entry();
-            entry.uuid = this.getUUID();
+            Entry entry = new Entry(this.getUUID());
             if (this.type == TYPE_ADD) {
                 entry.entityUniqueId = this.getEntityUniqueId();
                 entry.username = this.getString();

@@ -984,7 +984,7 @@ public abstract class Entity extends Location implements Metadatable {
             this.riding.spawnTo(player);
 
             SetEntityLinkPacket pkk = new SetEntityLinkPacket();
-            pkk.entityLink = new EntityLink(this.riding.getId(), this.getId(), EntityLink.Type.RIDER, true, false);
+            pkk.entityLink = new EntityLink(this.riding.getId(), this.getId(), EntityLink.Type.RIDE, true, false);
 
             player.dataPacket(pkk);
         }
@@ -1003,8 +1003,8 @@ public abstract class Entity extends Location implements Metadatable {
         addEntity.entityMetadata = this.dataProperties;
 
         addEntity.entityLinks = new EntityLink[this.passengers.size()];
-        for (int i = 0; i < addEntity.links.length; i++) {
-            addEntity.entityLinks[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.Type.RIDER : EntityLink.Type.PASSENGER, false, false);
+        for (int i = 0; i < this.passengers.size(); i++) {
+            addEntity.entityLinks[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.Type.RIDE : EntityLink.Type.PASSENGER, false, false);
         }
 
         return addEntity;
@@ -1498,7 +1498,7 @@ public abstract class Entity extends Location implements Metadatable {
      * @param entity The target Entity
      * @return {@code true} if the mounting successful
      */
-    public boolean mountEntity(Entity entity, byte mode) {
+    public boolean mountEntity(Entity entity, EntityLink.Type mode) {
         Objects.requireNonNull(entity, "The target of the mounting entity can't be null");
 
         if (entity.riding != null) {

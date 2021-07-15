@@ -20,7 +20,7 @@ public class PlayerHotbarPacket extends DataPacket {
     @Override
     public void decode() {
         this.selectedHotbarSlot = (int) this.getUnsignedVarInt();
-        this.windowId = this.getByte();
+        this.windowId = (byte) this.getByte();
         this.selectHotbarSlot = this.getBoolean();
     }
 

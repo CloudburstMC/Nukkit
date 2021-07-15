@@ -151,7 +151,7 @@ public class PlayerInventory extends BaseInventory {
 
         MobEquipmentPacket pk = new MobEquipmentPacket();
         pk.item = item;
-        pk.inventorySlot = pk.hotbarSlot = this.getHeldItemIndex();
+        pk.inventorySlot = pk.hotbarSlot = (byte) this.getHeldItemIndex();
 
         for (Player player : players) {
             pk.entityRuntimeId = this.getHolder().getId();
@@ -498,8 +498,8 @@ public class PlayerInventory extends BaseInventory {
     public void onOpen(Player who) {
         super.onOpen(who);
         ContainerOpenPacket pk = new ContainerOpenPacket();
-        pk.windowId = who.getWindowId(this);
-        pk.type = this.getType().getNetworkType();
+        pk.windowId = (byte) who.getWindowId(this);
+        pk.type = (byte) this.getType().getNetworkType();
         pk.x = who.getFloorX();
         pk.y = who.getFloorY();
         pk.z = who.getFloorZ();
@@ -510,7 +510,7 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public void onClose(Player who) {
         ContainerClosePacket pk = new ContainerClosePacket();
-        pk.windowId = who.getWindowId(this);
+        pk.windowId = (byte) who.getWindowId(this);
         pk.wasServerInitiated = who.getClosingWindowId() != pk.windowId;
         who.dataPacket(pk);
         // player can never stop viewing their own inventory

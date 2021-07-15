@@ -188,7 +188,7 @@ public class GameRules {
 
             @Override
             Value read(BinaryStream pk) {
-                return new Value<>(BOOLEAN, pk.readBoolean());
+                return new Value<>(BOOLEAN, pk.getBoolean());
             }
         },
         INTEGER {

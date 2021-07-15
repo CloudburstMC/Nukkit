@@ -32,11 +32,11 @@ public class AddPlayerPacket extends DataPacket {
     public EntityLink[] entries = new EntityLink[0];
     public String deviceId = "";
     public int buildPlatform = -1;
-    public int unknownUnsignedVarInt1;
-    public int unknownUnsignedVarInt2;
-    public int unknownUnsignedVarInt3;
-    public int unknownUnsignedVarInt4;
-    public int unknownUnsignedVarInt5;
+    public long unknownUnsignedVarInt1;
+    public long unknownUnsignedVarInt2;
+    public long unknownUnsignedVarInt3;
+    public long unknownUnsignedVarInt4;
+    public long unknownUnsignedVarInt5;
     public long unknownLLong;
 
     @Override

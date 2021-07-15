@@ -154,7 +154,7 @@ public class BlockCauldron extends BlockSolidMeta {
                     }
                 }
 
-                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_FILL_POTION);
+                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_SOUND_CAULDRON_FILL_POTION);
                 break;
             case Item.GLASS_BOTTLE:
                 if (isEmpty()) {
@@ -179,7 +179,7 @@ public class BlockCauldron extends BlockSolidMeta {
                     }
                 }
 
-                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_CAULDRON_TAKE_POTION);
+                this.level.addLevelEvent(this.add(0.5, 0.375 + this.getDamage() * 0.125, 0.5), LevelEventPacket.EVENT_SOUND_CAULDRON_TAKE_POTION);
                 break;
             default:
                 return true;

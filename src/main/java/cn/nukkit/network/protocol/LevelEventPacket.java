@@ -75,9 +75,10 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SET_GAME_SPEED = 3007; //x coordinate of pos = scale factor (default 1.0)
     //TODO: 3008-3499
     public static final int EVENT_REDSTONE_TRIGGER = 3500;
-    public static final int EVENT_SOUND_CAULDRON = 3501;
+    public static final int EVENT_SOUND_EXPLODE = 3501;
     public static final int EVENT_SOUND_CAULDRON_DYE_ARMOR = 3502;
     public static final int EVENT_SOUND_CAULDRON_FILL_POTION = 3504;
+    public static final int EVENT_SOUND_CAULDRON_TAKE_POTION = 3505;
     public static final int EVENT_SOUND_CAULDRON_FILL_WATER = 3506;
     public static final int EVENT_CAULDRON_TAKE_WATER = 3507;
     public static final int EVENT_CAULDRON_ADD_DYE = 3508;

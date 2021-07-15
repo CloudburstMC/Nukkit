@@ -22,7 +22,11 @@ public class UpdateAttributesPacket extends DataPacket {
 
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
-        this.entries = this.getAttributeList();
+        try {
+            this.entries = this.getAttributeList();
+        } catch (Exception exception) {
+
+        }
         this.tick = this.getUnsignedVarLong();
     }
 

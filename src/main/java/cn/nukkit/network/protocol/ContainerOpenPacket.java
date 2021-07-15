@@ -26,8 +26,8 @@ public class ContainerOpenPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.windowId = this.getByte();
-        this.type = this.getByte();
+        this.windowId = (byte) this.getByte();
+        this.type = (byte) this.getByte();
         BlockVector3 blockVector3 = this.getBlockVector3();
         this.x = blockVector3.getX();
         this.y = blockVector3.getY();

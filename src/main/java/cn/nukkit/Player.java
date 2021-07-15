@@ -2441,7 +2441,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.getLevel().addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
                             this.breakingBlock = null;
                             break;
-                        case UPDATED_BLOCK:
+                        case GET_UPDATED_BLOCK:
                             //TODO
                         case DROP_ITEM:
                             break; //TODO
@@ -2709,8 +2709,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     int animation = animationEvent.getAnimationType();
 
                     switch (animation) {
-                        case ACTION_ROW_RIGHT:
-                        case ACTION_ROW_LEFT:
+                        case AnimatePacket.ACTION_ROW_RIGHT:
+                        case AnimatePacket.ACTION_ROW_LEFT:
                             if (this.riding instanceof EntityBoat) {
                                 ((EntityBoat) this.riding).onPaddle(animation, ((AnimatePacket) packet).rowingTime);
                             }
@@ -2719,7 +2719,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     AnimatePacket animatePacket = new AnimatePacket();
                     animatePacket.entityRuntimeId = this.getId();
-                    animatePacket.action = animationEvent.getAnimationType();
+                    animatePacket.action = animation;
                     Server.broadcastPacket(this.getViewers().values(), animatePacket);
                     break;
                 case ProtocolInfo.SET_HEALTH_PACKET:
@@ -4226,7 +4226,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.sendPosition(pos, yaw, pitch, MovePlayerPacket.Mode.NORMAL);
     }
 
-    public void sendPosition(Vector3 pos, double yaw, double pitch, int mode) {
+    public void sendPosition(Vector3 pos, double yaw, double pitch, MovePlayerPacket.Mode mode) {
         this.sendPosition(pos, yaw, pitch, mode, null);
     }
 
@@ -4893,7 +4893,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 TakeItemEntityPacket pk = new TakeItemEntityPacket();
                 pk.entityRuntimeId = this.getId();
-                pk.targetRumtimeId = entity.getId();
+                pk.targetRuntimeId = entity.getId();
                 Server.broadcastPacket(entity.getViewers().values(), pk);
                 this.dataPacket(pk);
 

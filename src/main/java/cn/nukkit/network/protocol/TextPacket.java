@@ -36,8 +36,8 @@ public class TextPacket extends DataPacket {
             case RAW:
             case TIP:
             case SYSTEM:
-            case OBJECT:
-            case OBJECT_WHISPER:
+            case JSON:
+            case JSON_WHISPER:
                 this.message = this.getString();
                 break;
             case TRANSLATION:
@@ -66,8 +66,8 @@ public class TextPacket extends DataPacket {
             case RAW:
             case TIP:
             case SYSTEM:
-            case OBJECT:
-            case OBJECT_WHISPER:
+            case JSON:
+            case JSON_WHISPER:
                 this.putString(this.message);
                 break;
             case TRANSLATION:

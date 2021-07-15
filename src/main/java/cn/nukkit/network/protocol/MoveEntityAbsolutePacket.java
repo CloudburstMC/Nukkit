@@ -31,7 +31,7 @@ public class MoveEntityAbsolutePacket extends DataPacket {
     @Override
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
-        this.flags = this.getByte();
+        this.flags = (byte) this.getByte();
         this.position = this.getVector3f();
         this.yaw = this.getByte() * (360d / 256d);
         this.headYaw = this.getByte() * (360d / 256d);

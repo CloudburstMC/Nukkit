@@ -24,7 +24,7 @@ public class MobSpawnParticle extends Particle {
     public DataPacket[] encode() {
         LevelEventPacket packet = new LevelEventPacket();
         packet.event = LevelEventPacket.EVENT_PARTICLE_SPAWN;
-        packey.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
+        packet.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
         packet.data = (this.width & 0xff) + ((this.height & 0xff) << 8);
 
         return new DataPacket[]{packet};

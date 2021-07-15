@@ -24,7 +24,7 @@ public class SetEntityDataPacket extends DataPacket {
     @Override
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
-        this.entityMetadata = this.getMetadata();
+        this.entityMetadata = this.getEntityMetadata();
         this.tick = this.getUnsignedVarLong();
     }
 
@@ -32,7 +32,7 @@ public class SetEntityDataPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.entityRuntimeId);
-        this.putMetadata(this.entityMetadata);
+        this.putEntityMetadata(this.entityMetadata);
         this.putUnsignedVarLong(this.tick);
     }
 }

@@ -23,7 +23,7 @@ public class ItemBreakParticle extends Particle {
     public DataPacket[] encode() {
         LevelEventPacket packet = new LevelEventPacket();
         packet.event = (short) (LevelEventPacket.EVENT_ADD_PARTICLE_MASK | Particle.TYPE_ITEM_BREAK);
-        pk.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
+        packet.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
         packet.data = this.data;
         return new DataPacket[]{packet};
     }

@@ -32,7 +32,7 @@ public class ContainerSetDataPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.windowId = this.getByte();
+        this.windowId = (byte) this.getByte();
         this.property = this.getVarInt();
         this.value = this.getVarInt();
     }

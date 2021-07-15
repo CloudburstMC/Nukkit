@@ -82,7 +82,7 @@ public class EntityEventPacket extends DataPacket {
     @Override
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
-        this.event = this.getByte();
+        this.event = (byte) this.getByte();
         this.data = this.getVarInt();
     }
 

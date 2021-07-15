@@ -9,9 +9,9 @@ public class LevelSoundEventPacketV1 extends LevelSoundEventPacket {
     public static final byte NETWORK_ID = ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V1;
 
     public byte sound;
-    public Vextor3f position;
+    public Vector3f position;
     public int extraData;
-    public int entityType;
+    public int entityIdentifier;
     public boolean isBabyMob;
     public boolean isGlobal;
 
@@ -22,7 +22,7 @@ public class LevelSoundEventPacketV1 extends LevelSoundEventPacket {
 
     @Override
     public void decode() {
-        this.sound = this.getByte();
+        this.sound = (byte) this.getByte();
         this.position = this.getVector3f();
         this.extraData = this.getVarInt();
         this.entityIdentifier = this.getVarInt();

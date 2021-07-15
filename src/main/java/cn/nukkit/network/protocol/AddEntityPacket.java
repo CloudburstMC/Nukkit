@@ -164,7 +164,11 @@ public class AddEntityPacket extends DataPacket {
         this.pitch = this.getLFloat();
         this.yaw = this.getLFloat();
         this.headYaw = this.getLFloat();
-        this.attributes = this.getAttributeList();
+        try {
+            this.attributes = this.getAttributeList();
+        } catch (Exception exception) {
+
+        }
         this.entityMetadata = this.getEntityMetadata();
         int count = (int) this.getUnsignedVarInt();
         this.entityLinks = new EntityLink[count];

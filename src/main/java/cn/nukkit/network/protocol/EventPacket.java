@@ -28,7 +28,7 @@ public class EventPacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.entityRuntimeId);
         this.putVarInt(this.eventData);
-        this.putByte(this.event.ordinal());
+        this.putByte((byte) this.event.ordinal());
     }
 
     public static enum Event {

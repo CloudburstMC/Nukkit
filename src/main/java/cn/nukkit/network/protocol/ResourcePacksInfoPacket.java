@@ -57,7 +57,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.putBoolean(this.mustAccept);
         this.putBoolean(this.hasScripts);
         this.putBoolean(this.forceServerPacks);
-        this.putLShort(this.behaviorPackEntries.length);
+        this.putLShort(this.behaviourPackEntries.length);
         for (ResourcePack resourcePack : this.behaviourPackEntries) {
             this.putString(resourcePack.getPackId().toString());
             this.putString(resourcePack.getPackVersion());

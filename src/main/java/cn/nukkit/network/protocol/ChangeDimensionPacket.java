@@ -31,7 +31,7 @@ public class ChangeDimensionPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putVarInt(this.dimension);
+        this.putVarInt(this.dimensionId);
         this.putVector3f(this.position);
         this.putBoolean(this.respawn);
     }

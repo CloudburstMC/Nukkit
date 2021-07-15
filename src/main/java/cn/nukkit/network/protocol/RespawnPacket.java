@@ -23,16 +23,16 @@ public class RespawnPacket extends DataPacket {
     @Override
     public void decode() {
         this.position = this.getVector3f();
-        this.respawnState = State.values()[this.getByte()];
-        this.runtimeEntityId = this.getEntityRuntimeId();
+        this.state = State.values()[this.getByte()];
+        this.entityRuntimeId = this.getEntityRuntimeId();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putVector3f(this.position);
-        this.putByte(this.respawnState.ordinal());
-        this.putEntityRuntimeId(this.runtimeEntityId);
+        this.putByte((byte) this.state.ordinal());
+        this.putEntityRuntimeId(this.entityRuntimeId);
     }
 
     public static enum State {

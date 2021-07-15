@@ -27,9 +27,9 @@ public class MobEquipmentPacket extends DataPacket {
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
         this.item = this.getSlot();
-        this.inventorySlot = this.getByte();
-        this.hotbarSlot = this.getByte();
-        this.windowId = this.getByte();
+        this.inventorySlot = (byte) this.getByte();
+        this.hotbarSlot = (byte) this.getByte();
+        this.windowId = (byte) this.getByte();
     }
 
     @Override

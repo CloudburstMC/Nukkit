@@ -1,6 +1,7 @@
 package cn.nukkit.utils;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.*;
 import cn.nukkit.item.*;
@@ -227,10 +228,8 @@ public class BinaryStream {
      */
     public Attribute[] getAttributeList() throws Exception {
         List<Attribute> list = new ArrayList<>();
-        long count = this.getUnsignedVarInt();
-
-        for (int i = 0; i < count; ++i) {
-            String name = this.getString();
+        for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
+        	String name = this.getString();
             Attribute attr = Attribute.getAttributeByName(name);
             if (attr != null) {
                 attr.setMinValue(this.getLFloat());
@@ -688,9 +687,15 @@ public class BinaryStream {
     }
 
     public void putSignedBlockPosition(BlockVector3 v) {
-        putVarInt(v.x);
-        putVarInt(v.y);
-        putVarInt(v.z);
+        this.putVarInt(v.x);
+        this.putVarInt(v.y);
+        this.putVarInt(v.z);
+    }
+    
+    public void putSignedBlockPosition(int x, int y, int z) {
+        this.putVarInt(x);
+        this.putVarInt(y);
+        this.putVarInt(z);
     }
 
     public void putBlockVector3(BlockVector3 v) {
@@ -767,7 +772,7 @@ public class BinaryStream {
     public void putEntityLink(EntityLink link) {
         putEntityUniqueId(link.fromEntityUniquieId);
         putEntityUniqueId(link.toEntityUniquieId);
-        putByte(link.type.ordinal());
+        putByte((byte) link.type.ordinal());
         putBoolean(link.immediate);
         putBoolean(link.riderInitiated);
     }
@@ -776,7 +781,7 @@ public class BinaryStream {
         return new EntityLink(
                 getEntityUniqueId(),
                 getEntityUniqueId(),
-                getByte(),
+                (byte) getByte(),
                 getBoolean(),
                 getBoolean()
         );
@@ -788,7 +793,6 @@ public class BinaryStream {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return new CompoundTag();
     }
 
     public void putCompoundTag(CompoundTag compoundTag) {
@@ -799,7 +803,7 @@ public class BinaryStream {
         }
     }
 
-    public static EntityMetadata getEntityMetadata() {
+    public EntityMetadata getEntityMetadata() {
         int count = (int) this.getUnsignedVarInt();
         EntityMetadata entityMetadata = new EntityMetadata();
         for (int i = 0; i < count; i++) {
@@ -849,7 +853,7 @@ public class BinaryStream {
         return entityMetadata;
     }
 
-    public static void putEntityMetadata(EntityMetadata entityMetadata) {
+    public void putEntityMetadata(EntityMetadata entityMetadata) {
         Map<Integer, EntityData> map = entityMetadata.getMap();
         this.putUnsignedVarInt(map.size());
         for (int id : map.keySet()) {
