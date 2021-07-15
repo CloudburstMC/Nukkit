@@ -51,7 +51,7 @@ public class AvailableCommandsPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        //TODO
     }
 
     @Override

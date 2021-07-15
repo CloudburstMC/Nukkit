@@ -1,9 +1,7 @@
 package cn.nukkit.network.protocol.types;
 
-
 import lombok.ToString;
 
-import java.util.OptionalLong;
 import java.util.UUID;
 
 /**
@@ -11,27 +9,21 @@ import java.util.UUID;
  * Nukkit project
  */
 @ToString
-public final class CommandOriginData {
-    public final Origin type;
+public class CommandOriginData {
+
+    public final Type type;
     public final UUID uuid;
     public final String requestId;
-    private final Long varlong;
+    public long entityUniqueId;
 
-    public CommandOriginData(Origin type, UUID uuid, String requestId, Long varlong) {
+    public CommandOriginData(Type type, UUID uuid, String requestId) {
         this.type = type;
         this.uuid = uuid;
         this.requestId = requestId;
-        this.varlong = varlong;
     }
 
-    public OptionalLong getVarLong() {
-        if (varlong == null) {
-            return OptionalLong.empty();
-        }
-        return OptionalLong.of(varlong);
-    }
+    public static enum Type {
 
-    public enum Origin {
         PLAYER,
         BLOCK,
         MINECART_BLOCK,
@@ -43,6 +35,10 @@ public final class CommandOriginData {
         ENTITY,
         VIRTUAL,
         GAME_ARGUMENT,
-        ENTITY_SERVER
+        ENTITY_SERVER;
+
+        public static Type getById(int id) {
+            return values()[id];
+        }
     }
 }
