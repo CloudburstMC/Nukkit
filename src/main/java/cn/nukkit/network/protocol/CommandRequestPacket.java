@@ -37,21 +37,4 @@ public class CommandRequestPacket extends DataPacket {
         this.putCommandOriginData(this.commandOriginData);
         this.putBoolean(this.isInternal);
     }
-
-    private CommandOriginData getCommandOriginData() {
-        CommandOriginData commandOriginData = new CommandOriginData(CommandOriginData.Type.getById((int) this.getUnsignedVarInt()), this.getUUID(), this.getString());
-        if (commandOriginData.type == CommandOriginData.Type.DEV_CONSOLE || commandOriginData.type == CommandOriginData.Type.TEST) {
-            commandOriginData.entityUniqueId = this.getVarLong();
-        }
-        return commandOriginData;
-    }
-
-    private void putCommandOriginData(CommandOriginData commandOriginData) {
-        this.putUnsignedVarInt(commandOriginData.type.ordinal());
-        this.putUUID(commandOriginData.uuid);
-        this.putString(commandOriginData.requestId);
-        if (commandOriginData.type == CommandOriginData.Type.DEV_CONSOLE || commandOriginData.type == CommandOriginData.Type.TEST) {
-            this.putVarLong(commandOriginData.entityUniqueId);
-        }
-    }
 }
