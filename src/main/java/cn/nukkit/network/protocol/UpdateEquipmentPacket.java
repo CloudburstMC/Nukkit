@@ -1,33 +1,40 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.ToString;
 
-@ToString(exclude = "namedtag")
+@ToString(exclude = "namedTag")
 public class UpdateEquipmentPacket extends DataPacket {
 
-    public int windowId;
-    public int windowType;
-    public int unknown; //TODO: find out what this is (vanilla always sends 0)
-    public long eid;
-    public byte[] namedtag;
+    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_EQUIPMENT_PACKET;
 
+    public byte windowId;
+    public byte windowType;
+    public int windowSlotCount;
+    public long entityUniqueId;
+    public CompoundTag namedTag;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.UPDATE_EQUIPMENT_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-
+        this.windowId = (byte) this.getByte();
+        this.windowType = (byte) this.getByte();
+        this.windowSlotCount = this.getVarInt();
+        this.entityUniqueId = this.getEntityUniqueId();
+        this.namedTag = this.getCompoundTag();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putByte((byte) this.windowId);
-        this.putByte((byte) this.windowType);
-        this.putEntityUniqueId(this.eid);
-        this.put(this.namedtag);
+        this.putByte(this.windowId);
+        this.putByte(this.windowType);
+        this.putVarInt(this.windowSlotCount);
+        this.putEntityUniqueId(this.entityUniqueId);
+        this.putCompoundTag(this.namedTag);
     }
 }
