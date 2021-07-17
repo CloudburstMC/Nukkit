@@ -153,6 +153,11 @@ public class EntityBoat extends EntityVehicle {
                     this.motionY = this.motionY > SINKING_MAX_SPEED ? Math.max(this.motionY - 0.02, SINKING_MAX_SPEED) : this.motionY + SINKING_SPEED;
 //                    this.motionY = this.motionY + SINKING_SPEED > SINKING_MAX_SPEED ? this.motionY - SINKING_SPEED : this.motionY + SINKING_SPEED;
                 }
+            }else {
+                Block block = this.floor().add(0, -1).getLevelBlock();
+                if (!(block instanceof BlockWater) && block.canPassThrough()) {
+                    this.motionY -= 0.5;
+                }
             }
 
             if (this.checkObstruction(this.x, this.y, this.z)) {
