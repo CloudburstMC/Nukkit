@@ -156,7 +156,7 @@ public class EntityBoat extends EntityVehicle {
             }else {
                 Block block = this.floor().add(0, -1).getLevelBlock();
                 if (!(block instanceof BlockWater) && block.canPassThrough()) {
-                    this.motionY -= 0.5;
+                    this.motionY -= this.getGravity();
                 }
             }
 
