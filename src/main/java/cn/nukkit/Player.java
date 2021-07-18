@@ -3544,7 +3544,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void clearTitle() {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_CLEAR;
+        pk.type = SetTitlePacket.Type.CLEAR_TITLE;
         this.dataPacket(pk);
     }
 
@@ -3553,20 +3553,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      */
     public void resetTitleSettings() {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_RESET;
+        pk.type = SetTitlePacket.Type.RESET_TITLE;
         this.dataPacket(pk);
     }
 
     public void setSubtitle(String subtitle) {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_SUBTITLE;
+        pk.type = SetTitlePacket.Type.SET_SUBTITLE;
         pk.text = subtitle;
         this.dataPacket(pk);
     }
 
     public void setTitleAnimationTimes(int fadein, int duration, int fadeout) {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_ANIMATION_TIMES;
+        pk.type = SetTitlePacket.Type.SET_ANIMATION_TIMES;
         pk.fadeInTime = fadein;
         pk.stayTime = duration;
         pk.fadeOutTime = fadeout;
@@ -3577,7 +3577,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private void setTitle(String text) {
         SetTitlePacket packet = new SetTitlePacket();
         packet.text = text;
-        packet.type = SetTitlePacket.TYPE_TITLE;
+        packet.type = SetTitlePacket.Type.SET_TITLE;
         this.dataPacket(packet);
     }
 
@@ -3604,7 +3604,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendActionBar(String title, int fadein, int duration, int fadeout) {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_ACTION_BAR;
+        pk.type = SetTitlePacket.Type.SET_ACTIONBAR_MESSAGE;
         pk.text = title;
         pk.fadeInTime = fadein;
         pk.stayTime = duration;
