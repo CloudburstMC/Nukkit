@@ -21,7 +21,6 @@ public enum ParticleEffect {
     CAMERA_SHOOT_EXPLOSION("minecraft:camera_shoot_explosion"),
     CAMPFIRE_SMOKE("minecraft:campfire_smoke_particle"),
     CAMPFIRE_SMOKE_TALL("minecraft:campfire_tall_smoke_particle"),
-    CANDLE_FLAME("minecraft:candle_flame_particle"),
     CAULDRONSPELL("minecraft:cauldron_spell_emitter"),
     CAULDRON_BUBBLE("minecraft:cauldron_bubble_particle"),
     CAULDRON_SPLASH("minecraft:cauldron_splash_particle"),
