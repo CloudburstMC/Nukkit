@@ -422,8 +422,8 @@ public class Network {
         this.registerPacket(ProtocolInfo.PLAY_SOUND_PACKET, PlaySoundPacket.class);
         this.registerPacket(ProtocolInfo.STOP_SOUND_PACKET, StopSoundPacket.class);
         this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
-        /*this.registerPacket(ProtocolInfo.ADD_BEHAVIOR_TREE_PACKET, AddBehaviorTreePacket.class);
-        //TODO: STRUCTURE_BLOCK_UPDATE_PACKET
+        this.registerPacket(ProtocolInfo.ADD_BEHAVIOR_TREE_PACKET, AddBehaviorTreePacket.class);
+        /*TODO: STRUCTURE_BLOCK_UPDATE_PACKET
         this.registerPacket(ProtocolInfo.SHOW_STORE_OFFER_PACKET, ShowStoreOfferPacket.class);
         this.registerPacket(ProtocolInfo.PURCHASE_RECEIPT_PACKET, PurchaseReceiptPacket.class);
         this.registerPacket(ProtocolInfo.PLAYER_SKIN_PACKET, PlayerSkinPacket.class);
