@@ -467,7 +467,7 @@ public class Level implements ChunkManager, Metadatable {
         Preconditions.checkArgument(pitch >= 0, "Sound pitch must be higher than 0");
 
         PlaySoundPacket packet = new PlaySoundPacket();
-        packet.name = sound.getSound();
+        packet.soundName = sound.getSound();
         packet.volume = volume;
         packet.pitch = pitch;
         packet.x = pos.getFloorX();
