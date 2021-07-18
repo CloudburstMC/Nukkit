@@ -420,8 +420,8 @@ public class Network {
         this.registerPacket(ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET, ResourcePackChunkRequestPacket.class);
         this.registerPacket(ProtocolInfo.TRANSFER_PACKET, TransferPacket.class);
         this.registerPacket(ProtocolInfo.PLAY_SOUND_PACKET, PlaySoundPacket.class);
-        /*this.registerPacket(ProtocolInfo.STOP_SOUND_PACKET, StopSoundPacket.class);
-        this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
+        this.registerPacket(ProtocolInfo.STOP_SOUND_PACKET, StopSoundPacket.class);
+        /*this.registerPacket(ProtocolInfo.SET_TITLE_PACKET, SetTitlePacket.class);
         this.registerPacket(ProtocolInfo.ADD_BEHAVIOR_TREE_PACKET, AddBehaviorTreePacket.class);
         //TODO: STRUCTURE_BLOCK_UPDATE_PACKET
         this.registerPacket(ProtocolInfo.SHOW_STORE_OFFER_PACKET, ShowStoreOfferPacket.class);
