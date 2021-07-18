@@ -13,6 +13,11 @@ public class ResourcePackChunkRequestPacket extends DataPacket {
     public int chunkIndex;
 
     @Override
+    public byte pid() {
+        return NETWORK_ID;
+    }
+
+    @Override
     public void decode() {
         this.packId = UUID.fromString(this.getString());
         this.chunkIndex = this.getLInt();
@@ -23,10 +28,5 @@ public class ResourcePackChunkRequestPacket extends DataPacket {
         this.reset();
         this.putString(this.packId.toString());
         this.putLInt(this.chunkIndex);
-    }
-
-    @Override
-    public byte pid() {
-        return NETWORK_ID;
     }
 }
