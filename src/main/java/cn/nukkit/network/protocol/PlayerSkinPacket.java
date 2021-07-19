@@ -8,6 +8,8 @@ import java.util.UUID;
 @ToString
 public class PlayerSkinPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_SKIN_PACKET;
+
     public UUID uuid;
     public Skin skin;
     public String newSkinName;
@@ -15,27 +17,25 @@ public class PlayerSkinPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.PLAYER_SKIN_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-        uuid = getUUID();
-        skin = getSkin();
-        newSkinName = getString();
-        oldSkinName = getString();
-        if (!feof()) { // -facepalm-
-            skin.setTrusted(getBoolean());
-        }
+        this.uuid = this.getUUID();
+        this.skin = this.getSkin();
+        this.newSkinName = this.getString();
+        this.oldSkinName = this.getString();
+        this.skin.setTrusted(this.getBoolean());
     }
 
     @Override
     public void encode() {
-        reset();
-        putUUID(uuid);
-        putSkin(skin);
-        putString(newSkinName);
-        putString(oldSkinName);
-        putBoolean(skin.isTrusted());
+        this.reset();
+        this.putUUID(this.uuid);
+        this.putSkin(this.skin);
+        this.putString(this.newSkinName);
+        this.putString(this.oldSkinName);
+        this.putBoolean(this.skin.isTrusted());
     }
 }
