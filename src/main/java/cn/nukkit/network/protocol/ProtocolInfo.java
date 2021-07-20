@@ -125,7 +125,7 @@ public interface ProtocolInfo {
     byte PURCHASE_RECEIPT_PACKET = 0x5c;
     byte PLAYER_SKIN_PACKET = 0x5d;
     byte SUB_CLIENT_LOGIN_PACKET = 0x5e;
-    byte INITIATE_WEB_SOCKET_CONNECTION_PACKET = 0x5f;
+    byte AUTOMATION_CLIENT_CONNECT_PACKET = 0x5f;
 
     byte SET_LAST_HURT_BY_PACKET = 0x60;
     byte BOOK_EDIT_PACKET = 0x61;
