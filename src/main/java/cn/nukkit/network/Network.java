@@ -429,8 +429,8 @@ public class Network {
         this.registerPacket(ProtocolInfo.PLAYER_SKIN_PACKET, PlayerSkinPacket.class);
         this.registerPacket(ProtocolInfo.SUB_CLIENT_LOGIN_PACKET, SubClientLoginPacket.class);
         this.registerPacket(ProtocolInfo.AUTOMATION_CLIENT_CONNECT_PACKET, AutomationClientConnectPacket.class);
-        /*this.registerPacket(ProtocolInfo.SET_LAST_HURT_BY_PACKET, SetLastHurtByPacket.class);
-        this.registerPacket(ProtocolInfo.BOOK_EDIT_PACKET, BookEditPacket.class);
+        this.registerPacket(ProtocolInfo.SET_LAST_HURT_BY_PACKET, SetLastHurtByPacket.class);
+        /*this.registerPacket(ProtocolInfo.BOOK_EDIT_PACKET, BookEditPacket.class);
         this.registerPacket(ProtocolInfo.NPC_REQUEST_PACKET, NpcRequestPacket.class);
         this.registerPacket(ProtocolInfo.PHOTO_TRANSFER_PACKET, PhotoTransferPacket.class);
         this.registerPacket(ProtocolInfo.MODAL_FORM_REQUEST_PACKET, ModalFormRequestPacket.class);

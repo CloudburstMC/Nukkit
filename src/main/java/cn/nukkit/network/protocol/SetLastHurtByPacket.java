@@ -5,18 +5,23 @@ import lombok.ToString;
 @ToString
 public class SetLastHurtByPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.SET_LAST_HURT_BY_PACKET;
+
+    public int entityTypeId;
+
     @Override
     public byte pid() {
-        return ProtocolInfo.SET_LAST_HURT_BY_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-
+        this.entityTypeId = this.getVarInt();
     }
 
     @Override
     public void encode() {
-        //TODO
+        this.reset();
+        this.putVarInt(this.entityTypeId);
     }
 }
