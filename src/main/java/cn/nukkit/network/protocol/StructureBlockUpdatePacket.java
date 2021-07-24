@@ -56,8 +56,8 @@ public class StructureBlockUpdatePacket extends DataPacket {
         structureSettings.structureOffsetZ = structureOffset.getZ();
 
         structureSettings.lastTouchedByPlayerID = this.getEntityUniqueId();
-        structureSettings.rotation = (byte) this.getByte();
-        structureSettings.mirror = (byte) this.getByte();
+        structureSettings.rotation = this.getByte();
+        structureSettings.mirror = this.getByte();
         structureSettings.integrityValue = this.getFloat();
         structureSettings.integritySeed = this.getInt();
         structureSettings.pivot = this.getVector3f();
@@ -73,8 +73,8 @@ public class StructureBlockUpdatePacket extends DataPacket {
         this.putBlockVector3(structureSettings.structureOffsetX, structureSettings.structureOffsetY, structureSettings.structureOffsetZ);
 
         this.putEntityUniqueId(structureSettings.lastTouchedByPlayerID);
-        this.putByte(structureSettings.rotation);
-        this.putByte(structureSettings.mirror);
+        this.putByte((byte) structureSettings.rotation);
+        this.putByte((byte) structureSettings.mirror);
         this.putFloat(structureSettings.integrityValue);
         this.putInt(structureSettings.integritySeed);
         this.putVector3f(structureSettings.pivot);

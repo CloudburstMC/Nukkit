@@ -7,8 +7,8 @@ public class UpdateTradePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.UPDATE_TRADE_PACKET;
 
-    public byte windowId;
-    public byte windowType = 15; //Trading id
+    public int windowId;
+    public int windowType = 15; //Trading id
     public int windowSlotCount;
     public int tradeTier;
     public long traderUniqueId;
@@ -25,8 +25,8 @@ public class UpdateTradePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.windowId = (byte) this.getByte();
-        this.windowType = (byte) this.getByte();
+        this.windowId = this.getByte();
+        this.windowType = this.getByte();
         this.windowSlotCount = this.getVarInt();
         this.tradeTier = this.getVarInt();
         this.traderUniqueId = this.getEntityUniqueId();
@@ -40,8 +40,8 @@ public class UpdateTradePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.windowId);
-        this.putByte(this.windowType);
+        this.putByte((byte) this.windowId);
+        this.putByte((byte) this.windowType);
         this.putVarInt(this.windowSlotCount);
         this.putVarInt(this.tradeTier);
         this.putEntityUniqueId(this.traderUniqueId);

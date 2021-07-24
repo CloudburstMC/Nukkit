@@ -2,15 +2,13 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
-import java.util.UUID;
-
 @ToString
 public class ResourcePackClientResponsePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET;
 
-    public ResponseStatus responseStatus;
-    public Entry[] packEntries;
+    public ResponseStatus status;
+    public String[] packIds = new String[0];
 
     @Override
     public byte pid() {
@@ -19,39 +17,27 @@ public class ResourcePackClientResponsePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.responseStatus = ResponseStatus.values()[this.getByte() - 1];
+        this.status = ResponseStatus.values()[this.getByte()];
         int count = this.getLShort();
-        this.packEntries = new Entry[count];
+        this.packIds = new String[count];
         for (int i = 0; i < count; i++) {
-            String[] entry = this.getString().split("_");
-            this.packEntries[i] = new Entry(UUID.fromString(entry[0]), entry[1]);
+            this.packIds[i] = this.getString();
         }
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putByte((byte) (this.responseStatus.ordinal() + 1));
-        this.putLShort(this.packEntries.length);
-        for (Entry entry : this.packEntries) {
-            this.putString(entry.uuid.toString() + '_' + entry.version);
+        this.putByte((byte) this.status.ordinal());
+        this.putLShort(this.packIds.length);
+        for (String packId : this.packIds) {
+            this.putString(packId);
         }
     }
 
-    @ToString
-    public static class Entry {
+    public enum ResponseStatus {
 
-        public final UUID uuid;
-        public final String version;
-
-        public Entry(UUID uuid, String version) {
-            this.uuid = uuid;
-            this.version = version;
-        }
-    }
-
-    public static enum ResponseStatus {
-
+        NONE,
         REFUSED,
         SEND_PACKS,
         HAVE_ALL_PACKS,

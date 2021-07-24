@@ -8,7 +8,7 @@ public class LevelSoundEventPacketV1 extends LevelSoundEventPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.LEVEL_SOUND_EVENT_PACKET_V1;
 
-    public byte sound;
+    public int sound;
     public Vector3f position;
     public int extraData;
     public int entityIdentifier;
@@ -22,7 +22,7 @@ public class LevelSoundEventPacketV1 extends LevelSoundEventPacket {
 
     @Override
     public void decode() {
-        this.sound = (byte) this.getByte();
+        this.sound = this.getByte();
         this.position = this.getVector3f();
         this.extraData = this.getVarInt();
         this.entityIdentifier = this.getVarInt();
@@ -33,7 +33,7 @@ public class LevelSoundEventPacketV1 extends LevelSoundEventPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.sound);
+        this.putByte((byte) this.sound);
         this.putVector3f(this.position);
         this.putVarInt(this.extraData);
         this.putVarInt(this.entityIdentifier);

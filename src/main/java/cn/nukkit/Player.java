@@ -1922,7 +1922,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.saveOfflinePlayerData(this.uuid, nbt, true);
         }
 
-        this.sendPlayStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
+        this.sendPlayStatus(PlayStatusPacket.Status.SUCCESS);
         this.server.onPlayerLogin(this);
 
         ListTag<DoubleTag> posList = nbt.getList("Pos", DoubleTag.class);
@@ -2070,11 +2070,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (loginPacket.getProtocol() < ProtocolInfo.CURRENT_PROTOCOL) {
                             message = "disconnectionScreen.outdatedClient";
 
-                            this.sendPlayStatus(PlayStatusPacket.Status.LOGIN_FAILED_CLIENT);
+                            this.sendPlayStatus(PlayStatusPacket.Status.FAILED_CLIENT);
                         } else {
                             message = "disconnectionScreen.outdatedServer";
 
-                            this.sendPlayStatus(PlayStatusPacket.Status.LOGIN_FAILED_SERVER);
+                            this.sendPlayStatus(PlayStatusPacket.Status.FAILED_SERVER);
                         }
                         if (((LoginPacket) packet).protocol < 137) {
                             DisconnectPacket disconnectPacket = new DisconnectPacket();
@@ -2184,13 +2184,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 case ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
                     ResourcePackClientResponsePacket responsePacket = (ResourcePackClientResponsePacket) packet;
-                    switch (responsePacket.responseStatus) {
+                    switch (responsePacket.status) {
                         case REFUSED:
                             this.close("", "disconnectionScreen.noReason");
                             break;
                         case SEND_PACKS:
-                            for (ResourcePackClientResponsePacket.Entry entry : responsePacket.packEntries) {
-                                ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(entry.uuid);
+                            for (String packId : responsePacket.packIds) {
+                                ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(UUID.fromString(packId.split("_")[0]));
                                 if (resourcePack == null) {
                                     this.close("", "disconnectionScreen.resourcePack");
                                     break;

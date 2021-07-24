@@ -19,7 +19,7 @@ public class AddItemEntityPacket extends DataPacket {
     public Item item = Item.get(0);
     public Vector3f position = new Vector3f();
     public Vector3f motion = new Vector3f();
-    public EntityMetadata entityMetadata = new EntityMetadata();
+    public EntityMetadata metadata = new EntityMetadata();
     public boolean isFromFishing;
 
     @Override
@@ -34,7 +34,7 @@ public class AddItemEntityPacket extends DataPacket {
         this.item = this.getSlot();
         this.position = this.getVector3f();
         this.motion = this.getVector3f();
-        this.entityMetadata = this.getEntityMetadata();
+        this.metadata = this.getEntityMetadata();
         this.isFromFishing = this.getBoolean();
     }
 
@@ -46,7 +46,7 @@ public class AddItemEntityPacket extends DataPacket {
         this.putSlot(this.item);
         this.putVector3f(this.position);
         this.putVector3f(this.motion);
-        this.putEntityMetadata(this.entityMetadata);
+        this.putEntityMetadata(this.metadata);
         this.putBoolean(this.isFromFishing);
     }
 }

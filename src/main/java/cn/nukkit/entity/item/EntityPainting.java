@@ -53,7 +53,7 @@ public class EntityPainting extends EntityHanging {
         addPainting.entityRuntimeId = this.getId();
         addPainting.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
         addPainting.direction = this.getDirection().getHorizontalIndex();
-        addPainting.title = this.namedTag.getString("Motive");
+        addPainting.painting = AddPaintingPacket.Painting.getByName(this.namedTag.getString("Motive"));
         return addPainting;
     }
 

@@ -15,7 +15,7 @@ public class RemoveEntityPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.REMOVE_ENTITY_PACKET;
+        return NETWORK_ID;
     }
 
     @Override

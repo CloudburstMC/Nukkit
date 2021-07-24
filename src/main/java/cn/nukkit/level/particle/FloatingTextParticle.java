@@ -140,7 +140,7 @@ public class FloatingTextParticle extends Particle {
             pk.entityUniqueId = this.entityId;
             pk.entityRuntimeId = this.entityId;
             pk.position = new Vector3f((float) this.x, (float) (this.y - 0.75), (float) this.z);
-            pk.entityMetadata = this.metadata;
+            pk.metadata = this.metadata;
             pk.item = Item.get(Item.AIR);
             packets.add(pk);
 

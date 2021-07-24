@@ -12,8 +12,8 @@ public class ContainerOpenPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_OPEN_PACKET;
 
-    public byte windowId;
-    public byte type;
+    public int windowId;
+    public int type;
     public int x;
     public int y;
     public int z;
@@ -26,8 +26,8 @@ public class ContainerOpenPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.windowId = (byte) this.getByte();
-        this.type = (byte) this.getByte();
+        this.windowId = this.getByte();
+        this.type = this.getByte();
         BlockVector3 blockVector3 = this.getBlockVector3();
         this.x = blockVector3.getX();
         this.y = blockVector3.getY();
@@ -38,8 +38,8 @@ public class ContainerOpenPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.windowId);
-        this.putByte(this.type);
+        this.putByte((byte) this.windowId);
+        this.putByte((byte) this.type);
         this.putBlockVector3(this.x, this.y, this.z);
         this.putEntityUniqueId(this.entityUniqueId);
     }

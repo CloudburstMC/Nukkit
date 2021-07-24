@@ -13,10 +13,10 @@ public class PlayerListPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_LIST_PACKET;
 
-    public static final byte TYPE_ADD = 0;
-    public static final byte TYPE_REMOVE = 1;
+    public static final int TYPE_ADD = 0;
+    public static final int TYPE_REMOVE = 1;
 
-    public byte type;
+    public int type;
     public Entry[] entries = new Entry[0];
 
     @Override
@@ -26,7 +26,7 @@ public class PlayerListPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.type = (byte) this.getByte();
+        this.type = this.getByte();
         int count = (int) this.getUnsignedVarInt();
         this.entries = new Entry[count];
         for (int i = 0; i < count; i++) {
@@ -53,7 +53,7 @@ public class PlayerListPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.type);
+        this.putByte((byte) this.type);
         this.putUnsignedVarInt(this.entries.length);
         for (Entry entry : this.entries) {
             this.putUUID(entry.uuid);

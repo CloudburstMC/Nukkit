@@ -11,10 +11,8 @@ public class BookEditPacket extends DataPacket {
     public int inventorySlot;
     public int pageNumber;
     public int secondaryPageNumber;
-
     public String text;
     public String photoName;
-
     public String title;
     public String author;
     public String xuid;
@@ -28,7 +26,6 @@ public class BookEditPacket extends DataPacket {
     public void decode() {
         this.action = Action.values()[this.getByte()];
         this.inventorySlot = this.getByte();
-
         switch (this.action) {
             case REPLACE_PAGE:
             case ADD_PAGE:
@@ -53,10 +50,33 @@ public class BookEditPacket extends DataPacket {
 
     @Override
     public void encode() {
-
+        this.reset();
+        this.putByte((byte) this.action.ordinal());
+        this.putByte((byte) this.inventorySlot);
+        switch (this.action) {
+            case REPLACE_PAGE:
+            case ADD_PAGE:
+                this.putByte((byte) this.pageNumber);
+                this.putString(this.text);
+                this.putString(this.photoName);
+                break;
+            case DELETE_PAGE:
+                this.putByte((byte) this.pageNumber);
+                break;
+            case SWAP_PAGES:
+                this.putByte((byte) this.pageNumber);
+                this.putByte((byte) this.secondaryPageNumber);
+                break;
+            case SIGN_BOOK:
+                this.putString(this.title);
+                this.putString(this.author);
+                this.putString(this.xuid);
+                break;
+        }
     }
 
     public enum Action {
+
         REPLACE_PAGE,
         ADD_PAGE,
         DELETE_PAGE,

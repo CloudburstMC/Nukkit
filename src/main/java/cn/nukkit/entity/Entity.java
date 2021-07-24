@@ -1000,11 +1000,11 @@ public abstract class Entity extends Location implements Metadatable {
         addEntity.pitch = (float) this.pitch;
         addEntity.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
         addEntity.motion = new Vector3f((float) this.motionX, (float) this.motionY, (float) this.motionZ);
-        addEntity.entityMetadata = this.dataProperties;
+        addEntity.metadata = this.dataProperties;
 
-        addEntity.entityLinks = new EntityLink[this.passengers.size()];
+        addEntity.links = new EntityLink[this.passengers.size()];
         for (int i = 0; i < this.passengers.size(); i++) {
-            addEntity.entityLinks[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.Type.RIDE : EntityLink.Type.PASSENGER, false, false);
+            addEntity.links[i] = new EntityLink(this.getId(), this.passengers.get(i).getId(), i == 0 ? EntityLink.Type.RIDE : EntityLink.Type.PASSENGER, false, false);
         }
 
         return addEntity;

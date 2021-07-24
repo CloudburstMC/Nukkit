@@ -163,7 +163,7 @@ public class EntityThrownTrident extends EntityProjectile {
         pk.motion = new Vector3f((float) this.motionX, (float) this.motionY, (float) this.motionZ);
         pk.yaw = (float) this.yaw;
         pk.pitch = (float) this.pitch;
-        pk.entityMetadata = this.dataProperties;
+        pk.metadata = this.dataProperties;
         player.dataPacket(pk);
 
         super.spawnTo(player);

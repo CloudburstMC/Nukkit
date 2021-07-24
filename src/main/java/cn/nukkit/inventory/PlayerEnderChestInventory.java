@@ -46,7 +46,8 @@ public class PlayerEnderChestInventory extends BaseInventory {
             blockEventPacket.x = (int) chest.getX();
             blockEventPacket.y = (int) chest.getY();
             blockEventPacket.z = (int) chest.getZ();
-            blockEventPacket.eventData = 2;
+            blockEventPacket.type = 1;
+            blockEventPacket.data = BlockEventPacket.DATA_OPEN_CHEST;
 
             Level level = this.getHolder().getLevel();
             if (level != null) {
@@ -70,6 +71,8 @@ public class PlayerEnderChestInventory extends BaseInventory {
             blockEventPacket.x = (int) chest.getX();
             blockEventPacket.y = (int) chest.getY();
             blockEventPacket.z = (int) chest.getZ();
+            blockEventPacket.type = 1;
+            blockEventPacket.data = BlockEventPacket.DATA_CLOSE_CHEST;
 
             Level level = this.getHolder().getLevel();
             if (level != null) {

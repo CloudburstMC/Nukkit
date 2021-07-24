@@ -132,7 +132,7 @@ public class DummyBossBar {
         pkAdd.entityUniqueId = bossBarId;
         pkAdd.entityRuntimeId = bossBarId;
         pkAdd.position = new Vector3f((float) player.x, (float) -10, (float) player.z);
-        pkAdd.entityMetadata = new EntityMetadata()
+        pkAdd.metadata = new EntityMetadata()
                 // Default Metadata tags
                 .putLong(Entity.DATA_FLAGS, 0)
                 .putShort(Entity.DATA_AIR, 400)

@@ -302,7 +302,7 @@ public class EntityItem extends Entity {
         addEntity.entityRuntimeId = this.getId();
         addEntity.position = new Vector3f((float) this.x, (float) this.y, (float) this.z);
         addEntity.motion = new Vector3f((float) this.motionX, (float) this.motionY, (float) this.motionZ);
-        addEntity.entityMetadata = this.dataProperties;
+        addEntity.metadata = this.dataProperties;
         addEntity.item = this.getItem();
         return addEntity;
     }

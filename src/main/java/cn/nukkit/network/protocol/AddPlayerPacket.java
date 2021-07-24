@@ -28,8 +28,8 @@ public class AddPlayerPacket extends DataPacket {
     public float yaw;
     public float headYaw = this.yaw;
     public Item item;
-    public EntityMetadata entityMetadata = new EntityMetadata();
-    public EntityLink[] entries = new EntityLink[0];
+    public EntityMetadata metadata = new EntityMetadata();
+    public EntityLink[] links = new EntityLink[0];
     public String deviceId = "";
     public int buildPlatform = -1;
     public long unknownUnsignedVarInt1;
@@ -57,7 +57,7 @@ public class AddPlayerPacket extends DataPacket {
         this.yaw = this.getLFloat();
         this.headYaw = this.getLFloat();
         this.item = this.getSlot();
-        this.entityMetadata = this.getEntityMetadata();
+        this.metadata = this.getEntityMetadata();
         this.unknownUnsignedVarInt1 = this.getUnsignedVarInt(); //TODO: Adventure settings
         this.unknownUnsignedVarInt2 = this.getUnsignedVarInt();
         this.unknownUnsignedVarInt3 = this.getUnsignedVarInt();
@@ -65,9 +65,9 @@ public class AddPlayerPacket extends DataPacket {
         this.unknownUnsignedVarInt5 = this.getUnsignedVarInt();
         this.unknownLLong = this.getLLong();
         int count = (int) this.getUnsignedVarInt();
-        this.entries = new EntityLink[count];
+        this.links = new EntityLink[count];
         for (int i = 0; i < count; i++) {
-            this.entries[i] = this.getEntityLink();
+            this.links[i] = this.getEntityLink();
         }
         this.deviceId = this.getString();
         this.buildPlatform = this.getLInt();
@@ -87,16 +87,16 @@ public class AddPlayerPacket extends DataPacket {
         this.putLFloat(this.yaw);
         this.putLFloat(this.headYaw);
         this.putSlot(this.item);
-        this.putEntityMetadata(this.entityMetadata);
+        this.putEntityMetadata(this.metadata);
         this.putUnsignedVarInt(this.unknownUnsignedVarInt1); //TODO: Adventure settings
         this.putUnsignedVarInt(this.unknownUnsignedVarInt2);
         this.putUnsignedVarInt(this.unknownUnsignedVarInt3);
         this.putUnsignedVarInt(this.unknownUnsignedVarInt4);
         this.putUnsignedVarInt(this.unknownUnsignedVarInt5);
         this.putLLong(this.unknownLLong);
-        this.putUnsignedVarInt(this.entries.length);
-        for (EntityLink entry : this.entries) {
-            this.putEntityLink(entry);
+        this.putUnsignedVarInt(this.links.length);
+        for (EntityLink link : this.links) {
+            this.putEntityLink(link);
         }
         this.putString(this.deviceId);
         this.putLInt(this.buildPlatform);

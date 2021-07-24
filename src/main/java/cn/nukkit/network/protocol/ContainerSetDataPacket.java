@@ -21,7 +21,7 @@ public class ContainerSetDataPacket extends DataPacket {
     public static final int PROPERTY_BREWING_STAND_FUEL_AMOUNT = 1;
     public static final int PROPERTY_BREWING_STAND_FUEL_TOTAL = 2;
 
-    public byte windowId;
+    public int windowId;
     public int property;
     public int value;
 
@@ -32,7 +32,7 @@ public class ContainerSetDataPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.windowId = (byte) this.getByte();
+        this.windowId = this.getByte();
         this.property = this.getVarInt();
         this.value = this.getVarInt();
     }
@@ -40,7 +40,7 @@ public class ContainerSetDataPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.windowId);
+        this.putByte((byte) this.windowId);
         this.putVarInt(this.property);
         this.putVarInt(this.value);
     }

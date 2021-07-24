@@ -30,13 +30,13 @@ public class PlayStatusPacket extends DataPacket {
 
     public static enum Status {
 
-        LOGIN_SUCCESS,
-        LOGIN_FAILED_CLIENT,
-        LOGIN_FAILED_SERVER,
+        SUCCESS,
+        FAILED_CLIENT,
+        FAILED_SERVER,
         PLAYER_SPAWN,
-        LOGIN_FAILED_INVALID_TENANT,
-        LOGIN_FAILED_VANILLA_EDU,
-        LOGIN_FAILED_EDU_VANILLA,
-        LOGIN_FAILED_SERVER_FULL
+        FAILED_INVALID_TENANT,
+        FAILED_VANILLA_EDU,
+        FAILED_EDU_VANILLA,
+        FAILED_SERVER_FULL
     }
 }

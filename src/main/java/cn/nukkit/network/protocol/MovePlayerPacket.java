@@ -12,14 +12,14 @@ public class MovePlayerPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.MOVE_PLAYER_PACKET;
 
     public long entityRuntimeId;
-    public Vector3f position;
+    public Vector3f position = new Vector3f();
     public float pitch;
     public float yaw;
     public float headYaw;
     public Mode mode = Mode.NORMAL;
     public boolean onGround;
     public long ridingRuntimeId;
-    public int teleportCause;
+    public TeleportCause cause;
     public int teleportItem;
     public long tick;
 
@@ -39,7 +39,7 @@ public class MovePlayerPacket extends DataPacket {
         this.onGround = this.getBoolean();
         this.ridingRuntimeId = this.getEntityRuntimeId();
         if (this.mode == Mode.TELEPORT) {
-            this.teleportCause = this.getLInt();
+            this.cause = TeleportCause.values()[this.getLInt()];
             this.teleportItem = this.getLInt();
         }
         this.tick = this.getUnsignedVarLong();
@@ -57,17 +57,26 @@ public class MovePlayerPacket extends DataPacket {
         this.putBoolean(this.onGround);
         this.putEntityRuntimeId(this.ridingRuntimeId);
         if (this.mode == Mode.TELEPORT) {
-            this.putLInt(this.teleportCause);
+            this.putLInt(this.cause.ordinal());
             this.putLInt(this.teleportItem);
         }
         this.putUnsignedVarLong(this.tick);
     }
 
-    public static enum Mode {
+    public enum Mode {
 
         NORMAL,
         RESET,
         TELEPORT,
-        PITCH
+        ROTATION
+    }
+
+    public enum TeleportCause {
+
+        UNKNOWN,
+        PROJECTILE,
+        CHORUS_FRUIT,
+        COMMAND,
+        BEHAVIOR
     }
 }

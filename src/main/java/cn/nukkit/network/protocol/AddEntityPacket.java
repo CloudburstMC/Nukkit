@@ -1,13 +1,13 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.data.EntityMetadata;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
 import cn.nukkit.entity.passive.*;
 import cn.nukkit.entity.projectile.*;
 import cn.nukkit.entity.weather.EntityLightning;
+import cn.nukkit.entity.Attribute;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.types.EntityLink;
 import com.google.common.collect.ImmutableMap;
 import lombok.ToString;
@@ -146,8 +146,8 @@ public class AddEntityPacket extends DataPacket {
     public float yaw;
     public float headYaw;
     public Attribute[] attributes = new Attribute[0];
-    public EntityMetadata entityMetadata = new EntityMetadata();
-    public EntityLink[] entityLinks = new EntityLink[0];
+    public EntityMetadata metadata = new EntityMetadata();
+    public EntityLink[] links = new EntityLink[0];
 
     @Override
     public byte pid() {
@@ -164,16 +164,12 @@ public class AddEntityPacket extends DataPacket {
         this.pitch = this.getLFloat();
         this.yaw = this.getLFloat();
         this.headYaw = this.getLFloat();
-        try {
-            this.attributes = this.getAttributeList();
-        } catch (Exception exception) {
-
-        }
-        this.entityMetadata = this.getEntityMetadata();
+        this.attributes = this.getAttributeList();
+        this.metadata = this.getEntityMetadata();
         int count = (int) this.getUnsignedVarInt();
-        this.entityLinks = new EntityLink[count];
+        this.links = new EntityLink[count];
         for (int i = 0; i < count; i++) {
-            this.entityLinks[i] = this.getEntityLink();
+            this.links[i] = this.getEntityLink();
         }
     }
 
@@ -190,10 +186,10 @@ public class AddEntityPacket extends DataPacket {
         this.putLFloat(this.headYaw);
         this.putUnsignedVarInt(this.attributes.length);
         this.putAttributeList(this.attributes);
-        this.putEntityMetadata(this.entityMetadata);
-        this.putUnsignedVarInt(this.entityLinks.length);
-        for (EntityLink entityLink : this.entityLinks) {
-            this.putEntityLink(entityLink);
+        this.putEntityMetadata(this.metadata);
+        this.putUnsignedVarInt(this.links.length);
+        for (EntityLink link : this.links) {
+            this.putEntityLink(link);
         }
     }
 }

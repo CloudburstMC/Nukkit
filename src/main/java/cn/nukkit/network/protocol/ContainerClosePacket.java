@@ -11,7 +11,7 @@ public class ContainerClosePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.CONTAINER_CLOSE_PACKET;
 
-    public byte windowId;
+    public int windowId;
     public boolean wasServerInitiated = true;
 
     @Override
@@ -21,14 +21,14 @@ public class ContainerClosePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.windowId = (byte) this.getByte();
+        this.windowId = this.getByte();
         this.wasServerInitiated = this.getBoolean();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.windowId);
+        this.putByte((byte) this.windowId);
         this.putBoolean(this.wasServerInitiated);
     }
 }

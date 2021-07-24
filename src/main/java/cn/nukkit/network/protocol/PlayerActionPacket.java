@@ -27,10 +27,10 @@ public class PlayerActionPacket extends DataPacket {
     public void decode() {
         this.entityRuntimeId = this.getEntityRuntimeId();
         this.action = Action.values()[this.getVarInt()];
-        BlockVector3 blockVector3 = this.getBlockVector3();
-        this.x = blockVector3.getX();
-        this.y = blockVector3.getY();
-        this.z = blockVector3.getZ();
+        BlockVector3 position = this.getBlockVector3();
+        this.x = position.getX();
+        this.y = position.getY();
+        this.z = position.getZ();
         this.face = this.getVarInt();
     }
 

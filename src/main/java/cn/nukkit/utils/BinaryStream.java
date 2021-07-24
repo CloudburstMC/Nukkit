@@ -227,21 +227,18 @@ public class BinaryStream {
      *
      * @return Attribute[]
      */
-    public Attribute[] getAttributeList() throws Exception {
+    public Attribute[] getAttributeList() {
         List<Attribute> list = new ArrayList<>();
         for (int i = 0, count = (int) this.getUnsignedVarInt(); i < count; i++) {
-        	String name = this.getString();
+            String name = this.getString();
             Attribute attr = Attribute.getAttributeByName(name);
             if (attr != null) {
                 attr.setMinValue(this.getLFloat());
                 attr.setValue(this.getLFloat());
                 attr.setMaxValue(this.getLFloat());
                 list.add(attr);
-            } else {
-                throw new Exception("Unknown attribute type \"" + name + "\"");
             }
         }
-
         return list.toArray(new Attribute[0]);
     }
 

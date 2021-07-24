@@ -12,7 +12,7 @@ public class BlockPickRequestPacket extends DataPacket {
     public int y;
     public int z;
     public boolean addUserData;
-    public byte selectedSlot;
+    public int selectedSlot;
 
     @Override
     public byte pid() {
@@ -21,12 +21,12 @@ public class BlockPickRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-        BlockVector3 blockVector3 = this.getSignedBlockPosition();
-        this.x = blockVector3.getX();
-        this.y = blockVector3.getY();
-        this.z = blockVector3.getZ();
+        BlockVector3 blockPositon = this.getSignedBlockPosition();
+        this.x = blockPositon.getX();
+        this.y = blockPositon.getY();
+        this.z = blockPositon.getZ();
         this.addUserData = this.getBoolean();
-        this.selectedSlot = (byte) this.getByte();
+        this.selectedSlot = this.getByte();
     }
 
     @Override
@@ -34,6 +34,6 @@ public class BlockPickRequestPacket extends DataPacket {
         this.reset();
         this.putSignedBlockPosition(this.x, this.y, this.z);
         this.putBoolean(this.addUserData);
-        this.putByte(this.selectedSlot);
+        this.putByte((byte) this.selectedSlot);
     }
 }

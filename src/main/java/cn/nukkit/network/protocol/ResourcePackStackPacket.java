@@ -43,10 +43,7 @@ public class ResourcePackStackPacket extends DataPacket {
         count = this.getLInt();
         this.experiments = new Experiment[count];
         for (int i = 0; i < count; i++) {
-            Experiment experiment = new Experiment();
-            experiment.experimentName = this.getString();
-            experiment.enabled = this.getBoolean();
-            this.experiments[i] = experiment;
+            this.experiments[i] = new Experiment(this.getString(), this.getBoolean());
         }
         this.hasPreviouslyUsedExperiments = this.getBoolean();
     }
@@ -70,7 +67,7 @@ public class ResourcePackStackPacket extends DataPacket {
         this.putString(this.gameVersion);
         this.putLInt(this.experiments.length);
         for (Experiment experiment : this.experiments) {
-            this.putString(experiment.experimentName);
+            this.putString(experiment.name);
             this.putBoolean(experiment.enabled);
         }
         this.putBoolean(hasPreviouslyUsedExperiments);
@@ -78,7 +75,12 @@ public class ResourcePackStackPacket extends DataPacket {
 
     public static class Experiment {
 
-        public String experimentName;
-        public boolean enabled;
+        public final String name;
+        public final boolean enabled;
+
+        public Experiment(String name, boolean enabled) {
+            this.name = name;
+            this.enabled = enabled;
+        }
     }
 }

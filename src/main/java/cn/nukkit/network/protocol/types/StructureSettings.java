@@ -16,8 +16,8 @@ public class StructureSettings {
     public int structureOffsetY;
     public int structureOffsetZ;
     public long lastTouchedByPlayerID;
-    public byte rotation;
-    public byte mirror;
+    public int rotation;
+    public int mirror;
     public float integrityValue;
     public int integritySeed;
     public Vector3f pivot;
