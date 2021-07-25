@@ -40,6 +40,8 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_TRIDENT = 251;
     public static final int DURABILITY_FISHING_ROD = 65;
     public static final int DURABILITY_CROSSBOW = 465;
+    public static final int DURABILITY_CARROT_ON_A_STICK = 25;
+    public static final int DURABILITY_WARPED_FUNGUS_ON_A_STICK = 100;
 
     public ItemTool(int id) {
         this(id, 0, 1, UNKNOWN_STR);
@@ -64,7 +66,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean useOn(Block block) {
-        if (this.isUnbreakable() || isDurable()) {
+        if (this.isUnbreakable() || isDurable() || noDamageOnBreak()) {
             return true;
         }
 
@@ -90,7 +92,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean useOn(Entity entity) {
-        if (this.isUnbreakable() || isDurable()) {
+        if (this.isUnbreakable() || isDurable() || noDamageOnAttack()) {
             return true;
         }
 
@@ -150,7 +152,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean isTool() {
-        return (this.id == FLINT_STEEL || this.id == SHEARS || this.id == BOW || this.id == CROSSBOW || this.isPickaxe() || this.isAxe() || this.isShovel() || this.isSword() || this.isHoe());
+        return true;
     }
 
     @Override
@@ -169,5 +171,21 @@ public abstract class ItemTool extends Item implements ItemDurable {
         }
 
         return 0;
+    }
+
+    /**
+     * No damage to item when it's used to attack entities
+     * @return whether the item should take damage when used to attack entities
+     */
+    public boolean noDamageOnAttack() {
+        return false;
+    }
+
+    /**
+     * No damage to item when it's used to break blocks
+     * @return whether the item should take damage when used to break blocks
+     */
+    public boolean noDamageOnBreak() {
+        return false;
     }
 }
