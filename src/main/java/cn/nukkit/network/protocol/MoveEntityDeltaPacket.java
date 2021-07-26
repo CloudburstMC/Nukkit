@@ -2,6 +2,10 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+
 @ToString
 public class MoveEntityDeltaPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.MOVE_ENTITY_DELTA_PACKET;
@@ -24,11 +28,15 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public float pitch = 0;
     public float yaw = 0;
     public float headYaw = 0;
+
     @Deprecated
+    // see x
     private int deltaX;
     @Deprecated
+    // see y
     private int deltaY;
     @Deprecated
+    // see z
     private int deltaZ;
 
     @Override
@@ -64,63 +72,75 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(runtimeEntityId);
-        //int flagsIndex = buffer.writerIndex();
-        this.putLShort(0);
-        int flags = 0;
-        if ((this.flags & FLAG_HAS_X) != 0) {
-            flags |= FLAG_HAS_X;
-            this.putLFloat(this.x);
+        if (flags != 0) {
+            this.putLShort(flags);
+            if ((this.flags & FLAG_HAS_X) != 0) {
+                this.putLFloat(this.x);
+            }
+            if ((this.flags & FLAG_HAS_Y) != 0) {
+                this.putLFloat(this.y);
+            }
+            if ((this.flags & FLAG_HAS_Z) != 0) {
+                this.putLFloat(this.z);
+            }
+            if ((this.flags & FLAG_HAS_PITCH) != 0) {
+                this.putByte((byte) (pitch / (360F / 256F)));
+            }
+            if ((this.flags & FLAG_HAS_YAW) != 0) {
+                this.putByte((byte) (yaw / (360F / 256F)));
+            }
+            if ((this.flags & FLAG_HAS_HEAD_YAW) != 0) {
+                this.putByte((byte) (headYaw / (360F / 256F)));
+            }
+        } else {
+            List<Consumer<MoveEntityDeltaPacket>> consumers = new ArrayList<>(6);
+            if (this.x != 0) {
+                flags |= FLAG_HAS_X;
+                consumers.add(packet -> packet.putLFloat(this.x));
+            }
+            if (this.y != 0) {
+                flags |= FLAG_HAS_Y;
+                consumers.add(packet -> packet.putLFloat(this.y));
+            }
+            if (this.z != 0) {
+                flags |= FLAG_HAS_Z;
+                consumers.add(packet -> packet.putLFloat(this.z));
+            }
+            if (this.pitch != 0) {
+                flags |= FLAG_HAS_PITCH;
+                consumers.add(packet -> packet.putByte((byte) (pitch / (360F / 256F))));
+            }
+            if (this.yaw != 0) {
+                flags |= FLAG_HAS_YAW;
+                consumers.add(packet -> packet.putByte((byte) (yaw / (360F / 256F))));
+            }
+            if (this.headYaw != 0) {
+                flags |= FLAG_HAS_HEAD_YAW;
+                consumers.add(packet -> packet.putByte((byte) (headYaw / (360F / 256F))));
+            }
+            this.putLShort(flags);
+            if (consumers.size() > 0) {
+                for (Consumer<MoveEntityDeltaPacket> consumer : consumers) {
+                    consumer.accept(this);
+                }
+            }
         }
-        if ((this.flags & FLAG_HAS_Y) != 0) {
-            flags |= FLAG_HAS_Y;
-            this.putLFloat(this.y);
-        }
-        if ((this.flags & FLAG_HAS_Z) != 0) {
-            flags |= FLAG_HAS_Z;
-            this.putLFloat(this.z);
-        }
-        if ((this.flags & FLAG_HAS_PITCH) != 0) {
-            flags |= FLAG_HAS_PITCH;
-            this.putByte((byte) (pitch / (360F / 256F)));
-        }
-        if ((this.flags & FLAG_HAS_YAW) != 0) {
-            flags |= FLAG_HAS_YAW;
-            this.putByte((byte) (yaw / (360F / 256F)));
-        }
-        if ((this.flags & FLAG_HAS_HEAD_YAW) != 0) {
-            flags |= FLAG_HAS_HEAD_YAW;
-            this.putByte((byte) (headYaw / (360F / 256F)));
-        }
-        //int currentIndex = buffer.writerIndex();
-        //buffer.writerIndex(flagsIndex);
-        this.putByte((byte) flags);
-        //buffer.writerIndex(currentIndex);
     }
 
-    private float getCoordinate(int flag) {
-        if ((flags & flag) != 0) {
-            return this.getLFloat();
-        }
-        return 0;
+    public float getCoordinate() {
+        return this.getLFloat();
     }
 
-    private double getRotation(int flag) {
-        if ((flags & flag) != 0) {
-            return this.getByte() * (360F / 256F);
-        }
-        return 0;
+    public void putCoordinate(float value) {
+        this.putLFloat(value);
     }
 
-    private void putCoordinate(int flag, float value) {
-        if ((flags & flag) != 0) {
-            this.putLFloat(value);
-        }
+    public float getRotation() {
+        return this.getByte() * (360F / 256F);
     }
 
-    private void putRotation(int flag, double value) {
-        if ((flags & flag) != 0) {
-            this.putByte((byte) (value / (360F / 256F)));
-        }
+    public void putRotation(float value) {
+        this.putByte((byte) (value / (360F / 256F)));
     }
 
     public boolean hasFlag(int flag) {
