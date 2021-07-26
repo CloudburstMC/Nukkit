@@ -434,8 +434,8 @@ public class Network {
         this.registerPacket(ProtocolInfo.NPC_REQUEST_PACKET, NPCRequestPacket.class);
         this.registerPacket(ProtocolInfo.PHOTO_TRANSFER_PACKET, PhotoTransferPacket.class);
         this.registerPacket(ProtocolInfo.MODAL_FORM_REQUEST_PACKET, ModalFormRequestPacket.class);
-        /*this.registerPacket(ProtocolInfo.MODAL_FORM_RESPONSE_PACKET, ModalFormResponsePacket.class);
-        this.registerPacket(ProtocolInfo.SERVER_SETTINGS_REQUEST_PACKET, ServerSettingsRequestPacket.class);
+        this.registerPacket(ProtocolInfo.MODAL_FORM_RESPONSE_PACKET, ModalFormResponsePacket.class);
+        /*this.registerPacket(ProtocolInfo.SERVER_SETTINGS_REQUEST_PACKET, ServerSettingsRequestPacket.class);
         this.registerPacket(ProtocolInfo.SERVER_SETTINGS_RESPONSE_PACKET, ServerSettingsResponsePacket.class);
         this.registerPacket(ProtocolInfo.SHOW_PROFILE_PACKET, ShowProfilePacket.class);
         this.registerPacket(ProtocolInfo.SET_DEFAULT_GAME_TYPE_PACKET, SetDefaultGameTypePacket.class);
