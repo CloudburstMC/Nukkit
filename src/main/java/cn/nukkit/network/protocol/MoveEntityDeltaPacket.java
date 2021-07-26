@@ -71,7 +71,7 @@ public class MoveEntityDeltaPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(runtimeEntityId);
+        this.putEntityRuntimeId(this.runtimeEntityId);
         if (flags != 0) {
             this.putLShort(flags);
             if ((this.flags & FLAG_HAS_X) != 0) {
@@ -84,41 +84,41 @@ public class MoveEntityDeltaPacket extends DataPacket {
                 this.putLFloat(this.z);
             }
             if ((this.flags & FLAG_HAS_PITCH) != 0) {
-                this.putByte((byte) (pitch / (360F / 256F)));
+                this.putByte((byte) (this.pitch / (360F / 256F)));
             }
             if ((this.flags & FLAG_HAS_YAW) != 0) {
-                this.putByte((byte) (yaw / (360F / 256F)));
+                this.putByte((byte) (this.yaw / (360F / 256F)));
             }
             if ((this.flags & FLAG_HAS_HEAD_YAW) != 0) {
-                this.putByte((byte) (headYaw / (360F / 256F)));
+                this.putByte((byte) (this.headYaw / (360F / 256F)));
             }
         } else {
             List<Consumer<MoveEntityDeltaPacket>> consumers = new ArrayList<>(6);
             if (this.x != 0) {
-                flags |= FLAG_HAS_X;
+                this.flags |= FLAG_HAS_X;
                 consumers.add(packet -> packet.putLFloat(this.x));
             }
             if (this.y != 0) {
-                flags |= FLAG_HAS_Y;
+                this.flags |= FLAG_HAS_Y;
                 consumers.add(packet -> packet.putLFloat(this.y));
             }
             if (this.z != 0) {
-                flags |= FLAG_HAS_Z;
+                this.flags |= FLAG_HAS_Z;
                 consumers.add(packet -> packet.putLFloat(this.z));
             }
             if (this.pitch != 0) {
-                flags |= FLAG_HAS_PITCH;
-                consumers.add(packet -> packet.putByte((byte) (pitch / (360F / 256F))));
+                this.flags |= FLAG_HAS_PITCH;
+                consumers.add(packet -> packet.putByte((byte) (this.pitch / (360F / 256F))));
             }
             if (this.yaw != 0) {
-                flags |= FLAG_HAS_YAW;
-                consumers.add(packet -> packet.putByte((byte) (yaw / (360F / 256F))));
+                this.flags |= FLAG_HAS_YAW;
+                consumers.add(packet -> packet.putByte((byte) (this.yaw / (360F / 256F))));
             }
             if (this.headYaw != 0) {
-                flags |= FLAG_HAS_HEAD_YAW;
-                consumers.add(packet -> packet.putByte((byte) (headYaw / (360F / 256F))));
+                this.flags |= FLAG_HAS_HEAD_YAW;
+                consumers.add(packet -> packet.putByte((byte) (this.headYaw / (360F / 256F))));
             }
-            this.putLShort(flags);
+            this.putLShort(this.flags);
             if (consumers.size() > 0) {
                 for (Consumer<MoveEntityDeltaPacket> consumer : consumers) {
                     consumer.accept(this);
@@ -144,6 +144,6 @@ public class MoveEntityDeltaPacket extends DataPacket {
     }
 
     public boolean hasFlag(int flag) {
-        return (flags & flag) != 0;
+        return (this.flags & flag) != 0;
     }
 }
