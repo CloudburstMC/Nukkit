@@ -29,16 +29,6 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public float yaw = 0;
     public float headYaw = 0;
 
-    @Deprecated
-    // see x
-    private int deltaX;
-    @Deprecated
-    // see y
-    private int deltaY;
-    @Deprecated
-    // see z
-    private int deltaZ;
-
     @Override
     public byte pid() {
         return NETWORK_ID;
@@ -49,22 +39,22 @@ public class MoveEntityDeltaPacket extends DataPacket {
         this.runtimeEntityId = this.getEntityRuntimeId();
         this.flags = this.getByte();
         if ((flags & FLAG_HAS_X) != 0) {
-            this.x = this.getLFloat();
+            this.x = this.getCoordinate();
         }
         if ((flags & FLAG_HAS_Y) != 0) {
-            this.y = this.getLFloat();
+            this.y = this.getCoordinate();
         }
         if ((flags & FLAG_HAS_Z) != 0) {
-            this.z = this.getLFloat();
+            this.z = this.getCoordinate();
         }
         if ((flags & FLAG_HAS_PITCH) != 0) {
-            this.pitch = this.getByte() * (360F / 256F);
+            this.pitch = this.getRotation();
         }
         if ((flags & FLAG_HAS_YAW) != 0) {
-            this.yaw = this.getByte() * (360F / 256F);
+            this.yaw = this.getRotation();
         }
         if ((flags & FLAG_HAS_HEAD_YAW) != 0) {
-            this.headYaw = this.getByte() * (360F / 256F);
+            this.headYaw = this.getRotation();
         }
     }
 
@@ -75,48 +65,48 @@ public class MoveEntityDeltaPacket extends DataPacket {
         if (flags != 0) {
             this.putLShort(flags);
             if ((this.flags & FLAG_HAS_X) != 0) {
-                this.putLFloat(this.x);
+                this.putCoordinate(this.x);
             }
             if ((this.flags & FLAG_HAS_Y) != 0) {
-                this.putLFloat(this.y);
+                this.putCoordinate(this.y);
             }
             if ((this.flags & FLAG_HAS_Z) != 0) {
-                this.putLFloat(this.z);
+                this.putCoordinate(this.z);
             }
             if ((this.flags & FLAG_HAS_PITCH) != 0) {
-                this.putByte((byte) (this.pitch / (360F / 256F)));
+                this.putRotation(this.pitch);
             }
             if ((this.flags & FLAG_HAS_YAW) != 0) {
-                this.putByte((byte) (this.yaw / (360F / 256F)));
+                this.putRotation(this.yaw);
             }
             if ((this.flags & FLAG_HAS_HEAD_YAW) != 0) {
-                this.putByte((byte) (this.headYaw / (360F / 256F)));
+                this.putRotation(this.headYaw);
             }
         } else {
             List<Consumer<MoveEntityDeltaPacket>> consumers = new ArrayList<>(6);
             if (this.x != 0) {
                 this.flags |= FLAG_HAS_X;
-                consumers.add(packet -> packet.putLFloat(this.x));
+                consumers.add(packet -> packet.putCoordinate(this.x));
             }
             if (this.y != 0) {
                 this.flags |= FLAG_HAS_Y;
-                consumers.add(packet -> packet.putLFloat(this.y));
+                consumers.add(packet -> packet.putCoordinate(this.y));
             }
             if (this.z != 0) {
                 this.flags |= FLAG_HAS_Z;
-                consumers.add(packet -> packet.putLFloat(this.z));
+                consumers.add(packet -> packet.putCoordinate(this.z));
             }
             if (this.pitch != 0) {
                 this.flags |= FLAG_HAS_PITCH;
-                consumers.add(packet -> packet.putByte((byte) (this.pitch / (360F / 256F))));
+                consumers.add(packet -> packet.putRotation(this.pitch));
             }
             if (this.yaw != 0) {
                 this.flags |= FLAG_HAS_YAW;
-                consumers.add(packet -> packet.putByte((byte) (this.yaw / (360F / 256F))));
+                consumers.add(packet -> packet.putRotation(this.yaw));
             }
             if (this.headYaw != 0) {
                 this.flags |= FLAG_HAS_HEAD_YAW;
-                consumers.add(packet -> packet.putByte((byte) (this.headYaw / (360F / 256F))));
+                consumers.add(packet -> packet.putRotation(this.headYaw));
             }
             this.putLShort(this.flags);
             if (consumers.size() > 0) {
@@ -127,19 +117,19 @@ public class MoveEntityDeltaPacket extends DataPacket {
         }
     }
 
-    public float getCoordinate() {
+    private float getCoordinate() {
         return this.getLFloat();
     }
 
-    public void putCoordinate(float value) {
+    private void putCoordinate(float value) {
         this.putLFloat(value);
     }
 
-    public float getRotation() {
+    private float getRotation() {
         return this.getByte() * (360F / 256F);
     }
 
-    public void putRotation(float value) {
+    private void putRotation(float value) {
         this.putByte((byte) (value / (360F / 256F)));
     }
 
