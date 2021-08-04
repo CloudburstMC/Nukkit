@@ -42,7 +42,9 @@ public class GlobalBlockPalette {
             int runtimeId = state.getInt("runtimeId");
             int legacyId = blockId << 6 | meta;
             legacyToRuntimeId.put(legacyId, runtimeId);
-            runtimeIdToLegacy.put(runtimeId, legacyId);
+            if (!runtimeIdToLegacy.containsKey(runtimeId)) {
+                runtimeIdToLegacy.put(runtimeId, legacyId);
+            }
         }
     }
 

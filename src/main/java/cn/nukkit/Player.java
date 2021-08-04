@@ -585,7 +585,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Map<String, CommandDataVersions> data = new HashMap<>();
         int count = 0;
         for (Command command : this.server.getCommandMap().getCommands().values()) {
-            if (!command.testPermissionSilent(this)) {
+            if (!command.testPermissionSilent(this) || !command.isRegistered()) {
                 continue;
             }
             ++count;
@@ -3248,7 +3248,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         enchantment.doPostAttack(this, target);
                                     }
 
-                                    if (item.isTool() && this.isSurvival()) {
+                                    if (item.isTool() && (this.isSurvival() || this.isAdventure())) {
                                         if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
                                             this.inventory.setItemInHand(new ItemBlock(Block.get(BlockID.AIR)));
                                         } else {
