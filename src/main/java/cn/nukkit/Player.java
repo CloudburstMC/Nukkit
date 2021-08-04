@@ -64,6 +64,7 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.resourcepacks.ResourcePack;
+import cn.nukkit.resourcepacks.ResourcePackManager;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
@@ -1950,8 +1951,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
         this.timeSinceRest = this.namedTag.getInt("TimeSinceRest");
 
+        ResourcePackManager resourcePackManager = this.server.getResourcePackManager();
         ResourcePacksInfoPacket infoPacket = new ResourcePacksInfoPacket();
-        infoPacket.resourcePackEntries = this.server.getResourcePackManager().getResourceStack();
+        infoPacket.resourcePackEntries = resourcePackManager.getResourcePacks();
+        infoPacket.behaviourPackEntries = resourcePackManager.getBehaviourPacks();
+        infoPacket.scripting = Arrays.stream(infoPacket.behaviourPackEntries).anyMatch(ResourcePack::requiresScripting);
         infoPacket.mustAccept = this.server.getForceResources();
         this.dataPacket(infoPacket);
     }
@@ -2210,7 +2214,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         case ResourcePackClientResponsePacket.STATUS_HAVE_ALL_PACKS:
                             ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
                             stackPacket.mustAccept = this.server.getForceResources();
-                            stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourceStack();
+                            stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourcePacks();
+                            stackPacket.behaviourPackStack = this.server.getResourcePackManager().getBehaviourPacks();
                             this.dataPacket(stackPacket);
                             break;
                         case ResourcePackClientResponsePacket.STATUS_COMPLETED:

@@ -10,12 +10,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.MessageDigest;
+import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class ZippedResourcePack extends AbstractResourcePack {
     private File file;
     private byte[] sha256 = null;
+    private boolean requiresScripting = false;
 
     public ZippedResourcePack(File file) {
         if (!file.exists()) {
@@ -34,6 +36,16 @@ public class ZippedResourcePack extends AbstractResourcePack {
                 this.manifest = new JsonParser()
                         .parse(new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8))
                         .getAsJsonObject();
+            }
+
+            Enumeration<? extends ZipEntry> entries = zip.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry zipEntry = entries.nextElement();
+
+                if (zipEntry.getName().endsWith(".js")) {
+                    // once a JavaScript file is found in the zip, we assume it will be a behaviour script
+                    this.requiresScripting = true;
+                }
             }
         } catch (IOException e) {
             Server.getInstance().getLogger().logException(e);
@@ -80,5 +92,10 @@ public class ZippedResourcePack extends AbstractResourcePack {
         }
 
         return chunk;
+    }
+
+    @Override
+    public boolean requiresScripting() {
+        return this.getType().equals(Type.BEHAVIOUR_PACK) ? this.requiresScripting : false;
     }
 }
