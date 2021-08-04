@@ -26,7 +26,7 @@ public class ResourcePackDataInfoPacket extends DataPacket {
     public long compressedPackSize;
     public byte[] sha256;
     public boolean premium;
-    public int type = TYPE_RESOURCE;
+    public int type;
 
     @Override
     public void decode() {

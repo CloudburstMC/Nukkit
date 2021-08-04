@@ -2203,6 +2203,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
 
                                 ResourcePackDataInfoPacket dataInfoPacket = new ResourcePackDataInfoPacket();
+                                switch (resourcePack.getType()) {
+                                    case RESOURCE_PACK:
+                                        dataInfoPacket.type = ResourcePackDataInfoPacket.TYPE_RESOURCE;
+                                        break;
+                                    case BEHAVIOUR_PACK:
+                                        dataInfoPacket.type = ResourcePackDataInfoPacket.TYPE_BEHAVIOR;
+                                        break;
+                                }
                                 dataInfoPacket.packId = resourcePack.getPackId();
                                 dataInfoPacket.maxChunkSize = 1048576; //megabyte
                                 dataInfoPacket.chunkCount = resourcePack.getPackSize() / dataInfoPacket.maxChunkSize;
