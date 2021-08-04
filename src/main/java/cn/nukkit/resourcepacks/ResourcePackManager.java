@@ -9,9 +9,9 @@ import java.util.*;
 public class ResourcePackManager {
     private final Map<UUID, ResourcePack> packsById = new HashMap<>();
     private final ResourcePack[] resourcePacks;
-    private final ResourcePack[] behaviourPacks;
+    private final ResourcePack[] behaviorPacks;
 
-    public ResourcePackManager(File resourcePacksPath, File behaviourPacksPath) {
+    public ResourcePackManager(File resourcePacksPath, File behaviorPacksPath) {
         if (!resourcePacksPath.exists()) {
             resourcePacksPath.mkdirs();
         } else if (!resourcePacksPath.isDirectory()) {
@@ -19,15 +19,15 @@ public class ResourcePackManager {
                     .translateString("nukkit.resources.invalid-path", resourcePacksPath.getName()));
         }
 
-        if (!behaviourPacksPath.exists()) {
-            behaviourPacksPath.mkdirs();
-        } else if (!behaviourPacksPath.isDirectory()) {
+        if (!behaviorPacksPath.exists()) {
+            behaviorPacksPath.mkdirs();
+        } else if (!behaviorPacksPath.isDirectory()) {
             throw new IllegalArgumentException(Server.getInstance().getLanguage()
-                    .translateString("nukkit.resources.invalid-path", behaviourPacksPath.getName()));
+                    .translateString("nukkit.resources.invalid-path", behaviorPacksPath.getName()));
         }
 
         List<ResourcePack> loadedResourcePacks = new ArrayList<>();
-        List<ResourcePack> loadedBehaviourPacks = new ArrayList<>();
+        List<ResourcePack> loadedBehaviorPacks = new ArrayList<>();
         for (File pack : resourcePacksPath.listFiles()) {
             try {
                 ResourcePack resourcePack = null;
@@ -67,15 +67,15 @@ public class ResourcePackManager {
             }
         }
 
-        for (File pack : behaviourPacksPath.listFiles()) {
+        for (File pack : behaviorPacksPath.listFiles()) {
             try {
-                ResourcePack behaviourPack = null;
+                ResourcePack behaviorPack = null;
 
                 if (!pack.isDirectory()) { //directory resource packs temporarily unsupported
                     switch (Files.getFileExtension(pack.getName())) {
                         case "zip":
                         case "mcpack":
-                            behaviourPack = new ZippedResourcePack(pack);
+                            behaviorPack = new ZippedResourcePack(pack);
                             break;
                         default:
                             Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
@@ -84,19 +84,19 @@ public class ResourcePackManager {
                     }
                 }
 
-                if (behaviourPack != null) {
-                    if (!behaviourPack.getType().equals(ResourcePack.Type.BEHAVIOUR_PACK)) {
+                if (behaviorPack != null) {
+                    if (!behaviorPack.getType().equals(ResourcePack.Type.BEHAVIOR_PACK)) {
                         Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
-                                .translateString("nukkit.resources.invalid-type-behaviour", pack.getName(), behaviourPack.getPackName()));
+                                .translateString("nukkit.resources.invalid-type-behavior", pack.getName(), behaviorPack.getPackName()));
 
                         continue;
                     }
 
-                    loadedBehaviourPacks.add(behaviourPack);
-                    this.packsById.put(behaviourPack.getPackId(), behaviourPack);
+                    loadedBehaviorPacks.add(behaviorPack);
+                    this.packsById.put(behaviorPack.getPackId(), behaviorPack);
 
                     Server.getInstance().getLogger().info(Server.getInstance().getLanguage()
-                            .translateString("nukkit.resources.loaded-behaviour-pack", behaviourPack.getPackName()));
+                            .translateString("nukkit.resources.loaded-behavior-pack", behaviorPack.getPackName()));
                 }
             } catch (IllegalArgumentException e) {
                 Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
@@ -105,18 +105,18 @@ public class ResourcePackManager {
         }
 
         this.resourcePacks = loadedResourcePacks.toArray(new ResourcePack[0]);
-        this.behaviourPacks = loadedBehaviourPacks.toArray(new ResourcePack[0]);
+        this.behaviorPacks = loadedBehaviorPacks.toArray(new ResourcePack[0]);
 
         Server.getInstance().getLogger().info(Server.getInstance().getLanguage()
-                .translateString("nukkit.resources.success", String.valueOf(this.resourcePacks.length + this.behaviourPacks.length)));
+                .translateString("nukkit.resources.success", String.valueOf(this.resourcePacks.length + this.behaviorPacks.length)));
     }
 
     public ResourcePack[] getResourcePacks() {
         return this.resourcePacks;
     }
 
-    public ResourcePack[] getBehaviourPacks() {
-        return this.behaviourPacks;
+    public ResourcePack[] getBehaviorPacks() {
+        return this.behaviorPacks;
     }
 
     public ResourcePack getPackById(UUID id) {

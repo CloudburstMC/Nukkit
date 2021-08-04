@@ -43,7 +43,7 @@ public class ZippedResourcePack extends AbstractResourcePack {
                 ZipEntry zipEntry = entries.nextElement();
 
                 if (zipEntry.getName().endsWith(".js")) {
-                    // once a JavaScript file is found in the zip, we assume it will be a behaviour script
+                    // once a JavaScript file is found in the zip, we assume it is a behavior script
                     this.requiresScripting = true;
                 }
             }
@@ -96,6 +96,6 @@ public class ZippedResourcePack extends AbstractResourcePack {
 
     @Override
     public boolean requiresScripting() {
-        return this.getType().equals(Type.BEHAVIOUR_PACK) ? this.requiresScripting : false;
+        return this.getType().equals(Type.BEHAVIOR_PACK) ? this.requiresScripting : false;
     }
 }

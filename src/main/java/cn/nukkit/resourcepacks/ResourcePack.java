@@ -3,7 +3,7 @@ package cn.nukkit.resourcepacks;
 import java.util.UUID;
 
 /**
- * Can either be a "Resource Pack" or a "Behaviour Pack"
+ * Can either be a "Resource Pack" or a "Behavior Pack"
  */
 public interface ResourcePack {
     String getPackName();
@@ -25,7 +25,7 @@ public interface ResourcePack {
     enum Type {
         // Module types may not overlap.
         RESOURCE_PACK(new String[]{"resources"}),
-        BEHAVIOUR_PACK(new String[]{"client_data"}); // only client scripts are supported
+        BEHAVIOR_PACK(new String[]{"client_data"}); // only client scripts are supported
 
         private final String[] allowedModuleTypes;
 

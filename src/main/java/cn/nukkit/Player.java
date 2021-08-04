@@ -1954,8 +1954,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         ResourcePackManager resourcePackManager = this.server.getResourcePackManager();
         ResourcePacksInfoPacket infoPacket = new ResourcePacksInfoPacket();
         infoPacket.resourcePackEntries = resourcePackManager.getResourcePacks();
-        infoPacket.behaviourPackEntries = resourcePackManager.getBehaviourPacks();
-        infoPacket.scripting = Arrays.stream(infoPacket.behaviourPackEntries).anyMatch(ResourcePack::requiresScripting);
+        infoPacket.behaviorPackEntries = resourcePackManager.getBehaviorPacks();
+        infoPacket.scripting = Arrays.stream(infoPacket.behaviorPackEntries).anyMatch(ResourcePack::requiresScripting);
         infoPacket.mustAccept = this.server.getForceResources();
         this.dataPacket(infoPacket);
     }
@@ -2207,7 +2207,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                     case RESOURCE_PACK:
                                         dataInfoPacket.type = ResourcePackDataInfoPacket.TYPE_RESOURCE;
                                         break;
-                                    case BEHAVIOUR_PACK:
+                                    case BEHAVIOR_PACK:
                                         dataInfoPacket.type = ResourcePackDataInfoPacket.TYPE_BEHAVIOR;
                                         break;
                                 }
@@ -2223,7 +2223,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
                             stackPacket.mustAccept = this.server.getForceResources();
                             stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourcePacks();
-                            stackPacket.behaviourPackStack = this.server.getResourcePackManager().getBehaviourPacks();
+                            stackPacket.behaviorPackStack = this.server.getResourcePackManager().getBehaviorPacks();
                             this.dataPacket(stackPacket);
                             break;
                         case ResourcePackClientResponsePacket.STATUS_COMPLETED:
