@@ -3070,7 +3070,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             //TODO: Implement adventure mode checks
                                             if ((i = this.level.useItemOn(blockVector.asVector3(), i, face, useItemData.clickPos.x, useItemData.clickPos.y, useItemData.clickPos.z, this)) != null) {
                                                 if (!i.equals(oldItem) || i.getCount() != oldItem.getCount()) {
-                                                    inventory.setItemInHand(i);
+                                                    if (oldItem.getId() == i.getId() || i.getId() == 0) {
+                                                        inventory.setItemInHand(i);
+                                                    } else {
+                                                        server.getLogger().debug("Tried to set item " + i.getId() + " but " + this.username + " had item " + oldItem.getId() + " in their hand slot");
+                                                    }
                                                     inventory.sendHeldItem(this.getViewers().values());
                                                 }
                                                 break packetswitch;
@@ -3104,7 +3108,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                         if (this.isSurvival()) {
                                             this.getFoodData().updateFoodExpLevel(0.025);
                                             if (!i.equals(oldItem) || i.getCount() != oldItem.getCount()) {
-                                                inventory.setItemInHand(i);
+                                                if (oldItem.getId() == i.getId() || i.getId() == 0) {
+                                                    inventory.setItemInHand(i);
+                                                } else {
+                                                    server.getLogger().debug("Tried to set item " + i.getId() + " but " + this.username + " had item " + oldItem.getId() + " in their hand slot");
+                                                }
                                                 inventory.sendHeldItem(this.getViewers().values());
                                             }
                                         }
@@ -3147,7 +3155,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     if (item.onClickAir(this, directionVector)) {
                                         if (!this.isCreative()) {
-                                            this.inventory.setItemInHand(item);
+                                            if (item.getId() == 0 || this.inventory.getItemInHand().getId() == item.getId()) {
+                                                this.inventory.setItemInHand(item);
+                                            } else {
+                                                server.getLogger().debug("Tried to set item " + item.getId() + " but " + this.username + " had item " + this.inventory.getItemInHand().getId() + " in their hand slot");
+                                            }
                                         }
 
                                         if (!this.isUsingItem()) {
@@ -3208,7 +3220,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                             }
                                         }
 
-                                        this.inventory.setItemInHand(item);
+                                        if (item.getId() == 0 || this.inventory.getItemInHand().getId() == item.getId()) {
+                                            this.inventory.setItemInHand(item);
+                                        } else {
+                                            server.getLogger().debug("Tried to set item " + item.getId() + " but " + this.username + " had item " + this.inventory.getItemInHand().getId() + " in their hand slot");
+                                        }
                                     }
                                     break;
                                 case InventoryTransactionPacket.USE_ITEM_ON_ENTITY_ACTION_ATTACK:
@@ -3250,9 +3266,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                     if (item.isTool() && (this.isSurvival() || this.isAdventure())) {
                                         if (item.useOn(target) && item.getDamage() >= item.getMaxDurability()) {
-                                            this.inventory.setItemInHand(new ItemBlock(Block.get(BlockID.AIR)));
+                                            this.inventory.setItemInHand(Item.get(0));
                                         } else {
-                                            this.inventory.setItemInHand(item);
+                                            if (item.getId() == 0 || this.inventory.getItemInHand().getId() == item.getId()) {
+                                                this.inventory.setItemInHand(item);
+                                            } else {
+                                                server.getLogger().debug("Tried to set item " + item.getId() + " but " + this.username + " had item " + this.inventory.getItemInHand().getId() + " in their hand slot");
+                                            }
                                         }
                                     }
                                     return;
