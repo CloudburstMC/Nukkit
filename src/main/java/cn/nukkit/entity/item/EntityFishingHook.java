@@ -49,17 +49,12 @@ public class EntityFishingHook extends EntityProjectile {
 
     public Item rod = null;
 
-    public EntityFishingHook(FullChunk chunk, CompoundTag nbt,Item fishingRod) {
-        this(chunk, nbt, null,fishingRod);
+    public EntityFishingHook(FullChunk chunk, CompoundTag nbt) {
+        this(chunk, nbt, null);
     }
 
-    public EntityFishingHook(FullChunk chunk, CompoundTag nbt, Entity shootingEntity,Item fishingRod) {
+    public EntityFishingHook(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
-        this.rod = fishingRod;
-        if (rod.hasEnchantment(Enchantment.ID_LURE)) {
-            this.WAIT_CHANCE -= 25 * rod.getEnchantment(Enchantment.ID_LURE).getLevel();
-            waitChance = WAIT_CHANCE * 2;
-        }
     }
 
     @Override
@@ -115,6 +110,22 @@ public class EntityFishingHook extends EntityProjectile {
         Random random = new Random();
 
         if (this.isInsideOfWater()) {
+            if(rod != null){
+                if(waitChance == 240){
+                    if (rod.hasEnchantment(Enchantment.ID_LURE)) {
+                        this.WAIT_CHANCE -= 25 * rod.getEnchantment(Enchantment.ID_LURE).getLevel();
+
+                        waitChance = WAIT_CHANCE * 2;
+                    }
+                }
+                if(waitChance == 360){
+                    if (rod.hasEnchantment(Enchantment.ID_LURE)) {
+                        this.WAIT_CHANCE -= 25 * rod.getEnchantment(Enchantment.ID_LURE).getLevel();
+
+                        waitChance = WAIT_CHANCE * 3;
+                    }
+                }
+            }
             if (!this.attracted) {
                 if (this.waitChance > 0) {
                     --this.waitChance;
