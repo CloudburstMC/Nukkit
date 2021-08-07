@@ -12,6 +12,7 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ProjectileHitEvent;
 import cn.nukkit.event.player.PlayerFishEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.randomitem.Fishing;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
@@ -48,11 +49,11 @@ public class EntityFishingHook extends EntityProjectile {
 
     public Item rod = null;
 
-    public EntityFishingHook(FullChunk chunk, CompoundTag nbt, Item fishingRod) {
-        this(chunk, nbt, null, fishingRod);
+    public EntityFishingHook(FullChunk chunk, CompoundTag nbt,Item fishingRod) {
+        this(chunk, nbt, null,fishingRod);
     }
 
-    public EntityFishingHook(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, Item fishingRod) {
+    public EntityFishingHook(FullChunk chunk, CompoundTag nbt, Entity shootingEntity,Item fishingRod) {
         super(chunk, nbt, shootingEntity);
         this.rod = fishingRod;
         if (rod.hasEnchantment(Enchantment.ID_LURE)) {
