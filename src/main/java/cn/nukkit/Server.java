@@ -2199,7 +2199,7 @@ public class Server {
     }
 
     public boolean isOp(String name) {
-        return this.operators.exists(name, true);
+        return name != null && this.operators.exists(name, true);
     }
 
     public Config getWhitelist() {
