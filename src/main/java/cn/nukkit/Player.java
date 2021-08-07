@@ -5096,7 +5096,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         .add(new FloatTag("", (float) yaw))
                         .add(new FloatTag("", (float) pitch)));
         double f = 1.1;
-        EntityFishingHook fishingHook = new EntityFishingHook(chunk, nbt, this,fishingRod);
+        EntityFishingHook fishingHook = new EntityFishingHook(chunk, nbt, this);
         fishingHook.setMotion(new Vector3(-Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f, -Math.sin(Math.toRadians(pitch)) * f * f,
                 Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f));
         ProjectileLaunchEvent ev = new ProjectileLaunchEvent(fishingHook);
