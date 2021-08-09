@@ -209,6 +209,10 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public void setProvider(LevelProvider provider) {
         this.provider = provider;
+
+        if(provider != null) {
+            this.providerClass = provider.getClass();
+        }
     }
 
     @Override
