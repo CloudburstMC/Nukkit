@@ -10,6 +10,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
 
     public boolean mustAccept;
     public boolean scripting;
+    public boolean forceServerPacks;
     public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
     public ResourcePack[] resourcePackEntries = new ResourcePack[0];
 
@@ -23,9 +24,9 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.reset();
         this.putBoolean(this.mustAccept);
         this.putBoolean(this.scripting);
-
-        encodePacks(this.behaviourPackEntries);
-        encodePacks(this.resourcePackEntries);
+        this.putBoolean(this.forceServerPacks);
+        this.encodePacks(this.behaviourPackEntries);
+        this.encodePacks(this.resourcePackEntries);
     }
 
     private void encodePacks(ResourcePack[] packs) {

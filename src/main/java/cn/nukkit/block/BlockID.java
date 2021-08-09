@@ -301,6 +301,8 @@ public interface BlockID {
     int STONECUTTER = 245;
     int GLOWING_OBSIDIAN = 246;
     int NETHER_REACTOR = 247; //Should not be removed
+    int INFO_UPDATE = 248;
+    int INFO_UPDATE2 = 249;
 
     int PISTON_EXTENSION = 250;
 

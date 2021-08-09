@@ -35,8 +35,8 @@ public class UpdateTradePacket extends DataPacket {
         this.putByte(windowType);
         this.putVarInt(unknownVarInt1);
         this.putVarInt(tradeTier);
-        this.putEntityUniqueId(player);
         this.putEntityUniqueId(trader);
+        this.putEntityUniqueId(player);
         this.putString(displayName);
         this.putBoolean(screen2);
         this.putBoolean(isWilling);

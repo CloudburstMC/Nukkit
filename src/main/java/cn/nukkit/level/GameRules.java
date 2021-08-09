@@ -24,10 +24,12 @@ public class GameRules {
     public static GameRules getDefault() {
         GameRules gameRules = new GameRules();
 
+        gameRules.gameRules.put(COMMAND_BLOCKS_ENABLED, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(COMMAND_BLOCK_OUTPUT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_DAYLIGHT_CYCLE, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_ENTITY_DROPS, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_FIRE_TICK, new Value(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_INSOMNIA, new Value(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_IMMEDIATE_RESPAWN, new Value(Type.BOOLEAN, false));
         gameRules.gameRules.put(DO_MOB_LOOT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_MOB_SPAWNING, new Value<>(Type.BOOLEAN, true));
@@ -36,15 +38,20 @@ public class GameRules {
         gameRules.gameRules.put(DROWNING_DAMAGE, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(FALL_DAMAGE, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(FIRE_DAMAGE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(FREEZE_DAMAGE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(FUNCTION_COMMAND_LIMIT, new Value<>(Type.INTEGER, 10000));
         gameRules.gameRules.put(KEEP_INVENTORY, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(MAX_COMMAND_CHAIN_LENGTH, new Value<>(Type.INTEGER, 65536));
         gameRules.gameRules.put(MOB_GRIEFING, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(NATURAL_REGENERATION, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(PVP, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(RANDOM_TICK_SPEED, new Value<>(Type.INTEGER, 3));
         gameRules.gameRules.put(SEND_COMMAND_FEEDBACK, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(SHOW_COORDINATES, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(SHOW_DEATH_MESSAGES, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(SPAWN_RADIUS, new Value<>(Type.INTEGER, 5));
         gameRules.gameRules.put(TNT_EXPLODES, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(SHOW_DEATH_MESSAGE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(SHOW_TAGS, new Value<>(Type.BOOLEAN, true));
 
         return gameRules;
     }
@@ -193,6 +200,7 @@ public class GameRules {
     public static class Value<T> {
         private final Type type;
         private T value;
+        private boolean canBeChanged;
 
         public Value(Type type, T value) {
             this.type = type;
@@ -206,8 +214,16 @@ public class GameRules {
             this.value = value;
         }
 
+        public boolean isCanBeChanged() {
+            return this.canBeChanged;
+        }
+
+        public void setCanBeChanged(boolean canBeChanged) {
+            this.canBeChanged = canBeChanged;
+        }
+
         public Type getType() {
-            return type;
+            return this.type;
         }
 
         private boolean getValueAsBoolean() {
@@ -231,9 +247,10 @@ public class GameRules {
             return (Float) value;
         }
 
-        public void write(BinaryStream pk) {
-            pk.putUnsignedVarInt(type.ordinal());
-            type.write(pk, this);
+        public void write(BinaryStream stream) {
+            stream.putBoolean(this.canBeChanged);
+            stream.putUnsignedVarInt(type.ordinal());
+            type.write(stream, this);
         }
     }
 }

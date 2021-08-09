@@ -12,6 +12,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.*;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.*;
@@ -1093,7 +1094,43 @@ public abstract class Entity extends Location implements Metadatable {
             this.setAbsorption(Math.max(0, this.getAbsorption() + source.getDamage(EntityDamageEvent.DamageModifier.ABSORPTION)));
         }
         setLastDamageCause(source);
-        setHealth(getHealth() - source.getFinalDamage());
+
+        float newHealth = getHealth() - source.getFinalDamage();
+        if (newHealth < 1 && this instanceof Player) {
+            if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.SUICIDE) {
+                Player p = (Player) this;
+                boolean totem = false;
+                if (p.getOffhandInventory().getItem(0).getId() == ItemID.TOTEM) {
+                    p.getOffhandInventory().clear(0);
+                    totem = true;
+                } else if (p.getInventory().getItemInHand().getId() == ItemID.TOTEM) {
+                    p.getInventory().clear(p.getInventory().getHeldItemIndex());
+                    totem = true;
+                }
+                if (totem) {
+                    this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
+                    this.getLevel().addParticleEffect(this, ParticleEffect.TOTEM);
+
+                    this.extinguish();
+                    this.removeAllEffects();
+                    this.setHealth(1);
+
+                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800));
+                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
+
+                    EntityEventPacket pk = new EntityEventPacket();
+                    pk.eid = this.getId();
+                    pk.event = EntityEventPacket.CONSUME_TOTEM;
+                    p.dataPacket(pk);
+
+                    source.setCancelled(true);
+                    return false;
+                }
+            }
+        }
+
+        setHealth(newHealth);
         return true;
     }
 
@@ -1644,16 +1681,16 @@ public abstract class Entity extends Location implements Metadatable {
             return;
         }
 
-        float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
-
         Block down = this.level.getBlock(this.floor().down());
 
-        if(down instanceof BlockHayBale) {
-            damage -= (damage * 0.8f);
-        }
+        if (!this.isPlayer || level.getGameRules().getBoolean(GameRule.FALL_DAMAGE)) {
+            float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
 
-        if (damage > 0) {
-            if (!this.isPlayer || level.getGameRules().getBoolean(GameRule.FALL_DAMAGE)) {
+            if (down instanceof BlockHayBale) {
+                damage -= (damage * 0.8f);
+            }
+
+            if (damage > 0) {
                 this.attack(new EntityDamageEvent(this, DamageCause.FALL, damage));
             }
         }
@@ -2235,10 +2272,12 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void respawnToAll() {
-        for (Player player : this.hasSpawned.values()) {
+        Collection<Player> players = new ArrayList<>(this.hasSpawned.values());
+        this.hasSpawned.clear();
+
+        for (Player player : players) {
             this.spawnTo(player);
         }
-        this.hasSpawned.clear();
     }
 
     public void spawnToAll() {

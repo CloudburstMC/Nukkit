@@ -2740,6 +2740,32 @@
             "priority" : 50
         },
         {
+            "id" : "Torch_from_charcoal_recipeId",
+            "type" : 1,
+            "input" : {
+                "A" : {
+                    "id" : 263,
+                  "damage": 1
+                },
+                "B" : {
+                    "id" : 280,
+                  "damage": -1
+                }
+            },
+            "output" : [
+                {
+                    "id" : 50,
+                    "count" : 4
+                }
+            ],
+            "shape" : [
+                "A",
+                "B"
+            ],
+            "block" : "crafting_table",
+            "priority" : 50
+        },
+        {
             "id" : "TrapdoorAcacia_recipeId",
             "type" : 1,
             "input" : {
@@ -13742,6 +13768,36 @@
                 "B" : {
                     "id" : 263,
                   "damage": -1
+                },
+                "C" : {
+                    "id" : 17,
+                  "damage": -1
+                }
+            },
+            "output" : [
+              {
+                "id": 720
+              }
+            ],
+          "shape": [
+            " A ",
+            "ABA",
+            "CCC"
+          ],
+          "block": "crafting_table",
+          "priority": 1
+        },
+        {
+            "id" : "minecraft:campfire_from_charcoal",
+            "type" : 1,
+            "input" : {
+                "A" : {
+                    "id" : 280,
+                  "damage": -1
+                },
+                "B" : {
+                    "id" : 263,
+                  "damage": 1
                 },
                 "C" : {
                     "id" : 17,

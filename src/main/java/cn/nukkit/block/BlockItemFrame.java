@@ -11,7 +11,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Pub4Game on 03.07.2016.
@@ -114,8 +114,7 @@ public class BlockItemFrame extends BlockTransparentMeta {
     public Item[] getDrops(Item item) {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
-        int chance = new Random().nextInt(100) + 1;
-        if (itemFrame != null && chance <= (itemFrame.getItemDropChance() * 100)) {
+        if (itemFrame != null && ThreadLocalRandom.current().nextFloat() <= itemFrame.getItemDropChance()) {
             return new Item[]{
                     toItem(), itemFrame.getItem().clone()
             };

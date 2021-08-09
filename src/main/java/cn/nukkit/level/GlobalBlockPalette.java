@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -13,15 +14,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @Log4j2
 public class GlobalBlockPalette {
     private static final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private static final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
-    private static final AtomicInteger runtimeIdAllocator = new AtomicInteger(0);
 
     static {
         legacyToRuntimeId.defaultReturnValue(-1);
@@ -33,24 +31,19 @@ public class GlobalBlockPalette {
                 throw new AssertionError("Unable to locate block state nbt");
             }
             //noinspection unchecked
-            tag = (ListTag<CompoundTag>) NBTIO.readTag(new ByteArrayInputStream(ByteStreams.toByteArray(stream)), ByteOrder.LITTLE_ENDIAN, false);
+            tag = (ListTag<CompoundTag>) NBTIO.readTag(new ByteArrayInputStream(ByteStreams.toByteArray(stream)), ByteOrder.BIG_ENDIAN, false);
         } catch (IOException e) {
             throw new AssertionError("Unable to load block palette", e);
         }
 
         for (CompoundTag state : tag.getAll()) {
-            int runtimeId = runtimeIdAllocator.getAndIncrement();
-            if (!state.contains("LegacyStates")) continue;
-
-            List<CompoundTag> legacyStates = state.getList("LegacyStates", CompoundTag.class).getAll();
-
-            // Resolve to first legacy id
-            CompoundTag firstState = legacyStates.get(0);
-            runtimeIdToLegacy.put(runtimeId, firstState.getInt("id") << 6 | firstState.getShort("val"));
-
-            for (CompoundTag legacyState : legacyStates) {
-                int legacyId = legacyState.getInt("id") << 6 | legacyState.getShort("val");
-                legacyToRuntimeId.put(legacyId, runtimeId);
+            int blockId = state.getInt("id");
+            int meta = state.getShort("data");
+            int runtimeId = state.getInt("runtimeId");
+            int legacyId = blockId << 6 | meta;
+            legacyToRuntimeId.put(legacyId, runtimeId);
+            if (!runtimeIdToLegacy.containsKey(runtimeId)) {
+                runtimeIdToLegacy.put(runtimeId, legacyId);
             }
         }
     }
@@ -60,11 +53,11 @@ public class GlobalBlockPalette {
         int runtimeId = legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
             runtimeId = legacyToRuntimeId.get(id << 6);
-            if (runtimeId == -1) {
-                log.info("Creating new runtime ID for unknown block {}", id);
-                runtimeId = runtimeIdAllocator.getAndIncrement();
-                legacyToRuntimeId.put(id << 6, runtimeId);
-                runtimeIdToLegacy.put(runtimeId, id << 6);
+            if (runtimeId == -1 && id != BlockID.INFO_UPDATE) {
+                log.info("Unable to find runtime id for {}", id);
+                return getOrCreateRuntimeId(BlockID.INFO_UPDATE, 0);
+            } else if (id == BlockID.INFO_UPDATE){
+                throw new IllegalStateException("InfoUpdate state is missing!");
             }
         }
         return runtimeId;
@@ -72,5 +65,9 @@ public class GlobalBlockPalette {
 
     public static int getOrCreateRuntimeId(int legacyId) throws NoSuchElementException {
         return getOrCreateRuntimeId(legacyId >> 4, legacyId & 0xf);
+    }
+
+    public static int getLegacyFullId(int runtimeId) {
+        return runtimeIdToLegacy.get(runtimeId);
     }
 }
