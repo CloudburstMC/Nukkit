@@ -168,6 +168,27 @@ public class Location extends Position {
         return new Vector3(x, y, z).normalize();
     }
 
+    public Vector3 getRelativeToDirection(Vector3 vector3) {
+        return this.getRelativeToDirection(vector3.x, vector3.y, vector3.z);
+    }
+
+    public Vector3 getRelativeToDirection(double left, double up, double forward) {
+        double yaw0 = Math.cos((this.yaw + 90D) * Math.PI / 180D);
+        double yaw1 = Math.sin((this.yaw + 90D) * Math.PI / 180D);
+        double pitch0 = Math.cos(-this.pitch * Math.PI / 180D);
+        double pitch1 = Math.sin(-this.pitch * Math.PI / 180D);
+        double pitch2 = Math.cos((-this.pitch + 90D) * Math.PI / 180D);
+        double pitch3 = Math.sin((-this.pitch + 90D) * Math.PI / 180D);
+        Vector3 vec0 = new Vector3(yaw0 * pitch0, pitch1, yaw1 * pitch0);
+        Vector3 vec1 = new Vector3(yaw0 * pitch2, pitch3, yaw1 * pitch2);
+        Vector3 vec2 = vec0.cross(vec1).multiply(-1D);
+        return new Vector3(
+                vec0.x * forward + vec1.x * up + vec2.x * left,
+                vec0.y * forward + vec1.y * up + vec2.y * left,
+                vec0.z * forward + vec1.z * up + vec2.z * left
+        );
+    }
+
     @Override
     public Location clone() {
         return (Location) super.clone();

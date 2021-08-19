@@ -1460,6 +1460,16 @@ public abstract class Entity extends Location implements Metadatable {
         return this.temporalVector.setComponents(vector.x, vector.y, vector.z);
     }
 
+    public Vector3 getRelativeToDirection(Vector3 vector3) {
+        Vector3 vector = super.getRelativeToDirection(vector3);
+        return this.temporalVector.setComponents(vector.x, vector.y, vector.z);
+    }
+
+    public Vector3 getRelativeToDirection(double left, double up, double forward) {
+        Vector3 vector = super.getRelativeToDirection(left, up, forward);
+        return this.temporalVector.setComponents(vector.x, vector.y, vector.z);
+    }
+
     public Vector2 getDirectionPlane() {
         return (new Vector2((float) (-Math.cos(Math.toRadians(this.yaw) - Math.PI / 2)), (float) (-Math.sin(Math.toRadians(this.yaw) - Math.PI / 2)))).normalize();
     }
