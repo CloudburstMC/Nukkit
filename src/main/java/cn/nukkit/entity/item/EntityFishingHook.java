@@ -35,15 +35,12 @@ public class EntityFishingHook extends EntityProjectile {
 
     public static final int NETWORK_ID = 77;
 
-    public static final int CHANCE = 40;
-    public int WAIT_CHANCE = 120;
-
-    public boolean chance = false;
-    public int waitChance = WAIT_CHANCE * 2;
+    public int waitChance = 120;
+    public int waitTimer = 240;
     public boolean attracted = false;
     public int attractTimer = 0;
     public boolean caught = false;
-    public int coughtTimer = 0;
+    public int caughtTimer = 0;
 
     public Vector3 fish = null;
 
@@ -107,53 +104,42 @@ public class EntityFishingHook extends EntityProjectile {
             hasUpdate = true;
         }
 
-        Random random = new Random();
+        Random random = ThreadLocalRandom.current();
 
         if (this.isInsideOfWater()) {
-            if(rod != null){
-                if(waitChance == 240){
-                    if (rod.hasEnchantment(Enchantment.ID_LURE)) {
-                        this.WAIT_CHANCE -= 25 * rod.getEnchantment(Enchantment.ID_LURE).getLevel();
-
-                        waitChance = WAIT_CHANCE * 2;
-                    }
-                }
-                if(waitChance == 360){
-                    if (rod.hasEnchantment(Enchantment.ID_LURE)) {
-                        this.WAIT_CHANCE -= 25 * rod.getEnchantment(Enchantment.ID_LURE).getLevel();
-
-                        waitChance = WAIT_CHANCE * 3;
-                    }
-                }
+            if (this.waitTimer == 240) {
+                this.waitTimer = this.waitChance << 1;
+            } else if (this.waitTimer == 360) {
+                this.waitTimer = this.waitChance * 3;
             }
             if (!this.attracted) {
-                if (this.waitChance > 0) {
-                    --this.waitChance;
+                if (this.waitTimer > 0) {
+                    --this.waitTimer;
                 }
-                if (this.waitChance == 0) {
+                if (this.waitTimer == 0) {
                     if (random.nextInt(100) < 90) {
                         this.attractTimer = (random.nextInt(40) + 20);
                         this.spawnFish();
                         this.caught = false;
                         this.attracted = true;
                     } else {
-                        this.waitChance = WAIT_CHANCE;
+                        this.waitTimer = this.waitChance;
                     }
                 }
             } else if (!this.caught) {
                 if (this.attractFish()) {
-                    this.coughtTimer = (random.nextInt(20) + 30);
+                    this.caughtTimer = (random.nextInt(20) + 30);
                     this.fishBites();
                     this.caught = true;
                 }
             } else {
-                if (this.coughtTimer > 0) {
-                    --this.coughtTimer;
+                if (this.caughtTimer > 0) {
+                    --this.caughtTimer;
                 }
-                if (this.coughtTimer == 0) {
+                if (this.caughtTimer == 0) {
                     this.attracted = false;
                     this.caught = false;
-                    this.waitChance = WAIT_CHANCE * 3;
+                    this.waitTimer = this.waitChance * 3;
                 }
             }
         }
@@ -198,7 +184,7 @@ public class EntityFishingHook extends EntityProjectile {
     }
 
     public void spawnFish() {
-        Random random = new Random();
+        Random random = ThreadLocalRandom.current();
         this.fish = new Vector3(
                 this.x + (random.nextDouble() * 1.2 + 1) * (random.nextBoolean() ? -1 : 1),
                 this.getWaterHeight(),
@@ -213,14 +199,11 @@ public class EntityFishingHook extends EntityProjectile {
                 this.fish.y,
                 this.fish.z + (this.z - this.fish.z) * multiply
         );
-        if (new Random().nextInt(100) < 85) {
+        if (ThreadLocalRandom.current().nextInt(100) < 85) {
             this.level.addParticle(new WaterParticle(this.fish));
         }
         double dist = Math.abs(Math.sqrt(this.x * this.x + this.z * this.z) - Math.sqrt(this.fish.x * this.fish.x + this.fish.z * this.fish.z));
-        if (dist < 0.15) {
-            return true;
-        }
-        return false;
+        return dist < 0.15;
     }
 
     public void reelLine() {
@@ -285,5 +268,14 @@ public class EntityFishingHook extends EntityProjectile {
         }
 
         entity.attack(ev);
+    }
+
+    public void checkLure() {
+        if (rod != null) {
+            Enchantment ench = rod.getEnchantment(Enchantment.ID_LURE);
+            if (ench != null) {
+                this.waitChance = 120 - (25 * ench.getLevel());
+            }
+        }
     }
 }
