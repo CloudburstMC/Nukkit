@@ -4865,7 +4865,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setSprinting(boolean value) {
         if (isSprinting() != value) {
             super.setSprinting(value);
-            this.sendMovementSpeed(value ? this.movementSpeed * 1.3f : this.movementSpeed);
+            
+            if (this.movementSpeed != DEFAULT_SPEED) {
+                this.sendMovementSpeed(value ? this.movementSpeed * 1.3f : this.movementSpeed);
+            }
         }
     }
 
