@@ -4941,14 +4941,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (near) {
             if (entity instanceof EntityArrow && ((EntityArrow) entity).hadCollision) {
                 ItemArrow item = new ItemArrow();
-                if (this.isSurvival() && !this.inventory.canAddItem(item)) {
+                if (!this.isCreative() && !this.inventory.canAddItem(item)) {
                     return false;
                 }
 
                 InventoryPickupArrowEvent ev = new InventoryPickupArrowEvent(this.inventory, (EntityArrow) entity);
 
                 int pickupMode = ((EntityArrow) entity).getPickupMode();
-                if (pickupMode == EntityArrow.PICKUP_NONE || pickupMode == EntityArrow.PICKUP_CREATIVE && !this.isCreative()) {
+                if (pickupMode == EntityArrow.PICKUP_NONE || (pickupMode == EntityArrow.PICKUP_CREATIVE && !this.isCreative())) {
                     ev.setCancelled();
                 }
 
@@ -4970,11 +4970,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 return true;
             } else if (entity instanceof EntityThrownTrident && ((EntityThrownTrident) entity).hadCollision) {
                 Item item = ((EntityThrownTrident) entity).getItem();
-                if (this.isSurvival() && !this.inventory.canAddItem(item)) {
+                if (!this.isCreative() && !this.inventory.canAddItem(item)) {
                     return false;
                 }
 
                 InventoryPickupTridentEvent ev = new InventoryPickupTridentEvent(this.inventory, (EntityThrownTrident) entity);
+
+                int pickupMode = ((EntityThrownTrident) entity).getPickupMode();
+                if (pickupMode == EntityThrownTrident.PICKUP_NONE || (pickupMode == EntityThrownTrident.PICKUP_CREATIVE && !this.isCreative())) {
+                    ev.setCancelled();
+                }
+
                 this.server.getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {
                     return false;
@@ -4996,7 +5002,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Item item = ((EntityItem) entity).getItem();
 
                     if (item != null) {
-                        if (this.isSurvival() && !this.inventory.canAddItem(item)) {
+                        if (!this.isCreative() && !this.inventory.canAddItem(item)) {
                             return false;
                         }
 
@@ -5022,8 +5028,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Server.broadcastPacket(entity.getViewers().values(), pk);
                         this.dataPacket(pk);
 
-                        entity.close();
                         this.inventory.addItem(item.clone());
+                        entity.close();
                         return true;
                     }
                 }
@@ -5056,8 +5062,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (toRepair instanceof ItemTool || toRepair instanceof ItemArmor) {
                         if (toRepair.getDamage() > 0) {
                             int dmg = toRepair.getDamage() - 2;
-                            if (dmg < 0)
+                            if (dmg < 0) {
                                 dmg = 0;
+                            }
                             toRepair.setDamage(dmg);
                             inventory.setItem(itemToRepair, toRepair);
                             return true;
