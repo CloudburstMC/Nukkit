@@ -68,6 +68,10 @@ public class BlockSand extends BlockFallable {
 
     @Override
     public BlockColor getColor() {
+        if (this.getDamage() == 0x01) {
+            return BlockColor.ORANGE_BLOCK_COLOR;
+        }
+
         return BlockColor.SAND_BLOCK_COLOR;
     }
 }
