@@ -42,4 +42,9 @@ public class IntPositionEntityData extends EntityData<BlockVector3> {
     public int getType() {
         return Entity.DATA_TYPE_POS;
     }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ", " + z + ")";
+    }
 }

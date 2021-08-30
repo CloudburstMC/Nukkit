@@ -6,14 +6,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
-import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.crypto.factories.DefaultJWSVerifierFactory;
+import com.nimbusds.jose.crypto.ECDSAVerifier;
 import net.minidev.json.JSONObject;
 
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
@@ -164,9 +165,10 @@ public final class ClientChainData implements LoginChainData {
     private UUID clientUUID;
     private String xuid;
 
-    private static PublicKey generateKey(String base64) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(base64)));
+    private static ECPublicKey generateKey(String base64) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return (ECPublicKey) KeyFactory.getInstance("EC").generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(base64)));
     }
+
     private String identityPublicKey;
 
     private long clientId;
@@ -259,21 +261,30 @@ public final class ClientChainData implements LoginChainData {
     }
 
     private boolean verifyChain(List<String> chains) throws Exception {
-
-        PublicKey lastKey = null;
+        ECPublicKey lastKey = null;
         boolean mojangKeyVerified = false;
         for (String chain: chains) {
             JWSObject jws = JWSObject.parse(chain);
 
-            if (!mojangKeyVerified) {
-                // First chain should be signed using Mojang's private key. We'd be in big trouble if it leaked...
-                mojangKeyVerified = verify(MOJANG_PUBLIC_KEY, jws);
+            URI x5u = jws.getHeader().getX509CertURL();
+            if (x5u == null) {
+                return false;
             }
 
-            if (lastKey != null) {
-                if (!verify(lastKey, jws)) {
-                    throw new JOSEException("Unable to verify key in chain.");
-                }
+            ECPublicKey expectedKey = generateKey(x5u.toString());
+            // First key is self-signed
+            if (lastKey == null) {
+                lastKey = expectedKey;
+            } else if (!lastKey.equals(expectedKey)) {
+                return false;
+            }
+
+            if (!verify(lastKey, jws)) {
+                return false;
+            }
+
+            if (lastKey.equals(MOJANG_PUBLIC_KEY)) {
+                mojangKeyVerified = true;
             }
 
             JSONObject payload = jws.getPayload().toJSONObject();
@@ -286,8 +297,7 @@ public final class ClientChainData implements LoginChainData {
         return mojangKeyVerified;
     }
 
-    private boolean verify(PublicKey key, JWSObject object) throws JOSEException {
-        JWSVerifier verifier = new DefaultJWSVerifierFactory().createJWSVerifier(object.getHeader(), key);
-        return object.verify(verifier);
+    private boolean verify(ECPublicKey key, JWSObject object) throws JOSEException {
+        return object.verify(new ECDSAVerifier(key));
     }
 }

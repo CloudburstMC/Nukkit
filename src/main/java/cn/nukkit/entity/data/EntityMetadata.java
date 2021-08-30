@@ -4,6 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
+import lombok.extern.log4j.Log4j2;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
+@Log4j2
 public class EntityMetadata {
 
     private final Map<Integer, EntityData> map = new HashMap<>();
@@ -37,6 +39,7 @@ public class EntityMetadata {
 
     public EntityMetadata put(EntityData data) {
         this.map.put(data.getId(), data);
+        log.info("Updated entity data {}", this::toString);
         return this;
     }
 
@@ -119,5 +122,10 @@ public class EntityMetadata {
 
     public Map<Integer, EntityData> getMap() {
         return new HashMap<>(map);
+    }
+
+    @Override
+    public String toString() {
+        return map.toString();
     }
 }
