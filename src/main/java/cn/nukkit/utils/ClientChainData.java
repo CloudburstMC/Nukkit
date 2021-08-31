@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
-import net.minidev.json.JSONObject;
 
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -263,8 +262,9 @@ public final class ClientChainData implements LoginChainData {
     private boolean verifyChain(List<String> chains) throws Exception {
         ECPublicKey lastKey = null;
         boolean mojangKeyVerified = false;
-        for (String chain: chains) {
-            JWSObject jws = JWSObject.parse(chain);
+        Iterator<String> iterator = chains.iterator();
+        while (iterator.hasNext()) {
+            JWSObject jws = JWSObject.parse(iterator.next());
 
             URI x5u = jws.getHeader().getX509CertURL();
             if (x5u == null) {
@@ -283,16 +283,20 @@ public final class ClientChainData implements LoginChainData {
                 return false;
             }
 
+            if (mojangKeyVerified) {
+                return !iterator.hasNext();
+            }
+
             if (lastKey.equals(MOJANG_PUBLIC_KEY)) {
                 mojangKeyVerified = true;
             }
 
-            JSONObject payload = jws.getPayload().toJSONObject();
-            String base64key = payload.getAsString("identityPublicKey");
-            if (base64key == null) {
+            Map<String, Object> payload = jws.getPayload().toJSONObject();
+            Object base64key = payload.get("identityPublicKey");
+            if (!(base64key instanceof String)) {
                 throw new RuntimeException("No key found");
             }
-            lastKey = generateKey(base64key);
+            lastKey = generateKey((String) base64key);
         }
         return mojangKeyVerified;
     }
