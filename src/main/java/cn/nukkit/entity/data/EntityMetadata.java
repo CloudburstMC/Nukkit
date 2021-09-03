@@ -39,7 +39,7 @@ public class EntityMetadata {
 
     public EntityMetadata put(EntityData data) {
         this.map.put(data.getId(), data);
-        log.info("Updated entity data {}", this::toString);
+        //log.info("Updated entity data {}", this::toString);
         return this;
     }
 
