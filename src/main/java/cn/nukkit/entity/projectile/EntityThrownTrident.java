@@ -1,24 +1,20 @@
 package cn.nukkit.entity.projectile;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ProjectileHitEvent;
-import cn.nukkit.level.MovingObjectPosition;
-import cn.nukkit.level.Position;
+import cn.nukkit.event.weather.LightningStrikeEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by PetteriM1
@@ -27,9 +23,10 @@ public class EntityThrownTrident extends EntityProjectile {
 
     public static final int NETWORK_ID = 73;
 
-    public static final int DATA_SOURCE_ID = 17;
-
     protected Item trident;
+
+    protected int pickupMode;
+    public boolean alreadyCollided;
 
     @Override
     public int getNetworkId() {
@@ -53,7 +50,7 @@ public class EntityThrownTrident extends EntityProjectile {
 
     @Override
     public float getGravity() {
-        return 0.04f;
+        return 0.05f;
     }
 
     @Override
@@ -61,29 +58,25 @@ public class EntityThrownTrident extends EntityProjectile {
         return 0.01f;
     }
 
-    protected float gravity = 0.04f;
-    protected float drag = 0.01f;
-
     public EntityThrownTrident(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
 
     public EntityThrownTrident(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
-        this(chunk, nbt, shootingEntity, false);
+        super(chunk, nbt, shootingEntity);
     }
 
+    @Deprecated
     public EntityThrownTrident(FullChunk chunk, CompoundTag nbt, Entity shootingEntity, boolean critical) {
-        super(chunk, nbt, shootingEntity);
+        this(chunk, nbt, shootingEntity);
     }
 
     @Override
     protected void initEntity() {
         super.initEntity();
 
-        this.damage = namedTag.contains("damage") ? namedTag.getDouble("damage") : 8;
         this.trident = namedTag.contains("Trident") ? NBTIO.getItemHelper(namedTag.getCompound("Trident")) : Item.get(0);
-
-        closeOnCollide = false;
+        this.pickupMode = namedTag.contains("pickup") ? namedTag.getByte("pickup") : PICKUP_ANY;
     }
 
     @Override
@@ -91,6 +84,7 @@ public class EntityThrownTrident extends EntityProjectile {
         super.saveNBT();
 
         this.namedTag.put("Trident", NBTIO.putItemHelper(this.trident));
+        this.namedTag.putByte("pickup", this.pickupMode);
     }
 
     public Item getItem() {
@@ -101,79 +95,18 @@ public class EntityThrownTrident extends EntityProjectile {
         this.trident = item.clone();
     }
 
-    public void setCritical() {
-        this.setCritical(true);
-    }
-
-    public void setCritical(boolean value) {
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL, value);
-    }
-
-    public boolean isCritical() {
-        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_CRITICAL);
-    }
-
-    @Override
-    public int getResultDamage() {
-        int base = super.getResultDamage();
-
-        if (this.isCritical()) {
-            base += ThreadLocalRandom.current().nextInt(base / 2 + 2);
-        }
-
-        return base;
-    }
-
     @Override
     protected double getBaseDamage() {
         return 8;
     }
 
     @Override
-    public boolean onUpdate(int currentTick) {
-        if (this.closed) {
-            return false;
-        }
-
-        this.timing.startTiming();
-
-        if (this.isCollided && !this.hadCollision) {
-            this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_HIT_GROUND);
-        }
-
-        boolean hasUpdate = super.onUpdate(currentTick);
-
-        if (this.onGround || this.hadCollision) {
-            this.setCritical(false);
-        }
-
-        this.timing.stopTiming();
-
-        return hasUpdate;
-    }
-
-    @Override
-    public void spawnTo(Player player) {
-        AddEntityPacket pk = new AddEntityPacket();
-        pk.type = NETWORK_ID;
-        pk.entityUniqueId = this.getId();
-        pk.entityRuntimeId = this.getId();
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.speedX = (float) this.motionX;
-        pk.speedY = (float) this.motionY;
-        pk.speedZ = (float) this.motionZ;
-        pk.yaw = (float) this.yaw;
-        pk.pitch = (float) this.pitch;
-        pk.metadata = this.dataProperties;
-        player.dataPacket(pk);
-
-        super.spawnTo(player);
-    }
-
-    @Override
     public void onCollideWithEntity(Entity entity) {
+        if (this.alreadyCollided) {
+            this.move(this.motionX, this.motionY, this.motionZ);
+            return;
+        }
+
         this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity)));
         float damage = this.getResultDamage();
 
@@ -184,20 +117,32 @@ public class EntityThrownTrident extends EntityProjectile {
             ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
         entity.attack(ev);
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_HIT);
         this.hadCollision = true;
+        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_HIT);
         this.close();
-        Entity newTrident = create("ThrownTrident", this);
-        ((EntityThrownTrident) newTrident).setItem(this.trident);
+        if (trident != null && level.isThundering() && trident.hasEnchantment(Enchantment.ID_TRIDENT_CHANNELING) && level.canBlockSeeSky(this)) {
+            EntityLightning bolt = new EntityLightning(this.getChunk(), getDefaultNBT(this));
+            LightningStrikeEvent strikeEvent = new LightningStrikeEvent(level, bolt);
+            server.getPluginManager().callEvent(strikeEvent);
+            if (!strikeEvent.isCancelled()) {
+                bolt.spawnToAll();
+                level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ITEM_TRIDENT_THUNDER);
+            } else {
+                bolt.setEffect(false);
+            }
+        }
+        EntityThrownTrident newTrident = (EntityThrownTrident) Entity.createEntity("ThrownTrident", this);
+        newTrident.alreadyCollided = true;
+        newTrident.pickupMode = this.pickupMode;
+        newTrident.setItem(this.trident);
         newTrident.spawnToAll();
     }
 
-    public Entity create(Object type, Position source, Object... args) {
-        FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4);
-        if (chunk == null) return null;
+    public int getPickupMode() {
+        return this.pickupMode;
+    }
 
-        CompoundTag nbt = Entity.getDefaultNBT(source.add(0.5, 0, 0.5), new Vector3(), new Random().nextFloat() * 360, 0);
-
-        return Entity.createEntity(type.toString(), chunk, nbt, args);
+    public void setPickupMode(int pickupMode) {
+        this.pickupMode = pickupMode;
     }
 }
