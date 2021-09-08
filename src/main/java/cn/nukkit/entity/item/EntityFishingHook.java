@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
@@ -22,8 +23,10 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
+import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
 
+import java.util.Collection;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -41,6 +44,7 @@ public class EntityFishingHook extends EntityProjectile {
     public int attractTimer = 0;
     public boolean caught = false;
     public int caughtTimer = 0;
+    public boolean canCollide = true;
 
     public Vector3 fish = null;
 
@@ -52,6 +56,14 @@ public class EntityFishingHook extends EntityProjectile {
 
     public EntityFishingHook(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
+    }
+
+    @Override
+    protected void initEntity() {
+        super.initEntity();
+        if (this.age > 0) {
+            this.close();
+        }
     }
 
     @Override
@@ -85,13 +97,31 @@ public class EntityFishingHook extends EntityProjectile {
     }
 
     @Override
+    public boolean canCollide() {
+        return this.canCollide;
+    }
+
+    @Override
     public boolean onUpdate(int currentTick) {
         boolean hasUpdate = super.onUpdate(currentTick);
+
+        long target = this.getDataPropertyLong(DATA_TARGET_EID);
+        if (target != 0) {
+            Entity ent = level.getEntity(target);
+            if (ent == null || !ent.isAlive()) {
+                this.setTarget(0);
+            } else {
+                this.setPosition(new Vector3(ent.x, ent.y + (getHeight() * 0.75f), ent.z));
+            }
+            hasUpdate = true;
+        }
+
         if (hasUpdate) {
             return false;
         }
 
-        if (this.isInsideOfWater()) {
+        boolean inWater = this.isInsideOfWater();
+        if (inWater) {
             this.motionX = 0;
             this.motionY -= getGravity() * -0.04;
             this.motionZ = 0;
@@ -106,7 +136,7 @@ public class EntityFishingHook extends EntityProjectile {
 
         Random random = ThreadLocalRandom.current();
 
-        if (this.isInsideOfWater()) {
+        if (inWater) {
             if (this.waitTimer == 240) {
                 this.waitTimer = this.waitChance << 1;
             } else if (this.waitTimer == 360) {
@@ -158,22 +188,24 @@ public class EntityFishingHook extends EntityProjectile {
     }
 
     public void fishBites() {
+        Collection<Player> viewers = this.getViewers().values();
+
         EntityEventPacket pk = new EntityEventPacket();
         pk.eid = this.getId();
         pk.event = EntityEventPacket.FISH_HOOK_HOOK;
-        Server.broadcastPacket(this.getViewers().values(), pk);
+        Server.broadcastPacket(viewers, pk);
 
         EntityEventPacket bubblePk = new EntityEventPacket();
         bubblePk.eid = this.getId();
         bubblePk.event = EntityEventPacket.FISH_HOOK_BUBBLE;
-        Server.broadcastPacket(this.getViewers().values(), bubblePk);
+        Server.broadcastPacket(viewers, bubblePk);
 
         EntityEventPacket teasePk = new EntityEventPacket();
         teasePk.eid = this.getId();
         teasePk.event = EntityEventPacket.FISH_HOOK_TEASE;
-        Server.broadcastPacket(this.getViewers().values(), teasePk);
+        Server.broadcastPacket(viewers, teasePk);
 
-        Random random = new Random();
+        Random random = ThreadLocalRandom.current();
         for (int i = 0; i < 5; i++) {
             this.level.addParticle(new BubbleParticle(this.setComponents(
                     this.x + random.nextDouble() * 0.5 - 0.25,
@@ -232,7 +264,7 @@ public class EntityFishingHook extends EntityProjectile {
     }
 
     @Override
-    public void spawnTo(Player player) {
+    protected DataPacket createAddEntityPacket() {
         AddEntityPacket pk = new AddEntityPacket();
         pk.entityRuntimeId = this.getId();
         pk.entityUniqueId = this.getId();
@@ -251,8 +283,7 @@ public class EntityFishingHook extends EntityProjectile {
             ownerId = this.shootingEntity.getId();
         }
         pk.metadata = this.dataProperties.putLong(DATA_OWNER_EID, ownerId);
-        player.dataPacket(pk);
-        super.spawnTo(player);
+        return pk;
     }
 
     @Override
@@ -267,7 +298,9 @@ public class EntityFishingHook extends EntityProjectile {
             ev = new EntityDamageByChildEntityEvent(this.shootingEntity, this, entity, DamageCause.PROJECTILE, damage);
         }
 
-        entity.attack(ev);
+        if (entity.attack(ev)) {
+            this.setTarget(entity.getId());
+        }
     }
 
     public void checkLure() {
@@ -277,5 +310,10 @@ public class EntityFishingHook extends EntityProjectile {
                 this.waitChance = 120 - (25 * ench.getLevel());
             }
         }
+    }
+
+    public void setTarget(long eid) {
+        this.setDataProperty(new LongEntityData(DATA_TARGET_EID, eid));
+        this.canCollide = eid == 0;
     }
 }
