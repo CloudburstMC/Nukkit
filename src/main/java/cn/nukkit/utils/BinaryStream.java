@@ -282,10 +282,8 @@ public class BinaryStream {
 
         this.putImage(skin.getCapeData());
         this.putString(skin.getGeometryData());
+        this.putString(skin.getGeometryDataEngineVersion());
         this.putString(skin.getAnimationData());
-        this.putBoolean(skin.isPremium());
-        this.putBoolean(skin.isPersona());
-        this.putBoolean(skin.isCapeOnClassic());
         this.putString(skin.getCapeId());
         this.putString(skin.getFullSkinId());
         this.putString(skin.getArmSize());
@@ -310,6 +308,11 @@ public class BinaryStream {
                 this.putString(color);
             }
         }
+
+        this.putBoolean(skin.isPremium());
+        this.putBoolean(skin.isPersona());
+        this.putBoolean(skin.isCapeOnClassic());
+        this.putBoolean(skin.isPrimaryUser());
     }
 
     public Skin getSkin() {
@@ -330,10 +333,8 @@ public class BinaryStream {
 
         skin.setCapeData(this.getImage());
         skin.setGeometryData(this.getString());
+        skin.setGeometryDataEngineVersion(this.getString());
         skin.setAnimationData(this.getString());
-        skin.setPremium(this.getBoolean());
-        skin.setPersona(this.getBoolean());
-        skin.setCapeOnClassic(this.getBoolean());
         skin.setCapeId(this.getString());
         this.getString(); // TODO: Full skin id
         skin.setArmSize(this.getString());
@@ -359,6 +360,11 @@ public class BinaryStream {
             }
             skin.getTintColors().add(new PersonaPieceTint(pieceType, colors));
         }
+
+        skin.setPremium(this.getBoolean());
+        skin.setPersona(this.getBoolean());
+        skin.setCapeOnClassic(this.getBoolean());
+        skin.setPrimaryUser(this.getBoolean());
         return skin;
     }
 
