@@ -38,22 +38,22 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public void decode() {
         this.runtimeEntityId = this.getEntityRuntimeId();
         this.flags = this.getByte();
-        if ((flags & FLAG_HAS_X) != 0) {
+        if ((this.flags & FLAG_HAS_X) != 0) {
             this.x = this.getCoordinate();
         }
-        if ((flags & FLAG_HAS_Y) != 0) {
+        if ((this.flags & FLAG_HAS_Y) != 0) {
             this.y = this.getCoordinate();
         }
-        if ((flags & FLAG_HAS_Z) != 0) {
+        if ((this.flags & FLAG_HAS_Z) != 0) {
             this.z = this.getCoordinate();
         }
-        if ((flags & FLAG_HAS_PITCH) != 0) {
+        if ((this.flags & FLAG_HAS_PITCH) != 0) {
             this.pitch = this.getRotation();
         }
-        if ((flags & FLAG_HAS_YAW) != 0) {
+        if ((this.flags & FLAG_HAS_YAW) != 0) {
             this.yaw = this.getRotation();
         }
-        if ((flags & FLAG_HAS_HEAD_YAW) != 0) {
+        if ((this.flags & FLAG_HAS_HEAD_YAW) != 0) {
             this.headYaw = this.getRotation();
         }
     }
@@ -62,58 +62,24 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.runtimeEntityId);
-        if (flags != 0) {
-            this.putLShort(flags);
-            if ((this.flags & FLAG_HAS_X) != 0) {
-                this.putCoordinate(this.x);
-            }
-            if ((this.flags & FLAG_HAS_Y) != 0) {
-                this.putCoordinate(this.y);
-            }
-            if ((this.flags & FLAG_HAS_Z) != 0) {
-                this.putCoordinate(this.z);
-            }
-            if ((this.flags & FLAG_HAS_PITCH) != 0) {
-                this.putRotation(this.pitch);
-            }
-            if ((this.flags & FLAG_HAS_YAW) != 0) {
-                this.putRotation(this.yaw);
-            }
-            if ((this.flags & FLAG_HAS_HEAD_YAW) != 0) {
-                this.putRotation(this.headYaw);
-            }
-        } else {
-            List<Consumer<MoveEntityDeltaPacket>> consumers = new ArrayList<>(6);
-            if (this.x != 0) {
-                this.flags |= FLAG_HAS_X;
-                consumers.add(packet -> packet.putCoordinate(this.x));
-            }
-            if (this.y != 0) {
-                this.flags |= FLAG_HAS_Y;
-                consumers.add(packet -> packet.putCoordinate(this.y));
-            }
-            if (this.z != 0) {
-                this.flags |= FLAG_HAS_Z;
-                consumers.add(packet -> packet.putCoordinate(this.z));
-            }
-            if (this.pitch != 0) {
-                this.flags |= FLAG_HAS_PITCH;
-                consumers.add(packet -> packet.putRotation(this.pitch));
-            }
-            if (this.yaw != 0) {
-                this.flags |= FLAG_HAS_YAW;
-                consumers.add(packet -> packet.putRotation(this.yaw));
-            }
-            if (this.headYaw != 0) {
-                this.flags |= FLAG_HAS_HEAD_YAW;
-                consumers.add(packet -> packet.putRotation(this.headYaw));
-            }
-            this.putLShort(this.flags);
-            if (consumers.size() > 0) {
-                for (Consumer<MoveEntityDeltaPacket> consumer : consumers) {
-                    consumer.accept(this);
-                }
-            }
+        this.putLShort(this.flags);
+        if ((this.flags & FLAG_HAS_X) != 0) {
+            this.putCoordinate(this.x);
+        }
+        if ((this.flags & FLAG_HAS_Y) != 0) {
+            this.putCoordinate(this.y);
+        }
+        if ((this.flags & FLAG_HAS_Z) != 0) {
+            this.putCoordinate(this.z);
+        }
+        if ((this.flags & FLAG_HAS_PITCH) != 0) {
+            this.putRotation(this.pitch);
+        }
+        if ((this.flags & FLAG_HAS_YAW) != 0) {
+            this.putRotation(this.yaw);
+        }
+        if ((this.flags & FLAG_HAS_HEAD_YAW) != 0) {
+            this.putRotation(this.headYaw);
         }
     }
 
