@@ -327,12 +327,13 @@ public abstract class Entity extends Location implements Metadatable {
     public double lastMotionY;
     public double lastMotionZ;
 
-    public double lastYaw;
     public double lastPitch;
+    public double lastYaw;
     public double lastHeadYaw;
 
     public double pitchDelta;
     public double yawDelta;
+    public double headYawDelta;
 
     public double entityCollisionReduction = 0; // Higher than 0.9 will result a fast collisions
     public AxisAlignedBB boundingBox;
@@ -1439,8 +1440,8 @@ public abstract class Entity extends Location implements Metadatable {
             this.lastY = this.y;
             this.lastZ = this.z;
 
-            this.lastYaw = this.yaw;
             this.lastPitch = this.pitch;
+            this.lastYaw = this.yaw;
             this.lastHeadYaw = this.headYaw;
 
             // If you want to achieve headYaw in movement. You can override it by yourself. Changing would break some mob plugins.

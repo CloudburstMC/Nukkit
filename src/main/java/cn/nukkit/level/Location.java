@@ -25,12 +25,12 @@ public class Location extends Position {
         this(x, y, 0);
     }
 
-    public Location(double x, double y, double z, Level level) {
-        this(x, y, z, 0, 0, level);
-    }
-
     public Location(double x, double y, double z) {
         this(x, y, z, 0);
+    }
+
+    public Location(double x, double y, double z, Level level) {
+        this(x, y, z, 0, 0, level);
     }
 
     public Location(double x, double y, double z, double yaw) {
