@@ -184,10 +184,6 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             for (int slot = 0; slot < 4; slot++) {
                 Item armor = this.inventory.getArmorItem(slot);
 
-                if (armor.isUnbreakable() || armor instanceof ItemSkull) {
-                    continue;
-                }
-
                 if (armor.hasEnchantments()) {
                     if (damager != null) {
                         for (Enchantment enchantment : armor.getEnchantments()) {
@@ -198,6 +194,10 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                     Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
                     if (durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= ThreadLocalRandom.current().nextInt(100))
                         continue;
+                }
+
+                if (armor.isUnbreakable() || armor instanceof ItemSkull) {
+                    continue;
                 }
 
                 armor.setDamage(armor.getDamage() + 1);
