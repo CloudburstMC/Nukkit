@@ -98,7 +98,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_POTION_AUX_VALUE = 36; //short
     public static final int DATA_LEAD_HOLDER_EID = 37; //long
     public static final int DATA_SCALE = 38; //float
-    public static final int DATA_INTERACTIVE_TAG = 39; //string (button text)
+    public static final int DATA_HAS_NPC_COMPONENT = 39; //byte
     public static final int DATA_NPC_SKIN_ID = 40; //string
     public static final int DATA_URL_TAG = 41; //string
     public static final int DATA_MAX_AIR = 42; //short
@@ -159,7 +159,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_CHANGE_RATE = 97;
     public static final int DATA_CHANGE_ON_PICKUP = 98;
     public static final int DATA_PICKUP_COUNT = 99;
-    public static final int DATA_INTERACT_TEXT = 100;
+    public static final int DATA_INTERACTIVE_TAG = 100; //string (button text)
     public static final int DATA_TRADE_TIER = 101;
     public static final int DATA_MAX_TRADE_TIER = 102;
     public static final int DATA_TRADE_EXPERIENCE = 103;
@@ -179,9 +179,11 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = 117;
     public static final int DATA_HITBOX = 118;
     public static final int DATA_IS_BUOYANT = 119;
-    public static final int DATA_FREEZING_EFFECT_STRENGTH = 120;
-    public static final int DATA_BUOYANCY_DATA = 121;
-    public static final int DATA_GOAT_HORN_COUNT = 122;
+    public static final int DATA_BASE_RUNTIME_ID = 120;
+    public static final int DATA_FREEZING_EFFECT_STRENGTH = 121;
+    public static final int DATA_BUOYANCY_DATA = 122;
+    public static final int DATA_GOAT_HORN_COUNT = 123;
+    public static final int DATA_UPDATE_PROPERTIES = 124;
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
@@ -260,7 +262,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_BLOCKED_USING_SHIELD = 73;
     public static final int DATA_FLAG_BLOCKED_USING_DAMAGED_SHIELD = 74;
     public static final int DATA_FLAG_SLEEPING = 75;
-    public static final int DATA_FLAG_WANTS_TO_WAKE = 76;
+    public static final int DATA_FLAG_ENTITY_GROW_UP = 76;
     public static final int DATA_FLAG_TRADE_INTEREST = 77;
     public static final int DATA_FLAG_DOOR_BREAKER = 78;
     public static final int DATA_FLAG_BREAKING_OBSTRUCTION = 79;
@@ -280,6 +282,9 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_ADMIRING = 93;
     public static final int DATA_FLAG_CELEBRATING_SPECIAL = 94;
     public static final int DATA_FLAG_RAM_ATTACK = 96;
+    public static final int DATA_FLAG_PLAYING_DEAD = 97;
+    public static final int DATA_FLAG_IN_ASCENDABLE_BLOCK = 98;
+    public static final int DATA_FLAG_OVER_DESCENDABLE_BLOCK = 99;
 
     public static long entityCount = 1;
 
