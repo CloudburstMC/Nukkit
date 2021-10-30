@@ -61,6 +61,11 @@ public class EntityBoat extends EntityVehicle {
         super.initEntity();
 
         this.dataProperties.putInt(DATA_VARIANT, woodID = this.namedTag.getByte("woodID"));
+        this.dataProperties.putByte(DATA_CONTROLLING_RIDER_SEAT_NUMBER, 0);
+        this.dataProperties.putBoolean(DATA_IS_BUOYANT, true);
+        this.dataProperties.putString(DATA_BUOYANCY_DATA, "{\"apply_gravity\":true,\"base_buoyancy\":1.0,\"big_wave_probability\":0.02999999932944775,\"big_wave_speed\":10.0,\"drag_down_on_buoyancy_removed\":0.0,\"liquid_blocks\":[\"minecraft:water\",\"minecraft:flowing_water\"],\"simulate_waves\":true}");
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY, true);
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_STACKABLE, true);
     }
 
     @Override
@@ -311,12 +316,8 @@ public class EntityBoat extends EntityVehicle {
 
             entity.setDataProperty(new ByteEntityData(DATA_RIDER_ROTATION_LOCKED, 1));
             entity.setDataProperty(new FloatEntityData(DATA_RIDER_MAX_ROTATION, 90));
-
-            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, this.passengers.indexOf(entity) == 1 ? -90 : 0));
-
-            //            if(entity instanceof Player && mode == SetEntityLinkPacket.TYPE_RIDE){ //TODO: controlling?
-//                entity.setDataProperty(new ByteEntityData(DATA_FLAG_WASD_CONTROLLED))
-//            }
+            entity.setDataProperty(new FloatEntityData(DATA_RIDER_MIN_ROTATION, 1));
+            entity.setDataProperty(new FloatEntityData(DATA_RIDER_ROTATION_OFFSET, -90));
         }
 
         return r;
@@ -348,7 +349,7 @@ public class EntityBoat extends EntityVehicle {
             return false;
         }
 
-        super.mountEntity(player);
+        this.mountEntity(player);
         return super.onInteract(player, item, clickedPos);
     }
 
@@ -418,5 +419,9 @@ public class EntityBoat extends EntityVehicle {
         super.saveNBT();
 
         this.namedTag.putByte("woodID", this.woodID);
+    }
+
+    public void onInput(double x, double y, double z, double yaw) {
+        this.setPositionAndRotation(this.temporalVector.setComponents(x, y - this.getBaseOffset(), z), yaw % 360, 0);
     }
 }
