@@ -3926,8 +3926,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 case CONTACT:
                     if (cause instanceof EntityDamageByBlockEvent) {
-                        if (((EntityDamageByBlockEvent) cause).getDamager().getId() == Block.CACTUS) {
+                        int id = ((EntityDamageByBlockEvent) cause).getDamager().getId();
+                        if (id == Block.CACTUS) {
                             message = "death.attack.cactus";
+                        } else if (id == Block.ANVIL) {
+                            message = "death.attack.anvil";
                         }
                     }
                     break;

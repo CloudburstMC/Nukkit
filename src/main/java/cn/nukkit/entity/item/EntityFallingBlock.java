@@ -1,10 +1,13 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
+import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
@@ -21,6 +24,8 @@ import cn.nukkit.network.protocol.LevelEventPacket;
 public class EntityFallingBlock extends Entity {
 
     public static final int NETWORK_ID = 66;
+
+    private double startY;
 
     @Override
     public float getWidth() {
@@ -54,7 +59,7 @@ public class EntityFallingBlock extends Entity {
 
     @Override
     public boolean canCollide() {
-        return false;
+        return blockId == BlockID.ANVIL;
     }
 
     protected int blockId;
@@ -86,6 +91,7 @@ public class EntityFallingBlock extends Entity {
             return;
         }
 
+        this.startY = this.y;
         this.fireProof = true;
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_FIRE_IMMUNE, true);
 
@@ -93,7 +99,7 @@ public class EntityFallingBlock extends Entity {
     }
 
     public boolean canCollideWith(Entity entity) {
-        return false;
+        return blockId == BlockID.ANVIL;
     }
 
     @Override
@@ -175,6 +181,13 @@ public class EntityFallingBlock extends Entity {
 
                         if (event.getTo().getId() == Item.ANVIL) {
                             getLevel().addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ANVIL_FALL);
+
+                            Entity[] e = level.getCollidingEntities(this.getBoundingBox(), this);
+                            for (Entity entity : e) {
+                                if (entity instanceof EntityLiving) {
+                                    entity.attack(new EntityDamageByBlockEvent(event.getTo(), entity, DamageCause.CONTACT, (float) Math.min(40, Math.max(0, (startY - y) * 2))));
+                                }
+                            }
                         }
                     }
                 }
@@ -211,5 +224,10 @@ public class EntityFallingBlock extends Entity {
     @Override
     public boolean canBeMovedByCurrents() {
         return false;
+    }
+
+    @Override
+    public void resetFallDistance() {
+        this.highestPosition = this.y;
     }
 }
