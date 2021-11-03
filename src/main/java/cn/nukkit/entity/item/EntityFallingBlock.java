@@ -225,6 +225,8 @@ public class EntityFallingBlock extends Entity {
 
     @Override
     public void resetFallDistance() {
-        this.highestPosition = this.y;
+        if (!this.closed) { // For falling anvil: do not reset fall distance before dealing damage to entities
+            this.highestPosition = this.y;
+        }
     }
 }
