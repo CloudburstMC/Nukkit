@@ -25,8 +25,6 @@ public class EntityFallingBlock extends Entity {
 
     public static final int NETWORK_ID = 66;
 
-    private double startY;
-
     @Override
     public float getWidth() {
         return 0.98f;
@@ -91,7 +89,6 @@ public class EntityFallingBlock extends Entity {
             return;
         }
 
-        this.startY = this.y;
         this.fireProof = true;
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_FIRE_IMMUNE, true);
 
@@ -184,8 +181,8 @@ public class EntityFallingBlock extends Entity {
 
                             Entity[] e = level.getCollidingEntities(this.getBoundingBox(), this);
                             for (Entity entity : e) {
-                                if (entity instanceof EntityLiving) {
-                                    entity.attack(new EntityDamageByBlockEvent(event.getTo(), entity, DamageCause.CONTACT, (float) Math.min(40, Math.max(0, (startY - y) * 2))));
+                                if (entity instanceof EntityLiving && highestPosition > y) {
+                                    entity.attack(new EntityDamageByBlockEvent(event.getTo(), entity, DamageCause.CONTACT, (float) Math.min(40, Math.max(0, (highestPosition - y) * 2))));
                                 }
                             }
                         }
