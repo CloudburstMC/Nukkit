@@ -64,6 +64,7 @@ import cn.nukkit.permission.PermissionAttachmentInfo;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.resourcepacks.ResourcePack;
+import cn.nukkit.resourcepacks.ResourcePackManager;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.*;
 import co.aikar.timings.Timing;
@@ -1952,8 +1953,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
         this.timeSinceRest = this.namedTag.getInt("TimeSinceRest");
 
+        ResourcePackManager resourcePackManager = this.server.getResourcePackManager();
         ResourcePacksInfoPacket infoPacket = new ResourcePacksInfoPacket();
-        infoPacket.resourcePackEntries = this.server.getResourcePackManager().getResourceStack();
+        infoPacket.resourcePackEntries = resourcePackManager.getResourcePacks();
+        infoPacket.behaviorPackEntries = resourcePackManager.getBehaviorPacks();
+        infoPacket.scripting = Arrays.stream(infoPacket.behaviorPackEntries).anyMatch(ResourcePack::requiresScripting);
         infoPacket.mustAccept = this.server.getForceResources();
         this.dataPacket(infoPacket);
     }
@@ -2211,6 +2215,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
 
                                 ResourcePackDataInfoPacket dataInfoPacket = new ResourcePackDataInfoPacket();
+                                switch (resourcePack.getType()) {
+                                    case RESOURCE_PACK:
+                                        dataInfoPacket.type = ResourcePackDataInfoPacket.TYPE_RESOURCE;
+                                        break;
+                                    case BEHAVIOR_PACK:
+                                        dataInfoPacket.type = ResourcePackDataInfoPacket.TYPE_BEHAVIOR;
+                                        break;
+                                }
                                 dataInfoPacket.packId = resourcePack.getPackId();
                                 dataInfoPacket.maxChunkSize = 1048576; //megabyte
                                 dataInfoPacket.chunkCount = resourcePack.getPackSize() / dataInfoPacket.maxChunkSize;
@@ -2222,7 +2234,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         case ResourcePackClientResponsePacket.STATUS_HAVE_ALL_PACKS:
                             ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
                             stackPacket.mustAccept = this.server.getForceResources();
-                            stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourceStack();
+                            stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourcePacks();
+                            stackPacket.behaviorPackStack = this.server.getResourcePackManager().getBehaviorPacks();
                             this.dataPacket(stackPacket);
                             break;
                         case ResourcePackClientResponsePacket.STATUS_COMPLETED:

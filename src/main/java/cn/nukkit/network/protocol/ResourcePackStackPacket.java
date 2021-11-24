@@ -9,7 +9,7 @@ public class ResourcePackStackPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_STACK_PACKET;
 
     public boolean mustAccept = false;
-    public ResourcePack[] behaviourPackStack = new ResourcePack[0];
+    public ResourcePack[] behaviorPackStack = new ResourcePack[0];
     public ResourcePack[] resourcePackStack = new ResourcePack[0];
     public boolean isExperimental = false;
     public String gameVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
@@ -24,8 +24,8 @@ public class ResourcePackStackPacket extends DataPacket {
         this.reset();
         this.putBoolean(this.mustAccept);
 
-        this.putUnsignedVarInt(this.behaviourPackStack.length);
-        for (ResourcePack entry : this.behaviourPackStack) {
+        this.putUnsignedVarInt(this.behaviorPackStack.length);
+        for (ResourcePack entry : this.behaviorPackStack) {
             this.putString(entry.getPackId().toString());
             this.putString(entry.getPackVersion());
             this.putString(""); //TODO: subpack name
