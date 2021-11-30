@@ -135,6 +135,8 @@ public class StartGamePacket extends DataPacket {
         this.putLInt(16); // Limited world width
         this.putLInt(16); // Limited world height
         this.putBoolean(false); // Nether type
+        this.putString(""); // EduSharedUriResource buttonName
+        this.putString(""); // EduSharedUriResource linkUri
         this.putBoolean(false); // Experimental Gameplay
 
         this.putString(this.levelId);

@@ -1701,7 +1701,7 @@
     },
     {
         "name" : "minecraft:end_crystal",
-        "id" : 630
+        "id" : 632
     },
     {
         "name" : "minecraft:end_gateway",
@@ -3657,7 +3657,7 @@
     },
     {
         "name" : "minecraft:spyglass",
-        "id" : 625
+        "id" : 772
     },
     {
         "name" : "minecraft:squid_spawn_egg",

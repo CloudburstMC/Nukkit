@@ -170,4 +170,14 @@ public class Attribute implements Cloneable {
             return null;
         }
     }
+
+    @Override
+    public String toString() {
+        return name + "{" +
+                "min=" + minValue +
+                ", max=" + maxValue +
+                ", def=" + defaultValue +
+                ", val=" + currentValue +
+                '}';
+    }
 }

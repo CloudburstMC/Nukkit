@@ -30,4 +30,9 @@ public class IntEntityData extends EntityData<Integer> {
     public int getType() {
         return Entity.DATA_TYPE_INT;
     }
+
+    @Override
+    public String toString() {
+        return data + "i";
+    }
 }

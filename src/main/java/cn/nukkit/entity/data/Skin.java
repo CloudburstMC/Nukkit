@@ -3,9 +3,9 @@ package cn.nukkit.entity.data;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.utils.*;
 import com.google.common.base.Preconditions;
+import com.nimbusds.jose.shaded.json.JSONObject;
+import com.nimbusds.jose.shaded.json.JSONValue;
 import lombok.ToString;
-import net.minidev.json.JSONObject;
-import net.minidev.json.JSONValue;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -45,10 +45,12 @@ public class Skin {
     private boolean premium;
     private boolean persona;
     private boolean capeOnClassic;
+    private boolean primaryUser = true;
     private String capeId;
     private String skinColor = "#0";
     private String armSize = "wide";
     private boolean trusted = false;
+    private String geometryDataEngineVersion = "";
 
     public boolean isValid() {
         return isValidSkin() && isValidResourcePatch();
@@ -233,6 +235,22 @@ public class Skin {
 
     public void setCapeOnClassic(boolean capeOnClassic) {
         this.capeOnClassic = capeOnClassic;
+    }
+
+    public void setPrimaryUser(boolean primaryUser) {
+        this.primaryUser = primaryUser;
+    }
+
+    public boolean isPrimaryUser() {
+        return primaryUser;
+    }
+
+    public void setGeometryDataEngineVersion(String geometryDataEngineVersion) {
+        this.geometryDataEngineVersion = geometryDataEngineVersion;
+    }
+
+    public String getGeometryDataEngineVersion() {
+        return geometryDataEngineVersion;
     }
 
     public boolean isTrusted() {

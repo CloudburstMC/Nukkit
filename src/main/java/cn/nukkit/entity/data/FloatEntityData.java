@@ -31,4 +31,9 @@ public class FloatEntityData extends EntityData<Float> {
     public int getType() {
         return Entity.DATA_TYPE_FLOAT;
     }
+
+    @Override
+    public String toString() {
+        return data + "f";
+    }
 }

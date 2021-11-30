@@ -38,6 +38,10 @@ public abstract class EntityProjectile extends Entity {
 
     protected double damage = 0;
 
+    public static final int PICKUP_NONE = 0;
+    public static final int PICKUP_ANY = 1;
+    public static final int PICKUP_CREATIVE = 2;
+
     public EntityProjectile(FullChunk chunk, CompoundTag nbt) {
         this(chunk, nbt, null);
     }
@@ -60,7 +64,7 @@ public abstract class EntityProjectile extends Entity {
 
     public void onCollideWithEntity(Entity entity) {
         this.server.getPluginManager().callEvent(new ProjectileHitEvent(this, MovingObjectPosition.fromEntity(entity)));
-        float damage = this instanceof EntitySnowball && entity instanceof EntityBlaze ? 3 : this.getResultDamage();
+        float damage = this instanceof EntitySnowball && entity.getNetworkId() == EntityBlaze.NETWORK_ID ? 3f : this.getResultDamage();
 
         EntityDamageEvent ev;
         if (this.shootingEntity == null) {
@@ -73,7 +77,7 @@ public abstract class EntityProjectile extends Entity {
 
             if (this.fireTicks > 0) {
                 EntityCombustByEntityEvent event = new EntityCombustByEntityEvent(this, entity, 5);
-                this.server.getPluginManager().callEvent(ev);
+                this.server.getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     entity.setOnFire(event.getDuration());
                 }
