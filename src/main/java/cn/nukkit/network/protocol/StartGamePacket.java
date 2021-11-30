@@ -67,7 +67,11 @@ public class StartGamePacket extends DataPacket {
     public boolean isFromWorldTemplate = false;
     public boolean isWorldTemplateOptionLocked = false;
     public boolean isOnlySpawningV1Villagers = false;
-    public String vanillaVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
+
+    public String vanillaVersion = "1.17.40";
+    //HACK: For now we can specify this version, since the new chunk changes are not relevant for our Anvil format.
+    //However, it could be that Microsoft will prevent this in a new update.
+
     public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
@@ -153,5 +157,6 @@ public class StartGamePacket extends DataPacket {
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(this.isInventoryServerAuthoritative);
         this.putString(""); // Server Engine
+        this.putLLong(0L); // BlockRegistryChecksum
     }
 }
