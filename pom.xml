@@ -12,12 +12,16 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <junit.jupiter.version>5.0.0-M4</junit.jupiter.version>
         <junit.platform.version>1.0.0-M4</junit.platform.version>
-        <log4j2.version>2.13.3</log4j2.version>
+        <log4j2.version>2.15.0-20211206.182754-101</log4j2.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jline.version>3.9.0</jline.version>
     </properties>
 
     <repositories>
+        <repository>
+            <id>apache-snapshots</id>
+            <url>https://repository.apache.org/snapshots/</url>
+        </repository>
         <repository>
             <id>opencollab-repo-release</id>
             <url>https://repo.opencollab.dev/maven-releases/</url>
