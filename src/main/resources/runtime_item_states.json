@@ -117,7 +117,7 @@
     },
     {
         "name" : "minecraft:balloon",
-        "id" : 598
+        "id" : 597
     },
     {
         "name" : "minecraft:bamboo",
@@ -133,7 +133,7 @@
     },
     {
         "name" : "minecraft:banner_pattern",
-        "id" : 628
+        "id" : 629
     },
     {
         "name" : "minecraft:barrel",
@@ -293,7 +293,7 @@
     },
     {
         "name" : "minecraft:bleach",
-        "id" : 596
+        "id" : 595
     },
     {
         "name" : "minecraft:blue_candle",
@@ -317,7 +317,7 @@
     },
     {
         "name" : "minecraft:boat",
-        "id" : 626
+        "id" : 627
     },
     {
         "name" : "minecraft:bone",
@@ -429,7 +429,7 @@
     },
     {
         "name" : "minecraft:camera",
-        "id" : 593
+        "id" : 592
     },
     {
         "name" : "minecraft:campfire",
@@ -576,6 +576,10 @@
         "id" : 384
     },
     {
+        "name" : "minecraft:client_request_placeholder_block",
+        "id" : -465
+    },
+    {
         "name" : "minecraft:clock",
         "id" : 393
     },
@@ -669,7 +673,7 @@
     },
     {
         "name" : "minecraft:compound",
-        "id" : 594
+        "id" : 593
     },
     {
         "name" : "minecraft:concrete",
@@ -952,10 +956,6 @@
         "id" : 32
     },
     {
-        "name" : "minecraft:debug_stick",
-        "id" : 590
-    },
-    {
         "name" : "minecraft:deepslate",
         "id" : -378
     },
@@ -1173,7 +1173,7 @@
     },
     {
         "name" : "minecraft:dye",
-        "id" : 627
+        "id" : 628
     },
     {
         "name" : "minecraft:egg",
@@ -1701,7 +1701,7 @@
     },
     {
         "name" : "minecraft:end_crystal",
-        "id" : 632
+        "id" : 631
     },
     {
         "name" : "minecraft:end_gateway",
@@ -1897,7 +1897,7 @@
     },
     {
         "name" : "minecraft:glow_berries",
-        "id" : 631
+        "id" : 632
     },
     {
         "name" : "minecraft:glow_frame",
@@ -1917,7 +1917,7 @@
     },
     {
         "name" : "minecraft:glow_stick",
-        "id" : 166
+        "id" : 600
     },
     {
         "name" : "minecraft:glowingobsidian",
@@ -2113,11 +2113,11 @@
     },
     {
         "name" : "minecraft:honey_bottle",
-        "id" : 592
+        "id" : 591
     },
     {
         "name" : "minecraft:honeycomb",
-        "id" : 591
+        "id" : 590
     },
     {
         "name" : "minecraft:honeycomb_block",
@@ -2145,7 +2145,7 @@
     },
     {
         "name" : "minecraft:ice_bomb",
-        "id" : 595
+        "id" : 594
     },
     {
         "name" : "minecraft:infested_deepslate",
@@ -2617,7 +2617,7 @@
     },
     {
         "name" : "minecraft:medicine",
-        "id" : 599
+        "id" : 598
     },
     {
         "name" : "minecraft:medium_amethyst_bud",
@@ -2728,6 +2728,10 @@
         "id" : 540
     },
     {
+        "name" : "minecraft:music_disc_otherside",
+        "id" : 626
+    },
+    {
         "name" : "minecraft:music_disc_pigstep",
         "id" : 619
     },
@@ -2754,6 +2758,14 @@
     {
         "name" : "minecraft:mycelium",
         "id" : 110
+    },
+    {
+        "name" : "minecraft:mysterious_frame",
+        "id" : -466
+    },
+    {
+        "name" : "minecraft:mysterious_frame_slot",
+        "id" : -467
     },
     {
         "name" : "minecraft:name_tag",
@@ -3261,7 +3273,7 @@
     },
     {
         "name" : "minecraft:rapid_fertilizer",
-        "id" : 597
+        "id" : 596
     },
     {
         "name" : "minecraft:ravager_spawn_egg",
@@ -3432,8 +3444,24 @@
         "id" : -165
     },
     {
+        "name" : "minecraft:sculk",
+        "id" : -458
+    },
+    {
+        "name" : "minecraft:sculk_catalyst",
+        "id" : -460
+    },
+    {
         "name" : "minecraft:sculk_sensor",
         "id" : -307
+    },
+    {
+        "name" : "minecraft:sculk_shrieker",
+        "id" : -461
+    },
+    {
+        "name" : "minecraft:sculk_vein",
+        "id" : -459
     },
     {
         "name" : "minecraft:scute",
@@ -3589,11 +3617,11 @@
     },
     {
         "name" : "minecraft:sparkler",
-        "id" : 600
+        "id" : 599
     },
     {
         "name" : "minecraft:spawn_egg",
-        "id" : 629
+        "id" : 630
     },
     {
         "name" : "minecraft:spider_eye",
@@ -3657,7 +3685,7 @@
     },
     {
         "name" : "minecraft:spyglass",
-        "id" : 772
+        "id" : 625
     },
     {
         "name" : "minecraft:squid_spawn_egg",
