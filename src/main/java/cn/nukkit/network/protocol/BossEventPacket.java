@@ -25,7 +25,7 @@ public class BossEventPacket extends DataPacket {
     public static final int TYPE_TITLE = 5;
     /* S2C: Not sure on this. Includes color and overlay fields, plus an unknown short. TODO: check this */
     public static final int TYPE_UNKNOWN_6 = 6;
-    /* S2C: Not implemented :( Intended to alter bar appearance, but these currently produce no effect on clientside whatsoever. */
+    /* S2C: Sets color and overlay of the bar. */
     public static final int TYPE_TEXTURE = 7;
 
     public long bossEid;
