@@ -9,11 +9,14 @@ pipeline {
     }
     stages {
         stage ('Build') {
-            when { not {
-                branch "master"
-            }}
             steps {
                 sh 'mvn clean package -B'
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/**/*.xml'
+                    archiveArtifacts artifacts: 'target/nukkit-*-SNAPSHOT.jar', fingerprint: true
+                }
             }
         }
 
@@ -37,7 +40,7 @@ pipeline {
                 )
                 rtMavenRun (
                         pom: 'pom.xml',
-                        goals: 'javadoc:javadoc javadoc:jar source:jar install -B',
+                        goals: 'javadoc:javadoc javadoc:jar source:jar install -B -DskipTests',
                         deployerId: "maven-deployer",
                         resolverId: "maven-resolver"
                 )
@@ -50,10 +53,6 @@ pipeline {
     }
 
     post {
-        success {
-            junit 'target/surefire-reports/**/*.xml'
-            archiveArtifacts artifacts: 'target/nukkit-*-SNAPSHOT.jar', fingerprint: true
-        }
         always {
             deleteDir()
             withCredentials([string(credentialsId: 'nukkitx-discord-webhook', variable: 'DISCORD_WEBHOOK')]) {
