@@ -3,9 +3,9 @@ package cn.nukkit.network.protocol;
 public class SetDisplayObjectivePacket extends DataPacket {
 
     public String displaySlot;
-    public String objectiveName;
+    public String objectiveId;
     public String displayName;
-    public String criteriaName;
+    public String criteria;
     public int sortOrder;
 
     @Override
@@ -16,9 +16,9 @@ public class SetDisplayObjectivePacket extends DataPacket {
     @Override
     public void decode() {
         this.displaySlot = this.getString();
-        this.objectiveName = this.getString();
+        this.objectiveId = this.getString();
         this.displayName = this.getString();
-        this.criteriaName = this.getString();
+        this.criteria = this.getString();
         this.sortOrder = this.getVarInt();
     }
 
@@ -26,9 +26,9 @@ public class SetDisplayObjectivePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putString(this.displaySlot);
-        this.putString(this.objectiveName);
+        this.putString(this.objectiveId);
         this.putString(this.displayName);
-        this.putString(this.criteriaName);
+        this.putString(this.criteria);
         this.putVarInt(this.sortOrder);
     }
 

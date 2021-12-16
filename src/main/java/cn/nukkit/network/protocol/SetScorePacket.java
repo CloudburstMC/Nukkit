@@ -1,15 +1,11 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.network.protocol.types.ScoreEntry;
+import cn.nukkit.network.protocol.types.ScoreInfo;
 
 public class SetScorePacket extends DataPacket {
 
-    public static final byte TYPE_CHANGE = 0;
-    public static final byte TYPE_REMOVE = 1;
-
-    public byte type;
-
-    public ScoreEntry[] entries;
+    public Action action;
+    public ScoreInfo[] infos;
 
     @Override
     public byte pid() {
@@ -18,53 +14,58 @@ public class SetScorePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.type = (byte) this.getByte();
-        this.entries = new ScoreEntry[(int) this.getUnsignedVarInt()];
+        this.action = Action.values()[this.getByte()];
+        this.infos = new ScoreInfo[(int) this.getUnsignedVarInt()];
 
-        for (int index = 0; index < this.entries.length; index++) {
-            ScoreEntry entry = new ScoreEntry();
-            entry.scoreId = this.getVarLong();
-            entry.objectiveName = this.getString();
-            entry.score = this.getLInt();
-            if (this.type == TYPE_CHANGE) {
-                entry.type = (byte) this.getByte();
-                switch (entry.type) {
-                    case ScoreEntry.TYPE_PLAYER:
-                    case ScoreEntry.TYPE_ENTITY:
-                        entry.entityUniqueId = this.getEntityUniqueId();
+        for (int index = 0; index < this.infos.length; index++) {
+            ScoreInfo scoreInfo = new ScoreInfo();
+            scoreInfo.scoreboardId = this.getVarLong();
+            scoreInfo.objectiveId = this.getString();
+            scoreInfo.score = this.getLInt();
+            if (this.action == Action.SET) {
+                scoreInfo.type = ScoreInfo.ScorerType.values()[this.getByte()];
+                switch (scoreInfo.type) {
+                    case PLAYER:
+                    case ENTITY:
+                        scoreInfo.entityId = this.getEntityUniqueId();
                         break;
-                    case ScoreEntry.TYPE_FAKE_PLAYER:
-                        entry.displayName = this.getString();
+                    case FAKE:
+                        scoreInfo.name = this.getString();
                         break;
                 }
             }
 
-            this.entries[index] = entry;
+            this.infos[index] = scoreInfo;
         }
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.type);
-        this.putUnsignedVarInt(this.entries.length);
-        for (ScoreEntry entry : this.entries) {
-            this.putVarLong(entry.scoreId);
-            this.putString(entry.objectiveName);
-            this.putLInt(entry.score);
-            if (this.type == TYPE_CHANGE) {
-                this.putByte(entry.type);
-                switch (entry.type) {
-                    case ScoreEntry.TYPE_PLAYER:
-                    case ScoreEntry.TYPE_ENTITY:
-                        this.putEntityUniqueId(entry.entityUniqueId);
+        this.putByte((byte) this.action.ordinal());
+        this.putUnsignedVarInt(this.infos.length);
+        for (ScoreInfo scoreInfo : this.infos) {
+            this.putVarLong(scoreInfo.scoreboardId);
+            this.putString(scoreInfo.objectiveId);
+            this.putLInt(scoreInfo.score);
+            if (this.action == Action.SET) {
+                this.putByte((byte) scoreInfo.type.ordinal());
+                switch (scoreInfo.type) {
+                    case PLAYER:
+                    case ENTITY:
+                        this.putEntityUniqueId(scoreInfo.entityId);
                         break;
-                    case ScoreEntry.TYPE_FAKE_PLAYER:
-                        this.putString(entry.displayName);
+                    case FAKE:
+                        this.putString(scoreInfo.name);
                         break;
                 }
             }
         }
+    }
+
+    public enum Action {
+        SET,
+        REMOVE
     }
 
 }

@@ -2,7 +2,7 @@ package cn.nukkit.network.protocol;
 
 public class RemoveObjectivePacket extends DataPacket {
 
-    public String objectiveName;
+    public String objectiveId;
 
     @Override
     public byte pid() {
@@ -11,13 +11,13 @@ public class RemoveObjectivePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.objectiveName = this.getString();
+        this.objectiveId = this.getString();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putString(this.objectiveName);
+        this.putString(this.objectiveId);
     }
 
 }
