@@ -129,7 +129,7 @@ public class DummyScoreboard {
     }
 
     private void resendToAll() {
-        for (Player player : this.players.toArray(new Player[0])) {
+        for (Player player : this.players) {
             this.hideFrom0(player);
             this.showTo0(player);
         }
