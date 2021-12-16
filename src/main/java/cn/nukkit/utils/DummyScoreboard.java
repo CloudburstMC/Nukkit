@@ -24,17 +24,18 @@ public class DummyScoreboard {
     private DisplaySlot displaySlot;
     private SortOrder sortOrder;
 
-    public DummyScoreboard(String displayName, String objectiveName) {
-        this(displayName, objectiveName, DisplaySlot.SIDEBAR, SortOrder.ASCENDING);
+    public DummyScoreboard(String objectiveName, String displayName) {
+        this(objectiveName, displayName, DisplaySlot.SIDEBAR, SortOrder.ASCENDING);
     }
 
-    public DummyScoreboard(String displayName, String objectiveName, DisplaySlot displaySlot) {
-        this(displayName, objectiveName, displaySlot, SortOrder.ASCENDING);
+    public DummyScoreboard(String objectiveName, String displayName, DisplaySlot displaySlot) {
+        this(objectiveName, displayName, displaySlot, SortOrder.ASCENDING);
     }
 
-    public DummyScoreboard(String displayName, String objectiveName, DisplaySlot displaySlot, SortOrder sortOrder) {
-        this.displayName = displayName;
+    public DummyScoreboard(String objectiveName, String displayName, DisplaySlot displaySlot, SortOrder sortOrder) {
         this.objectiveName = objectiveName;
+
+        this.displayName = displayName;
         this.displaySlot = displaySlot;
         this.sortOrder = sortOrder;
     }
@@ -107,17 +108,17 @@ public class DummyScoreboard {
         this.players.remove(player);
     }
 
-    public long addLine(int score, String lineContent) {
+    public long addLine(String displayText, int score) {
         long scoreId = DummyScoreboard.scoreCount++;
 
-        this.lines.put(scoreId, lineContent);
+        this.lines.put(scoreId, displayText);
         this.scores.put(scoreId, score);
 
         ScoreEntry entry = new ScoreEntry();
         entry.type = ScoreEntry.TYPE_FAKE_PLAYER;
         entry.score = score;
         entry.objectiveName = this.objectiveName;
-        entry.displayName = lineContent;
+        entry.displayName = displayText;
         entry.scoreId = scoreId;
 
         SetScorePacket setScorePacket = new SetScorePacket();
