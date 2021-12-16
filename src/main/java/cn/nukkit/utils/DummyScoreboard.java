@@ -44,6 +44,11 @@ public class DummyScoreboard {
             return;
         }
 
+        this.showTo0(player);
+        this.players.add(player);
+    }
+
+    private void showTo0(Player player) {
         SetDisplayObjectivePacket setDisplayObjectivePacket = new SetDisplayObjectivePacket();
         setDisplayObjectivePacket.criteria = "dummy";
         setDisplayObjectivePacket.displayName = this.displayName;
@@ -58,8 +63,6 @@ public class DummyScoreboard {
         setScorePacket.infos = this.scores.values().toArray(new ScoreInfo[0]);
 
         player.dataPacket(setScorePacket);
-
-        this.players.add(player);
     }
 
     public void hideFrom(Player player) {
@@ -67,6 +70,11 @@ public class DummyScoreboard {
             return;
         }
 
+        this.hideFrom0(player);
+        this.players.remove(player);
+    }
+
+    private void hideFrom0(Player player) {
         SetScorePacket setScorePacket = new SetScorePacket();
         setScorePacket.action = SetScorePacket.Action.REMOVE;
         setScorePacket.infos = this.scores.values().toArray(new ScoreInfo[0]);
@@ -77,8 +85,6 @@ public class DummyScoreboard {
         removeObjectivePacket.objectiveId = this.objectiveId;
 
         player.dataPacket(removeObjectivePacket);
-
-        this.players.remove(player);
     }
 
     public long addEntry(String displayText, int score) {
@@ -124,8 +130,8 @@ public class DummyScoreboard {
 
     private void resendToAll() {
         for (Player player : this.players.toArray(new Player[0])) {
-            this.hideFrom(player);
-            this.showTo(player);
+            this.hideFrom0(player);
+            this.showTo0(player);
         }
     }
 
