@@ -16,8 +16,7 @@ public class DummyScoreboard {
     public static long scoreCount = 0;
 
     private final List<Player> players = new ArrayList<>();
-    private final Map<Long, String> lines = new HashMap<>();
-    private final Map<Long, Integer> scores = new HashMap<>();
+    private final Map<Long, ScoreEntry> scores = new HashMap<>();
     private final String objectiveName;
 
     private String displayName;
@@ -54,22 +53,9 @@ public class DummyScoreboard {
 
         player.dataPacket(setDisplayObjectivePacket);
 
-        ScoreEntry[] entries = new ScoreEntry[this.lines.size()];
-
-        int index = 0;
-        for (long scoreId : this.lines.keySet()) {
-            ScoreEntry entry = new ScoreEntry();
-            entry.type = ScoreEntry.TYPE_FAKE_PLAYER;
-            entry.score = this.scores.get(scoreId);
-            entry.objectiveName = this.objectiveName;
-            entry.displayName = this.lines.get(scoreId);
-            entry.scoreId = scoreId;
-            entries[index++] = entry;
-        }
-
         SetScorePacket setScorePacket = new SetScorePacket();
         setScorePacket.type = SetScorePacket.TYPE_CHANGE;
-        setScorePacket.entries = entries;
+        setScorePacket.entries = this.scores.values().toArray(new ScoreEntry[0]);
 
         player.dataPacket(setScorePacket);
 
@@ -81,22 +67,9 @@ public class DummyScoreboard {
             return;
         }
 
-        ScoreEntry[] entries = new ScoreEntry[this.lines.size()];
-
-        int index = 0;
-        for (long scoreId : this.lines.keySet()) {
-            ScoreEntry entry = new ScoreEntry();
-            entry.type = ScoreEntry.TYPE_FAKE_PLAYER;
-            entry.score = this.scores.get(scoreId);
-            entry.objectiveName = this.objectiveName;
-            entry.displayName = this.lines.get(scoreId);
-            entry.scoreId = scoreId;
-            entries[index++] = entry;
-        }
-
         SetScorePacket setScorePacket = new SetScorePacket();
         setScorePacket.type = SetScorePacket.TYPE_REMOVE;
-        setScorePacket.entries = entries;
+        setScorePacket.entries = this.scores.values().toArray(new ScoreEntry[0]);
 
         player.dataPacket(setScorePacket);
 
@@ -108,11 +81,8 @@ public class DummyScoreboard {
         this.players.remove(player);
     }
 
-    public long addLine(String displayText, int score) {
+    public long addEntry(String displayText, int score) {
         long scoreId = DummyScoreboard.scoreCount++;
-
-        this.lines.put(scoreId, displayText);
-        this.scores.put(scoreId, score);
 
         ScoreEntry entry = new ScoreEntry();
         entry.type = ScoreEntry.TYPE_FAKE_PLAYER;
@@ -120,6 +90,8 @@ public class DummyScoreboard {
         entry.objectiveName = this.objectiveName;
         entry.displayName = displayText;
         entry.scoreId = scoreId;
+
+        this.scores.put(scoreId, entry);
 
         SetScorePacket setScorePacket = new SetScorePacket();
         setScorePacket.type = SetScorePacket.TYPE_CHANGE;
@@ -132,25 +104,18 @@ public class DummyScoreboard {
         return scoreId;
     }
 
-    public String getLine(long scoreId) {
-        return this.lines.get(scoreId);
+    public ScoreEntry getEntry(long scoreId) {
+        return this.scores.get(scoreId);
     }
 
-    public void removeLine(long scoreId) {
-        if (!this.lines.containsKey(scoreId)) {
+    public void removeEntry(long scoreId) {
+        if (!this.scores.containsKey(scoreId)) {
             return;
         }
 
-        ScoreEntry entry = new ScoreEntry();
-        entry.type = ScoreEntry.TYPE_FAKE_PLAYER;
-        entry.score = this.scores.remove(scoreId);
-        entry.objectiveName = this.objectiveName;
-        entry.displayName = this.lines.remove(scoreId);
-        entry.scoreId = scoreId;
-
         SetScorePacket setScorePacket = new SetScorePacket();
         setScorePacket.type = SetScorePacket.TYPE_REMOVE;
-        setScorePacket.entries = new ScoreEntry[]{entry};
+        setScorePacket.entries = new ScoreEntry[]{this.scores.remove(scoreId)};
 
         for (Player player : this.players) {
             player.dataPacket(setScorePacket);
@@ -168,11 +133,7 @@ public class DummyScoreboard {
         return this.players;
     }
 
-    public Map<Long, String> getLines() {
-        return this.lines;
-    }
-
-    public Map<Long, Integer> getScores() {
+    public Map<Long, ScoreEntry> getScores() {
         return this.scores;
     }
 
