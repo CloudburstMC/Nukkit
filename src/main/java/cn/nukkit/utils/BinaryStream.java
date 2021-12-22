@@ -508,7 +508,7 @@ public class BinaryStream {
 
         if (!instanceItem) {
             this.putBoolean(true);
-            this.putVarInt(0); //TODO
+            this.putVarInt(1);
         }
 
         Block block = item.getBlockUnsafe();
