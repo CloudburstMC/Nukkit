@@ -64,7 +64,8 @@ public class BlockTallGrass extends BlockFlowable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
-        if (down.getId() == Block.GRASS || down.getId() == Block.DIRT || down.getId() == Block.PODZOL) {
+        int id = down.getId();
+        if (id == Block.GRASS || id == Block.DIRT || id == Block.PODZOL || id == FARMLAND || id == MYCELIUM) {
             this.getLevel().setBlock(block, this, true);
             return true;
         }
