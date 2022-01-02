@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntitySign;
+import cn.nukkit.event.block.SignColorChangeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemSign;
 import cn.nukkit.item.ItemTool;
@@ -11,7 +12,9 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
 /**
@@ -126,5 +129,50 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromIndex(this.getDamage() & 0x07);
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (item.getId() == Item.DYE && item.getDamage() != DyeColor.BLACK.getDyeData()) {
+            BlockEntity blockEntity = this.level.getBlockEntity(this);
+            if (!(blockEntity instanceof BlockEntitySign)) {
+                return false;
+            }
+            BlockEntitySign sign = (BlockEntitySign) blockEntity;
+
+            BlockColor color = DyeColor.getByDyeData(item.getDamage()).getSignColor();
+            if (color.equals(sign.getColor())) {
+                if (player != null) {
+                    sign.spawnTo(player);
+                }
+                return false;
+            }
+
+            SignColorChangeEvent event = new SignColorChangeEvent(this, player, color);
+            this.level.getServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                if (player != null) {
+                    sign.spawnTo(player);
+                }
+                return false;
+            }
+
+            sign.setColor(color);
+            sign.spawnToAll();
+
+            this.level.addLevelEvent(this, LevelEventPacket.EVENT_SOUND_DYE_USED);
+
+            if (player != null && (player.getGamemode() & 0x01) == 0) {
+                item.count--;
+            }
+
+            return true;
+        }
+        return false;
     }
 }
