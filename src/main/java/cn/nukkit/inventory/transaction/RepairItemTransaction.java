@@ -316,7 +316,14 @@ public class RepairItemTransaction extends InventoryTransaction {
             case Item.WOODEN_SHOVEL:
             case Item.WOODEN_AXE:
             case Item.WOODEN_HOE:
+            case Item.SHIELD:
                 return this.materialItem.getId() == Item.PLANKS;
+            case Item.STONE_SWORD:
+            case Item.STONE_PICKAXE:
+            case Item.STONE_SHOVEL:
+            case Item.STONE_AXE:
+            case Item.STONE_HOE:
+                return this.materialItem.getId() == Item.COBBLESTONE;
             case Item.IRON_SWORD:
             case Item.IRON_PICKAXE:
             case Item.IRON_SHOVEL:
