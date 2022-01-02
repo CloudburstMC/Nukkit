@@ -17,13 +17,15 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_DOOR = 1003;
     public static final int EVENT_SOUND_FIZZ = 1004;
     public static final int EVENT_SOUND_TNT = 1005;
-
+    public static final int EVENT_SOUND_PLAY_RECORDING = 1006;
     public static final int EVENT_SOUND_GHAST = 1007;
-    public static final int EVENT_SOUND_BLAZE_SHOOT = 1008;
-    public static final int EVENT_SOUND_GHAST_SHOOT = 1009;
+    public static final int EVENT_SOUND_GHAST_SHOOT = 1008;
+    public static final int EVENT_SOUND_BLAZE_SHOOT = 1009;
     public static final int EVENT_SOUND_DOOR_BUMP = 1010;
     public static final int EVENT_SOUND_DOOR_CRASH = 1012;
 
+    public static final int EVENT_SOUND_ZOMBIE_INFECTED = 1016;
+    public static final int EVENT_SOUND_ZOMBIE_CONVERTED = 1017;
     public static final int EVENT_SOUND_ENDERMAN_TELEPORT = 1018;
 
     public static final int EVENT_SOUND_ANVIL_BREAK = 1020;
@@ -32,7 +34,6 @@ public class LevelEventPacket extends DataPacket {
 
     public static final int EVENT_SOUND_ITEM_DROP = 1030;
     public static final int EVENT_SOUND_ITEM_THROWN = 1031;
-
     public static final int EVENT_SOUND_PORTAL = 1032;
 
     public static final int EVENT_SOUND_ITEM_FRAME_ITEM_ADDED = 1040;
@@ -49,15 +50,41 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_ARMOR_STAND_HIT = 1061;
     public static final int EVENT_SOUND_ARMOR_STAND_FALL = 1062;
     public static final int EVENT_SOUND_ARMOR_STAND_PLACE = 1063;
+    public static final int EVENT_SOUND_POINTED_DRIPSTONE_LAND = 1064;
+    public static final int EVENT_SOUND_DYE_USED = 1065;
+    public static final int EVENT_SOUND_INK_SAC_USED = 1066;
 
     public static final int EVENT_GUARDIAN_CURSE = 2006;
-
+    public static final int EVENT_PARTICLE_DEATH_SMOKE = 2007;
     public static final int EVENT_PARTICLE_BLOCK_FORCE_FIELD = 2008;
     public static final int EVENT_PARTICLE_PROJECTILE_HIT = 2009;
     public static final int EVENT_PARTICLE_DRAGON_EGG_TELEPORT = 2010;
-
+    public static final int EVENT_PARTICLE_CROP_EATEN = 2011;
+    public static final int EVENT_PARTICLE_CRIT = 2012;
     public static final int EVENT_PARTICLE_ENDERMAN_TELEPORT = 2013;
     public static final int EVENT_PARTICLE_PUNCH_BLOCK = 2014;
+    public static final int EVENT_PARTICLE_BUBBLES = 2015;
+    public static final int EVENT_PARTICLE_EVAPORATE = 2016;
+    public static final int EVENT_PARTICLE_DESTROY_ARMOR_STAND = 2017;
+    public static final int EVENT_PARTICLE_BREAKING_EGG = 2018;
+    public static final int EVENT_PARTICLE_DESTROY_EGG = 2019;
+    public static final int EVENT_PARTICLE_EVAPORATE_WATER = 2020;
+    public static final int EVENT_PARTICLE_DESTROY_BLOCK_NO_SOUND = 2021;
+    public static final int EVENT_PARTICLE_KNOCKBACK_ROAR = 2022;
+    public static final int EVENT_PARTICLE_TELEPORT_TRAIL = 2023;
+    public static final int EVENT_PARTICLE_POINT_CLOUD = 2024;
+    public static final int EVENT_PARTICLE_EXPLOSION = 2025;
+    public static final int EVENT_PARTICLE_BLOCK_EXPLOSION = 2026;
+    public static final int EVENT_PARTICLE_VIBRATION_SIGNAL = 2027;
+    public static final int EVENT_PARTICLE_DRIPSTONE_DRIP = 2028;
+    public static final int EVENT_PARTICLE_FIZZ_EFFECT = 2029;
+    public static final int EVENT_PARTICLE_WAX_ON = 2030;
+    public static final int EVENT_PARTICLE_WAX_OFF = 2031;
+    public static final int EVENT_PARTICLE_SCRAPE = 2032;
+    public static final int EVENT_PARTICLE_ELECTRIC_SPARK = 2033;
+    public static final int EVENT_PARTICLE_TURTLE_EGG = 2034;
+    public static final int EVENT_PARTICLE_SCULK_SHRIEK = 2035;
+    public static final int EVENT_PARTICLE_SCULK_CATALYST_BLOOM = 2036;
 
     public static final int EVENT_SOUND_BUTTON_CLICK = 3500;
     public static final int EVENT_SOUND_EXPLODE = 3501;
@@ -69,6 +96,12 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_CAULDRON_TAKE_WATER = 3507;
     public static final int EVENT_CAULDRON_ADD_DYE = 3508;
     public static final int EVENT_CAULDRON_CLEAN_BANNER = 3509;
+    public static final int EVENT_CAULDRON_FLUSH = 3510;
+    public static final int EVENT_AGENT_SPAWN_EFFECT = 3511;
+    public static final int EVENT_CAULDRON_FILL_LAVA = 3512;
+    public static final int EVENT_CAULDRON_TAKE_LAVA = 3513;
+    public static final int EVENT_CAULDRON_FILL_POWDER_SNOW = 3514;
+    public static final int EVENT_CAULDRON_TAKE_POWDER_SNOW = 3515;
 
     public static final int EVENT_PARTICLE_SHOOT = 2000;
     public static final int EVENT_PARTICLE_DESTROY = 2001;
@@ -81,6 +114,9 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_START_THUNDER = 3002;
     public static final int EVENT_STOP_RAIN = 3003;
     public static final int EVENT_STOP_THUNDER = 3004;
+    public static final int EVENT_GLOBAL_PAUSE = 3005;
+    public static final int EVENT_SIM_TIME_STEP = 3006;
+    public static final int EVENT_SIM_TIME_SCALE = 3007;
 
     public static final int EVENT_SOUND_CAULDRON = 3501;
     public static final int EVENT_SOUND_CAULDRON_DYE_ARMOR = 3502;
@@ -89,10 +125,13 @@ public class LevelEventPacket extends DataPacket {
 
     public static final int EVENT_BLOCK_START_BREAK = 3600;
     public static final int EVENT_BLOCK_STOP_BREAK = 3601;
+    public static final int EVENT_BLOCK_UPDATE_BREAK = 3602;
 
     public static final int EVENT_SET_DATA = 4000;
 
     public static final int EVENT_PLAYERS_SLEEPING = 9800;
+
+    public static final int EVENT_JUMP_PREVENTED = 9810;
 
     public static final int EVENT_ADD_PARTICLE_MASK = 0x4000;
 
