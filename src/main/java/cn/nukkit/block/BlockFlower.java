@@ -24,6 +24,8 @@ public class BlockFlower extends BlockFlowable {
     public static final int TYPE_WHITE_TULIP = 6;
     public static final int TYPE_PINK_TULIP = 7;
     public static final int TYPE_OXEYE_DAISY = 8;
+    public static final int TYPE_CORNFLOWER = 9;
+    public static final int TYPE_LILY_OF_THE_VALLEY = 10;
 
     public BlockFlower() {
         this(0);
@@ -50,8 +52,8 @@ public class BlockFlower extends BlockFlowable {
                 "White Tulip",
                 "Pink Tulip",
                 "Oxeye Daisy",
-                "Unknown",
-                "Unknown",
+                "Cornflower",
+                "Lily of the Valley",
                 "Unknown",
                 "Unknown",
                 "Unknown",
