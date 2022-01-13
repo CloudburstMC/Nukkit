@@ -2051,8 +2051,14 @@ public class Server {
             return false;
         }
 
-        String path = this.getDataPath() + "worlds/" + name + "/";
         if (this.getLevelByName(name) == null) {
+            String path;
+
+            if (name.contains("/") || name.contains("\\")) {
+                path = name;
+            } else {
+                path = this.getDataPath() + "worlds/" + name + "/";
+            }
 
             return LevelProviderManager.getProvider(path) != null;
         }
