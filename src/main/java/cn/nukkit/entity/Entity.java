@@ -1804,6 +1804,7 @@ public abstract class Entity extends Location implements Metadatable {
         return onInteract(player, item);
     }
 
+    @Deprecated
     public boolean onInteract(Player player, Item item) {
         return false;
     }
