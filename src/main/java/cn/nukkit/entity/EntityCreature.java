@@ -18,7 +18,7 @@ public abstract class EntityCreature extends EntityLiving {
     // Armor stands, when implemented, should also check this.
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        if (item.getId() == Item.NAME_TAG) {
+        if (item.getId() == Item.NAME_TAG && !player.isAdventure()) {
             return applyNameTag(player, item);
         }
         return false;
@@ -26,18 +26,12 @@ public abstract class EntityCreature extends EntityLiving {
 
     // Structured like this so I can override nametags in player and dragon classes
     // without overriding onInteract.
-    protected boolean applyNameTag(Player player, Item item){
+    protected boolean applyNameTag(Player player, Item item) {
         if (item.hasCustomName()) {
             this.setNameTag(item.getCustomName());
             this.setNameTagVisible(true);
-
-            if(!player.isCreative()) {
-                player.getInventory().removeItem(item);
-            }
-            // Set entity as persistent.
-            return true;
+            return true; // onInteract: true = decrease count
         }
         return false;
     }
-
 }
