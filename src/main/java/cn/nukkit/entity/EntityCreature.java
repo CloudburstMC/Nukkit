@@ -26,7 +26,7 @@ public abstract class EntityCreature extends EntityLiving {
 
     // Structured like this so I can override nametags in player and dragon classes
     // without overriding onInteract.
-    protected boolean applyNameTag(Player player, Item item){
+    protected boolean applyNameTag(Player player, Item item) {
         if (item.hasCustomName()) {
             this.setNameTag(item.getCustomName());
             this.setNameTagVisible(true);
