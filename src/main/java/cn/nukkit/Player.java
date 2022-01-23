@@ -126,6 +126,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected static final int RESOURCE_PACK_CHUNK_SIZE = 8 * 1024; // 8KB
 
+    protected static final int MAXIMUM_FORM_WINDOW_OPENED_COUNT = 0x0f;
+
     protected final SourceInterface interfaz;
 
     public boolean playedBefore;
@@ -4521,12 +4523,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return form id to use in {@link PlayerFormRespondedEvent}
      */
     public int showFormWindow(FormWindow window, int id) {
-        ModalFormRequestPacket packet = new ModalFormRequestPacket();
-        packet.formId = id;
-        packet.data = window.getJSONData();
-        this.formWindows.put(packet.formId, window);
+        if (this.formWindows.size() < MAXIMUM_FORM_WINDOW_OPENED_COUNT) {
+            ModalFormRequestPacket packet = new ModalFormRequestPacket();
+            packet.formId = id;
+            packet.data = window.getJSONData();
+            this.formWindows.put(packet.formId, window);
 
-        this.dataPacket(packet);
+            this.dataPacket(packet);
+        } else {
+            this.server.getLogger().debug("Player \"" + this.getName() + "\" has already opened too many forms");
+        }
+
         return id;
     }
 
