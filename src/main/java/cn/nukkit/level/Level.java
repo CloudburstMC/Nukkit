@@ -1225,13 +1225,13 @@ public class Level implements ChunkManager, Metadatable {
                 continue;
             }
 
-            this.getBlock(pos.getSide(side)).onUpdate(BLOCK_UPDATE_REDSTONE);
+            this.getBlock(pos.getSideVec(side)).onUpdate(BLOCK_UPDATE_REDSTONE);
         }
     }
 
     public void updateComparatorOutputLevel(Vector3 v) {
         for (BlockFace face : Plane.HORIZONTAL) {
-            Vector3 pos = v.getSide(face);
+            Vector3 pos = v.getSideVec(face);
 
             if (this.isChunkLoaded((int) pos.x >> 4, (int) pos.z >> 4)) {
                 Block block1 = this.getBlock(pos);
@@ -1239,7 +1239,7 @@ public class Level implements ChunkManager, Metadatable {
                 if (BlockRedstoneDiode.isDiode(block1)) {
                     block1.onUpdate(BLOCK_UPDATE_REDSTONE);
                 } else if (block1.isNormalBlock()) {
-                    pos = pos.getSide(face);
+                    pos = pos.getSideVec(face);
                     block1 = this.getBlock(pos);
 
                     if (BlockRedstoneDiode.isDiode(block1)) {
@@ -3433,7 +3433,7 @@ public class Level implements ChunkManager, Metadatable {
         int i = 0;
 
         for (BlockFace face : BlockFace.values()) {
-            i = Math.max(i, this.getStrongPower(pos.getSide(face), face));
+            i = Math.max(i, this.getStrongPower(pos.getSideVec(face), face));
 
             if (i >= 15) {
                 return i;
@@ -3486,7 +3486,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public boolean isBlockPowered(Vector3 pos) {
         for (BlockFace face : BlockFace.values()) {
-            if (this.getRedstonePower(pos.getSide(face), face) > 0) {
+            if (this.getRedstonePower(pos.getSideVec(face), face) > 0) {
                 return true;
             }
         }
@@ -3498,7 +3498,7 @@ public class Level implements ChunkManager, Metadatable {
         int power = 0;
 
         for (BlockFace face : BlockFace.values()) {
-            int blockPower = this.getRedstonePower(pos.getSide(face), face);
+            int blockPower = this.getRedstonePower(pos.getSideVec(face), face);
 
             if (blockPower >= 15) {
                 return 15;
