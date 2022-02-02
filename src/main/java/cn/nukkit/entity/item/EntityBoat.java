@@ -329,8 +329,8 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
-    public boolean dismountEntity(Entity entity) {
-        boolean r = super.dismountEntity(entity);
+    public boolean dismountEntity(Entity entity, boolean sendLinks) {
+        boolean r = super.dismountEntity(entity, sendLinks);
 
         updatePassengers();
         entity.setDataProperty(new ByteEntityData(DATA_RIDER_ROTATION_LOCKED, 0));
