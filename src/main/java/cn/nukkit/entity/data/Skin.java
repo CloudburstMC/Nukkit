@@ -49,7 +49,7 @@ public class Skin {
     private String capeId;
     private String skinColor = "#0";
     private String armSize = "wide";
-    private boolean trusted = false;
+    private boolean trusted = true;
     private String geometryDataEngineVersion = "";
 
     public boolean isValid() {
