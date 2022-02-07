@@ -1449,6 +1449,14 @@ public class Server {
         return this.difficulty;
     }
 
+    public void setDifficulty(int difficulty) {
+        int value = difficulty;
+        if (value < 0) value = 0;
+        if (value > 3) value = 3;
+        this.difficulty = value;
+        this.setPropertyInt("difficulty", value);
+    }
+
     public boolean hasWhitelist() {
         return this.getPropertyBoolean("white-list", false);
     }
