@@ -2726,13 +2726,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, ((AnimatePacket) packet).action);
+                    AnimatePacket animatePacket = (AnimatePacket) packet;
+                    PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, animatePacket.action);
 
                     // prevent client send illegal packet to server and broadcast to other client and make other client crash
-                    if(animationEvent.getAnimationType() == null // illegal action id
-                            || animationEvent.getAnimationType() == AnimatePacket.Action.WAKE_UP // these actions are only for server to client
-                            || animationEvent.getAnimationType() == AnimatePacket.Action.CRITICAL_HIT
-                            || animationEvent.getAnimationType() == AnimatePacket.Action.MAGIC_CRITICAL_HIT) {
+                    if(animatePacket.action == null // illegal action id
+                            || animatePacket.action == AnimatePacket.Action.WAKE_UP // these actions are only for server to client
+                            || animatePacket.action == AnimatePacket.Action.CRITICAL_HIT
+                            || animatePacket.action == AnimatePacket.Action.MAGIC_CRITICAL_HIT) {
                         break; // maybe we should cancel the event here? but if client send too many packets, server will lag
                     }
 
@@ -2752,7 +2753,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                     }
 
-                    AnimatePacket animatePacket = new AnimatePacket();
                     animatePacket.eid = this.getId();
                     animatePacket.action = animationEvent.getAnimationType();
                     Server.broadcastPacket(this.getViewers().values(), animatePacket);
