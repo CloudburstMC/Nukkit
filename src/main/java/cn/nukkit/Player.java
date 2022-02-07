@@ -2727,6 +2727,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, ((AnimatePacket) packet).action);
+
+                    // prevent client send illegal packet to server and broadcast to other client and make other client crash
+                    if(animationEvent.getAnimationType() == null // illegal action id
+                            || animationEvent.getAnimationType() == AnimatePacket.Action.WAKE_UP // these actions are only for server to client
+                            || animationEvent.getAnimationType() == AnimatePacket.Action.CRITICAL_HIT
+                            || animationEvent.getAnimationType() == AnimatePacket.Action.MAGIC_CRITICAL_HIT) {
+                        break; // maybe we should cancel the event here? but if client send too many packets, server will lag
+                    }
+
                     this.server.getPluginManager().callEvent(animationEvent);
                     if (animationEvent.isCancelled()) {
                         break;
