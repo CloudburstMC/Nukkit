@@ -285,6 +285,8 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_PLAYING_DEAD = 97;
     public static final int DATA_FLAG_IN_ASCENDABLE_BLOCK = 98;
     public static final int DATA_FLAG_OVER_DESCENDABLE_BLOCK = 99;
+    public static final int DATA_FLAG_CROAKING = 100;
+    public static final int DATA_FLAG_EAT_MOB = 101;
 
     public static long entityCount = 1;
 
