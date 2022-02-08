@@ -15,7 +15,7 @@ import java.util.Arrays;
  */
 public class EmptyChunkSection implements ChunkSection {
     public static final EmptyChunkSection[] EMPTY = new EmptyChunkSection[16];
-    private static final PalettedBlockStorage EMPTY_STORAGE = new PalettedBlockStorage(BitArrayVersion.V1);
+    private static final PalettedBlockStorage EMPTY_STORAGE = PalettedBlockStorage.createFromBlockPalette(BitArrayVersion.V1);
 
     static {
         for (int y = 0; y < EMPTY.length; y++) {
