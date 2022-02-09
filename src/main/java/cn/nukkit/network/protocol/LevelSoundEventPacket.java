@@ -379,7 +379,10 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_WARDEN_NEARBY_CLOSEST = 369;
     public static final int SOUND_WARDEN_SLIGHTLY_ANGRY = 370;
     public static final int SOUND_RECORD_OTHERSIDE = 371;
-    public static final int SOUND_UNDEFINED = 372;
+    public static final int SOUND_TONGUE = 372;
+    public static final int SOUND_CRACK_IRON_GOLEM = 373;
+    public static final int SOUND_REPAIR_IRON_GOLEM = 374;
+    public static final int SOUND_UNDEFINED = 375;
 
     public int sound;
     public float x;

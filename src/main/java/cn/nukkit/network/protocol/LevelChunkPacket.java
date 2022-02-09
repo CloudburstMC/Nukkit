@@ -19,6 +19,8 @@ public class LevelChunkPacket extends DataPacket {
     public int chunkZ;
     public int subChunkCount;
     public boolean cacheEnabled;
+    public boolean requestSubChunks;
+    public int subChunkLimit;
     public long[] blobIds;
     public byte[] data;
 
@@ -32,7 +34,15 @@ public class LevelChunkPacket extends DataPacket {
         this.reset();
         this.putVarInt(this.chunkX);
         this.putVarInt(this.chunkZ);
-        this.putUnsignedVarInt(this.subChunkCount);
+        if (!this.requestSubChunks) {
+            this.putUnsignedVarInt(this.subChunkCount);
+        } else if (this.subChunkLimit < 0) {
+            this.putUnsignedVarInt(-1);
+        } else {
+            this.putUnsignedVarInt(-2);
+            this.putUnsignedVarInt(this.subChunkLimit);
+        }
+
         this.putBoolean(cacheEnabled);
         if (this.cacheEnabled) {
             this.putUnsignedVarInt(blobIds.length);
