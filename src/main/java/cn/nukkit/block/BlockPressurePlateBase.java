@@ -85,7 +85,8 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.down().isTransparent()) {
+            Block down = this.down();
+            if (down.isTransparent() && !(down instanceof BlockFence)) {
                 this.level.useBreakOn(this);
             }
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
@@ -101,7 +102,8 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (block.down().isTransparent()) {
+        Block down = block.down();
+        if (down.isTransparent() && !(down instanceof BlockFence)) {
             return false;
         }
 
