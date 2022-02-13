@@ -272,4 +272,5 @@ public interface ItemID {
     int RECORD_PIGSTEP = 759;
 
     int SPYGLASS = 772;
+    int RECORD_OTHERSIDE = 773;
 }
