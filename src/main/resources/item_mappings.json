@@ -6,7 +6,8 @@
     "3": "minecraft:mojang_banner_pattern",
     "4": "minecraft:field_masoned_banner_pattern",
     "5": "minecraft:bordure_indented_banner_pattern",
-    "6": "minecraft:piglin_banner_pattern"
+    "6": "minecraft:piglin_banner_pattern",
+    "7": "minecraft:globe_banner_pattern"
   },
   "minecraft:boat": {
     "0": "minecraft:oak_boat",
@@ -24,7 +25,10 @@
     "4": "minecraft:tropical_fish_bucket",
     "5": "minecraft:pufferfish_bucket",
     "8": "minecraft:water_bucket",
-    "10": "minecraft:lava_bucket"
+    "10": "minecraft:lava_bucket",
+    "11": "minecraft:powder_snow_bucket",
+    "12": "minecraft:axolotl_bucket",
+    "13": "minecraft:tadpole_bucket"
   },
   "minecraft:coal": {
     "1": "minecraft:charcoal"
@@ -49,7 +53,8 @@
     "16": "minecraft:black_dye",
     "17": "minecraft:brown_dye",
     "18": "minecraft:blue_dye",
-    "19": "minecraft:white_dye"
+    "19": "minecraft:white_dye",
+    "20": "minecraft:glow_ink_sac"
   },
   "minecraft:spawn_egg": {
     "0": "",
@@ -122,6 +127,10 @@
     "127": "minecraft:piglin_brute_spawn_egg",
     "128": "minecraft:goat_spawn_egg",
     "129": "minecraft:glow_squid_spawn_egg",
-    "130": "minecraft:axolotl_spawn_egg"
+    "130": "minecraft:axolotl_spawn_egg",
+    "132": "minecraft:frog_spawn_egg",
+    "133": "minecraft:tadpole_spawn_egg",
+    "134": "minecraft:allay_spawn_egg",
+    "135": "minecraft:firefly_spawn_egg"
   }
 }

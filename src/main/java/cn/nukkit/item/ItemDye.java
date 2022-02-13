@@ -44,6 +44,31 @@ public class ItemDye extends Item {
     @Deprecated
     public static final int BLACK = DyeColor.BLACK.getDyeData();
 
+    public static final int INK_SAC = 0;
+    public static final int COCOA_BEANS = 3;
+    public static final int LAPIS_LAZULI = 4;
+    public static final int BONE_MEAL = 15;
+
+    public static final int BLACK_NEW = 16;
+    public static final int BROWN_NEW = 17;
+    public static final int BLUE_NEW = 18;
+    public static final int WHITE_NEW = 19;
+
+    public static final int GLOW_INK_SAC = 20;
+
+    private static final String[] NAMES = new String[21];
+
+    static {
+        for (int i = 0; i < 16; i++) {
+            NAMES[i] = DyeColor.getByDyeData(i).getDyeName();
+        }
+        NAMES[BLACK_NEW] = "Black Dye";
+        NAMES[BROWN_NEW] = "Brown Dye";
+        NAMES[BLUE_NEW] = "Blue Dye";
+        NAMES[WHITE_NEW] = "White Dye";
+        NAMES[GLOW_INK_SAC] = "Glow Ink Sac";
+    }
+
     public ItemDye() {
         this(0, 1);
     }
@@ -61,7 +86,7 @@ public class ItemDye extends Item {
     }
 
     public ItemDye(Integer meta, int amount) {
-        super(DYE, meta, amount, DyeColor.getByDyeData(meta).getDyeName());
+        super(DYE, meta, amount, meta >= 0 && meta <= 20 ? NAMES[meta] : UNKNOWN_STR);
 
         if (this.meta == DyeColor.BROWN.getDyeData()) {
             this.block = Block.get(BlockID.COCOA_BLOCK);
