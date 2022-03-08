@@ -72,6 +72,10 @@ public class KillCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                     return true;
                 }
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage(new TranslationContainer("%commands.generic.ingame"));
+                    return true;
+                }
                 EntityDamageEvent ev = new EntityDamageEvent((Player) sender, DamageCause.SUICIDE, 1000);
                 sender.getServer().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {
