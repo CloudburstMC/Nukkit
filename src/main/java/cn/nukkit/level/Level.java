@@ -1133,28 +1133,34 @@ public class Level implements ChunkManager, Metadatable {
 
                 if (tickSpeed > 0) {
                     if (this.useSections) {
-                        for (ChunkSection section : ((Chunk) chunk).getSections()) {
-                            if (!(section instanceof EmptyChunkSection)) {
-                                int Y = section.getY();
-                                for (int i = 0; i < tickSpeed; ++i) {
-                                    int lcg = this.getUpdateLCG();
-                                    int x = lcg & 0x0f;
-                                    int y = lcg >>> 8 & 0x0f;
-                                    int z = lcg >>> 16 & 0x0f;
+                        int highestNonAirSectionIndex = -1;
+                        ChunkSection[] sections = ((Chunk) chunk).getSections();
+                        for (int i = sections.length - 1; i >= 0; i--) {
+                            if (!sections[i].isEmpty()) {
+                                highestNonAirSectionIndex = i;
+                                break;
+                            }
+                        }
+                        int tickCount = (int) ((highestNonAirSectionIndex + 1) * 2.5f) * tickSpeed;
+                        int maxHeight = (highestNonAirSectionIndex + 1) << 4;
+                        for (int i = 0; i < tickCount; i++) {
+                            int lcg = this.getUpdateLCG();
+                            int x = lcg & 0x0f;
+                            int y = (lcg >>> 8 & 0xff) % maxHeight;
+                            int z = lcg >>> 16 & 0x0f;
 
-                                    int fullId = section.getFullBlock(x, y, z);
-                                    int blockId = fullId >> 4;
-                                    if (randomTickBlocks[blockId]) {
-                                        Block block = Block.get(fullId, this, chunkX * 16 + x, (Y << 4) + y, chunkZ * 16 + z);
-                                        block.onUpdate(BLOCK_UPDATE_RANDOM);
-                                    }
-                                }
+                            int fullId = chunk.getFullBlock(x, y, z);
+                            int blockId = fullId >> 4;
+                            if (randomTickBlocks[blockId]) {
+                                Block block = Block.get(fullId, this, (chunkX << 4) + x, y, (chunkZ << 4) + z);
+                                block.onUpdate(BLOCK_UPDATE_RANDOM);
                             }
                         }
                     } else {
+                        float tickCount = tickSpeed * 2.5f;
                         for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
                             blockTest = 0;
-                            for (int i = 0; i < tickSpeed; ++i) {
+                            for (int i = 0; i < tickCount; ++i) {
                                 int lcg = this.getUpdateLCG();
                                 int x = lcg & 0x0f;
                                 int y = lcg >>> 8 & 0x0f;
@@ -1164,7 +1170,7 @@ public class Level implements ChunkManager, Metadatable {
                                 int blockId = fullId >> 4;
                                 blockTest |= fullId;
                                 if (Level.randomTickBlocks[blockId]) {
-                                    Block block = Block.get(fullId, this, x, y + (Y << 4), z);
+                                    Block block = Block.get(fullId, this, (chunkX << 4) + x, y + (Y << 4), (chunkZ << 4) + z);
                                     block.onUpdate(BLOCK_UPDATE_RANDOM);
                                 }
                             }
