@@ -114,7 +114,7 @@ public class EntityPainting extends EntityHanging {
         DONKEY_KONG("DonkeyKong", 4, 3),
         POINTER("Pointer", 4, 4),
         PIG_SCENE("Pigscene", 4, 4),
-        FLAMING_SKULL("Flaming Skull", 4, 4);
+        BURNING_SKULL("BurningSkull", 4, 4);
 
         public final String title;
         public final int width;
