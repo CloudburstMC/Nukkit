@@ -4162,7 +4162,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             level++;
             most = calculateRequireExperience(level);
         }
-        this.setExperience(added, level);
+
+        PlayerExperienceChangeEvent event = new PlayerExperienceChangeEvent(this, this.getExperienceLevel(), this.getExperience(), added, level);
+        this.server.getPluginManager().callEvent(event);
+
+        if(event.isCancelled()) {
+            return;
+        }
+
+        this.setExperience(event.getNewProgress(), event.getNewLevel());
     }
 
     public static int calculateRequireExperience(int level) {
