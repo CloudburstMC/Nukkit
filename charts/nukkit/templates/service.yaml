@@ -11,7 +11,7 @@ spec:
       targetPort: udp
       protocol: UDP
       name: udp
-{{- if eq .Values.service.port "NodePort" }}
+{{- if eq .Values.service.type "NodePort" }}
       nodePort: {{ .Values.service.nodePort }}
 {{- end }}
   selector:
