@@ -131,10 +131,11 @@ public class BlockSugarcane extends BlockFlowable {
             return false;
         }
         Block down = this.down();
-        if (down.getId() == SUGARCANE_BLOCK) {
+        int id = down.getId();
+        if (id == SUGARCANE_BLOCK) {
             this.getLevel().setBlock(block, Block.get(BlockID.SUGARCANE_BLOCK), true);
             return true;
-        } else if (down.getId() == GRASS || down.getId() == DIRT || down.getId() == SAND || down.getId() == PODZOL) {
+        } else if (id == GRASS || id == DIRT || id == SAND || id == PODZOL || id == MYCELIUM) {
             Block block0 = down.north();
             Block block1 = down.south();
             Block block2 = down.west();

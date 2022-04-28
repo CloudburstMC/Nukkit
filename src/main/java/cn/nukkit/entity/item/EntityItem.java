@@ -11,6 +11,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddItemEntityPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.EntityEventPacket;
@@ -19,9 +20,8 @@ import cn.nukkit.network.protocol.EntityEventPacket;
  * @author MagicDroidX
  */
 public class EntityItem extends Entity {
-    public static final int NETWORK_ID = 64;
 
-    public static final int DATA_SOURCE_ID = 17;
+    public static final int NETWORK_ID = 64;
 
     public EntityItem(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -115,13 +115,33 @@ public class EntityItem extends Entity {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        return (source.getCause() == DamageCause.VOID ||
-                source.getCause() == DamageCause.CONTACT ||
-                source.getCause() == DamageCause.FIRE_TICK ||
-                (source.getCause() == DamageCause.ENTITY_EXPLOSION ||
-                source.getCause() == DamageCause.BLOCK_EXPLOSION) &&
-                !this.isInsideOfWater() && (this.item == null ||
-                this.item.getId() != Item.NETHER_STAR)) && super.attack(source);
+        DamageCause cause = source.getCause();
+        if ((cause == DamageCause.VOID || cause == DamageCause.CONTACT || cause == DamageCause.FIRE_TICK
+                || (cause == DamageCause.ENTITY_EXPLOSION || cause == DamageCause.BLOCK_EXPLOSION) && !this.isInsideOfWater()
+                && (this.item == null || this.item.getId() != Item.NETHER_STAR)) && super.attack(source)) {
+            if (this.item == null || this.isAlive()) {
+                return true;
+            }
+            int id = this.item.getId();
+            if (id != Item.SHULKER_BOX && id != Item.UNDYED_SHULKER_BOX) {
+                return true;
+            }
+            CompoundTag nbt = this.item.getNamedTag();
+            if (nbt == null) {
+                return true;
+            }
+            ListTag<CompoundTag> items = nbt.getList("Items", CompoundTag.class);
+            for (int i = 0; i < items.size(); i++) {
+                CompoundTag itemTag = items.get(i);
+                Item item = NBTIO.getItemHelper(itemTag);
+                if (item.isNull()) {
+                    continue;
+                }
+                this.level.dropItem(this, item);
+            }
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -258,7 +278,7 @@ public class EntityItem extends Entity {
 
     @Override
     public String getName() {
-        return this.hasCustomName() ? this.getNameTag() : (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
+        return this.hasCustomName() ? this.getNameTag() : (this.item == null ? "" : this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
     }
 
     public Item getItem() {
@@ -300,7 +320,7 @@ public class EntityItem extends Entity {
         addEntity.entityUniqueId = this.getId();
         addEntity.entityRuntimeId = this.getId();
         addEntity.x = (float) this.x;
-        addEntity.y = (float) this.y;
+        addEntity.y = (float) this.y + this.getBaseOffset();
         addEntity.z = (float) this.z;
         addEntity.speedX = (float) this.motionX;
         addEntity.speedY = (float) this.motionY;

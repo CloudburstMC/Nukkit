@@ -29,4 +29,9 @@ public class NBTEntityData extends EntityData<CompoundTag> {
     public int getType() {
         return Entity.DATA_TYPE_NBT;
     }
+
+    @Override
+    public String toString() {
+        return tag.toString();
+    }
 }

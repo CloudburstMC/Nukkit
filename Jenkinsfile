@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage ('Build') {
             steps {
-                sh 'mvn clean package'
+                sh 'mvn clean package -B'
             }
             post {
                 success {
@@ -32,15 +32,15 @@ pipeline {
                         releaseRepo: "maven-releases",
                         snapshotRepo: "maven-snapshots"
                 )
-                rtMavenResolver (
+                rtMavenResolver(
                         id: "maven-resolver",
                         serverId: "opencollab-artifactory",
-                        releaseRepo: "release",
-                        snapshotRepo: "snapshot"
+                        releaseRepo: "maven-deploy-release",
+                        snapshotRepo: "maven-deploy-snapshot"
                 )
                 rtMavenRun (
                         pom: 'pom.xml',
-                        goals: 'javadoc:javadoc javadoc:jar source:jar install -DskipTests',
+                        goals: 'javadoc:javadoc javadoc:jar source:jar install -B -DskipTests',
                         deployerId: "maven-deployer",
                         resolverId: "maven-resolver"
                 )
@@ -55,6 +55,9 @@ pipeline {
     post {
         always {
             deleteDir()
+            withCredentials([string(credentialsId: 'nukkitx-discord-webhook', variable: 'DISCORD_WEBHOOK')]) {
+                discordSend description: "**Build:** [${currentBuild.id}](${env.BUILD_URL})\n**Status:** [${currentBuild.currentResult}](${env.BUILD_URL})", footer: 'NukkitX Jenkins', link: env.BUILD_URL, successful: currentBuild.resultIsBetterOrEqualTo('SUCCESS'), title: "${env.JOB_NAME} #${currentBuild.id}", webhookURL: DISCORD_WEBHOOK
+            }
         }
     }
 }

@@ -1024,10 +1024,7 @@ public class Server {
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Collection<Player> players) {
-        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId,
-                players.stream()
-                        .filter(p -> !p.getUniqueId().equals(uuid))
-                        .toArray(Player[]::new));
+        this.updatePlayerListData(uuid, entityId, name, skin, xboxUserId, players.toArray(new Player[0]));
     }
 
     public void removePlayerListData(UUID uuid) {
@@ -1447,6 +1444,14 @@ public class Server {
             this.difficulty = getDifficultyFromString(this.getPropertyString("difficulty", "1"));
         }
         return this.difficulty;
+    }
+
+    public void setDifficulty(int difficulty) {
+        int value = difficulty;
+        if (value < 0) value = 0;
+        if (value > 3) value = 3;
+        this.difficulty = value;
+        this.setPropertyInt("difficulty", value);
     }
 
     public boolean hasWhitelist() {
@@ -2051,8 +2056,14 @@ public class Server {
             return false;
         }
 
-        String path = this.getDataPath() + "worlds/" + name + "/";
         if (this.getLevelByName(name) == null) {
+            String path;
+
+            if (name.contains("/") || name.contains("\\")) {
+                path = name;
+            } else {
+                path = this.getDataPath() + "worlds/" + name + "/";
+            }
 
             return LevelProviderManager.getProvider(path) != null;
         }
@@ -2199,7 +2210,7 @@ public class Server {
     }
 
     public boolean isOp(String name) {
-        return this.operators.exists(name, true);
+        return name != null && this.operators.exists(name, true);
     }
 
     public Config getWhitelist() {

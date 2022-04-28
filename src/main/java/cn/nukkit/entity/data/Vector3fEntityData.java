@@ -41,4 +41,9 @@ public class Vector3fEntityData extends EntityData<Vector3f> {
     public int getType() {
         return Entity.DATA_TYPE_VECTOR3F;
     }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ", " + z + ")";
+    }
 }

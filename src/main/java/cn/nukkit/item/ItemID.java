@@ -199,6 +199,7 @@ public interface ItemID {
     int DARK_OAK_DOOR = 431;
     int CHORUS_FRUIT = 432;
     int POPPED_CHORUS_FRUIT = 433;
+    int BANNER_PATTERN = 434;
 
     int DRAGON_BREATH = 437;
     int SPLASH_POTION = 438;
@@ -248,6 +249,8 @@ public interface ItemID {
 
     int SHIELD = 513;
 
+    int SUSPICIOUS_STEW = 734;
+
     int HONEYCOMB = 736;
     int HONEY_BOTTLE = 737;
 
@@ -267,4 +270,7 @@ public interface ItemID {
     int WARPED_FUNGUS_ON_A_STICK = 757;
 
     int RECORD_PIGSTEP = 759;
+
+    int SPYGLASS = 772;
+    int RECORD_OTHERSIDE = 773;
 }

@@ -47,4 +47,9 @@ public class BlockIcePacked extends BlockIce {
     public boolean canSilkTouch() {
         return true;
     }
+
+    @Override
+    public boolean isTransparent() {
+        return false;
+    }
 }

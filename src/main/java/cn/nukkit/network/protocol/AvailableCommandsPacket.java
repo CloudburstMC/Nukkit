@@ -31,15 +31,16 @@ public class AvailableCommandsPacket extends DataPacket {
     public static final int ARG_TYPE_WILDCARD_INT = 5;
     public static final int ARG_TYPE_OPERATOR = 6;
     public static final int ARG_TYPE_TARGET = 7;
-    public static final int ARG_TYPE_WILDCARD_TARGET = 8;
+    public static final int ARG_TYPE_WILDCARD_TARGET = 9;
     public static final int ARG_TYPE_FILE_PATH = 16;
-    public static final int ARG_TYPE_STRING = 32;
-    public static final int ARG_TYPE_BLOCK_POSITION = 40;
-    public static final int ARG_TYPE_POSITION = 41;
-    public static final int ARG_TYPE_MESSAGE = 44;
-    public static final int ARG_TYPE_RAWTEXT = 46;
-    public static final int ARG_TYPE_JSON = 50;
-    public static final int ARG_TYPE_COMMAND = 63;
+    public static final int ARG_TYPE_EQUIPMENT_SLOT = 37;
+    public static final int ARG_TYPE_STRING = 38;
+    public static final int ARG_TYPE_BLOCK_POSITION = 46;
+    public static final int ARG_TYPE_POSITION = 47;
+    public static final int ARG_TYPE_MESSAGE = 50;
+    public static final int ARG_TYPE_RAWTEXT = 52;
+    public static final int ARG_TYPE_JSON = 56;
+    public static final int ARG_TYPE_COMMAND = 69;
 
     public Map<String, CommandDataVersions> commands;
     public final Map<String, List<String>> softEnums = new HashMap<>();
@@ -130,7 +131,7 @@ public class AvailableCommandsPacket extends DataPacket {
 
             putString(name);
             putString(data.description);
-            putByte((byte) data.flags);
+            putLShort(data.flags);
             putByte((byte) data.permission);
 
             putLInt(data.aliases == null ? -1 : enums.indexOf(data.aliases));

@@ -27,11 +27,6 @@ public class ItemFishingRod extends ItemTool {
     }
 
     @Override
-    public int getMaxStackSize() {
-        return 1;
-    }
-
-    @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
         if (player.fishing != null) {
             player.stopFishing(true);
@@ -45,5 +40,15 @@ public class ItemFishingRod extends ItemTool {
     @Override
     public int getMaxDurability() {
         return ItemTool.DURABILITY_FISHING_ROD;
+    }
+
+    @Override
+    public boolean noDamageOnAttack() {
+        return true;
+    }
+
+    @Override
+    public boolean noDamageOnBreak() {
+        return true;
     }
 }

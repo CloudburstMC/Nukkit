@@ -282,10 +282,8 @@ public class BinaryStream {
 
         this.putImage(skin.getCapeData());
         this.putString(skin.getGeometryData());
+        this.putString(skin.getGeometryDataEngineVersion());
         this.putString(skin.getAnimationData());
-        this.putBoolean(skin.isPremium());
-        this.putBoolean(skin.isPersona());
-        this.putBoolean(skin.isCapeOnClassic());
         this.putString(skin.getCapeId());
         this.putString(skin.getFullSkinId());
         this.putString(skin.getArmSize());
@@ -310,6 +308,11 @@ public class BinaryStream {
                 this.putString(color);
             }
         }
+
+        this.putBoolean(skin.isPremium());
+        this.putBoolean(skin.isPersona());
+        this.putBoolean(skin.isCapeOnClassic());
+        this.putBoolean(skin.isPrimaryUser());
     }
 
     public Skin getSkin() {
@@ -330,10 +333,8 @@ public class BinaryStream {
 
         skin.setCapeData(this.getImage());
         skin.setGeometryData(this.getString());
+        skin.setGeometryDataEngineVersion(this.getString());
         skin.setAnimationData(this.getString());
-        skin.setPremium(this.getBoolean());
-        skin.setPersona(this.getBoolean());
-        skin.setCapeOnClassic(this.getBoolean());
         skin.setCapeId(this.getString());
         this.getString(); // TODO: Full skin id
         skin.setArmSize(this.getString());
@@ -359,6 +360,11 @@ public class BinaryStream {
             }
             skin.getTintColors().add(new PersonaPieceTint(pieceType, colors));
         }
+
+        skin.setPremium(this.getBoolean());
+        skin.setPersona(this.getBoolean());
+        skin.setCapeOnClassic(this.getBoolean());
+        skin.setPrimaryUser(this.getBoolean());
         return skin;
     }
 
@@ -419,7 +425,7 @@ public class BinaryStream {
             }
 
             if (compoundTag != null && compoundTag.getAllTags().size() > 0) {
-                if (compoundTag.contains("Damage")) {
+                if (compoundTag.contains("Damage") && !legacyEntry.isHasDamage()) {
                     damage = compoundTag.getInt("Damage");
                     compoundTag.remove("Damage");
                 }
@@ -502,7 +508,7 @@ public class BinaryStream {
 
         if (!instanceItem) {
             this.putBoolean(true);
-            this.putVarInt(0); //TODO
+            this.putVarInt(1);
         }
 
         Block block = item.getBlockUnsafe();
@@ -511,7 +517,7 @@ public class BinaryStream {
 
         ByteBuf userDataBuf = ByteBufAllocator.DEFAULT.ioBuffer();
         try (LittleEndianByteBufOutputStream stream = new LittleEndianByteBufOutputStream(userDataBuf)) {
-            if (item.getDamage() != 0) {
+            if (((item instanceof ItemDurable && item.getDamage() > 0) || block != null && block.getDamage() > 0) && !runtimeEntry.isHasDamage()) {
                 byte[] nbt = item.getCompoundTag();
                 CompoundTag tag;
                 if (nbt == null || nbt.length == 0) {

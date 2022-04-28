@@ -467,7 +467,7 @@
     "minecraft:glow_stick": 166,
     "minecraft:iron_trapdoor": 167,
     "minecraft:prismarine": 168,
-    "minecraft:sealantern": 169,
+    "minecraft:sea_lantern": 169,
     "minecraft:hay_block": 170,
     "minecraft:carpet": 171,
     "minecraft:hardened_clay": 172,
@@ -805,5 +805,7 @@
     "minecraft:oak_sign": 323,
     "minecraft:glistering_melon_slice": 382,
     "minecraft:totem_of_undying": 450,
-    "minecraft:scute": 468
+    "minecraft:scute": 468,
+    "minecraft:spyglass": 772,
+    "minecraft:music_disc_otherside": 773
 }

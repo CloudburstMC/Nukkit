@@ -1,29 +1,26 @@
 package cn.nukkit.level.format.anvil;
 
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.format.generic.BaseRegionLoader;
+import cn.nukkit.level.format.generic.serializer.NetworkChunkSerializer;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.ThreadCache;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 /**
@@ -32,7 +29,8 @@ import java.util.regex.Pattern;
  */
 public class Anvil extends BaseLevelProvider {
     public static final int VERSION = 19133;
-    static private final byte[] PAD_256 = new byte[256];
+    private static final byte[] PAD_256 = new byte[256];
+    public static final int EXTENDED_NEGATIVE_SUB_CHUNKS = 4;
 
     public Anvil(Level level, String path) throws IOException {
         super(level, path);
@@ -112,45 +110,9 @@ public class Anvil extends BaseLevelProvider {
         }
 
         long timestamp = chunk.getChanges();
-
-        byte[] blockEntities = new byte[0];
-
-        if (!chunk.getBlockEntities().isEmpty()) {
-            List<CompoundTag> tagList = new ArrayList<>();
-
-            for (BlockEntity blockEntity : chunk.getBlockEntities().values()) {
-                if (blockEntity instanceof BlockEntitySpawnable) {
-                    tagList.add(((BlockEntitySpawnable) blockEntity).getSpawnCompound());
-                }
-            }
-
-            try {
-                blockEntities = NBTIO.write(tagList, ByteOrder.LITTLE_ENDIAN, true);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        BinaryStream stream = ThreadCache.binaryStream.get().reset();
-        int count = 0;
-        cn.nukkit.level.format.ChunkSection[] sections = chunk.getSections();
-        for (int i = sections.length - 1; i >= 0; i--) {
-            if (!sections[i].isEmpty()) {
-                count = i + 1;
-                break;
-            }
-        }
-
-        for (int i = 0; i < count; i++) {
-            sections[i].writeTo(stream);
-        }
-
-        stream.put(chunk.getBiomeIdArray());
-        stream.putByte((byte) 0); // Border blocks
-        stream.put(blockEntities);
-
-        this.getLevel().chunkRequestCallback(timestamp, x, z, count, stream.getBuffer());
-
+        BiConsumer<BinaryStream, Integer> callback = (stream, subchunks) ->
+                this.getLevel().chunkRequestCallback(timestamp, x, z, subchunks, stream.getBuffer());
+        NetworkChunkSerializer.serialize(chunk, callback, this.level.getDimensionData());
         return null;
     }
 

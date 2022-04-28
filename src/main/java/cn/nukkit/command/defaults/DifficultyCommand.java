@@ -47,7 +47,7 @@ public class DifficultyCommand extends VanillaCommand {
         }
 
         if (difficulty != -1) {
-            sender.getServer().setPropertyInt("difficulty", difficulty);
+            sender.getServer().setDifficulty(difficulty);
 
             SetDifficultyPacket pk = new SetDifficultyPacket();
             pk.difficulty = sender.getServer().getDifficulty();

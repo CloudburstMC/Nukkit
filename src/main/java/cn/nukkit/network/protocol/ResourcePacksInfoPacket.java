@@ -10,6 +10,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
 
     public boolean mustAccept;
     public boolean scripting;
+    public boolean forceServerPacks;
     public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
     public ResourcePack[] resourcePackEntries = new ResourcePack[0];
 
@@ -23,12 +24,25 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.reset();
         this.putBoolean(this.mustAccept);
         this.putBoolean(this.scripting);
-
-        encodePacks(this.behaviourPackEntries);
-        encodePacks(this.resourcePackEntries);
+        this.putBoolean(this.forceServerPacks);
+        this.encodeBehaviourPacks(this.behaviourPackEntries);
+        this.encodeResourcePacks(this.resourcePackEntries);
     }
 
-    private void encodePacks(ResourcePack[] packs) {
+    private void encodeBehaviourPacks(ResourcePack[] packs) {
+        this.putLShort(packs.length);
+        for (ResourcePack entry : packs) {
+            this.putString(entry.getPackId().toString());
+            this.putString(entry.getPackVersion());
+            this.putLLong(entry.getPackSize());
+            this.putString(""); // encryption key
+            this.putString(""); // sub-pack name
+            this.putString(""); // content identity
+            this.putBoolean(false); // scripting
+        }
+    }
+
+    private void encodeResourcePacks(ResourcePack[] packs) {
         this.putLShort(packs.length);
         for (ResourcePack entry : packs) {
             this.putString(entry.getPackId().toString());

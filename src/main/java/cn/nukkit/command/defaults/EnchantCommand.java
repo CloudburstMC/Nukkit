@@ -31,7 +31,7 @@ public class EnchantCommand extends VanillaCommand {
                         "protection", "fire_protection", "feather_falling", "blast_protection", "projectile_projection", "thorns", "respiration",
                         "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods", "knockback", "fire_aspect", "looting", "efficiency",
                         "silk_touch", "durability", "fortune", "power", "punch", "flame", "infinity", "luck_of_the_sea", "lure", "frost_walker", "mending",
-                        "binding_curse", "vanishing_curse", "impaling", "loyality", "riptide", "channeling", "multishot", "piercing", "quick_charge",
+                        "binding_curse", "vanishing_curse", "impaling", "loyalty", "riptide", "channeling", "multishot", "piercing", "quick_charge",
                         "soul_speed")),
                 CommandParameter.newType("level", true, CommandParamType.INT)
         });
@@ -78,6 +78,7 @@ public class EnchantCommand extends VanillaCommand {
     }
 
     public int getIdByName(String value) throws NumberFormatException {
+        value = value.toLowerCase();
         switch (value) {
             case "protection":
                 return 0;
@@ -114,6 +115,7 @@ public class EnchantCommand extends VanillaCommand {
             case "silk_touch":
                 return 16;
             case "durability":
+            case "unbreaking":
                 return 17;
             case "fortune":
                 return 18;
@@ -139,9 +141,9 @@ public class EnchantCommand extends VanillaCommand {
                 return 28;
             case "impaling":
                 return 29;
-            case "loyality":
-                return 30;
             case "riptide":
+                return 30;
+            case "loyalty":
                 return 31;
             case "channeling":
                 return 32;
