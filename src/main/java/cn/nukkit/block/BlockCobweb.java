@@ -73,4 +73,10 @@ public class BlockCobweb extends BlockFlowable {
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Override
+    public boolean diffusesSkyLight() {
+        return true;
+    }
+
 }

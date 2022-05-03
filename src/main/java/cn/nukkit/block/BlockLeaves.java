@@ -224,6 +224,11 @@ public class BlockLeaves extends BlockTransparentMeta {
         return true;
     }
 
+    @Override
+    public boolean diffusesSkyLight() {
+        return true;
+    }
+
     protected boolean canDropApple() {
         return (this.getDamage() & 0x03) == OAK;
     }
@@ -231,4 +236,5 @@ public class BlockLeaves extends BlockTransparentMeta {
     protected Item getSapling() {
         return Item.get(BlockID.SAPLING, this.getDamage() & 0x03);
     }
+
 }
