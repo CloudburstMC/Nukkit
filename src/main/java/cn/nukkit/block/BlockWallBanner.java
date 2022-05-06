@@ -38,4 +38,9 @@ public class BlockWallBanner extends BlockBanner {
         }
         return 0;
     }
+
+    @Override
+    public BlockFace getBlockFace() {
+        return BlockFace.fromIndex(this.getDamage() & 0x7);
+    }
 }

@@ -148,6 +148,31 @@ public class BlockAnvil extends BlockFallable implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x3);
+    }
+
+    @Override
+    public double getMinX() {
+        return this.x + (this.getBlockFace().getAxis() == BlockFace.Axis.X ? 0 : 2 / 16.0);
+    }
+
+    @Override
+    public double getMinZ() {
+        return this.z + (this.getBlockFace().getAxis() == BlockFace.Axis.Z ? 0 : 2 / 16.0);
+    }
+
+    @Override
+    public double getMaxX() {
+        return this.x + (this.getBlockFace().getAxis() == BlockFace.Axis.X ? 1 : 1 - 2 / 16.0);
+    }
+
+    @Override
+    public double getMaxZ() {
+        return this.z + (this.getBlockFace().getAxis() == BlockFace.Axis.Z ? 1 : 1 - 2 / 16.0);
+    }
+
+    @Override
+    public boolean isSolid() {
+        return false;
     }
 }
