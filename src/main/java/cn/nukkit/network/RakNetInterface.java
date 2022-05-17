@@ -132,7 +132,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public int getNetworkLatency(Player player) {
-        RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
+        RakNetServerSession session = this.raknet.getSession(player.getRawSocketAddress());
         return session == null ? -1 : (int) session.getPing();
     }
 
@@ -143,7 +143,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public void close(Player player, String reason) {
-        RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
+        RakNetServerSession session = this.raknet.getSession(player.getRawSocketAddress());
         if (session != null) {
             session.close();
         }
@@ -214,7 +214,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
-        NukkitRakNetSession session = this.sessions.get(player.getSocketAddress());
+        NukkitRakNetSession session = this.sessions.get(player.getRawSocketAddress());
 
         if (session != null) {
             packet.tryEncode();
