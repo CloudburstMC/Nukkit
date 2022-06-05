@@ -11,29 +11,41 @@ public class PlayerExperienceChangeEvent extends PlayerEvent implements Cancella
         return handlers;
     }
 
-    private int exp;
-    private int expLevel;
+    private final int oldExp;
+    private final int oldExpLevel;
+    private int newExp;
+    private int newExpLevel;
 
-    public PlayerExperienceChangeEvent(Player player, int exp, int level) {
+    public PlayerExperienceChangeEvent(Player player, int oldExp, int oldLevel, int newExp, int newLevel) {
         this.player = player;
-        this.exp = exp;
-        this.expLevel = level;
+        this.oldExp = oldExp;
+        this.oldExpLevel = oldLevel;
+        this.newExp = newExp;
+        this.newExpLevel = newLevel;
     }
 
-    public int getExperience() {
-        return this.exp;
+    public int getOldExperience() {
+        return this.oldExp;
     }
 
-    public void setExperience(int exp) {
-        this.exp = exp;
+    public int getOldExperienceLevel() {
+        return this.oldExpLevel;
     }
 
-    public int getExperienceLevel() {
-        return this.expLevel;
+    public int getNewExperience() {
+        return this.newExp;
     }
 
-    public void setExperienceLevel(int level) {
-        this.expLevel = level;
+    public void setNewExperience(int exp) {
+        this.newExp = exp;
+    }
+
+    public int getNewExperienceLevel() {
+        return this.newExpLevel;
+    }
+
+    public void setNewExperienceLevel(int level) {
+        this.newExpLevel = level;
     }
 
 }

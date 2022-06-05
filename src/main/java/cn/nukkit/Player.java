@@ -4182,15 +4182,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     //todo something on performance, lots of exp orbs then lots of packets, could crash client
 
     public void setExperience(int exp, int level) {
-        PlayerExperienceChangeEvent ev = new PlayerExperienceChangeEvent(this, exp, level);
+        PlayerExperienceChangeEvent ev = new PlayerExperienceChangeEvent(this, this.exp, this.expLevel, exp, level);
         this.server.getPluginManager().callEvent(ev);
 
         if (ev.isCancelled()) {
             return;
         }
 
-        this.exp = ev.getExperience();
-        this.expLevel = ev.getExperienceLevel();
+        this.exp = ev.getNewExperience();
+        this.expLevel = ev.getNewExperienceLevel();
 
         this.sendExperienceLevel(this.expLevel);
         this.sendExperience(this.exp);
