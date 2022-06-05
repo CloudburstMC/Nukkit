@@ -80,7 +80,7 @@ public class VersionCommand extends VanillaCommand {
                     sender.sendMessage("Authors: " + authorsString[0]);
                 }
             } else {
-                sender.sendMessage(new TranslationContainer("nukkit.command.version.noSuchPlugin"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%nukkit.command.version.noSuchPlugin"));
             }
         }
         return true;

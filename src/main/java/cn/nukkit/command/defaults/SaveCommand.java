@@ -13,7 +13,7 @@ import cn.nukkit.level.Level;
 public class SaveCommand extends VanillaCommand {
 
     public SaveCommand(String name) {
-        super(name, "%nukkit.command.save.description", "%commands.save.usage");
+        super(name, "%nukkit.command.save.description", "%nukkit.command.save.usage");
         this.setPermission("nukkit.command.save.perform");
         this.commandParameters.clear();
     }

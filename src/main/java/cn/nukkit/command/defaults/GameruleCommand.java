@@ -8,6 +8,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
+import cn.nukkit.utils.TextFormat;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -79,7 +80,7 @@ public class GameruleCommand extends VanillaCommand {
         }
 
         if (!sender.isPlayer()) {
-            sender.sendMessage(new TranslationContainer("%commands.generic.ingame"));
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.ingame"));
             return true;
         }
         GameRules rules = ((Player) sender).getLevel().getGameRules();
@@ -95,7 +96,7 @@ public class GameruleCommand extends VanillaCommand {
             case 1:
                 Optional<GameRule> gameRule = GameRule.parseString(args[0]);
                 if (!gameRule.isPresent() || !rules.hasRule(gameRule.get())) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule", args[0]));
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.syntax", "/gamerule ", args[0], ""));
                     return true;
                 }
 
@@ -105,7 +106,7 @@ public class GameruleCommand extends VanillaCommand {
                 Optional<GameRule> optionalRule = GameRule.parseString(args[0]);
 
                 if (!optionalRule.isPresent()) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax",
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.syntax",
                             "/gamerule ", args[0], " " + String.join(" ", Arrays.copyOfRange(args, 1, args.length))));
                     return true;
                 }
@@ -114,7 +115,7 @@ public class GameruleCommand extends VanillaCommand {
                     rules.setGameRules(optionalRule.get(), args[1]);
                     sender.sendMessage(new TranslationContainer("commands.gamerule.success", optionalRule.get().getName().toLowerCase(), args[1]));
                 } catch (IllegalArgumentException e) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule "  + args[0] + " ", args[1], " " + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.syntax", "/gamerule " + args[0] + " ", args[1], " " + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
                 }
                 return true;
         }

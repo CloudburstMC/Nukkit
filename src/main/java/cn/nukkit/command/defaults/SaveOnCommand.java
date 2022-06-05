@@ -11,7 +11,7 @@ import cn.nukkit.lang.TranslationContainer;
 public class SaveOnCommand extends VanillaCommand {
 
     public SaveOnCommand(String name) {
-        super(name, "%nukkit.command.saveon.description", "%commands.save-on.usage");
+        super(name, "%nukkit.command.saveon.description", "%nukkit.command.save-on.usage");
         this.setPermission("nukkit.command.save.enable");
         this.commandParameters.clear();
     }

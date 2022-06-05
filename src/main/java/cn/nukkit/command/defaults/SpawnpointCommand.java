@@ -18,7 +18,7 @@ import java.text.DecimalFormat;
  */
 public class SpawnpointCommand extends VanillaCommand {
     public SpawnpointCommand(String name) {
-        super(name, "%nukkit.command.spawnpoint.description", "%commands.spawnpoint.usage");
+        super(name, "%nukkit.command.spawnpoint.description", "%nukkit.command.spawnpoint.usage");
         this.setPermission("nukkit.command.spawnpoint");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
@@ -37,7 +37,7 @@ public class SpawnpointCommand extends VanillaCommand {
             if (sender instanceof Player) {
                 target = (Player) sender;
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.ingame"));
                 return true;
             }
         } else {
@@ -65,7 +65,7 @@ public class SpawnpointCommand extends VanillaCommand {
                 if (y < 0) y = 0;
                 if (y > 256) y = 256;
                 target.setSpawn(new Position(x, y, z, level));
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success", target.getName(),
+                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success.single", target.getName(),
                         round2.format(x),
                         round2.format(y),
                         round2.format(z)));
@@ -75,13 +75,13 @@ public class SpawnpointCommand extends VanillaCommand {
             if (sender instanceof Player) {
                 Position pos = (Position) sender;
                 target.setSpawn(pos);
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success", target.getName(),
+                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success.single", target.getName(),
                         round2.format(pos.x),
                         round2.format(pos.y),
                         round2.format(pos.z)));
                 return true;
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.ingame"));
                 return true;
             }
         }

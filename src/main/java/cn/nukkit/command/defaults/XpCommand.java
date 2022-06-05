@@ -14,7 +14,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class XpCommand extends Command {
     public XpCommand(String name) {
-        super(name, "%nukkit.command.xp.description", "%commands.xp.usage");
+        super(name, "%nukkit.command.xp.description", "%nukkit.command.xp.usage");
         this.setPermission("nukkit.command.xp");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
@@ -91,7 +91,7 @@ public class XpCommand extends Command {
             if (amount > 0) {
                 sender.sendMessage(new TranslationContainer("commands.xp.success.levels", String.valueOf(amount), player.getName()));
             } else {
-                sender.sendMessage(new TranslationContainer("commands.xp.success.levels.minus", String.valueOf(-amount), player.getName()));
+                sender.sendMessage(new TranslationContainer("commands.xp.success.negative.levels", String.valueOf(-amount), player.getName()));
             }
             return true;
         } else {

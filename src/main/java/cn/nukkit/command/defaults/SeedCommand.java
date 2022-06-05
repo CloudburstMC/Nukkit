@@ -11,7 +11,7 @@ import cn.nukkit.lang.TranslationContainer;
 public class SeedCommand extends VanillaCommand {
 
     public SeedCommand(String name) {
-        super(name, "%nukkit.command.seed.description", "%commands.seed.usage");
+        super(name, "%nukkit.command.seed.description", "%nukkit.command.seed.usage");
         this.setPermission("nukkit.command.seed");
         this.commandParameters.clear();
     }

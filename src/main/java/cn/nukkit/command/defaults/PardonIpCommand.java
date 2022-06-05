@@ -5,6 +5,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.utils.TextFormat;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -17,7 +18,7 @@ import java.util.regex.Pattern;
 public class PardonIpCommand extends VanillaCommand {
 
     public PardonIpCommand(String name) {
-        super(name, "%nukkit.command.unban.ip.description", "%commands.unbanip.usage");
+        super(name, "%nukkit.command.unban.ip.description", "%nukkit.command.unbanip.usage");
         this.setPermission("nukkit.command.unban.ip");
         this.setAliases(new String[]{"unbanip", "unban-ip", "pardonip"});
         this.commandParameters.clear();
@@ -46,14 +47,14 @@ public class PardonIpCommand extends VanillaCommand {
             try {
                 sender.getServer().getNetwork().unblockAddress(InetAddress.getByName(value));
             } catch (UnknownHostException e) {
-                sender.sendMessage(new TranslationContainer("commands.unbanip.invalid"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.unbanip.invalid"));
                 return true;
             }
 
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.unbanip.success", value));
         } else {
 
-            sender.sendMessage(new TranslationContainer("commands.unbanip.invalid"));
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.unbanip.invalid"));
         }
 
         return true;

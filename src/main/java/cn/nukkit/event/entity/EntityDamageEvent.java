@@ -224,6 +224,10 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         /**
          * Damage caused by hunger
          */
-        HUNGER
+        HUNGER,
+        /**
+         * Damage caused in retaliation to another attack by the Thorns enchantment.
+         */
+        THORNS,
     }
 }

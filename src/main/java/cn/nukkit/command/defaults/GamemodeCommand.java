@@ -17,7 +17,7 @@ import cn.nukkit.utils.TextFormat;
 public class GamemodeCommand extends VanillaCommand {
 
     public GamemodeCommand(String name) {
-        super(name, "%nukkit.command.gamemode.description", "%commands.gamemode.usage",
+        super(name, "%nukkit.command.gamemode.description", "%nukkit.command.gamemode.usage",
                 new String[]{"gm"});
         this.setPermission("nukkit.command.gamemode.survival;" +
                 "nukkit.command.gamemode.creative;" +
@@ -44,7 +44,7 @@ public class GamemodeCommand extends VanillaCommand {
 
         int gameMode = Server.getGamemodeFromString(args[0]);
         if (gameMode == -1) {
-            sender.sendMessage("Unknown game mode");
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.gamemode.fail.invalid", args[0]));
             return true;
         }
 
@@ -57,7 +57,7 @@ public class GamemodeCommand extends VanillaCommand {
                     return true;
                 }
             } else {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", this.getName()));
                 return true;
             }
         } else if (!(sender instanceof Player)) {
@@ -65,22 +65,22 @@ public class GamemodeCommand extends VanillaCommand {
             return true;
         }
 
-        if ((gameMode == 0 && !sender.hasPermission("nukkit.command.gamemode.survival")) ||
-                (gameMode == 1 && !sender.hasPermission("nukkit.command.gamemode.creative")) ||
-                (gameMode == 2 && !sender.hasPermission("nukkit.command.gamemode.adventure")) ||
-                (gameMode == 3 && !sender.hasPermission("nukkit.command.gamemode.spectator"))) {
-            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+        if ((gameMode == Player.SURVIVAL && !sender.hasPermission("nukkit.command.gamemode.survival")) ||
+                (gameMode == Player.CREATIVE && !sender.hasPermission("nukkit.command.gamemode.creative")) ||
+                (gameMode == Player.ADVENTURE && !sender.hasPermission("nukkit.command.gamemode.adventure")) ||
+                (gameMode == Player.SPECTATOR && !sender.hasPermission("nukkit.command.gamemode.spectator"))) {
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", this.getName()));
             return true;
         }
 
         if (!((Player) target).setGamemode(gameMode)) {
-            sender.sendMessage("Game mode update for " + target.getName() + " failed");
+            sender.sendMessage(new TranslationContainer("nukkit.command.gamemode.fail", target.getName()));
         } else {
             if (target.equals(sender)) {
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(gameMode)));
             } else {
                 target.sendMessage(new TranslationContainer("gameMode.changed", Server.getGamemodeString(gameMode)));
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", target.getName(), Server.getGamemodeString(gameMode)));
+                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", Server.getGamemodeString(gameMode), target.getName()));
             }
         }
 

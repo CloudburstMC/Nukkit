@@ -15,7 +15,7 @@ import cn.nukkit.utils.TextFormat;
 public class SayCommand extends VanillaCommand {
 
     public SayCommand(String name) {
-        super(name, "%nukkit.command.say.description", "%commands.say.usage");
+        super(name, "%nukkit.command.say.description", "%nukkit.command.say.usage");
         this.setPermission("nukkit.command.say");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{

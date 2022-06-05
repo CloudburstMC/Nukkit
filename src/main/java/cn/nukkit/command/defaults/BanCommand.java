@@ -15,7 +15,7 @@ import cn.nukkit.lang.TranslationContainer;
 public class BanCommand extends VanillaCommand {
 
     public BanCommand(String name) {
-        super(name, "%nukkit.command.ban.player.description", "%commands.ban.usage");
+        super(name, "%nukkit.command.ban.player.description", "%nukkit.command.ban.usage");
         this.setPermission("nukkit.command.ban.player");
         this.commandParameters.clear();
         this.commandParameters.put("default",
@@ -54,7 +54,7 @@ public class BanCommand extends VanillaCommand {
             player.kick(PlayerKickEvent.Reason.NAME_BANNED, (reason.length() > 0) ? "Banned by admin. Reason: " + reason : "Banned by admin");
         }
 
-        Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.ban.success", player != null ? player.getName() : name));
+        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.ban.success", player != null ? player.getName() : name));
 
         return true;
     }
