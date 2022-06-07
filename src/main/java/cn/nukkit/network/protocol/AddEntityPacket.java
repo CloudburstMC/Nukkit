@@ -134,6 +134,7 @@ public class AddEntityPacket extends DataPacket {
             .put(128, "minecraft:goat")
             .put(129, "minecraft:glow_squid")
             .put(130, "minecraft:axolotl")
+            .put(134, "minecraft:allay")
             .build();
 
     @Override
