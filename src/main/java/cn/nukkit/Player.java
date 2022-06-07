@@ -32,7 +32,6 @@ import cn.nukkit.event.server.DataPacketSendEvent;
 import cn.nukkit.form.handler.FormResponseHandler;
 import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
-import cn.nukkit.form.window.FormWindowModal;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.inventory.transaction.EnchantTransaction;
