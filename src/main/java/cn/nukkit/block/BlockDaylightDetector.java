@@ -38,6 +38,16 @@ public class BlockDaylightDetector extends BlockTransparent {
         return new ItemBlock(this, 0);
     }
 
+    @Override
+    public boolean isSolid() {
+        return false;
+    }
+
+    @Override
+    public double getMaxY() {
+        return this.y + 0.625;
+    }
+
     //This function is a suggestion that can be renamed or deleted
     protected boolean invertDetect() {
         return false;

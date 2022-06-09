@@ -47,6 +47,10 @@ public class KillCommand extends VanillaCommand {
             }
             Player player = sender.getServer().getPlayer(args[0]);
             if (player != null) {
+                if (player.isCreative() || player.isSpectator()) {
+                    sender.sendMessage(TextFormat.RED + "No targets matched selector");
+                    return true;
+                }
                 EntityDamageEvent ev = new EntityDamageEvent(player, DamageCause.SUICIDE, 1000);
                 sender.getServer().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {
@@ -60,7 +64,13 @@ public class KillCommand extends VanillaCommand {
                 for (Level level : Server.getInstance().getLevels().values()) {
                     for (Entity entity : level.getEntities()) {
                         if (!(entity instanceof Player)) {
+                            EntityDamageEvent ev = new EntityDamageEvent(entity, DamageCause.SUICIDE, 1000);
+                            sender.getServer().getPluginManager().callEvent(ev);
+                            if (ev.isCancelled()) {
+                                continue;
+                            }
                             joiner.add(entity.getName());
+                            entity.setLastDamageCause(ev);
                             entity.close();
                         }
                     }
@@ -76,13 +86,18 @@ public class KillCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer("%commands.generic.ingame"));
                     return true;
                 }
-                EntityDamageEvent ev = new EntityDamageEvent((Player) sender, DamageCause.SUICIDE, 1000);
+                Player p = (Player) sender;
+                if (p.isCreative() || p.isSpectator()) {
+                    sender.sendMessage(TextFormat.RED + "No targets matched selector");
+                    return true;
+                }
+                EntityDamageEvent ev = new EntityDamageEvent(p, DamageCause.SUICIDE, 1000);
                 sender.getServer().getPluginManager().callEvent(ev);
                 if (ev.isCancelled()) {
                     return true;
                 }
-                ((Player) sender).setLastDamageCause(ev);
-                ((Player) sender).setHealth(0);
+                p.setLastDamageCause(ev);
+                p.setHealth(0);
                 sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
             } else if (args[0].equals("@a")) {
                 if (!sender.hasPermission("nukkit.command.kill.other")) {
@@ -92,6 +107,16 @@ public class KillCommand extends VanillaCommand {
                 for (Level level : Server.getInstance().getLevels().values()) {
                     for (Entity entity : level.getEntities()) {
                         if (entity instanceof Player) {
+                            Player p = (Player) entity;
+                            if (p.isCreative() || p.isSpectator()) {
+                                continue;
+                            }
+                            EntityDamageEvent ev = new EntityDamageEvent(entity, DamageCause.SUICIDE, 1000);
+                            sender.getServer().getPluginManager().callEvent(ev);
+                            if (ev.isCancelled()) {
+                                continue;
+                            }
+                            entity.setLastDamageCause(ev);
                             entity.setHealth(0);
                         }
                     }
@@ -107,13 +132,18 @@ public class KillCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                 return true;
             }
-            EntityDamageEvent ev = new EntityDamageEvent((Player) sender, DamageCause.SUICIDE, 1000);
+            Player player = (Player) sender;
+            if (player.isCreative() || player.isSpectator()) {
+                sender.sendMessage(TextFormat.RED + "No targets matched selector");
+                return true;
+            }
+            EntityDamageEvent ev = new EntityDamageEvent(player, DamageCause.SUICIDE, 1000);
             sender.getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return true;
             }
-            ((Player) sender).setLastDamageCause(ev);
-            ((Player) sender).setHealth(0);
+            player.setLastDamageCause(ev);
+            player.setHealth(0);
             sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
         } else {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
