@@ -179,6 +179,7 @@ public interface ProtocolInfo {
     byte ITEM_COMPONENT_PACKET = (byte) 0xa2;
     byte FILTER_TEXT_PACKET = (byte) 0xa3;
     byte CLIENTBOUND_DEBUG_RENDERER_PACKET = (byte) 0xa4;
+    byte TOAST_REQUEST_PACKET = (byte) 0xba;
 
     byte BATCH_PACKET = (byte) 0xff;
 }
