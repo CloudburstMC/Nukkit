@@ -5,8 +5,8 @@ import lombok.ToString;
 @ToString
 public class ToastRequestPacket extends DataPacket {
 
-    public String mTitle = "";
-    public String mContent = "";
+    public String title = "";
+    public String content = "";
 
     @Override
     public byte pid() {
@@ -15,14 +15,14 @@ public class ToastRequestPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.mTitle = this.getString();
-        this.mContent = this.getString();
+        this.title = this.getString();
+        this.content = this.getString();
     }
 
     @Override
     public void encode() {
         this.reset();
-        this.putString(this.mTitle);
-        this.putString(this.mContent);
+        this.putString(this.title);
+        this.putString(this.content);
     }
 }

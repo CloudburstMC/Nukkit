@@ -3721,8 +3721,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendToast(String title, String content) {
         ToastRequestPacket pk = new ToastRequestPacket();
-        pk.mTitle = title;
-        pk.mContent = content;
+        pk.title = title;
+        pk.content = content;
         this.dataPacket(pk);
     }
 
