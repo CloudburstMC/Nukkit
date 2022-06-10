@@ -63,7 +63,7 @@ public class NetworkChunkSerializer {
 
         // Overworld has negative coordinates, but we currently do not support them
         int writtenSections = subChunkCount;
-        if (dimensionData.getDimensionId() == Level.DIMENSION_OVERWORLD && subChunkCount < maxDimensionSections) {
+        if (/*dimensionData.getDimensionId() == Level.DIMENSION_OVERWORLD && subChunkCount < maxDimensionSections*/true) { //TODO: change client dimension
             stream.put(negativeSubChunks);
             writtenSections += EXTENDED_NEGATIVE_SUB_CHUNKS;
         }
