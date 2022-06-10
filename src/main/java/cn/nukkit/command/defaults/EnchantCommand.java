@@ -155,6 +155,8 @@ public class EnchantCommand extends VanillaCommand {
                 return 35;
             case "soul_speed":
                 return 36;
+            case "swift_sneak":
+                return 37;
             default:
                 return Integer.parseInt(value);
         }

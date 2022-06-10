@@ -74,6 +74,7 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_CROSSBOW_PIERCING = 34;
     public static final int ID_CROSSBOW_QUICK_CHARGE = 35;
     public static final int ID_SOUL_SPEED = 36;
+    public static final int ID_SWIFT_SNEAK = 37;
 
     public static void init() {
         enchantments = new Enchantment[256];
@@ -104,17 +105,18 @@ public abstract class Enchantment implements Cloneable {
         enchantments[ID_FORTUNE_FISHING] = new EnchantmentLootFishing();
         enchantments[ID_LURE] = new EnchantmentLure();
         enchantments[ID_FROST_WALKER] = new EnchantmentFrostWalker();
-        enchantments[ID_MENDING]  = new EnchantmentMending();
-        enchantments[ID_BINDING_CURSE]  = new EnchantmentBindingCurse();
-        enchantments[ID_VANISHING_CURSE]  = new EnchantmentVanishingCurse();
-        enchantments[ID_TRIDENT_IMPALING]  = new EnchantmentTridentImpaling();
-        enchantments[ID_TRIDENT_RIPTIDE]  = new EnchantmentTridentRiptide();
-        enchantments[ID_TRIDENT_LOYALTY]  = new EnchantmentTridentLoyalty();
-        enchantments[ID_TRIDENT_CHANNELING]  = new EnchantmentTridentChanneling();
-        enchantments[ID_CROSSBOW_MULTISHOT]  = new EnchantmentCrossbowMultishot();
-        enchantments[ID_CROSSBOW_PIERCING]  = new EnchantmentCrossbowPiercing();
-        enchantments[ID_CROSSBOW_QUICK_CHARGE]  = new EnchantmentCrossbowQuickCharge();
-        enchantments[ID_SOUL_SPEED]  = new EnchantmentSoulSpeed();
+        enchantments[ID_MENDING] = new EnchantmentMending();
+        enchantments[ID_BINDING_CURSE] = new EnchantmentBindingCurse();
+        enchantments[ID_VANISHING_CURSE] = new EnchantmentVanishingCurse();
+        enchantments[ID_TRIDENT_IMPALING] = new EnchantmentTridentImpaling();
+        enchantments[ID_TRIDENT_RIPTIDE] = new EnchantmentTridentRiptide();
+        enchantments[ID_TRIDENT_LOYALTY] = new EnchantmentTridentLoyalty();
+        enchantments[ID_TRIDENT_CHANNELING] = new EnchantmentTridentChanneling();
+        enchantments[ID_CROSSBOW_MULTISHOT] = new EnchantmentCrossbowMultishot();
+        enchantments[ID_CROSSBOW_PIERCING] = new EnchantmentCrossbowPiercing();
+        enchantments[ID_CROSSBOW_QUICK_CHARGE] = new EnchantmentCrossbowQuickCharge();
+        enchantments[ID_SOUL_SPEED] = new EnchantmentSoulSpeed();
+        enchantments[ID_SWIFT_SNEAK] = new EnchantmentSwiftSneak();
     }
 
     public static Enchantment get(int id) {
