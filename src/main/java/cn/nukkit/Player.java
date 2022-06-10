@@ -1239,6 +1239,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.setAdventureSettings(ev.getNewAdventureSettings());
 
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, !this.isSpectator());
+
         if (this.isSpectator()) {
             this.getAdventureSettings().set(Type.FLYING, true);
             this.teleport(this.temporalVector.setComponents(this.x, this.y + 0.1, this.z));
