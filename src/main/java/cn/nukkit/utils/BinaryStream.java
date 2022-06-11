@@ -431,7 +431,7 @@ public class BinaryStream {
             }
 
             if (compoundTag != null && compoundTag.getAllTags().size() > 0) {
-                if (compoundTag.contains("Damage")) {
+                if (compoundTag.contains("Damage") && !legacyEntry.isHasDamage()) {
                     damage = compoundTag.getInt("Damage");
                     compoundTag.remove("Damage");
                 }
@@ -527,7 +527,7 @@ public class BinaryStream {
 
         ByteBuf userDataBuf = ByteBufAllocator.DEFAULT.ioBuffer();
         try (LittleEndianByteBufOutputStream stream = new LittleEndianByteBufOutputStream(userDataBuf)) {
-            if (!instanceItem && isDurable) {
+            if (!instanceItem && isDurable && !runtimeEntry.isHasDamage()) {
                 byte[] nbt = item.getCompoundTag();
                 CompoundTag tag;
                 if (nbt == null || nbt.length == 0) {
