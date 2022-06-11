@@ -7,12 +7,14 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteOrder;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.zip.GZIPInputStream;
 
@@ -36,16 +38,33 @@ public class GlobalBlockPalette {
             throw new AssertionError("Unable to load block palette", e);
         }
 
+        List<CompoundTag> stateOverloads = new ObjectArrayList<>();
         for (CompoundTag state : tag.getAll()) {
-            int blockId = state.getInt("id");
-            int meta = state.getShort("data");
-            int runtimeId = state.getInt("runtimeId");
-            int legacyId = blockId << 6 | meta;
-            legacyToRuntimeId.put(legacyId, runtimeId);
-            if (!runtimeIdToLegacy.containsKey(runtimeId)) {
-                runtimeIdToLegacy.put(runtimeId, legacyId);
+            if (!registerBlockState(state, false)) {
+                stateOverloads.add(state);
             }
         }
+
+        for (CompoundTag state : stateOverloads) {
+            log.debug("Registering block palette overload: {}", state.getString("name"));
+            registerBlockState(state, true);
+        }
+    }
+
+    private static boolean registerBlockState(CompoundTag state, boolean force) {
+        int blockId = state.getInt("id");
+        int meta = state.getShort("data");
+        int runtimeId = state.getInt("runtimeId");
+        boolean stateOverload = state.getBoolean("stateOverload");
+
+        if (stateOverload && !force) {
+            return false;
+        }
+
+        int legacyId = blockId << 6 | meta;
+        legacyToRuntimeId.put(legacyId, runtimeId);
+        runtimeIdToLegacy.putIfAbsent(runtimeId, legacyId);
+        return true;
     }
 
     public static int getOrCreateRuntimeId(int id, int meta) {
