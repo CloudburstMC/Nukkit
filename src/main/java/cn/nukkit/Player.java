@@ -1376,25 +1376,23 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     protected void checkBlockCollision() {
+        if (this.isSpectator()) {
+            return;
+        }
+
         boolean portal = false;
 
         for (Block block : this.getCollisionBlocks()) {
             if (block.getId() == Block.NETHER_PORTAL) {
                 portal = true;
-                if (this.isSpectator()) {
-                    break;
-                }
                 continue;
             }
 
-            if (this.isSpectator()) {
-                continue;
-            }
             block.onEntityCollide(this);
         }
 
         if (portal) {
-            if ((this.isCreative() || this.isSpectator()) && this.inPortalTicks < 80) {
+            if (this.isCreative() && this.inPortalTicks < 80) {
                 this.inPortalTicks = 80;
             } else {
                 this.inPortalTicks++;
