@@ -1377,6 +1377,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     protected void checkBlockCollision() {
         if (this.isSpectator()) {
+            if (this.blocksAround == null) {
+                this.blocksAround = new ArrayList<>();
+            }
+            if (this.collisionBlocks == null) {
+                this.collisionBlocks = new ArrayList<>();
+            }
             return;
         }
 
