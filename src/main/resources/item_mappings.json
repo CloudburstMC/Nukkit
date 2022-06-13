@@ -15,7 +15,8 @@
     "2": "minecraft:birch_boat",
     "3": "minecraft:jungle_boat",
     "4": "minecraft:acacia_boat",
-    "5": "minecraft:dark_oak_boat"
+    "5": "minecraft:dark_oak_boat",
+    "6": "minecraft:mangrove_boat"
   },
   "minecraft:bucket": {
     "0": "minecraft:bucket",
@@ -128,9 +129,9 @@
     "128": "minecraft:goat_spawn_egg",
     "129": "minecraft:glow_squid_spawn_egg",
     "130": "minecraft:axolotl_spawn_egg",
+    "131": "minecraft:warden_spawn_egg",
     "132": "minecraft:frog_spawn_egg",
     "133": "minecraft:tadpole_spawn_egg",
-    "134": "minecraft:allay_spawn_egg",
-    "135": "minecraft:firefly_spawn_egg"
+    "134": "minecraft:allay_spawn_egg"
   }
 }
