@@ -64,19 +64,24 @@ public class AdventureSettings implements Cloneable {
 
     public enum Type {
         WORLD_IMMUTABLE(AdventureSettingsPacket.WORLD_IMMUTABLE, false),
+        NO_PVM(AdventureSettingsPacket.NO_PVM, false),
+        NO_MVP(AdventureSettingsPacket.NO_MVP, false),
+        SHOW_NAME_TAGS(AdventureSettingsPacket.SHOW_NAME_TAGS, false),
         AUTO_JUMP(AdventureSettingsPacket.AUTO_JUMP, true),
         ALLOW_FLIGHT(AdventureSettingsPacket.ALLOW_FLIGHT, false),
         NO_CLIP(AdventureSettingsPacket.NO_CLIP, false),
-        WORLD_BUILDER(AdventureSettingsPacket.WORLD_BUILDER, true),
+        WORLD_BUILDER(AdventureSettingsPacket.WORLD_BUILDER, false),
         FLYING(AdventureSettingsPacket.FLYING, false),
         MUTED(AdventureSettingsPacket.MUTED, false),
-        BUILD_AND_MINE(AdventureSettingsPacket.BUILD_AND_MINE, true),
+        MINE(AdventureSettingsPacket.MINE, true),
         DOORS_AND_SWITCHED(AdventureSettingsPacket.DOORS_AND_SWITCHES, true),
         OPEN_CONTAINERS(AdventureSettingsPacket.OPEN_CONTAINERS, true),
         ATTACK_PLAYERS(AdventureSettingsPacket.ATTACK_PLAYERS, true),
         ATTACK_MOBS(AdventureSettingsPacket.ATTACK_MOBS, true),
         OPERATOR(AdventureSettingsPacket.OPERATOR, false),
-        TELEPORT(AdventureSettingsPacket.TELEPORT, false);
+        TELEPORT(AdventureSettingsPacket.TELEPORT, false),
+        BUILD(AdventureSettingsPacket.BUILD, true),
+        DEFAULT_LEVEL_PERMISSIONS(AdventureSettingsPacket.DEFAULT_LEVEL_PERMISSIONS, false);
 
         private final int id;
         private final boolean defaultValue;
