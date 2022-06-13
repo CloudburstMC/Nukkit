@@ -37,8 +37,8 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_PORTAL = 1032;
 
     public static final int EVENT_SOUND_ITEM_FRAME_ITEM_ADDED = 1040;
-    public static final int EVENT_SOUND_ITEM_FRAME_PLACED = 1041;
-    public static final int EVENT_SOUND_ITEM_FRAME_REMOVED = 1042;
+    public static final int EVENT_SOUND_ITEM_FRAME_REMOVED = 1041;
+    public static final int EVENT_SOUND_ITEM_FRAME_PLACED = 1042;
     public static final int EVENT_SOUND_ITEM_FRAME_ITEM_REMOVED = 1043;
     public static final int EVENT_SOUND_ITEM_FRAME_ITEM_ROTATED = 1044;
 
@@ -85,6 +85,9 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_PARTICLE_TURTLE_EGG = 2034;
     public static final int EVENT_PARTICLE_SCULK_SHRIEK = 2035;
     public static final int EVENT_PARTICLE_SCULK_CATALYST_BLOOM = 2036;
+    public static final int EVENT_PARTICLE_SCULK_CHARGE = 2037;
+    public static final int EVENT_PARTICLE_SCULK_CHARGE_POP = 2038;
+    public static final int EVENT_PARTICLE_SONIC_EXPLOSION = 2039;
 
     public static final int EVENT_SOUND_BUTTON_CLICK = 3500;
     public static final int EVENT_SOUND_EXPLODE = 3501;
@@ -130,6 +133,7 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SET_DATA = 4000;
 
     public static final int EVENT_PLAYERS_SLEEPING = 9800;
+    public static final int EVENT_SLEEPING_PLAYERS = 9801;
 
     public static final int EVENT_JUMP_PREVENTED = 9810;
 

@@ -30,16 +30,19 @@ public class AvailableCommandsPacket extends DataPacket {
     public static final int ARG_TYPE_VALUE = 4;
     public static final int ARG_TYPE_WILDCARD_INT = 5;
     public static final int ARG_TYPE_OPERATOR = 6;
+    public static final int ARG_TYPE_COMPARE_OPERATOR = 7;
     public static final int ARG_TYPE_TARGET = 8;
     public static final int ARG_TYPE_WILDCARD_TARGET = 10;
     public static final int ARG_TYPE_FILE_PATH = 17;
-    public static final int ARG_TYPE_EQUIPMENT_SLOT = 37;
+    public static final int ARG_TYPE_FULL_INTEGER_RANGE = 23;
+    public static final int ARG_TYPE_EQUIPMENT_SLOT = 38;
     public static final int ARG_TYPE_STRING = 39;
     public static final int ARG_TYPE_BLOCK_POSITION = 47;
     public static final int ARG_TYPE_POSITION = 48;
     public static final int ARG_TYPE_MESSAGE = 51;
     public static final int ARG_TYPE_RAWTEXT = 53;
     public static final int ARG_TYPE_JSON = 57;
+    public static final int ARG_TYPE_BLOCK_STATES = 67;
     public static final int ARG_TYPE_COMMAND = 70;
 
     public Map<String, CommandDataVersions> commands;

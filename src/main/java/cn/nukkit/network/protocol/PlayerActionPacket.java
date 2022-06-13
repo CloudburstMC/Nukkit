@@ -24,7 +24,7 @@ public class PlayerActionPacket extends DataPacket {
     public static final int ACTION_STOP_SPRINT = 10;
     public static final int ACTION_START_SNEAK = 11;
     public static final int ACTION_STOP_SNEAK = 12;
-    public static final int ACTION_DIMENSION_CHANGE_REQUEST = 13; //sent when dying in different dimension
+    public static final int ACTION_CREATIVE_PLAYER_DESTROY_BLOCK = 13;
     public static final int ACTION_DIMENSION_CHANGE_ACK = 14; //sent when spawning in a different dimension to tell the server we spawned
     public static final int ACTION_START_GLIDE = 15;
     public static final int ACTION_STOP_GLIDE = 16;
@@ -35,6 +35,11 @@ public class PlayerActionPacket extends DataPacket {
     public static final int ACTION_STOP_SWIMMING = 22;
     public static final int ACTION_START_SPIN_ATTACK = 23;
     public static final int ACTION_STOP_SPIN_ATTACK = 24;
+    public static final int ACTION_INTERACT_BLOCK = 25;
+    public static final int ACTION_PREDICT_DESTROY_BLOCK = 26;
+    public static final int ACTION_CONTINUE_DESTROY_BLOCK = 27;
+    public static final int ACTION_START_ITEM_USE_ON = 28;
+    public static final int ACTION_STOP_ITEM_USE_ON = 29;
 
     public long entityId;
     public int action;
@@ -43,7 +48,6 @@ public class PlayerActionPacket extends DataPacket {
     public int z;
     public BlockVector3 resultPosition;
     public int face;
-
 
     @Override
     public void decode() {
