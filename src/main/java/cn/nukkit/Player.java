@@ -226,7 +226,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private int hash;
 
-    private String buttonText = "Button";
+    private String buttonText = "";
 
     protected boolean enableClientCommand = true;
 
@@ -720,6 +720,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void setButtonText(String text) {
+        if (this.buttonText.equals(text)) {
+            return;
+        }
         this.buttonText = text;
         this.setDataProperty(new StringEntityData(Entity.DATA_INTERACTIVE_TAG, this.buttonText));
     }
@@ -1750,10 +1753,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.checkTeleportPosition();
 
-        if (currentTick % 10 == 0) {
-            this.checkInteractNearby();
-        }
-
         if (this.spawned && this.dummyBossBars.size() > 0 && currentTick % 100 == 0) {
             this.dummyBossBars.values().forEach(DummyBossBar::updateBossEntityPosition);
         }
@@ -1766,7 +1765,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (canInteract(this, interactDistance)) {
             if (getEntityPlayerLookingAt(interactDistance) != null) {
                 EntityInteractable onInteract = getEntityPlayerLookingAt(interactDistance);
-                setButtonText(onInteract.getInteractButtonText());
+                String buttonText = onInteract.getInteractButtonText(this);
+                if (buttonText == null) {
+                    buttonText = "";
+                }
+                setButtonText(buttonText);
             } else {
                 setButtonText("");
             }
@@ -2680,12 +2683,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    this.craftingType = CRAFTING_SMALL;
-                    //this.resetCraftingGridType();
-
                     InteractPacket interactPacket = (InteractPacket) packet;
 
-                    Entity targetEntity = this.level.getEntity(interactPacket.target);
+                    if (interactPacket.target == 0 && interactPacket.action == InteractPacket.ACTION_MOUSEOVER) {
+                        this.setButtonText("");
+                        break;
+                    }
+
+                    Entity targetEntity = interactPacket.target == this.getId() ? this : this.level.getEntity(interactPacket.target);
 
                     if (targetEntity == null || !this.isAlive() || !targetEntity.isAlive()) {
                         break;
@@ -2697,24 +2702,30 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    item = this.inventory.getItemInHand();
-
                     switch (interactPacket.action) {
                         case InteractPacket.ACTION_MOUSEOVER:
-                            if (interactPacket.target == 0) {
-                                break packetswitch;
+                            String buttonText = "";
+                            if (targetEntity instanceof EntityInteractable) {
+                                buttonText = ((EntityInteractable) targetEntity).getInteractButtonText(this);
+                                if (buttonText == null) {
+                                    buttonText = "";
+                                }
                             }
+                            this.setButtonText(buttonText);
+
                             this.getServer().getPluginManager().callEvent(new PlayerMouseOverEntityEvent(this, targetEntity));
                             break;
                         case InteractPacket.ACTION_VEHICLE_EXIT:
-                            if (!(targetEntity instanceof EntityRideable) || this.riding == null) {
+                            if (!(targetEntity instanceof EntityRideable) || this.riding != targetEntity) {
                                 break;
                             }
 
                             ((EntityRideable) riding).dismountEntity(this);
                             break;
                         case InteractPacket.ACTION_OPEN_INVENTORY:
-                            if (targetEntity.getId() != this.getId()) break;
+                            if (targetEntity != this) {
+                                break;
+                            }
                             if (!this.inventoryOpen) {
                                 this.inventory.open(this);
                                 this.inventoryOpen = true;

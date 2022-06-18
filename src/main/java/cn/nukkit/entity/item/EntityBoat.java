@@ -194,7 +194,7 @@ public class EntityBoat extends EntityVehicle {
             //TODO: lily pad collision
             this.updateMovement();
 
-            if (this.passengers.size() < 2) {
+            if (!this.isFull()) {
                 for (Entity entity : this.level.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this)) {
                     if (entity.riding != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal || isPassenger(entity)) {
                         continue;
@@ -202,7 +202,7 @@ public class EntityBoat extends EntityVehicle {
 
                     this.mountEntity(entity);
 
-                    if (this.passengers.size() >= 2) {
+                    if (this.isFull()) {
                         break;
                     }
                 }
@@ -345,7 +345,7 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        if (this.passengers.size() >= 2) {
+        if (this.isFull()) {
             return false;
         }
 
@@ -423,5 +423,14 @@ public class EntityBoat extends EntityVehicle {
 
     public void onInput(double x, double y, double z, double yaw) {
         this.setPositionAndRotation(this.temporalVector.setComponents(x, y - this.getBaseOffset(), z), yaw % 360, 0);
+    }
+
+    public boolean isFull() {
+        return this.passengers.size() >= 2;
+    }
+
+    @Override
+    public String getInteractButtonText() {
+        return !this.isFull() ? "action.interact.ride.boat" : "";
     }
 }
