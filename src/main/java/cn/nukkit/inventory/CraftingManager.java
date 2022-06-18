@@ -245,7 +245,7 @@ public class CraftingManager {
     }
 
     private static int getFullItemHash(Item item) {
-        return 31 * getItemHash(item) + item.getCount();
+        return (getItemHash(item) << 6) | (item.getCount() & 0x3f);
     }
 
     public void registerFurnaceRecipe(FurnaceRecipe recipe) {
@@ -258,7 +258,7 @@ public class CraftingManager {
     }
 
     private static int getItemHash(int id, int meta) {
-        return (id << 4) | (meta & 0xf);
+        return (id << 12) | (meta & 0xfff);
     }
 
     public void registerShapedRecipe(ShapedRecipe recipe) {
@@ -292,11 +292,11 @@ public class CraftingManager {
     }
 
     private static int getPotionHash(int ingredientId, int potionType) {
-        return (ingredientId << 6) | potionType;
+        return (ingredientId << 15) | potionType;
     }
 
     private static int getContainerHash(int ingredientId, int containerId) {
-        return (ingredientId << 9) | containerId;
+        return (ingredientId << 15) | containerId;
     }
 
     public void registerBrewingRecipe(BrewingRecipe recipe) {
