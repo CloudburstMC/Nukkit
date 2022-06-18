@@ -46,12 +46,15 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
 
     @Override
     public void dropItem() {
-        super.dropItem();
-
-        this.level.dropItem(this, Item.get(Item.HOPPER));
+        this.level.dropItem(this, Item.get(Item.HOPPER_MINECART));
         for (Item item : this.inventory.getContents().values()) {
             this.level.dropItem(this, item);
         }
+    }
+
+    @Override
+    public void kill() {
+        super.kill();
         this.inventory.clearAll();
     }
 
