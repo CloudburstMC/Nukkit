@@ -241,6 +241,12 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     }
 
     public void dropItem() {
+        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) this.lastDamageCause).getDamager();
+            if (damager instanceof Player && ((Player) damager).isCreative()) {
+                return;
+            }
+        }
         level.dropItem(this, new ItemMinecart());
     }
 
@@ -248,12 +254,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     public void kill() {
         super.kill();
 
-        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
-            Entity damager = ((EntityDamageByEntityEvent) this.lastDamageCause).getDamager();
-            if (damager instanceof Player && ((Player) damager).isCreative()) {
-                return;
-            }
-        }
         if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
             dropItem();
         }
