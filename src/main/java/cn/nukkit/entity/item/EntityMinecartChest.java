@@ -108,4 +108,9 @@ public class EntityMinecartChest extends EntityMinecartAbstract implements Inven
             }
         }
     }
+
+    @Override
+    public String getInteractButtonText() {
+        return "action.interact.opencontainer";
+    }
 }
