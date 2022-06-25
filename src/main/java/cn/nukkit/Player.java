@@ -2734,10 +2734,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     break;
                 case ProtocolInfo.BLOCK_PICK_REQUEST_PACKET:
-                    if (!this.isCreative()) {
-                        break;
-                    }
-
                     BlockPickRequestPacket pickRequestPacket = (BlockPickRequestPacket) packet;
                     Block block = this.level.getBlock(pickRequestPacket.x, pickRequestPacket.y, pickRequestPacket.z, false);
                     if (block.distanceSquared(this) > 1000) {
@@ -2758,19 +2754,23 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     PlayerBlockPickEvent pickEvent = new PlayerBlockPickEvent(this, block, item);
+                    if (this.isSpectator()) {
+                        pickEvent.setCancelled();
+                    }
                     this.server.getPluginManager().callEvent(pickEvent);
                     if (!pickEvent.isCancelled()) {
-                        this.onCreativePickItem(pickEvent.getItem());
+                        this.pickItem(pickEvent.getItem());
                     }
                     break;
                 case ProtocolInfo.ENTITY_PICK_REQUEST_PACKET:
-                    if (!this.isCreative()) {
-                        break;
-                    }
-
                     EntityPickRequestPacket entityPickRequestPacket = (EntityPickRequestPacket) packet;
                     targetEntity = this.level.getEntity(entityPickRequestPacket.entityId);
                     if (!(targetEntity instanceof EntityPickable)) {
+                        break;
+                    }
+
+                    if (this.distanceSquared(targetEntity) > 1000) {
+                        this.getServer().getLogger().debug(this.getName() + ": Entity pick request for a entity too far away");
                         break;
                     }
 
@@ -2780,12 +2780,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     PlayerEntityPickEvent entityPickEvent = new PlayerEntityPickEvent(this, targetEntity, item);
+                    if (this.isSpectator()) {
+                        entityPickEvent.setCancelled();
+                    }
                     this.server.getPluginManager().callEvent(entityPickEvent);
                     if (entityPickEvent.isCancelled()) {
                         break;
                     }
 
-                    this.onCreativePickItem(entityPickEvent.getItem());
+                    this.pickItem(entityPickEvent.getItem());
                     break;
                 case ProtocolInfo.ANIMATE_PACKET:
                     if (!this.spawned || !this.isAlive()) {
@@ -5303,7 +5306,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.timeSinceRest = timeSinceRest;
     }
 
-    protected void onCreativePickItem(Item item) {
+    protected void pickItem(Item item) {
         if (item == null || item.isNull()) {
             return;
         }
@@ -5323,6 +5326,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             break;
         }
 
+        if (existingSlot == -1 && !this.isCreative()) {
+            return;
+        }
+
         for (int slot = 0; slot < this.inventory.getHotbarSize(); slot++) {
             if (!this.inventory.getItem(slot).isNull()) {
                 continue;
@@ -5339,7 +5346,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         Item itemInHand = this.inventory.getItemInHand();
-        if (existingSlot > -1) {
+        if (existingSlot != -1) {
             this.inventory.setItemInHand(this.inventory.getItem(existingSlot));
             this.inventory.setItem(existingSlot, itemInHand);
             return;
