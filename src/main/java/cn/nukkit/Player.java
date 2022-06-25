@@ -2734,6 +2734,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     break;
                 case ProtocolInfo.BLOCK_PICK_REQUEST_PACKET:
+                    if (!this.isCreative()) {
+                        break;
+                    }
+
                     BlockPickRequestPacket pickRequestPacket = (BlockPickRequestPacket) packet;
                     Block block = this.level.getBlock(pickRequestPacket.x, pickRequestPacket.y, pickRequestPacket.z, false);
                     if (block.distanceSquared(this) > 1000) {
@@ -2754,60 +2758,34 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     PlayerBlockPickEvent pickEvent = new PlayerBlockPickEvent(this, block, item);
-                    if (this.isSpectator()) {
-                        log.debug("Got block-pick request from " + this.getName() + " when in spectator mode");
-                        pickEvent.setCancelled();
-                    }
-
                     this.server.getPluginManager().callEvent(pickEvent);
-
                     if (!pickEvent.isCancelled()) {
-                        boolean itemExists = false;
-                        int itemSlot = -1;
-                        for (int slot = 0; slot < this.inventory.getSize(); slot++) {
-                            if (this.inventory.getItem(slot).equals(pickEvent.getItem())) {
-                                if (slot < this.inventory.getHotbarSize()) {
-                                    this.inventory.setHeldItemSlot(slot);
-                                } else {
-                                    itemSlot = slot;
-                                }
-                                itemExists = true;
-                                break;
-                            }
-                        }
-
-                        for (int slot = 0; slot < this.inventory.getHotbarSize(); slot++) {
-                            if (this.inventory.getItem(slot).isNull()) {
-                                if (!itemExists && this.isCreative()) {
-                                    this.inventory.setHeldItemSlot(slot);
-                                    this.inventory.setItemInHand(pickEvent.getItem());
-                                    break packetswitch;
-                                } else if (itemSlot > -1) {
-                                    this.inventory.setHeldItemSlot(slot);
-                                    this.inventory.setItemInHand(this.inventory.getItem(itemSlot));
-                                    this.inventory.clear(itemSlot, true);
-                                    break packetswitch;
-                                }
-                            }
-                        }
-
-                        if (!itemExists && this.isCreative()) {
-                            Item itemInHand = this.inventory.getItemInHand();
-                            this.inventory.setItemInHand(pickEvent.getItem());
-                            if (!this.inventory.isFull()) {
-                                for (int slot = 0; slot < this.inventory.getSize(); slot++) {
-                                    if (this.inventory.getItem(slot).isNull()) {
-                                        this.inventory.setItem(slot, itemInHand);
-                                        break;
-                                    }
-                                }
-                            }
-                        } else if (itemSlot > -1) {
-                            Item itemInHand = this.inventory.getItemInHand();
-                            this.inventory.setItemInHand(this.inventory.getItem(itemSlot));
-                            this.inventory.setItem(itemSlot, itemInHand);
-                        }
+                        this.onCreativePickItem(pickEvent.getItem());
                     }
+                    break;
+                case ProtocolInfo.ENTITY_PICK_REQUEST_PACKET:
+                    if (!this.isCreative()) {
+                        break;
+                    }
+
+                    EntityPickRequestPacket entityPickRequestPacket = (EntityPickRequestPacket) packet;
+                    targetEntity = this.level.getEntity(entityPickRequestPacket.entityId);
+                    if (!(targetEntity instanceof EntityPickable)) {
+                        break;
+                    }
+
+                    item = ((EntityPickable) targetEntity).toItem();
+                    if (item == null || item.isNull()) {
+                        break;
+                    }
+
+                    PlayerEntityPickEvent entityPickEvent = new PlayerEntityPickEvent(this, targetEntity, item);
+                    this.server.getPluginManager().callEvent(entityPickEvent);
+                    if (entityPickEvent.isCancelled()) {
+                        break;
+                    }
+
+                    this.onCreativePickItem(entityPickEvent.getItem());
                     break;
                 case ProtocolInfo.ANIMATE_PACKET:
                     if (!this.spawned || !this.isAlive()) {
@@ -5323,5 +5301,62 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void setTimeSinceRest(int timeSinceRest) {
         this.timeSinceRest = timeSinceRest;
+    }
+
+    protected void onCreativePickItem(Item item) {
+        if (item == null || item.isNull()) {
+            return;
+        }
+
+        int existingSlot = -1;
+        for (int slot = 0; slot < this.inventory.getSize(); slot++) {
+            if (!this.inventory.getItem(slot).equals(item)) {
+                continue;
+            }
+
+            if (slot < this.inventory.getHotbarSize()) {
+                this.inventory.setHeldItemSlot(slot);
+                return;
+            }
+
+            existingSlot = slot;
+            break;
+        }
+
+        for (int slot = 0; slot < this.inventory.getHotbarSize(); slot++) {
+            if (!this.inventory.getItem(slot).isNull()) {
+                continue;
+            }
+
+            this.inventory.setHeldItemSlot(slot);
+            if (existingSlot == -1) {
+                this.inventory.setItemInHand(item);
+            } else {
+                this.inventory.setItemInHand(this.inventory.getItem(existingSlot));
+                this.inventory.clear(existingSlot, true);
+            }
+            return;
+        }
+
+        Item itemInHand = this.inventory.getItemInHand();
+        if (existingSlot > -1) {
+            this.inventory.setItemInHand(this.inventory.getItem(existingSlot));
+            this.inventory.setItem(existingSlot, itemInHand);
+            return;
+        }
+
+        this.inventory.setItemInHand(item);
+        if (this.inventory.isFull()) {
+            return;
+        }
+
+        for (int slot = 0; slot < this.inventory.getSize(); slot++) {
+            if (!this.inventory.getItem(slot).isNull()) {
+                continue;
+            }
+
+            this.inventory.setItem(slot, itemInHand);
+            break;
+        }
     }
 }

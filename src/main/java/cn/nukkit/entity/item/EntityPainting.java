@@ -3,8 +3,10 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHanging;
+import cn.nukkit.entity.EntityPickable;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemPainting;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
@@ -19,7 +21,7 @@ import java.util.Map;
  * author: MagicDroidX
  * Nukkit Project
  */
-public class EntityPainting extends EntityHanging {
+public class EntityPainting extends EntityHanging implements EntityPickable {
 
     public static final int NETWORK_ID = 83;
 
@@ -86,6 +88,11 @@ public class EntityPainting extends EntityHanging {
 
     public Motive getMotive() {
         return Motive.BY_NAME.get(namedTag.getString("Motive"));
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(Item.PAINTING);
     }
 
     public enum Motive {

@@ -5,6 +5,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
+import cn.nukkit.entity.EntityPickable;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
@@ -24,7 +25,7 @@ import java.util.concurrent.ThreadLocalRandom;
  * <p>
  * Nukkit Project.
  */
-public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityExplosive {
+public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityExplosive, EntityPickable {
 
     public static final int NETWORK_ID = 97;
     private int fuse;
@@ -154,6 +155,11 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
         }
 
         return interact;
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(Item.MINECART_WITH_TNT);
     }
 
     @Override

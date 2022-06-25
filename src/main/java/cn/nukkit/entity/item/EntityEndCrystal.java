@@ -2,7 +2,9 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
+import cn.nukkit.entity.EntityPickable;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Position;
@@ -12,7 +14,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 /**
  * Created by PetteriM1
  */
-public class EntityEndCrystal extends Entity implements EntityExplosive {
+public class EntityEndCrystal extends Entity implements EntityExplosive, EntityPickable {
 
     public static final int NETWORK_ID = 71;
 
@@ -91,6 +93,11 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
     @Override
     public boolean canCollideWith(Entity entity) {
         return false;
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(Item.END_CRYSTAL);
     }
 
     public boolean showBase() {

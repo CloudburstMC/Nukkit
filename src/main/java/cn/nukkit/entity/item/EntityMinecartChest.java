@@ -3,6 +3,7 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityPickable;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.MinecartChestInventory;
 import cn.nukkit.item.Item;
@@ -17,7 +18,7 @@ import cn.nukkit.utils.MinecartType;
  * Created by Snake1999 on 2016/1/30.
  * Package cn.nukkit.entity.item in project Nukkit.
  */
-public class EntityMinecartChest extends EntityMinecartAbstract implements InventoryHolder {
+public class EntityMinecartChest extends EntityMinecartAbstract implements InventoryHolder, EntityPickable {
 
     public static final int NETWORK_ID = 98;
 
@@ -112,5 +113,10 @@ public class EntityMinecartChest extends EntityMinecartAbstract implements Inven
     @Override
     public String getInteractButtonText() {
         return "action.interact.opencontainer";
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(Item.MINECART_WITH_CHEST);
     }
 }
