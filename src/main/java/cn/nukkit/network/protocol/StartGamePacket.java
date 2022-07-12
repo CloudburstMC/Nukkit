@@ -47,6 +47,7 @@ public class StartGamePacket extends DataPacket {
     public int spawnY;
     public int spawnZ;
     public boolean hasAchievementsDisabled = true;
+    public boolean worldEditor;
     public int dayCycleStopTime = -1; //-1 = not stopped, any positive value = stopped at that time
     public int eduEditionOffer = 0;
     public boolean hasEduFeaturesEnabled = false;
@@ -108,6 +109,7 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.difficulty);
         this.putBlockVector3(this.spawnX, this.spawnY, this.spawnZ);
         this.putBoolean(this.hasAchievementsDisabled);
+        this.putBoolean(this.worldEditor);
         this.putVarInt(this.dayCycleStopTime);
         this.putVarInt(this.eduEditionOffer);
         this.putBoolean(this.hasEduFeaturesEnabled);

@@ -155,6 +155,7 @@ public class AddEntityPacket extends DataPacket {
     public float yaw;
     public float pitch;
     public float headYaw;
+    public float bodyYaw = -1;
     public EntityMetadata metadata = new EntityMetadata();
     public Attribute[] attributes = new Attribute[0];
     public EntityLink[] links = new EntityLink[0];
@@ -178,6 +179,7 @@ public class AddEntityPacket extends DataPacket {
         this.putLFloat(this.pitch);
         this.putLFloat(this.yaw);
         this.putLFloat(this.headYaw);
+        this.putLFloat(this.bodyYaw == -1 ? this.yaw : this.bodyYaw);
         this.putAttributeList(this.attributes);
         this.put(Binary.writeMetadata(this.metadata));
         this.putUnsignedVarInt(this.links.length);
