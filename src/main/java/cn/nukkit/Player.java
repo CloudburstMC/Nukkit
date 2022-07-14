@@ -56,6 +56,7 @@ import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.*;
+import cn.nukkit.network.protocol.types.AuthInputAction;
 import cn.nukkit.network.protocol.types.ContainerIds;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import cn.nukkit.permission.PermissibleBase;
@@ -2048,6 +2049,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         startGamePacket.levelId = "";
         startGamePacket.worldName = this.getServer().getNetwork().getName();
         startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
+        if (System.getenv().containsKey("SERVER_AUTH_DEBUG")) {
+            startGamePacket.isMovementServerAuthoritative = true;
+        }
         this.dataPacket(startGamePacket);
 
         this.dataPacket(new BiomeDefinitionListPacket());
@@ -2390,6 +2394,93 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         this.setRotation(movePlayerPacket.yaw, movePlayerPacket.pitch);
                         this.newPosition = newPos;
+                        this.forceMovement = null;
+                    }
+                    break;
+                case ProtocolInfo.PLAYER_AUTH_INPUT_PACKET:
+                    if (this.teleportPosition != null) {
+                        break;
+                    }
+
+                    PlayerAuthInputPacket authPacket = (PlayerAuthInputPacket) packet;
+
+                    // Proper player.isPassenger() check may be needed
+                    if (this.riding instanceof EntityMinecartAbstract) {
+                        ((EntityMinecartAbstract) riding).setCurrentSpeed(authPacket.getMotion().getY());
+                        break;
+                    }
+
+                    if (!authPacket.getBlockActionData().isEmpty())
+                        System.out.println("handled PlayerAuthInputPacket " + authPacket.getBlockActionData());
+
+                    if (authPacket.getInputData().contains(AuthInputAction.START_SPRINTING)) {
+                        PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(this, true);
+                        this.server.getPluginManager().callEvent(event);
+                        if (event.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSprinting(true);
+                        }
+                    }
+                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SPRINTING)) {
+                        PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(this, false);
+                        this.server.getPluginManager().callEvent(event);
+                        if (event.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSprinting(false);
+                        }
+                    }
+                    if (authPacket.getInputData().contains(AuthInputAction.START_SNEAKING)) {
+                        PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this, true);
+                        this.server.getPluginManager().callEvent(event);
+                        if (event.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSneaking(true);
+                        }
+                    }
+                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SNEAKING)) {
+                        PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this, false);
+                        this.server.getPluginManager().callEvent(event);
+                        if (event.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSneaking(false);
+                        }
+                    }
+
+                    Vector3 clientPosition = authPacket.getPosition().asVector3()
+                            .subtract(0, this.getEyeHeight(), 0);
+
+                    double distSqrt = clientPosition.distanceSquared(this);
+                    if (distSqrt == 0.0 && authPacket.getYaw() % 360 == this.yaw && authPacket.getPitch() % 360 == this.pitch) {
+                        break;
+                    }
+
+                    if (distSqrt > 100) {
+                        this.sendPosition(this, authPacket.getYaw(), authPacket.getPitch(), MovePlayerPacket.MODE_RESET);
+                        break;
+                    }
+
+                    boolean revertMotion = false;
+                    if (!this.isAlive() || !this.spawned) {
+                        revertMotion = true;
+                        this.forceMovement = new Vector3(this.x, this.y, this.z);
+                    }
+
+                    if (this.forceMovement != null && (clientPosition.distanceSquared(this.forceMovement) > 0.1 || revertMotion)) {
+                        this.sendPosition(this.forceMovement, authPacket.getYaw(), authPacket.getPitch(), MovePlayerPacket.MODE_RESET);
+                    } else {
+                        float yaw = authPacket.getYaw() % 360;
+                        float pitch = authPacket.getPitch() % 360;
+
+                        if (yaw < 0) {
+                            yaw += 360;
+                        }
+
+                        this.setRotation(authPacket.getYaw(), authPacket.getPitch());
+                        this.newPosition = clientPosition;
                         this.forceMovement = null;
                     }
                     break;
