@@ -40,7 +40,6 @@ public class GarbageCollectorCommand extends VanillaCommand {
             tilesCollected += tilesCount - level.getBlockEntities().size();
         }
 
-        ThreadCache.clean();
         System.gc();
 
         long freedMemory = Runtime.getRuntime().freeMemory() - memory;
