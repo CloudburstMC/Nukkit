@@ -6,6 +6,7 @@ import cn.nukkit.utils.ThreadCache;
 import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
+import java.util.BitSet;
 
 /**
  * @author https://github.com/boy0001/
@@ -171,14 +172,14 @@ public final class BlockDataPalette implements Cloneable {
         if (raw != null) {
             char unique = 0;
 
-            boolean[] countTable = ThreadCache.boolCache4096.get();
+            BitSet countTable = ThreadCache.boolCache4096.get();
             char[] mapFullTable = ThreadCache.charCache4096.get();
             char[] mapBitTable = ThreadCache.charCache4096v2.get();
-            Arrays.fill(countTable, false);
+            countTable.clear();
             for (char c : raw) {
-                if (!countTable[c]) {
+                if (!countTable.get(c)) {
                     mapBitTable[unique] = c;
-                    countTable[c] = true;
+                    countTable.set(c);
                     unique++;
                 }
             }
