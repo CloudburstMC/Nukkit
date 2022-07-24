@@ -437,6 +437,7 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_ITEM_TAKEN = 429;
     public static final int SOUND_DISAPPEARED = 430;
     public static final int SOUND_REAPPEARED = 431;
+    public static final int SOUND_MILK_DRINK = 432;
     public static final int SOUND_FROGSPAWN_HATCHED = 433;
     public static final int SOUND_LAY_SPAWN = 434;
     public static final int SOUND_FROGSPAWN_BREAK = 435;
@@ -445,7 +446,8 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_ITEM_THROWN = 438;
     public static final int SOUND_RECORD_5 = 439;
     public static final int SOUND_CONVERT_TO_FROG = 440;
-    public static final int SOUND_UNDEFINED = 441;
+    public static final int SOUND_RECORD_PLAYING = 441;
+    public static final int SOUND_UNDEFINED = 442;
 
     public int sound;
     public float x;

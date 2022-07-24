@@ -70,6 +70,7 @@ public class EntityEventPacket extends DataPacket {
     public static final int FALL = 75;
     public static final int GROW_UP = 76;
     public static final int VIBRATION_DETECTED = 77;
+    public static final int DRINK_MILK = 78;
 
     @Override
     public byte pid() {
