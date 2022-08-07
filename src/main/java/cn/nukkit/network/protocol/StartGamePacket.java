@@ -151,7 +151,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isTrial);
         this.putUnsignedVarInt(this.isMovementServerAuthoritative ? 1 : 0); // 2 - rewind
         this.putVarInt(0); // RewindHistorySize
-        this.putBoolean(false); // isServerAuthoritativeBlockBreaking
+        this.putBoolean(true); // isServerAuthoritativeBlockBreaking
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
         this.putUnsignedVarInt(0); // Custom blocks
