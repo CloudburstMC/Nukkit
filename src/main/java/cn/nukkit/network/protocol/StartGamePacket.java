@@ -80,10 +80,13 @@ public class StartGamePacket extends DataPacket {
     public boolean isMovementServerAuthoritative;
     public boolean isInventoryServerAuthoritative;
     public long currentTick;
-
     public int enchantmentSeed;
-
     public String multiplayerCorrelationId = "";
+    public boolean isDisablingPersonas;
+    public boolean isDisablingCustomSkins;
+    public boolean clientSideGenerationEnabled;
+    public byte chatRestrictionLevel;
+    public boolean disablePlayerInteractions;
 
     @Override
     public void decode() {
@@ -99,7 +102,7 @@ public class StartGamePacket extends DataPacket {
         this.putVector3f(this.x, this.y, this.z);
         this.putLFloat(this.yaw);
         this.putLFloat(this.pitch);
-
+        /* Level settings start */
         this.putLLong(this.seed);
         this.putLShort(0x00); // SpawnBiomeType - Default
         this.putString("plains"); // UserDefinedBiomeName
@@ -137,6 +140,8 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isFromWorldTemplate);
         this.putBoolean(this.isWorldTemplateOptionLocked);
         this.putBoolean(this.isOnlySpawningV1Villagers);
+        this.putBoolean(this.isDisablingPersonas);
+        this.putBoolean(this.isDisablingCustomSkins);
         this.putString(this.vanillaVersion);
         this.putLInt(16); // Limited world width
         this.putLInt(16); // Limited world height
@@ -144,7 +149,9 @@ public class StartGamePacket extends DataPacket {
         this.putString(""); // EduSharedUriResource buttonName
         this.putString(""); // EduSharedUriResource linkUri
         this.putBoolean(false); // Experimental Gameplay
-
+        this.putByte(this.chatRestrictionLevel);
+        this.putBoolean(this.disablePlayerInteractions);
+        /* Level settings end */
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
@@ -166,5 +173,6 @@ public class StartGamePacket extends DataPacket {
         }
         this.putLLong(0); // blockRegistryChecksum
         this.putUUID(new UUID(0, 0)); // worldTemplateId
+        this.putBoolean(this.clientSideGenerationEnabled);
     }
 }
