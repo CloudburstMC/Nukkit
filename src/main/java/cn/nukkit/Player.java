@@ -1434,7 +1434,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         double distance = clientPos.distanceSquared(this);
         if (distance > 128) {
             invalidMotion = true;
-        } else if (!this.level.isChunkGenerated(clientPos.getChunkX(), clientPos.getChunkX())) {
+        } else if (this.chunk != null && !this.level.isChunkGenerated(clientPos.getChunkX(), clientPos.getChunkZ())) {
             invalidMotion = true;
             this.nextChunkOrderRun = 0;
         }
