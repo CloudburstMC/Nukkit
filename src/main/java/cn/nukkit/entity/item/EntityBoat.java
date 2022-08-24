@@ -5,6 +5,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWater;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
+import cn.nukkit.entity.EntityPickable;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.FloatEntityData;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 /**
  * Created by yescallop on 2016/2/13.
  */
-public class EntityBoat extends EntityVehicle {
+public class EntityBoat extends EntityVehicle implements EntityPickable {
 
     public static final int NETWORK_ID = 90;
 
@@ -432,5 +433,10 @@ public class EntityBoat extends EntityVehicle {
     @Override
     public String getInteractButtonText() {
         return !this.isFull() ? "action.interact.ride.boat" : "";
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(Item.BOAT, this.woodID);
     }
 }

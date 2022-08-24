@@ -3,9 +3,11 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
+import cn.nukkit.entity.EntityPickable;
 import cn.nukkit.entity.passive.EntityWaterAnimal;
 import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.MinecartType;
@@ -14,7 +16,7 @@ import cn.nukkit.utils.MinecartType;
  * Created by Snake1999 on 2016/1/30.
  * Package cn.nukkit.entity.item in project Nukkit.
  */
-public class EntityMinecartEmpty extends EntityMinecartAbstract {
+public class EntityMinecartEmpty extends EntityMinecartAbstract implements EntityPickable {
 
     public static final int NETWORK_ID = 84;
 
@@ -73,5 +75,10 @@ public class EntityMinecartEmpty extends EntityMinecartAbstract {
     @Override
     public String getInteractButtonText() {
         return this.passengers.isEmpty() ? "action.interact.ride.minecart" : "";
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(Item.MINECART);
     }
 }

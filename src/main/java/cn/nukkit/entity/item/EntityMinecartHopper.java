@@ -3,6 +3,7 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityPickable;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.MinecartHopperInventory;
 import cn.nukkit.item.Item;
@@ -13,7 +14,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.MinecartType;
 
-public class EntityMinecartHopper extends EntityMinecartAbstract implements InventoryHolder {
+public class EntityMinecartHopper extends EntityMinecartAbstract implements InventoryHolder, EntityPickable {
 
     public static final int NETWORK_ID = 96;
 
@@ -108,5 +109,10 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     @Override
     public String getInteractButtonText() {
         return "action.interact.opencontainer";
+    }
+
+    @Override
+    public Item toItem() {
+        return Item.get(Item.MINECART_WITH_HOPPER);
     }
 }
