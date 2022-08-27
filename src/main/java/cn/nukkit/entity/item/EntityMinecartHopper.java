@@ -104,4 +104,9 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
             }
         }
     }
+
+    @Override
+    public String getInteractButtonText() {
+        return "action.interact.opencontainer";
+    }
 }

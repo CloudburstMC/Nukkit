@@ -80,4 +80,9 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
     }
+
+    @Override
+    public Item toItem() {
+        return Item.get(this.getId(), 0);
+    }
 }

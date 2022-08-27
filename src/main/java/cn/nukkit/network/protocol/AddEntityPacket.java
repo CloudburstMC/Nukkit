@@ -130,10 +130,14 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityHoglin.NETWORK_ID, "minecraft:hoglin")
             .put(EntityStrider.NETWORK_ID, "minecraft:strider")
             .put(EntityZoglin.NETWORK_ID, "minecraft:zoglin")
-            .put(127, "minecraft:piglin_brute")
-            .put(128, "minecraft:goat")
-            .put(129, "minecraft:glow_squid")
-            .put(130, "minecraft:axolotl")
+            .put(EntityPiglinBrute.NETWORK_ID, "minecraft:piglin_brute")
+            .put(EntityGoat.NETWORK_ID, "minecraft:goat")
+            .put(EntityGlowSquid.NETWORK_ID, "minecraft:glow_squid")
+            .put(EntityAxolotl.NETWORK_ID, "minecraft:axolotl")
+            .put(EntityWarden.NETWORK_ID, "minecraft:warden")
+            .put(EntityFrog.NETWORK_ID, "minecraft:frog")
+            .put(EntityTadpole.NETWORK_ID, "minecraft:tadpole")
+            .put(EntityAllay.NETWORK_ID, "minecraft:allay")
             .build();
 
     @Override
@@ -154,6 +158,7 @@ public class AddEntityPacket extends DataPacket {
     public float yaw;
     public float pitch;
     public float headYaw;
+    public float bodyYaw = -1;
     public EntityMetadata metadata = new EntityMetadata();
     public Attribute[] attributes = new Attribute[0];
     public EntityLink[] links = new EntityLink[0];
@@ -177,6 +182,7 @@ public class AddEntityPacket extends DataPacket {
         this.putLFloat(this.pitch);
         this.putLFloat(this.yaw);
         this.putLFloat(this.headYaw);
+        this.putLFloat(this.bodyYaw == -1 ? this.yaw : this.bodyYaw);
         this.putAttributeList(this.attributes);
         this.put(Binary.writeMetadata(this.metadata));
         this.putUnsignedVarInt(this.links.length);

@@ -2,8 +2,13 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRules;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
 import lombok.ToString;
 import lombok.extern.log4j.Log4j2;
+
+import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Created on 15-10-13.
@@ -42,6 +47,7 @@ public class StartGamePacket extends DataPacket {
     public int spawnY;
     public int spawnZ;
     public boolean hasAchievementsDisabled = true;
+    public boolean worldEditor;
     public int dayCycleStopTime = -1; //-1 = not stopped, any positive value = stopped at that time
     public int eduEditionOffer = 0;
     public boolean hasEduFeaturesEnabled = false;
@@ -57,7 +63,6 @@ public class StartGamePacket extends DataPacket {
     public GameRules gameRules;
     public boolean bonusChest = false;
     public boolean hasStartWithMapEnabled = false;
-    public boolean trustingPlayers;
     public int permissionLevel = 1;
     public int serverChunkTickRange = 4;
     public boolean hasLockedBehaviorPack = false;
@@ -75,10 +80,13 @@ public class StartGamePacket extends DataPacket {
     public boolean isMovementServerAuthoritative;
     public boolean isInventoryServerAuthoritative;
     public long currentTick;
-
     public int enchantmentSeed;
-
     public String multiplayerCorrelationId = "";
+    public boolean isDisablingPersonas;
+    public boolean isDisablingCustomSkins;
+    public boolean clientSideGenerationEnabled;
+    public byte chatRestrictionLevel;
+    public boolean disablePlayerInteractions;
 
     @Override
     public void decode() {
@@ -94,8 +102,8 @@ public class StartGamePacket extends DataPacket {
         this.putVector3f(this.x, this.y, this.z);
         this.putLFloat(this.yaw);
         this.putLFloat(this.pitch);
-
-        this.putVarInt(this.seed);
+        /* Level settings start */
+        this.putLLong(this.seed);
         this.putLShort(0x00); // SpawnBiomeType - Default
         this.putString("plains"); // UserDefinedBiomeName
         this.putVarInt(this.dimension);
@@ -104,6 +112,7 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.difficulty);
         this.putBlockVector3(this.spawnX, this.spawnY, this.spawnZ);
         this.putBoolean(this.hasAchievementsDisabled);
+        this.putBoolean(this.worldEditor);
         this.putVarInt(this.dayCycleStopTime);
         this.putVarInt(this.eduEditionOffer);
         this.putBoolean(this.hasEduFeaturesEnabled);
@@ -131,6 +140,8 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isFromWorldTemplate);
         this.putBoolean(this.isWorldTemplateOptionLocked);
         this.putBoolean(this.isOnlySpawningV1Villagers);
+        this.putBoolean(this.isDisablingPersonas);
+        this.putBoolean(this.isDisablingCustomSkins);
         this.putString(this.vanillaVersion);
         this.putLInt(16); // Limited world width
         this.putLInt(16); // Limited world height
@@ -138,14 +149,16 @@ public class StartGamePacket extends DataPacket {
         this.putString(""); // EduSharedUriResource buttonName
         this.putString(""); // EduSharedUriResource linkUri
         this.putBoolean(false); // Experimental Gameplay
-
+        this.putByte(this.chatRestrictionLevel);
+        this.putBoolean(this.disablePlayerInteractions);
+        /* Level settings end */
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
         this.putBoolean(this.isTrial);
-        this.putUnsignedVarInt(this.isMovementServerAuthoritative ? 1 : 0); // 2 - rewind
+        this.putVarInt(this.isMovementServerAuthoritative ? 1 : 0); // 2 - rewind
         this.putVarInt(0); // RewindHistorySize
-        this.putBoolean(false); // isServerAuthoritativeBlockBreaking
+        this.putBoolean(true); // isServerAuthoritativeBlockBreaking
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
         this.putUnsignedVarInt(0); // Custom blocks
@@ -153,5 +166,13 @@ public class StartGamePacket extends DataPacket {
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(this.isInventoryServerAuthoritative);
         this.putString(""); // Server Engine
+        try {
+            this.put(NBTIO.writeNetwork(new CompoundTag(""))); // playerPropertyData
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        this.putLLong(0); // blockRegistryChecksum
+        this.putUUID(new UUID(0, 0)); // worldTemplateId
+        this.putBoolean(this.clientSideGenerationEnabled);
     }
 }

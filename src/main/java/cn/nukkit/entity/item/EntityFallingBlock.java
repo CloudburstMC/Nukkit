@@ -1,10 +1,13 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.event.entity.EntityBlockChangeEvent;
+import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
@@ -54,7 +57,7 @@ public class EntityFallingBlock extends Entity {
 
     @Override
     public boolean canCollide() {
-        return false;
+        return blockId == BlockID.ANVIL;
     }
 
     protected int blockId;
@@ -93,7 +96,7 @@ public class EntityFallingBlock extends Entity {
     }
 
     public boolean canCollideWith(Entity entity) {
-        return false;
+        return blockId == BlockID.ANVIL;
     }
 
     @Override
@@ -175,6 +178,13 @@ public class EntityFallingBlock extends Entity {
 
                         if (event.getTo().getId() == Item.ANVIL) {
                             getLevel().addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ANVIL_FALL);
+
+                            Entity[] e = level.getCollidingEntities(this.getBoundingBox(), this);
+                            for (Entity entity : e) {
+                                if (entity instanceof EntityLiving && highestPosition > y) {
+                                    entity.attack(new EntityDamageByBlockEvent(event.getTo(), entity, DamageCause.CONTACT, (float) Math.min(40, Math.max(0, (highestPosition - y) * 2))));
+                                }
+                            }
                         }
                     }
                 }
@@ -211,5 +221,12 @@ public class EntityFallingBlock extends Entity {
     @Override
     public boolean canBeMovedByCurrents() {
         return false;
+    }
+
+    @Override
+    public void resetFallDistance() {
+        if (!this.closed) { // For falling anvil: do not reset fall distance before dealing damage to entities
+            this.highestPosition = this.y;
+        }
     }
 }

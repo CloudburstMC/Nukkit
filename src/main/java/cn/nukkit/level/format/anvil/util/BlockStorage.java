@@ -95,7 +95,7 @@ public class BlockStorage {
     }
 
     public void writeTo(BinaryStream stream) {
-        PalettedBlockStorage storage = new PalettedBlockStorage();
+        PalettedBlockStorage storage = PalettedBlockStorage.createFromBlockPalette();
         for (int i = 0; i < SECTION_SIZE; i++) {
             storage.setBlock(i, GlobalBlockPalette.getOrCreateRuntimeId(blockIds[i] & 0xff, blockData.get(i)));
         }

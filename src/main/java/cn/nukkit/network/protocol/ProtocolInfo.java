@@ -14,12 +14,12 @@ public interface ProtocolInfo {
      * Actual Minecraft: PE protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("471"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("545"); // DO NOT REMOVE BOXING
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION = "v1.17.40";
-    String MINECRAFT_VERSION_NETWORK = "1.17.40";
+    String MINECRAFT_VERSION_NETWORK = "1.19.21";
+    String MINECRAFT_VERSION = 'v' + MINECRAFT_VERSION_NETWORK;
 
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
@@ -179,6 +179,28 @@ public interface ProtocolInfo {
     byte ITEM_COMPONENT_PACKET = (byte) 0xa2;
     byte FILTER_TEXT_PACKET = (byte) 0xa3;
     byte CLIENTBOUND_DEBUG_RENDERER_PACKET = (byte) 0xa4;
+    byte SYNC_ENTITY_PROPERTY_PACKET = (byte) 0xa5;
+    byte ADD_VOLUME_ENTITY_PACKET = (byte) 0xa6;
+    byte REMOVE_VOLUME_ENTITY_PACKET = (byte) 0xa7;
+    byte SIMULATION_TYPE_PACKET = (byte) 0xa8;
+    byte NPC_DIALOGUE_PACKET = (byte) 0xa9;
+    byte EDU_URI_RESOURCE_PACKET = (byte) 0xaa;
+    byte CREATE_PHOTO_PACKET = (byte) 0xab;
+    byte UPDATE_SUB_CHUNK_BLOCKS_PACKET = (byte) 0xac;
+    byte PHOTO_INFO_REQUEST_PACKET = (byte) 0xad;
+    byte SUB_CHUNK_PACKET = (byte) 0xae;
+    byte SUB_CHUNK_REQUEST_PACKET = (byte) 0xaf;
+    byte PLAYER_START_ITEM_COOLDOWN_PACKET = (byte) 0xb0;
+    byte SCRIPT_MESSAGE_PACKET = (byte) 0xb1;
+    byte CODE_BUILDER_SOURCE_PACKET = (byte) 0xb2;
+    byte TICKING_AREAS_LOAD_STATUS_PACKET = (byte) 0xb3;
+    byte DIMENSION_DATA_PACKET = (byte) 0xb4;
+    byte AGENT_ACTION_EVENT_PACKET = (byte) 0xb5;
+    byte CHANGE_MOB_PROPERTY_PACKET = (byte) 0xb6;
+    byte LESSON_PROGRESS_PACKET = (byte) 0xb7;
+    byte REQUEST_ABILITY_PACKET = (byte) 0xb8;
+    byte REQUEST_PERMISSIONS_PACKET = (byte) 0xb9;
+    byte TOAST_REQUEST_PACKET = (byte) 0xba;
 
     byte BATCH_PACKET = (byte) 0xff;
 }

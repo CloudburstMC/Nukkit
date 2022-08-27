@@ -49,7 +49,7 @@ public class Skin {
     private String capeId;
     private String skinColor = "#0";
     private String armSize = "wide";
-    private boolean trusted = false;
+    private boolean trusted = true;
     private String geometryDataEngineVersion = "";
 
     public boolean isValid() {
@@ -57,13 +57,18 @@ public class Skin {
     }
 
     private boolean isValidSkin() {
-        return skinId != null && !skinId.trim().isEmpty() &&
+        return skinId != null && !skinId.trim().isEmpty() && skinId.length() < 100 &&
                 skinData != null && skinData.width >= 64 && skinData.height >= 32 &&
-                skinData.data.length >= SINGLE_SKIN_SIZE;
+                skinData.data.length >= SINGLE_SKIN_SIZE &&
+                (playFabId == null || playFabId.length() < 100) &&
+                (capeId == null || capeId.length() < 100) &&
+                (skinColor == null || skinColor.length() < 100) &&
+                (armSize == null || armSize.length() < 100) &&
+                (geometryDataEngineVersion == null || geometryDataEngineVersion.length() < 100);
     }
 
     private boolean isValidResourcePatch() {
-        if (skinResourcePatch == null) {
+        if (skinResourcePatch == null || skinResourcePatch.length() > 1000) {
             return false;
         }
         try {

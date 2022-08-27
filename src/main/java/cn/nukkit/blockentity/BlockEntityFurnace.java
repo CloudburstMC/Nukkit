@@ -14,8 +14,10 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.ContainerSetDataPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 import java.util.HashSet;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -28,6 +30,8 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
     protected int burnDuration;
     protected int cookTime;
     protected int maxTime;
+
+    private int crackledTime;
 
     public BlockEntityFurnace(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -239,6 +243,11 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
             burnTime--;
             burnDuration = (int) Math.ceil((float) burnTime / maxTime * 200);
 
+            if (this.crackledTime-- <= 0) {
+                this.crackledTime = ThreadLocalRandom.current().nextInt(20, 100);
+                this.getLevel().addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_BLOCK_FURNACE_LIT);
+            }
+
             if (smelt != null && canSmelt) {
                 cookTime++;
                 if (cookTime >= 200) {
@@ -272,6 +281,7 @@ public class BlockEntityFurnace extends BlockEntitySpawnable implements Inventor
             burnTime = 0;
             cookTime = 0;
             burnDuration = 0;
+            this.crackledTime = 0;
         }
 
         for (Player player : this.getInventory().getViewers()) {

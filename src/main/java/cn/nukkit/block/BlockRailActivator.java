@@ -32,7 +32,10 @@ public class BlockRailActivator extends BlockRail {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_SCHEDULED) {
-            super.onUpdate(type);
+            if (super.onUpdate(type) == Level.BLOCK_UPDATE_NORMAL) {
+                return 0; // Already broken
+            }
+
             boolean wasPowered = isActive();
             boolean isPowered = level.isBlockPowered(this.getLocation())
                     || checkSurrounding(this, true, 0)
@@ -173,4 +176,8 @@ public class BlockRailActivator extends BlockRail {
         };
     }
 
+    @Override
+    public double getHardness() {
+        return 0.5;
+    }
 }

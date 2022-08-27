@@ -50,6 +50,7 @@ public class Effect implements Cloneable {
     public static final int SLOW_FALLING = 27;
     public static final int BAD_OMEN = 28;
     public static final int VILLAGE_HERO = 29;
+    public static final int DARKNESS = 30;
 
     protected static Effect[] effects;
 
@@ -87,7 +88,8 @@ public class Effect implements Cloneable {
         effects[Effect.CONDUIT_POWER] = new Effect(Effect.CONDUIT_POWER, "%potion.conduitPower", 29, 194, 209);
         effects[Effect.SLOW_FALLING] = new Effect(Effect.SLOW_FALLING, "%potion.slowFalling", 206, 255, 255);
         effects[Effect.BAD_OMEN] = new Effect(Effect.BAD_OMEN, "%effect.badOmen", 11, 97, 56, true);
-        effects[Effect.VILLAGE_HERO] = new Effect(Effect.VILLAGE_HERO, "%effect.villageHero", 68, 255, 68);
+        effects[Effect.VILLAGE_HERO] = new Effect(Effect.VILLAGE_HERO, "%effect.villageHero", 68, 255, 68).setVisible(false);
+        effects[Effect.DARKNESS] = new Effect(Effect.DARKNESS, "%effect.darkness", 41, 39, 33, true).setVisible(false);
     }
 
     public static Effect getEffect(int id) {
@@ -153,7 +155,7 @@ public class Effect implements Cloneable {
     }
 
     public boolean isVisible() {
-        return show && this.id != VILLAGE_HERO;
+        return show;
     }
 
     public Effect setVisible(boolean visible) {

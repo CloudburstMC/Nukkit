@@ -4,7 +4,11 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.IntTag;
+import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.Arrays;
@@ -55,6 +59,13 @@ public class BlockEntitySign extends BlockEntitySpawnable {
             sanitizeText(text);
         }
 
+        if (!this.namedTag.contains("SignTextColor") || !(this.namedTag.get("SignTextColor") instanceof IntTag)) {
+            this.setColor(DyeColor.BLACK.getSignColor());
+        }
+        if (!this.namedTag.contains("IgnoreLighting") || !(this.namedTag.get("IgnoreLighting") instanceof ByteTag)) {
+            this.setGlowing(false);
+        }
+
         super.initBlockEntity();
     }
 
@@ -90,6 +101,22 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     public String[] getText() {
         return text;
+    }
+
+    public BlockColor getColor() {
+        return new BlockColor(this.namedTag.getInt("SignTextColor"), true);
+    }
+
+    public void setColor(BlockColor color) {
+        this.namedTag.putInt("SignTextColor", color.getARGB());
+    }
+
+    public boolean isGlowing() {
+        return this.namedTag.getBoolean("IgnoreLighting");
+    }
+
+    public void setGlowing(boolean glowing) {
+        this.namedTag.putBoolean("IgnoreLighting", glowing);
     }
 
     @Override
@@ -131,10 +158,12 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         return new CompoundTag()
                 .putString("id", BlockEntity.SIGN)
                 .putString("Text", this.namedTag.getString("Text"))
+                .putInt("SignTextColor", this.getColor().getARGB())
+                .putBoolean("IgnoreLighting", this.isGlowing())
+                .putBoolean("TextIgnoreLegacyBugResolved", true)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
-
     }
 
     private static void sanitizeText(String[] lines) {

@@ -6,7 +6,8 @@ import lombok.ToString;
 public class ModalFormResponsePacket extends DataPacket {
 
     public int formId;
-    public String data;
+    public String data = "null";
+    public int cancelReason;
 
     @Override
     public byte pid() {
@@ -16,7 +17,12 @@ public class ModalFormResponsePacket extends DataPacket {
     @Override
     public void decode() {
         this.formId = this.getVarInt();
-        this.data = this.getString(); //Data will be null if player close form without submit (by cross button or ESC)
+        if (this.getBoolean()) {
+            this.data = this.getString();
+        }
+        if (this.getBoolean()) {
+            this.cancelReason = this.getByte();
+        }
     }
 
     @Override

@@ -17,7 +17,7 @@ import java.util.Arrays;
  */
 public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
 
-    private static final PalettedBlockStorage EMPTY_STORAGE = new PalettedBlockStorage();
+    private static final PalettedBlockStorage EMPTY_STORAGE = PalettedBlockStorage.createFromBlockPalette();
 
     private final int y;
 

@@ -167,11 +167,11 @@ public class BlockSnowLayer extends BlockFallable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.isShovel()) {
+        if (item.isShovel() && (player.gamemode & 0x2) == 0) {
             item.useOn(this);
             this.level.useBreakOn(this, item.clone().clearNamedTag(), null, true);
             return true;
-        } else if (item.getId() == SNOW_LAYER) {
+        } else if (item.getId() == SNOW_LAYER && (player.gamemode & 0x2) == 0) {
             if ((this.getDamage() & 0x7) != 0x7) {
                 this.setDamage(this.getDamage() + 1);
                 this.level.setBlock(this ,this, true);

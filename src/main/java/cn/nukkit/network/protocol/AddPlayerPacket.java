@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Server;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.Binary;
@@ -34,6 +35,7 @@ public class AddPlayerPacket extends DataPacket {
     public float pitch;
     public float yaw;
     public Item item;
+    public int gameType = Server.getInstance().getGamemode();
     public EntityMetadata metadata = new EntityMetadata();
     //public EntityLink links = new EntityLink[0];
     public String deviceId = "";
@@ -49,7 +51,7 @@ public class AddPlayerPacket extends DataPacket {
         this.reset();
         this.putUUID(this.uuid);
         this.putString(this.username);
-        this.putEntityUniqueId(this.entityUniqueId);
+        // this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
         this.putString(this.platformChatId);
         this.putVector3f(this.x, this.y, this.z);
@@ -58,13 +60,17 @@ public class AddPlayerPacket extends DataPacket {
         this.putLFloat(this.yaw); //TODO headrot
         this.putLFloat(this.yaw);
         this.putSlot(this.item);
+        this.putVarInt(this.gameType);
         this.put(Binary.writeMetadata(this.metadata));
-        this.putUnsignedVarInt(0); //TODO: Adventure settings
-        this.putUnsignedVarInt(0);
-        this.putUnsignedVarInt(0);
-        this.putUnsignedVarInt(0);
-        this.putUnsignedVarInt(0);
         this.putLLong(entityUniqueId);
+        this.putUnsignedVarInt(0); // playerPermission
+        this.putUnsignedVarInt(0); // commandPermission
+        this.putUnsignedVarInt(1); // abilitiesLayer size
+        this.putLShort(1); // BASE layer type
+        this.putLInt(262143); // abilitiesSet - all abilities
+        this.putLInt(63); // abilityValues - survival abilities
+        this.putLFloat(0.1f); // flySpeed
+        this.putLFloat(0.05f); // walkSpeed
         this.putUnsignedVarInt(0); //TODO: Entity links
         this.putString(deviceId);
         this.putLInt(buildPlatform);

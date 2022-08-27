@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBrewingStand;
@@ -17,7 +16,7 @@ import cn.nukkit.utils.BlockColor;
 
 import java.util.Map;
 
-public class BlockBrewingStand extends BlockSolidMeta {
+public class BlockBrewingStand extends BlockTransparentMeta {
 
     public BlockBrewingStand() {
         this(0);
@@ -144,6 +143,37 @@ public class BlockBrewingStand extends BlockSolidMeta {
         return BlockColor.IRON_BLOCK_COLOR;
     }
 
+    @Override
+    public boolean isSolid() {
+        return false;
+    }
+
+    @Override
+    public double getMinX() {
+        return this.x + 7 / 16.0;
+    }
+
+    @Override
+    public double getMinZ() {
+        return this.z + 7 / 16.0;
+    }
+
+    @Override
+    public double getMaxX() {
+        return this.x + 1 - 7 / 16.0;
+    }
+
+    @Override
+    public double getMaxY() {
+        return this.y + 1 - 2 / 16.0;
+    }
+
+    @Override
+    public double getMaxZ() {
+        return this.z + 1 - 7 / 16.0;
+    }
+
+    @Override
     public boolean hasComparatorInputOverride() {
         return true;
     }

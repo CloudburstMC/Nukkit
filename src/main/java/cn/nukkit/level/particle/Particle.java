@@ -92,6 +92,9 @@ public abstract class Particle extends Vector3 {
     public static final int TYPE_SPORE_BLOSSOM_AMBIENT = 79;
     public static final int TYPE_WAX = 80;
     public static final int TYPE_ELECTRIC_SPARK = 81;
+    public static final int TYPE_SHRIEK = 82;
+    public static final int TYPE_SCULK_SOUL = 83;
+    public static final int TYPE_SONIC_EXPLOSION = 84;
 
     public static final Integer getParticleIdByName(String name) {
         name = name.toUpperCase();
@@ -101,10 +104,10 @@ public abstract class Particle extends Vector3 {
 
             Class<?> type = field.getType();
 
-            if(type==int.class) {
+            if (type == int.class) {
                 return field.getInt(null);
             }
-        } catch(NoSuchFieldException | IllegalAccessException e) {
+        } catch (NoSuchFieldException | IllegalAccessException e) {
             // ignore
         }
         return null;

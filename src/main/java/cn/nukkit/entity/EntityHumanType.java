@@ -13,6 +13,7 @@ import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemSkull;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitMath;
@@ -195,7 +196,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                         continue;
                 }
 
-                if (armor.isUnbreakable()) {
+                if (armor.isUnbreakable() || armor instanceof ItemSkull) {
                     continue;
                 }
 
