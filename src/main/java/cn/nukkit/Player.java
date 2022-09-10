@@ -2655,7 +2655,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    System.out.println(playerActionPacket.action);
                     switch (playerActionPacket.action) {
                         case PlayerActionPacket.ACTION_STOP_SLEEPING:
                             this.stopSleep();
