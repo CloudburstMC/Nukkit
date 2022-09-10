@@ -2440,6 +2440,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.setSprinting(true);
                         }
                     }
+
                     if (authPacket.getInputData().contains(AuthInputAction.STOP_SPRINTING)) {
                         PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(this, false);
                         this.server.getPluginManager().callEvent(event);
@@ -2449,6 +2450,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.setSprinting(false);
                         }
                     }
+
                     if (authPacket.getInputData().contains(AuthInputAction.START_SNEAKING)) {
                         PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this, true);
                         this.server.getPluginManager().callEvent(event);
@@ -2458,6 +2460,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.setSneaking(true);
                         }
                     }
+
                     if (authPacket.getInputData().contains(AuthInputAction.STOP_SNEAKING)) {
                         PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this, false);
                         this.server.getPluginManager().callEvent(event);
@@ -2471,46 +2474,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     if (authPacket.getInputData().contains(AuthInputAction.START_JUMPING)) {
                         PlayerJumpEvent playerJumpEvent = new PlayerJumpEvent(this);
                         this.server.getPluginManager().callEvent(playerJumpEvent);
-                    }
-
-                    if (authPacket.getInputData().contains(AuthInputAction.START_SPRINTING)) {
-                        PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, true);
-                        this.server.getPluginManager().callEvent(playerToggleSprintEvent);
-                        if (playerToggleSprintEvent.isCancelled()) {
-                            this.sendData(this);
-                        } else {
-                            this.setSprinting(true);
-                        }
-                    }
-
-                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SPRINTING)) {
-                        PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, false);
-                        this.server.getPluginManager().callEvent(playerToggleSprintEvent);
-                        if (playerToggleSprintEvent.isCancelled()) {
-                            this.sendData(this);
-                        } else {
-                            this.setSprinting(false);
-                        }
-                    }
-
-                    if (authPacket.getInputData().contains(AuthInputAction.START_SNEAKING)) {
-                        PlayerToggleSneakEvent playerToggleSneakEvent = new PlayerToggleSneakEvent(this, true);
-                        this.server.getPluginManager().callEvent(playerToggleSneakEvent);
-                        if (playerToggleSneakEvent.isCancelled()) {
-                            this.sendData(this);
-                        } else {
-                            this.setSneaking(true);
-                        }
-                    }
-
-                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SNEAKING)) {
-                        PlayerToggleSneakEvent playerToggleSneakEvent = new PlayerToggleSneakEvent(this, false);
-                        this.server.getPluginManager().callEvent(playerToggleSneakEvent);
-                        if (playerToggleSneakEvent.isCancelled()) {
-                            this.sendData(this);
-                        } else {
-                            this.setSneaking(false);
-                        }
                     }
 
                     if (authPacket.getInputData().contains(AuthInputAction.START_GLIDING)) {
