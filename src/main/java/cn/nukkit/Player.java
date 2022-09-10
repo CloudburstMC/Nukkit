@@ -2108,6 +2108,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 log.trace("Inbound {}: {}", this.getName(), packet);
             }
 
+            BlockFace face;
+
             packetswitch:
             switch (packet.pid()) {
                 case ProtocolInfo.LOGIN_PACKET:
@@ -2465,9 +2467,90 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             this.setSneaking(false);
                         }
                     }
+
                     if (authPacket.getInputData().contains(AuthInputAction.START_JUMPING)) {
                         PlayerJumpEvent playerJumpEvent = new PlayerJumpEvent(this);
                         this.server.getPluginManager().callEvent(playerJumpEvent);
+                    }
+
+                    if (authPacket.getInputData().contains(AuthInputAction.START_SPRINTING)) {
+                        PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, true);
+                        this.server.getPluginManager().callEvent(playerToggleSprintEvent);
+                        if (playerToggleSprintEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSprinting(true);
+                        }
+                    }
+
+                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SPRINTING)) {
+                        PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, false);
+                        this.server.getPluginManager().callEvent(playerToggleSprintEvent);
+                        if (playerToggleSprintEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSprinting(false);
+                        }
+                    }
+
+                    if (authPacket.getInputData().contains(AuthInputAction.START_SNEAKING)) {
+                        PlayerToggleSneakEvent playerToggleSneakEvent = new PlayerToggleSneakEvent(this, true);
+                        this.server.getPluginManager().callEvent(playerToggleSneakEvent);
+                        if (playerToggleSneakEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSneaking(true);
+                        }
+                    }
+
+                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SNEAKING)) {
+                        PlayerToggleSneakEvent playerToggleSneakEvent = new PlayerToggleSneakEvent(this, false);
+                        this.server.getPluginManager().callEvent(playerToggleSneakEvent);
+                        if (playerToggleSneakEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSneaking(false);
+                        }
+                    }
+
+                    if (authPacket.getInputData().contains(AuthInputAction.START_GLIDING)) {
+                        PlayerToggleGlideEvent playerToggleGlideEvent = new PlayerToggleGlideEvent(this, true);
+                        this.server.getPluginManager().callEvent(playerToggleGlideEvent);
+                        if (playerToggleGlideEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setGliding(true);
+                        }
+                    }
+
+                    if (authPacket.getInputData().contains(AuthInputAction.STOP_GLIDING)) {
+                        PlayerToggleGlideEvent playerToggleGlideEvent = new PlayerToggleGlideEvent(this, false);
+                        this.server.getPluginManager().callEvent(playerToggleGlideEvent);
+                        if (playerToggleGlideEvent.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setGliding(false);
+                        }
+                    }
+
+                    if (authPacket.getInputData().contains(AuthInputAction.START_SWIMMING)) {
+                        PlayerToggleSwimEvent ptse = new PlayerToggleSwimEvent(this, true);
+                        this.server.getPluginManager().callEvent(ptse);
+                        if (ptse.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSwimming(true);
+                        }
+                    }
+
+                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SWIMMING)) {
+                        PlayerToggleSwimEvent ptse = new PlayerToggleSwimEvent(this, false);
+                        this.server.getPluginManager().callEvent(ptse);
+                        if (ptse.isCancelled()) {
+                            this.sendData(this);
+                        } else {
+                            this.setSwimming(false);
+                        }
                     }
 
                     Vector3 clientPosition = authPacket.getPosition().asVector3()
@@ -2572,23 +2655,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    playerActionPacket.entityId = this.id;
-                    Vector3 pos = new Vector3(playerActionPacket.x, playerActionPacket.y, playerActionPacket.z);
-                    BlockFace face = BlockFace.fromIndex(playerActionPacket.face);
-
-                    actionswitch:
                     switch (playerActionPacket.action) {
-                        case PlayerActionPacket.ACTION_START_BREAK:
-                            this.onBlockBreakStart(pos, face);
-                            break;
-                        case PlayerActionPacket.ACTION_ABORT_BREAK:
-                        case PlayerActionPacket.ACTION_STOP_BREAK:
-                           this.onBlockBreakAbort(pos, face);
-                            break;
-                        case PlayerActionPacket.ACTION_GET_UPDATED_BLOCK:
-                            //TODO
-                        case PlayerActionPacket.ACTION_DROP_ITEM:
-                            break; //TODO
                         case PlayerActionPacket.ACTION_STOP_SLEEPING:
                             this.stopSleep();
                             break;
@@ -2596,92 +2663,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (!this.spawned || this.isAlive() || !this.isOnline()) {
                                 break;
                             }
-
                             this.respawn();
                             break;
-                        case PlayerActionPacket.ACTION_JUMP:
-                            PlayerJumpEvent playerJumpEvent = new PlayerJumpEvent(this);
-                            this.server.getPluginManager().callEvent(playerJumpEvent);
-                            break packetswitch;
-                        case PlayerActionPacket.ACTION_START_SPRINT:
-                            PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, true);
-                            this.server.getPluginManager().callEvent(playerToggleSprintEvent);
-                            if (playerToggleSprintEvent.isCancelled()) {
-                                this.sendData(this);
-                            } else {
-                                this.setSprinting(true);
-                            }
-                            break packetswitch;
-                        case PlayerActionPacket.ACTION_STOP_SPRINT:
-                            playerToggleSprintEvent = new PlayerToggleSprintEvent(this, false);
-                            this.server.getPluginManager().callEvent(playerToggleSprintEvent);
-                            if (playerToggleSprintEvent.isCancelled()) {
-                                this.sendData(this);
-                            } else {
-                                this.setSprinting(false);
-                            }
-                            break packetswitch;
-                        case PlayerActionPacket.ACTION_START_SNEAK:
-                            PlayerToggleSneakEvent playerToggleSneakEvent = new PlayerToggleSneakEvent(this, true);
-                            this.server.getPluginManager().callEvent(playerToggleSneakEvent);
-                            if (playerToggleSneakEvent.isCancelled()) {
-                                this.sendData(this);
-                            } else {
-                                this.setSneaking(true);
-                            }
-                            break packetswitch;
-                        case PlayerActionPacket.ACTION_STOP_SNEAK:
-                            playerToggleSneakEvent = new PlayerToggleSneakEvent(this, false);
-                            this.server.getPluginManager().callEvent(playerToggleSneakEvent);
-                            if (playerToggleSneakEvent.isCancelled()) {
-                                this.sendData(this);
-                            } else {
-                                this.setSneaking(false);
-                            }
-                            break packetswitch;
                         case PlayerActionPacket.ACTION_DIMENSION_CHANGE_ACK:
-                            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_NORMAL);
-                            break; //TODO
-                        case PlayerActionPacket.ACTION_START_GLIDE:
-                            PlayerToggleGlideEvent playerToggleGlideEvent = new PlayerToggleGlideEvent(this, true);
-                            this.server.getPluginManager().callEvent(playerToggleGlideEvent);
-                            if (playerToggleGlideEvent.isCancelled()) {
-                                this.sendData(this);
-                            } else {
-                                this.setGliding(true);
-                            }
-                            break packetswitch;
-                        case PlayerActionPacket.ACTION_STOP_GLIDE:
-                            playerToggleGlideEvent = new PlayerToggleGlideEvent(this, false);
-                            this.server.getPluginManager().callEvent(playerToggleGlideEvent);
-                            if (playerToggleGlideEvent.isCancelled()) {
-                                this.sendData(this);
-                            } else {
-                                this.setGliding(false);
-                            }
-                            break packetswitch;
-                        case PlayerActionPacket.ACTION_CONTINUE_BREAK:
-                           this.onBlockBreakContinue(pos, face);
-                            break;
-                        case PlayerActionPacket.ACTION_START_SWIMMING:
-                            PlayerToggleSwimEvent ptse = new PlayerToggleSwimEvent(this, true);
-                            this.server.getPluginManager().callEvent(ptse);
-
-                            if (ptse.isCancelled()) {
-                                this.sendData(this);
-                            } else {
-                                this.setSwimming(true);
-                            }
-                            break;
-                        case PlayerActionPacket.ACTION_STOP_SWIMMING:
-                            ptse = new PlayerToggleSwimEvent(this, false);
-                            this.server.getPluginManager().callEvent(ptse);
-
-                            if (ptse.isCancelled()) {
-                                this.sendData(this);
-                            } else {
-                                this.setSwimming(false);
-                            }
+                            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
                             break;
                     }
 
@@ -2993,7 +2978,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.craftingType = CRAFTING_SMALL;
                     this.resetCraftingGridType();
 
-                    pos = new Vector3(blockEntityDataPacket.x, blockEntityDataPacket.y, blockEntityDataPacket.z);
+                    Vector3 pos = new Vector3(blockEntityDataPacket.x, blockEntityDataPacket.y, blockEntityDataPacket.z);
                     if (pos.distanceSquared(this) > 10000) {
                         break;
                     }
