@@ -705,7 +705,7 @@ public class Server {
         List<InetSocketAddress> targets = new ArrayList<>();
         for (Player p : players) {
             if (p.isConnected()) {
-                targets.add(p.getSocketAddress());
+                targets.add(p.getRawSocketAddress());
             }
         }
 
@@ -1851,7 +1851,7 @@ public class Server {
     }
 
     public void removePlayer(Player player) {
-        Player toRemove = this.players.remove(player.getSocketAddress());
+        Player toRemove = this.players.remove(player.getRawSocketAddress());
         if (toRemove != null) {
             return;
         }

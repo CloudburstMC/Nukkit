@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Server;
 import cn.nukkit.network.protocol.LoginPacket;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -109,7 +110,11 @@ public final class ClientChainData implements LoginChainData {
 
     @Override
     public String getXUID() {
-        return xuid;
+        if (Server.getInstance().getConfig("waterdogpe", false) && Waterdog_XUID != null) {
+            return Waterdog_XUID;
+        } else {
+            return xuid;
+        }
     }
 
     private boolean xboxAuthed;
@@ -135,6 +140,16 @@ public final class ClientChainData implements LoginChainData {
     @Override
     public int getUIProfile() {
         return UIProfile;
+    }
+
+    @Override
+    public String getWaterdogXUID() {
+        return Waterdog_XUID;
+    }
+
+    @Override
+    public String getWaterdogIP() {
+        return Waterdog_IP;
     }
 
     @Override
@@ -180,6 +195,8 @@ public final class ClientChainData implements LoginChainData {
     private String languageCode;
     private int currentInputMode;
     private int defaultInputMode;
+    private String Waterdog_IP;
+    private String Waterdog_XUID;
 
     private int UIProfile;
 
@@ -215,6 +232,14 @@ public final class ClientChainData implements LoginChainData {
         if (skinToken.has("DefaultInputMode")) this.defaultInputMode = skinToken.get("DefaultInputMode").getAsInt();
         if (skinToken.has("UIProfile")) this.UIProfile = skinToken.get("UIProfile").getAsInt();
         if (skinToken.has("CapeData")) this.capeData = skinToken.get("CapeData").getAsString();
+        if (skinToken.has("Waterdog_IP")) this.Waterdog_IP = skinToken.get("Waterdog_IP").getAsString();
+        if (skinToken.has("Waterdog_XUID")) this.Waterdog_XUID = skinToken.get("Waterdog_XUID").getAsString();
+
+        boolean useWaterdog = Server.getInstance().getConfig("settings.waterdogpe", false);
+
+        if (useWaterdog && this.Waterdog_XUID != null) {
+            xboxAuthed = true;
+        }
 
         this.rawData = skinToken;
     }
