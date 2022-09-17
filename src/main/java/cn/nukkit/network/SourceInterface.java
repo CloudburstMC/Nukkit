@@ -15,13 +15,19 @@ import java.net.InetSocketAddress;
 public interface SourceInterface {
 
     @Deprecated
-    Integer putPacket(Player player, DataPacket packet);
+    default Integer putPacket(Player player, DataPacket packet) {
+        throw new UnsupportedOperationException("This method is deprecated");
+    }
 
     @Deprecated
-    Integer putPacket(Player player, DataPacket packet, boolean needACK);
+    default Integer putPacket(Player player, DataPacket packet, boolean needACK) {
+        throw new UnsupportedOperationException("This method is deprecated");
+    }
 
     @Deprecated
-    Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate);
+    default Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
+        throw new UnsupportedOperationException("This method is deprecated");
+    }
 
     NetworkPlayerSession getSession(InetSocketAddress address);
 
