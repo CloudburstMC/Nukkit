@@ -2,6 +2,10 @@ package cn.nukkit.network;
 
 import cn.nukkit.Player;
 import cn.nukkit.network.protocol.DataPacket;
+import cn.nukkit.network.protocol.types.PacketCompressionAlgorithm;
+import cn.nukkit.network.session.NetworkPlayerSession;
+
+import java.net.InetSocketAddress;
 
 
 /**
@@ -10,11 +14,16 @@ import cn.nukkit.network.protocol.DataPacket;
  */
 public interface SourceInterface {
 
+    @Deprecated
     Integer putPacket(Player player, DataPacket packet);
 
+    @Deprecated
     Integer putPacket(Player player, DataPacket packet, boolean needACK);
 
+    @Deprecated
     Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate);
+
+    NetworkPlayerSession getSession(InetSocketAddress address);
 
     int getNetworkLatency(Player player);
 

@@ -14,11 +14,11 @@ public interface ProtocolInfo {
      * Actual Minecraft: PE protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("545"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("554"); // DO NOT REMOVE BOXING
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION_NETWORK = "1.19.21";
+    String MINECRAFT_VERSION_NETWORK = "1.19.30";
     String MINECRAFT_VERSION = 'v' + MINECRAFT_VERSION_NETWORK;
 
     byte LOGIN_PACKET = 0x01;
@@ -201,6 +201,9 @@ public interface ProtocolInfo {
     byte REQUEST_ABILITY_PACKET = (byte) 0xb8;
     byte REQUEST_PERMISSIONS_PACKET = (byte) 0xb9;
     byte TOAST_REQUEST_PACKET = (byte) 0xba;
+    byte UPDATE_ABILITIES_PACKET = (byte) 0xbb;
+    byte UPDATE_ADVENTURE_SETTINGS_PACKET = (byte) 0xbc;
+    byte REQUEST_NETWORK_SETTINGS_PACKET = (byte) 0xc1;
 
     byte BATCH_PACKET = (byte) 0xff;
 }

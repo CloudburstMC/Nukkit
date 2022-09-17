@@ -7,6 +7,7 @@ import lombok.ToString;
  * @author Nukkit Project Team
  */
 @ToString
+@Deprecated
 public class AdventureSettingsPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
