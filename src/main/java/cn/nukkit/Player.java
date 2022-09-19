@@ -1504,12 +1504,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.lastPitch = target.pitch;
 
             if (!isFirst) {
-                List<Block> blocksAround = new ObjectArrayList<>(this.blocksAround);
-                List<Block> collidingBlocks = new ObjectArrayList<>(this.collisionBlocks);
+                List<Block> blocksAround = null;
+                if (this.blocksAround != null) {
+                    blocksAround = new ObjectArrayList<>(this.blocksAround);
+                }
+                List<Block> collidingBlocks = null;
+                if (this.collisionBlocks != null) {
+                    collidingBlocks = new ObjectArrayList<>(this.collisionBlocks);
+                }
 
                 PlayerMoveEvent event = new PlayerMoveEvent(this, source, target);
-                this.blocksAround.clear();
-                this.collisionBlocks.clear();
+                this.blocksAround = null;
+                this.collisionBlocks = null;
                 this.server.getPluginManager().callEvent(event);
 
                 if (!(invalidMotion = event.isCancelled())) {
