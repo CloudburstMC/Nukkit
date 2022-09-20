@@ -2142,6 +2142,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     NetworkSettingsPacket settingsPacket = new NetworkSettingsPacket();
                     settingsPacket.compressionAlgorithm = PacketCompressionAlgorithm.ZLIB;
+                    settingsPacket.compressionThreshold = 1; // compress everything
                     this.forceDataPacket(settingsPacket, () -> {
                         this.networkSession.setCompression(CompressionProvider.ZLIB);
                     });
