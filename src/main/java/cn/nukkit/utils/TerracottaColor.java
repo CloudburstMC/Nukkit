@@ -2,7 +2,7 @@ package cn.nukkit.utils;
 
 public enum TerracottaColor {
 
-    BLACK(0, 15, "Black", "Ink Sack", BlockColor.BLACK_TERRACOTA_BLOCK_COLOR),
+    BLACK(0, 15, "Black", "Ink Sac", BlockColor.BLACK_TERRACOTA_BLOCK_COLOR),
     RED(1, 14, "Red", "Rose Red", BlockColor.RED_TERRACOTA_BLOCK_COLOR),
     GREEN(2, 13, "Green", "Cactus Green", BlockColor.GREEN_TERRACOTA_BLOCK_COLOR),
     BROWN(3, 12, "Brown", "Cocoa Beans", BlockColor.BROWN_TERRACOTA_BLOCK_COLOR),

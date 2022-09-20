@@ -1,7 +1,7 @@
 package cn.nukkit.utils;
 
 public enum DyeColor {
-    BLACK(0, 15, "Black", "Ink Sack", BlockColor.BLACK_BLOCK_COLOR, new BlockColor(0x00, 0x00, 0x00)),
+    BLACK(0, 15, "Black", "Ink Sac", BlockColor.BLACK_BLOCK_COLOR, new BlockColor(0x00, 0x00, 0x00)),
     RED(1, 14, "Red", BlockColor.RED_BLOCK_COLOR, new BlockColor(0xb0, 0x2e, 0x26)),
     GREEN(2, 13, "Green", BlockColor.GREEN_BLOCK_COLOR, new BlockColor(0x5e, 0x7c, 0x16)),
     BROWN(3, 12, "Brown", "Cocoa Beans", BlockColor.BROWN_BLOCK_COLOR, new BlockColor(0x83, 0x54, 0x32)),
