@@ -153,10 +153,10 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             return false;
         }
 
-        if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.CUSTOM && source.getCause() != DamageCause.MAGIC) {
+        if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.CUSTOM && source.getCause() != DamageCause.MAGIC && source.getCause() != DamageCause.HUNGER) {
             int armorPoints = 0;
             int epf = 0;
-            int toughness = 0;
+            //int toughness = 0;
 
             for (Item armor : inventory.getArmorContents()) {
                 armorPoints += armor.getArmorPoints();
@@ -170,9 +170,9 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
 
             source.setDamage(-source.getFinalDamage() * Math.min(NukkitMath.ceilFloat(Math.min(epf, 25) * ((float) ThreadLocalRandom.current().nextInt(50, 100) / 100)), 20) * 0.04f,
                     DamageModifier.ARMOR_ENCHANTMENTS);
-
-            source.setDamage(-Math.min(this.getAbsorption(), source.getFinalDamage()), DamageModifier.ABSORPTION);
         }
+
+        source.setDamage(-Math.min(this.getAbsorption(), source.getFinalDamage()), DamageModifier.ABSORPTION);
 
         if (super.attack(source)) {
             Entity damager = null;
@@ -196,16 +196,26 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                         continue;
                 }
 
-                if (armor.isUnbreakable() || armor instanceof ItemSkull) {
-                    continue;
-                }
+                if (source.getCause() != DamageCause.VOID &&
+                        source.getCause() != DamageCause.MAGIC &&
+                        source.getCause() != DamageCause.HUNGER &&
+                        source.getCause() != DamageCause.DROWNING &&
+                        source.getCause() != DamageCause.SUFFOCATION &&
+                        source.getCause() != DamageCause.SUICIDE &&
+                        source.getCause() != DamageCause.FIRE_TICK &&
+                        source.getCause() != DamageCause.FALL) { // No armor damage
 
-                armor.setDamage(armor.getDamage() + 1);
+                    if (armor.isUnbreakable() || armor instanceof ItemSkull) {
+                        continue;
+                    }
 
-                if (armor.getDamage() >= armor.getMaxDurability()) {
-                    inventory.setArmorItem(slot, new ItemBlock(Block.get(BlockID.AIR)));
-                } else {
-                    inventory.setArmorItem(slot, armor, true);
+                    armor.setDamage(armor.getDamage() + 1);
+
+                    if (armor.getDamage() >= armor.getMaxDurability()) {
+                        inventory.setArmorItem(slot, new ItemBlock(Block.get(BlockID.AIR)));
+                    } else {
+                        inventory.setArmorItem(slot, armor, true);
+                    }
                 }
             }
 

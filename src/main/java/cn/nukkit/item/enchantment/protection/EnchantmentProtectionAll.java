@@ -33,7 +33,7 @@ public class EnchantmentProtectionAll extends EnchantmentProtection {
     public float getProtectionFactor(EntityDamageEvent e) {
         DamageCause cause = e.getCause();
 
-        if (level <= 0 || cause == DamageCause.VOID || cause == DamageCause.CUSTOM || cause == DamageCause.MAGIC) {
+        if (level <= 0 || cause == DamageCause.VOID || cause == DamageCause.CUSTOM || cause == DamageCause.MAGIC || cause == DamageCause.HUNGER) {
             return 0;
         }
 
