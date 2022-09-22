@@ -7,23 +7,23 @@ package cn.nukkit.utils;
 public class BlockColor  {
 
     public static final BlockColor TRANSPARENT_BLOCK_COLOR = new BlockColor(0x00, 0x00, 0x00, 0x00);
-    public static final BlockColor VOID_BLOCK_COLOR = new BlockColor(0x00, 0x00, 0x00, 0x00);
+    public static final BlockColor VOID_BLOCK_COLOR = TRANSPARENT_BLOCK_COLOR;
+    public static final BlockColor AIR_BLOCK_COLOR = TRANSPARENT_BLOCK_COLOR;
 
-    public static final BlockColor AIR_BLOCK_COLOR = new BlockColor(0x00, 0x00, 0x00);
     public static final BlockColor GRASS_BLOCK_COLOR = new BlockColor(0x7f, 0xb2, 0x38);
-    public static final BlockColor SAND_BLOCK_COLOR = new BlockColor(0xf1, 0xe9, 0xa3);
-    public static final BlockColor CLOTH_BLOCK_COLOR = new BlockColor(0xa7, 0xa7, 0xa7);
+    public static final BlockColor SAND_BLOCK_COLOR = new BlockColor(0xf7, 0xe9, 0xa3);
+    public static final BlockColor CLOTH_BLOCK_COLOR = new BlockColor(0xc7, 0xc7, 0xc7);
     public static final BlockColor TNT_BLOCK_COLOR = new BlockColor(0xff, 0x00, 0x00);
     public static final BlockColor ICE_BLOCK_COLOR = new BlockColor(0xa0, 0xa0, 0xff);
     public static final BlockColor IRON_BLOCK_COLOR = new BlockColor(0xa7, 0xa7, 0xa7);
     public static final BlockColor FOLIAGE_BLOCK_COLOR = new BlockColor(0x00, 0x7c, 0x00);
     public static final BlockColor SNOW_BLOCK_COLOR = new BlockColor(0xff, 0xff, 0xff);
     public static final BlockColor CLAY_BLOCK_COLOR = new BlockColor(0xa4, 0xa8, 0xb8);
-    public static final BlockColor DIRT_BLOCK_COLOR = new BlockColor(0xb7, 0x6a, 0x2f);
+    public static final BlockColor DIRT_BLOCK_COLOR = new BlockColor(0x97, 0x6d, 0x4d);
     public static final BlockColor STONE_BLOCK_COLOR = new BlockColor(0x70, 0x70, 0x70);
     public static final BlockColor WATER_BLOCK_COLOR = new BlockColor(0x40, 0x40, 0xff);
     public static final BlockColor LAVA_BLOCK_COLOR = TNT_BLOCK_COLOR;
-    public static final BlockColor WOOD_BLOCK_COLOR = new BlockColor(0x68, 0x53, 0x32);
+    public static final BlockColor WOOD_BLOCK_COLOR = new BlockColor(0x8f, 0x77, 0x48);
     public static final BlockColor QUARTZ_BLOCK_COLOR = new BlockColor(0xff, 0xfc, 0xf5);
     public static final BlockColor ADOBE_BLOCK_COLOR = new BlockColor(0xd8, 0x7f, 0x33);
 
