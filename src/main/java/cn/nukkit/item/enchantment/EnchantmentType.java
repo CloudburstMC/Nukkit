@@ -36,7 +36,7 @@ public enum EnchantmentType {
             return true;
 
         } else if (item instanceof ItemArmor) {
-            if (this == ARMOR || this == WEARABLE) {
+            if (this == WEARABLE || (this == ARMOR && item.isArmor())) {
                 return true;
             }
 
