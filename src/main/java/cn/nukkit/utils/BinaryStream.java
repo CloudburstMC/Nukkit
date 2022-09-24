@@ -19,6 +19,7 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.LittleEndianByteBufInputStream;
 import cn.nukkit.network.LittleEndianByteBufOutputStream;
 import cn.nukkit.network.protocol.types.EntityLink;
+import com.nukkitx.network.VarInts;
 import io.netty.buffer.AbstractByteBufAllocator;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -28,6 +29,7 @@ import java.lang.reflect.Array;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
@@ -600,9 +602,12 @@ public class BinaryStream {
 
     public void putRecipeIngredient(Item item) {
         if (item == null || item.getId() == Item.AIR) {
-            this.putVarInt(0);
+            this.putBoolean(false); // isValid? - false
+            this.putVarInt(0); // item == null ? 0 : item.getCount()
             return;
         }
+
+        this.putBoolean(true); // isValid? - true
 
         RuntimeItemMapping mapping = RuntimeItems.getMapping();
         int runtimeId, damage;
@@ -616,8 +621,8 @@ public class BinaryStream {
             runtimeId = runtimeEntry.getRuntimeId();
             damage = runtimeEntry.isHasDamage() ? 0 : item.getDamage();
         }
-        this.putVarInt(runtimeId);
-        this.putVarInt(damage);
+        this.putLShort(runtimeId);
+        this.putLShort(damage);
         this.putVarInt(item.getCount());
     }
 
@@ -805,6 +810,13 @@ public class BinaryStream {
             deque.add(function.apply(this));
         }
         return deque.toArray((T[]) Array.newInstance(clazz, 0));
+    }
+
+    public <T> void putArray(Collection<T> array, BiConsumer<BinaryStream, T> biConsumer) {
+        this.putUnsignedVarInt(array.size());
+        for (T val : array) {
+            biConsumer.accept(this, val);
+        }
     }
 
     public boolean feof() {
