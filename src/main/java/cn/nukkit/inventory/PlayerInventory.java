@@ -1,5 +1,6 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
@@ -32,7 +33,6 @@ public class PlayerInventory extends BaseInventory {
         for (int i = 0; i < this.hotbar.length; i++) {
             this.hotbar[i] = i;
         }
-
     }
 
     @Override
@@ -178,6 +178,7 @@ public class PlayerInventory extends BaseInventory {
         if (index >= this.getSize()) {
             this.sendArmorSlot(index, this.getViewers());
             this.sendArmorSlot(index, this.getHolder().getViewers().values());
+
         } else {
             super.onSlotChange(index, before, send);
         }
@@ -234,6 +235,11 @@ public class PlayerInventory extends BaseInventory {
     @Override
     public boolean setItem(int index, Item item) {
         return setItem(index, item, true, false);
+    }
+
+    @Override
+    public boolean setItem(int index, Item item, boolean send) {
+        return setItem(index, item, send, false);
     }
 
     private boolean setItem(int index, Item item, boolean send, boolean ignoreArmorEvents) {
@@ -380,6 +386,7 @@ public class PlayerInventory extends BaseInventory {
         this.sendArmorSlot(index, new Player[]{player});
     }
 
+    // This one
     public void sendArmorSlot(int index, Player[] players) {
         Item[] armor = this.getArmorContents();
 
