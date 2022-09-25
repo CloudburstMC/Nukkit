@@ -61,6 +61,7 @@ public enum Sound {
     BLOCK_COMPOSTER_FILL("block.composter.fill"),
     BLOCK_COMPOSTER_FILL_SUCCESS("block.composter.fill_success"),
     BLOCK_COMPOSTER_READY("block.composter.ready"),
+    BLOCK_ENCHANTING_TABLE_USE("block.enchanting_table.use"),
     BLOCK_END_PORTAL_SPAWN("block.end_portal.spawn"),
     BLOCK_END_PORTAL_FRAME_FILL("block.end_portal_frame.fill"),
     BLOCK_FALSE_PERMISSIONS("block.false_permissions"),
