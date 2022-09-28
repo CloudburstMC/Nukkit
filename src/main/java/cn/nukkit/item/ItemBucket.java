@@ -64,10 +64,12 @@ public class ItemBucket extends Item {
             case 4:
             case 5:
             case 8:
+            case 9:
             case 12:
             case 13:
                 return 8;
             case 10:
+            case 11:
                 return 10;
             default:
                 return 0;
