@@ -94,9 +94,9 @@ public class EnchantCommand extends VanillaCommand {
                 return 5;
             case "respiration":
                 return 6;
-            case "aqua_affinity":
-                return 7;
             case "depth_strider":
+                return 7;
+            case "aqua_affinity":
                 return 8;
             case "sharpness":
                 return 9;
