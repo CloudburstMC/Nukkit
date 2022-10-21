@@ -55,7 +55,11 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     @Override
     public DataPacket clone() {
         try {
-            return (DataPacket) super.clone();
+            DataPacket packet = (DataPacket) super.clone();
+            packet.setBuffer(this.getBuffer()); // prevent reflecting same buffer instance
+            packet.offset = this.offset;
+            packet.count = this.count;
+            return packet;
         } catch (CloneNotSupportedException e) {
             return null;
         }
