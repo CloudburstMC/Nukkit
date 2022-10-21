@@ -8,10 +8,12 @@ import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockRail;
 import cn.nukkit.block.BlockRailActivator;
 import cn.nukkit.block.BlockRailPowered;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.IntEntityData;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
@@ -239,6 +241,12 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     }
 
     public void dropItem() {
+        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) this.lastDamageCause).getDamager();
+            if (damager instanceof Player && ((Player) damager).isCreative()) {
+                return;
+            }
+        }
         level.dropItem(this, new ItemMinecart());
     }
 

@@ -6,6 +6,7 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.data.IntEntityData;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemMinecartTNT;
@@ -119,6 +120,12 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
     @Override
     public void dropItem() {
+        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) this.lastDamageCause).getDamager();
+            if (damager instanceof Player && ((Player) damager).isCreative()) {
+                return;
+            }
+        }
         level.dropItem(this, new ItemMinecartTNT());
     }
 

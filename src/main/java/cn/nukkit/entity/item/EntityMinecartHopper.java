@@ -3,6 +3,7 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.MinecartHopperInventory;
 import cn.nukkit.item.Item;
@@ -46,12 +47,22 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
 
     @Override
     public void dropItem() {
-        super.dropItem();
-
-        this.level.dropItem(this, Item.get(Item.HOPPER));
         for (Item item : this.inventory.getContents().values()) {
             this.level.dropItem(this, item);
         }
+
+        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
+            Entity damager = ((EntityDamageByEntityEvent) this.lastDamageCause).getDamager();
+            if (damager instanceof Player && ((Player) damager).isCreative()) {
+                return;
+            }
+        }
+        this.level.dropItem(this, Item.get(Item.HOPPER_MINECART));
+    }
+
+    @Override
+    public void kill() {
+        super.kill();
         this.inventory.clearAll();
     }
 
