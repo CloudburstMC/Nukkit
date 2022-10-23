@@ -4,7 +4,6 @@ import cn.nukkit.Server;
 import cn.nukkit.network.Network;
 import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
-import com.nukkitx.network.raknet.RakNetReliability;
 
 /**
  * author: MagicDroidX
@@ -13,9 +12,6 @@ import com.nukkitx.network.raknet.RakNetReliability;
 public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     public volatile boolean isEncoded = false;
-    private int channel = 0;
-
-    public RakNetReliability reliability = RakNetReliability.RELIABLE_ORDERED;
 
     public abstract byte pid();
 
@@ -35,14 +31,6 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
         super.reset();
         this.putUnsignedVarInt(this.pid() & 0xff);
         return this;
-    }
-
-    public void setChannel(int channel) {
-        this.channel = channel;
-    }
-
-    public int getChannel() {
-        return channel;
     }
 
     public DataPacket clean() {

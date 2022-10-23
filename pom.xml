@@ -42,9 +42,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.nukkitx.network</groupId>
-            <artifactId>raknet</artifactId>
-            <version>1.6.28-SNAPSHOT</version>
+            <groupId>org.cloudburstmc.netty</groupId>
+            <artifactId>netty-transport-raknet</artifactId>
+            <version>0.0.1.Final-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

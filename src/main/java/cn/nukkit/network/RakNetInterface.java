@@ -10,18 +10,24 @@ import cn.nukkit.network.session.NetworkPlayerSession;
 import cn.nukkit.network.session.RakNetPlayerSession;
 import cn.nukkit.utils.Utils;
 import com.google.common.base.Strings;
-import com.nukkitx.network.raknet.*;
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.internal.PlatformDependent;
 import lombok.extern.log4j.Log4j2;
+import org.cloudburstmc.netty.channel.raknet.RakChannelFactory;
+import org.cloudburstmc.netty.channel.raknet.config.RakChannelOption;
 
 import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -29,26 +35,56 @@ import java.util.concurrent.TimeUnit;
  * Nukkit Project
  */
 @Log4j2
-public class RakNetInterface implements RakNetServerListener, AdvancedSourceInterface {
+public class RakNetInterface implements AdvancedSourceInterface {
 
     private final Server server;
     private Network network;
-    private final RakNetServer raknet;
+    private final List<Channel> channels = new ArrayList<>();
 
     private final Map<InetSocketAddress, RakNetPlayerSession> sessions = new HashMap<>();
     private final Queue<RakNetPlayerSession> sessionCreationQueue = PlatformDependent.newMpscQueue();
 
+    private final long serverId = ThreadLocalRandom.current().nextLong();
 
     private byte[] advertisement;
 
     public RakNetInterface(Server server) {
         this.server = server;
 
-        InetSocketAddress bindAddress = new InetSocketAddress(Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp(), this.server.getPort());
-        this.raknet = new RakNetServer(bindAddress, Runtime.getRuntime().availableProcessors());
-        this.raknet.setProtocolVersion(11);
-        this.raknet.bind().join();
-        this.raknet.setListener(this);
+        ServerBootstrap bootstrap = new ServerBootstrap()
+                .channelFactory(RakChannelFactory.server(NioDatagramChannel.class))
+                .group(new NioEventLoopGroup())
+                .option(RakChannelOption.RAK_SUPPORTED_PROTOCOLS, new int[]{11})
+                .childOption(RakChannelOption.RAK_ORDERING_CHANNELS, 1)
+                .option(RakChannelOption.RAK_GUID, serverId)
+                .handler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel channel) throws Exception {
+                        channel.pipeline().addLast("query-handler", new ChannelInboundHandlerAdapter() {
+                            @Override
+                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                if (msg instanceof DatagramPacket) {
+                                    DatagramPacket packet = (DatagramPacket) msg;
+                                    server.handlePacket(packet.sender(), packet.content());
+                                }
+                                super.channelRead(ctx, msg);
+                            }
+                        });
+                    }
+                })
+                .childHandler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel channel) throws Exception {
+                        RakNetPlayerSession nukkitSession = new RakNetPlayerSession(RakNetInterface.this, channel);
+                        channel.pipeline().addLast("nukkit-handler", nukkitSession);
+                        RakNetInterface.this.sessionCreationQueue.offer(nukkitSession);
+                    }
+                });
+
+        String address = Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp();
+
+        this.channels.add(bootstrap.bind(address, this.server.getPort())
+                .awaitUninterruptibly().channel());
     }
 
     @Override
@@ -60,7 +96,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     public boolean process() {
         RakNetPlayerSession session;
         while ((session = this.sessionCreationQueue.poll()) != null) {
-            InetSocketAddress address = session.getRakNetSession().getAddress();
+            InetSocketAddress address = (InetSocketAddress) session.getChannel().remoteAddress();
             try {
                 PlayerCreationEvent event = new PlayerCreationEvent(this, Player.class, Player.class, null, address);
                 this.server.getPluginManager().callEvent(event);
@@ -94,8 +130,9 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public int getNetworkLatency(Player player) {
-        RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
-        return session == null ? -1 : (int) session.getPing();
+//        RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
+//        return session == null ? -1 : (int) session.getPing();
+        return 0;
     }
 
     @Override
@@ -119,33 +156,33 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     @Override
     public void shutdown() {
         this.sessions.values().forEach(session -> session.disconnect("Shutdown"));
-        this.raknet.close();
+        this.channels.forEach(channel -> channel.close().awaitUninterruptibly());
     }
 
     @Override
     public void emergencyShutdown() {
         this.sessions.values().forEach(session -> session.disconnect("Shutdown"));
-        this.raknet.close();
+        this.channels.forEach(channel -> channel.close().awaitUninterruptibly());
     }
 
     @Override
     public void blockAddress(InetAddress address) {
-        this.raknet.block(address);
+//        this.raknet.block(address);
     }
 
     @Override
     public void blockAddress(InetAddress address, int timeout) {
-        this.raknet.block(address, timeout, TimeUnit.SECONDS);
+//        this.raknet.block(address, timeout, TimeUnit.SECONDS);
     }
 
     @Override
     public void unblockAddress(InetAddress address) {
-        this.raknet.unblock(address);
+//        this.raknet.unblock(address);
     }
 
     @Override
     public void sendRawPacket(InetSocketAddress socketAddress, ByteBuf payload) {
-        this.raknet.send(socketAddress, payload);
+        this.channels.get(0).write(new DatagramPacket(payload, socketAddress));
     }
 
     @Override
@@ -161,12 +198,16 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                 .add(ProtocolInfo.MINECRAFT_VERSION_NETWORK)
                 .add(Integer.toString(info.getPlayerCount()))
                 .add(Integer.toString(info.getMaxPlayerCount()))
-                .add(Long.toString(this.raknet.getGuid()))
+                .add(Long.toString(serverId))
                 .add(subMotd)
                 .add(Server.getGamemodeString(this.server.getDefaultGamemode(), true))
                 .add("1");
 
-        this.advertisement = joiner.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] advertisement = joiner.toString().getBytes(StandardCharsets.UTF_8);
+
+        for (Channel channel : this.channels) {
+            channel.config().setOption(RakChannelOption.RAK_ADVERTISEMENT, Unpooled.wrappedBuffer(advertisement));
+        }
     }
 
     @Override
@@ -186,38 +227,6 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
             session.sendPacket(packet);
         }
         return null;
-    }
-
-    @Override
-    public boolean onConnectionRequest(InetSocketAddress address, InetSocketAddress realAddress) {
-        return true;
-    }
-
-    @Override
-    public byte[] onQuery(InetSocketAddress inetSocketAddress) {
-        return this.advertisement;
-    }
-
-    @Override
-    public void onSessionCreation(RakNetServerSession session) {
-        // We need to make sure this gets put into the correct thread local hashmap
-        // for ticking or race conditions will occur.
-        if (session.getEventLoop().inEventLoop()) {
-            this.onSessionCreation0(session);
-        } else {
-            session.getEventLoop().execute(() -> this.onSessionCreation0(session));
-        }
-    }
-
-    private void onSessionCreation0(RakNetServerSession session) {
-        RakNetPlayerSession nukkitSession = new RakNetPlayerSession(this, session);
-        session.setListener(nukkitSession);
-        this.sessionCreationQueue.offer(nukkitSession);
-    }
-
-    @Override
-    public void onUnhandledDatagram(ChannelHandlerContext ctx, DatagramPacket datagramPacket) {
-        this.server.handlePacket(datagramPacket.sender(), datagramPacket.content());
     }
 
     public Network getNetwork() {
