@@ -60,15 +60,10 @@ public class RakNetInterface implements AdvancedSourceInterface {
                 .handler(new ChannelInitializer<Channel>() {
                     @Override
                     protected void initChannel(Channel channel) throws Exception {
-                        channel.pipeline().addLast("query-handler", new ChannelInboundHandlerAdapter() {
+                        channel.pipeline().addLast("query-handler", new SimpleChannelInboundHandler<DatagramPacket>() {
                             @Override
-                            public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                if (msg instanceof DatagramPacket) {
-                                    DatagramPacket packet = (DatagramPacket) msg;
-                                    server.handlePacket(packet.sender(), packet.content());
-                                    return;
-                                }
-                                super.channelRead(ctx, msg);
+                            protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet) {
+                                server.handlePacket(packet.sender(), packet.content());
                             }
                         });
                     }
