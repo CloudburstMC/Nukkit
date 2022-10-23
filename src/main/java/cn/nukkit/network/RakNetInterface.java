@@ -66,6 +66,7 @@ public class RakNetInterface implements AdvancedSourceInterface {
                                 if (msg instanceof DatagramPacket) {
                                     DatagramPacket packet = (DatagramPacket) msg;
                                     server.handlePacket(packet.sender(), packet.content());
+                                    return;
                                 }
                                 super.channelRead(ctx, msg);
                             }
