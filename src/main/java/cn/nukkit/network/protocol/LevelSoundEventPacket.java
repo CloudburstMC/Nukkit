@@ -447,7 +447,8 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_RECORD_5 = 439;
     public static final int SOUND_CONVERT_TO_FROG = 440;
     public static final int SOUND_RECORD_PLAYING = 441;
-    public static final int SOUND_UNDEFINED = 442;
+    public static final int SOUND_ENCHANTING_TABLE_USE = 442;
+    public static final int SOUND_UNDEFINED = 443;
 
     public int sound;
     public float x;

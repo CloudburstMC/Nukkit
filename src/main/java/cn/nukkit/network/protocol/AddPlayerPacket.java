@@ -62,6 +62,8 @@ public class AddPlayerPacket extends DataPacket {
         this.putSlot(this.item);
         this.putVarInt(this.gameType);
         this.put(Binary.writeMetadata(this.metadata));
+        this.putUnsignedVarInt(0); // Entity properties int
+        this.putUnsignedVarInt(0); // Entity properties float
         this.putLLong(entityUniqueId);
         this.putUnsignedVarInt(0); // playerPermission
         this.putUnsignedVarInt(0); // commandPermission

@@ -17,6 +17,7 @@ public class AbilityLayer {
         CACHE,
         BASE,
         SPECTATOR,
-        COMMANDS
+        COMMANDS,
+        EDITOR
     }
 }
