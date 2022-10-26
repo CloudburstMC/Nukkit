@@ -4729,13 +4729,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void teleportImmediate(Location location, TeleportCause cause) {
         Location from = this.getLocation();
         if (super.teleport(location, cause)) {
-
-            for (Inventory window : new ArrayList<>(this.windows.keySet())) {
-                if (window == this.inventory) {
-                    continue;
-                }
-                this.removeWindow(window);
-            }
+            this.removeAllWindows();
 
             if (from.getLevel().getId() != location.getLevel().getId()) { //Different level, update compass position
                 SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
@@ -4755,6 +4749,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.nextChunkOrderRun = 0;
             this.resetClientMovement();
 
+            //DummyBossBar
+            this.getDummyBossBars().values().forEach(DummyBossBar::reshow);
             //Weather
             this.getLevel().sendWeather(this);
             //Update time
