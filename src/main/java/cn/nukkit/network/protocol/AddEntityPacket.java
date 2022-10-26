@@ -185,6 +185,8 @@ public class AddEntityPacket extends DataPacket {
         this.putLFloat(this.bodyYaw == -1 ? this.yaw : this.bodyYaw);
         this.putAttributeList(this.attributes);
         this.put(Binary.writeMetadata(this.metadata));
+        this.putUnsignedVarInt(0); // Entity properties int
+        this.putUnsignedVarInt(0); // Entity properties float
         this.putUnsignedVarInt(this.links.length);
         for (EntityLink link : links) {
             putEntityLink(link);
