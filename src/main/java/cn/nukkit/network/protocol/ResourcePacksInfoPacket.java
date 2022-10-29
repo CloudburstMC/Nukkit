@@ -48,9 +48,9 @@ public class ResourcePacksInfoPacket extends DataPacket {
             this.putString(entry.getPackId().toString());
             this.putString(entry.getPackVersion());
             this.putLLong(entry.getPackSize());
-            this.putString(""); // encryption key
+            this.putString(entry.getEncryptionKey()); // encryption key
             this.putString(""); // sub-pack name
-            this.putString(""); // content identity
+            this.putString(!entry.getEncryptionKey().equals("") ? entry.getPackId().toString() : ""); // content identity
             this.putBoolean(false); // scripting
             this.putBoolean(false); // raytracing capable
         }
