@@ -179,17 +179,16 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_NEARBY_CURED_DISCOUNT_TIMESTAMP = 117;
     public static final int DATA_HITBOX = 118;
     public static final int DATA_IS_BUOYANT = 119;
-    public static final int DATA_BASE_RUNTIME_ID = 120;
-    public static final int DATA_FREEZING_EFFECT_STRENGTH = 121;
-    public static final int DATA_BUOYANCY_DATA = 122;
-    public static final int DATA_GOAT_HORN_COUNT = 123;
-    public static final int DATA_UPDATE_PROPERTIES = 124;
-    public static final int DATA_MOVEMENT_SOUND_DISTANCE_OFFSET = 125;
-    public static final int DATA_HEARTBEAT_INTERVAL_TICKS = 126;
-    public static final int DATA_HEARTBEAT_SOUND_EVENT = 127;
-    public static final int DATA_PLAYER_LAST_DEATH_POS = 128;
-    public static final int DATA_PLAYER_LAST_DEATH_DIMENSION = 129;
-    public static final int DATA_PLAYER_HAS_DIED = 130;
+    public static final int DATA_FREEZING_EFFECT_STRENGTH = 120;
+    public static final int DATA_BUOYANCY_DATA = 121;
+    public static final int DATA_GOAT_HORN_COUNT = 122;
+    public static final int DATA_BASE_RUNTIME_ID = 123;
+    public static final int DATA_MOVEMENT_SOUND_DISTANCE_OFFSET = 124;
+    public static final int DATA_HEARTBEAT_INTERVAL_TICKS = 125;
+    public static final int DATA_HEARTBEAT_SOUND_EVENT = 126;
+    public static final int DATA_PLAYER_LAST_DEATH_POS = 127;
+    public static final int DATA_PLAYER_LAST_DEATH_DIMENSION = 128;
+    public static final int DATA_PLAYER_HAS_DIED = 129;
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
