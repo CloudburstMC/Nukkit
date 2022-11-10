@@ -45,4 +45,9 @@ public abstract class AbstractResourcePack implements ResourcePack {
                 version.get(1).getAsString(),
                 version.get(2).getAsString());
     }
+
+    @Override
+    public String getEncryptionKey() {
+        return "";
+    }
 }

@@ -23,8 +23,9 @@ public class ResourcePackManager {
             try {
                 ResourcePack resourcePack = null;
 
-                if (!pack.isDirectory()) { //directory resource packs temporarily unsupported
-                    switch (Files.getFileExtension(pack.getName())) {
+                String fileExt = Files.getFileExtension(pack.getName());
+                if (!pack.isDirectory() && !fileExt.equals("key")) { //directory resource packs temporarily unsupported
+                    switch (fileExt) {
                         case "zip":
                         case "mcpack":
                             resourcePack = new ZippedResourcePack(pack);
