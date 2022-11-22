@@ -55,13 +55,15 @@ Build image from the source,
 docker build -t nukkit .
 ```
 
-Run once to generate the `/data` volume, default settings, and choose language,
+Run once to generate the `nukkit-data` volume, default settings, and choose language,
 
 ```
-docker run -it --rm -p 19132:19132 nukkit
+docker run -it -p 19132:19132 -v nukkit-data:/data nukkit
 ```
+Docker Compose
+-------------
 
-Use [docker-compose](https://docs.docker.com/compose/overview/) to start server on port `19132` and with `./data` volume,
+Use [docker-compose](https://docs.docker.com/compose/overview/) to start server on port `19132` and with `nukkit-data` volume,
 
 ```
 docker-compose up -d

@@ -6,6 +6,10 @@ services:
       - "19132:19132"
       - "19132:19132/udp"
     volumes:
-      - ./data:/data
-    stdin_open: true
-    tty: true
+      - data:/data
+    container_name: nukkit
+    restart: unless-stopped
+volumes:
+  data:
+    external: true
+    name: nukkit-data
