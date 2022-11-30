@@ -448,7 +448,18 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_CONVERT_TO_FROG = 440;
     public static final int SOUND_RECORD_PLAYING = 441;
     public static final int SOUND_ENCHANTING_TABLE_USE = 442;
-    public static final int SOUND_UNDEFINED = 443;
+
+    public static final int SOUND_PRESSURE_PLATE_CLICK_OFF = 448;
+    public static final int SOUND_PRESSURE_PLATE_CLICK_ON = 449;
+    public static final int SOUND_BUTTON_CLICK_OFF = 450;
+    public static final int SOUND_BUTTON_CLICK_ON = 451;
+    public static final int SOUND_DOOR_OPEN = 452;
+    public static final int SOUND_DOOR_CLOSE = 453;
+    public static final int SOUND_TRAPDOOR_OPEN = 454;
+    public static final int SOUND_TRAPDOOR_CLOSE = 455;
+    public static final int SOUND_FENCE_GATE_OPEN = 456;
+    public static final int SOUND_FENCE_GATE_CLOSE = 457;
+    public static final int SOUND_UNDEFINED = 458;
 
     public int sound;
     public float x;
