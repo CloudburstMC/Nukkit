@@ -153,16 +153,16 @@ public class NukkitMetrics {
             case 1: return "Android";
             case 2: return "iOS";
             case 3: return "macOS";
-            case 4: return "FireOS";
+            case 4: return "Fire OS";
             case 5: return "Gear VR";
-            case 6: return "Hololens";
+            case 6: return "HoloLens";
             case 7: return "Windows 10";
             case 8: return "Windows";
             case 9: return "Dedicated";
-            case 10: return "PS4";
-            case 11: return "Switch";
+            case 10: return "tvOS";
+            case 11: return "PlayStation";
             case 12: return "Switch";
-            case 13: return "Xbox One";
+            case 13: return "Xbox";
             case 14: return "Windows Phone";
         }
         return "Unknown";
