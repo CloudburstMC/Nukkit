@@ -16,6 +16,7 @@ import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -263,6 +264,7 @@ public final class ClientChainData implements LoginChainData {
         ECPublicKey lastKey = null;
         boolean mojangKeyVerified = false;
         Iterator<String> iterator = chains.iterator();
+        long epoch = Instant.now().getEpochSecond();
         while (iterator.hasNext()) {
             JWSObject jws = JWSObject.parse(iterator.next());
 
@@ -292,6 +294,22 @@ public final class ClientChainData implements LoginChainData {
             }
 
             Map<String, Object> payload = jws.getPayload().toJSONObject();
+
+            // chain expiry check
+            Object chainExpiresObj = payload.get("exp");
+            long chainExpires;
+            if (chainExpiresObj instanceof Long) {
+                chainExpires = (Long)chainExpiresObj;
+            } else if (chainExpiresObj instanceof Integer) {
+                chainExpires = (Integer)chainExpiresObj;
+            } else {
+                throw new RuntimeException("Unsupported expiry time format");
+            }
+            if (chainExpires < epoch) {
+                // chain has already expires
+                return false;
+            }
+
             Object base64key = payload.get("identityPublicKey");
             if (!(base64key instanceof String)) {
                 throw new RuntimeException("No key found");
