@@ -9,6 +9,7 @@ import cn.nukkit.event.entity.ItemDespawnEvent;
 import cn.nukkit.event.entity.ItemSpawnEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -212,9 +213,9 @@ public class EntityItem extends Entity {
                 }
             }*/
 
-            int bid = level.getBlockIdAt(this.getFloorX(), this.getFloorY(), this.getFloorZ());
+            int bid = level.getBlockIdAt(this.getFloorX(), NukkitMath.floorDouble(this.y + 0.53), this.getFloorZ());
             if (bid == BlockID.WATER || bid == BlockID.STILL_WATER) {
-                this.motionY = this.getGravity() - 0.06;
+                this.motionY = this.getGravity() / 2;
             } else if (!this.isOnGround()) {
                 this.motionY -= this.getGravity();
             }
