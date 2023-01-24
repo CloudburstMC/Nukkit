@@ -1984,8 +1984,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.namedTag.putInt("foodLevel", 20);
         }
         int foodLevel = this.namedTag.getInt("foodLevel");
-        if (!this.namedTag.contains("FoodSaturationLevel")) {
-            this.namedTag.putFloat("FoodSaturationLevel", 20);
+        if (!this.namedTag.contains("foodSaturationLevel")) {
+            this.namedTag.putFloat("foodSaturationLevel", 20);
         }
         float foodSaturationLevel = this.namedTag.getFloat("foodSaturationLevel");
         this.foodData = new PlayerFood(this, foodLevel, foodSaturationLevel);
