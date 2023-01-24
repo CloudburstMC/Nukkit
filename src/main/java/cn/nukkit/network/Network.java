@@ -226,6 +226,7 @@ public class Network {
         List<DataPacket> packets = new ObjectArrayList<>();
         try {
             this.processBatch(packet.payload, packets, player.getNetworkSession().getCompression());
+            this.processPackets(player, packets);
         } catch (ProtocolException e) {
             player.close("", e.getMessage());
             log.error("Unable to process player packets ", e);
