@@ -31,7 +31,8 @@ public enum PlayerActionType {
     PREDICT_DESTROY_BLOCK,
     CONTINUE_DESTROY_BLOCK,
     START_ITEM_USE_ON,
-    STOP_ITEM_USE_ON;
+    STOP_ITEM_USE_ON,
+    HANDLED_TELEPORT;
 
     private static final PlayerActionType[] VALUES = values();
 

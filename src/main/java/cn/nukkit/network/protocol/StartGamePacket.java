@@ -87,6 +87,7 @@ public class StartGamePacket extends DataPacket {
     public boolean clientSideGenerationEnabled;
     public byte chatRestrictionLevel;
     public boolean disablePlayerInteractions;
+    public boolean emoteChatMuted;
 
     @Override
     public void decode() {
@@ -142,6 +143,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isOnlySpawningV1Villagers);
         this.putBoolean(this.isDisablingPersonas);
         this.putBoolean(this.isDisablingCustomSkins);
+        this.putBoolean(this.emoteChatMuted);
         this.putString(this.vanillaVersion);
         this.putLInt(16); // Limited world width
         this.putLInt(16); // Limited world height
