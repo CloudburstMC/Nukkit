@@ -337,7 +337,7 @@ public class BinaryStream {
         skin.setGeometryDataEngineVersion(this.getString());
         skin.setAnimationData(this.getString());
         skin.setCapeId(this.getString());
-        this.getString(); // TODO: Full skin id
+        skin.setFullSkinId(this.getString());
         skin.setArmSize(this.getString());
         skin.setSkinColor(this.getString());
 

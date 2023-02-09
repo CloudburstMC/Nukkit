@@ -45,7 +45,7 @@ public class PlayerListPacket extends DataPacket {
 
         if (type == TYPE_ADD) {
             for (Entry entry : this.entries) {
-                this.putBoolean(true);
+                this.putBoolean(entry.skin.isTrusted());
             }
         }
     }
