@@ -87,6 +87,7 @@ public enum ParticleEffect {
     MOBFLAME("minecraft:mobflame_emitter"),
     MOBFLAME_SINGLE("minecraft:mobflame_single"),
     MOBSPELL("minecraft:mobspell_emitter"),
+    MOBSPELL_AMBIENT("minecraft:mobspell_ambient"),
     MOB_BLOCK_SPAWN("minecraft:mob_block_spawn_emitter"),
     MOB_PORTAL("minecraft:mob_portal"),
     MYCELIUM_DUST("minecraft:mycelium_dust_particle"),
