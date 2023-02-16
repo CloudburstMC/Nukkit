@@ -2302,7 +2302,7 @@ public abstract class Entity extends Location implements Metadatable {
         Location from = this.getLocation();
         Location to = location;
         if (cause != null) {
-            EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to);
+            EntityTeleportEvent ev = new EntityTeleportEvent(this, from, to, cause);
             this.server.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
                 return false;
