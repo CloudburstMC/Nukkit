@@ -19,7 +19,7 @@ public class EntityTeleportEvent extends EntityEvent implements Cancellable {
 
     private Location from;
     private Location to;
-    private PlayerTeleportEvent.TeleportCause cause;
+    private final PlayerTeleportEvent.TeleportCause cause;
 
     public EntityTeleportEvent(Entity entity, Location from, Location to) {
         this(entity, from, to, PlayerTeleportEvent.TeleportCause.UNKNOWN);
@@ -50,9 +50,5 @@ public class EntityTeleportEvent extends EntityEvent implements Cancellable {
 
     public PlayerTeleportEvent.TeleportCause getCause() {
         return cause;
-    }
-
-    public void setCause(PlayerTeleportEvent.TeleportCause cause) {
-        this.cause = cause;
     }
 }
