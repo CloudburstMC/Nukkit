@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import lombok.ToString;
 
@@ -11,7 +12,6 @@ public class PlayerSkinPacket extends DataPacket {
     public UUID uuid;
     public Skin skin;
     public String newSkinName;
-    public String oldSkinName;
 
     @Override
     public byte pid() {
@@ -23,11 +23,6 @@ public class PlayerSkinPacket extends DataPacket {
         uuid = getUUID();
         skin = getSkin();
         newSkinName = getString();
-        oldSkinName = getString();
-        if (!feof()) { // -facepalm-
-            getBoolean(); // skin.setTrusted(getBoolean());
-        }
-        skin.setTrusted(false); // Don't trust player skins
     }
 
     @Override
@@ -36,7 +31,6 @@ public class PlayerSkinPacket extends DataPacket {
         putUUID(uuid);
         putSkin(skin);
         putString(newSkinName);
-        putString(oldSkinName);
         putBoolean(skin.isTrusted());
     }
 }
