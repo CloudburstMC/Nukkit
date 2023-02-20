@@ -51,6 +51,7 @@ public class Skin {
     private String armSize = "wide";
     private boolean trusted = true;
     private String geometryDataEngineVersion = "";
+    private boolean overridingPlayerAppearance = true;
 
     public boolean isValid() {
         return isValidSkin() && isValidResourcePatch();
@@ -326,5 +327,13 @@ public class Skin {
 
     private static String convertLegacyGeometryName(String geometryName) {
         return "{\"geometry\" : {\"default\" : \"" + geometryName + "\"}}";
+    }
+
+    public void setOverridingPlayerAppearance(boolean overridingPlayerAppearance) {
+        this.overridingPlayerAppearance = overridingPlayerAppearance;
+    }
+
+    public boolean isOverridingPlayerAppearance() {
+        return this.overridingPlayerAppearance;
     }
 }

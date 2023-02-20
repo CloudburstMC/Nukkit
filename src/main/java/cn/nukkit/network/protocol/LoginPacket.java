@@ -25,6 +25,7 @@ public class LoginPacket extends DataPacket {
     public UUID clientUUID;
     public long clientId;
     public Skin skin;
+    public boolean incompatibleVersion;
 
     @Override
     public byte pid() {
@@ -77,6 +78,17 @@ public class LoginPacket extends DataPacket {
     private void decodeSkinData() {
         JsonObject skinToken = decodeToken(new String(this.get(this.getLInt())));
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
+
+        // Hack: 1.19.62 hotfix includes protocol changes but doesn't bump the protocol
+        // TODO: Remove in next update
+        if (skinToken.has("GameVersion") && skinToken.get("GameVersion").getAsString().startsWith("1.19.60")) {
+            // Hack: Allow plugins to ignore this patch if they really want to
+            if (!ProtocolInfo.SUPPORTED_PROTOCOLS.contains(ProtocolInfo.CURRENT_PROTOCOL + 1)) {
+                this.incompatibleVersion = true;
+                return;
+            }
+        }
+
         skin = new Skin();
         skin.setTrusted(false); // Don't trust player skins
 

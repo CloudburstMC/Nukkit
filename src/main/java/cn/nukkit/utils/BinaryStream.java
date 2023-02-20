@@ -314,6 +314,7 @@ public class BinaryStream {
         this.putBoolean(skin.isPersona());
         this.putBoolean(skin.isCapeOnClassic());
         this.putBoolean(skin.isPrimaryUser());
+        this.putBoolean(skin.isOverridingPlayerAppearance());
     }
 
     public Skin getSkin() {
@@ -366,6 +367,7 @@ public class BinaryStream {
         skin.setPersona(this.getBoolean());
         skin.setCapeOnClassic(this.getBoolean());
         skin.setPrimaryUser(this.getBoolean());
+        this.getBoolean(); //skin.setOverridingPlayerAppearance(this.getBoolean());
         return skin;
     }
 
