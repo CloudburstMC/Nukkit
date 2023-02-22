@@ -2,6 +2,7 @@ package cn.nukkit.command;
 
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * author: MagicDroidX
@@ -21,7 +22,7 @@ public class PluginCommand<T extends Plugin> extends Command implements PluginId
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String @NotNull [] args) {
         if (!this.owningPlugin.isEnabled()) {
             return false;
         }

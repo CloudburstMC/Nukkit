@@ -10,6 +10,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Created by Pub4Game on 23.01.2016.
@@ -38,7 +39,7 @@ public class EnchantCommand extends VanillaCommand {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String @NotNull [] args) {
         if (!this.testPermission(sender)) {
             return true;
         }

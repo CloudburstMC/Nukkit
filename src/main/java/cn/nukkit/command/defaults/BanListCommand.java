@@ -6,6 +6,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
@@ -24,7 +25,7 @@ public class BanListCommand extends VanillaCommand {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String @NotNull [] args) {
         if (!this.testPermission(sender)) {
             return true;
         }

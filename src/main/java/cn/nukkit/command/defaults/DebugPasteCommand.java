@@ -9,6 +9,8 @@ import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.utils.HastebinUtility;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.Utils;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -22,7 +24,7 @@ public class DebugPasteCommand extends VanillaCommand {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, String @NotNull [] args) {
         if (!this.testPermission(sender)) {
             return true;
         }

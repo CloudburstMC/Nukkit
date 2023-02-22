@@ -9,6 +9,7 @@ import cn.nukkit.permission.Permissible;
 import cn.nukkit.utils.TextFormat;
 import co.aikar.timings.Timing;
 import co.aikar.timings.Timings;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -135,7 +136,11 @@ public abstract class Command {
         return this.commandData.overloads;
     }
 
-    public abstract boolean execute(CommandSender sender, String commandLabel, String[] args);
+    public abstract boolean execute(
+            @NotNull CommandSender sender,
+            @NotNull String commandLabel,
+            @NotNull String[] args
+    );
 
     public String getName() {
         return name;
