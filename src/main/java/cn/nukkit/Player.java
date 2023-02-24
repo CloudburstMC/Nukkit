@@ -2163,12 +2163,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.displayName = this.username;
                     this.iusername = this.username.toLowerCase();
 
-                    // TODO: Remove in the next update
-                    if (loginPacket.incompatibleVersion) {
-                        this.close("", "disconnectionScreen.outdatedClient");
-                        return;
-                    }
-
                     this.setDataProperty(new StringEntityData(DATA_NAMETAG, this.username), false);
 
                     this.loginChainData = ClientChainData.read(loginPacket);
