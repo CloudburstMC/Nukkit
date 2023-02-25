@@ -84,6 +84,10 @@ tasks {
         useJUnitPlatform()
     }
 
+    jar {
+        archiveClassifier.set("dev")
+    }
+
     shadowJar {
         manifest.attributes["Multi-Release"] = "true"
 
