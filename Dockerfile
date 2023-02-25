@@ -5,23 +5,16 @@
 # Use OpenJDK JDK image for intermiediate build
 FROM openjdk:8-jdk-slim AS build
 
-# Install packages required for build
-RUN apt-get -y update 
-RUN apt-get install -y build-essential
-RUN apt-get install -y git
-RUN mkdir -p /usr/share/man/man1
-RUN apt-get install -y maven
-
 # Build from source and create artifact
 WORKDIR /src
 
-COPY mvn* pom.xml /src/
+COPY gradlew *.gradle.kts .gitmodules /src/
 COPY src /src/src
 COPY .git /src/.git
-COPY .mvn /src/.mvn
+COPY gradle /src/gradle
 
 RUN git submodule update --init
-RUN mvn clean package
+RUN ./gradlew shadowJar
 
 # Use OpenJDK JRE image for runtime
 FROM openjdk:8-jre-slim AS run

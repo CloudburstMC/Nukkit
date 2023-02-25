@@ -10,24 +10,13 @@ pipeline {
     stages {
         stage ('Build') {
             steps {
-                sh 'mvn clean package -B'
+                sh 'bash gradlew shadowJar'
             }
             post {
                 success {
-                    junit 'target/surefire-reports/**/*.xml'
+//                     junit 'build/test-results/**/*.xml'
                     archiveArtifacts artifacts: 'target/nukkit-*-SNAPSHOT.jar', fingerprint: true
                 }
-            }
-        }
-
-        stage ('Deploy') {
-            when {
-                branch "master"
-            }
-
-            steps {
-                // TODO: Fix deployment
-                sh 'mvn javadoc:javadoc javadoc:jar source:jar install -B -DskipTests'
             }
         }
     }
