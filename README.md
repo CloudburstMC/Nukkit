@@ -26,13 +26,16 @@ Links
 * __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
 * __[Wiki](https://nukkitx.com/wiki/nukkit)__
 
+Contributing
+-------------
+Please read the [CONTRIBUTING](.github/CONTRIBUTING.md) guide before submitting any issue. Issues with insufficient information or in the wrong format will be closed and will not be reviewed.
+
 Build JAR file
 -------------
 - `git clone https://github.com/CloudburstMC/Nukkit`
 - `cd Nukkit`
 - `git submodule update --init`
-- `chmod +x mvnw`
-- `./mvnw clean package`
+- `./gradlew shadowJar`
 
 The compiled JAR can be found in the `target/` directory.
 
@@ -112,8 +115,3 @@ Testing after deployment:
 Completely remove the chart:
 
 `helm uninstall nukkit`
-
-
-Contributing
-------------
-Please read the [CONTRIBUTING](.github/CONTRIBUTING.md) guide before submitting any issue. Issues with insufficient information or in the wrong format will be closed and will not be reviewed.
