@@ -1,14 +1,12 @@
 FROM arm64v8/openjdk:8-jdk-slim AS build
 WORKDIR /usr/local/src/nukkit
 COPY src /usr/local/src/nukkit/src
-COPY mvn* pom.xml /usr/local/src/nukkit/
-COPY .git /usr/local/src/nukkit/.git
-COPY .mvn /usr/local/src/nukkit/.mvn
-COPY .gitmodules /usr/local/src/nukkit/.gitmodules
-RUN apt-get -y update && \
-    apt-get install -y build-essential git maven && \
-    git submodule update --init && \
-    mvn clean package
+COPY gradlew *.gradle.kts .gitmodules /src/
+COPY src /src/src
+COPY .git /src/.git
+COPY gradle /src/gradle
+RUN git submodule update --init && \
+    ./gradlew shadowJar
 
 FROM arm64v8/openjdk:8-jre-slim AS run
 LABEL maintainer="Chris Fordham <chris@fordham.id.au>"
