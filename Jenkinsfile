@@ -26,28 +26,8 @@ pipeline {
             }
 
             steps {
-                rtMavenDeployer (
-                        id: "maven-deployer",
-                        serverId: "opencollab-artifactory",
-                        releaseRepo: "maven-releases",
-                        snapshotRepo: "maven-snapshots"
-                )
-                rtMavenResolver(
-                        id: "maven-resolver",
-                        serverId: "opencollab-artifactory",
-                        releaseRepo: "maven-deploy-release",
-                        snapshotRepo: "maven-deploy-snapshot"
-                )
-                rtMavenRun (
-                        pom: 'pom.xml',
-                        goals: 'javadoc:javadoc javadoc:jar source:jar install -B -DskipTests',
-                        deployerId: "maven-deployer",
-                        resolverId: "maven-resolver"
-                )
-                rtPublishBuildInfo (
-                        serverId: "opencollab-artifactory"
-                )
-                step([$class: 'JavadocArchiver', javadocDir: 'target/site/apidocs', keepAll: false])
+                // TODO: Fix deployment
+                sh 'mvn javadoc:javadoc javadoc:jar source:jar install -B -DskipTests'
             }
         }
     }
