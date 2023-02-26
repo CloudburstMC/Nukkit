@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.event.block.BlockFromToEvent;
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.concurrent.ThreadLocalRandom;

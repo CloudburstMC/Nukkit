@@ -9,8 +9,6 @@ import cn.nukkit.item.ItemPainting;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AddPaintingPacket;
-import cn.nukkit.network.protocol.DataPacket;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -46,7 +44,7 @@ public class EntityPainting extends EntityHanging {
     }
 
     @Override
-    public DataPacket createAddEntityPacket() {
+    public BedrockPacket createAddEntityPacket() {
         AddPaintingPacket addPainting = new AddPaintingPacket();
         addPainting.entityUniqueId = this.getId();
         addPainting.entityRuntimeId = this.getId();

@@ -1,6 +1,5 @@
 package cn.nukkit.network;
 
-import cn.nukkit.network.protocol.types.PacketCompressionAlgorithm;
 import cn.nukkit.utils.BinaryStream;
 
 public interface CompressionProvider {

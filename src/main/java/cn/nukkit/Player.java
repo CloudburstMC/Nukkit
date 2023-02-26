@@ -53,7 +53,6 @@ import cn.nukkit.metadata.MetadataValue;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.CompressionProvider;
-import cn.nukkit.network.Network;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.*;
@@ -72,6 +71,7 @@ import co.aikar.timings.Timings;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import io.netty.buffer.Unpooled;
 import io.netty.util.internal.PlatformDependent;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
@@ -82,6 +82,12 @@ import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import lombok.extern.log4j.Log4j2;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.protocol.bedrock.data.*;
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityEventType;
+import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryActionData;
+import org.cloudburstmc.protocol.bedrock.data.skin.SerializedSkin;
+import org.cloudburstmc.protocol.bedrock.packet.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -582,7 +588,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setEnableClientCommand(boolean enable) {
         this.enableClientCommand = enable;
         SetCommandsEnabledPacket pk = new SetCommandsEnabledPacket();
-        pk.enabled = enable;
+        pk.setCommandsEnabled(enable);
         this.dataPacket(pk);
         if (enable) this.sendCommandData();
     }
@@ -601,10 +607,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             ++count;
             CommandDataVersions data0 = command.generateCustomCommandData(this);
             data.put(command.getName(), data0);
+            pk.getCommands().add(data);
         }
         if (count > 0) {
             //TODO: structure checking
-            pk.commands = data;
             this.dataPacket(pk);
         }
     }
@@ -761,7 +767,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
     }
 
-    public void sendChunk(int x, int z, DataPacket packet) {
+    public void sendChunk(int x, int z, BedrockPacket packet) {
         if (!this.connected) {
             return;
         }
@@ -789,10 +795,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.chunkLoadCount++;
 
         LevelChunkPacket pk = new LevelChunkPacket();
-        pk.chunkX = x;
-        pk.chunkZ = z;
-        pk.subChunkCount = subChunkCount;
-        pk.data = payload;
+        pk.setChunkX(x);
+        pk.setChunkZ(z);
+        pk.setSubChunkLimit(subChunkCount);
+        pk.setData(Unpooled.wrappedBuffer(payload));
 
         this.dataPacket(pk);
 
@@ -862,7 +868,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.setEnableClientCommand(true);
 
         SetTimePacket setTimePacket = new SetTimePacket();
-        setTimePacket.time = this.level.getTime();
+        setTimePacket.setTime(this.level.getTime());
         this.dataPacket(setTimePacket);
 
         Position pos = this.level.getSafeSpawn(this);
@@ -873,7 +879,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         pos = respawnEvent.getRespawnPosition();
 
-        this.sendPlayStatus(PlayStatusPacket.PLAYER_SPAWN);
+        this.sendPlayStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
 
         PlayerJoinEvent playerJoinEvent = new PlayerJoinEvent(this,
                 new TranslationContainer(TextFormat.YELLOW + "%multiplayer.player.joined", new String[]{
@@ -1015,8 +1021,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (!loadQueue.isEmpty()) {
             NetworkChunkPublisherUpdatePacket packet = new NetworkChunkPublisherUpdatePacket();
-            packet.position = this.asBlockVector3();
-            packet.radius = viewDistance << 4;
+            packet.setPosition(this.asBlockVector3());
+            packet.setRadius(viewDistance << 4);
             this.dataPacket(packet);
         }
 
@@ -1025,7 +1031,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Deprecated
-    public boolean batchDataPacket(DataPacket packet) {
+    public boolean batchDataPacket(BedrockPacket packet) {
         return this.dataPacket(packet);
     }
 
@@ -1036,7 +1042,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param packet packet to send
      * @return packet successfully sent
      */
-    public boolean dataPacket(DataPacket packet) {
+    public boolean dataPacket(BedrockPacket packet) {
         if (!this.connected) {
             return false;
         }
@@ -1058,7 +1064,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     @Deprecated
-    public int dataPacket(DataPacket packet, boolean needACK) {
+    public int dataPacket(BedrockPacket packet, boolean needACK) {
         return dataPacket(packet) ? 1 : 0;
     }
 
@@ -1070,16 +1076,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return packet successfully sent
      */
     @Deprecated
-    public boolean directDataPacket(DataPacket packet) {
+    public boolean directDataPacket(BedrockPacket packet) {
         return this.dataPacket(packet);
     }
 
     @Deprecated
-    public int directDataPacket(DataPacket packet, boolean needACK) {
+    public int directDataPacket(BedrockPacket packet, boolean needACK) {
         return this.dataPacket(packet) ? 1 : 0;
     }
 
-    public void forceDataPacket(DataPacket packet, Runnable callback) {
+    public void forceDataPacket(BedrockPacket packet, Runnable callback) {
         this.networkSession.sendImmediatePacket(packet, (callback == null ? () -> {} : callback));
     }
 
@@ -1130,7 +1136,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
         this.spawnPosition = new Position(pos.x, pos.y, pos.z, level);
         SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
-        pk.spawnType = SetSpawnPositionPacket.TYPE_PLAYER_SPAWN;
+        pk.setSpawnType(SetSpawnPositionPacket.Type.PLAYER_SPAWN);
         pk.x = (int) this.spawnPosition.x;
         pk.y = (int) this.spawnPosition.y;
         pk.z = (int) this.spawnPosition.z;
@@ -1149,8 +1155,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.level.sleepTicks = 0;
 
             AnimatePacket pk = new AnimatePacket();
-            pk.eid = this.id;
-            pk.action = AnimatePacket.Action.WAKE_UP;
+            pk.setRuntimeEntityId(this.id);
+            pk.setAction(AnimatePacket.Action.WAKE_UP);
             this.dataPacket(pk);
         }
     }
@@ -1251,7 +1257,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (!clientSide) {
             SetPlayerGameTypePacket pk = new SetPlayerGameTypePacket();
-            pk.gamemode = getClientFriendlyGamemode(gamemode);
+            pk.setGamemode(getClientFriendlyGamemode(gamemode));
             this.dataPacket(pk);
         }
 
@@ -1586,7 +1592,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.lastPitch = originalPos.getPitch();
 
         Vector3 syncPos = originalPos.add(0, 0.00001, 0);
-        this.sendPosition(syncPos, originalPos.getYaw(), originalPos.getPitch(), MovePlayerPacket.MODE_RESET);
+        this.sendPosition(syncPos, originalPos.getYaw(), originalPos.getPitch(), MovePlayerPacket.Mode.RESPAWN);
         this.forceMovement = syncPos;
 
         if (this.speed == null) {
@@ -1603,7 +1609,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
-        this.sendPosition(new Vector3(x, y, z), yaw, pitch, MovePlayerPacket.MODE_NORMAL, this.getViewers().values().toArray(new Player[0]));
+        this.sendPosition(new Vector3(x, y, z), yaw, pitch, MovePlayerPacket.Mode.NORMAL, this.getViewers().values().toArray(new Player[0]));
     }
 
     @Override
@@ -1612,10 +1618,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (this.chunk != null) {
                 this.addMotion(this.motionX, this.motionY, this.motionZ);  //Send to others
                 SetEntityMotionPacket pk = new SetEntityMotionPacket();
-                pk.eid = this.id;
-                pk.motionX = (float) motion.x;
-                pk.motionY = (float) motion.y;
-                pk.motionZ = (float) motion.z;
+                pk.setRuntimeEntityId(this.id);
+                pk.setMotion(motion);
                 this.dataPacket(pk);  //Send to self
             }
 
@@ -1632,14 +1636,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendAttributes() {
         UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        pk.entityId = this.getId();
-        pk.entries = new Attribute[]{
+        pk.setRuntimeEntityId(this.getId());
+        pk.getAttributes().addAll(new Attribute[]{
                 Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0),
                 Attribute.getAttribute(Attribute.MAX_HUNGER).setValue(this.getFoodData().getLevel()),
                 Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(this.getMovementSpeed()),
                 Attribute.getAttribute(Attribute.EXPERIENCE_LEVEL).setValue(this.getExperienceLevel()),
                 Attribute.getAttribute(Attribute.EXPERIENCE).setValue(((float) this.getExperience()) / calculateRequireExperience(this.getExperienceLevel()))
-        };
+        });
         this.dataPacket(pk);
     }
 
@@ -1973,7 +1977,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.saveOfflinePlayerData(this.uuid, nbt, true);
         }
 
-        this.sendPlayStatus(PlayStatusPacket.LOGIN_SUCCESS);
+        this.sendPlayStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
         this.server.onPlayerLogin(this);
 
         ListTag<DoubleTag> posList = nbt.getList("Pos", DoubleTag.class);
@@ -2003,8 +2007,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.timeSinceRest = this.namedTag.getInt("TimeSinceRest");
 
         ResourcePacksInfoPacket infoPacket = new ResourcePacksInfoPacket();
-        infoPacket.resourcePackEntries = this.server.getResourcePackManager().getResourceStack();
-        infoPacket.mustAccept = this.server.getForceResources();
+        infoPacket.getResourcePackInfos() = this.server.getResourcePackManager().getResourceStack();
+        infoPacket.setForcedToAccept(this.server.getForceResources());
         this.dataPacket(infoPacket);
     }
 
@@ -2026,31 +2030,31 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         spawnPosition = this.getSpawn();
 
         StartGamePacket startGamePacket = new StartGamePacket();
-        startGamePacket.entityUniqueId = this.id;
-        startGamePacket.entityRuntimeId = this.id;
-        startGamePacket.playerGamemode = getClientFriendlyGamemode(this.gamemode);
+        startGamePacket.setUniqueEntityId(this.id);
+        startGamePacket.setRuntimeEntityId(this.id);
+        startGamePacket.setPlayerGameType(GameType.from(getClientFriendlyGamemode(this.gamemode)));
         startGamePacket.x = (float) this.x;
         startGamePacket.y = (float) this.y;
         startGamePacket.z = (float) this.z;
         startGamePacket.yaw = (float) this.yaw;
         startGamePacket.pitch = (float) this.pitch;
-        startGamePacket.seed = -1;
-        startGamePacket.dimension = /*(byte) (this.level.getDimension() & 0xff)*/0;
-        startGamePacket.worldGamemode = getClientFriendlyGamemode(this.gamemode);
-        startGamePacket.difficulty = this.server.getDifficulty();
+        startGamePacket.setSeed(-1);
+        startGamePacket.setDimensionId(/*(byte) (this.level.getDimension() & 0xff)*/0);
+        startGamePacket.setLevelGameType(GameType.from(getClientFriendlyGamemode(this.gamemode)));
+        startGamePacket.setDifficulty(this.server.getDifficulty());
         startGamePacket.spawnX = spawnPosition.getFloorX();
         startGamePacket.spawnY = spawnPosition.getFloorY();
         startGamePacket.spawnZ = spawnPosition.getFloorZ();
-        startGamePacket.hasAchievementsDisabled = true;
-        startGamePacket.dayCycleStopTime = -1;
-        startGamePacket.rainLevel = 0;
-        startGamePacket.lightningLevel = 0;
-        startGamePacket.commandsEnabled = this.isEnableClientCommand();
+        startGamePacket.setAchievementsDisabled(true);
+        startGamePacket.setDayCycleStopTime(-1);
+        startGamePacket.setRainLevel(0);
+        startGamePacket.setLightningLevel(0);
+        startGamePacket.setCommandsEnabled(this.isEnableClientCommand());
         startGamePacket.gameRules = getLevel().getGameRules();
-        startGamePacket.levelId = "";
-        startGamePacket.worldName = this.getServer().getNetwork().getName();
-        startGamePacket.generator = 1; //0 old, 1 infinite, 2 flat
-        startGamePacket.isMovementServerAuthoritative = true;
+        startGamePacket.setLevelId("");
+        startGamePacket.setLevelName(this.getServer().getNetwork().getName());
+        startGamePacket.setGeneratorId(1); //0 old, 1 infinite, 2 flat
+        startGamePacket.setAuthoritativeMovementMode(AuthoritativeMovementMode.SERVER);
         this.dataPacket(startGamePacket);
 
         this.dataPacket(new BiomeDefinitionListPacket());
@@ -2095,12 +2099,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.server.onPlayerCompleteLoginSequence(this);
     }
 
-    public void handleDataPacket(DataPacket packet) {
+    public void handleDataPacket(BedrockPacket packet) {
         if (!connected) {
             return;
         }
 
-        if (!verified && packet.pid() != ProtocolInfo.LOGIN_PACKET && packet.pid() != ProtocolInfo.BATCH_PACKET && packet.pid() != ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET) {
+        if (!verified && !(packet instanceof LoginPacket || packet instanceof RequestNetworkSettingsPacket)) {
             server.getLogger().warning("Ignoring " + packet.getClass().getSimpleName() + " from " + getAddress() + " due to player not verified yet");
             if (unverifiedPackets++ > 100) {
                 this.close("", "Too many failed login attempts");
@@ -2115,11 +2119,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 return;
             }
 
-            if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
-                this.server.getNetwork().processBatch((BatchPacket) packet, this);
-                return;
-            }
-
             if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
                 log.trace("Inbound {}: {}", this.getName(), packet);
             }
@@ -2127,13 +2126,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             BlockFace face;
 
             packetswitch:
-            switch (packet.pid()) {
-                case ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET:
+            switch (packet.getPacketType()) {
+                case REQUEST_NETWORK_SETTINGS:
                     if (this.loggedIn) {
                         break;
                     }
 
-                    int protocolVersion = ((RequestNetworkSettingsPacket) packet).protocolVersion;
+                    int protocolVersion = ((RequestNetworkSettingsPacket) packet).getProtocolVersion();
 
                     if (!ProtocolInfo.SUPPORTED_PROTOCOLS.contains(protocolVersion)) {
                         String message;
@@ -2147,13 +2146,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     NetworkSettingsPacket settingsPacket = new NetworkSettingsPacket();
-                    settingsPacket.compressionAlgorithm = PacketCompressionAlgorithm.ZLIB;
-                    settingsPacket.compressionThreshold = 1; // compress everything
+                    settingsPacket.setCompressionAlgorithm(PacketCompressionAlgorithm.ZLIB);
+                    settingsPacket.setCompressionThreshold(1); // compress everything
                     this.forceDataPacket(settingsPacket, () -> {
                         this.networkSession.setCompression(CompressionProvider.ZLIB);
                     });
                     break;
-                case ProtocolInfo.LOGIN_PACKET:
+                case LOGIN:
                     if (this.loggedIn) {
                         break;
                     }
@@ -2255,36 +2254,36 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.server.getScheduler().scheduleAsyncTask(this.preLoginEventTask);
                     this.processLogin();
                     break;
-                case ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
+                case RESOURCE_PACK_CLIENT_RESPONSE:
                     ResourcePackClientResponsePacket responsePacket = (ResourcePackClientResponsePacket) packet;
-                    switch (responsePacket.responseStatus) {
-                        case ResourcePackClientResponsePacket.STATUS_REFUSED:
+                    switch (responsePacket.getStatus()) {
+                        case REFUSED:
                             this.close("", "disconnectionScreen.noReason");
                             break;
-                        case ResourcePackClientResponsePacket.STATUS_SEND_PACKS:
-                            for (ResourcePackClientResponsePacket.Entry entry : responsePacket.packEntries) {
-                                ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(entry.uuid);
+                        case SEND_PACKS:
+                            for (String packId : responsePacket.getPackIds()) {
+                                ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(packId);
                                 if (resourcePack == null) {
                                     this.close("", "disconnectionScreen.resourcePack");
                                     break;
                                 }
 
                                 ResourcePackDataInfoPacket dataInfoPacket = new ResourcePackDataInfoPacket();
-                                dataInfoPacket.packId = resourcePack.getPackId();
-                                dataInfoPacket.maxChunkSize = RESOURCE_PACK_CHUNK_SIZE;
-                                dataInfoPacket.chunkCount = MathHelper.ceil(resourcePack.getPackSize() / (float) RESOURCE_PACK_CHUNK_SIZE);
-                                dataInfoPacket.compressedPackSize = resourcePack.getPackSize();
-                                dataInfoPacket.sha256 = resourcePack.getSha256();
+                                dataInfoPacket.setPackId(resourcePack.getPackId());
+                                dataInfoPacket.setMaxChunkSize(RESOURCE_PACK_CHUNK_SIZE);
+                                dataInfoPacket.setChunkCount(MathHelper.ceil(resourcePack.getPackSize() / (float) RESOURCE_PACK_CHUNK_SIZE));
+                                dataInfoPacket.setCompressedPackSize(resourcePack.getPackSize());
+                                dataInfoPacket.setHash(resourcePack.getSha256());
                                 this.dataPacket(dataInfoPacket);
                             }
                             break;
-                        case ResourcePackClientResponsePacket.STATUS_HAVE_ALL_PACKS:
+                        case HAVE_ALL_PACKS:
                             ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
-                            stackPacket.mustAccept = this.server.getForceResources();
-                            stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourceStack();
+                            stackPacket.setForcedToAccept(this.server.getForceResources());
+                            stackPacket.getBehaviorPacks().addAll(this.server.getResourcePackManager().getResourceStack());
                             this.dataPacket(stackPacket);
                             break;
-                        case ResourcePackClientResponsePacket.STATUS_COMPLETED:
+                        case COMPLETED:
                             this.shouldLogin = true;
 
                             if (this.preLoginEventTask.isFinished()) {
@@ -2293,22 +2292,22 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                     }
                     break;
-                case ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET:
+                case RESOURCE_PACK_CHUNK_REQUEST:
                     ResourcePackChunkRequestPacket requestPacket = (ResourcePackChunkRequestPacket) packet;
-                    ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(requestPacket.packId);
+                    ResourcePack resourcePack = this.server.getResourcePackManager().getPackById(requestPacket.getPackId());
                     if (resourcePack == null) {
                         this.close("", "disconnectionScreen.resourcePack");
                         break;
                     }
 
                     ResourcePackChunkDataPacket dataPacket = new ResourcePackChunkDataPacket();
-                    dataPacket.packId = resourcePack.getPackId();
-                    dataPacket.chunkIndex = requestPacket.chunkIndex;
-                    dataPacket.data = resourcePack.getPackChunk(RESOURCE_PACK_CHUNK_SIZE * requestPacket.chunkIndex, RESOURCE_PACK_CHUNK_SIZE);
-                    dataPacket.progress = (long) RESOURCE_PACK_CHUNK_SIZE * requestPacket.chunkIndex;
+                    dataPacket.setPackId(resourcePack.getPackId());
+                    dataPacket.setChunkIndex(requestPacket.getChunkIndex());
+                    dataPacket.setData(resourcePack.getPackChunk(RESOURCE_PACK_CHUNK_SIZE * requestPacket.getChunkIndex(), RESOURCE_PACK_CHUNK_SIZE));
+                    dataPacket.setProgress((long) RESOURCE_PACK_CHUNK_SIZE * requestPacket.getChunkIndex());
                     this.dataPacket(dataPacket);
                     break;
-                case ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET:
+                case SET_LOCAL_PLAYER_AS_INITIALIZED:
                     if (this.locallyInitialized) {
                         break;
                     }
@@ -2316,9 +2315,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     PlayerLocallyInitializedEvent locallyInitializedEvent = new PlayerLocallyInitializedEvent(this);
                     this.server.getPluginManager().callEvent(locallyInitializedEvent);
                     break;
-                case ProtocolInfo.PLAYER_SKIN_PACKET:
+                case PLAYER_SKIN:
                     PlayerSkinPacket skinPacket = (PlayerSkinPacket) packet;
-                    Skin skin = skinPacket.skin;
+                    SerializedSkin skin = skinPacket.getSkin();
 
                     if (!skin.isValid()) {
                         this.getServer().getLogger().debug(username + ": PlayerSkinPacket with invalid skin");
@@ -2334,32 +2333,32 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     break;
-                case ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET:
+                case PACKET_VIOLATION_WARNING:
                     log.warn("Violation warning from {}: {}", this.getName(), packet.toString());
                     break;
-                case ProtocolInfo.EMOTE_PACKET:
+                case EMOTE:
                     if (!this.spawned) {
                         return;
                     }
                     EmotePacket emotePacket = (EmotePacket) packet;
-                    if (emotePacket.runtimeId != this.id) {
-                        server.getLogger().warning(this.username + " sent EmotePacket with invalid entity id: " + emotePacket.runtimeId + " != " + this.id);
+                    if (emotePacket.getRuntimeEntityId() != this.id) {
+                        server.getLogger().warning(this.username + " sent EmotePacket with invalid entity id: " + emotePacket.getRuntimeEntityId() + " != " + this.id);
                         return;
                     }
                     for (Player viewer : this.getViewers().values()) {
                         viewer.dataPacket(emotePacket);
                     }
                     return;
-                case ProtocolInfo.PLAYER_INPUT_PACKET:
+                case PLAYER_INPUT:
                     if (!this.isAlive() || !this.spawned) {
                         break;
                     }
                     PlayerInputPacket ipk = (PlayerInputPacket) packet;
                     if (riding instanceof EntityMinecartAbstract) {
-                        ((EntityMinecartAbstract) riding).setCurrentSpeed(ipk.motionY);
+                        ((EntityMinecartAbstract) riding).setCurrentSpeed(ipk.getInputMotion().getY());
                     }
                     break;
-                case ProtocolInfo.MOVE_PLAYER_PACKET:
+                case MOVE_PLAYER:
                     if (this.teleportPosition != null) {
                         break;
                     }
@@ -2373,7 +2372,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     if (dis > 100) {
-                        this.sendPosition(this, movePlayerPacket.yaw, movePlayerPacket.pitch, MovePlayerPacket.MODE_RESET);
+                        this.sendPosition(this, movePlayerPacket.yaw, movePlayerPacket.pitch, MovePlayerPacket.Mode.RESPAWN);
                         break;
                     }
 
@@ -2384,7 +2383,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     if (this.forceMovement != null && (newPos.distanceSquared(this.forceMovement) > 0.1 || revert)) {
-                        this.sendPosition(this.forceMovement, movePlayerPacket.yaw, movePlayerPacket.pitch, MovePlayerPacket.MODE_RESET);
+                        this.sendPosition(this.forceMovement, movePlayerPacket.yaw, movePlayerPacket.pitch, MovePlayerPacket.Mode.RESPAWN);
                     } else {
 
                         movePlayerPacket.yaw %= 360;
@@ -2402,16 +2401,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 case ProtocolInfo.PLAYER_AUTH_INPUT_PACKET:
                     PlayerAuthInputPacket authPacket = (PlayerAuthInputPacket) packet;
 
-                    if (!authPacket.getBlockActionData().isEmpty()) {
-                        for (PlayerBlockActionData action : authPacket.getBlockActionData().values()) {
-                            BlockVector3 blockPos = action.getPosition();
-                            BlockFace blockFace = BlockFace.fromIndex(action.getFacing());
+                    if (!authPacket.getPlayerActions().isEmpty()) {
+                        for (PlayerBlockActionData action : authPacket.getPlayerActions()) {
+                            BlockVector3 blockPos = action.getBlockPosition();
+                            BlockFace blockFace = BlockFace.fromIndex(action.getFace());
                             if (this.lastBlockAction != null && this.lastBlockAction.getAction() == PlayerActionType.PREDICT_DESTROY_BLOCK &&
                                     action.getAction() == PlayerActionType.CONTINUE_DESTROY_BLOCK) {
                                 this.onBlockBreakStart(blockPos.asVector3(), blockFace);
                             }
 
-                            BlockVector3 lastBreakPos = this.lastBlockAction == null ? null : this.lastBlockAction.getPosition();
+                            BlockVector3 lastBreakPos = this.lastBlockAction == null ? null : this.lastBlockAction.getBlockPosition();
                             if (lastBreakPos != null && (lastBreakPos.getX() != blockPos.getX() ||
                                     lastBreakPos.getY() != blockPos.getY() || lastBreakPos.getZ() != blockPos.getZ())) {
                                 this.onBlockBreakAbort(lastBreakPos.asVector3(), BlockFace.DOWN);
@@ -2419,17 +2418,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
 
                             switch (action.getAction()) {
-                                case START_DESTROY_BLOCK:
+                                case START_BREAK:
                                     this.onBlockBreakStart(blockPos.asVector3(), blockFace);
                                     break;
-                                case ABORT_DESTROY_BLOCK:
-                                case STOP_DESTROY_BLOCK:
+                                case ABORT_BREAK:
+                                case STOP_BREAK:
                                     this.onBlockBreakAbort(blockPos.asVector3(), blockFace);
                                     break;
-                                case CONTINUE_DESTROY_BLOCK:
+                                case CONTINUE_BREAK:
                                     this.onBlockBreakContinue(blockPos.asVector3(), blockFace);
                                     break;
-                                case PREDICT_DESTROY_BLOCK:
+                                case BLOCK_PREDICT_DESTROY:
                                     this.onBlockBreakAbort(blockPos.asVector3(), blockFace);
                                     this.onBlockBreakComplete(blockPos, blockFace);
                                     break;
@@ -2448,7 +2447,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    if (authPacket.getInputData().contains(AuthInputAction.START_SPRINTING)) {
+                    if (authPacket.getInputData().contains(PlayerAuthInputData.START_SPRINTING)) {
                         PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(this, true);
                         this.server.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
@@ -2458,7 +2457,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SPRINTING)) {
+                    if (authPacket.getInputData().contains(PlayerAuthInputData.STOP_SPRINTING)) {
                         PlayerToggleSprintEvent event = new PlayerToggleSprintEvent(this, false);
                         this.server.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
@@ -2468,7 +2467,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if (authPacket.getInputData().contains(AuthInputAction.START_SNEAKING)) {
+                    if (authPacket.getInputData().contains(PlayerAuthInputData.START_SNEAKING)) {
                         PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this, true);
                         this.server.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
@@ -2478,7 +2477,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SNEAKING)) {
+                    if (authPacket.getInputData().contains(PlayerAuthInputData.STOP_SNEAKING)) {
                         PlayerToggleSneakEvent event = new PlayerToggleSneakEvent(this, false);
                         this.server.getPluginManager().callEvent(event);
                         if (event.isCancelled()) {
@@ -2488,12 +2487,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if (authPacket.getInputData().contains(AuthInputAction.START_JUMPING)) {
+                    if (authPacket.getInputData().contains(PlayerAuthInputData.START_JUMPING)) {
                         PlayerJumpEvent playerJumpEvent = new PlayerJumpEvent(this);
                         this.server.getPluginManager().callEvent(playerJumpEvent);
                     }
 
-                    if (authPacket.getInputData().contains(AuthInputAction.START_GLIDING)) {
+                    if (authPacket.getInputData().contains(PlayerAuthInputData.START_GLIDING)) {
                         PlayerToggleGlideEvent playerToggleGlideEvent = new PlayerToggleGlideEvent(this, true);
                         this.server.getPluginManager().callEvent(playerToggleGlideEvent);
                         if (playerToggleGlideEvent.isCancelled()) {
@@ -2503,7 +2502,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if (authPacket.getInputData().contains(AuthInputAction.STOP_GLIDING)) {
+                    if (authPacket.getInputData().contains(PlayerAuthInputData.STOP_GLIDING)) {
                         PlayerToggleGlideEvent playerToggleGlideEvent = new PlayerToggleGlideEvent(this, false);
                         this.server.getPluginManager().callEvent(playerToggleGlideEvent);
                         if (playerToggleGlideEvent.isCancelled()) {
@@ -2513,7 +2512,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if (authPacket.getInputData().contains(AuthInputAction.START_SWIMMING)) {
+                    if (authPacket.getInputData().contains(PlayerAuthInputData.START_SWIMMING)) {
                         PlayerToggleSwimEvent ptse = new PlayerToggleSwimEvent(this, true);
                         this.server.getPluginManager().callEvent(ptse);
                         if (ptse.isCancelled()) {
@@ -2523,7 +2522,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    if (authPacket.getInputData().contains(AuthInputAction.STOP_SWIMMING)) {
+                    if (authPacket.getInputData().contains(PlayerAuthInputData.STOP_SWIMMING)) {
                         PlayerToggleSwimEvent ptse = new PlayerToggleSwimEvent(this, false);
                         this.server.getPluginManager().callEvent(ptse);
                         if (ptse.isCancelled()) {
@@ -2542,7 +2541,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     if (distSqrt > 100) {
-                        this.sendPosition(this, authPacket.getYaw(), authPacket.getPitch(), MovePlayerPacket.MODE_RESET);
+                        this.sendPosition(this, authPacket.getYaw(), authPacket.getPitch(), MovePlayerPacket.Mode.RESPAWN);
                         break;
                     }
 
@@ -2553,7 +2552,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     if (this.forceMovement != null && (clientPosition.distanceSquared(this.forceMovement) > 0.1 || revertMotion)) {
-                        this.sendPosition(this.forceMovement, authPacket.getYaw(), authPacket.getPitch(), MovePlayerPacket.MODE_RESET);
+                        this.sendPosition(this.forceMovement, authPacket.getYaw(), authPacket.getPitch(), MovePlayerPacket.Mode.RESPAWN);
                     } else {
                         float yaw = authPacket.getYaw() % 360;
                         float pitch = authPacket.getPitch() % 360;
@@ -2567,9 +2566,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.forceMovement = null;
                     }
                     break;
-                case ProtocolInfo.MOVE_ENTITY_ABSOLUTE_PACKET:
+                case MOVE_ENTITY_ABSOLUTE:
                     MoveEntityAbsolutePacket moveEntityAbsolutePacket = (MoveEntityAbsolutePacket) packet;
-                    if (this.riding == null || this.riding.getId() != moveEntityAbsolutePacket.eid || !this.riding.isControlling(this)) {
+                    if (this.riding == null || this.riding.getId() != moveEntityAbsolutePacket.getRuntimeEntityId() || !this.riding.isControlling(this)) {
                         break;
                     }
                     if (this.riding instanceof EntityBoat) {
@@ -2578,11 +2577,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
-                case ProtocolInfo.REQUEST_ABILITY_PACKET:
+                case REQUEST_ABILITY:
                     RequestAbilityPacket abilityPacket = (RequestAbilityPacket) packet;
 
-                    PlayerAbility ability = abilityPacket.getAbility();
-                    if (ability != PlayerAbility.FLYING) {
+                    Ability ability = abilityPacket.getAbility();
+                    if (ability != Ability.FLYING) {
                         this.server.getLogger().info("[" + this.getName() + "] has tried to trigger " + ability + " ability " + (abilityPacket.isBoolValue() ? "on" : "off"));
                         return;
                     }
@@ -2603,86 +2602,86 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.getAdventureSettings().set(Type.FLYING, playerToggleFlightEvent.isFlying());
                     }
                     break;
-                case ProtocolInfo.MOB_EQUIPMENT_PACKET:
+                case MOB_EQUIPMENT:
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
 
                     MobEquipmentPacket mobEquipmentPacket = (MobEquipmentPacket) packet;
 
-                    Inventory inv = this.getWindowById(mobEquipmentPacket.windowId);
+                    Inventory inv = this.getWindowById(mobEquipmentPacket.getContainerId());
 
                     if (inv == null) {
-                        this.server.getLogger().debug(this.getName() + " has no open container with window ID " + mobEquipmentPacket.windowId);
+                        this.server.getLogger().debug(this.getName() + " has no open container with window ID " + mobEquipmentPacket.getContainerId());
                         return;
                     }
 
-                    Item item = inv.getItem(mobEquipmentPacket.hotbarSlot);
+                    Item item = inv.getItem(mobEquipmentPacket.getHotbarSlot());
 
-                    if (!item.equals(mobEquipmentPacket.item)) {
-                        this.server.getLogger().debug(this.getName() + " tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
+                    if (!item.equals(mobEquipmentPacket.getItem())) {
+                        this.server.getLogger().debug(this.getName() + " tried to equip " + mobEquipmentPacket.getItem() + " but have " + item + " in target slot");
                         inv.sendContents(this);
                         return;
                     }
 
                     if (inv instanceof PlayerInventory) {
-                        ((PlayerInventory) inv).equipItem(mobEquipmentPacket.hotbarSlot);
+                        ((PlayerInventory) inv).equipItem(mobEquipmentPacket.getHotbarSlot());
                     }
 
                     this.setDataFlag(Player.DATA_FLAGS, Player.DATA_FLAG_ACTION, false);
 
                     break;
-                case ProtocolInfo.PLAYER_ACTION_PACKET:
+                case PLAYER_ACTION:
                     PlayerActionPacket playerActionPacket = (PlayerActionPacket) packet;
-                    if (!this.spawned || !this.isAlive() && playerActionPacket.action != PlayerActionPacket.ACTION_RESPAWN) {
+                    if (!this.spawned || !this.isAlive() && playerActionPacket.getAction() != PlayerActionType.RESPAWN) {
                         break;
                     }
 
-                    switch (playerActionPacket.action) {
-                        case PlayerActionPacket.ACTION_STOP_SLEEPING:
+                    switch (playerActionPacket.getAction()) {
+                        case STOP_SLEEP:
                             this.stopSleep();
                             break;
-                        case PlayerActionPacket.ACTION_RESPAWN:
+                        case RESPAWN:
                             if (!this.spawned || this.isAlive() || !this.isOnline()) {
                                 break;
                             }
                             this.respawn();
                             break;
-                        case PlayerActionPacket.ACTION_DIMENSION_CHANGE_ACK:
-                            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+                        case DIMENSION_CHANGE_SUCCESS:
+                            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.Mode.RESPAWN);
                             break;
                     }
 
                     this.setUsingItem(false);
                     break;
-                case ProtocolInfo.MOB_ARMOR_EQUIPMENT_PACKET:
+                case MOB_ARMOR_EQUIPMENT:
                     break;
-                case ProtocolInfo.MODAL_FORM_RESPONSE_PACKET:
+                case MODAL_FORM_RESPONSE:
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
 
                     ModalFormResponsePacket modalFormPacket = (ModalFormResponsePacket) packet;
 
-                    if (formWindows.containsKey(modalFormPacket.formId)) {
-                        FormWindow window = formWindows.remove(modalFormPacket.formId);
-                        window.setResponse(modalFormPacket.data.trim());
+                    if (formWindows.containsKey(modalFormPacket.getFormId())) {
+                        FormWindow window = formWindows.remove(modalFormPacket.getFormId());
+                        window.setResponse(modalFormPacket.getFormData().trim());
 
                         for (FormResponseHandler handler : window.getHandlers()) {
-                            handler.handle(this, modalFormPacket.formId);
+                            handler.handle(this, modalFormPacket.getFormId());
                         }
 
-                        PlayerFormRespondedEvent event = new PlayerFormRespondedEvent(this, modalFormPacket.formId, window);
+                        PlayerFormRespondedEvent event = new PlayerFormRespondedEvent(this, modalFormPacket.getFormId(), window);
                         getServer().getPluginManager().callEvent(event);
-                    } else if (serverSettings.containsKey(modalFormPacket.formId)) {
-                        FormWindow window = serverSettings.get(modalFormPacket.formId);
-                        window.setResponse(modalFormPacket.data.trim());
+                    } else if (serverSettings.containsKey(modalFormPacket.getFormId())) {
+                        FormWindow window = serverSettings.get(modalFormPacket.getFormId());
+                        window.setResponse(modalFormPacket.getFormData().trim());
 
                         for (FormResponseHandler handler : window.getHandlers()) {
-                            handler.handle(this, modalFormPacket.formId);
+                            handler.handle(this, modalFormPacket.getFormId());
                         }
 
-                        PlayerSettingsRespondedEvent event = new PlayerSettingsRespondedEvent(this, modalFormPacket.formId, window);
+                        PlayerSettingsRespondedEvent event = new PlayerSettingsRespondedEvent(this, modalFormPacket.getFormId(), window);
                         getServer().getPluginManager().callEvent(event);
 
                         //Set back new settings if not been cancelled
@@ -2692,19 +2691,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     break;
 
-                case ProtocolInfo.INTERACT_PACKET:
+                case INTERACT:
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
 
                     InteractPacket interactPacket = (InteractPacket) packet;
 
-                    if (interactPacket.target == 0 && interactPacket.action == InteractPacket.ACTION_MOUSEOVER) {
+                    if (interactPacket.getRuntimeEntityId() == 0 && interactPacket.getAction() == InteractPacket.Action.MOUSEOVER) {
                         this.setButtonText("");
                         break;
                     }
 
-                    Entity targetEntity = interactPacket.target == this.getId() ? this : this.level.getEntity(interactPacket.target);
+                    Entity targetEntity = interactPacket.getRuntimeEntityId() == this.getId() ? this :
+                            this.level.getEntity(interactPacket.getRuntimeEntityId());
 
                     if (targetEntity == null || !this.isAlive() || !targetEntity.isAlive()) {
                         break;
@@ -2716,8 +2716,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    switch (interactPacket.action) {
-                        case InteractPacket.ACTION_MOUSEOVER:
+                    switch (interactPacket.getAction()) {
+                        case MOUSEOVER:
                             String buttonText = "";
                             if (targetEntity instanceof EntityInteractable) {
                                 buttonText = ((EntityInteractable) targetEntity).getInteractButtonText(this);
@@ -2729,14 +2729,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                             this.getServer().getPluginManager().callEvent(new PlayerMouseOverEntityEvent(this, targetEntity));
                             break;
-                        case InteractPacket.ACTION_VEHICLE_EXIT:
+                        case LEAVE_VEHICLE:
                             if (!(targetEntity instanceof EntityRideable) || this.riding != targetEntity) {
                                 break;
                             }
 
                             ((EntityRideable) riding).dismountEntity(this);
                             break;
-                        case InteractPacket.ACTION_OPEN_INVENTORY:
+                        case OPEN_INVENTORY:
                             if (targetEntity != this) {
                                 break;
                             }
@@ -2747,7 +2747,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                     }
                     break;
-                case ProtocolInfo.BLOCK_PICK_REQUEST_PACKET:
+                case BLOCK_PICK_REQUEST:
                     BlockPickRequestPacket pickRequestPacket = (BlockPickRequestPacket) packet;
                     Block block = this.level.getBlock(pickRequestPacket.x, pickRequestPacket.y, pickRequestPacket.z, false);
                     if (block.distanceSquared(this) > 1000) {
@@ -2756,7 +2756,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     item = block.toItem();
 
-                    if (pickRequestPacket.addUserData) {
+                    if (pickRequestPacket.isAddUserData()) {
                         BlockEntity blockEntity = this.getLevel().getBlockEntity(new Vector3(pickRequestPacket.x, pickRequestPacket.y, pickRequestPacket.z));
                         if (blockEntity != null) {
                             CompoundTag nbt = blockEntity.getCleanedNBT();
@@ -2823,19 +2823,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
-                case ProtocolInfo.ANIMATE_PACKET:
+                case ANIMATE:
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
 
                     AnimatePacket animatePacket = (AnimatePacket) packet;
-                    PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, animatePacket.action);
+                    PlayerAnimationEvent animationEvent = new PlayerAnimationEvent(this, animatePacket.getAction());
 
                     // prevent client send illegal packet to server and broadcast to other client and make other client crash
-                    if(animatePacket.action == null // illegal action id
-                            || animatePacket.action == AnimatePacket.Action.WAKE_UP // these actions are only for server to client
-                            || animatePacket.action == AnimatePacket.Action.CRITICAL_HIT
-                            || animatePacket.action == AnimatePacket.Action.MAGIC_CRITICAL_HIT) {
+                    if(animatePacket.getAction() == null // illegal action id
+                            || animatePacket.getAction() == AnimatePacket.Action.WAKE_UP // these actions are only for server to client
+                            || animatePacket.getAction() == AnimatePacket.Action.CRITICAL_HIT
+                            || animatePacket.getAction() == AnimatePacket.Action.MAGIC_CRITICAL_HIT) {
                         break; // maybe we should cancel the event here? but if client send too many packets, server will lag
                     }
 
@@ -2850,57 +2850,56 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         case ROW_RIGHT:
                         case ROW_LEFT:
                             if (this.riding instanceof EntityBoat) {
-                                ((EntityBoat) this.riding).onPaddle(animation, ((AnimatePacket) packet).rowingTime);
+                                ((EntityBoat) this.riding).onPaddle(animation, ((AnimatePacket) packet).getRowingTime());
                             }
                             break;
                     }
 
-                    animatePacket.eid = this.getId();
-                    animatePacket.action = animationEvent.getAnimationType();
+                    animatePacket.setRuntimeEntityId(this.getId());
+                    animatePacket.setAction(animationEvent.getAnimationType());
                     Server.broadcastPacket(this.getViewers().values(), animatePacket);
                     break;
-                case ProtocolInfo.SET_HEALTH_PACKET:
+                case SET_HEALTH:
                     //use UpdateAttributePacket instead
                     break;
 
-                case ProtocolInfo.ENTITY_EVENT_PACKET:
+                case ENTITY_EVENT:
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
                     EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
-                    if (entityEventPacket.event != EntityEventPacket.ENCHANT)
+                    if (entityEventPacket.getType() != EntityEventType.ENCHANT)
                         this.craftingType = CRAFTING_SMALL;
                     //this.resetCraftingGridType();
 
 
-                    if (entityEventPacket.event == EntityEventPacket.EATING_ITEM) {
-                        if (entityEventPacket.data == 0 || entityEventPacket.eid != this.id) {
+                    if (entityEventPacket.getType() == EntityEventType.EATING_ITEM) {
+                        if (entityEventPacket.getData() == 0 || entityEventPacket.getRuntimeEntityId() != this.id) {
                             break;
                         }
 
-                        entityEventPacket.eid = this.id;
-                        entityEventPacket.isEncoded = false;
+                        entityEventPacket.setRuntimeEntityId(this.id);
 
                         this.dataPacket(entityEventPacket);
                         Server.broadcastPacket(this.getViewers().values(), entityEventPacket);
-                    } else if (entityEventPacket.event == EntityEventPacket.ENCHANT) {
-                        if (entityEventPacket.eid != this.id) {
+                    } else if (entityEventPacket.getType() == EntityEventPacket.ENCHANT) {
+                        if (entityEventPacket.getRuntimeEntityId() != this.id) {
                             break;
                         }
 
                         Inventory inventory = this.getWindowById(ANVIL_WINDOW_ID);
                         if (inventory instanceof AnvilInventory) {
-                            ((AnvilInventory) inventory).setCost(-entityEventPacket.data);
+                            ((AnvilInventory) inventory).setCost(-entityEventPacket.getData());
                         }
                     }
                     break;
-                case ProtocolInfo.COMMAND_REQUEST_PACKET:
+                case COMMAND_REQUEST:
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
                     this.craftingType = CRAFTING_SMALL;
                     CommandRequestPacket commandRequestPacket = (CommandRequestPacket) packet;
-                    PlayerCommandPreprocessEvent playerCommandPreprocessEvent = new PlayerCommandPreprocessEvent(this, commandRequestPacket.command);
+                    PlayerCommandPreprocessEvent playerCommandPreprocessEvent = new PlayerCommandPreprocessEvent(this, commandRequestPacket.getCommand());
                     this.server.getPluginManager().callEvent(playerCommandPreprocessEvent);
                     if (playerCommandPreprocessEvent.isCancelled()) {
                         break;
@@ -2910,15 +2909,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.server.dispatchCommand(playerCommandPreprocessEvent.getPlayer(), playerCommandPreprocessEvent.getMessage().substring(1));
                     Timings.playerCommandTimer.stopTiming();
                     break;
-                case ProtocolInfo.TEXT_PACKET:
+                case TEXT:
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
 
                     TextPacket textPacket = (TextPacket) packet;
 
-                    if (textPacket.type == TextPacket.TYPE_CHAT) {
-                        String chatMessage = textPacket.message;
+                    if (textPacket.getType() == TextPacket.Type.CHAT) {
+                        String chatMessage = textPacket.getMessage();
                         int breakLine = chatMessage.indexOf('\n');
                         // Chat messages shouldn't contain break lines so ignore text afterwards
                         if (breakLine != -1) {
@@ -2927,32 +2926,32 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.chat(chatMessage);
                     }
                     break;
-                case ProtocolInfo.CONTAINER_CLOSE_PACKET:
+                case CONTAINER_CLOSE:
                     ContainerClosePacket containerClosePacket = (ContainerClosePacket) packet;
-                    if (!this.spawned || containerClosePacket.windowId == ContainerIds.INVENTORY && !inventoryOpen) {
+                    if (!this.spawned || containerClosePacket.getId() == ContainerIds.INVENTORY && !inventoryOpen) {
                         break;
                     }
 
-                    if (this.windowIndex.containsKey(containerClosePacket.windowId)) {
-                        this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windowIndex.get(containerClosePacket.windowId), this));
-                        if (containerClosePacket.windowId == ContainerIds.INVENTORY) this.inventoryOpen = false;
-                        this.closingWindowId = containerClosePacket.windowId;
-                        this.removeWindow(this.windowIndex.get(containerClosePacket.windowId), true);
+                    if (this.windowIndex.containsKey(containerClosePacket.getId())) {
+                        this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windowIndex.get(containerClosePacket.getId()), this));
+                        if (containerClosePacket.getId() == ContainerIds.INVENTORY) this.inventoryOpen = false;
+                        this.closingWindowId = containerClosePacket.getId();
+                        this.removeWindow(this.windowIndex.get(containerClosePacket.getId()), true);
                         this.closingWindowId = Integer.MIN_VALUE;
                     }
-                    if (containerClosePacket.windowId == -1) {
+                    if (containerClosePacket.getId() == -1) {
                         this.craftingType = CRAFTING_SMALL;
                         this.resetCraftingGridType();
                         this.addWindow(this.craftingGrid, ContainerIds.NONE);
                         ContainerClosePacket pk = new ContainerClosePacket();
-                        pk.wasServerInitiated = false;
-                        pk.windowId = -1;
+                        pk.setServerInitiated(false);
+                        pk.setId(-1);
                         this.dataPacket(pk);
                     }
                     break;
-                case ProtocolInfo.CRAFTING_EVENT_PACKET:
+                case CRAFTING_EVENT:
                     break;
-                case ProtocolInfo.BLOCK_ENTITY_DATA_PACKET:
+                case BLOCK_ENTITY_DATA:
                     if (!this.spawned || !this.isAlive()) {
                         break;
                     }
@@ -2968,40 +2967,35 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     BlockEntity t = this.level.getBlockEntity(pos);
                     if (t instanceof BlockEntitySpawnable) {
-                        CompoundTag nbt;
-                        try {
-                            nbt = NBTIO.read(blockEntityDataPacket.namedTag, ByteOrder.LITTLE_ENDIAN, true);
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
+                        NbtMap nbt = blockEntityDataPacket.getData();
 
                         if (!((BlockEntitySpawnable) t).updateCompoundTag(nbt, this)) {
                             ((BlockEntitySpawnable) t).spawnTo(this);
                         }
                     }
                     break;
-                case ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET:
+                case REQUEST_CHUNK_RADIUS:
                     RequestChunkRadiusPacket requestChunkRadiusPacket = (RequestChunkRadiusPacket) packet;
                     ChunkRadiusUpdatedPacket chunkRadiusUpdatePacket = new ChunkRadiusUpdatedPacket();
-                    this.chunkRadius = Math.max(3, Math.min(requestChunkRadiusPacket.radius, this.viewDistance));
-                    chunkRadiusUpdatePacket.radius = this.chunkRadius;
+                    this.chunkRadius = Math.max(3, Math.min(requestChunkRadiusPacket.getRadius(), this.viewDistance));
+                    chunkRadiusUpdatePacket.setRadius(this.chunkRadius);
                     this.dataPacket(chunkRadiusUpdatePacket);
                     break;
-                case ProtocolInfo.SET_PLAYER_GAME_TYPE_PACKET:
+                case SET_PLAYER_GAME_TYPE:
                     SetPlayerGameTypePacket setPlayerGameTypePacket = (SetPlayerGameTypePacket) packet;
-                    if (setPlayerGameTypePacket.gamemode != this.gamemode) {
+                    if (setPlayerGameTypePacket.getGamemode() != this.gamemode) {
                         if (!this.hasPermission("nukkit.command.gamemode")) {
                             SetPlayerGameTypePacket setPlayerGameTypePacket1 = new SetPlayerGameTypePacket();
-                            setPlayerGameTypePacket1.gamemode = this.gamemode & 0x01;
+                            setPlayerGameTypePacket1.setGamemode(this.gamemode & 0x01);
                             this.dataPacket(setPlayerGameTypePacket1);
                             this.getAdventureSettings().update();
                             break;
                         }
-                        this.setGamemode(setPlayerGameTypePacket.gamemode, true);
+                        this.setGamemode(setPlayerGameTypePacket.getGamemode(), true);
                         Command.broadcastCommandMessage(this, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(this.gamemode)));
                     }
                     break;
-                case ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET:
+                case ITEM_FRAME_DROP_ITEM:
                     ItemFrameDropItemPacket itemFrameDropItemPacket = (ItemFrameDropItemPacket) packet;
                     Vector3 vector3 = this.temporalVector.setComponents(itemFrameDropItemPacket.x, itemFrameDropItemPacket.y, itemFrameDropItemPacket.z);
                     if (vector3.distanceSquared(this) < 1000) {
@@ -3011,19 +3005,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
                     break;
-                case ProtocolInfo.MAP_INFO_REQUEST_PACKET:
+                case MAP_INFO_REQUEST:
                     MapInfoRequestPacket pk = (MapInfoRequestPacket) packet;
                     Item mapItem = null;
 
                     for (Item item1 : this.offhandInventory.getContents().values()) {
-                        if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.mapId) {
+                        if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.getUniqueMapId()) {
                             mapItem = item1;
                         }
                     }
 
                     if (mapItem == null) {
                         for (Item item1 : this.inventory.getContents().values()) {
-                            if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.mapId) {
+                            if (item1 instanceof ItemMap && ((ItemMap) item1).getMapId() == pk.getUniqueMapId()) {
                                 mapItem = item1;
                             }
                         }
@@ -3034,7 +3028,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (be instanceof BlockEntityItemFrame) {
                                 BlockEntityItemFrame itemFrame1 = (BlockEntityItemFrame) be;
 
-                                if (itemFrame1.getItem() instanceof ItemMap && ((ItemMap) itemFrame1.getItem()).getMapId() == pk.mapId) {
+                                if (itemFrame1.getItem() instanceof ItemMap && ((ItemMap) itemFrame1.getItem()).getMapId() == pk.getUniqueMapId()) {
                                     ((ItemMap) itemFrame1.getItem()).sendImage(this);
                                     break;
                                 }
@@ -3068,11 +3062,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     InventoryTransactionPacket transactionPacket = (InventoryTransactionPacket) packet;
 
                     List<InventoryAction> actions = new ArrayList<>();
-                    for (NetworkInventoryAction networkInventoryAction : transactionPacket.actions) {
-                        InventoryAction a = networkInventoryAction.createInventoryAction(this);
+                    for (InventoryActionData action : transactionPacket.getActions()) {
+                        InventoryAction a = action.createInventoryAction(this);
 
                         if (a == null) {
-                            this.getServer().getLogger().debug("Unmatched inventory action from " + this.getName() + ": " + networkInventoryAction);
+                            this.getServer().getLogger().debug("Unmatched inventory action from " + this.getName() + ": " + action);
                             this.sendAllInventories();
                             break packetswitch;
                         }
@@ -3471,107 +3465,108 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                     }
                     break;
-                case ProtocolInfo.PLAYER_HOTBAR_PACKET:
+                case PLAYER_HOTBAR:
                     PlayerHotbarPacket hotbarPacket = (PlayerHotbarPacket) packet;
 
-                    if (hotbarPacket.windowId != ContainerIds.INVENTORY) {
+                    if (hotbarPacket.getContainerId() != ContainerIds.INVENTORY) {
                         return; //In PE this should never happen
                     }
 
-                    this.inventory.equipItem(hotbarPacket.selectedHotbarSlot);
+                    this.inventory.equipItem(hotbarPacket.getSelectedHotbarSlot());
                     break;
-                case ProtocolInfo.SERVER_SETTINGS_REQUEST_PACKET:
+                case SERVER_SETTINGS_REQUEST:
                     PlayerServerSettingsRequestEvent settingsRequestEvent = new PlayerServerSettingsRequestEvent(this, new HashMap<>(this.serverSettings));
                     this.getServer().getPluginManager().callEvent(settingsRequestEvent);
 
                     if (!settingsRequestEvent.isCancelled()) {
                         settingsRequestEvent.getSettings().forEach((id, window) -> {
                             ServerSettingsResponsePacket re = new ServerSettingsResponsePacket();
-                            re.formId = id;
-                            re.data = window.getJSONData();
+                            re.setFormId(id);
+                            re.setFormData(window.getJSONData());
                             this.dataPacket(re);
                         });
                     }
                     break;
-                case ProtocolInfo.RESPAWN_PACKET:
+                case RESPAWN:
                     if (this.isAlive()) {
                         break;
                     }
                     RespawnPacket respawnPacket = (RespawnPacket) packet;
-                    if (respawnPacket.respawnState == RespawnPacket.STATE_CLIENT_READY_TO_SPAWN) {
+                    if (respawnPacket.getState() == RespawnPacket.State.CLIENT_READY) {
                         RespawnPacket respawn1 = new RespawnPacket();
                         respawn1.x = (float) this.getX();
                         respawn1.y = (float) this.getY();
                         respawn1.z = (float) this.getZ();
-                        respawn1.respawnState = RespawnPacket.STATE_READY_TO_SPAWN;
+                        respawn1.setState(RespawnPacket.State.SERVER_READY);
                         this.dataPacket(respawn1);
                     }
                     break;
-                case ProtocolInfo.BOOK_EDIT_PACKET:
+                case BOOK_EDIT:
                     BookEditPacket bookEditPacket = (BookEditPacket) packet;
-                    Item oldBook = this.inventory.getItem(bookEditPacket.inventorySlot);
+                    Item oldBook = this.inventory.getItem(bookEditPacket.getInventorySlot());
                     if (oldBook.getId() != Item.BOOK_AND_QUILL) {
                         return;
                     }
 
-                    if (bookEditPacket.text != null && bookEditPacket.text.length() > 256) {
+                    if (bookEditPacket.getText() != null && bookEditPacket.getText().length() > 256) {
                         this.getServer().getLogger().debug(username + ": BookEditPacket with too long text");
                         return;
                     }
 
                     Item newBook = oldBook.clone();
                     boolean success;
-                    switch (bookEditPacket.action) {
+                    switch (bookEditPacket.getAction()) {
                         case REPLACE_PAGE:
-                            success = ((ItemBookAndQuill) newBook).setPageText(bookEditPacket.pageNumber, bookEditPacket.text);
+                            success = ((ItemBookAndQuill) newBook).setPageText(bookEditPacket.getPageNumber(), bookEditPacket.getText());
                             break;
                         case ADD_PAGE:
-                            success = ((ItemBookAndQuill) newBook).insertPage(bookEditPacket.pageNumber, bookEditPacket.text);
+                            success = ((ItemBookAndQuill) newBook).insertPage(bookEditPacket.getPageNumber(), bookEditPacket.getText());
                             break;
                         case DELETE_PAGE:
-                            success = ((ItemBookAndQuill) newBook).deletePage(bookEditPacket.pageNumber);
+                            success = ((ItemBookAndQuill) newBook).deletePage(bookEditPacket.getPageNumber());
                             break;
                         case SWAP_PAGES:
-                            success = ((ItemBookAndQuill) newBook).swapPages(bookEditPacket.pageNumber, bookEditPacket.secondaryPageNumber);
+                            success = ((ItemBookAndQuill) newBook).swapPages(bookEditPacket.getPageNumber(), bookEditPacket.getSecondaryPageNumber());
                             break;
                         case SIGN_BOOK:
-                            if (bookEditPacket.title == null || bookEditPacket.author == null || bookEditPacket.xuid == null || bookEditPacket.title.length() > 64 || bookEditPacket.author.length() > 64 || bookEditPacket.xuid.length() > 64) {
+                            if (bookEditPacket.getTitle() == null || bookEditPacket.getAuthor() == null || bookEditPacket.getXuid() == null ||
+                                    bookEditPacket.getTitle().length() > 64 || bookEditPacket.getAuthor().length() > 64 || bookEditPacket.getXuid().length() > 64) {
                                 this.getServer().getLogger().debug(username + ": Invalid BookEditPacket action SIGN_BOOK: title/author/xuid is too long");
                                 return;
                             }
                             newBook = Item.get(Item.WRITTEN_BOOK, 0, 1, oldBook.getCompoundTag());
-                            success = ((ItemBookWritten) newBook).signBook(bookEditPacket.title, bookEditPacket.author, bookEditPacket.xuid, ItemBookWritten.GENERATION_ORIGINAL);
+                            success = ((ItemBookWritten) newBook).signBook(bookEditPacket.getTitle(), bookEditPacket.getAuthor(), bookEditPacket.getXuid(), ItemBookWritten.GENERATION_ORIGINAL);
                             break;
                         default:
                             return;
                     }
 
                     if (success) {
-                        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(this, oldBook, newBook, bookEditPacket.action);
+                        PlayerEditBookEvent editBookEvent = new PlayerEditBookEvent(this, oldBook, newBook, bookEditPacket.getAction());
                         this.server.getPluginManager().callEvent(editBookEvent);
                         if (!editBookEvent.isCancelled()) {
-                            this.inventory.setItem(bookEditPacket.inventorySlot, editBookEvent.getNewBook());
+                            this.inventory.setItem(bookEditPacket.getInventorySlot(), editBookEvent.getNewBook());
                         }
                     }
                     break;
-                case ProtocolInfo.FILTER_TEXT_PACKET:
+                case FILTER_TEXT:
                     FilterTextPacket filterTextPacket = (FilterTextPacket) packet;
-                    if (filterTextPacket.text == null || filterTextPacket.text.length() > 64) {
+                    if (filterTextPacket.getText() == null || filterTextPacket.getText().length() > 64) {
                         this.getServer().getLogger().debug(username + ": FilterTextPacket with too long text");
                         return;
                     }
                     FilterTextPacket textResponsePacket = new FilterTextPacket();
-                    textResponsePacket.text = filterTextPacket.text;
-                    textResponsePacket.fromServer = true;
+                    textResponsePacket.setText(filterTextPacket.getText());
+                    textResponsePacket.setFromServer(true);
                     this.dataPacket(textResponsePacket);
                     break;
-                case ProtocolInfo.SET_DIFFICULTY_PACKET:
+                case SET_DIFFICULTY:
                     if (!this.spawned || !this.hasPermission("nukkit.command.difficulty")) {
                         return;
                     }
-                    server.setDifficulty(((SetDifficultyPacket) packet).difficulty);
+                    server.setDifficulty(((SetDifficultyPacket) packet).getDifficulty());
                     SetDifficultyPacket difficultyPacket = new SetDifficultyPacket();
-                    difficultyPacket.difficulty = server.getDifficulty();
+                    difficultyPacket.setDifficulty(server.getDifficulty());
                     Server.broadcastPacket(server.getOnlinePlayers().values(), difficultyPacket);
                     Command.broadcastCommandMessage(this, new TranslationContainer("commands.difficulty.success", String.valueOf(server.getDifficulty())));
                     break;
@@ -3626,7 +3621,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Block block = target.getSide(face);
         if (block.getId() == Block.FIRE) {
             this.level.setBlock(block, Block.get(BlockID.AIR), true);
-            this.level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_EXTINGUISH_FIRE);
+            this.level.addLevelSoundEvent(block, SoundEvent.EXTINGUISH_FIRE);
             return;
         }
 
@@ -3634,11 +3629,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             double breakTime = Math.ceil(target.getBreakTime(this.inventory.getItemInHand(), this) * 20);
             if (breakTime > 0) {
                 LevelEventPacket pk = new LevelEventPacket();
-                pk.evid = LevelEventPacket.EVENT_BLOCK_START_BREAK;
+                pk.setType(LevelEvent.BLOCK_START_BREAK);
                 pk.x = (float) pos.x;
                 pk.y = (float) pos.y;
                 pk.z = (float) pos.z;
-                pk.data = (int) (65535 / breakTime);
+                pk.setData((int) (65535 / breakTime));
                 this.getLevel().addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
             }
         }
@@ -3651,11 +3646,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private void onBlockBreakAbort(Vector3 pos, BlockFace face) {
         if (pos.distanceSquared(this) < 100) {
             LevelEventPacket pk = new LevelEventPacket();
-            pk.evid = LevelEventPacket.EVENT_BLOCK_STOP_BREAK;
+            pk.setType(LevelEvent.BLOCK_STOP_BREAK);
             pk.x = (float) pos.x;
             pk.y = (float) pos.y;
             pk.z = (float) pos.z;
-            pk.data = 0;
+            pk.setData(0);
             this.getLevel().addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
         }
         this.breakingBlock = null;
@@ -3790,7 +3785,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.chunkRadius = distance;
 
         ChunkRadiusUpdatedPacket pk = new ChunkRadiusUpdatedPacket();
-        pk.radius = distance;
+        pk.setRadius(distance);
 
         this.dataPacket(pk);
     }
@@ -3802,8 +3797,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Override
     public void sendMessage(String message) {
         TextPacket pk = new TextPacket();
-        pk.type = TextPacket.TYPE_RAW;
-        pk.message = this.server.getLanguage().translateString(message);
+        pk.setType(TextPacket.Type.RAW);
+        pk.setMessage(this.server.getLanguage().translateString(message));
         this.dataPacket(pk);
     }
 
@@ -3823,16 +3818,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void sendTranslation(String message, String[] parameters) {
         TextPacket pk = new TextPacket();
         if (!this.server.isLanguageForced()) {
-            pk.type = TextPacket.TYPE_TRANSLATION;
-            pk.message = this.server.getLanguage().translateString(message, parameters, "nukkit.");
+            pk.setType(TextPacket.Type.TRANSLATION);
+            pk.setMessage(this.server.getLanguage().translateString(message, parameters, "nukkit."));
             for (int i = 0; i < parameters.length; i++) {
                 parameters[i] = this.server.getLanguage().translateString(parameters[i], parameters, "nukkit.");
 
             }
-            pk.parameters = parameters;
+            Collections.addAll(pk.getParameters(), parameters);
         } else {
-            pk.type = TextPacket.TYPE_RAW;
-            pk.message = this.server.getLanguage().translateString(message, parameters);
+            pk.setType(TextPacket.Type.RAW);
+            pk.setMessage(this.server.getLanguage().translateString(message, parameters));
         }
         this.dataPacket(pk);
     }
@@ -3843,9 +3838,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendChat(String source, String message) {
         TextPacket pk = new TextPacket();
-        pk.type = TextPacket.TYPE_CHAT;
-        pk.source = source;
-        pk.message = this.server.getLanguage().translateString(message);
+        pk.setType(TextPacket.Type.CHAT);
+        pk.setSourceName(source);
+        pk.setMessage(this.server.getLanguage().translateString(message));
         this.dataPacket(pk);
     }
 
@@ -3855,21 +3850,21 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendPopup(String message, String subtitle) {
         TextPacket pk = new TextPacket();
-        pk.type = TextPacket.TYPE_POPUP;
-        pk.message = message;
+        pk.setType(TextPacket.Type.POPUP);
+        pk.setMessage(message);
         this.dataPacket(pk);
     }
 
     public void sendTip(String message) {
         TextPacket pk = new TextPacket();
-        pk.type = TextPacket.TYPE_TIP;
-        pk.message = message;
+        pk.setType(TextPacket.Type.TIP);
+        pk.setMessage(message);
         this.dataPacket(pk);
     }
 
     public void clearTitle() {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_CLEAR;
+        pk.setType(SetTitlePacket.Type.CLEAR);
         this.dataPacket(pk);
     }
 
@@ -3878,31 +3873,31 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      */
     public void resetTitleSettings() {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_RESET;
+        pk.setType(SetTitlePacket.Type.RESET);
         this.dataPacket(pk);
     }
 
     public void setSubtitle(String subtitle) {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_SUBTITLE;
-        pk.text = subtitle;
+        pk.setType(SetTitlePacket.Type.SUBTITLE);
+        pk.setText(subtitle);
         this.dataPacket(pk);
     }
 
     public void setTitleAnimationTimes(int fadein, int duration, int fadeout) {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_ANIMATION_TIMES;
-        pk.fadeInTime = fadein;
-        pk.stayTime = duration;
-        pk.fadeOutTime = fadeout;
+        pk.setType(SetTitlePacket.Type.TIMES);
+        pk.setFadeInTime(fadein);
+        pk.setStayTime(duration);
+        pk.setFadeOutTime(fadeout);
         this.dataPacket(pk);
     }
 
 
     private void setTitle(String text) {
         SetTitlePacket packet = new SetTitlePacket();
-        packet.text = text;
-        packet.type = SetTitlePacket.TYPE_TITLE;
+        packet.setText(text);
+        packet.setType(SetTitlePacket.Type.TITLE);
         this.dataPacket(packet);
     }
 
@@ -3929,18 +3924,18 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void sendActionBar(String title, int fadein, int duration, int fadeout) {
         SetTitlePacket pk = new SetTitlePacket();
-        pk.type = SetTitlePacket.TYPE_ACTION_BAR;
-        pk.text = title;
-        pk.fadeInTime = fadein;
-        pk.stayTime = duration;
-        pk.fadeOutTime = fadeout;
+        pk.setType(SetTitlePacket.Type.ACTIONBAR);
+        pk.setText(title);
+        pk.setFadeInTime(fadein);
+        pk.setStayTime(duration);
+        pk.setFadeOutTime(fadeout);
         this.dataPacket(pk);
     }
 
     public void sendToast(String title, String content) {
         ToastRequestPacket pk = new ToastRequestPacket();
-        pk.title = title;
-        pk.content = content;
+        pk.setTitle(title);
+        pk.setContent(content);
         this.dataPacket(pk);
     }
 
@@ -3973,7 +3968,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.connected && !this.closed) {
             if (notify && reason.length() > 0) {
                 DisconnectPacket pk = new DisconnectPacket();
-                pk.message = reason;
+                pk.setKickMessage(reason);
                 this.forceDataPacket(pk, null);
             }
 
@@ -4289,7 +4284,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             pk.x = (float) pos.x;
             pk.y = (float) pos.y;
             pk.z = (float) pos.z;
-            pk.respawnState = RespawnPacket.STATE_SEARCHING_FOR_SPAWN;
+            pk.setState(RespawnPacket.State.SERVER_SEARCHING);
 
             this.dataPacket(pk);
         }
@@ -4348,8 +4343,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getAbsorption() % 2 != 0 ? this.getMaxHealth() + 1 : this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0);
         if (this.spawned) {
             UpdateAttributesPacket pk = new UpdateAttributesPacket();
-            pk.entries = new Attribute[]{attr};
-            pk.entityId = this.id;
+            pk.getAttributes().add(attr);
+            pk.setRuntimeEntityId(this.id);
             this.dataPacket(pk);
         }
     }
@@ -4361,8 +4356,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Attribute attr = Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(this.getAbsorption() % 2 != 0 ? this.getMaxHealth() + 1 : this.getMaxHealth()).setValue(health > 0 ? (health < getMaxHealth() ? health : getMaxHealth()) : 0);
         if (this.spawned) {
             UpdateAttributesPacket pk = new UpdateAttributesPacket();
-            pk.entries = new Attribute[]{attr};
-            pk.entityId = this.id;
+            pk.getAttributes().add(attr);
+            pk.setRuntimeEntityId(this.id);
             this.dataPacket(pk);
         }
     }
@@ -4444,8 +4439,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public void setAttribute(Attribute attribute) {
         UpdateAttributesPacket pk = new UpdateAttributesPacket();
-        pk.entries = new Attribute[]{attribute};
-        pk.entityId = this.id;
+        pk.getAttributes().add(attribute);
+        pk.setRuntimeEntityId(this.id);
         this.dataPacket(pk);
     }
 
@@ -4501,8 +4496,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                 }
                 EntityEventPacket pk = new EntityEventPacket();
-                pk.eid = this.id;
-                pk.event = EntityEventPacket.HURT_ANIMATION;
+                pk.setRuntimeEntityId(this.id);
+                pk.setType(EntityEventType.HURT);
                 this.dataPacket(pk);
             }
             return true;
@@ -4567,26 +4562,26 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     public void sendPosition(Vector3 pos, double yaw, double pitch) {
-        this.sendPosition(pos, yaw, pitch, MovePlayerPacket.MODE_NORMAL);
+        this.sendPosition(pos, yaw, pitch, MovePlayerPacket.Mode.NORMAL);
     }
 
-    public void sendPosition(Vector3 pos, double yaw, double pitch, int mode) {
+    public void sendPosition(Vector3 pos, double yaw, double pitch, MovePlayerPacket.Mode mode) {
         this.sendPosition(pos, yaw, pitch, mode, null);
     }
 
-    public void sendPosition(Vector3 pos, double yaw, double pitch, int mode, Player[] targets) {
+    public void sendPosition(Vector3 pos, double yaw, double pitch, MovePlayerPacket.Mode mode, Player[] targets) {
         MovePlayerPacket pk = new MovePlayerPacket();
-        pk.eid = this.getId();
+        pk.setRuntimeEntityId(this.getId());
         pk.x = (float) pos.x;
         pk.y = (float) (pos.y + this.getEyeHeight());
         pk.z = (float) pos.z;
         pk.headYaw = (float) yaw;
         pk.pitch = (float) pitch;
         pk.yaw = (float) yaw;
-        pk.mode = mode;
+        pk.setMode(mode);
         if (this.riding != null) {
-            pk.ridingEid = this.riding.getId();
-            pk.mode = MovePlayerPacket.MODE_PITCH;
+            pk.setRidingRuntimeEntityId(this.riding.getId());
+            pk.setMode(MovePlayerPacket.Mode.HEAD_ROTATION);
         }
 
         if (targets != null) {
@@ -4654,13 +4649,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return false;
     }
 
-    protected void sendPlayStatus(int status) {
+    protected void sendPlayStatus(PlayStatusPacket.Status status) {
         sendPlayStatus(status, false);
     }
 
-    protected void sendPlayStatus(int status, boolean immediate) {
+    protected void sendPlayStatus(PlayStatusPacket.Status status, boolean immediate) {
         PlayStatusPacket pk = new PlayStatusPacket();
-        pk.status = status;
+        pk.setStatus(status);
 
         this.dataPacket(pk);
     }
@@ -4687,7 +4682,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             this.teleportPosition = new Vector3(this.x, this.y, this.z);
             this.forceMovement = this.teleportPosition;
-            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_TELEPORT);
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.Mode.TELEPORT);
 
             this.checkTeleportPosition();
 
@@ -4713,9 +4708,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         for (int x = -chunkRadius; x < chunkRadius; x++) {
             for (int z = -chunkRadius; z < chunkRadius; z++) {
                 LevelChunkPacket chunk = new LevelChunkPacket();
-                chunk.chunkX = chunkPositionX + x;
-                chunk.chunkZ = chunkPositionZ + z;
-                chunk.data = new byte[0];
+                chunk.setChunkX(chunkPositionX + x);
+                chunk.setChunkZ(chunkPositionZ + z);
+                chunk.setData(Unpooled.EMPTY_BUFFER);
                 this.dataPacket(chunk);
             }
         }
@@ -4732,16 +4727,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             if (from.getLevel().getId() != location.getLevel().getId()) { //Different level, update compass position
                 SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
-                pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+                pk.setSpawnType(SetSpawnPositionPacket.Type.WORLD_SPAWN);
                 Position spawn = location.getLevel().getSpawnLocation();
-                pk.x = spawn.getFloorX();
-                pk.y = spawn.getFloorY();
-                pk.z = spawn.getFloorZ();
+                pk.setSpawnPosition(spawn);
                 dataPacket(pk);
             }
 
             this.forceMovement = new Vector3(this.x, this.y, this.z);
-            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_RESET);
+            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.Mode.RESPAWN);
 
             this.resetFallDistance();
             this.orderChunks();
@@ -4778,9 +4771,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      */
     public int showFormWindow(FormWindow window, int id) {
         ModalFormRequestPacket packet = new ModalFormRequestPacket();
-        packet.formId = id;
-        packet.data = window.getJSONData();
-        this.formWindows.put(packet.formId, window);
+        packet.setFormId(id);
+        packet.setFormData(window.getJSONData());
+        this.formWindows.put(packet.getFormId(), window);
 
         this.dataPacket(packet);
         return id;
@@ -5092,29 +5085,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.isConnected();
     }
 
-
-    public static BatchPacket getChunkCacheFromData(int chunkX, int chunkZ, int subChunkCount, byte[] payload) {
-        LevelChunkPacket pk = new LevelChunkPacket();
-        pk.chunkX = chunkX;
-        pk.chunkZ = chunkZ;
-        pk.subChunkCount = subChunkCount;
-        pk.data = payload;
-        pk.encode();
-
-        BatchPacket batch = new BatchPacket();
-        byte[][] batchPayload = new byte[2][];
-        byte[] buf = pk.getBuffer();
-        batchPayload[0] = Binary.writeUnsignedVarInt(buf.length);
-        batchPayload[1] = buf;
-        byte[] data = Binary.appendBytes(batchPayload);
-        try {
-            batch.payload = Network.deflateRaw(data, Server.getInstance().networkCompressionLevel);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return batch;
-    }
-
     private boolean foodEnabled = true;
 
     public boolean isFoodEnabled() {
@@ -5133,7 +5103,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private void setDimension(int dimension) {
         ChangeDimensionPacket pk = new ChangeDimensionPacket();
-        pk.dimension = dimension;
+        pk.setDimension(dimension);
         pk.x = (float) this.x;
         pk.y = (float) this.y;
         pk.z = (float) this.z;
@@ -5145,7 +5115,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Level oldLevel = this.level;
         if (super.switchLevel(level)) {
             SetSpawnPositionPacket spawnPosition = new SetSpawnPositionPacket();
-            spawnPosition.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+            spawnPosition.setSpawnType(SetSpawnPositionPacket.Type.WORLD_SPAWN);
             Position spawn = level.getSpawnLocation();
             spawnPosition.x = spawn.getFloorX();
             spawnPosition.y = spawn.getFloorY();
@@ -5161,7 +5131,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.usedChunks.clear();
 
             SetTimePacket setTime = new SetTimePacket();
-            setTime.time = level.getTime();
+            setTime.setTime(level.getTime());
             this.dataPacket(setTime);
 
             GameRulesChangedPacket gameRulesChanged = new GameRulesChangedPacket();
@@ -5205,8 +5175,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         String hostName = address.getAddress().getHostAddress();
         int port = address.getPort();
         TransferPacket pk = new TransferPacket();
-        pk.address = hostName;
-        pk.port = port;
+        pk.setAddress(hostName);
+        pk.setPort(port);
         this.dataPacket(pk);
     }
 
@@ -5239,8 +5209,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 TakeItemEntityPacket pk = new TakeItemEntityPacket();
-                pk.entityId = this.getId();
-                pk.target = entity.getId();
+                pk.setRuntimeEntityId(this.getId());
+                pk.setItemRuntimeEntityId(entity.getId());
                 Server.broadcastPacket(entity.getViewers().values(), pk);
                 this.dataPacket(pk);
 
@@ -5268,8 +5238,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 TakeItemEntityPacket pk = new TakeItemEntityPacket();
-                pk.entityId = this.getId();
-                pk.target = entity.getId();
+                pk.setRuntimeEntityId(this.getId());
+                pk.setItemRuntimeEntityId(entity.getId());
                 Server.broadcastPacket(entity.getViewers().values(), pk);
                 this.dataPacket(pk);
 
@@ -5304,8 +5274,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
 
                         TakeItemEntityPacket pk = new TakeItemEntityPacket();
-                        pk.entityId = this.getId();
-                        pk.target = entity.getId();
+                        pk.setRuntimeEntityId(this.getId());
+                        pk.setItemRuntimeEntityId(entity.getId());
                         Server.broadcastPacket(entity.getViewers().values(), pk);
                         this.dataPacket(pk);
 
@@ -5323,7 +5293,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (xpOrb.getPickupDelay() <= 0) {
                 int exp = xpOrb.getExp();
                 entity.kill();
-                this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_EXPERIENCE_ORB);
+                this.getLevel().addLevelEvent(this, LevelEvent.SOUND_EXPERIENCE_ORB_PICKUP);
                 pickedXPOrb = tick;
 
                 //Mending
@@ -5389,7 +5359,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      */
     public void showXboxProfile(String xuid) {
         ShowProfilePacket pk = new ShowProfilePacket();
-        pk.xuid = xuid;
+        pk.setXuid(xuid);
         this.dataPacket(pk);
     }
 

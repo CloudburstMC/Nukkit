@@ -9,7 +9,6 @@ import cn.nukkit.item.*;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.network.protocol.LevelEventPacket;
 
 import java.util.Map;
 

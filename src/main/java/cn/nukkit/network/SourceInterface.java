@@ -1,8 +1,8 @@
 package cn.nukkit.network;
 
 import cn.nukkit.Player;
-import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.session.NetworkPlayerSession;
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 
 import java.net.InetSocketAddress;
 
@@ -14,17 +14,17 @@ import java.net.InetSocketAddress;
 public interface SourceInterface {
 
     @Deprecated
-    default Integer putPacket(Player player, DataPacket packet) {
+    default Integer putPacket(Player player, BedrockPacket packet) {
         throw new UnsupportedOperationException("This method is deprecated");
     }
 
     @Deprecated
-    default Integer putPacket(Player player, DataPacket packet, boolean needACK) {
+    default Integer putPacket(Player player, BedrockPacket packet, boolean needACK) {
         throw new UnsupportedOperationException("This method is deprecated");
     }
 
     @Deprecated
-    default Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
+    default Integer putPacket(Player player, BedrockPacket packet, boolean needACK, boolean immediate) {
         throw new UnsupportedOperationException("This method is deprecated");
     }
 

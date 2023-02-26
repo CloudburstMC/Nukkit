@@ -56,9 +56,6 @@ import cn.nukkit.network.CompressBatchedTask;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.BatchPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.PlayerListPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
@@ -84,6 +81,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
+import org.cloudburstmc.protocol.bedrock.packet.PlayerListPacket;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
@@ -102,6 +101,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author MagicDroidX
@@ -657,78 +657,18 @@ public class Server {
         return recipients.size();
     }
 
-    public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
-        packet.tryEncode();
-
+    public static void broadcastPacket(Collection<Player> players, BedrockPacket... packets) {
         for (Player player : players) {
-            player.dataPacket(packet);
-        }
-    }
-
-    public static void broadcastPacket(Player[] players, DataPacket packet) {
-        packet.tryEncode();
-
-        for (Player player : players) {
-            player.dataPacket(packet);
-        }
-    }
-
-    @Deprecated
-    public void batchPackets(Player[] players, DataPacket[] packets) {
-        this.batchPackets(players, packets, false);
-    }
-
-    @Deprecated
-    public void batchPackets(Player[] players, DataPacket[] packets, boolean forceSync) {
-        if (players == null || packets == null || players.length == 0 || packets.length == 0) {
-            return;
-        }
-
-        BatchPacketsEvent ev = new BatchPacketsEvent(players, packets, forceSync);
-        getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) {
-            return;
-        }
-
-        Timings.playerNetworkSendTimer.startTiming();
-        byte[][] payload = new byte[packets.length * 2][];
-        for (int i = 0; i < packets.length; i++) {
-            DataPacket p = packets[i];
-            int idx = i * 2;
-            p.tryEncode();
-            byte[] buf = p.getBuffer();
-            payload[idx] = Binary.writeUnsignedVarInt(buf.length);
-            payload[idx + 1] = buf;
-            packets[i] = null;
-        }
-
-        List<InetSocketAddress> targets = new ArrayList<>();
-        for (Player p : players) {
-            if (p.isConnected()) {
-                targets.add(p.getSocketAddress());
+            for (BedrockPacket packet : packets) {
+                player.dataPacket(packet);
             }
         }
-
-        if (!forceSync && this.networkCompressionAsync) {
-            this.getScheduler().scheduleAsyncTask(new CompressBatchedTask(payload, targets, this.networkCompressionLevel));
-        } else {
-            try {
-                byte[] data = Binary.appendBytes(payload);
-                this.broadcastPacketsCallback(Network.deflateRaw(data, this.networkCompressionLevel), targets);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
-        Timings.playerNetworkSendTimer.stopTiming();
     }
 
-    public void broadcastPacketsCallback(byte[] data, List<InetSocketAddress> targets) {
-        BatchPacket pk = new BatchPacket();
-        pk.payload = data;
-
-        for (InetSocketAddress i : targets) {
-            if (this.players.containsKey(i)) {
-                this.players.get(i).dataPacket(pk);
+    public static void broadcastPacket(Player[] players, BedrockPacket... packets) {
+        for (Player player : players) {
+            for (BedrockPacket packet : packets) {
+                player.dataPacket(packet);
             }
         }
     }
@@ -997,8 +937,8 @@ public class Server {
             this.playerList.remove(player.getUniqueId());
 
             PlayerListPacket pk = new PlayerListPacket();
-            pk.type = PlayerListPacket.TYPE_REMOVE;
-            pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(player.getUniqueId())};
+            pk.setAction(PlayerListPacket.Action.REMOVE);
+            pk.getEntries().add(new PlayerListPacket.Entry(player.getUniqueId()));
 
             Server.broadcastPacket(this.playerList.values(), pk);
         }
@@ -1018,8 +958,14 @@ public class Server {
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Player[] players) {
         PlayerListPacket pk = new PlayerListPacket();
-        pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid, entityId, name, skin, xboxUserId)};
+        pk.setAction(PlayerListPacket.Action.ADD);
+        PlayerListPacket.Entry entry = new PlayerListPacket.Entry(uuid);
+        entry.setEntityId(entityId);
+        entry.setName(name);
+        entry.setSkin(skin);
+        entry.setXuid(xboxUserId);
+        pk.getEntries().add(entry);
+
         Server.broadcastPacket(players, pk);
     }
 
@@ -1033,15 +979,15 @@ public class Server {
 
     public void removePlayerListData(UUID uuid, Player[] players) {
         PlayerListPacket pk = new PlayerListPacket();
-        pk.type = PlayerListPacket.TYPE_REMOVE;
-        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid)};
+        pk.setAction(PlayerListPacket.Action.REMOVE);
+        pk.getEntries().add(new PlayerListPacket.Entry(uuid));
         Server.broadcastPacket(players, pk);
     }
 
     public void removePlayerListData(UUID uuid, Player player) {
         PlayerListPacket pk = new PlayerListPacket();
-        pk.type = PlayerListPacket.TYPE_REMOVE;
-        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid)};
+        pk.setAction(PlayerListPacket.Action.REMOVE);
+        pk.getEntries().add(new PlayerListPacket.Entry(uuid));
         player.dataPacket(pk);
     }
 
@@ -1051,15 +997,17 @@ public class Server {
 
     public void sendFullPlayerListData(Player player) {
         PlayerListPacket pk = new PlayerListPacket();
-        pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = this.playerList.values().stream()
-                .map(p -> new PlayerListPacket.Entry(
-                p.getUniqueId(),
-                p.getId(),
-                p.getDisplayName(),
-                p.getSkin(),
-                p.getLoginChainData().getXUID()))
-                .toArray(PlayerListPacket.Entry[]::new);
+        pk.setAction(PlayerListPacket.Action.ADD);
+        pk.getEntries().addAll(this.playerList.values().stream()
+                .map(p -> {
+                    PlayerListPacket.Entry entry = new PlayerListPacket.Entry(p.getUniqueId());
+                    entry.setEntityId(p.getId());
+                    entry.setName(p.getDisplayName());
+                    entry.setSkin(p.getSkin());
+                    entry.setXuid(p.getLoginChainData().getXUID());
+                    return entry;
+                })
+                .collect(Collectors.toList()));
 
         player.dataPacket(pk);
     }
@@ -2419,7 +2367,7 @@ public class Server {
         this.playerDataSerializer = Preconditions.checkNotNull(playerDataSerializer, "playerDataSerializer");
     }
 
-    public boolean isIgnoredPacket(Class<? extends DataPacket> clazz) {
+    public boolean isIgnoredPacket(Class<? extends BedrockPacket> clazz) {
         return this.ignoredPackets.contains(clazz.getSimpleName());
     }
 

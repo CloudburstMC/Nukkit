@@ -22,8 +22,8 @@ repositories {
 }
 
 dependencies {
-    api(libs.network)
-    api(libs.fastutil)
+    api(libs.protocol)
+    api(libs.bundles.fastutil)
     api(libs.guava)
     api(libs.gson)
     api(libs.snakeyaml)

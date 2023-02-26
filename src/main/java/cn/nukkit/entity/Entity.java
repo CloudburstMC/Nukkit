@@ -1018,7 +1018,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    protected DataPacket createAddEntityPacket() {
+    protected BedrockPacket createAddEntityPacket() {
         AddEntityPacket addEntity = new AddEntityPacket();
         addEntity.type = this.getNetworkId();
         addEntity.entityUniqueId = this.getId();

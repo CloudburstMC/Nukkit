@@ -5,10 +5,6 @@ import cn.nukkit.block.BlockEnderChest;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityHumanType;
 import cn.nukkit.level.Level;
-import cn.nukkit.network.protocol.BlockEventPacket;
-import cn.nukkit.network.protocol.ContainerClosePacket;
-import cn.nukkit.network.protocol.ContainerOpenPacket;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 public class PlayerEnderChestInventory extends BaseInventory {
 

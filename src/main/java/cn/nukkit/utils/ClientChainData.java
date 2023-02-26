@@ -1,6 +1,5 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.network.protocol.LoginPacket;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;

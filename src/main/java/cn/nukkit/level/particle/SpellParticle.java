@@ -1,8 +1,6 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -37,7 +35,7 @@ public class SpellParticle extends Particle {
     }
 
     @Override
-    public DataPacket[] encode() {
+    public BedrockPacket[] encode() {
         LevelEventPacket pk = new LevelEventPacket();
         pk.evid = LevelEventPacket.EVENT_PARTICLE_SPLASH;
         pk.x = (float) this.x;
@@ -45,6 +43,6 @@ public class SpellParticle extends Particle {
         pk.z = (float) this.z;
         pk.data = this.data;
 
-        return new DataPacket[]{pk};
+        return new BedrockPacket[]{pk};
     }
 }

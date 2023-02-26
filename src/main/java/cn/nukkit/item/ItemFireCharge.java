@@ -7,7 +7,6 @@ import cn.nukkit.Player;
 
 import java.util.concurrent.ThreadLocalRandom;
 import cn.nukkit.event.block.BlockIgniteEvent;
-import cn.nukkit.network.protocol.LevelEventPacket;
 
 /**
  * Created by PetteriM1

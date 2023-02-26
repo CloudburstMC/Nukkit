@@ -11,9 +11,9 @@ import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
-import cn.nukkit.network.protocol.BatchPacket;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     protected boolean isInit;
 
-    protected BatchPacket chunkPacket;
+    protected LevelChunkPacket chunkPacket;
 
     @Override
     public BaseFullChunk clone() {
@@ -102,18 +102,11 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         return chunk;
     }
 
-    public void setChunkPacket(BatchPacket packet) {
-        if (packet != null) {
-            packet.trim();
-        }
+    public void setChunkPacket(LevelChunkPacket packet) {
         this.chunkPacket = packet;
     }
 
-    public BatchPacket getChunkPacket() {
-        BatchPacket pk = chunkPacket;
-        if (pk != null) {
-            pk.trim();
-        }
+    public LevelChunkPacket getChunkPacket() {
         return chunkPacket;
     }
 
@@ -575,14 +568,5 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public long getSeed() {
         throw new UnsupportedOperationException("Chunk does not have a seed");
-    }
-
-    public boolean compress() {
-        BatchPacket pk = chunkPacket;
-        if (pk != null) {
-            pk.trim();
-            return true;
-        }
-        return false;
     }
 }

@@ -22,8 +22,8 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.AnimatePacket;
-import cn.nukkit.network.protocol.SetEntityLinkPacket;
+import org.cloudburstmc.protocol.bedrock.packet.AnimatePacket;
+import org.cloudburstmc.protocol.bedrock.packet.SetEntityLinkPacket;
 
 import java.util.ArrayList;
 

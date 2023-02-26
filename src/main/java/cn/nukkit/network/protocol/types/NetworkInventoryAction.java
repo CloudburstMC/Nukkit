@@ -8,8 +8,8 @@ import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.PlayerUIComponent;
 import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
-import cn.nukkit.network.protocol.InventoryTransactionPacket;
 import lombok.ToString;
+import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket;
 
 import java.util.Optional;
 

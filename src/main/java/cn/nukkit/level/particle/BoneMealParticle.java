@@ -1,8 +1,6 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
 
 /**
  * Created by CreeperFace on 15.4.2017.
@@ -16,7 +14,7 @@ public class BoneMealParticle extends Particle {
     }
 
     @Override
-    public DataPacket[] encode() {
+    public BedrockPacket[] encode() {
         LevelEventPacket pk = new LevelEventPacket();
         pk.evid = LevelEventPacket.EVENT_PARTICLE_BONEMEAL;
         pk.x = (float) this.x;
@@ -24,6 +22,6 @@ public class BoneMealParticle extends Particle {
         pk.z = (float) this.z;
         pk.data = 0;
 
-        return new DataPacket[]{pk};
+        return new BedrockPacket[]{pk};
     }
 }

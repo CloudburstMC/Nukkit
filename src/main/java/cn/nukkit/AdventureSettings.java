@@ -1,7 +1,5 @@
 package cn.nukkit;
 
-import cn.nukkit.network.protocol.UpdateAbilitiesPacket;
-import cn.nukkit.network.protocol.UpdateAdventureSettingsPacket;
 import cn.nukkit.network.protocol.types.AbilityLayer;
 import cn.nukkit.network.protocol.types.PlayerAbility;
 

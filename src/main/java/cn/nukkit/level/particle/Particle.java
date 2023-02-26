@@ -1,7 +1,7 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.DataPacket;
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 
 import java.lang.reflect.Field;
 
@@ -133,5 +133,5 @@ public abstract class Particle extends Vector3 {
         super(x, y, z);
     }
 
-    abstract public DataPacket[] encode();
+    abstract public BedrockPacket[] encode();
 }

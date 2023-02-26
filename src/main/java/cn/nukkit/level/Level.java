@@ -64,6 +64,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.*;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import org.cloudburstmc.protocol.bedrock.data.LevelEvent;
+import org.cloudburstmc.protocol.bedrock.data.LevelEventType;
+import org.cloudburstmc.protocol.bedrock.data.SoundEvent;
+import org.cloudburstmc.protocol.bedrock.packet.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -145,8 +149,6 @@ public class Level implements ChunkManager, Metadatable {
 
     private final ConcurrentLinkedQueue<BlockEntity> updateBlockEntities = new ConcurrentLinkedQueue<>();
 
-    private boolean cacheChunks = false;
-
     private final Server server;
     
     private final int levelId;
@@ -161,7 +163,7 @@ public class Level implements ChunkManager, Metadatable {
 
     private final Long2ObjectOpenHashMap<Map<Integer, Player>> playerLoaders = new Long2ObjectOpenHashMap<>();
 
-    private final Long2ObjectOpenHashMap<Deque<DataPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
+    private final Long2ObjectOpenHashMap<Deque<BedrockPacket>> chunkPackets = new Long2ObjectOpenHashMap<>();
 
     private final Long2LongMap unloadQueue = Long2LongMaps.synchronize(new Long2LongOpenHashMap());
 
@@ -333,7 +335,6 @@ public class Level implements ChunkManager, Metadatable {
         this.chunkPopulationQueueSize = this.server.getConfig("chunk-generation.population-queue-size", 2);
         this.chunkTickList.clear();
         this.clearChunksOnTick = this.server.getConfig("chunk-ticking.clear-tick-list", true);
-        this.cacheChunks = this.server.getConfig("chunk-sending.cache-chunks", false);
         this.temporalPosition = new Position(0, 0, 0, this);
         this.temporalVector = new Vector3(0, 0, 0);
         this.tickRate = 1;
@@ -466,12 +467,10 @@ public class Level implements ChunkManager, Metadatable {
         Preconditions.checkArgument(pitch >= 0, "Sound pitch must be higher than 0");
 
         PlaySoundPacket packet = new PlaySoundPacket();
-        packet.name = sound.getSound();
-        packet.volume = volume;
-        packet.pitch = pitch;
-        packet.x = pos.getFloorX();
-        packet.y = pos.getFloorY();
-        packet.z = pos.getFloorZ();
+        packet.setSound(sound.getSound());
+        packet.setVolume(volume);
+        packet.setPitch(pitch);
+        packet.setPosition(pos);
 
         if (players == null || players.length == 0) {
             addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, packet);
@@ -480,31 +479,29 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public void addLevelEvent(Vector3 pos, int event) {
+    public void addLevelEvent(Vector3 pos, LevelEventType event) {
         this.addLevelEvent(pos, event, 0);
     }
 
-    public void addLevelEvent(Vector3 pos, int event, int data) {
+    public void addLevelEvent(Vector3 pos, LevelEventType event, int data) {
         LevelEventPacket pk = new LevelEventPacket();
-        pk.evid = event;
-        pk.x = (float) pos.x;
-        pk.y = (float) pos.y;
-        pk.z = (float) pos.z;
-        pk.data = data;
+        pk.setType(event);
+        pk.setPosition(pos);
+        pk.setData(data);
 
         addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
     }
 
-    public void addLevelSoundEvent(Vector3 pos, int type, int data, int entityType) {
+    public void addLevelSoundEvent(Vector3 pos, SoundEvent type, int data, int entityType) {
         addLevelSoundEvent(pos, type, data, entityType, false, false);
     }
 
-    public void addLevelSoundEvent(Vector3 pos, int type, int data, int entityType, boolean isBaby, boolean isGlobal) {
+    public void addLevelSoundEvent(Vector3 pos, SoundEvent type, int data, int entityType, boolean isBaby, boolean isGlobal) {
         String identifier = AddEntityPacket.LEGACY_IDS.getOrDefault(entityType, ":");
         addLevelSoundEvent(pos, type, data, identifier, isBaby, isGlobal);
     }
 
-    public void addLevelSoundEvent(Vector3 pos, int type) {
+    public void addLevelSoundEvent(Vector3 pos, SoundEvent type) {
         this.addLevelSoundEvent(pos, type, -1);
     }
 
@@ -512,23 +509,21 @@ public class Level implements ChunkManager, Metadatable {
      * Broadcasts sound to players
      *
      * @param pos  position where sound should be played
-     * @param type ID of the sound from {@link cn.nukkit.network.protocol.LevelSoundEventPacket}
+     * @param type ID of the sound from {@link SoundEvent}
      * @param data generic data that can affect sound
      */
-    public void addLevelSoundEvent(Vector3 pos, int type, int data) {
+    public void addLevelSoundEvent(Vector3 pos, SoundEvent type, int data) {
         this.addLevelSoundEvent(pos, type, data, ":", false, false);
     }
 
-    public void addLevelSoundEvent(Vector3 pos, int type, int data, String identifier, boolean isBaby, boolean isGlobal) {
+    public void addLevelSoundEvent(Vector3 pos, SoundEvent type, int data, String identifier, boolean isBaby, boolean isGlobal) {
         LevelSoundEventPacket pk = new LevelSoundEventPacket();
-        pk.sound = type;
-        pk.extraData = data;
-        pk.entityIdentifier = identifier;
-        pk.x = (float) pos.x;
-        pk.y = (float) pos.y;
-        pk.z = (float) pos.z;
-        pk.isGlobal = isGlobal;
-        pk.isBabyMob = isBaby;
+        pk.setSound(type);
+        pk.setExtraData(data);
+        pk.setIdentifier(identifier);
+        pk.setPosition(pos);
+        pk.setRelativeVolumeDisabled(isGlobal);
+        pk.setBabySound(isBaby);
 
         this.addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
     }
@@ -542,21 +537,15 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void addParticle(Particle particle, Player[] players) {
-        DataPacket[] packets = particle.encode();
+        BedrockPacket[] packets = particle.encode();
 
-        if (players == null) {
-            if (packets != null) {
-                for (DataPacket packet : packets) {
+        if (packets != null) {
+            if (players == null) {
+                for (BedrockPacket packet : packets) {
                     this.addChunkPacket((int) particle.x >> 4, (int) particle.z >> 4, packet);
                 }
-            }
-        } else {
-            if (packets != null) {
-                if (packets.length == 1) {
-                    Server.broadcastPacket(players, packets[0]);
-                } else {
-                    this.server.batchPackets(players, packets, false);
-                }
+            } else {
+                Server.broadcastPacket(players, packets);
             }
         }
     }
@@ -587,10 +576,10 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addParticleEffect(Vector3f pos, String identifier, long uniqueEntityId, int dimensionId, Player... players) {
         SpawnParticleEffectPacket pk = new SpawnParticleEffectPacket();
-        pk.identifier = identifier;
-        pk.uniqueEntityId = uniqueEntityId;
-        pk.dimensionId = dimensionId;
-        pk.position = pos;
+        pk.setIdentifier(identifier);
+        pk.setUniqueEntityId(uniqueEntityId);
+        pk.setDimensionId(dimensionId);
+        pk.setPosition(pos);
 
         if (players == null || players.length == 0) {
             addChunkPacket(pos.getFloorX() >> 4, pos.getFloorZ() >> 4, pk);
@@ -663,10 +652,10 @@ public class Level implements ChunkManager, Metadatable {
         }
     }
 
-    public void addChunkPacket(int chunkX, int chunkZ, DataPacket packet) {
+    public void addChunkPacket(int chunkX, int chunkZ, BedrockPacket packet) {
         long index = Level.chunkHash(chunkX, chunkZ);
         synchronized (chunkPackets) {
-            Deque<DataPacket> packets = chunkPackets.computeIfAbsent(index, i -> new ArrayDeque<>());
+            Deque<BedrockPacket> packets = chunkPackets.computeIfAbsent(index, i -> new ArrayDeque<>());
             packets.add(packet);
         }
     }
@@ -739,7 +728,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void sendTime(Player... players) {
         SetTimePacket pk = new SetTimePacket();
-        pk.time = (int) this.time;
+        pk.setTime((int) this.time);
 
         Server.broadcastPacket(players, pk);
     }
@@ -891,7 +880,7 @@ public class Level implements ChunkManager, Metadatable {
                 int chunkZ = Level.getHashZ(index);
                 Player[] chunkPlayers = this.getChunkPlayers(chunkX, chunkZ).values().toArray(new Player[0]);
                 if (chunkPlayers.length > 0) {
-                    for (DataPacket pk : this.chunkPackets.get(index)) {
+                    for (BedrockPacket pk : this.chunkPackets.get(index)) {
                         Server.broadcastPacket(chunkPlayers, pk);
                     }
                 }
@@ -944,8 +933,8 @@ public class Level implements ChunkManager, Metadatable {
                 bolt.setEffect(false);
             }
 
-            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, -1, EntityLightning.NETWORK_ID);
-            this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, -1, EntityLightning.NETWORK_ID);
+            this.addLevelSoundEvent(vector, SoundEvent.THUNDER, -1, EntityLightning.NETWORK_ID);
+            this.addLevelSoundEvent(vector, SoundEvent.EXPLODE, -1, EntityLightning.NETWORK_ID);
         }
     }
 
@@ -1007,32 +996,32 @@ public class Level implements ChunkManager, Metadatable {
 
     public void sendBlockExtraData(int x, int y, int z, int id, int data, Player[] players) {
         LevelEventPacket pk = new LevelEventPacket();
-        pk.evid = LevelEventPacket.EVENT_SET_DATA;
+        pk.setType(LevelEvent.SET_DATA);
         pk.x = x + 0.5f;
         pk.y = y + 0.5f;
         pk.z = z + 0.5f;
-        pk.data = (data << 8) | id;
+        pk.setData((data << 8) | id);
 
         Server.broadcastPacket(players, pk);
     }
 
     public void sendBlocks(Player[] target, Vector3[] blocks) {
-        this.sendBlocks(target, blocks, UpdateBlockPacket.FLAG_NONE);
+        this.sendBlocks(target, blocks, EnumSet.noneOf(UpdateBlockPacket.Flag.class));
     }
 
-    public void sendBlocks(Player[] target, Vector3[] blocks, int flags) {
+    public void sendBlocks(Player[] target, Vector3[] blocks, Set<UpdateBlockPacket.Flag> flags) {
         this.sendBlocks(target, blocks, flags, 0);
     }
 
-    public void sendBlocks(Player[] target, Vector3[] blocks, int flags, boolean optimizeRebuilds) {
+    public void sendBlocks(Player[] target, Vector3[] blocks, Set<UpdateBlockPacket.Flag> flags, boolean optimizeRebuilds) {
         this.sendBlocks(target, blocks, flags, 0, optimizeRebuilds);
     }
 
-    public void sendBlocks(Player[] target, Vector3[] blocks, int flags, int dataLayer) {
+    public void sendBlocks(Player[] target, Vector3[] blocks, Set<UpdateBlockPacket.Flag> flags, int dataLayer) {
         this.sendBlocks(target, blocks, flags, dataLayer, false);
     }
 
-    public void sendBlocks(Player[] target, Vector3[] blocks, int flags, int dataLayer, boolean optimizeRebuilds) {
+    public void sendBlocks(Player[] target, Vector3[] blocks, Set<UpdateBlockPacket.Flag> flags, int dataLayer, boolean optimizeRebuilds) {
         int size = 0;
         for (Vector3 block : blocks) {
             if (block != null) size++;
@@ -1058,11 +1047,9 @@ public class Level implements ChunkManager, Metadatable {
             }
 
             UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
-            updateBlockPacket.x = (int) b.x;
-            updateBlockPacket.y = (int) b.y;
-            updateBlockPacket.z = (int) b.z;
-            updateBlockPacket.flags = first ? flags : UpdateBlockPacket.FLAG_NONE;
-            updateBlockPacket.dataLayer = dataLayer;
+            updateBlockPacket.setBlockPosition(b);
+            updateBlockPacket.getFlags().addAll(first ? flags : EnumSet.noneOf(UpdateBlockPacket.Flag.class));
+            updateBlockPacket.setDataLayer(dataLayer);
             int fullId;
             if (b instanceof Block) {
                 fullId = ((Block) b).getFullId();
@@ -1070,14 +1057,14 @@ public class Level implements ChunkManager, Metadatable {
                 fullId = getFullBlock((int) b.x, (int) b.y, (int) b.z);
             }
             try {
-                updateBlockPacket.blockRuntimeId = GlobalBlockPalette.getOrCreateRuntimeId(fullId);
+                updateBlockPacket.setDefinition(GlobalBlockPalette.getOrCreateRuntimeId(fullId));
             } catch (NoSuchElementException e) {
                 throw new IllegalStateException("Unable to create BlockUpdatePacket at (" +
                         b.x + ", " + b.y + ", " + b.z + ") in " + getName(), e);
             }
             packets[packetIndex++] = updateBlockPacket;
         }
-        this.server.batchPackets(target, packets);
+        Server.broadcastPacket(target, packets);
     }
 
     private void tickChunks() {
@@ -2213,7 +2200,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (playSound) {
-            this.addLevelSoundEvent(hand, LevelSoundEventPacket.SOUND_PLACE, GlobalBlockPalette.getOrCreateRuntimeId(hand.getId(), hand.getDamage()));
+            this.addLevelSoundEvent(hand, SoundEvent.PLACE, GlobalBlockPalette.getOrCreateRuntimeId(hand.getId(), hand.getDamage()));
         }
 
         if (item.getCount() <= 0) {
@@ -2633,7 +2620,7 @@ public class Level implements ChunkManager, Metadatable {
         this.provider.setSpawn(pos);
         this.server.getPluginManager().callEvent(new SpawnChangeEvent(this, previousSpawn));
         SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
-        pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
+        pk.setSpawnType(SetSpawnPositionPacket.Type.WORLD_SPAWN;
         pk.x = pos.getFloorX();
         pk.y = pos.getFloorY();
         pk.z = pos.getFloorZ();
@@ -2649,7 +2636,7 @@ public class Level implements ChunkManager, Metadatable {
         this.chunkSendQueue.get(index).put(player.getLoaderId(), player);
     }
 
-    private void sendChunk(int x, int z, long index, DataPacket packet) {
+    private void sendChunk(int x, int z, long index, BedrockPacket packet) {
         if (this.chunkSendTasks.contains(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
                 if (player.isConnected() && player.usedChunks.containsKey(index)) {
@@ -2673,7 +2660,7 @@ public class Level implements ChunkManager, Metadatable {
             this.chunkSendTasks.add(index);
             BaseFullChunk chunk = getChunk(x, z);
             if (chunk != null) {
-                BatchPacket packet = chunk.getChunkPacket();
+                LevelChunkPacket packet = chunk.getChunkPacket();
                 if (packet != null) {
                     this.sendChunk(x, z, index, packet);
                     continue;
@@ -2692,17 +2679,6 @@ public class Level implements ChunkManager, Metadatable {
     public void chunkRequestCallback(long timestamp, int x, int z, int subChunkCount, byte[] payload) {
         this.timings.syncChunkSendTimer.startTiming();
         long index = Level.chunkHash(x, z);
-
-        if (this.cacheChunks) {
-            BatchPacket data = Player.getChunkCacheFromData(x, z, subChunkCount, payload);
-            BaseFullChunk chunk = getChunk(x, z, false);
-            if (chunk != null && chunk.getChanges() <= timestamp) {
-                chunk.setChunkPacket(data);
-            }
-            this.sendChunk(x, z, index, data);
-            this.timings.syncChunkSendTimer.stopTiming();
-            return;
-        }
 
         if (this.chunkSendTasks.contains(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
@@ -3265,7 +3241,7 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addPlayerMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MovePlayerPacket pk = new MovePlayerPacket();
-        pk.eid = entity.getId();
+        pk.setRuntimeEntityId(entity.getId());
         pk.x = (float) x;
         pk.y = (float) y;
         pk.z = (float) z;
@@ -3273,8 +3249,8 @@ public class Level implements ChunkManager, Metadatable {
         pk.headYaw = (float) headYaw;
         pk.pitch = (float) pitch;
         if (entity.riding != null) {
-            pk.ridingEid = entity.riding.getId();
-            pk.mode = MovePlayerPacket.MODE_PITCH;
+            pk.setRidingRuntimeEntityId(entity.riding.getId());
+            pk.setMode(MovePlayerPacket.Mode.HEAD_ROTATION);
         }
 
         Server.broadcastPacket(entity.getViewers().values(), pk);
@@ -3282,14 +3258,14 @@ public class Level implements ChunkManager, Metadatable {
 
     public void addEntityMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
-        pk.eid = entity.getId();
+        pk.setRuntimeEntityId(entity.getId());
         pk.x = (float) x;
         pk.y = (float) y;
         pk.z = (float) z;
         pk.yaw = (float) yaw;
         pk.headYaw = (float) headYaw;
         pk.pitch = (float) pitch;
-        pk.onGround = entity.onGround;
+        pk.setOnGround(entity.onGround);
 
         Server.broadcastPacket(entity.getViewers().values(), pk);
     }
@@ -3312,12 +3288,12 @@ public class Level implements ChunkManager, Metadatable {
         // These numbers are from Minecraft
 
         if (raining) {
-            pk.evid = LevelEventPacket.EVENT_START_RAIN;
+            pk.setType(LevelEvent.START_RAINING);
             int time = ThreadLocalRandom.current().nextInt(12000) + 12000;
-            pk.data = time;
+            pk.setData(time);
             setRainTime(time);
         } else {
-            pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
+            pk.setType(LevelEvent.STOP_RAINING);
             setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
@@ -3355,12 +3331,12 @@ public class Level implements ChunkManager, Metadatable {
         LevelEventPacket pk = new LevelEventPacket();
         // These numbers are from Minecraft
         if (thundering) {
-            pk.evid = LevelEventPacket.EVENT_START_THUNDER;
+            pk.setType(LevelEvent.START_THUNDERSTORM);
             int time = ThreadLocalRandom.current().nextInt(12000) + 3600;
-            pk.data = time;
+            pk.setData(time);
             setThunderTime(time);
         } else {
-            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
+            pk.setType(LevelEvent.STOP_THUNDERSTORM);
             setThunderTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
@@ -3385,19 +3361,19 @@ public class Level implements ChunkManager, Metadatable {
         LevelEventPacket pk = new LevelEventPacket();
 
         if (this.isRaining()) {
-            pk.evid = LevelEventPacket.EVENT_START_RAIN;
-            pk.data = this.rainTime;
+            pk.setType(LevelEvent.START_RAINING);
+            pk.setData(this.rainTime);
         } else {
-            pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
+            pk.setType(LevelEvent.STOP_RAINING);
         }
 
         Server.broadcastPacket(players, pk);
 
         if (this.isThundering()) {
-            pk.evid = LevelEventPacket.EVENT_START_THUNDER;
-            pk.data = this.thunderTime;
+            pk.setType(LevelEvent.START_THUNDERSTORM);
+            pk.setData(this.thunderTime);
         } else {
-            pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
+            pk.setType(LevelEvent.STOP_THUNDERSTORM);
         }
 
         Server.broadcastPacket(players, pk);
@@ -3667,7 +3643,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-            this.addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_IGNITE);
+            this.addLevelSoundEvent(target, SoundEvent.IGNITE);
             return true;
         } else if (sizeZ >= 2 && sizeZ <= maxPortalSize) {
             //start scan from 1 block above base
@@ -3750,7 +3726,7 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
 
-            this.addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_IGNITE);
+            this.addLevelSoundEvent(target, SoundEvent.IGNITE);
             return true;
         }
 

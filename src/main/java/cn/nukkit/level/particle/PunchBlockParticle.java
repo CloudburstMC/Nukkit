@@ -4,8 +4,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
 
 public class PunchBlockParticle extends Particle {
 
@@ -21,7 +19,7 @@ public class PunchBlockParticle extends Particle {
     }
 
     @Override
-    public DataPacket[] encode() {
+    public BedrockPacket[] encode() {
         LevelEventPacket pk = new LevelEventPacket();
         pk.evid = LevelEventPacket.EVENT_PARTICLE_PUNCH_BLOCK;
         pk.x = (float) this.x;
@@ -29,6 +27,6 @@ public class PunchBlockParticle extends Particle {
         pk.z = (float) this.z;
         pk.data = this.data;
 
-        return new DataPacket[]{pk};
+        return new BedrockPacket[]{pk};
     }
 }

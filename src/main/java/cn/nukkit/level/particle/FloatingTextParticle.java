@@ -114,8 +114,8 @@ public class FloatingTextParticle extends Particle {
     }
 
     @Override
-    public DataPacket[] encode() {
-        ArrayList<DataPacket> packets = new ArrayList<>();
+    public BedrockPacket[] encode() {
+        ArrayList<BedrockPacket> packets = new ArrayList<>();
 
         if (this.entityId == -1) {
             this.entityId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
@@ -157,6 +157,6 @@ public class FloatingTextParticle extends Particle {
             packets.add(playerRemove);
         }
 
-        return packets.toArray(new DataPacket[0]);
+        return packets.toArray(new BedrockPacket[0]);
     }
 }

@@ -1,8 +1,6 @@
 package cn.nukkit.level.particle;
 
 import cn.nukkit.math.Vector3;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.LevelEventPacket;
 
 /**
  * Created on 2015/11/21 by xtypr.
@@ -25,7 +23,7 @@ public class GenericParticle extends Particle {
     }
 
     @Override
-    public DataPacket[] encode() {
+    public BedrockPacket[] encode() {
         LevelEventPacket pk = new LevelEventPacket();
         pk.evid = (short) (LevelEventPacket.EVENT_ADD_PARTICLE_MASK | this.id);
         pk.x = (float) this.x;
@@ -33,6 +31,6 @@ public class GenericParticle extends Particle {
         pk.z = (float) this.z;
         pk.data = this.data;
 
-        return new DataPacket[]{pk};
+        return new BedrockPacket[]{pk};
     }
 }

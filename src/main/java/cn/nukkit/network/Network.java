@@ -50,7 +50,7 @@ public class Network {
     public static final byte CHANNEL_TEXT = 7; //Chat and other text stuff
     public static final byte CHANNEL_END = 31;
 
-    private Class<? extends DataPacket>[] packetPool = new Class[256];
+    private Class<? extends BedrockPacket>[] packetPool = new Class[256];
 
     private final Server server;
 
@@ -214,7 +214,7 @@ public class Network {
         }
     }
 
-    public void registerPacket(byte id, Class<? extends DataPacket> clazz) {
+    public void registerPacket(byte id, Class<? extends BedrockPacket> clazz) {
         this.packetPool[id & 0xff] = clazz;
     }
 
@@ -223,7 +223,7 @@ public class Network {
     }
 
     public void processBatch(BatchPacket packet, Player player) {
-        List<DataPacket> packets = new ObjectArrayList<>();
+        List<BedrockPacket> packets = new ObjectArrayList<>();
         try {
             this.processBatch(packet.payload, packets, player.getNetworkSession().getCompression());
         } catch (ProtocolException e) {
@@ -232,7 +232,7 @@ public class Network {
         }
     }
 
-    public void processBatch(byte[] payload, Collection<DataPacket> packets, CompressionProvider compression) throws ProtocolException {
+    public void processBatch(byte[] payload, Collection<BedrockPacket> packets, CompressionProvider compression) throws ProtocolException {
         byte[] data;
         try {
             data = compression.decompress(payload);
@@ -258,7 +258,7 @@ public class Network {
                 // |   2 bits  |   2 bits  |  10 bits  |
                 int packetId = header & 0x3ff;
 
-                DataPacket pk = this.getPacket(packetId);
+                BedrockPacket pk = this.getPacket(packetId);
 
                 if (pk != null) {
                     pk.setBuffer(buf, buf.length - bais.available());
@@ -290,13 +290,13 @@ public class Network {
      *
      * @param packets
      */
-    public void processPackets(Player player, List<DataPacket> packets) {
+    public void processPackets(Player player, List<BedrockPacket> packets) {
         if (packets.isEmpty()) return;
         packets.forEach(player::handleDataPacket);
     }
 
-    public DataPacket getPacket(int id) {
-        Class<? extends DataPacket> clazz = this.packetPool[id];
+    public BedrockPacket getPacket(int id) {
+        Class<? extends BedrockPacket> clazz = this.packetPool[id];
         if (clazz != null) {
             try {
                 return clazz.newInstance();
