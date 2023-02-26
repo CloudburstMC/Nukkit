@@ -106,4 +106,8 @@ tasks {
         standardInput = System.`in`
         workingDir = dir
     }
+
+    javadoc {
+        options.encoding = "UTF-8"
+    }
 }

@@ -10,13 +10,24 @@ pipeline {
     stages {
         stage ('Build') {
             steps {
-                sh 'bash gradlew shadowJar'
+                sh './gradlew shadowJar'
             }
             post {
                 success {
 //                     junit 'build/test-results/**/*.xml'
                     archiveArtifacts artifacts: 'target/nukkit-*-SNAPSHOT.jar', fingerprint: true
                 }
+            }
+        }
+
+        stage ('Javadocs') {
+            when {
+                branch "master"
+            }
+
+            steps {
+                sh './gradlew javadoc'
+                step([$class: 'JavadocArchiver', javadocDir: 'build/docs/javadoc', keepAll: false])
             }
         }
     }
