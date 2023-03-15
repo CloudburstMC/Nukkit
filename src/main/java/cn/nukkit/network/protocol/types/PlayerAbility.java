@@ -21,7 +21,8 @@ public enum PlayerAbility {
     WALK_SPEED,
     MUTED,
     WORLD_BUILDER,
-    NO_CLIP;
+    NO_CLIP,
+    PRIVILEGED_BUILDER;
 
     public static final List<PlayerAbility> VALUES = Arrays.asList(values());
 }
