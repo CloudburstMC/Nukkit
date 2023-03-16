@@ -84,7 +84,7 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
                 return;
             }
 
-            Explosion explosion = new Explosion(this.add(0, this.getHeight() / 2, 0), (float) ev.getForce(), this);
+            Explosion explosion = new Explosion(this, (float) ev.getForce(), this);
             if (ev.isBlockBreaking()) {
                 explosion.explodeA();
             }
