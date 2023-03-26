@@ -13,6 +13,9 @@ COPY src /src/src
 COPY .git /src/.git
 COPY gradle /src/gradle
 
+RUN apt-get clean \
+    && apt-get update \
+    && apt install git -y
 RUN git submodule update --init
 RUN ./gradlew shadowJar
 
