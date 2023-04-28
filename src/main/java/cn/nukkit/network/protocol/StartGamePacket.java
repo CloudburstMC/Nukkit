@@ -114,6 +114,8 @@ public class StartGamePacket extends DataPacket {
         this.putBlockVector3(this.spawnX, this.spawnY, this.spawnZ);
         this.putBoolean(this.hasAchievementsDisabled);
         this.putBoolean(this.worldEditor);
+        this.putBoolean(false); // isCreatedInEditor
+        this.putBoolean(false); // isExportedFromEditor
         this.putVarInt(this.dayCycleStopTime);
         this.putVarInt(this.eduEditionOffer);
         this.putBoolean(this.hasEduFeaturesEnabled);
@@ -176,5 +178,6 @@ public class StartGamePacket extends DataPacket {
         this.putLLong(0); // blockRegistryChecksum
         this.putUUID(new UUID(0, 0)); // worldTemplateId
         this.putBoolean(this.clientSideGenerationEnabled);
+        this.putBoolean(false); // blockIdsAreHashed
     }
 }
