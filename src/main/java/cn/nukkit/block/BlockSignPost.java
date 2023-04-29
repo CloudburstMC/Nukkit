@@ -15,6 +15,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.OpenSignPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
@@ -94,6 +95,14 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
             }
 
             BlockEntitySign sign = (BlockEntitySign) BlockEntity.createBlockEntity(BlockEntity.SIGN, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+
+            if (player != null) {
+                OpenSignPacket pk = new OpenSignPacket();
+                pk.position = this.asBlockVector3();
+                pk.frontSide = true;
+                player.dataPacket(pk);
+            }
+
             return sign != null;
         }
 

@@ -33,7 +33,14 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     @Override
     public DataPacket reset() {
         super.reset();
-        this.putUnsignedVarInt(this.pid() & 0xff);
+
+        byte packetId = this.pid();
+        if (packetId < 0 && packetId >= -56) { // Hack: (byte) 200+ --> (int) 300+
+            this.putUnsignedVarInt(packetId + 356);
+        } else {
+            this.putUnsignedVarInt(packetId & 0xff);
+        }
+
         return this;
     }
 
