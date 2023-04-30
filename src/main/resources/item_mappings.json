@@ -1,4 +1,22 @@
 {
+  "minecraft:fence": {
+    "0": "minecraft:oak_fence",
+    "1": "minecraft:spruce_fence",
+    "2": "minecraft:birch_fence",
+    "3": "minecraft:jungle_fence",
+    "4": "minecraft:acacia_fence",
+    "5": "minecraft:dark_oak_fence"
+  },
+  "minecraft:log": {
+    "0": "minecraft:oak_log",
+    "1": "minecraft:spruce_log",
+    "2": "minecraft:birch_log",
+    "3": "minecraft:jungle_log"
+  },
+  "minecraft:log2": {
+    "0": "minecraft:acacia_log",
+    "1": "minecraft:dark_oak_log"
+  },
   "minecraft:wool": {
     "0": "minecraft:white_wool",
     "1": "minecraft:orange_wool",
