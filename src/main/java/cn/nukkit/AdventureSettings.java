@@ -109,6 +109,7 @@ public class AdventureSettings implements Cloneable {
         OPERATOR(PlayerAbility.OPERATOR_COMMANDS, false),
         TELEPORT(PlayerAbility.TELEPORT, false),
         BUILD(PlayerAbility.BUILD, true),
+        PRIVILEGED_BUILDER(PlayerAbility.PRIVILEGED_BUILDER, false),
 
         @Deprecated
         DEFAULT_LEVEL_PERMISSIONS(null, false);

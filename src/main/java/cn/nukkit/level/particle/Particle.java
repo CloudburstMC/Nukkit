@@ -95,6 +95,7 @@ public abstract class Particle extends Vector3 {
     public static final int TYPE_SHRIEK = 82;
     public static final int TYPE_SCULK_SOUL = 83;
     public static final int TYPE_SONIC_EXPLOSION = 84;
+    public static final int TYPE_BRUSH_DUST = 85;
 
     public static final Integer getParticleIdByName(String name) {
         name = name.toUpperCase();

@@ -43,7 +43,6 @@ dependencies {
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(8))
-        vendor.set(JvmVendorSpec.ADOPTIUM)
     }
 }
 
@@ -105,5 +104,9 @@ tasks {
         }
         standardInput = System.`in`
         workingDir = dir
+    }
+
+    javadoc {
+        options.encoding = "UTF-8"
     }
 }

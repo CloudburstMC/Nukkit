@@ -1,4 +1,22 @@
 {
+  "minecraft:wool": {
+    "0": "minecraft:white_wool",
+    "1": "minecraft:orange_wool",
+    "2": "minecraft:magenta_wool",
+    "3": "minecraft:light_blue_wool",
+    "4": "minecraft:yellow_wool",
+    "5": "minecraft:lime_wool",
+    "6": "minecraft:pink_wool",
+    "7": "minecraft:gray_wool",
+    "8": "minecraft:light_gray_wool",
+    "9": "minecraft:cyan_wool",
+    "10": "minecraft:purple_wool",
+    "11": "minecraft:blue_wool",
+    "12": "minecraft:brown_wool",
+    "13": "minecraft:green_wool",
+    "14": "minecraft:red_wool",
+    "15": "minecraft:black_wool"
+  },
   "minecraft:banner_pattern": {
     "0": "minecraft:creeper_banner_pattern",
     "1": "minecraft:skull_banner_pattern",
