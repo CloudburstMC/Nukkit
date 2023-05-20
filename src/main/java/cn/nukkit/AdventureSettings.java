@@ -55,7 +55,7 @@ public class AdventureSettings implements Cloneable {
         packet.setPlayerPermission(player.isOp() && !player.isSpectator() ? UpdateAbilitiesPacket.PlayerPermission.OPERATOR : UpdateAbilitiesPacket.PlayerPermission.MEMBER);
 
         AbilityLayer layer = new AbilityLayer();
-        layer.setLayerType(AbilityLayer.Type.BASE);
+        layer.setLayerType(player.isSpectator() ? AbilityLayer.Type.SPECTATOR : AbilityLayer.Type.BASE);
         layer.getAbilitiesSet().addAll(PlayerAbility.VALUES);
 
         for (Type type : Type.values()) {
