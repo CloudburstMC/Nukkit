@@ -77,6 +77,7 @@ import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.scheduler.Task;
+import cn.nukkit.spark.SparkInstaller;
 import cn.nukkit.utils.*;
 import cn.nukkit.utils.bugreport.ExceptionHandler;
 import com.google.common.base.Preconditions;
@@ -283,7 +284,7 @@ public class Server {
             try {
                 InputStream languageList = this.getClass().getClassLoader().getResourceAsStream("lang/language.list");
                 if (languageList == null) {
-                    throw new IllegalStateException("lang/language.list is missing. If you are running a development version, make sure you have run 'git submodule update --init'.");
+                    throw new IllegalStateException("lang/language.list is missing. If you are running a development version, make sure you have run 'git submodule update --checkSpark'.");
                 }
                 String[] lines = Utils.readFile(languageList).split("\n");
                 for (String line : lines) {
@@ -812,6 +813,7 @@ public class Server {
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
         this.pluginManager.loadPlugins(this.pluginPath);
+        SparkInstaller.checkSpark(this);
         this.enablePlugins(PluginLoadOrder.STARTUP);
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
     }
