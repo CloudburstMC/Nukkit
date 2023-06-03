@@ -53,10 +53,7 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.scheduler.AsyncTask;
 import cn.nukkit.scheduler.BlockUpdateScheduler;
-import cn.nukkit.timings.LevelTimings;
 import cn.nukkit.utils.*;
-import co.aikar.timings.Timings;
-import co.aikar.timings.TimingsHistory;
 import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
@@ -222,8 +219,6 @@ public class Level implements ChunkManager, Metadatable {
 
     private static final int LCG_CONSTANT = 1013904223;
 
-    public LevelTimings timings;
-
     private int tickRate;
     public int tickRateTime = 0;
     public int tickRateCounter = 0;
@@ -277,8 +272,6 @@ public class Level implements ChunkManager, Metadatable {
         } catch (Exception e) {
             throw new LevelException("Caused by " + Utils.getExceptionMessage(e));
         }
-
-        this.timings = new LevelTimings(this);
 
         if (convert) {
             this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.level.updating",
@@ -753,8 +746,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void doTick(int currentTick) {
-        this.timings.doTick.startTiming();
-
         updateBlockLight(lightQueue);
         this.checkTime();
 
@@ -808,20 +799,13 @@ public class Level implements ChunkManager, Metadatable {
         this.levelCurrentTick++;
 
         this.unloadChunks();
-        this.timings.doTickPending.startTiming();
-
-        int polled = 0;
 
         this.updateQueue.tick(this.getCurrentTick());
-        this.timings.doTickPending.stopTiming();
 
         Block block;
         while ((block = this.normalUpdateQueue.poll()) != null) {
             block.onUpdate(BLOCK_UPDATE_NORMAL);
         }
-
-        TimingsHistory.entityTicks += this.updateEntities.size();
-        this.timings.entityTick.startTiming();
 
         if (!this.updateEntities.isEmpty()) {
             for (long id : new ArrayList<>(this.updateEntities.keySet())) {
@@ -835,16 +819,10 @@ public class Level implements ChunkManager, Metadatable {
                 }
             }
         }
-        this.timings.entityTick.stopTiming();
 
-        TimingsHistory.tileEntityTicks += this.updateBlockEntities.size();
-        this.timings.blockEntityTick.startTiming();
         this.updateBlockEntities.removeIf(blockEntity -> !blockEntity.isValid() || !blockEntity.onUpdate());
-        this.timings.blockEntityTick.stopTiming();
 
-        this.timings.tickChunks.startTiming();
         this.tickChunks();
-        this.timings.tickChunks.stopTiming();
 
         synchronized (changedBlocks) {
             if (!this.changedBlocks.isEmpty()) {
@@ -905,8 +883,6 @@ public class Level implements ChunkManager, Metadatable {
             Server.broadcastPacket(players.values().toArray(new Player[0]), packet);
             gameRules.refresh();
         }
-
-        this.timings.doTick.stopTiming();
     }
 
     private void performThunder(long index, FullChunk chunk) {
@@ -2481,7 +2457,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void generateChunkCallback(int x, int z, BaseFullChunk chunk, boolean isPopulated) {
-        Timings.generationCallbackTimer.startTiming();
         long index = Level.chunkHash(x, z);
         if (this.chunkPopulationQueue.containsKey(index)) {
             FullChunk oldChunk = this.getChunk(x, z, false);
@@ -2511,7 +2486,6 @@ public class Level implements ChunkManager, Metadatable {
             chunk.setProvider(this.provider);
             this.setChunk(x, z, chunk, false);
         }
-        Timings.generationCallbackTimer.stopTiming();
     }
 
     @Override
@@ -2663,7 +2637,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private void processChunkRequest() {
-        this.timings.syncChunkSendTimer.startTiming();
         for (long index : this.chunkSendQueue.keySet()) {
             if (this.chunkSendTasks.contains(index)) {
                 continue;
@@ -2679,18 +2652,14 @@ public class Level implements ChunkManager, Metadatable {
                     continue;
                 }
             }
-            this.timings.syncChunkSendPrepareTimer.startTiming();
             AsyncTask task = this.provider.requestChunkTask(x, z);
             if (task != null) {
                 this.server.getScheduler().scheduleAsyncTask(task);
             }
-            this.timings.syncChunkSendPrepareTimer.stopTiming();
         }
-        this.timings.syncChunkSendTimer.stopTiming();
     }
 
     public void chunkRequestCallback(long timestamp, int x, int z, int subChunkCount, byte[] payload) {
-        this.timings.syncChunkSendTimer.startTiming();
         long index = Level.chunkHash(x, z);
 
         if (this.cacheChunks) {
@@ -2700,7 +2669,6 @@ public class Level implements ChunkManager, Metadatable {
                 chunk.setChunkPacket(data);
             }
             this.sendChunk(x, z, index, data);
-            this.timings.syncChunkSendTimer.stopTiming();
             return;
         }
 
@@ -2714,7 +2682,6 @@ public class Level implements ChunkManager, Metadatable {
             this.chunkSendQueue.remove(index);
             this.chunkSendTasks.remove(index);
         }
-        this.timings.syncChunkSendTimer.stopTiming();
     }
 
     public void removeEntity(Entity entity) {
@@ -2787,13 +2754,11 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private synchronized BaseFullChunk forceLoadChunk(long index, int x, int z, boolean generate) {
-        this.timings.syncChunkLoadTimer.startTiming();
         BaseFullChunk chunk = this.provider.getChunk(x, z, generate);
         if (chunk == null) {
             if (generate) {
                 throw new IllegalStateException("Could not create new Chunk");
             }
-            this.timings.syncChunkLoadTimer.stopTiming();
             return chunk;
         }
 
@@ -2801,7 +2766,6 @@ public class Level implements ChunkManager, Metadatable {
             this.server.getPluginManager().callEvent(new ChunkLoadEvent(chunk, !chunk.isGenerated()));
         } else {
             this.unloadChunk(x, z, false);
-            this.timings.syncChunkLoadTimer.stopTiming();
             return chunk;
         }
 
@@ -2820,7 +2784,6 @@ public class Level implements ChunkManager, Metadatable {
         } else {
             this.unloadQueue.put(index, System.currentTimeMillis());
         }
-        this.timings.syncChunkLoadTimer.stopTiming();
         return chunk;
     }
 
@@ -2868,15 +2831,12 @@ public class Level implements ChunkManager, Metadatable {
             return true;
         }
 
-        this.timings.doChunkUnload.startTiming();
-
         BaseFullChunk chunk = this.getChunk(x, z);
 
         if (chunk != null && chunk.getProvider() != null) {
             ChunkUnloadEvent ev = new ChunkUnloadEvent(chunk);
             this.server.getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
-                this.timings.doChunkUnload.stopTiming();
                 return false;
             }
         }
@@ -2907,8 +2867,6 @@ public class Level implements ChunkManager, Metadatable {
             logger.error(this.server.getLanguage().translateString("nukkit.level.chunkUnloadError", e.toString()));
             logger.logException(e);
         }
-
-        this.timings.doChunkUnload.stopTiming();
 
         return true;
     }
@@ -3028,7 +2986,6 @@ public class Level implements ChunkManager, Metadatable {
         BaseFullChunk chunk = this.getChunk(x, z, true);
         boolean populate;
         if (!chunk.isPopulated()) {
-            Timings.populationTimer.startTiming();
             populate = true;
             for (int xx = -1; xx <= 1; ++xx) {
                 for (int zz = -1; zz <= 1; ++zz) {
@@ -3053,7 +3010,6 @@ public class Level implements ChunkManager, Metadatable {
                     this.server.getScheduler().scheduleAsyncTask(task);
                 }
             }
-            Timings.populationTimer.stopTiming();
             return false;
         }
 
@@ -3071,11 +3027,9 @@ public class Level implements ChunkManager, Metadatable {
 
         long index = Level.chunkHash(x, z);
         if (!this.chunkGenerationQueue.containsKey(index)) {
-            Timings.generationTimer.startTiming();
             this.chunkGenerationQueue.put(index, Boolean.TRUE);
             GenerationTask task = new GenerationTask(this, this.getChunk(x, z, true));
             this.server.getScheduler().scheduleAsyncTask(task);
-            Timings.generationTimer.stopTiming();
         }
     }
 
@@ -3091,7 +3045,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void doChunkGarbageCollection() {
-        this.timings.doChunkGC.startTiming();
         // remove all invaild block entities.
         if (!blockEntities.isEmpty()) {
             ObjectIterator<BlockEntity> iter = blockEntities.values().iterator();
@@ -3121,7 +3074,6 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         this.provider.doGarbageCollection();
-        this.timings.doChunkGC.stopTiming();
     }
 
     public void doGarbageCollection(long allocatedTime) {
