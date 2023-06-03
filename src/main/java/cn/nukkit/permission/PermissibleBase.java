@@ -4,7 +4,6 @@ import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.ServerException;
-import co.aikar.timings.Timings;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -118,8 +117,6 @@ public class PermissibleBase implements Permissible {
 
     @Override
     public void recalculatePermissions() {
-        Timings.permissibleCalculationTimer.startTiming();
-
         this.clearPermissions();
         Map<String, Permission> defaults = Server.getInstance().getPluginManager().getDefaultPermissions(this.isOp());
         Server.getInstance().getPluginManager().subscribeToDefaultPerms(this.isOp(), this.parent != null ? this.parent : this);
@@ -134,7 +131,6 @@ public class PermissibleBase implements Permissible {
         for (PermissionAttachment attachment : this.attachments) {
             this.calculateChildPermissions(attachment.getPermissions(), false, attachment);
         }
-        Timings.permissibleCalculationTimer.stopTiming();
     }
 
     public void clearPermissions() {

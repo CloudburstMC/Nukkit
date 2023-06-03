@@ -2,8 +2,6 @@ package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
-import co.aikar.timings.Timing;
-import co.aikar.timings.Timings;
 
 /**
  * @author MagicDroidX
@@ -23,14 +21,11 @@ public class TaskHandler {
 
     private boolean cancelled;
 
-    public final Timing timing;
-
     public TaskHandler(Plugin plugin, Runnable task, int taskId, boolean asynchronous) {
         this.asynchronous = asynchronous;
         this.plugin = plugin;
         this.task = task;
         this.taskId = taskId;
-        this.timing = Timings.getTaskTiming(this, period);
     }
 
     public boolean isCancelled() {

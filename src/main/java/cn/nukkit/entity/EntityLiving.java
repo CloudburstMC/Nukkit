@@ -23,7 +23,6 @@ import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockIterator;
-import co.aikar.timings.Timings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -204,7 +203,6 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
 
     @Override
     public boolean entityBaseTick(int tickDiff) {
-        Timings.livingEntityBaseTickTimer.startTiming();
         boolean isBreathing = !this.isInsideOfWater();
 
         if (this instanceof Player) {
@@ -287,8 +285,6 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
         // Used to check collisions with magma blocks
         Block block = this.level.getBlock((int) x, (int) y - 1, (int) z);
         if (block instanceof BlockMagma) block.onEntityCollide(this);
-
-        Timings.livingEntityBaseTickTimer.stopTiming();
 
         return hasUpdate;
     }

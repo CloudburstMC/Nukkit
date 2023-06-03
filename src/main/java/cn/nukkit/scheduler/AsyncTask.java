@@ -2,7 +2,6 @@ package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
 import cn.nukkit.utils.ThreadStore;
-import co.aikar.timings.Timings;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -76,7 +75,6 @@ public abstract class AsyncTask implements Runnable {
     }
 
     public static void collectTask() {
-        Timings.schedulerAsyncTimer.startTiming();
         while (!FINISHED_LIST.isEmpty()) {
             AsyncTask task = FINISHED_LIST.poll();
             try {
@@ -87,7 +85,5 @@ public abstract class AsyncTask implements Runnable {
                         + " invoking onCompletion", e);
             }
         }
-        Timings.schedulerAsyncTimer.stopTiming();
     }
-
 }
