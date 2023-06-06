@@ -179,5 +179,6 @@ public class StartGamePacket extends DataPacket {
         this.putUUID(new UUID(0, 0)); // worldTemplateId
         this.putBoolean(this.clientSideGenerationEnabled);
         this.putBoolean(false); // blockIdsAreHashed
+        this.putBoolean(false); // serverAuthSounds
     }
 }

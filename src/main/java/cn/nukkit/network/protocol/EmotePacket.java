@@ -6,6 +6,8 @@ import lombok.ToString;
 public class EmotePacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.EMOTE_PACKET;
     public long runtimeId;
+    public String xuid;
+    public String platformId;
     public String emoteID;
     public byte flags;
 
@@ -18,6 +20,8 @@ public class EmotePacket extends DataPacket {
     public void decode() {
         this.runtimeId = this.getEntityRuntimeId();
         this.emoteID = this.getString();
+        this.xuid = this.getString();
+        this.platformId = this.getString();
         this.flags = (byte) this.getByte();
     }
 
@@ -26,6 +30,8 @@ public class EmotePacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.runtimeId);
         this.putString(this.emoteID);
+        this.putString(this.xuid);
+        this.putString(this.platformId);
         this.putByte(flags);
     }
 }

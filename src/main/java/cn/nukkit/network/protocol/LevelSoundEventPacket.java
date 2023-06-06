@@ -463,10 +463,15 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_PICKUP = 459;
     public static final int SOUND_INSERT_ENCHANTED = 460;
     public static final int SOUND_PICKUP_ENCHANTED = 461;
+    public static final int SOUND_BRUSH = 462;
     public static final int SOUND_BRUSH_COMPLETED = 463;
     public static final int SOUND_SHATTER_DECORATED_POT = 464;
     public static final int SOUND_BREAK_DECORATED_POD = 465;
-    public static final int SOUND_UNDEFINED = 466;
+    public static final int SOUND_SNIFFER_EGG_CRACK = 466;
+    public static final int SOUND_SNIFFER_EGG_HATCHED = 467;
+    public static final int SOUND_WAXED_SIGN_INTERACT_FAIL = 468;
+    public static final int SOUND_RECORD_RELIC = 469;
+    public static final int SOUND_UNDEFINED = 470;
 
     public int sound;
     public float x;

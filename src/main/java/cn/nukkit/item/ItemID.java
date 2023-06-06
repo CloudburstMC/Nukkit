@@ -79,7 +79,6 @@ public interface ItemID {
     int SIGN = 323;
     int WOODEN_DOOR = 324;
     int BUCKET = 325;
-
     int MINECART = 328;
     int SADDLE = 329;
     int IRON_DOOR = 330;
@@ -99,7 +98,6 @@ public interface ItemID {
     int SLIMEBALL = 341;
     int CHEST_MINECART = 342;
     int MINECART_WITH_CHEST = 342;
-
     int EGG = 344;
     int COMPASS = 345;
     int FISHING_ROD = 346;
@@ -203,21 +201,16 @@ public interface ItemID {
     int CHORUS_FRUIT = 432;
     int POPPED_CHORUS_FRUIT = 433;
     int BANNER_PATTERN = 434;
-
     int DRAGON_BREATH = 437;
     int SPLASH_POTION = 438;
-
     int LINGERING_POTION = 441;
-
     int COMMAND_BLOCK_MINECART = 443;
     int ELYTRA = 444;
     int SHULKER_SHELL = 445;
     int BANNER = 446;
     int TOTEM = 450;
     int IRON_NUGGET = 452;
-
     int TRIDENT = 455;
-
     int BEETROOT = 457;
     int BEETROOT_SEEDS = 458;
     int BEETROOT_SEED = 458;
@@ -234,9 +227,7 @@ public interface ItemID {
     int TURTLE_SHELL = 469;
     int PHANTOM_MEMBRANE = 470;
     int CROSSBOW = 471;
-
     int SWEET_BERRIES = 477;
-
     int RECORD_13 = 500;
     int RECORD_CAT = 501;
     int RECORD_BLOCKS = 502;
@@ -249,14 +240,12 @@ public interface ItemID {
     int RECORD_WARD = 509;
     int RECORD_11 = 510;
     int RECORD_WAIT = 511;
-
     int SHIELD = 513;
-
+    int RECORD_5 = 643;
+    int RECORD_RELIC = 701;
     int SUSPICIOUS_STEW = 734;
-
     int HONEYCOMB = 736;
     int HONEY_BOTTLE = 737;
-
     int LODESTONECOMPASS = 741;
     int NETHERITE_INGOT = 742;
     int NETHERITE_SWORD = 743;
@@ -269,11 +258,8 @@ public interface ItemID {
     int NETHERITE_LEGGINGS = 750;
     int NETHERITE_BOOTS = 751;
     int NETHERITE_SCRAP = 752;
-
     int WARPED_FUNGUS_ON_A_STICK = 757;
-
     int RECORD_PIGSTEP = 759;
-
     int SPYGLASS = 772;
     int RECORD_OTHERSIDE = 773;
 }
