@@ -91,6 +91,12 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
                 case Item.RECORD_OTHERSIDE:
                     this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_OTHERSIDE);
                     break;
+                case Item.RECORD_5:
+                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_5);
+                    break;
+                case Item.RECORD_RELIC:
+                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_RELIC);
+                    break;
             }
         }
     }
