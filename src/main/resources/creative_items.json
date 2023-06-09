@@ -2,443 +2,443 @@
     "items": [
         {
             "id": "minecraft:planks",
-            "blockRuntimeId": 934006095
+            "blockRuntimeId": 10437
         },
         {
             "id": "minecraft:planks",
-            "blockRuntimeId": 1722777465
+            "blockRuntimeId": 10438
         },
         {
             "id": "minecraft:planks",
-            "blockRuntimeId": 1990300350
+            "blockRuntimeId": 10439
         },
         {
             "id": "minecraft:planks",
-            "blockRuntimeId": -1108868186
+            "blockRuntimeId": 10440
         },
         {
             "id": "minecraft:planks",
-            "blockRuntimeId": 1984705437
+            "blockRuntimeId": 10441
         },
         {
             "id": "minecraft:planks",
-            "blockRuntimeId": 1501952743
+            "blockRuntimeId": 10442
         },
         {
             "id": "minecraft:mangrove_planks",
-            "blockRuntimeId": 647292747
+            "blockRuntimeId": 2068
         },
         {
             "id": "minecraft:cherry_planks",
-            "blockRuntimeId": 1754553875
+            "blockRuntimeId": 12582
         },
         {
             "id": "minecraft:bamboo_planks",
-            "blockRuntimeId": -1843072030
+            "blockRuntimeId": 8786
         },
         {
             "id": "minecraft:bamboo_mosaic",
-            "blockRuntimeId": 832568857
+            "blockRuntimeId": 13109
         },
         {
             "id": "minecraft:crimson_planks",
-            "blockRuntimeId": 1967379138
+            "blockRuntimeId": 7977
         },
         {
             "id": "minecraft:warped_planks",
-            "blockRuntimeId": 1862290605
+            "blockRuntimeId": 2039
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": 748347524
+            "blockRuntimeId": 2296
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": -1755398700
+            "blockRuntimeId": 2297
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": -157900040
+            "blockRuntimeId": 2298
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": -721145600
+            "blockRuntimeId": 2299
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": -1674351608
+            "blockRuntimeId": 2300
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": -1407505767
+            "blockRuntimeId": 2301
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": 37282729
+            "blockRuntimeId": 2308
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": -749622949
+            "blockRuntimeId": 2303
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": -7024277
+            "blockRuntimeId": 2304
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": 925576807
+            "blockRuntimeId": 2302
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": -768135411
+            "blockRuntimeId": 2305
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": 1884063545
+            "blockRuntimeId": 2309
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": 1983915965
+            "blockRuntimeId": 2306
         },
         {
             "id": "minecraft:cobblestone_wall",
-            "blockRuntimeId": 1581411919
+            "blockRuntimeId": 2307
         },
         {
             "id": "minecraft:blackstone_wall",
-            "blockRuntimeId": 453304006
+            "blockRuntimeId": 6189
         },
         {
             "id": "minecraft:polished_blackstone_wall",
-            "blockRuntimeId": 1068714754
+            "blockRuntimeId": 11115
         },
         {
             "id": "minecraft:polished_blackstone_brick_wall",
-            "blockRuntimeId": -950547642
+            "blockRuntimeId": 2077
         },
         {
             "id": "minecraft:cobbled_deepslate_wall",
-            "blockRuntimeId": -973431742
+            "blockRuntimeId": 12915
         },
         {
             "id": "minecraft:deepslate_tile_wall",
-            "blockRuntimeId": 948683754
+            "blockRuntimeId": 8217
         },
         {
             "id": "minecraft:polished_deepslate_wall",
-            "blockRuntimeId": 1666773026
+            "blockRuntimeId": 12647
         },
         {
             "id": "minecraft:deepslate_brick_wall",
-            "blockRuntimeId": 465722050
+            "blockRuntimeId": 1154
         },
         {
             "id": "minecraft:mud_brick_wall",
-            "blockRuntimeId": 1700199711
+            "blockRuntimeId": 1833
         },
         {
             "id": "minecraft:oak_fence",
-            "blockRuntimeId": 1997655867
+            "blockRuntimeId": 8915
         },
         {
             "id": "minecraft:spruce_fence",
-            "blockRuntimeId": 1246777405
+            "blockRuntimeId": 1116
         },
         {
             "id": "minecraft:birch_fence",
-            "blockRuntimeId": -652925544
+            "blockRuntimeId": 12910
         },
         {
             "id": "minecraft:jungle_fence",
-            "blockRuntimeId": 425194876
+            "blockRuntimeId": 1109
         },
         {
             "id": "minecraft:acacia_fence",
-            "blockRuntimeId": -1128708395
+            "blockRuntimeId": 12913
         },
         {
             "id": "minecraft:dark_oak_fence",
-            "blockRuntimeId": 329256923
+            "blockRuntimeId": 11485
         },
         {
             "id": "minecraft:mangrove_fence",
-            "blockRuntimeId": -769833176
+            "blockRuntimeId": 11031
         },
         {
             "id": "minecraft:cherry_fence",
-            "blockRuntimeId": 46432752
+            "blockRuntimeId": 2067
         },
         {
             "id": "minecraft:bamboo_fence",
-            "blockRuntimeId": 1462261651
+            "blockRuntimeId": 1337
         },
         {
             "id": "minecraft:nether_brick_fence",
-            "blockRuntimeId": 1580000185
+            "blockRuntimeId": 6556
         },
         {
             "id": "minecraft:crimson_fence",
-            "blockRuntimeId": -830654345
+            "blockRuntimeId": 12826
         },
         {
             "id": "minecraft:warped_fence",
-            "blockRuntimeId": 790125098
+            "blockRuntimeId": 9420
         },
         {
             "id": "minecraft:fence_gate",
-            "blockRuntimeId": 333008766
+            "blockRuntimeId": 79
         },
         {
             "id": "minecraft:spruce_fence_gate",
-            "blockRuntimeId": 2050587666
+            "blockRuntimeId": 10982
         },
         {
             "id": "minecraft:birch_fence_gate",
-            "blockRuntimeId": -1044386037
+            "blockRuntimeId": 5658
         },
         {
             "id": "minecraft:jungle_fence_gate",
-            "blockRuntimeId": -1226810365
+            "blockRuntimeId": 8528
         },
         {
             "id": "minecraft:acacia_fence_gate",
-            "blockRuntimeId": 1323568926
+            "blockRuntimeId": 12406
         },
         {
             "id": "minecraft:dark_oak_fence_gate",
-            "blockRuntimeId": -1629451024
+            "blockRuntimeId": 6432
         },
         {
             "id": "minecraft:mangrove_fence_gate",
-            "blockRuntimeId": -1830764129
+            "blockRuntimeId": 6943
         },
         {
             "id": "minecraft:cherry_fence_gate",
-            "blockRuntimeId": 1708381951
+            "blockRuntimeId": 13086
         },
         {
             "id": "minecraft:bamboo_fence_gate",
-            "blockRuntimeId": -883979572
+            "blockRuntimeId": 8192
         },
         {
             "id": "minecraft:crimson_fence_gate",
-            "blockRuntimeId": -1319816396
+            "blockRuntimeId": 7395
         },
         {
             "id": "minecraft:warped_fence_gate",
-            "blockRuntimeId": -574619759
+            "blockRuntimeId": 8563
         },
         {
             "id": "minecraft:normal_stone_stairs",
-            "blockRuntimeId": 189800222
+            "blockRuntimeId": 1338
         },
         {
             "id": "minecraft:stone_stairs",
-            "blockRuntimeId": -474021321
+            "blockRuntimeId": 5584
         },
         {
             "id": "minecraft:mossy_cobblestone_stairs",
-            "blockRuntimeId": 430841682
+            "blockRuntimeId": 6351
         },
         {
             "id": "minecraft:oak_stairs",
-            "blockRuntimeId": -1054044407
+            "blockRuntimeId": 702
         },
         {
             "id": "minecraft:spruce_stairs",
-            "blockRuntimeId": 925629167
+            "blockRuntimeId": 132
         },
         {
             "id": "minecraft:birch_stairs",
-            "blockRuntimeId": 1888784220
+            "blockRuntimeId": 11403
         },
         {
             "id": "minecraft:jungle_stairs",
-            "blockRuntimeId": 2023214964
+            "blockRuntimeId": 11364
         },
         {
             "id": "minecraft:acacia_stairs",
-            "blockRuntimeId": -99866693
+            "blockRuntimeId": 10582
         },
         {
             "id": "minecraft:dark_oak_stairs",
-            "blockRuntimeId": -1604288215
+            "blockRuntimeId": 8209
         },
         {
             "id": "minecraft:mangrove_stairs",
-            "blockRuntimeId": 189821736
+            "blockRuntimeId": 6901
         },
         {
             "id": "minecraft:cherry_stairs",
-            "blockRuntimeId": -173161904
+            "blockRuntimeId": 11534
         },
         {
             "id": "minecraft:bamboo_stairs",
-            "blockRuntimeId": 907951829
+            "blockRuntimeId": 1819
         },
         {
             "id": "minecraft:bamboo_mosaic_stairs",
-            "blockRuntimeId": -1899527197
+            "blockRuntimeId": 10590
         },
         {
             "id": "minecraft:stone_brick_stairs",
-            "blockRuntimeId": 36844083
+            "blockRuntimeId": 2051
         },
         {
             "id": "minecraft:mossy_stone_brick_stairs",
-            "blockRuntimeId": -1019587837
+            "blockRuntimeId": 9850
         },
         {
             "id": "minecraft:sandstone_stairs",
-            "blockRuntimeId": -120717419
+            "blockRuntimeId": 5458
         },
         {
             "id": "minecraft:smooth_sandstone_stairs",
-            "blockRuntimeId": -240771151
+            "blockRuntimeId": 5503
         },
         {
             "id": "minecraft:red_sandstone_stairs",
-            "blockRuntimeId": -546470611
+            "blockRuntimeId": 8513
         },
         {
             "id": "minecraft:smooth_red_sandstone_stairs",
-            "blockRuntimeId": 1060425153
+            "blockRuntimeId": 8711
         },
         {
             "id": "minecraft:granite_stairs",
-            "blockRuntimeId": -704559298
+            "blockRuntimeId": 5024
         },
         {
             "id": "minecraft:polished_granite_stairs",
-            "blockRuntimeId": -601464526
+            "blockRuntimeId": 6409
         },
         {
             "id": "minecraft:diorite_stairs",
-            "blockRuntimeId": 94842602
+            "blockRuntimeId": 6694
         },
         {
             "id": "minecraft:polished_diorite_stairs",
-            "blockRuntimeId": -1599939218
+            "blockRuntimeId": 11100
         },
         {
             "id": "minecraft:andesite_stairs",
-            "blockRuntimeId": 85088168
+            "blockRuntimeId": 8470
         },
         {
             "id": "minecraft:polished_andesite_stairs",
-            "blockRuntimeId": 1370408852
+            "blockRuntimeId": 11428
         },
         {
             "id": "minecraft:brick_stairs",
-            "blockRuntimeId": -1618506537
+            "blockRuntimeId": 10928
         },
         {
             "id": "minecraft:nether_brick_stairs",
-            "blockRuntimeId": 1913555715
+            "blockRuntimeId": 109
         },
         {
             "id": "minecraft:red_nether_brick_stairs",
-            "blockRuntimeId": -1274256697
+            "blockRuntimeId": 11000
         },
         {
             "id": "minecraft:end_brick_stairs",
-            "blockRuntimeId": 1520561357
+            "blockRuntimeId": 10776
         },
         {
             "id": "minecraft:quartz_stairs",
-            "blockRuntimeId": 2067288422
+            "blockRuntimeId": 7509
         },
         {
             "id": "minecraft:smooth_quartz_stairs",
-            "blockRuntimeId": -921646898
+            "blockRuntimeId": 12521
         },
         {
             "id": "minecraft:purpur_stairs",
-            "blockRuntimeId": 1656552147
+            "blockRuntimeId": 12584
         },
         {
             "id": "minecraft:prismarine_stairs",
-            "blockRuntimeId": 2019504837
+            "blockRuntimeId": 12087
         },
         {
             "id": "minecraft:dark_prismarine_stairs",
-            "blockRuntimeId": -1028342827
+            "blockRuntimeId": 12250
         },
         {
             "id": "minecraft:prismarine_bricks_stairs",
-            "blockRuntimeId": -1228929695
+            "blockRuntimeId": 612
         },
         {
             "id": "minecraft:crimson_stairs",
-            "blockRuntimeId": -801869387
+            "blockRuntimeId": 10674
         },
         {
             "id": "minecraft:warped_stairs",
-            "blockRuntimeId": 1804931902
+            "blockRuntimeId": 5594
         },
         {
             "id": "minecraft:blackstone_stairs",
-            "blockRuntimeId": -427231771
+            "blockRuntimeId": 11419
         },
         {
             "id": "minecraft:polished_blackstone_stairs",
-            "blockRuntimeId": -1292159207
+            "blockRuntimeId": 6596
         },
         {
             "id": "minecraft:polished_blackstone_brick_stairs",
-            "blockRuntimeId": 1955497857
+            "blockRuntimeId": 6783
         },
         {
             "id": "minecraft:cut_copper_stairs",
-            "blockRuntimeId": -278926471
+            "blockRuntimeId": 6910
         },
         {
             "id": "minecraft:exposed_cut_copper_stairs",
-            "blockRuntimeId": -579014752
+            "blockRuntimeId": 6893
         },
         {
             "id": "minecraft:weathered_cut_copper_stairs",
-            "blockRuntimeId": -28976151
+            "blockRuntimeId": 6604
         },
         {
             "id": "minecraft:oxidized_cut_copper_stairs",
-            "blockRuntimeId": -1648158567
+            "blockRuntimeId": 1073
         },
         {
             "id": "minecraft:waxed_cut_copper_stairs",
-            "blockRuntimeId": -1465349479
+            "blockRuntimeId": 1118
         },
         {
             "id": "minecraft:waxed_exposed_cut_copper_stairs",
-            "blockRuntimeId": 1324615712
+            "blockRuntimeId": 6161
         },
         {
             "id": "minecraft:waxed_weathered_cut_copper_stairs",
-            "blockRuntimeId": 1528655993
+            "blockRuntimeId": 10549
         },
         {
             "id": "minecraft:waxed_oxidized_cut_copper_stairs",
-            "blockRuntimeId": -822934175
+            "blockRuntimeId": 9395
         },
         {
             "id": "minecraft:cobbled_deepslate_stairs",
-            "blockRuntimeId": -2110181483
+            "blockRuntimeId": 552
         },
         {
             "id": "minecraft:deepslate_tile_stairs",
-            "blockRuntimeId": -1954541935
+            "blockRuntimeId": 7387
         },
         {
             "id": "minecraft:polished_deepslate_stairs",
-            "blockRuntimeId": -654748527
+            "blockRuntimeId": 1014
         },
         {
             "id": "minecraft:deepslate_brick_stairs",
-            "blockRuntimeId": -1035950027
+            "blockRuntimeId": 12242
         },
         {
             "id": "minecraft:mud_brick_stairs",
-            "blockRuntimeId": -857869146
+            "blockRuntimeId": 8687
         },
         {
             "id": "minecraft:wooden_door",
@@ -490,1575 +490,1575 @@
         },
         {
             "id": "minecraft:trapdoor",
-            "blockRuntimeId": -1877593911
+            "blockRuntimeId": 640
         },
         {
             "id": "minecraft:spruce_trapdoor",
-            "blockRuntimeId": -1378553103
+            "blockRuntimeId": 10950
         },
         {
             "id": "minecraft:birch_trapdoor",
-            "blockRuntimeId": 2122552696
+            "blockRuntimeId": 11048
         },
         {
             "id": "minecraft:jungle_trapdoor",
-            "blockRuntimeId": -1703102900
+            "blockRuntimeId": 8544
         },
         {
             "id": "minecraft:acacia_trapdoor",
-            "blockRuntimeId": 1341187041
+            "blockRuntimeId": 8754
         },
         {
             "id": "minecraft:dark_oak_trapdoor",
-            "blockRuntimeId": 1330091683
+            "blockRuntimeId": 12322
         },
         {
             "id": "minecraft:mangrove_trapdoor",
-            "blockRuntimeId": -991535216
+            "blockRuntimeId": 6791
         },
         {
             "id": "minecraft:cherry_trapdoor",
-            "blockRuntimeId": -663208992
+            "blockRuntimeId": 2013
         },
         {
             "id": "minecraft:bamboo_trapdoor",
-            "blockRuntimeId": 1061149627
+            "blockRuntimeId": 8409
         },
         {
             "id": "minecraft:iron_trapdoor",
-            "blockRuntimeId": 2136558063
+            "blockRuntimeId": 1041
         },
         {
             "id": "minecraft:crimson_trapdoor",
-            "blockRuntimeId": 365333515
+            "blockRuntimeId": 6635
         },
         {
             "id": "minecraft:warped_trapdoor",
-            "blockRuntimeId": 385782130
+            "blockRuntimeId": 7475
         },
         {
             "id": "minecraft:iron_bars",
-            "blockRuntimeId": -1844999203
+            "blockRuntimeId": 7543
         },
         {
             "id": "minecraft:glass",
-            "blockRuntimeId": 927668178
+            "blockRuntimeId": 10546
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 450618927
+            "blockRuntimeId": 2239
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": -693058684
+            "blockRuntimeId": 2247
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 69473032
+            "blockRuntimeId": 2246
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 2143861053
+            "blockRuntimeId": 2254
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": -1777501770
+            "blockRuntimeId": 2251
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 344601955
+            "blockRuntimeId": 2253
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 2031331935
+            "blockRuntimeId": 2240
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 522691301
+            "blockRuntimeId": 2243
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": -607259006
+            "blockRuntimeId": 2244
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 247346533
+            "blockRuntimeId": 2252
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 1953778112
+            "blockRuntimeId": 2248
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 1360162276
+            "blockRuntimeId": 2242
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 19575535
+            "blockRuntimeId": 2250
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 252328955
+            "blockRuntimeId": 2249
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": 2000409143
+            "blockRuntimeId": 2241
         },
         {
             "id": "minecraft:stained_glass",
-            "blockRuntimeId": -450895157
+            "blockRuntimeId": 2245
         },
         {
             "id": "minecraft:tinted_glass",
-            "blockRuntimeId": 2136584036
+            "blockRuntimeId": 9944
         },
         {
             "id": "minecraft:glass_pane",
-            "blockRuntimeId": 1848427078
+            "blockRuntimeId": 8379
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": -843504407
+            "blockRuntimeId": 7979
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 1502693606
+            "blockRuntimeId": 7987
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 737888242
+            "blockRuntimeId": 7986
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 640847743
+            "blockRuntimeId": 7994
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 1403165760
+            "blockRuntimeId": 7991
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 1974908089
+            "blockRuntimeId": 7993
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 1926535357
+            "blockRuntimeId": 7980
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 738125123
+            "blockRuntimeId": 7983
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 70490980
+            "blockRuntimeId": 7984
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 644076183
+            "blockRuntimeId": 7992
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": -182233118
+            "blockRuntimeId": 7988
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 1408758734
+            "blockRuntimeId": 7982
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 883840765
+            "blockRuntimeId": 7990
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": -1960098323
+            "blockRuntimeId": 7989
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": -1092369415
+            "blockRuntimeId": 7981
         },
         {
             "id": "minecraft:stained_glass_pane",
-            "blockRuntimeId": 1039455421
+            "blockRuntimeId": 7985
         },
         {
             "id": "minecraft:ladder",
-            "blockRuntimeId": 1540239144
+            "blockRuntimeId": 13114
         },
         {
             "id": "minecraft:scaffolding",
-            "blockRuntimeId": -1796842225
+            "blockRuntimeId": 5442
         },
         {
             "id": "minecraft:stone_block_slab",
-            "blockRuntimeId": -626164414
+            "blockRuntimeId": 6534
         },
         {
             "id": "minecraft:stone_block_slab4",
-            "blockRuntimeId": 762337552
+            "blockRuntimeId": 8989
         },
         {
             "id": "minecraft:stone_block_slab",
-            "blockRuntimeId": 364296219
+            "blockRuntimeId": 6537
         },
         {
             "id": "minecraft:stone_block_slab2",
-            "blockRuntimeId": 2088998345
+            "blockRuntimeId": 8960
         },
         {
             "id": "minecraft:wooden_slab",
-            "blockRuntimeId": -817803033
+            "blockRuntimeId": 8432
         },
         {
             "id": "minecraft:wooden_slab",
-            "blockRuntimeId": -1397501183
+            "blockRuntimeId": 8433
         },
         {
             "id": "minecraft:wooden_slab",
-            "blockRuntimeId": 182338326
+            "blockRuntimeId": 8434
         },
         {
             "id": "minecraft:wooden_slab",
-            "blockRuntimeId": -670781378
+            "blockRuntimeId": 8435
         },
         {
             "id": "minecraft:wooden_slab",
-            "blockRuntimeId": -209074507
+            "blockRuntimeId": 8436
         },
         {
             "id": "minecraft:wooden_slab",
-            "blockRuntimeId": -1057537601
+            "blockRuntimeId": 8437
         },
         {
             "id": "minecraft:mangrove_slab",
-            "blockRuntimeId": -1131680557
+            "blockRuntimeId": 2255
         },
         {
             "id": "minecraft:cherry_slab",
-            "blockRuntimeId": -430135621
+            "blockRuntimeId": 10614
         },
         {
             "id": "minecraft:bamboo_slab",
-            "blockRuntimeId": 747751434
+            "blockRuntimeId": 10926
         },
         {
             "id": "minecraft:bamboo_mosaic_slab",
-            "blockRuntimeId": 829210788
+            "blockRuntimeId": 4572
         },
         {
             "id": "minecraft:stone_block_slab",
-            "blockRuntimeId": 416089302
+            "blockRuntimeId": 6539
         },
         {
             "id": "minecraft:stone_block_slab4",
-            "blockRuntimeId": 31239400
+            "blockRuntimeId": 8987
         },
         {
             "id": "minecraft:stone_block_slab",
-            "blockRuntimeId": -326930792
+            "blockRuntimeId": 6535
         },
         {
             "id": "minecraft:stone_block_slab4",
-            "blockRuntimeId": 1144788793
+            "blockRuntimeId": 8990
         },
         {
             "id": "minecraft:stone_block_slab2",
-            "blockRuntimeId": -1048356294
+            "blockRuntimeId": 8961
         },
         {
             "id": "minecraft:stone_block_slab2",
-            "blockRuntimeId": 1667694386
+            "blockRuntimeId": 8955
         },
         {
             "id": "minecraft:stone_block_slab4",
-            "blockRuntimeId": 1900836825
+            "blockRuntimeId": 8991
         },
         {
             "id": "minecraft:stone_block_slab3",
-            "blockRuntimeId": 868882984
+            "blockRuntimeId": 8972
         },
         {
             "id": "minecraft:stone_block_slab3",
-            "blockRuntimeId": 1786318807
+            "blockRuntimeId": 8977
         },
         {
             "id": "minecraft:stone_block_slab3",
-            "blockRuntimeId": -1446185521
+            "blockRuntimeId": 8978
         },
         {
             "id": "minecraft:stone_block_slab3",
-            "blockRuntimeId": 1086730727
+            "blockRuntimeId": 8975
         },
         {
             "id": "minecraft:stone_block_slab3",
-            "blockRuntimeId": 136780847
+            "blockRuntimeId": 8976
         },
         {
             "id": "minecraft:stone_block_slab3",
-            "blockRuntimeId": 754764113
+            "blockRuntimeId": 8974
         },
         {
             "id": "minecraft:stone_block_slab3",
-            "blockRuntimeId": -990307463
+            "blockRuntimeId": 8973
         },
         {
             "id": "minecraft:stone_block_slab",
-            "blockRuntimeId": -383017978
+            "blockRuntimeId": 6538
         },
         {
             "id": "minecraft:stone_block_slab",
-            "blockRuntimeId": 2052680506
+            "blockRuntimeId": 6541
         },
         {
             "id": "minecraft:stone_block_slab2",
-            "blockRuntimeId": 1185045516
+            "blockRuntimeId": 8962
         },
         {
             "id": "minecraft:stone_block_slab3",
-            "blockRuntimeId": -999541264
+            "blockRuntimeId": 8971
         },
         {
             "id": "minecraft:stone_block_slab",
-            "blockRuntimeId": -1478308477
+            "blockRuntimeId": 6540
         },
         {
             "id": "minecraft:stone_block_slab4",
-            "blockRuntimeId": -1588329387
+            "blockRuntimeId": 8988
         },
         {
             "id": "minecraft:stone_block_slab2",
-            "blockRuntimeId": -264064276
+            "blockRuntimeId": 8956
         },
         {
             "id": "minecraft:stone_block_slab2",
-            "blockRuntimeId": 1626272350
+            "blockRuntimeId": 8957
         },
         {
             "id": "minecraft:stone_block_slab2",
-            "blockRuntimeId": 997520290
+            "blockRuntimeId": 8958
         },
         {
             "id": "minecraft:stone_block_slab2",
-            "blockRuntimeId": -403988350
+            "blockRuntimeId": 8959
         },
         {
             "id": "minecraft:crimson_slab",
-            "blockRuntimeId": 225876226
+            "blockRuntimeId": 9867
         },
         {
             "id": "minecraft:warped_slab",
-            "blockRuntimeId": 1443497437
+            "blockRuntimeId": 10890
         },
         {
             "id": "minecraft:blackstone_slab",
-            "blockRuntimeId": -1120087070
+            "blockRuntimeId": 2029
         },
         {
             "id": "minecraft:polished_blackstone_slab",
-            "blockRuntimeId": -1695771010
+            "blockRuntimeId": 10372
         },
         {
             "id": "minecraft:polished_blackstone_brick_slab",
-            "blockRuntimeId": -304146078
+            "blockRuntimeId": 6453
         },
         {
             "id": "minecraft:cut_copper_slab",
-            "blockRuntimeId": 3910266
+            "blockRuntimeId": 8381
         },
         {
             "id": "minecraft:exposed_cut_copper_slab",
-            "blockRuntimeId": 783134095
+            "blockRuntimeId": 10998
         },
         {
             "id": "minecraft:weathered_cut_copper_slab",
-            "blockRuntimeId": -469348858
+            "blockRuntimeId": 10418
         },
         {
             "id": "minecraft:oxidized_cut_copper_slab",
-            "blockRuntimeId": -446263102
+            "blockRuntimeId": 8444
         },
         {
             "id": "minecraft:waxed_cut_copper_slab",
-            "blockRuntimeId": 1701743114
+            "blockRuntimeId": 12645
         },
         {
             "id": "minecraft:waxed_exposed_cut_copper_slab",
-            "blockRuntimeId": -59008545
+            "blockRuntimeId": 660
         },
         {
             "id": "minecraft:waxed_weathered_cut_copper_slab",
-            "blockRuntimeId": -111385978
+            "blockRuntimeId": 10943
         },
         {
             "id": "minecraft:waxed_oxidized_cut_copper_slab",
-            "blockRuntimeId": -1808299902
+            "blockRuntimeId": 1803
         },
         {
             "id": "minecraft:cobbled_deepslate_slab",
-            "blockRuntimeId": 165772222
+            "blockRuntimeId": 12135
         },
         {
             "id": "minecraft:polished_deepslate_slab",
-            "blockRuntimeId": -873146210
+            "blockRuntimeId": 720
         },
         {
             "id": "minecraft:deepslate_tile_slab",
-            "blockRuntimeId": -444019722
+            "blockRuntimeId": 6557
         },
         {
             "id": "minecraft:deepslate_brick_slab",
-            "blockRuntimeId": -1981270210
+            "blockRuntimeId": 5592
         },
         {
             "id": "minecraft:mud_brick_slab",
-            "blockRuntimeId": 790234781
+            "blockRuntimeId": 6169
         },
         {
             "id": "minecraft:brick_block",
-            "blockRuntimeId": 1184293289
+            "blockRuntimeId": 7507
         },
         {
             "id": "minecraft:chiseled_nether_bricks",
-            "blockRuntimeId": -1818276676
+            "blockRuntimeId": 12067
         },
         {
             "id": "minecraft:cracked_nether_bricks",
-            "blockRuntimeId": 1014633093
+            "blockRuntimeId": 6858
         },
         {
             "id": "minecraft:quartz_bricks",
-            "blockRuntimeId": -1961826404
+            "blockRuntimeId": 10745
         },
         {
             "id": "minecraft:stonebrick",
-            "blockRuntimeId": -1250389447
+            "blockRuntimeId": 10945
         },
         {
             "id": "minecraft:stonebrick",
-            "blockRuntimeId": 2009973699
+            "blockRuntimeId": 10946
         },
         {
             "id": "minecraft:stonebrick",
-            "blockRuntimeId": -2080260717
+            "blockRuntimeId": 10947
         },
         {
             "id": "minecraft:stonebrick",
-            "blockRuntimeId": -1337773304
+            "blockRuntimeId": 10948
         },
         {
             "id": "minecraft:end_bricks",
-            "blockRuntimeId": -1590117313
+            "blockRuntimeId": 713
         },
         {
             "id": "minecraft:prismarine",
-            "blockRuntimeId": 1450038151
+            "blockRuntimeId": 10469
         },
         {
             "id": "minecraft:polished_blackstone_bricks",
-            "blockRuntimeId": -547680429
+            "blockRuntimeId": 7414
         },
         {
             "id": "minecraft:cracked_polished_blackstone_bricks",
-            "blockRuntimeId": 1481921079
+            "blockRuntimeId": 12016
         },
         {
             "id": "minecraft:gilded_blackstone",
-            "blockRuntimeId": 1394655156
+            "blockRuntimeId": 6892
         },
         {
             "id": "minecraft:chiseled_polished_blackstone",
-            "blockRuntimeId": -157993866
+            "blockRuntimeId": 8208
         },
         {
             "id": "minecraft:deepslate_tiles",
-            "blockRuntimeId": 385861263
+            "blockRuntimeId": 6887
         },
         {
             "id": "minecraft:cracked_deepslate_tiles",
-            "blockRuntimeId": 976881179
+            "blockRuntimeId": 6419
         },
         {
             "id": "minecraft:deepslate_bricks",
-            "blockRuntimeId": -814686073
+            "blockRuntimeId": 8628
         },
         {
             "id": "minecraft:cracked_deepslate_bricks",
-            "blockRuntimeId": 339494639
+            "blockRuntimeId": 8527
         },
         {
             "id": "minecraft:chiseled_deepslate",
-            "blockRuntimeId": 1092855370
+            "blockRuntimeId": 8380
         },
         {
             "id": "minecraft:cobblestone",
-            "blockRuntimeId": 1741778478
+            "blockRuntimeId": 5489
         },
         {
             "id": "minecraft:mossy_cobblestone",
-            "blockRuntimeId": -735275266
+            "blockRuntimeId": 663
         },
         {
             "id": "minecraft:cobbled_deepslate",
-            "blockRuntimeId": -119993289
+            "blockRuntimeId": 11068
         },
         {
             "id": "minecraft:smooth_stone",
-            "blockRuntimeId": 555751865
+            "blockRuntimeId": 6888
         },
         {
             "id": "minecraft:sandstone",
-            "blockRuntimeId": -1828540387
+            "blockRuntimeId": 5529
         },
         {
             "id": "minecraft:sandstone",
-            "blockRuntimeId": -453393378
+            "blockRuntimeId": 5530
         },
         {
             "id": "minecraft:sandstone",
-            "blockRuntimeId": -1592973484
+            "blockRuntimeId": 5531
         },
         {
             "id": "minecraft:sandstone",
-            "blockRuntimeId": 1912846579
+            "blockRuntimeId": 5532
         },
         {
             "id": "minecraft:red_sandstone",
-            "blockRuntimeId": -2054671007
+            "blockRuntimeId": 10978
         },
         {
             "id": "minecraft:red_sandstone",
-            "blockRuntimeId": -174433046
+            "blockRuntimeId": 10979
         },
         {
             "id": "minecraft:red_sandstone",
-            "blockRuntimeId": 90784976
+            "blockRuntimeId": 10980
         },
         {
             "id": "minecraft:red_sandstone",
-            "blockRuntimeId": -2089484049
+            "blockRuntimeId": 10981
         },
         {
             "id": "minecraft:coal_block",
-            "blockRuntimeId": 2126838376
+            "blockRuntimeId": 8561
         },
         {
             "id": "minecraft:dried_kelp_block",
-            "blockRuntimeId": -282458096
+            "blockRuntimeId": 12809
         },
         {
             "id": "minecraft:gold_block",
-            "blockRuntimeId": 1549804739
+            "blockRuntimeId": 755
         },
         {
             "id": "minecraft:iron_block",
-            "blockRuntimeId": -939070369
+            "blockRuntimeId": 13113
         },
         {
             "id": "minecraft:copper_block",
-            "blockRuntimeId": -593390456
+            "blockRuntimeId": 7385
         },
         {
             "id": "minecraft:exposed_copper",
-            "blockRuntimeId": 600140015
+            "blockRuntimeId": 1318
         },
         {
             "id": "minecraft:weathered_copper",
-            "blockRuntimeId": 1229534000
+            "blockRuntimeId": 13079
         },
         {
             "id": "minecraft:oxidized_copper",
-            "blockRuntimeId": -1242444440
+            "blockRuntimeId": 5424
         },
         {
             "id": "minecraft:waxed_copper",
-            "blockRuntimeId": -36704888
+            "blockRuntimeId": 12561
         },
         {
             "id": "minecraft:waxed_exposed_copper",
-            "blockRuntimeId": 1496465303
+            "blockRuntimeId": 1789
         },
         {
             "id": "minecraft:waxed_weathered_copper",
-            "blockRuntimeId": -38144880
+            "blockRuntimeId": 1802
         },
         {
             "id": "minecraft:waxed_oxidized_copper",
-            "blockRuntimeId": -1317255528
+            "blockRuntimeId": 12362
         },
         {
             "id": "minecraft:cut_copper",
-            "blockRuntimeId": 1478169831
+            "blockRuntimeId": 7423
         },
         {
             "id": "minecraft:exposed_cut_copper",
-            "blockRuntimeId": 1152328132
+            "blockRuntimeId": 10548
         },
         {
             "id": "minecraft:weathered_cut_copper",
-            "blockRuntimeId": -1172813825
+            "blockRuntimeId": 11999
         },
         {
             "id": "minecraft:oxidized_cut_copper",
-            "blockRuntimeId": -1144556273
+            "blockRuntimeId": 8642
         },
         {
             "id": "minecraft:waxed_cut_copper",
-            "blockRuntimeId": 2099034927
+            "blockRuntimeId": 12118
         },
         {
             "id": "minecraft:waxed_exposed_cut_copper",
-            "blockRuntimeId": 1193195900
+            "blockRuntimeId": 5690
         },
         {
             "id": "minecraft:waxed_weathered_cut_copper",
-            "blockRuntimeId": 1426268431
+            "blockRuntimeId": 7978
         },
         {
             "id": "minecraft:waxed_oxidized_cut_copper",
-            "blockRuntimeId": 36290879
+            "blockRuntimeId": 620
         },
         {
             "id": "minecraft:emerald_block",
-            "blockRuntimeId": 770369380
+            "blockRuntimeId": 2265
         },
         {
             "id": "minecraft:diamond_block",
-            "blockRuntimeId": 1460042000
+            "blockRuntimeId": 701
         },
         {
             "id": "minecraft:lapis_block",
-            "blockRuntimeId": 78929077
+            "blockRuntimeId": 6550
         },
         {
             "id": "minecraft:raw_iron_block",
-            "blockRuntimeId": 1077242782
+            "blockRuntimeId": 13110
         },
         {
             "id": "minecraft:raw_copper_block",
-            "blockRuntimeId": 1063959733
+            "blockRuntimeId": 8431
         },
         {
             "id": "minecraft:raw_gold_block",
-            "blockRuntimeId": -2126961618
+            "blockRuntimeId": 1083
         },
         {
             "id": "minecraft:quartz_block",
-            "blockRuntimeId": 1342941515
+            "blockRuntimeId": 5572
         },
         {
             "id": "minecraft:quartz_block",
-            "blockRuntimeId": 1576696783
+            "blockRuntimeId": 5574
         },
         {
             "id": "minecraft:quartz_block",
-            "blockRuntimeId": -880880858
+            "blockRuntimeId": 5573
         },
         {
             "id": "minecraft:quartz_block",
-            "blockRuntimeId": 1576086683
+            "blockRuntimeId": 5575
         },
         {
             "id": "minecraft:prismarine",
-            "blockRuntimeId": 113910341
+            "blockRuntimeId": 10467
         },
         {
             "id": "minecraft:prismarine",
-            "blockRuntimeId": -1352452669
+            "blockRuntimeId": 10468
         },
         {
             "id": "minecraft:slime",
-            "blockRuntimeId": -858454146
+            "blockRuntimeId": 6494
         },
         {
             "id": "minecraft:honey_block",
-            "blockRuntimeId": 1517479843
+            "blockRuntimeId": 1995
         },
         {
             "id": "minecraft:honeycomb_block",
-            "blockRuntimeId": 2128784556
+            "blockRuntimeId": 6782
         },
         {
             "id": "minecraft:hay_block",
-            "blockRuntimeId": 1514836139
+            "blockRuntimeId": 1790
         },
         {
             "id": "minecraft:bone_block",
-            "blockRuntimeId": 279386582
+            "blockRuntimeId": 6495
         },
         {
             "id": "minecraft:nether_brick",
-            "blockRuntimeId": 1523459785
+            "blockRuntimeId": 12097
         },
         {
             "id": "minecraft:red_nether_brick",
-            "blockRuntimeId": 408777833
+            "blockRuntimeId": 551
         },
         {
             "id": "minecraft:netherite_block",
-            "blockRuntimeId": -1382353780
+            "blockRuntimeId": 5655
         },
         {
             "id": "minecraft:lodestone",
-            "blockRuntimeId": -1945640889
+            "blockRuntimeId": 13108
         },
         {
             "id": "minecraft:white_wool",
-            "blockRuntimeId": -1869155698
+            "blockRuntimeId": 8562
         },
         {
             "id": "minecraft:light_gray_wool",
-            "blockRuntimeId": -2130077302
+            "blockRuntimeId": 12885
         },
         {
             "id": "minecraft:gray_wool",
-            "blockRuntimeId": 2029530197
+            "blockRuntimeId": 632
         },
         {
             "id": "minecraft:black_wool",
-            "blockRuntimeId": 1558473812
+            "blockRuntimeId": 1084
         },
         {
             "id": "minecraft:brown_wool",
-            "blockRuntimeId": -52932765
+            "blockRuntimeId": 684
         },
         {
             "id": "minecraft:red_wool",
-            "blockRuntimeId": 1885700022
+            "blockRuntimeId": 119
         },
         {
             "id": "minecraft:orange_wool",
-            "blockRuntimeId": -1011696902
+            "blockRuntimeId": 1771
         },
         {
             "id": "minecraft:yellow_wool",
-            "blockRuntimeId": 1549901968
+            "blockRuntimeId": 542
         },
         {
             "id": "minecraft:lime_wool",
-            "blockRuntimeId": 1776245615
+            "blockRuntimeId": 10361
         },
         {
             "id": "minecraft:green_wool",
-            "blockRuntimeId": -258297172
+            "blockRuntimeId": 5603
         },
         {
             "id": "minecraft:cyan_wool",
-            "blockRuntimeId": -1207885395
+            "blockRuntimeId": 8506
         },
         {
             "id": "minecraft:light_blue_wool",
-            "blockRuntimeId": -401430339
+            "blockRuntimeId": 11483
         },
         {
             "id": "minecraft:blue_wool",
-            "blockRuntimeId": 1416924150
+            "blockRuntimeId": 8643
         },
         {
             "id": "minecraft:purple_wool",
-            "blockRuntimeId": 890413206
+            "blockRuntimeId": 13112
         },
         {
             "id": "minecraft:magenta_wool",
-            "blockRuntimeId": 882906254
+            "blockRuntimeId": 2070
         },
         {
             "id": "minecraft:pink_wool",
-            "blockRuntimeId": -1438952986
+            "blockRuntimeId": 5656
         },
         {
             "id": "minecraft:white_carpet",
-            "blockRuntimeId": 1460445510
+            "blockRuntimeId": 12095
         },
         {
             "id": "minecraft:light_gray_carpet",
-            "blockRuntimeId": 1344176194
+            "blockRuntimeId": 13111
         },
         {
             "id": "minecraft:gray_carpet",
-            "blockRuntimeId": 1534603537
+            "blockRuntimeId": 633
         },
         {
             "id": "minecraft:black_carpet",
-            "blockRuntimeId": -765532584
+            "blockRuntimeId": 10399
         },
         {
             "id": "minecraft:brown_carpet",
-            "blockRuntimeId": -367598733
+            "blockRuntimeId": 2046
         },
         {
             "id": "minecraft:red_carpet",
-            "blockRuntimeId": -896564178
+            "blockRuntimeId": 12240
         },
         {
             "id": "minecraft:orange_carpet",
-            "blockRuntimeId": 1314859442
+            "blockRuntimeId": 11474
         },
         {
             "id": "minecraft:yellow_carpet",
-            "blockRuntimeId": -2068865284
+            "blockRuntimeId": 9881
         },
         {
             "id": "minecraft:lime_carpet",
-            "blockRuntimeId": -472719281
+            "blockRuntimeId": 11109
         },
         {
             "id": "minecraft:green_carpet",
-            "blockRuntimeId": -268292072
+            "blockRuntimeId": 5604
         },
         {
             "id": "minecraft:cyan_carpet",
-            "blockRuntimeId": 778656297
+            "blockRuntimeId": 5491
         },
         {
             "id": "minecraft:light_blue_carpet",
-            "blockRuntimeId": -1953704051
+            "blockRuntimeId": 7544
         },
         {
             "id": "minecraft:blue_carpet",
-            "blockRuntimeId": 1037929218
+            "blockRuntimeId": 584
         },
         {
             "id": "minecraft:purple_carpet",
-            "blockRuntimeId": 1671964394
+            "blockRuntimeId": 12578
         },
         {
             "id": "minecraft:magenta_carpet",
-            "blockRuntimeId": 413981434
+            "blockRuntimeId": 667
         },
         {
             "id": "minecraft:pink_carpet",
-            "blockRuntimeId": 257454254
+            "blockRuntimeId": 12520
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": -646916581
+            "blockRuntimeId": 10657
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 618532952
+            "blockRuntimeId": 10665
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": -962620580
+            "blockRuntimeId": 10664
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 30113449
+            "blockRuntimeId": 10672
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": -2142081086
+            "blockRuntimeId": 10669
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 2136307679
+            "blockRuntimeId": 10671
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": -854624229
+            "blockRuntimeId": 10658
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 1578960937
+            "blockRuntimeId": 10661
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 1419180694
+            "blockRuntimeId": 10662
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 257205049
+            "blockRuntimeId": 10670
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 544317876
+            "blockRuntimeId": 10666
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": -1782265520
+            "blockRuntimeId": 10660
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 663298099
+            "blockRuntimeId": 10668
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 1873323071
+            "blockRuntimeId": 10667
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": -120070877
+            "blockRuntimeId": 10659
         },
         {
             "id": "minecraft:concrete_powder",
-            "blockRuntimeId": 126141967
+            "blockRuntimeId": 10663
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": -931470414
+            "blockRuntimeId": 1750
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": -1426946601
+            "blockRuntimeId": 1758
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 1667030431
+            "blockRuntimeId": 1757
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": -1978456288
+            "blockRuntimeId": 1765
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": -113206765
+            "blockRuntimeId": 1762
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 553912590
+            "blockRuntimeId": 1764
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 1077003860
+            "blockRuntimeId": 1751
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 62211626
+            "blockRuntimeId": 1754
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 2102956705
+            "blockRuntimeId": 1755
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 317506400
+            "blockRuntimeId": 1763
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 1810809495
+            "blockRuntimeId": 1759
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": -1301208941
+            "blockRuntimeId": 1753
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 2128262820
+            "blockRuntimeId": 1761
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 1473095088
+            "blockRuntimeId": 1760
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": -470995558
+            "blockRuntimeId": 1752
         },
         {
             "id": "minecraft:concrete",
-            "blockRuntimeId": 2081503380
+            "blockRuntimeId": 1756
         },
         {
             "id": "minecraft:clay",
-            "blockRuntimeId": 666874214
+            "blockRuntimeId": 11533
         },
         {
             "id": "minecraft:hardened_clay",
-            "blockRuntimeId": -336983999
+            "blockRuntimeId": 1346
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": 161280990
+            "blockRuntimeId": 10558
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": -616145205
+            "blockRuntimeId": 10566
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": -1786513485
+            "blockRuntimeId": 10565
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": 274973996
+            "blockRuntimeId": 10573
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": -852582225
+            "blockRuntimeId": 10570
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": -1296383830
+            "blockRuntimeId": 10572
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": -1266780320
+            "blockRuntimeId": 10559
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": 2122355390
+            "blockRuntimeId": 10562
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": -2105363851
+            "blockRuntimeId": 10563
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": 1688950068
+            "blockRuntimeId": 10571
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": 2036572347
+            "blockRuntimeId": 10567
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": -1830807121
+            "blockRuntimeId": 10561
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": -40161352
+            "blockRuntimeId": 10569
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": 1640548020
+            "blockRuntimeId": 10568
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": 2031763430
+            "blockRuntimeId": 10560
         },
         {
             "id": "minecraft:stained_hardened_clay",
-            "blockRuntimeId": -1694075752
+            "blockRuntimeId": 10564
         },
         {
             "id": "minecraft:white_glazed_terracotta",
-            "blockRuntimeId": 16603170
+            "blockRuntimeId": 8738
         },
         {
             "id": "minecraft:silver_glazed_terracotta",
-            "blockRuntimeId": -1850412551
+            "blockRuntimeId": 5018
         },
         {
             "id": "minecraft:gray_glazed_terracotta",
-            "blockRuntimeId": -2050534635
+            "blockRuntimeId": 13102
         },
         {
             "id": "minecraft:black_glazed_terracotta",
-            "blockRuntimeId": -199522344
+            "blockRuntimeId": 9389
         },
         {
             "id": "minecraft:brown_glazed_terracotta",
-            "blockRuntimeId": -1037882073
+            "blockRuntimeId": 5418
         },
         {
             "id": "minecraft:red_glazed_terracotta",
-            "blockRuntimeId": 556073414
+            "blockRuntimeId": 6426
         },
         {
             "id": "minecraft:orange_glazed_terracotta",
-            "blockRuntimeId": 904773342
+            "blockRuntimeId": 2257
         },
         {
             "id": "minecraft:yellow_glazed_terracotta",
-            "blockRuntimeId": -362985564
+            "blockRuntimeId": 2032
         },
         {
             "id": "minecraft:lime_glazed_terracotta",
-            "blockRuntimeId": 379907727
+            "blockRuntimeId": 634
         },
         {
             "id": "minecraft:green_glazed_terracotta",
-            "blockRuntimeId": -1837802080
+            "blockRuntimeId": 11008
         },
         {
             "id": "minecraft:cyan_glazed_terracotta",
-            "blockRuntimeId": 769879805
+            "blockRuntimeId": 8521
         },
         {
             "id": "minecraft:light_blue_glazed_terracotta",
-            "blockRuntimeId": -976483655
+            "blockRuntimeId": 8635
         },
         {
             "id": "minecraft:blue_glazed_terracotta",
-            "blockRuntimeId": -2106754178
+            "blockRuntimeId": 8629
         },
         {
             "id": "minecraft:purple_glazed_terracotta",
-            "blockRuntimeId": 1313381298
+            "blockRuntimeId": 11411
         },
         {
             "id": "minecraft:magenta_glazed_terracotta",
-            "blockRuntimeId": 802520842
+            "blockRuntimeId": 2071
         },
         {
             "id": "minecraft:pink_glazed_terracotta",
-            "blockRuntimeId": -156512822
+            "blockRuntimeId": 10937
         },
         {
             "id": "minecraft:purpur_block",
-            "blockRuntimeId": 514063536
+            "blockRuntimeId": 12535
         },
         {
             "id": "minecraft:purpur_block",
-            "blockRuntimeId": 1528070388
+            "blockRuntimeId": 12537
         },
         {
             "id": "minecraft:packed_mud",
-            "blockRuntimeId": -224235564
+            "blockRuntimeId": 715
         },
         {
             "id": "minecraft:mud_bricks",
-            "blockRuntimeId": -2093611356
+            "blockRuntimeId": 11280
         },
         {
             "id": "minecraft:nether_wart_block",
-            "blockRuntimeId": 581531271
+            "blockRuntimeId": 6560
         },
         {
             "id": "minecraft:warped_wart_block",
-            "blockRuntimeId": 1820365362
+            "blockRuntimeId": 9872
         },
         {
             "id": "minecraft:shroomlight",
-            "blockRuntimeId": -1953927892
+            "blockRuntimeId": 8191
         },
         {
             "id": "minecraft:crimson_nylium",
-            "blockRuntimeId": 240216761
+            "blockRuntimeId": 6450
         },
         {
             "id": "minecraft:warped_nylium",
-            "blockRuntimeId": -1538785618
+            "blockRuntimeId": 10743
         },
         {
             "id": "minecraft:netherrack",
-            "blockRuntimeId": -2144106048
+            "blockRuntimeId": 11437
         },
         {
             "id": "minecraft:basalt",
-            "blockRuntimeId": 1581894931
+            "blockRuntimeId": 6651
         },
         {
             "id": "minecraft:polished_basalt",
-            "blockRuntimeId": 2090385247
+            "blockRuntimeId": 24
         },
         {
             "id": "minecraft:smooth_basalt",
-            "blockRuntimeId": 368734180
+            "blockRuntimeId": 2263
         },
         {
             "id": "minecraft:soul_soil",
-            "blockRuntimeId": 601701031
+            "blockRuntimeId": 8997
         },
         {
             "id": "minecraft:dirt",
-            "blockRuntimeId": 1745588518
+            "blockRuntimeId": 8918
         },
         {
             "id": "minecraft:dirt",
-            "blockRuntimeId": 1272608520
+            "blockRuntimeId": 8919
         },
         {
             "id": "minecraft:farmland",
-            "blockRuntimeId": 360492383
+            "blockRuntimeId": 6171
         },
         {
             "id": "minecraft:grass",
-            "blockRuntimeId": -1848593788
+            "blockRuntimeId": 11372
         },
         {
             "id": "minecraft:grass_path",
-            "blockRuntimeId": 1942424059
+            "blockRuntimeId": 12914
         },
         {
             "id": "minecraft:podzol",
-            "blockRuntimeId": 1711067891
+            "blockRuntimeId": 7384
         },
         {
             "id": "minecraft:mycelium",
-            "blockRuntimeId": 1576129324
+            "blockRuntimeId": 5559
         },
         {
             "id": "minecraft:mud",
-            "blockRuntimeId": 1234506994
+            "blockRuntimeId": 11070
         },
         {
             "id": "minecraft:stone",
-            "blockRuntimeId": -1706049077
+            "blockRuntimeId": 1743
         },
         {
             "id": "minecraft:iron_ore",
-            "blockRuntimeId": 2032622302
+            "blockRuntimeId": 7424
         },
         {
             "id": "minecraft:gold_ore",
-            "blockRuntimeId": 2144082742
+            "blockRuntimeId": 2031
         },
         {
             "id": "minecraft:diamond_ore",
-            "blockRuntimeId": 1419890941
+            "blockRuntimeId": 6663
         },
         {
             "id": "minecraft:lapis_ore",
-            "blockRuntimeId": -1364705592
+            "blockRuntimeId": 12519
         },
         {
             "id": "minecraft:redstone_ore",
-            "blockRuntimeId": 180213920
+            "blockRuntimeId": 6553
         },
         {
             "id": "minecraft:coal_ore",
-            "blockRuntimeId": 685383673
+            "blockRuntimeId": 6551
         },
         {
             "id": "minecraft:copper_ore",
-            "blockRuntimeId": -1478483411
+            "blockRuntimeId": 5425
         },
         {
             "id": "minecraft:emerald_ore",
-            "blockRuntimeId": 170572189
+            "blockRuntimeId": 12172
         },
         {
             "id": "minecraft:quartz_ore",
-            "blockRuntimeId": -205965389
+            "blockRuntimeId": 6807
         },
         {
             "id": "minecraft:nether_gold_ore",
-            "blockRuntimeId": 950287826
+            "blockRuntimeId": 27
         },
         {
             "id": "minecraft:ancient_debris",
-            "blockRuntimeId": 274932653
+            "blockRuntimeId": 10489
         },
         {
             "id": "minecraft:deepslate_iron_ore",
-            "blockRuntimeId": 1047475280
+            "blockRuntimeId": 12098
         },
         {
             "id": "minecraft:deepslate_gold_ore",
-            "blockRuntimeId": 360452980
+            "blockRuntimeId": 10488
         },
         {
             "id": "minecraft:deepslate_diamond_ore",
-            "blockRuntimeId": 811072115
+            "blockRuntimeId": 12868
         },
         {
             "id": "minecraft:deepslate_lapis_ore",
-            "blockRuntimeId": -925097910
+            "blockRuntimeId": 12080
         },
         {
             "id": "minecraft:deepslate_redstone_ore",
-            "blockRuntimeId": 299238750
+            "blockRuntimeId": 11014
         },
         {
             "id": "minecraft:deepslate_emerald_ore",
-            "blockRuntimeId": -1417960745
+            "blockRuntimeId": 10744
         },
         {
             "id": "minecraft:deepslate_coal_ore",
-            "blockRuntimeId": 680219455
+            "blockRuntimeId": 11998
         },
         {
             "id": "minecraft:deepslate_copper_ore",
-            "blockRuntimeId": -2115277505
+            "blockRuntimeId": 108
         },
         {
             "id": "minecraft:gravel",
-            "blockRuntimeId": 1529044762
+            "blockRuntimeId": 13139
         },
         {
             "id": "minecraft:stone",
-            "blockRuntimeId": -768812946
+            "blockRuntimeId": 1744
         },
         {
             "id": "minecraft:stone",
-            "blockRuntimeId": 1021231326
+            "blockRuntimeId": 1746
         },
         {
             "id": "minecraft:stone",
-            "blockRuntimeId": 1672769376
+            "blockRuntimeId": 1748
         },
         {
             "id": "minecraft:blackstone",
-            "blockRuntimeId": -2017701205
+            "blockRuntimeId": 12405
         },
         {
             "id": "minecraft:deepslate",
-            "blockRuntimeId": 994207970
+            "blockRuntimeId": 664
         },
         {
             "id": "minecraft:stone",
-            "blockRuntimeId": -2014165436
+            "blockRuntimeId": 1745
         },
         {
             "id": "minecraft:stone",
-            "blockRuntimeId": 1400325884
+            "blockRuntimeId": 1747
         },
         {
             "id": "minecraft:stone",
-            "blockRuntimeId": 596981658
+            "blockRuntimeId": 1749
         },
         {
             "id": "minecraft:polished_blackstone",
-            "blockRuntimeId": -1467081089
+            "blockRuntimeId": 5558
         },
         {
             "id": "minecraft:polished_deepslate",
-            "blockRuntimeId": -1052582365
+            "blockRuntimeId": 12583
         },
         {
             "id": "minecraft:sand",
-            "blockRuntimeId": -430992930
+            "blockRuntimeId": 6456
         },
         {
             "id": "minecraft:sand",
-            "blockRuntimeId": -1496677997
+            "blockRuntimeId": 6457
         },
         {
             "id": "minecraft:cactus",
-            "blockRuntimeId": 269582903
+            "blockRuntimeId": 11383
         },
         {
             "id": "minecraft:oak_log",
-            "blockRuntimeId": 825916963
+            "blockRuntimeId": 710
         },
         {
             "id": "minecraft:stripped_oak_log",
-            "blockRuntimeId": 1798777496
+            "blockRuntimeId": 12363
         },
         {
             "id": "minecraft:spruce_log",
-            "blockRuntimeId": 507450469
+            "blockRuntimeId": 6531
         },
         {
             "id": "minecraft:stripped_spruce_log",
-            "blockRuntimeId": -1220513712
+            "blockRuntimeId": 10682
         },
         {
             "id": "minecraft:birch_log",
-            "blockRuntimeId": 1423805714
+            "blockRuntimeId": 1766
         },
         {
             "id": "minecraft:stripped_birch_log",
-            "blockRuntimeId": -768079651
+            "blockRuntimeId": 9941
         },
         {
             "id": "minecraft:jungle_log",
-            "blockRuntimeId": 1059442202
+            "blockRuntimeId": 625
         },
         {
             "id": "minecraft:stripped_jungle_log",
-            "blockRuntimeId": 516789807
+            "blockRuntimeId": 1731
         },
         {
             "id": "minecraft:acacia_log",
-            "blockRuntimeId": -1264119183
+            "blockRuntimeId": 6632
         },
         {
             "id": "minecraft:stripped_acacia_log",
-            "blockRuntimeId": 1367858272
+            "blockRuntimeId": 9415
         },
         {
             "id": "minecraft:dark_oak_log",
-            "blockRuntimeId": -1226044173
+            "blockRuntimeId": 4574
         },
         {
             "id": "minecraft:stripped_dark_oak_log",
-            "blockRuntimeId": 1920611122
+            "blockRuntimeId": 622
         },
         {
             "id": "minecraft:mangrove_log",
-            "blockRuntimeId": -1984330898
+            "blockRuntimeId": 1070
         },
         {
             "id": "minecraft:stripped_mangrove_log",
-            "blockRuntimeId": -1247849989
+            "blockRuntimeId": 13136
         },
         {
             "id": "minecraft:cherry_log",
-            "blockRuntimeId": -992628298
+            "blockRuntimeId": 12084
         },
         {
             "id": "minecraft:stripped_cherry_log",
-            "blockRuntimeId": 629722723
+            "blockRuntimeId": 6735
         },
         {
             "id": "minecraft:crimson_stem",
-            "blockRuntimeId": 1025569707
+            "blockRuntimeId": 9864
         },
         {
             "id": "minecraft:stripped_crimson_stem",
-            "blockRuntimeId": 850053242
+            "blockRuntimeId": 11345
         },
         {
             "id": "minecraft:warped_stem",
-            "blockRuntimeId": 867349882
+            "blockRuntimeId": 10892
         },
         {
             "id": "minecraft:stripped_warped_stem",
-            "blockRuntimeId": 74387233
+            "blockRuntimeId": 12219
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": 1784223896
+            "blockRuntimeId": 4577
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": -280191567
+            "blockRuntimeId": 4583
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": 286182376
+            "blockRuntimeId": 4578
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": -642919989
+            "blockRuntimeId": 4584
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": -908331243
+            "blockRuntimeId": 4579
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": 899222552
+            "blockRuntimeId": 4585
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": 546250655
+            "blockRuntimeId": 4580
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": -1565793992
+            "blockRuntimeId": 4586
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": -661421400
+            "blockRuntimeId": 4581
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": -183177597
+            "blockRuntimeId": 4587
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": -524451558
+            "blockRuntimeId": 4582
         },
         {
             "id": "minecraft:wood",
-            "blockRuntimeId": 1046846749
+            "blockRuntimeId": 4588
         },
         {
             "id": "minecraft:mangrove_wood",
-            "blockRuntimeId": 1112708072
+            "blockRuntimeId": 6420
         },
         {
             "id": "minecraft:stripped_mangrove_wood",
-            "blockRuntimeId": 1014956299
+            "blockRuntimeId": 6490
         },
         {
             "id": "minecraft:cherry_wood",
-            "blockRuntimeId": 2093744656
+            "blockRuntimeId": 11524
         },
         {
             "id": "minecraft:stripped_cherry_wood",
-            "blockRuntimeId": -1248487805
+            "blockRuntimeId": 8002
         },
         {
             "id": "minecraft:crimson_hyphae",
-            "blockRuntimeId": -1380369927
+            "blockRuntimeId": 6593
         },
         {
             "id": "minecraft:stripped_crimson_hyphae",
-            "blockRuntimeId": 1851001188
+            "blockRuntimeId": 10895
         },
         {
             "id": "minecraft:warped_hyphae",
-            "blockRuntimeId": 16963668
+            "blockRuntimeId": 9869
         },
         {
             "id": "minecraft:stripped_warped_hyphae",
-            "blockRuntimeId": -1008489317
+            "blockRuntimeId": 8744
         },
         {
             "id": "minecraft:bamboo_block",
-            "blockRuntimeId": 2109882402
+            "blockRuntimeId": 60
         },
         {
             "id": "minecraft:stripped_bamboo_block",
-            "blockRuntimeId": -781413973
+            "blockRuntimeId": 5468
         },
         {
             "id": "minecraft:leaves",
-            "blockRuntimeId": 867674857
+            "blockRuntimeId": 10472
         },
         {
             "id": "minecraft:leaves",
-            "blockRuntimeId": 1144264019
+            "blockRuntimeId": 10473
         },
         {
             "id": "minecraft:leaves",
-            "blockRuntimeId": 1863489952
+            "blockRuntimeId": 10474
         },
         {
             "id": "minecraft:leaves",
-            "blockRuntimeId": 1756129536
+            "blockRuntimeId": 10475
         },
         {
             "id": "minecraft:leaves2",
-            "blockRuntimeId": 628787077
+            "blockRuntimeId": 6655
         },
         {
             "id": "minecraft:leaves2",
-            "blockRuntimeId": -1643376401
+            "blockRuntimeId": 6656
         },
         {
             "id": "minecraft:mangrove_leaves",
-            "blockRuntimeId": -1626787340
+            "blockRuntimeId": 11064
         },
         {
             "id": "minecraft:cherry_leaves",
-            "blockRuntimeId": 1895459964
+            "blockRuntimeId": 9385
         },
         {
             "id": "minecraft:azalea_leaves",
-            "blockRuntimeId": 1157564365
+            "blockRuntimeId": 12531
         },
         {
             "id": "minecraft:azalea_leaves_flowered",
-            "blockRuntimeId": -226272453
+            "blockRuntimeId": 10733
         },
         {
             "id": "minecraft:sapling",
-            "blockRuntimeId": 803315750
+            "blockRuntimeId": 1807
         },
         {
             "id": "minecraft:sapling",
-            "blockRuntimeId": 647033358
+            "blockRuntimeId": 1808
         },
         {
             "id": "minecraft:sapling",
-            "blockRuntimeId": 605691395
+            "blockRuntimeId": 1809
         },
         {
             "id": "minecraft:sapling",
-            "blockRuntimeId": 850871005
+            "blockRuntimeId": 1810
         },
         {
             "id": "minecraft:sapling",
-            "blockRuntimeId": -839447230
+            "blockRuntimeId": 1811
         },
         {
             "id": "minecraft:sapling",
-            "blockRuntimeId": -820247180
+            "blockRuntimeId": 1812
         },
         {
             "id": "minecraft:mangrove_propagule",
-            "blockRuntimeId": -1765922558
+            "blockRuntimeId": 11373
         },
         {
             "id": "minecraft:cherry_sapling",
-            "blockRuntimeId": 1571067594
+            "blockRuntimeId": 12082
         },
         {
             "id": "minecraft:bee_nest",
-            "blockRuntimeId": 277575049
+            "blockRuntimeId": 8921
         },
         {
             "id": "minecraft:wheat_seeds",
@@ -2122,7 +2122,7 @@
         },
         {
             "id": "minecraft:melon_block",
-            "blockRuntimeId": -890578421
+            "blockRuntimeId": 1117
         },
         {
             "id": "minecraft:melon_slice",
@@ -2142,15 +2142,15 @@
         },
         {
             "id": "minecraft:pumpkin",
-            "blockRuntimeId": -1324410811
+            "blockRuntimeId": 6883
         },
         {
             "id": "minecraft:carved_pumpkin",
-            "blockRuntimeId": -446180516
+            "blockRuntimeId": 12197
         },
         {
             "id": "minecraft:lit_pumpkin",
-            "blockRuntimeId": -535508085
+            "blockRuntimeId": 11071
         },
         {
             "id": "minecraft:honeycomb",
@@ -2158,19 +2158,19 @@
         },
         {
             "id": "minecraft:tallgrass",
-            "blockRuntimeId": 870086632
+            "blockRuntimeId": 2049
         },
         {
             "id": "minecraft:double_plant",
-            "blockRuntimeId": -122587700
+            "blockRuntimeId": 8619
         },
         {
             "id": "minecraft:tallgrass",
-            "blockRuntimeId": -222959286
+            "blockRuntimeId": 2048
         },
         {
             "id": "minecraft:double_plant",
-            "blockRuntimeId": 1651956230
+            "blockRuntimeId": 8618
         },
         {
             "id": "minecraft:nether_sprouts",
@@ -2178,171 +2178,171 @@
         },
         {
             "id": "minecraft:fire_coral",
-            "blockRuntimeId": 341687485
+            "blockRuntimeId": 1742
         },
         {
             "id": "minecraft:brain_coral",
-            "blockRuntimeId": -2043793234
+            "blockRuntimeId": 1770
         },
         {
             "id": "minecraft:bubble_coral",
-            "blockRuntimeId": 760973449
+            "blockRuntimeId": 10616
         },
         {
             "id": "minecraft:tube_coral",
-            "blockRuntimeId": -103777197
+            "blockRuntimeId": 12592
         },
         {
             "id": "minecraft:horn_coral",
-            "blockRuntimeId": 2087327870
+            "blockRuntimeId": 5490
         },
         {
             "id": "minecraft:dead_fire_coral",
-            "blockRuntimeId": 1592597203
+            "blockRuntimeId": 10673
         },
         {
             "id": "minecraft:dead_brain_coral",
-            "blockRuntimeId": -1573442780
+            "blockRuntimeId": 11997
         },
         {
             "id": "minecraft:dead_bubble_coral",
-            "blockRuntimeId": 205368427
+            "blockRuntimeId": 12081
         },
         {
             "id": "minecraft:dead_tube_coral",
-            "blockRuntimeId": 684972525
+            "blockRuntimeId": 6559
         },
         {
             "id": "minecraft:dead_horn_coral",
-            "blockRuntimeId": -419885808
+            "blockRuntimeId": 9882
         },
         {
             "id": "minecraft:coral_fan",
-            "blockRuntimeId": 780745704
+            "blockRuntimeId": 6922
         },
         {
             "id": "minecraft:coral_fan",
-            "blockRuntimeId": 1945166720
+            "blockRuntimeId": 6920
         },
         {
             "id": "minecraft:coral_fan",
-            "blockRuntimeId": 1228900784
+            "blockRuntimeId": 6921
         },
         {
             "id": "minecraft:coral_fan",
-            "blockRuntimeId": 781710940
+            "blockRuntimeId": 6919
         },
         {
             "id": "minecraft:coral_fan",
-            "blockRuntimeId": 1988236110
+            "blockRuntimeId": 6923
         },
         {
             "id": "minecraft:coral_fan_dead",
-            "blockRuntimeId": -808447370
+            "blockRuntimeId": 72
         },
         {
             "id": "minecraft:coral_fan_dead",
-            "blockRuntimeId": -1381224886
+            "blockRuntimeId": 70
         },
         {
             "id": "minecraft:coral_fan_dead",
-            "blockRuntimeId": -862838502
+            "blockRuntimeId": 71
         },
         {
             "id": "minecraft:coral_fan_dead",
-            "blockRuntimeId": 977991322
+            "blockRuntimeId": 69
         },
         {
             "id": "minecraft:coral_fan_dead",
-            "blockRuntimeId": -515982180
+            "blockRuntimeId": 73
         },
         {
             "id": "minecraft:crimson_roots",
-            "blockRuntimeId": -678394037
+            "blockRuntimeId": 12393
         },
         {
             "id": "minecraft:warped_roots",
-            "blockRuntimeId": 1880023250
+            "blockRuntimeId": 6664
         },
         {
             "id": "minecraft:yellow_flower",
-            "blockRuntimeId": 1769487136
+            "blockRuntimeId": 1022
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": 111456938
+            "blockRuntimeId": 5492
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": -475525654
+            "blockRuntimeId": 5493
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": -566555911
+            "blockRuntimeId": 5494
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": 1233142990
+            "blockRuntimeId": 5495
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": -1743178002
+            "blockRuntimeId": 5496
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": -544654348
+            "blockRuntimeId": 5497
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": 1926796010
+            "blockRuntimeId": 5498
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": 990932044
+            "blockRuntimeId": 5499
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": 784385118
+            "blockRuntimeId": 5500
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": 1152430880
+            "blockRuntimeId": 5501
         },
         {
             "id": "minecraft:red_flower",
-            "blockRuntimeId": 1541607023
+            "blockRuntimeId": 5502
         },
         {
             "id": "minecraft:double_plant",
-            "blockRuntimeId": -565795097
+            "blockRuntimeId": 8616
         },
         {
             "id": "minecraft:double_plant",
-            "blockRuntimeId": -2122158367
+            "blockRuntimeId": 8617
         },
         {
             "id": "minecraft:double_plant",
-            "blockRuntimeId": -117764386
+            "blockRuntimeId": 8620
         },
         {
             "id": "minecraft:double_plant",
-            "blockRuntimeId": 1675686029
+            "blockRuntimeId": 8621
         },
         {
             "id": "minecraft:pitcher_plant",
-            "blockRuntimeId": -1782684825
+            "blockRuntimeId": 5637
         },
         {
             "id": "minecraft:pink_petals",
-            "blockRuntimeId": -1828198877
+            "blockRuntimeId": 6959
         },
         {
             "id": "minecraft:wither_rose",
-            "blockRuntimeId": 1070281985
+            "blockRuntimeId": 10547
         },
         {
             "id": "minecraft:torchflower",
-            "blockRuntimeId": -133267933
+            "blockRuntimeId": 10436
         },
         {
             "id": "minecraft:white_dye",
@@ -2430,23 +2430,23 @@
         },
         {
             "id": "minecraft:vine",
-            "blockRuntimeId": 1530630292
+            "blockRuntimeId": 1997
         },
         {
             "id": "minecraft:weeping_vines",
-            "blockRuntimeId": -1988873156
+            "blockRuntimeId": 8644
         },
         {
             "id": "minecraft:twisting_vines",
-            "blockRuntimeId": 555042534
+            "blockRuntimeId": 8857
         },
         {
             "id": "minecraft:waterlily",
-            "blockRuntimeId": -1615946013
+            "blockRuntimeId": 2264
         },
         {
             "id": "minecraft:seagrass",
-            "blockRuntimeId": 274823543
+            "blockRuntimeId": 657
         },
         {
             "id": "minecraft:kelp",
@@ -2454,119 +2454,119 @@
         },
         {
             "id": "minecraft:deadbush",
-            "blockRuntimeId": -85591723
+            "blockRuntimeId": 7411
         },
         {
             "id": "minecraft:bamboo",
-            "blockRuntimeId": 1993764742
+            "blockRuntimeId": 5560
         },
         {
             "id": "minecraft:snow",
-            "blockRuntimeId": -2027434956
+            "blockRuntimeId": 6455
         },
         {
             "id": "minecraft:ice",
-            "blockRuntimeId": 107547877
+            "blockRuntimeId": 11075
         },
         {
             "id": "minecraft:packed_ice",
-            "blockRuntimeId": 445316843
+            "blockRuntimeId": 714
         },
         {
             "id": "minecraft:blue_ice",
-            "blockRuntimeId": -234816571
+            "blockRuntimeId": 11427
         },
         {
             "id": "minecraft:snow_layer",
-            "blockRuntimeId": -595350462
+            "blockRuntimeId": 560
         },
         {
             "id": "minecraft:pointed_dripstone",
-            "blockRuntimeId": 1659726445
+            "blockRuntimeId": 12235
         },
         {
             "id": "minecraft:dripstone_block",
-            "blockRuntimeId": 1289380550
+            "blockRuntimeId": 1996
         },
         {
             "id": "minecraft:moss_carpet",
-            "blockRuntimeId": 1136091496
+            "blockRuntimeId": 718
         },
         {
             "id": "minecraft:moss_block",
-            "blockRuntimeId": -551148041
+            "blockRuntimeId": 10936
         },
         {
             "id": "minecraft:dirt_with_roots",
-            "blockRuntimeId": 985900240
+            "blockRuntimeId": 8560
         },
         {
             "id": "minecraft:hanging_roots",
-            "blockRuntimeId": -1345461932
+            "blockRuntimeId": 611
         },
         {
             "id": "minecraft:mangrove_roots",
-            "blockRuntimeId": 503319956
+            "blockRuntimeId": 10557
         },
         {
             "id": "minecraft:muddy_mangrove_roots",
-            "blockRuntimeId": -476298465
+            "blockRuntimeId": 1065
         },
         {
             "id": "minecraft:big_dripleaf",
-            "blockRuntimeId": 1730433241
+            "blockRuntimeId": 9949
         },
         {
             "id": "minecraft:small_dripleaf_block",
-            "blockRuntimeId": -561395583
+            "blockRuntimeId": 6619
         },
         {
             "id": "minecraft:spore_blossom",
-            "blockRuntimeId": 481848731
+            "blockRuntimeId": 12137
         },
         {
             "id": "minecraft:azalea",
-            "blockRuntimeId": -731457553
+            "blockRuntimeId": 11279
         },
         {
             "id": "minecraft:flowering_azalea",
-            "blockRuntimeId": 356354615
+            "blockRuntimeId": 8641
         },
         {
             "id": "minecraft:glow_lichen",
-            "blockRuntimeId": 1210392330
+            "blockRuntimeId": 8850
         },
         {
             "id": "minecraft:amethyst_block",
-            "blockRuntimeId": -831947792
+            "blockRuntimeId": 754
         },
         {
             "id": "minecraft:budding_amethyst",
-            "blockRuntimeId": -1062772016
+            "blockRuntimeId": 11399
         },
         {
             "id": "minecraft:amethyst_cluster",
-            "blockRuntimeId": 91920649
+            "blockRuntimeId": 12640
         },
         {
             "id": "minecraft:large_amethyst_bud",
-            "blockRuntimeId": -802837318
+            "blockRuntimeId": 7462
         },
         {
             "id": "minecraft:medium_amethyst_bud",
-            "blockRuntimeId": -278391653
+            "blockRuntimeId": 6678
         },
         {
             "id": "minecraft:small_amethyst_bud",
-            "blockRuntimeId": 1002878782
+            "blockRuntimeId": 1024
         },
         {
             "id": "minecraft:tuff",
-            "blockRuntimeId": -194428816
+            "blockRuntimeId": 1069
         },
         {
             "id": "minecraft:calcite",
-            "blockRuntimeId": 1135757605
+            "blockRuntimeId": 621
         },
         {
             "id": "minecraft:chicken",
@@ -2606,35 +2606,35 @@
         },
         {
             "id": "minecraft:brown_mushroom",
-            "blockRuntimeId": 1548623150
+            "blockRuntimeId": 5417
         },
         {
             "id": "minecraft:red_mushroom",
-            "blockRuntimeId": -1992436181
+            "blockRuntimeId": 6891
         },
         {
             "id": "minecraft:crimson_fungus",
-            "blockRuntimeId": -783457521
+            "blockRuntimeId": 12581
         },
         {
             "id": "minecraft:warped_fungus",
-            "blockRuntimeId": -1422933532
+            "blockRuntimeId": 719
         },
         {
             "id": "minecraft:brown_mushroom_block",
-            "blockRuntimeId": 203547508
+            "blockRuntimeId": 12187
         },
         {
             "id": "minecraft:red_mushroom_block",
-            "blockRuntimeId": -1161199409
+            "blockRuntimeId": 5485
         },
         {
             "id": "minecraft:brown_mushroom_block",
-            "blockRuntimeId": 142072685
+            "blockRuntimeId": 12188
         },
         {
             "id": "minecraft:brown_mushroom_block",
-            "blockRuntimeId": -165301430
+            "blockRuntimeId": 12173
         },
         {
             "id": "minecraft:egg",
@@ -2658,7 +2658,7 @@
         },
         {
             "id": "minecraft:web",
-            "blockRuntimeId": 955936010
+            "blockRuntimeId": 11099
         },
         {
             "id": "minecraft:spider_eye",
@@ -2666,63 +2666,63 @@
         },
         {
             "id": "minecraft:mob_spawner",
-            "blockRuntimeId": -1710007245
+            "blockRuntimeId": 1126
         },
         {
             "id": "minecraft:monster_egg",
-            "blockRuntimeId": 1190883753
+            "blockRuntimeId": 6403
         },
         {
             "id": "minecraft:monster_egg",
-            "blockRuntimeId": -379879304
+            "blockRuntimeId": 6404
         },
         {
             "id": "minecraft:monster_egg",
-            "blockRuntimeId": 362585357
+            "blockRuntimeId": 6405
         },
         {
             "id": "minecraft:monster_egg",
-            "blockRuntimeId": 1289494329
+            "blockRuntimeId": 6406
         },
         {
             "id": "minecraft:monster_egg",
-            "blockRuntimeId": 472243369
+            "blockRuntimeId": 6407
         },
         {
             "id": "minecraft:monster_egg",
-            "blockRuntimeId": -2104514026
+            "blockRuntimeId": 6408
         },
         {
             "id": "minecraft:infested_deepslate",
-            "blockRuntimeId": 1860943670
+            "blockRuntimeId": 7375
         },
         {
             "id": "minecraft:dragon_egg",
-            "blockRuntimeId": -1856226336
+            "blockRuntimeId": 12096
         },
         {
             "id": "minecraft:turtle_egg",
-            "blockRuntimeId": 567624840
+            "blockRuntimeId": 12827
         },
         {
             "id": "minecraft:sniffer_egg",
-            "blockRuntimeId": -637589777
+            "blockRuntimeId": 11400
         },
         {
             "id": "minecraft:frog_spawn",
-            "blockRuntimeId": -1650734011
+            "blockRuntimeId": 6702
         },
         {
             "id": "minecraft:pearlescent_froglight",
-            "blockRuntimeId": 1080727706
+            "blockRuntimeId": 10829
         },
         {
             "id": "minecraft:verdant_froglight",
-            "blockRuntimeId": -1318615796
+            "blockRuntimeId": 10887
         },
         {
             "id": "minecraft:ochre_froglight",
-            "blockRuntimeId": -1659923475
+            "blockRuntimeId": 4997
         },
         {
             "id": "minecraft:chicken_spawn_egg",
@@ -3026,23 +3026,23 @@
         },
         {
             "id": "minecraft:obsidian",
-            "blockRuntimeId": -1513117254
+            "blockRuntimeId": 1153
         },
         {
             "id": "minecraft:crying_obsidian",
-            "blockRuntimeId": 1581112104
+            "blockRuntimeId": 11108
         },
         {
             "id": "minecraft:bedrock",
-            "blockRuntimeId": -173245189
+            "blockRuntimeId": 11417
         },
         {
             "id": "minecraft:soul_sand",
-            "blockRuntimeId": -1289874924
+            "blockRuntimeId": 8998
         },
         {
             "id": "minecraft:magma",
-            "blockRuntimeId": 1719727561
+            "blockRuntimeId": 12839
         },
         {
             "id": "minecraft:nether_wart",
@@ -3050,15 +3050,15 @@
         },
         {
             "id": "minecraft:end_stone",
-            "blockRuntimeId": -1253866153
+            "blockRuntimeId": 6095
         },
         {
             "id": "minecraft:chorus_flower",
-            "blockRuntimeId": 1448507239
+            "blockRuntimeId": 6836
         },
         {
             "id": "minecraft:chorus_plant",
-            "blockRuntimeId": -1554584051
+            "blockRuntimeId": 8670
         },
         {
             "id": "minecraft:chorus_fruit",
@@ -3070,79 +3070,79 @@
         },
         {
             "id": "minecraft:sponge",
-            "blockRuntimeId": -307481251
+            "blockRuntimeId": 1333
         },
         {
             "id": "minecraft:sponge",
-            "blockRuntimeId": -2072801544
+            "blockRuntimeId": 1334
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": 56260890
+            "blockRuntimeId": 8383
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": 1794011466
+            "blockRuntimeId": 8384
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": 2062696858
+            "blockRuntimeId": 8385
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": -972843658
+            "blockRuntimeId": 8386
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": 1655690592
+            "blockRuntimeId": 8387
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": 1111567461
+            "blockRuntimeId": 8388
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": -1445649259
+            "blockRuntimeId": 8389
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": -1176963867
+            "blockRuntimeId": 8390
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": 82462913
+            "blockRuntimeId": 8391
         },
         {
             "id": "minecraft:coral_block",
-            "blockRuntimeId": -1583970133
+            "blockRuntimeId": 8392
         },
         {
             "id": "minecraft:sculk",
-            "blockRuntimeId": 1041212874
+            "blockRuntimeId": 11436
         },
         {
             "id": "minecraft:sculk_vein",
-            "blockRuntimeId": 1467842196
+            "blockRuntimeId": 11933
         },
         {
             "id": "minecraft:sculk_catalyst",
-            "blockRuntimeId": -5792464
+            "blockRuntimeId": 5487
         },
         {
             "id": "minecraft:sculk_shrieker",
-            "blockRuntimeId": 879274693
+            "blockRuntimeId": 628
         },
         {
             "id": "minecraft:sculk_sensor",
-            "blockRuntimeId": -145164616
+            "blockRuntimeId": 6691
         },
         {
             "id": "minecraft:calibrated_sculk_sensor",
-            "blockRuntimeId": 1279468616
+            "blockRuntimeId": 9403
         },
         {
             "id": "minecraft:reinforced_deepslate",
-            "blockRuntimeId": 1769900828
+            "blockRuntimeId": 9383
         },
         {
             "id": "minecraft:leather_helmet",
@@ -4497,119 +4497,119 @@
         },
         {
             "id": "minecraft:torch",
-            "blockRuntimeId": -1188029192
+            "blockRuntimeId": 1827
         },
         {
             "id": "minecraft:soul_torch",
-            "blockRuntimeId": 189951137
+            "blockRuntimeId": 7378
         },
         {
             "id": "minecraft:sea_pickle",
-            "blockRuntimeId": 845428104
+            "blockRuntimeId": 9422
         },
         {
             "id": "minecraft:lantern",
-            "blockRuntimeId": -217346716
+            "blockRuntimeId": 11475
         },
         {
             "id": "minecraft:soul_lantern",
-            "blockRuntimeId": -952113049
+            "blockRuntimeId": 8916
         },
         {
             "id": "minecraft:candle",
-            "blockRuntimeId": 221249915
+            "blockRuntimeId": 12222
         },
         {
             "id": "minecraft:white_candle",
-            "blockRuntimeId": 1754953123
+            "blockRuntimeId": 8462
         },
         {
             "id": "minecraft:orange_candle",
-            "blockRuntimeId": 910120863
+            "blockRuntimeId": 1085
         },
         {
             "id": "minecraft:magenta_candle",
-            "blockRuntimeId": -1853025801
+            "blockRuntimeId": 1143
         },
         {
             "id": "minecraft:light_blue_candle",
-            "blockRuntimeId": -227381798
+            "blockRuntimeId": 6875
         },
         {
             "id": "minecraft:yellow_candle",
-            "blockRuntimeId": -1455870595
+            "blockRuntimeId": 10574
         },
         {
             "id": "minecraft:lime_candle",
-            "blockRuntimeId": -382860000
+            "blockRuntimeId": 10762
         },
         {
             "id": "minecraft:pink_candle",
-            "blockRuntimeId": -462981925
+            "blockRuntimeId": 12189
         },
         {
             "id": "minecraft:gray_candle",
-            "blockRuntimeId": 147970782
+            "blockRuntimeId": 2059
         },
         {
             "id": "minecraft:light_gray_candle",
-            "blockRuntimeId": 2060361839
+            "blockRuntimeId": 10617
         },
         {
             "id": "minecraft:cyan_candle",
-            "blockRuntimeId": 957383270
+            "blockRuntimeId": 12553
         },
         {
             "id": "minecraft:purple_candle",
-            "blockRuntimeId": -2121454425
+            "blockRuntimeId": 11438
         },
         {
             "id": "minecraft:blue_candle",
-            "blockRuntimeId": 1088625327
+            "blockRuntimeId": 0
         },
         {
             "id": "minecraft:brown_candle",
-            "blockRuntimeId": 1980081316
+            "blockRuntimeId": 9842
         },
         {
             "id": "minecraft:green_candle",
-            "blockRuntimeId": 1000092441
+            "blockRuntimeId": 1781
         },
         {
             "id": "minecraft:red_candle",
-            "blockRuntimeId": 114257755
+            "blockRuntimeId": 7415
         },
         {
             "id": "minecraft:black_candle",
-            "blockRuntimeId": -509686055
+            "blockRuntimeId": 576
         },
         {
             "id": "minecraft:crafting_table",
-            "blockRuntimeId": 1752181952
+            "blockRuntimeId": 9421
         },
         {
             "id": "minecraft:cartography_table",
-            "blockRuntimeId": 863215907
+            "blockRuntimeId": 13140
         },
         {
             "id": "minecraft:fletching_table",
-            "blockRuntimeId": 1247520413
+            "blockRuntimeId": 9384
         },
         {
             "id": "minecraft:smithing_table",
-            "blockRuntimeId": -855547043
+            "blockRuntimeId": 5602
         },
         {
             "id": "minecraft:beehive",
-            "blockRuntimeId": 450333055
+            "blockRuntimeId": 10490
         },
         {
             "id": "minecraft:suspicious_sand",
-            "blockRuntimeId": -2140609367
+            "blockRuntimeId": 2267
         },
         {
             "id": "minecraft:suspicious_gravel",
-            "blockRuntimeId": 623036
+            "blockRuntimeId": 7468
         },
         {
             "id": "minecraft:campfire",
@@ -4621,19 +4621,19 @@
         },
         {
             "id": "minecraft:furnace",
-            "blockRuntimeId": 492656709
+            "blockRuntimeId": 12632
         },
         {
             "id": "minecraft:blast_furnace",
-            "blockRuntimeId": 1560445798
+            "blockRuntimeId": 12387
         },
         {
             "id": "minecraft:smoker",
-            "blockRuntimeId": 1344013753
+            "blockRuntimeId": 1736
         },
         {
             "id": "minecraft:respawn_anchor",
-            "blockRuntimeId": 1763447706
+            "blockRuntimeId": 1776
         },
         {
             "id": "minecraft:brewing_stand",
@@ -4641,35 +4641,35 @@
         },
         {
             "id": "minecraft:anvil",
-            "blockRuntimeId": -808581719
+            "blockRuntimeId": 11032
         },
         {
             "id": "minecraft:anvil",
-            "blockRuntimeId": 641271390
+            "blockRuntimeId": 11036
         },
         {
             "id": "minecraft:anvil",
-            "blockRuntimeId": 1221301038
+            "blockRuntimeId": 11040
         },
         {
             "id": "minecraft:grindstone",
-            "blockRuntimeId": 1003295416
+            "blockRuntimeId": 12869
         },
         {
             "id": "minecraft:enchanting_table",
-            "blockRuntimeId": 1230080101
+            "blockRuntimeId": 11114
         },
         {
             "id": "minecraft:bookshelf",
-            "blockRuntimeId": -1933568489
+            "blockRuntimeId": 11069
         },
         {
             "id": "minecraft:chiseled_bookshelf",
-            "blockRuntimeId": -1833473142
+            "blockRuntimeId": 758
         },
         {
             "id": "minecraft:lectern",
-            "blockRuntimeId": -1975974832
+            "blockRuntimeId": 11337
         },
         {
             "id": "minecraft:cauldron",
@@ -4677,91 +4677,91 @@
         },
         {
             "id": "minecraft:composter",
-            "blockRuntimeId": 787090290
+            "blockRuntimeId": 8579
         },
         {
             "id": "minecraft:chest",
-            "blockRuntimeId": -1003636878
+            "blockRuntimeId": 11518
         },
         {
             "id": "minecraft:trapped_chest",
-            "blockRuntimeId": -587643491
+            "blockRuntimeId": 8748
         },
         {
             "id": "minecraft:ender_chest",
-            "blockRuntimeId": 1811533369
+            "blockRuntimeId": 6671
         },
         {
             "id": "minecraft:barrel",
-            "blockRuntimeId": 198111737
+            "blockRuntimeId": 6824
         },
         {
             "id": "minecraft:undyed_shulker_box",
-            "blockRuntimeId": -1647957089
+            "blockRuntimeId": 5557
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 1037045916
+            "blockRuntimeId": 8478
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": -904488351
+            "blockRuntimeId": 8486
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": -1612432543
+            "blockRuntimeId": 8485
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": -8689174
+            "blockRuntimeId": 8493
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 1025460749
+            "blockRuntimeId": 8490
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 2031571580
+            "blockRuntimeId": 8492
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 600932882
+            "blockRuntimeId": 8479
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": -1818593424
+            "blockRuntimeId": 8482
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": -1020759221
+            "blockRuntimeId": 8483
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 816249506
+            "blockRuntimeId": 8491
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 104540585
+            "blockRuntimeId": 8487
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 1115851829
+            "blockRuntimeId": 8481
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 51790554
+            "blockRuntimeId": 8489
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": -1910614846
+            "blockRuntimeId": 8488
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 1871116148
+            "blockRuntimeId": 8480
         },
         {
             "id": "minecraft:shulker_box",
-            "blockRuntimeId": 722163070
+            "blockRuntimeId": 8484
         },
         {
             "id": "minecraft:armor_stand",
@@ -4769,11 +4769,11 @@
         },
         {
             "id": "minecraft:noteblock",
-            "blockRuntimeId": 166024317
+            "blockRuntimeId": 1068
         },
         {
             "id": "minecraft:jukebox",
-            "blockRuntimeId": 1605519270
+            "blockRuntimeId": 8001
         },
         {
             "id": "minecraft:music_disc_13",
@@ -4849,15 +4849,15 @@
         },
         {
             "id": "minecraft:glowstone",
-            "blockRuntimeId": -2040923292
+            "blockRuntimeId": 6144
         },
         {
             "id": "minecraft:redstone_lamp",
-            "blockRuntimeId": 670839919
+            "blockRuntimeId": 662
         },
         {
             "id": "minecraft:sea_lantern",
-            "blockRuntimeId": -925502508
+            "blockRuntimeId": 12366
         },
         {
             "id": "minecraft:oak_sign",
@@ -5051,23 +5051,23 @@
         },
         {
             "id": "minecraft:beacon",
-            "blockRuntimeId": 561914719
+            "blockRuntimeId": 550
         },
         {
             "id": "minecraft:bell",
-            "blockRuntimeId": -1475096837
+            "blockRuntimeId": 11305
         },
         {
             "id": "minecraft:conduit",
-            "blockRuntimeId": 1729458390
+            "blockRuntimeId": 6493
         },
         {
             "id": "minecraft:stonecutter_block",
-            "blockRuntimeId": -897072425
+            "blockRuntimeId": 12394
         },
         {
             "id": "minecraft:end_portal_frame",
-            "blockRuntimeId": -806534189
+            "blockRuntimeId": 10443
         },
         {
             "id": "minecraft:coal",
@@ -5251,11 +5251,11 @@
         },
         {
             "id": "minecraft:end_rod",
-            "blockRuntimeId": 617576502
+            "blockRuntimeId": 9858
         },
         {
             "id": "minecraft:lightning_rod",
-            "blockRuntimeId": -2139310005
+            "blockRuntimeId": 2290
         },
         {
             "id": "minecraft:end_crystal",
@@ -5897,19 +5897,19 @@
         },
         {
             "id": "minecraft:rail",
-            "blockRuntimeId": -1734456706
+            "blockRuntimeId": 6179
         },
         {
             "id": "minecraft:golden_rail",
-            "blockRuntimeId": 791742332
+            "blockRuntimeId": 8494
         },
         {
             "id": "minecraft:detector_rail",
-            "blockRuntimeId": -1997120683
+            "blockRuntimeId": 6391
         },
         {
             "id": "minecraft:activator_rail",
-            "blockRuntimeId": -1692076187
+            "blockRuntimeId": 1029
         },
         {
             "id": "minecraft:minecart",
@@ -5933,139 +5933,139 @@
         },
         {
             "id": "minecraft:redstone_block",
-            "blockRuntimeId": 512666773
+            "blockRuntimeId": 5657
         },
         {
             "id": "minecraft:redstone_torch",
-            "blockRuntimeId": -923042632
+            "blockRuntimeId": 5012
         },
         {
             "id": "minecraft:lever",
-            "blockRuntimeId": -1194959088
+            "blockRuntimeId": 10910
         },
         {
             "id": "minecraft:wooden_button",
-            "blockRuntimeId": 414831508
+            "blockRuntimeId": 10785
         },
         {
             "id": "minecraft:spruce_button",
-            "blockRuntimeId": -1367256860
+            "blockRuntimeId": 6620
         },
         {
             "id": "minecraft:birch_button",
-            "blockRuntimeId": 719300965
+            "blockRuntimeId": 12596
         },
         {
             "id": "minecraft:jungle_button",
-            "blockRuntimeId": -1769374467
+            "blockRuntimeId": 120
         },
         {
             "id": "minecraft:acacia_button",
-            "blockRuntimeId": 152215376
+            "blockRuntimeId": 12049
         },
         {
             "id": "minecraft:dark_oak_button",
-            "blockRuntimeId": 1644326878
+            "blockRuntimeId": 96
         },
         {
             "id": "minecraft:mangrove_button",
-            "blockRuntimeId": 219759617
+            "blockRuntimeId": 11462
         },
         {
             "id": "minecraft:cherry_button",
-            "blockRuntimeId": -802498999
+            "blockRuntimeId": 6929
         },
         {
             "id": "minecraft:bamboo_button",
-            "blockRuntimeId": 1057945498
+            "blockRuntimeId": 10874
         },
         {
             "id": "minecraft:stone_button",
-            "blockRuntimeId": 761806540
+            "blockRuntimeId": 1321
         },
         {
             "id": "minecraft:crimson_button",
-            "blockRuntimeId": -915440134
+            "blockRuntimeId": 6738
         },
         {
             "id": "minecraft:warped_button",
-            "blockRuntimeId": 897130215
+            "blockRuntimeId": 12068
         },
         {
             "id": "minecraft:polished_blackstone_button",
-            "blockRuntimeId": -415378418
+            "blockRuntimeId": 12620
         },
         {
             "id": "minecraft:tripwire_hook",
-            "blockRuntimeId": -1991050318
+            "blockRuntimeId": 9883
         },
         {
             "id": "minecraft:wooden_pressure_plate",
-            "blockRuntimeId": -600018124
+            "blockRuntimeId": 12894
         },
         {
             "id": "minecraft:spruce_pressure_plate",
-            "blockRuntimeId": 218827956
+            "blockRuntimeId": 5639
         },
         {
             "id": "minecraft:birch_pressure_plate",
-            "blockRuntimeId": -323141345
+            "blockRuntimeId": 5426
         },
         {
             "id": "minecraft:jungle_pressure_plate",
-            "blockRuntimeId": 537218999
+            "blockRuntimeId": 5511
         },
         {
             "id": "minecraft:acacia_pressure_plate",
-            "blockRuntimeId": 1596185984
+            "blockRuntimeId": 8393
         },
         {
             "id": "minecraft:dark_oak_pressure_plate",
-            "blockRuntimeId": -1396926422
+            "blockRuntimeId": 9925
         },
         {
             "id": "minecraft:mangrove_pressure_plate",
-            "blockRuntimeId": -914160197
+            "blockRuntimeId": 6128
         },
         {
             "id": "minecraft:cherry_pressure_plate",
-            "blockRuntimeId": -1107667981
+            "blockRuntimeId": 142
         },
         {
             "id": "minecraft:bamboo_pressure_plate",
-            "blockRuntimeId": 1985903750
+            "blockRuntimeId": 10451
         },
         {
             "id": "minecraft:crimson_pressure_plate",
-            "blockRuntimeId": 190797670
+            "blockRuntimeId": 13120
         },
         {
             "id": "minecraft:warped_pressure_plate",
-            "blockRuntimeId": -2019536491
+            "blockRuntimeId": 685
         },
         {
             "id": "minecraft:stone_pressure_plate",
-            "blockRuntimeId": -1046659956
+            "blockRuntimeId": 6145
         },
         {
             "id": "minecraft:light_weighted_pressure_plate",
-            "blockRuntimeId": -1904165458
+            "blockRuntimeId": 5541
         },
         {
             "id": "minecraft:heavy_weighted_pressure_plate",
-            "blockRuntimeId": -1186327273
+            "blockRuntimeId": 2274
         },
         {
             "id": "minecraft:polished_blackstone_pressure_plate",
-            "blockRuntimeId": 1903053274
+            "blockRuntimeId": 10625
         },
         {
             "id": "minecraft:observer",
-            "blockRuntimeId": 1075404840
+            "blockRuntimeId": 5000
         },
         {
             "id": "minecraft:daylight_detector",
-            "blockRuntimeId": 2103062190
+            "blockRuntimeId": 6458
         },
         {
             "id": "minecraft:repeater",
@@ -6081,23 +6081,23 @@
         },
         {
             "id": "minecraft:dropper",
-            "blockRuntimeId": -1277280225
+            "blockRuntimeId": 12204
         },
         {
             "id": "minecraft:dispenser",
-            "blockRuntimeId": 1036524128
+            "blockRuntimeId": 12843
         },
         {
             "id": "minecraft:piston",
-            "blockRuntimeId": 1961230256
+            "blockRuntimeId": 2041
         },
         {
             "id": "minecraft:sticky_piston",
-            "blockRuntimeId": -1993329665
+            "blockRuntimeId": 6666
         },
         {
             "id": "minecraft:tnt",
-            "blockRuntimeId": 1317904161
+            "blockRuntimeId": 11093
         },
         {
             "id": "minecraft:name_tag",
@@ -6105,7 +6105,7 @@
         },
         {
             "id": "minecraft:loom",
-            "blockRuntimeId": -674110593
+            "blockRuntimeId": 6091
         },
         {
             "id": "minecraft:banner",
@@ -6558,11 +6558,11 @@
         },
         {
             "id": "minecraft:target",
-            "blockRuntimeId": -842110736
+            "blockRuntimeId": 10784
         },
         {
             "id": "minecraft:decorated_pot",
-            "blockRuntimeId": 340115056
+            "blockRuntimeId": 11110
         },
         {
             "id": "minecraft:lodestone_compass",
