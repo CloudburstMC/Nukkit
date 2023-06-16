@@ -595,6 +595,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         Map<String, CommandDataVersions> data = new HashMap<>();
         int count = 0;
         for (Command command : this.server.getCommandMap().getCommands().values()) {
+            if ("help".equals(command.getName())) {
+                continue; // The client will add this
+            }
             if (!command.testPermissionSilent(this) || !command.isRegistered()) {
                 continue;
             }
