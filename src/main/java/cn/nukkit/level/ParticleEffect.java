@@ -25,6 +25,7 @@ public enum ParticleEffect {
     CAULDRONSPELL("minecraft:cauldron_spell_emitter"),
     CAULDRON_BUBBLE("minecraft:cauldron_bubble_particle"),
     CAULDRON_SPLASH("minecraft:cauldron_splash_particle"),
+    CHERRY_LEAVES_PARTICLE("minecraft:cherry_leaves_particle"),
     COLORED_FLAME("minecraft:colored_flame_particle"),
     CONDUIT("minecraft:conduit_particle"),
     CONDUIT_ABSORB("minecraft:conduit_absorb_particle"),
