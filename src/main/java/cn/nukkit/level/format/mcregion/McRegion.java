@@ -148,7 +148,6 @@ public class McRegion extends BaseLevelProvider {
         int regionX = getRegionIndexX(chunkX);
         int regionZ = getRegionIndexZ(chunkZ);
         BaseRegionLoader region = this.loadRegion(regionX, regionZ);
-        this.level.timings.syncChunkLoadDataTimer.startTiming();
         BaseFullChunk chunk;
         try {
             chunk = region.readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
@@ -163,7 +162,6 @@ public class McRegion extends BaseLevelProvider {
         } else {
             putChunk(index, chunk);
         }
-        this.level.timings.syncChunkLoadDataTimer.stopTiming();
         return chunk;
     }
 

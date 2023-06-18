@@ -7,8 +7,6 @@ import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.utils.TextFormat;
-import co.aikar.timings.Timing;
-import co.aikar.timings.Timings;
 
 import java.util.*;
 
@@ -44,8 +42,6 @@ public abstract class Command {
 
     protected Map<String, CommandParameter[]> commandParameters = new HashMap<>();
 
-    public Timing timing;
-
     public Command(String name) {
         this(name, "", null, new String[0]);
     }
@@ -67,7 +63,6 @@ public abstract class Command {
         this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
         this.aliases = aliases;
         this.activeAliases = aliases;
-        this.timing = Timings.getCommandTiming(this);
         this.commandParameters.put("default", new CommandParameter[]{CommandParameter.newType("args", true, CommandParamType.RAWTEXT)});
     }
 
@@ -186,7 +181,6 @@ public abstract class Command {
         this.nextLabel = name;
         if (!this.isRegistered()) {
             this.label = name;
-            this.timing = Timings.getCommandTiming(this);
             return true;
         }
         return false;
