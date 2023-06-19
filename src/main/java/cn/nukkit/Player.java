@@ -2743,8 +2743,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (targetEntity != this) {
                                 break;
                             }
-                            if (!this.inventoryOpen) {
-                                this.inventory.open(this);
+                            if (!this.inventoryOpen && this.inventory.open(this)) {
                                 this.inventoryOpen = true;
                             }
                             break;
