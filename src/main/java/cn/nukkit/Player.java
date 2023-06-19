@@ -4948,8 +4948,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected void removeWindow(Inventory inventory, boolean isResponse) {
         inventory.close(this);
-        if (isResponse && !this.permanentWindows.contains(this.getWindowId(inventory)))
+        // TODO: This needs a proper fix
+        // Requiring isResponse here causes issues with inventory events and an item duplication glitch
+        if (/*isResponse &&*/ !this.permanentWindows.contains(this.getWindowId(inventory))) {
             this.windows.remove(inventory);
+        }
     }
 
     public void sendAllInventories() {
