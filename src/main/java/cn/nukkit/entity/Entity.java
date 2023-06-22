@@ -1734,7 +1734,7 @@ public abstract class Entity extends Location implements Metadatable {
             }
 
             if (this.isPlayer) {
-                int level = ((Player) this).getInventory().getBootsFast().getEnchantmentLevel(Enchantment.ID_PROTECTION_FALL);
+                int level = ((Player) this).getInventory().getBoots().getEnchantmentLevel(Enchantment.ID_PROTECTION_FALL);
                 if (level != 0) {
                     damage -= damage / 100 * (level * 12);
                 }
