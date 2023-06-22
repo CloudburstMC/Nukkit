@@ -55,6 +55,7 @@ import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.CompressionProvider;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.SourceInterface;
+import cn.nukkit.network.encryption.PrepareEncryptionTask;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.*;
 import cn.nukkit.network.session.NetworkPlayerSession;
@@ -137,8 +138,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public boolean spawned = false;
     public boolean loggedIn = false;
     public boolean locallyInitialized = false;
-    private boolean verified = false;
+    private boolean loginVerified = false;
     private int unverifiedPackets;
+    private boolean loginPacketReceived;
+    private boolean awaitingEncryptionHandshake;
     public int gamemode;
     public long lastBreak;
     private BlockVector3 lastBreakPosition = new BlockVector3();
@@ -2103,7 +2106,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        if (!verified && packet.pid() != ProtocolInfo.LOGIN_PACKET && packet.pid() != ProtocolInfo.BATCH_PACKET && packet.pid() != ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET) {
+        byte pid = packet.pid();
+        if (!loginVerified && pid != ProtocolInfo.LOGIN_PACKET && pid != ProtocolInfo.BATCH_PACKET && pid != ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET && pid != ProtocolInfo.CLIENT_TO_SERVER_HANDSHAKE_PACKET) {
             server.getLogger().warning("Ignoring " + packet.getClass().getSimpleName() + " from " + getAddress() + " due to player not verified yet");
             if (unverifiedPackets++ > 100) {
                 this.close("", "Too many failed login attempts");
@@ -2118,7 +2122,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 return;
             }
 
-            if (packet.pid() == ProtocolInfo.BATCH_PACKET) {
+            if (pid == ProtocolInfo.BATCH_PACKET) {
                 this.server.getNetwork().processBatch((BatchPacket) packet, this);
                 return;
             }
@@ -2130,10 +2134,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             BlockFace face;
 
             packetswitch:
-            switch (packet.pid()) {
+            switch (pid) {
                 case ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET:
-                    if (this.loggedIn) {
-                        break;
+                    if (this.loginPacketReceived) {
+                        this.getServer().getLogger().debug(username + ": got a RequestNetworkSettingsPacket but player is already logged in");
+                        return;
                     }
 
                     int protocolVersion = ((RequestNetworkSettingsPacket) packet).protocolVersion;
@@ -2157,9 +2162,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     });
                     break;
                 case ProtocolInfo.LOGIN_PACKET:
-                    if (this.loggedIn) {
-                        break;
+                    if (this.loginPacketReceived) {
+                        this.close("", "Invalid login packet");
+                        return;
                     }
+
+                    this.loginPacketReceived = true;
 
                     LoginPacket loginPacket = (LoginPacket) packet;
                     this.username = TextFormat.clean(loginPacket.username);
@@ -2186,7 +2194,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     boolean valid = true;
                     int len = loginPacket.username.length();
-                    if (len > 16 || len < 3) {
+                    if (len > 16 || len < 3 || loginPacket.username.trim().isEmpty()) {
                         valid = false;
                     }
 
@@ -2225,39 +2233,41 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break;
                     }
 
-                    Player playerInstance = this;
-                    this.verified = true;
+                    if (server.encryptionEnabled) {
+                        this.getServer().getScheduler().scheduleAsyncTask(new PrepareEncryptionTask(this) {
 
-                    this.preLoginEventTask = new AsyncTask() {
-                        private PlayerAsyncPreLoginEvent event;
-
-                        @Override
-                        public void onRun() {
-                            this.event = new PlayerAsyncPreLoginEvent(username, uuid, loginChainData, playerInstance.getSkin(), playerInstance.getAddress(), playerInstance.getPort());
-                            server.getPluginManager().callEvent(this.event);
-                        }
-
-                        @Override
-                        public void onCompletion(Server server) {
-                            if (playerInstance.closed) {
-                                return;
-                            }
-
-                            if (this.event.getLoginResult() == LoginResult.KICK) {
-                                playerInstance.close(this.event.getKickMessage(), this.event.getKickMessage());
-                            } else if (playerInstance.shouldLogin) {
-                                playerInstance.setSkin(this.event.getSkin());
-                                playerInstance.completeLoginSequence();
-                                for (Consumer<Server> action : this.event.getScheduledActions()) {
-                                    action.accept(server);
+                            @Override
+                            public void onCompletion(Server server) {
+                                if (!Player.this.connected) {
+                                    return;
                                 }
-                            }
-                        }
-                    };
 
-                    this.server.getScheduler().scheduleAsyncTask(this.preLoginEventTask);
-                    this.processLogin();
+                                if (this.getHandshakeJwt() == null || this.getEncryptionKey() == null || this.getEncryptionCipher() == null || this.getDecryptionCipher() == null) {
+                                    Player.this.close("Failed to enable encryption");
+                                    return;
+                                }
+
+                                ServerToClientHandshakePacket handshakePacket = new ServerToClientHandshakePacket();
+                                handshakePacket.jwt = this.getHandshakeJwt();
+                                Player.this.forceDataPacket(handshakePacket, () -> {
+                                    Player.this.awaitingEncryptionHandshake = true;
+                                    Player.this.networkSession.setEncryption(this.getEncryptionKey(), this.getEncryptionCipher(), this.getDecryptionCipher());
+                                });
+                            }
+                        });
+                    } else {
+                        this.processPreLogin();
+                    }
                     break;
+                case ProtocolInfo.CLIENT_TO_SERVER_HANDSHAKE_PACKET:
+                    if (!this.awaitingEncryptionHandshake) {
+                        this.close("Invalid encryption handshake");
+                        return;
+                    }
+
+                    this.awaitingEncryptionHandshake = false;
+                    this.processPreLogin();
+                    return;
                 case ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET:
                     ResourcePackClientResponsePacket responsePacket = (ResourcePackClientResponsePacket) packet;
                     switch (responsePacket.responseStatus) {
@@ -5466,5 +5476,40 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public NetworkPlayerSession getNetworkSession() {
         return this.networkSession;
+    }
+
+    protected void processPreLogin() {
+        this.loginVerified = true;
+        final Player playerInstance = this;
+
+        this.preLoginEventTask = new AsyncTask() {
+            private PlayerAsyncPreLoginEvent event;
+
+            @Override
+            public void onRun() {
+                this.event = new PlayerAsyncPreLoginEvent(username, uuid, loginChainData, playerInstance.getSkin(), playerInstance.getAddress(), playerInstance.getPort());
+                server.getPluginManager().callEvent(this.event);
+            }
+
+            @Override
+            public void onCompletion(Server server) {
+                if (!playerInstance.connected) {
+                    return;
+                }
+
+                if (this.event.getLoginResult() == LoginResult.KICK) {
+                    playerInstance.close(this.event.getKickMessage(), this.event.getKickMessage());
+                } else if (playerInstance.shouldLogin) {
+                    playerInstance.setSkin(this.event.getSkin());
+                    playerInstance.completeLoginSequence();
+                    for (Consumer<Server> action : this.event.getScheduledActions()) {
+                        action.accept(server);
+                    }
+                }
+            }
+        };
+
+        this.server.getScheduler().scheduleAsyncTask(this.preLoginEventTask);
+        this.processLogin();
     }
 }

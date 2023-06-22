@@ -552,10 +552,8 @@ public class Level implements ChunkManager, Metadatable {
             }
         } else {
             if (packets != null) {
-                if (packets.length == 1) {
-                    Server.broadcastPacket(players, packets[0]);
-                } else {
-                    this.server.batchPackets(players, packets, false);
+                for (DataPacket packet : packets) {
+                    Server.broadcastPacket(players, packet);
                 }
             }
         }
@@ -1033,12 +1031,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void sendBlocks(Player[] target, Vector3[] blocks, int flags, int dataLayer, boolean optimizeRebuilds) {
-        int size = 0;
-        for (Vector3 block : blocks) {
-            if (block != null) size++;
-        }
-        int packetIndex = 0;
-        UpdateBlockPacket[] packets = new UpdateBlockPacket[size];
         LongSet chunks = null;
         if (optimizeRebuilds) {
             chunks = new LongOpenHashSet();
@@ -1075,9 +1067,9 @@ public class Level implements ChunkManager, Metadatable {
                 throw new IllegalStateException("Unable to create BlockUpdatePacket at (" +
                         b.x + ", " + b.y + ", " + b.z + ") in " + getName(), e);
             }
-            packets[packetIndex++] = updateBlockPacket;
+
+            Server.broadcastPacket(target, updateBlockPacket);
         }
-        this.server.batchPackets(target, packets);
     }
 
     private void tickChunks() {
