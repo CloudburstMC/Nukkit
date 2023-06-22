@@ -1730,7 +1730,14 @@ public abstract class Entity extends Location implements Metadatable {
             float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0));
 
             if (down instanceof BlockHayBale) {
-                damage -= (damage * 0.8f);
+                damage -= damage * 0.8f;
+            }
+
+            if (this.isPlayer) {
+                int level = ((Player) this).getInventory().getBootsFast().getEnchantmentLevel(Enchantment.ID_PROTECTION_FALL);
+                if (level != 0) {
+                    damage -= damage / 100 * (level * 12);
+                }
             }
 
             if (damage > 0) {
