@@ -17,4 +17,9 @@ public class ItemBeetrootSoup extends ItemEdible {
     public ItemBeetrootSoup(Integer meta, int count) {
         super(BEETROOT_SOUP, 0, count, "Beetroot Soup");
     }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
+    }
 }
