@@ -46,7 +46,7 @@ public class EnchantCommand extends VanillaCommand {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
-        Player player = sender.getServer().getPlayer(args[0]);
+        Player player = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
         if (player == null) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             return true;

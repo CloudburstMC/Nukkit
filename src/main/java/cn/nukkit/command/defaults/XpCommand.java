@@ -52,7 +52,7 @@ public class XpCommand extends Command {
                 player = (Player) sender;
             } else if (args.length == 2) {
                 amountString = args[0];
-                playerName = args[1];
+                playerName = args[1].replace("@s", sender.getName());
                 player = sender.getServer().getPlayer(playerName);
             } else {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));

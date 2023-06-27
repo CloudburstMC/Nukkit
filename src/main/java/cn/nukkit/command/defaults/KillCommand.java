@@ -45,7 +45,7 @@ public class KillCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                 return true;
             }
-            Player player = sender.getServer().getPlayer(args[0]);
+            Player player = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
             if (player != null) {
                 if (player.isCreative() || player.isSpectator()) {
                     sender.sendMessage(TextFormat.RED + "No targets matched selector");

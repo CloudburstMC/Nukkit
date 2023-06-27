@@ -51,7 +51,7 @@ public class GamemodeCommand extends VanillaCommand {
         CommandSender target = sender;
         if (args.length > 1) {
             if (sender.hasPermission("nukkit.command.gamemode.other")) {
-                target = sender.getServer().getPlayer(args[1]);
+                target = sender.getServer().getPlayer(args[1].replace("@s", sender.getName()));
                 if (target == null) {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                     return true;

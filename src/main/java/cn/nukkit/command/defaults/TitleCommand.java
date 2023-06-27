@@ -50,7 +50,7 @@ public class TitleCommand extends VanillaCommand {
             return false;
         }
 
-        Player player = Server.getInstance().getPlayerExact(args[0]);
+        Player player = Server.getInstance().getPlayerExact(args[0].replace("@s", sender.getName()));
         if (player == null) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             return true;

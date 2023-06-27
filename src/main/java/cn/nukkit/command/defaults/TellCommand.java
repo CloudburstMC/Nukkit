@@ -37,7 +37,7 @@ public class TellCommand extends VanillaCommand {
             return false;
         }
 
-        String name = args[0].toLowerCase();
+        String name = args[0].replace("@s", sender.getName());
 
         Player player = sender.getServer().getPlayer(name);
         if (player == null) {
