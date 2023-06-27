@@ -34,7 +34,7 @@ public class DeopCommand extends VanillaCommand {
             return false;
         }
 
-        String playerName = args[0];
+        String playerName = args[0].replace("@s", sender.getName());
         IPlayer player = sender.getServer().getOfflinePlayer(playerName);
         player.setOp(false);
 

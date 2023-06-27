@@ -51,7 +51,7 @@ public class GiveCommand extends VanillaCommand {
             return true;
         }
 
-        Player player = sender.getServer().getPlayer(args[0]);
+        Player player = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
         Item item;
 
         try {
