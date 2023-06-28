@@ -402,6 +402,10 @@ public class Server {
         this.networkCompressionThreshold = this.getConfig("network.batch-threshold", 256);
         this.encryptionEnabled = this.getConfig("network.encryption", false);
 
+        if (!this.encryptionEnabled) {
+            this.getLogger().warning("Encryption is not enabled. For better security, it's recommended to enable it (network.encryption=true in nukkit.yml) if you don't use a proxy software.");
+        }
+
         this.autoTickRate = this.getConfig("level-settings.auto-tick-rate", true);
         this.autoTickRateLimit = this.getConfig("level-settings.auto-tick-rate-limit", 20);
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
