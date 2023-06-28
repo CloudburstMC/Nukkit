@@ -16,7 +16,7 @@ import java.security.MessageDigest;
 import java.util.stream.Collectors;
 
 public class SparkInstaller {
-    public static void checkSpark(Server server) {
+    public static void initSpark(Server server) {
         Logger log = server.getLogger();
         PluginManager manager = server.getPluginManager();
 

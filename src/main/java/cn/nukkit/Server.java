@@ -504,6 +504,8 @@ public class Server {
 
         this.pluginManager.loadPlugins(this.pluginPath);
 
+        SparkInstaller.initSpark(this);
+
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
         LevelProviderManager.addProvider(this, Anvil.class);
@@ -813,7 +815,7 @@ public class Server {
 
         this.pluginManager.registerInterface(JavaPluginLoader.class);
         this.pluginManager.loadPlugins(this.pluginPath);
-        SparkInstaller.checkSpark(this);
+        SparkInstaller.initSpark(this);
         this.enablePlugins(PluginLoadOrder.STARTUP);
         this.enablePlugins(PluginLoadOrder.POSTWORLD);
     }
