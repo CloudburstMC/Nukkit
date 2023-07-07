@@ -5,7 +5,6 @@ import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.level.Explosion;
 import cn.nukkit.level.GameRule;
-import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -76,8 +75,7 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
         if (!this.detonated) {
             this.detonated = true;
 
-            Position pos = this.getPosition();
-            Explosion explode = new Explosion(pos, 6, this);
+            Explosion explode = new Explosion(this.add(0, getHeight() / 2, 0), 6, this);
 
             this.close();
 
