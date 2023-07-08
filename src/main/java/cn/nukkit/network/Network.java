@@ -94,7 +94,7 @@ public class Network {
     public static byte[] deflateRaw(byte[] data, int level) throws IOException {
         Deflater deflater = DEFLATER_RAW.get();
         try {
-            deflater.setLevel(level);
+            deflater.setLevel(data.length < Server.getInstance().networkCompressionThreshold ? 0 : level);
             deflater.setInput(data);
             deflater.finish();
             FastByteArrayOutputStream bos = ThreadCache.fbaos.get();
@@ -450,5 +450,6 @@ public class Network {
         this.registerPacket(ProtocolInfo.FILTER_TEXT_PACKET, FilterTextPacket.class);
         this.registerPacket(ProtocolInfo.TOAST_REQUEST_PACKET, ToastRequestPacket.class);
         this.registerPacket(ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET, RequestNetworkSettingsPacket.class);
+        this.registerPacket(ProtocolInfo.CLIENT_TO_SERVER_HANDSHAKE_PACKET, ClientToServerHandshakePacket.class);
     }
 }

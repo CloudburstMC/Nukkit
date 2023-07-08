@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.network.encryption.EncryptionUtils;
 import cn.nukkit.network.protocol.LoginPacket;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -12,7 +13,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.security.interfaces.ECPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
@@ -32,17 +32,6 @@ import java.util.*;
  * ===============
  */
 public final class ClientChainData implements LoginChainData {
-    private static final String MOJANG_PUBLIC_KEY_BASE64 =
-            "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
-    private static final PublicKey MOJANG_PUBLIC_KEY;
-
-    static {
-        try {
-            MOJANG_PUBLIC_KEY = generateKey(MOJANG_PUBLIC_KEY_BASE64);
-        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
-            throw new AssertionError(e);
-        }
-    }
 
     public static ClientChainData of(byte[] buffer) {
         return new ClientChainData(buffer);
@@ -287,7 +276,7 @@ public final class ClientChainData implements LoginChainData {
                 return !iterator.hasNext();
             }
 
-            if (lastKey.equals(MOJANG_PUBLIC_KEY)) {
+            if (lastKey.equals(EncryptionUtils.MOJANG_PUBLIC_KEY) || lastKey.equals(EncryptionUtils.OLD_MOJANG_PUBLIC_KEY)) {
                 mojangKeyVerified = true;
             }
 
