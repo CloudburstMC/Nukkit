@@ -40,9 +40,11 @@ public interface BlockID {
     int DETECTOR_RAIL = 28;
     int STICKY_PISTON = 29;
     int COBWEB = 30;
+    int WEB = 30;
     int TALL_GRASS = 31;
     int BUSH = 32;
     int DEAD_BUSH = 32;
+    int DEADBUSH = 32;
     int PISTON = 33;
     int PISTON_HEAD = 34;
     int WOOL = 35;
@@ -149,6 +151,7 @@ public interface BlockID {
     int STONE_BRICK_STAIRS = 109;
     int MYCELIUM = 110;
     int WATER_LILY = 111;
+    int WATERLILY = 111;
     int LILY_PAD = 111;
     int NETHER_BRICKS = 112;
     int NETHER_BRICK_BLOCK = 112;
@@ -184,7 +187,7 @@ public interface BlockID {
     int BIRCH_WOODEN_STAIRS = 135;
     int JUNGLE_WOOD_STAIRS = 136;
     int JUNGLE_WOODEN_STAIRS = 136;
-
+    int COMMAND_BLOCK = 137;
     int BEACON = 138;
     int COBBLE_WALL = 139;
     int STONE_WALL = 139;
@@ -227,13 +230,16 @@ public interface BlockID {
     int DARK_OAK_WOOD_STAIRS = 164;
     int DARK_OAK_WOODEN_STAIRS = 164;
     int SLIME_BLOCK = 165;
-
+    int SLIME = 165;
+    int GLOW_STICK = 166;
     int IRON_TRAPDOOR = 167;
     int PRISMARINE = 168;
     int SEA_LANTERN = 169;
     int HAY_BALE = 170;
+    int HAY_BLOCK = 170;
     int CARPET = 171;
     int TERRACOTTA = 172;
+    int HARDENED_CLAY = 172;
     int COAL_BLOCK = 173;
     int PACKED_ICE = 174;
     int DOUBLE_PLANT = 175;
@@ -249,7 +255,8 @@ public interface BlockID {
     int FENCE_GATE_JUNGLE = 185;
     int FENCE_GATE_DARK_OAK = 186;
     int FENCE_GATE_ACACIA = 187;
-
+    int REPEATING_COMMAND_BLOCK = 188;
+    int CHAIN_COMMAND_BLOCK = 189;
     int SPRUCE_DOOR_BLOCK = 193;
     int BIRCH_DOOR_BLOCK = 194;
     int JUNGLE_DOOR_BLOCK = 195;
@@ -261,14 +268,16 @@ public interface BlockID {
     int PURPUR_BLOCK = 201;
 
     int PURPUR_STAIRS = 203;
-    //int DOUBLE_PURPUR_SLAB = 204;
     int UNDYED_SHULKER_BOX = 205;
     int END_BRICKS = 206;
     //Note: frosted ice CAN NOT BE HARVESTED WITH HAND -- canHarvestWithHand method should be overridden FALSE.
+    int FROSTED_ICE = 207;
     int ICE_FROSTED = 207;
     int END_ROD = 208;
     int END_GATEWAY = 209;
-
+    int ALLOW = 210;
+    int DENY = 211;
+    int BORDER_BLOCK = 212;
     int MAGMA = 213;
     int BLOCK_NETHER_WART_BLOCK = 214;
     int RED_NETHER_BRICK = 215;
@@ -307,4 +316,5 @@ public interface BlockID {
     int PISTON_EXTENSION = 250;
 
     int OBSERVER = 251;
+    int STRUCTURE_BLOCK = 252;
 }
