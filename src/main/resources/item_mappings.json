@@ -1,4 +1,22 @@
 {
+  "minecraft:carpet": {
+    "0": "minecraft:white_carpet",
+    "1": "minecraft:orange_carpet",
+    "2": "minecraft:magenta_carpet",
+    "3": "minecraft:light_blue_carpet",
+    "4": "minecraft:yellow_carpet",
+    "5": "minecraft:lime_carpet",
+    "6": "minecraft:pink_carpet",
+    "7": "minecraft:gray_carpet",
+    "8": "minecraft:light_gray_carpet",
+    "9": "minecraft:cyan_carpet",
+    "10": "minecraft:purple_carpet",
+    "11": "minecraft:blue_carpet",
+    "12": "minecraft:brown_carpet",
+    "13": "minecraft:green_carpet",
+    "14": "minecraft:red_carpet",
+    "15": "minecraft:black_carpet"
+  },
   "minecraft:fence": {
     "0": "minecraft:oak_fence",
     "1": "minecraft:spruce_fence",
