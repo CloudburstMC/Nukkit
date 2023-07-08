@@ -61,7 +61,7 @@ docker build -t nukkit .
 Run once to generate the `nukkit-data` volume, default settings, and choose language,
 
 ```
-docker run -it -p 19132:19132 -v nukkit-data:/data nukkit
+docker run -it -p 19132:19132/udp -v nukkit-data:/data nukkit
 ```
 Docker Compose
 -------------
