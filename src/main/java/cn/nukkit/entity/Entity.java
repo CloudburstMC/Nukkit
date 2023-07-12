@@ -301,6 +301,11 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_SONIC_BOOM = 107;
     public static final int DATA_FLAG_HAS_DASH_COOLDOWN = 108;
     public static final int DATA_FLAG_PUSH_TOWARDS_CLOSEST_SPACE = 109;
+    public static final int DATA_FLAG_SCENTING = 110;
+    public static final int DATA_FLAG_RISING = 111;
+    public static final int DATA_FLAG_FEELING_HAPPY = 112;
+    public static final int DATA_FLAG_SEARCHING = 113;
+    public static final int DATA_FLAG_CRAWLING = 114;
 
     public static long entityCount = 1;
 
