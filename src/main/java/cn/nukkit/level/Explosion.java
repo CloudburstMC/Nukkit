@@ -3,6 +3,7 @@ package cn.nukkit.level;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockTNT;
+import cn.nukkit.block.BlockWater;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityShulkerBox;
 import cn.nukkit.entity.Entity;
@@ -69,8 +70,7 @@ public class Explosion {
     public boolean explodeA() {
         if (what instanceof EntityExplosive) {
             Entity entity = (Entity) what;
-            int block = level.getBlockIdAt(entity.getFloorX(), entity.getFloorY(), entity.getFloorZ());
-            if (block == BlockID.WATER || block == BlockID.STILL_WATER) {
+            if (entity.getLevelBlock() instanceof BlockWater) {
                 this.doesDamage = false;
                 return true;
             }
