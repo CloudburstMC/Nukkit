@@ -42,13 +42,10 @@ import java.util.Iterator;
 public class EncryptionUtils {
 
     private static final AesFactory AES_FACTORY;
-    public static final ECPublicKey MOJANG_PUBLIC_KEY;
-    public static final ECPublicKey OLD_MOJANG_PUBLIC_KEY;
+    private static final ECPublicKey MOJANG_PUBLIC_KEY;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String MOJANG_PUBLIC_KEY_BASE64 =
             "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAECRXueJeTDqNRRgJi/vlRufByu/2G0i2Ebt6YMar5QX/R0DIIyrJMcUpruK4QveTfJSTp3Shlq4Gk34cD/4GUWwkv0DVuzeuB+tXija7HBxii03NHDbPAD0AKnLr2wdAp";
-    private static final String OLD_MOJANG_PUBLIC_KEY_BASE64 =
-            "MHYwEAYHKoZIzj0CAQYFK4EEACIDYgAE8ELkixyLcwlZryUQcu1TvPOmI2B7vX83ndnWRUaXm74wFfa5f/lwQNTfrLVHa2PmenpGI6JhIMUJaWZrjmMj90NoKNFSNBuKdm8rYiXsfaz3K36x/1U26HpG0ZxK/V1V";
     private static final KeyPairGenerator KEY_PAIR_GEN;
 
     static {
@@ -69,7 +66,6 @@ public class EncryptionUtils {
             KEY_PAIR_GEN = KeyPairGenerator.getInstance("EC");
             KEY_PAIR_GEN.initialize(new ECGenParameterSpec("secp384r1"));
             MOJANG_PUBLIC_KEY = generateKey(MOJANG_PUBLIC_KEY_BASE64);
-            OLD_MOJANG_PUBLIC_KEY = generateKey(OLD_MOJANG_PUBLIC_KEY_BASE64);
         } catch (NoSuchAlgorithmException | InvalidAlgorithmParameterException | InvalidKeySpecException e) {
             throw new AssertionError("Unable to initialize required encryption", e);
         }
@@ -160,7 +156,7 @@ public class EncryptionUtils {
                 return !iterator.hasNext();
             }
 
-            if (lastKey.equals(EncryptionUtils.MOJANG_PUBLIC_KEY) || lastKey.equals(EncryptionUtils.OLD_MOJANG_PUBLIC_KEY)) {
+            if (lastKey.equals(EncryptionUtils.getMojangPublicKey())) {
                 validChain = true;
             }
 

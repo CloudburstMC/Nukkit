@@ -471,7 +471,14 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_SNIFFER_EGG_HATCHED = 467;
     public static final int SOUND_WAXED_SIGN_INTERACT_FAIL = 468;
     public static final int SOUND_RECORD_RELIC = 469;
-    public static final int SOUND_UNDEFINED = 470;
+    public static final int SOUND_BUMP = 470;
+    public static final int SOUND_PUMPKIN_CARVE = 471;
+    public static final int SOUND_CONVERT_HUSK_TO_ZOMBIE = 472;
+    public static final int SOUND_PIG_DEATH = 473;
+    public static final int SOUND_HOGLIN_CONVERT_TO_ZOMBIE = 474;
+    public static final int SOUND_AMBIENT_UNDERWATER_ENTER = 475;
+    public static final int SOUND_AMBIENT_UNDERWATER_EXIT = 476;
+    public static final int SOUND_UNDEFINED = 477;
 
     public int sound;
     public float x;

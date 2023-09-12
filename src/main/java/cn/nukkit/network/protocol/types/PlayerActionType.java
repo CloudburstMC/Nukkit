@@ -32,7 +32,30 @@ public enum PlayerActionType {
     CONTINUE_DESTROY_BLOCK,
     START_ITEM_USE_ON,
     STOP_ITEM_USE_ON,
-    HANDLED_TELEPORT;
+    /**
+     * @since v567
+     */
+    HANDLED_TELEPORT,
+    /**
+     * @since v594
+     */
+    MISSED_SWING,
+    /**
+     * @since v594
+     */
+    START_CRAWLING,
+    /**
+     * @since v594
+     */
+    STOP_CRAWLING,
+    /**
+     * @since v618
+     */
+    START_FLYING,
+    /**
+     * @since v618
+     */
+    STOP_FLYING;
 
     private static final PlayerActionType[] VALUES = values();
 
