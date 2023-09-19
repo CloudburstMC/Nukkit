@@ -1,6 +1,7 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -39,6 +40,7 @@ public class EntityItem extends Entity {
     protected Item item;
 
     protected int pickupDelay;
+    protected boolean floatsInLava;
 
     @Override
     public float getWidth() {
@@ -109,6 +111,7 @@ public class EntityItem extends Entity {
         int id = this.item.getId();
         if (id >= Item.NETHERITE_INGOT && id <= Item.NETHERITE_SCRAP) {
             this.fireProof = true; // Netherite items are fireproof
+            this.floatsInLava = true;
         }
 
         this.server.getPluginManager().callEvent(new ItemSpawnEvent(this));
@@ -214,7 +217,8 @@ public class EntityItem extends Entity {
             }*/
 
             int bid = level.getBlock(this.getFloorX(), NukkitMath.floorDouble(this.y + 0.53), this.getFloorZ(), false).getId();
-            if (bid == BlockID.WATER || bid == BlockID.STILL_WATER) {
+            if (bid == BlockID.WATER || bid == BlockID.STILL_WATER ||
+                    (this.floatsInLava && (bid == Block.LAVA || bid == Block.STILL_LAVA))) {
                 this.motionY = this.getGravity() / 2;
             } else if (!this.isOnGround()) {
                 this.motionY -= this.getGravity();
