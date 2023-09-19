@@ -2546,8 +2546,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
-                    Vector3 clientPosition = authPacket.getPosition().asVector3()
-                            .subtract(0, this.getEyeHeight(), 0);
+                    Vector3 clientPosition = authPacket.getPosition().subtract(0, this.getEyeHeight(), 0).asVector3();
 
                     double distSqrt = clientPosition.distanceSquared(this);
                     if (distSqrt == 0.0 && authPacket.getYaw() % 360 == this.yaw && authPacket.getPitch() % 360 == this.pitch) {
