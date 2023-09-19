@@ -38,7 +38,34 @@ public enum AuthInputAction {
     PERFORM_ITEM_INTERACTION,
     PERFORM_BLOCK_ACTIONS,
     PERFORM_ITEM_STACK_REQUEST,
-    HANDLE_TELEPORT;
+    /**
+     * @since v567
+     */
+    HANDLE_TELEPORT,
+    /**
+     * @since v575
+     */
+    EMOTING,
+    /**
+     * @since v594
+     */
+    MISSED_SWING,
+    /**
+     * @since v594
+     */
+    START_CRAWLING,
+    /**
+     * @since v594
+     */
+    STOP_CRAWLING,
+    /**
+     * @since v618
+     */
+    START_FLYING,
+    /**
+     * @since v618
+     */
+    STOP_FLYING;
 
     private static final AuthInputAction[] VALUES = values();
 

@@ -302,6 +302,7 @@ public interface BlockID {
     int BLACK_GLAZED_TERRACOTTA = 235;
     int CONCRETE = 236;
     int CONCRETE_POWDER = 237;
+    int CONCRETEPOWDER = 237;
 
     int CHORUS_PLANT = 240;
     int STAINED_GLASS = 241;
