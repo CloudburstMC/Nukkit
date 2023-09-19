@@ -5,6 +5,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 
 /**
  * Created by CreeperFace on 2.6.2017.
@@ -96,5 +98,10 @@ public class BlockConcretePowder extends BlockFallable {
         }
 
         return true;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return DyeColor.getByWoolData(getDamage()).getColor();
     }
 }
