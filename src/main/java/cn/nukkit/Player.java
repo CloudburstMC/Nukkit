@@ -2552,6 +2552,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             break;
                         }
                         PlayerToggleFlightEvent playerToggleFlightEvent = new PlayerToggleFlightEvent(this, true);
+                        if (this.isSpectator()) {
+                            playerToggleFlightEvent.setCancelled();
+                        }
                         this.getServer().getPluginManager().callEvent(playerToggleFlightEvent);
                         if (playerToggleFlightEvent.isCancelled()) {
                             this.getAdventureSettings().update();
@@ -2562,6 +2565,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     if (authPacket.getInputData().contains(AuthInputAction.STOP_FLYING)) {
                         PlayerToggleFlightEvent playerToggleFlightEvent = new PlayerToggleFlightEvent(this, false);
+                        if (this.isSpectator()) {
+                            playerToggleFlightEvent.setCancelled();
+                        }
                         this.getServer().getPluginManager().callEvent(playerToggleFlightEvent);
                         if (playerToggleFlightEvent.isCancelled()) {
                             this.getAdventureSettings().update();
