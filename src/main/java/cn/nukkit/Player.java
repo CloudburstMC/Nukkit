@@ -3775,7 +3775,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public boolean kick(PlayerKickEvent.Reason reason, String reasonString, boolean isAdmin) {
         PlayerKickEvent ev;
-        this.server.getPluginManager().callEvent(ev = new PlayerKickEvent(this, reason, this.getLeaveMessage()));
+        this.server.getPluginManager().callEvent(ev = new PlayerKickEvent(this, reason, reasonString, this.getLeaveMessage()));
         if (!ev.isCancelled()) {
             String message;
             if (isAdmin) {
