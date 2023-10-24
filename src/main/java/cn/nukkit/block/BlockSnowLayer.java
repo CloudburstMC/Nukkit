@@ -186,4 +186,9 @@ public class BlockSnowLayer extends BlockFallable {
         }
         return false;
     }
+
+    @Override
+    public boolean canPassThrough() {
+        return (this.getDamage() & 0x7) < 3;
+    }
 }

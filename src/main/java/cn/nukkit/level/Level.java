@@ -3275,12 +3275,12 @@ public class Level implements ChunkManager, Metadatable {
     public void addEntityMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
         pk.eid = entity.getId();
-        pk.x = (float) x;
-        pk.y = (float) y;
-        pk.z = (float) z;
-        pk.yaw = (float) yaw;
-        pk.headYaw = (float) headYaw;
-        pk.pitch = (float) pitch;
+        pk.x = x;
+        pk.y = y;
+        pk.z = z;
+        pk.yaw = yaw;
+        pk.headYaw = headYaw;
+        pk.pitch = pitch;
         pk.onGround = entity.onGround;
 
         Server.broadcastPacket(entity.getViewers().values(), pk);
