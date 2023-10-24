@@ -6,6 +6,7 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -103,7 +104,12 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-        if (item.getShort("id") != Item.AIR) {
+        int itemId = item.getShort("id");
+        if (itemId != Item.AIR) {
+            String identifier = RuntimeItems.getMapping().toRuntime(itemId, item.getShort("Damage")).getIdentifier();
+            item.putString("Name", identifier);
+            item.remove("id");
+
             tag.putCompound("Item", item)
                     .putByte("ItemRotation", this.getItemRotation());
         }
