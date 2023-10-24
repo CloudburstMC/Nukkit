@@ -1,7 +1,5 @@
 package cn.nukkit.utils;
 
-import com.google.common.collect.Maps;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -101,7 +99,18 @@ public enum TextFormat {
     /**
      * Resets all previous chat colors or formats.
      */
-    RESET('r', 0x15);
+    RESET('r', 0x15),
+
+    MATERIAL_QUARTZ('h', 0),
+    MATERIAL_IRON('i', 0),
+    MATERIAL_NETHERITE('j', 0),
+    MATERIAL_REDSTONE('m', 0),
+    MATERIAL_COPPER('n', 0),
+    MATERIAL_GOLD('p', 0),
+    MATERIAL_EMERALD('q', 0),
+    MATERIAL_DIAMOND('s', 0),
+    MATERIAL_LAPIS('t', 0),
+    MATERIAL_AMETHYST('u', 0);
 
     /**
      * The special character which prefixes all format codes. Use this if
@@ -109,18 +118,18 @@ public enum TextFormat {
      */
     public static final char ESCAPE = '\u00A7';
 
-    private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + ESCAPE + "[0-9A-GK-OR]");
-    private final static Map<Integer, TextFormat> BY_ID = Maps.newTreeMap();
+    private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + ESCAPE + "[0-9A-U]");
+    //private final static Map<Integer, TextFormat> BY_ID = new TreeMap<>(); //unused
     private final static Map<Character, TextFormat> BY_CHAR = new HashMap<>();
 
     static {
         for (TextFormat color : values()) {
-            BY_ID.put(color.intCode, color);
+            //BY_ID.put(color.intCode, color);
             BY_CHAR.put(color.code, color);
         }
     }
 
-    private final int intCode;
+    //private final int intCode;
     private final char code;
     private final boolean isFormat;
     private final String toString;
@@ -131,7 +140,7 @@ public enum TextFormat {
 
     TextFormat(char code, int intCode, boolean isFormat) {
         this.code = code;
-        this.intCode = intCode;
+        //this.intCode = intCode;
         this.isFormat = isFormat;
         this.toString = new String(new char[]{ESCAPE, code});
     }
@@ -198,9 +207,10 @@ public enum TextFormat {
     public static String colorize(char altFormatChar, String textToTranslate) {
         char[] b = textToTranslate.toCharArray();
         for (int i = 0; i < b.length - 1; i++) {
-            if (b[i] == altFormatChar && "0123456789AaBbCcDdEeFfGgKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
+            int x = i + 1;
+            if (b[i] == altFormatChar && "0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUu".indexOf(b[x]) > -1) {
                 b[i] = TextFormat.ESCAPE;
-                b[i + 1] = Character.toLowerCase(b[i + 1]);
+                b[x] = Character.toLowerCase(b[x]);
             }
         }
         return new String(b);
