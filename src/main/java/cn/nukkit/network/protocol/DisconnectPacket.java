@@ -19,6 +19,7 @@ public class DisconnectPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.getVarInt(); // Disconnect fail reason
         this.hideDisconnectionScreen = this.getBoolean();
         this.message = this.getString();
     }
@@ -26,6 +27,7 @@ public class DisconnectPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
+        this.putVarInt(0); // Disconnect fail reason UNKNOWN
         this.putBoolean(this.hideDisconnectionScreen);
         if (!this.hideDisconnectionScreen) {
             this.putString(this.message);
