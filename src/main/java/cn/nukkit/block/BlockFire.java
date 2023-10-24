@@ -77,8 +77,8 @@ public class BlockFire extends BlockFlowable {
                 if (!event.isCancelled()) {
                     this.level.setBlock(this, event.getNewState(), true);
                 }
+                return;
             }
-            return;
         }
 
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
