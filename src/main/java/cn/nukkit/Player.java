@@ -2546,6 +2546,36 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                     }
 
+                    if (authPacket.getInputData().contains(AuthInputAction.START_FLYING)) {
+                        if (!server.getAllowFlight() && !this.getAdventureSettings().get(Type.ALLOW_FLIGHT)) {
+                            this.kick(PlayerKickEvent.Reason.FLYING_DISABLED, "Flying is not enabled on this server");
+                            break;
+                        }
+                        PlayerToggleFlightEvent playerToggleFlightEvent = new PlayerToggleFlightEvent(this, true);
+                        if (this.isSpectator()) {
+                            playerToggleFlightEvent.setCancelled();
+                        }
+                        this.getServer().getPluginManager().callEvent(playerToggleFlightEvent);
+                        if (playerToggleFlightEvent.isCancelled()) {
+                            this.getAdventureSettings().update();
+                        } else {
+                            this.getAdventureSettings().set(AdventureSettings.Type.FLYING, playerToggleFlightEvent.isFlying());
+                        }
+                    }
+
+                    if (authPacket.getInputData().contains(AuthInputAction.STOP_FLYING)) {
+                        PlayerToggleFlightEvent playerToggleFlightEvent = new PlayerToggleFlightEvent(this, false);
+                        if (this.isSpectator()) {
+                            playerToggleFlightEvent.setCancelled();
+                        }
+                        this.getServer().getPluginManager().callEvent(playerToggleFlightEvent);
+                        if (playerToggleFlightEvent.isCancelled()) {
+                            this.getAdventureSettings().update();
+                        } else {
+                            this.getAdventureSettings().set(AdventureSettings.Type.FLYING, playerToggleFlightEvent.isFlying());
+                        }
+                    }
+
                     Vector3 clientPosition = authPacket.getPosition().subtract(0, this.getEyeHeight(), 0).asVector3();
 
                     double distSqrt = clientPosition.distanceSquared(this);
@@ -2588,31 +2618,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (this.temporalVector.setComponents(moveEntityAbsolutePacket.x, moveEntityAbsolutePacket.y, moveEntityAbsolutePacket.z).distanceSquared(this.riding) < 1000) {
                             ((EntityBoat) this.riding).onInput(moveEntityAbsolutePacket.x, moveEntityAbsolutePacket.y, moveEntityAbsolutePacket.z, moveEntityAbsolutePacket.headYaw);
                         }
-                    }
-                    break;
-                case ProtocolInfo.REQUEST_ABILITY_PACKET:
-                    RequestAbilityPacket abilityPacket = (RequestAbilityPacket) packet;
-
-                    PlayerAbility ability = abilityPacket.getAbility();
-                    if (ability != PlayerAbility.FLYING) {
-                        this.server.getLogger().info("[" + this.getName() + "] has tried to trigger " + ability + " ability " + (abilityPacket.isBoolValue() ? "on" : "off"));
-                        return;
-                    }
-
-                    if (!server.getAllowFlight() && abilityPacket.isBoolValue() && !this.getAdventureSettings().get(Type.ALLOW_FLIGHT)) {
-                        this.kick(PlayerKickEvent.Reason.FLYING_DISABLED, "Flying is not enabled on this server");
-                        break;
-                    }
-
-                    PlayerToggleFlightEvent playerToggleFlightEvent = new PlayerToggleFlightEvent(this, abilityPacket.isBoolValue());
-                    if (this.isSpectator()) {
-                        playerToggleFlightEvent.setCancelled();
-                    }
-                    this.server.getPluginManager().callEvent(playerToggleFlightEvent);
-                    if (playerToggleFlightEvent.isCancelled()) {
-                        this.getAdventureSettings().update();
-                    } else {
-                        this.getAdventureSettings().set(Type.FLYING, playerToggleFlightEvent.isFlying());
                     }
                     break;
                 case ProtocolInfo.MOB_EQUIPMENT_PACKET:
@@ -3774,7 +3779,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     public boolean kick(PlayerKickEvent.Reason reason, String reasonString, boolean isAdmin) {
         PlayerKickEvent ev;
-        this.server.getPluginManager().callEvent(ev = new PlayerKickEvent(this, reason, this.getLeaveMessage()));
+        this.server.getPluginManager().callEvent(ev = new PlayerKickEvent(this, reason, reasonString, this.getLeaveMessage()));
         if (!ev.isCancelled()) {
             String message;
             if (isAdmin) {

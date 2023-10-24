@@ -41,10 +41,10 @@ public class StatusCommand extends VanillaCommand {
 
         TextFormat tpsColor = TextFormat.GREEN;
         float tps = server.getTicksPerSecond();
-        if (tps < 17) {
-            tpsColor = TextFormat.GOLD;
-        } else if (tps < 12) {
+        if (tps < 12) {
             tpsColor = TextFormat.RED;
+        } else if (tps < 17) {
+            tpsColor = TextFormat.GOLD;
         }
 
         sender.sendMessage(TextFormat.GOLD + "Current TPS: " + tpsColor + NukkitMath.round(tps, 2));
