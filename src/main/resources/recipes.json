@@ -2966,12 +2966,12 @@
             "priority" : 50
         },
         {
-            "id" : "WorkBench0_recipeId",
+            "id" : "WorkBench_recipeId",
             "type" : 1,
             "input" : {
                 "A" : {
                     "id" : 5,
-                  "damage": 0
+                  "damage": -1
                 }
             },
             "output" : [
@@ -2986,111 +2986,6 @@
             "block" : "crafting_table",
           "priority": 0
         },
-    {
-      "id" : "WorkBench1_recipeId",
-      "type" : 1,
-      "input" : {
-        "A" : {
-          "id" : 5,
-          "damage": 1
-        }
-      },
-      "output" : [
-        {
-          "id" : 58
-        }
-      ],
-      "shape" : [
-        "AA",
-        "AA"
-      ],
-      "block" : "crafting_table",
-      "priority": 0
-    },
-    {
-      "id" : "WorkBench2_recipeId",
-      "type" : 1,
-      "input" : {
-        "A" : {
-          "id" : 5,
-          "damage": 2
-        }
-      },
-      "output" : [
-        {
-          "id" : 58
-        }
-      ],
-      "shape" : [
-        "AA",
-        "AA"
-      ],
-      "block" : "crafting_table",
-      "priority": 0
-    },
-    {
-      "id" : "WorkBench3_recipeId",
-      "type" : 1,
-      "input" : {
-        "A" : {
-          "id" : 5,
-          "damage": 3
-        }
-      },
-      "output" : [
-        {
-          "id" : 58
-        }
-      ],
-      "shape" : [
-        "AA",
-        "AA"
-      ],
-      "block" : "crafting_table",
-      "priority": 0
-    },
-    {
-      "id" : "WorkBench4_recipeId",
-      "type" : 1,
-      "input" : {
-        "A" : {
-          "id" : 5,
-          "damage": 4
-        }
-      },
-      "output" : [
-        {
-          "id" : 58
-        }
-      ],
-      "shape" : [
-        "AA",
-        "AA"
-      ],
-      "block" : "crafting_table",
-      "priority": 0
-    },
-    {
-      "id" : "WorkBench5_recipeId",
-      "type" : 1,
-      "input" : {
-        "A" : {
-          "id" : 5,
-          "damage": 5
-        }
-      },
-      "output" : [
-        {
-          "id" : 58
-        }
-      ],
-      "shape" : [
-        "AA",
-        "AA"
-      ],
-      "block" : "crafting_table",
-      "priority": 0
-    },
         {
             "id" : "acacia_stairs_acacia_recipeId",
             "type" : 1,
