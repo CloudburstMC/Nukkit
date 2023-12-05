@@ -50,7 +50,7 @@ public class Network {
     public static final byte CHANNEL_TEXT = 7; //Chat and other text stuff
     public static final byte CHANNEL_END = 31;
 
-    private Class<? extends DataPacket>[] packetPool = new Class[256];
+    private Class<? extends DataPacket>[] packetPool = new Class[512];
 
     private final Server server;
 
@@ -332,7 +332,7 @@ public class Network {
     }
 
     private void registerPackets() {
-        this.packetPool = new Class[256];
+        this.packetPool = new Class[512];
 
         this.registerPacket(ProtocolInfo.ADD_ENTITY_PACKET, AddEntityPacket.class);
         this.registerPacket(ProtocolInfo.ADD_ITEM_ENTITY_PACKET, AddItemEntityPacket.class);
