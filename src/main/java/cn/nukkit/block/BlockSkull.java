@@ -87,10 +87,9 @@ public class BlockSkull extends BlockTransparentMeta implements Faceable {
                 nbt.put(aTag.getName(), aTag);
             }
         }
-        BlockEntitySkull skull = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
-        if (skull == null) {
-            return false;
-        }
+
+        BlockEntitySkull blockEntity = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, this.getChunk(), nbt);
+        blockEntity.spawnToAll();
 
         // TODO: 2016/2/3 SPAWN WITHER
 
@@ -103,7 +102,7 @@ public class BlockSkull extends BlockTransparentMeta implements Faceable {
         int dropMeta = 0;
         if (blockEntity != null) dropMeta = blockEntity.namedTag.getByte("SkullType");
         return new Item[]{
-                new ItemSkull(dropMeta)
+                Item.get(Item.SKULL, dropMeta)
         };
     }
 
@@ -112,7 +111,7 @@ public class BlockSkull extends BlockTransparentMeta implements Faceable {
         BlockEntity blockEntity = getLevel().getBlockEntity(this);
         int itemMeta = 0;
         if (blockEntity != null) itemMeta = blockEntity.namedTag.getByte("SkullType");
-        return new ItemSkull(itemMeta);
+        return Item.get(Item.SKULL, itemMeta);
     }
 
     @Override
