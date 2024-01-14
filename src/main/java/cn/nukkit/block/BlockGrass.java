@@ -8,7 +8,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.ObjectTallGrass;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.NukkitRandom;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -49,20 +48,28 @@ public class BlockGrass extends BlockDirt {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
-            if (player != null && (player.gamemode & 0x01) == 0) {
-                item.count--;
-            }
-            this.level.addParticle(new BoneMealParticle(this));
             ObjectTallGrass.growGrass(this.getLevel(), this, new NukkitRandom());
+            this.level.addParticle(new BoneMealParticle(this));
+            if (player != null) {
+                if (!player.isCreative()) {
+                    item.count--;
+                }
+            }
             return true;
         } else if (item.isHoe()) {
-            item.useOn(this);
-            this.getLevel().setBlock(this, Block.get(BlockID.FARMLAND));
-            return true;
+            Block up = this.up();
+            if (up instanceof BlockAir || up instanceof BlockFlowable) {
+                item.useOn(this);
+                this.getLevel().setBlock(this, Block.get(FARMLAND));
+                return true;
+            }
         } else if (item.isShovel()) {
-            item.useOn(this);
-            this.getLevel().setBlock(this, Block.get(BlockID.GRASS_PATH));
-            return true;
+            Block up = this.up();
+            if (up instanceof BlockAir || up instanceof BlockFlowable) {
+                item.useOn(this);
+                this.getLevel().setBlock(this, Block.get(GRASS_PATH));
+                return true;
+            }
         }
 
         return false;
@@ -71,27 +78,30 @@ public class BlockGrass extends BlockDirt {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
+            Block up = this.up();
+            if ((up.isSolid() && !up.isTransparent()) || up instanceof BlockLiquid) {
+                BlockSpreadEvent ev = new BlockSpreadEvent(this, this, Block.get(BlockID.DIRT));
+                Server.getInstance().getPluginManager().callEvent(ev);
+                if (!ev.isCancelled()) {
+                    this.getLevel().setBlock(this, ev.getNewState());
+                }
+                return 0;
+            }
+
             NukkitRandom random = new NukkitRandom();
-            x = random.nextRange((int) x - 1, (int) x + 1);
-            y = random.nextRange((int) y - 2, (int) y + 2);
-            z = random.nextRange((int) z - 1, (int) z + 1);
-            Block block = this.getLevel().getBlock(new Vector3(x, y, z));
+            int xx = random.nextRange((int) x - 1, (int) x + 1);
+            int yy = random.nextRange((int) y - 2, (int) y + 2);
+            int zz = random.nextRange((int) z - 1, (int) z + 1);
+            Block block = this.getLevel().getBlock(xx, yy, zz);
             if (block.getId() == Block.DIRT && block.getDamage() == 0) {
-                if (block.up() instanceof BlockAir) {
+                up = block.up();
+                if (!up.isSolid() && up.isTransparent() && !(up instanceof BlockLiquid)) {
                     BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(BlockID.GRASS));
                     Server.getInstance().getPluginManager().callEvent(ev);
                     if (!ev.isCancelled()) {
                         this.getLevel().setBlock(block, ev.getNewState());
                     }
                 }
-             } else if (block.getId() == Block.GRASS) {
-                if (block.up() instanceof BlockSolid) {
-                    BlockSpreadEvent ev = new BlockSpreadEvent(block, this, Block.get(BlockID.DIRT));
-                    Server.getInstance().getPluginManager().callEvent(ev);
-                    if (!ev.isCancelled()) {
-                        this.getLevel().setBlock(block, ev.getNewState());
-                    }
-                }   
             }
         }
         return 0;
