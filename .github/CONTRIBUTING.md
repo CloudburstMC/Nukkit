@@ -30,7 +30,7 @@ Example
 ---
 
 ### Issue Description
-<!--- Use our forum https://forums.nukkit.io for questions -->
+<!--- Use our forum cloudburstmc.org or Discord for questions -->
 It seems that the player you are manipulating does not seem to be moving from other people, and it seems that you are not moving from others.
 
 I do not know because I have not logged in to anything other than my server, but it works normally with Wi-Fi multi.
@@ -68,7 +68,7 @@ Java HotSpot(TM) 64-Bit Server VM (build 9+175, mixed mode)
 
 ```
 ### Issue Description
-<!--- Use our forum https://forums.nukkit.io for questions -->
+<!--- Use our forum cloudburstmc.org or Discord for questions -->
 It seems that the player you are manipulating does not seem to be moving from other people, and it seems that you are not moving from others.
 
 I do not know because I have not logged in to anything other than my server, but it works normally with Wi-Fi multi.
