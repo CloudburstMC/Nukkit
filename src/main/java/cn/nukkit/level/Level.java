@@ -3072,14 +3072,14 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void regenerateChunk(int x, int z) {
-        this.unloadChunk(x, z, false);
+        this.unloadChunk(x, z, false, false);
 
         this.cancelUnloadChunkRequest(x, z);
 
         BaseFullChunk chunk = provider.getEmptyChunk(x, z);
         provider.setChunk(x, z, chunk);
 
-        this.generateChunk(x, z);
+        this.generateChunk(x, z, true);
     }
 
     public void doChunkGarbageCollection() {
