@@ -72,7 +72,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new StatusCommand("status"));
         this.register("nukkit", new GarbageCollectorCommand("gc"));
         this.register("nukkit", new TimingsCommand("timings"));
-        this.register("nukkit", new DebugPasteCommand("debugpaste"));
+        //this.register("nukkit", new DebugPasteCommand("debugpaste")); // No more unauthenticated API access, TODO: find a replacement for hastebin.com
         //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
 //        }
     }
