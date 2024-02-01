@@ -40,6 +40,7 @@ public class PlayerListPacket extends DataPacket {
                 this.putSkin(entry.skin);
                 this.putBoolean(entry.isTeacher);
                 this.putBoolean(entry.isHost);
+                this.putBoolean(entry.isSubClient);
             }
         }
 
@@ -67,6 +68,7 @@ public class PlayerListPacket extends DataPacket {
         public Skin skin;
         public boolean isTeacher;
         public boolean isHost;
+        public boolean isSubClient;
 
         public Entry(UUID uuid) {
             this.uuid = uuid;

@@ -2122,11 +2122,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 return;
             }
 
-            if (pid == ProtocolInfo.BATCH_PACKET) {
-                this.server.getNetwork().processBatch((BatchPacket) packet, this);
-                return;
-            }
-
             if (log.isTraceEnabled() && !server.isIgnoredPacket(packet.getClass())) {
                 log.trace("Inbound {}: {}", this.getName(), packet);
             }
@@ -2452,13 +2447,24 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     if (this.teleportPosition != null) {
-                        break;
+                        return;
                     }
 
-                    // Proper player.isPassenger() check may be needed
                     if (this.riding instanceof EntityMinecartAbstract) {
-                        ((EntityMinecartAbstract) riding).setCurrentSpeed(authPacket.getMotion().getY());
-                        break;
+                        double inputY = authPacket.getMotion().getY();
+                        if (inputY >= -1.001 && inputY <= 1.001) {
+                            ((EntityMinecartAbstract) riding).setCurrentSpeed(inputY);
+                        }
+                    } else if (this.riding instanceof EntityBoat && authPacket.getInputData().contains(AuthInputAction.IN_CLIENT_PREDICTED_IN_VEHICLE)) {
+                        if (this.riding.getId() == authPacket.getPredictedVehicle() && this.riding.isControlling(this)) {
+                            if (this.temporalVector.setComponents(authPacket.getPosition().getX(), authPacket.getPosition().getY(), authPacket.getPosition().getZ()).distanceSquared(this.riding) < 100) {
+                                ((EntityBoat) this.riding).onInput(authPacket.getPosition().getX(), authPacket.getPosition().getY(), authPacket.getPosition().getZ(), authPacket.getHeadYaw());
+                            }
+                        }
+                    }
+
+                    if (!this.isSpectator() && authPacket.getInputData().contains(AuthInputAction.MISSED_SWING)) {
+                        level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_ATTACK_NODAMAGE, -1, "minecraft:player", false, false);
                     }
 
                     if (authPacket.getInputData().contains(AuthInputAction.START_SPRINTING)) {
@@ -2607,17 +2613,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.newPosition = clientPosition;
                         this.clientMovements.offer(clientPosition);
                         this.forceMovement = null;
-                    }
-                    break;
-                case ProtocolInfo.MOVE_ENTITY_ABSOLUTE_PACKET:
-                    MoveEntityAbsolutePacket moveEntityAbsolutePacket = (MoveEntityAbsolutePacket) packet;
-                    if (this.riding == null || this.riding.getId() != moveEntityAbsolutePacket.eid || !this.riding.isControlling(this)) {
-                        break;
-                    }
-                    if (this.riding instanceof EntityBoat) {
-                        if (this.temporalVector.setComponents(moveEntityAbsolutePacket.x, moveEntityAbsolutePacket.y, moveEntityAbsolutePacket.z).distanceSquared(this.riding) < 1000) {
-                            ((EntityBoat) this.riding).onInput(moveEntityAbsolutePacket.x, moveEntityAbsolutePacket.y, moveEntityAbsolutePacket.z, moveEntityAbsolutePacket.headYaw);
-                        }
                     }
                     break;
                 case ProtocolInfo.MOB_EQUIPMENT_PACKET:
@@ -5452,6 +5447,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             fishingHook.rod = fishingRod;
             fishingHook.checkLure();
             fishingHook.spawnToAll();
+            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_THROW, -1, "minecraft:player", false, false);
         }
     }
 

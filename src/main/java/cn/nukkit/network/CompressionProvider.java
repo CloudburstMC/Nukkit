@@ -15,6 +15,11 @@ public interface CompressionProvider {
         public byte[] decompress(byte[] compressed) throws Exception {
             return compressed;
         }
+
+        @Override
+        public byte getPrefix() {
+            return (byte) 0xff;
+        }
     };
 
     CompressionProvider ZLIB = new CompressionProvider() {
@@ -26,6 +31,11 @@ public interface CompressionProvider {
         @Override
         public byte[] decompress(byte[] compressed) throws Exception {
             return Network.inflateRaw(compressed);
+        }
+
+        @Override
+        public byte getPrefix() {
+            return (byte) 0x00;
         }
     };
 
@@ -40,5 +50,19 @@ public interface CompressionProvider {
             return ZLIB;
         }
         throw new UnsupportedOperationException();
+    }
+
+    default byte getPrefix() {
+        throw new UnsupportedOperationException();
+    }
+
+    static CompressionProvider byPrefix(byte prefix) {
+        switch (prefix) {
+            case 0x00:
+                return ZLIB;
+            case (byte) 0xff:
+                return NONE;
+        }
+        throw new IllegalArgumentException("Unsupported compression type: " + prefix);
     }
 }

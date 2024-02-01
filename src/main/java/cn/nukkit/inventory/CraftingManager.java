@@ -69,7 +69,7 @@ public class CraftingManager {
         }
         this.rebuildPacket();
 
-        MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes.");
+        MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes");
     }
 
     @SuppressWarnings("unchecked")
@@ -99,12 +99,9 @@ public class CraftingManager {
                         // Bake sorted list
                         sorted.sort(recipeComparator);
 
-                        String recipeId = (String) recipe.get("id");
-                        int priority = Utils.toInt(recipe.get("priority"));
-
-                        ShapelessRecipe result = new ShapelessRecipe(recipeId, priority, Item.fromJson(first), sorted);
-
-                        this.registerRecipe(result);
+                        Item resultItem = Item.fromJson(first, true);
+                        if (resultItem == null) continue; // TODO: remove when new blocks are supported
+                        this.registerRecipe(new ShapelessRecipe(null, Utils.toInt(recipe.get("priority")), resultItem, sorted)); // null recipeId will be replaced with recipe uuid
                         break;
                     case 1:
                         craftingBlock = (String) recipe.get("block");
@@ -137,10 +134,9 @@ public class CraftingManager {
                             extraResults.add(Item.fromJson(data));
                         }
 
-                        recipeId = (String) recipe.get("id");
-                        priority = Utils.toInt(recipe.get("priority"));
-
-                        this.registerRecipe(new ShapedRecipe(recipeId, priority, Item.fromJson(first), shape, ingredients, extraResults));
+                        resultItem = Item.fromJson(first, true);
+                        if (resultItem == null) continue; // TODO: remove when new blocks are supported
+                        this.registerRecipe(new ShapedRecipe(null, Utils.toInt(recipe.get("priority")), resultItem, shape, ingredients, extraResults));
                         break;
                     case 2:
                     case 3:
@@ -150,7 +146,8 @@ public class CraftingManager {
                             continue;
                         }
                         Map<String, Object> resultMap = (Map) recipe.get("output");
-                        Item resultItem = Item.fromJson(resultMap);
+                        resultItem = Item.fromJson(resultMap, true);
+                        if (resultItem == null) continue; // TODO: remove when new blocks are supported
                         Item inputItem;
                         try {
                             Map<String, Object> inputMap = (Map) recipe.get("input");
@@ -216,7 +213,7 @@ public class CraftingManager {
                 ingredients.put(ingredientChar, ingredient);
             }
             this.registerRecipe(
-                    new ShapedRecipe(recipe.get("id") + "_" + planksMeta, Utils.toInt(recipe.get("priority")), Item.fromJson(first), shape, ingredients, extraResults));
+                    new ShapedRecipe(null, Utils.toInt(recipe.get("priority")), Item.fromJson(first), shape, ingredients, extraResults));
         }
     }
 

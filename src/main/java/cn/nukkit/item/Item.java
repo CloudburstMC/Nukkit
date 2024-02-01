@@ -460,7 +460,7 @@ public class Item implements Cloneable, BlockID, ItemID {
         return fromJson(data, false);
     }
 
-    private static Item fromJson(Map<String, Object> data, boolean ignoreUnsupported) {
+    public static Item fromJson(Map<String, Object> data, boolean ignoreUnsupported) {
         String nbt = (String) data.get("nbt_b64");
         byte[] nbtBytes;
         if (nbt != null) {
