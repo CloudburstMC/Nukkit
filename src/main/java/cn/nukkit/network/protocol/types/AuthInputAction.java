@@ -65,7 +65,15 @@ public enum AuthInputAction {
     /**
      * @since v618
      */
-    STOP_FLYING;
+    STOP_FLYING,
+    /**
+     * @since v622
+     */
+    RECEIVED_SERVER_DATA,
+    /**
+     * @since v649
+     */
+    IN_CLIENT_PREDICTED_IN_VEHICLE;
 
     private static final AuthInputAction[] VALUES = values();
 

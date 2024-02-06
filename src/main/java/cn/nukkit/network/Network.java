@@ -1,7 +1,6 @@
 package cn.nukkit.network;
 
 import cn.nukkit.Nukkit;
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.network.protocol.*;
@@ -12,7 +11,6 @@ import cn.nukkit.utils.VarInt;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufUtil;
 import io.netty.buffer.Unpooled;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
@@ -22,7 +20,6 @@ import java.net.InetSocketAddress;
 import java.net.ProtocolException;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
@@ -222,17 +219,7 @@ public class Network {
         return server;
     }
 
-    public void processBatch(BatchPacket packet, Player player) {
-        List<DataPacket> packets = new ObjectArrayList<>();
-        try {
-            this.processBatch(packet.payload, packets, player.getNetworkSession().getCompression());
-        } catch (ProtocolException e) {
-            player.close("", e.getMessage());
-            log.error("Unable to process player packets ", e);
-        }
-    }
-
-    public void processBatch(byte[] payload, Collection<DataPacket> packets, CompressionProvider compression) throws ProtocolException {
+    public void processBatch(byte[] payload, Collection<DataPacket> packets, CompressionProvider compression) {
         byte[] data;
         try {
             data = compression.decompress(payload);
@@ -282,17 +269,6 @@ public class Network {
                 log.debug("Error whilst decoding batch packet", e);
             }
         }
-    }
-
-    /**
-     * Process packets obtained from batch packets
-     * Required to perform additional analyses and filter unnecessary packets
-     *
-     * @param packets
-     */
-    public void processPackets(Player player, List<DataPacket> packets) {
-        if (packets.isEmpty()) return;
-        packets.forEach(player::handleDataPacket);
     }
 
     public DataPacket getPacket(int id) {

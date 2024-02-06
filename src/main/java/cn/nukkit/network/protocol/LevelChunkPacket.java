@@ -17,6 +17,7 @@ public class LevelChunkPacket extends DataPacket {
 
     public int chunkX;
     public int chunkZ;
+    public int dimension;
     public int subChunkCount;
     public boolean cacheEnabled;
     public boolean requestSubChunks;
@@ -34,6 +35,7 @@ public class LevelChunkPacket extends DataPacket {
         this.reset();
         this.putVarInt(this.chunkX);
         this.putVarInt(this.chunkZ);
+        this.putVarInt(this.dimension);
         if (!this.requestSubChunks) {
             this.putUnsignedVarInt(this.subChunkCount);
         } else if (this.subChunkLimit < 0) {

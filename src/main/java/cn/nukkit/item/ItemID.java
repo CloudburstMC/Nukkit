@@ -245,6 +245,7 @@ public interface ItemID {
     int APPLEENCHANTED = 466;
     int HEART_OF_THE_SEA = 467;
     int SCUTE = 468;
+    int TURTLE_SCUTE = 468;
     int TURTLE_SHELL = 469;
     int TURTLE_HELMET = 469;
     int PHANTOM_MEMBRANE = 470;
