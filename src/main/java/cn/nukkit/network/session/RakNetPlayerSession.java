@@ -47,7 +47,6 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
     private Player player;
     private String disconnectReason = null;
 
-    private CompressionProvider compressionIn = CompressionProvider.NONE;
     private CompressionProvider compressionOut = CompressionProvider.NONE;
     private boolean compressionInitialized;
 
@@ -69,6 +68,8 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
         if (packetId == 0xfe) {
             byte[] packetBuffer;
 
+            CompressionProvider compressionIn = CompressionProvider.NONE;
+
             if (this.decryptionCipher != null) {
                 try {
                     ByteBuffer buf = buffer.nioBuffer();
@@ -79,13 +80,13 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
                 }
 
                 if (this.compressionInitialized) {
-                    this.compressionIn = CompressionProvider.byPrefix(buffer.readByte());
+                    compressionIn = CompressionProvider.byPrefix(buffer.readByte());
                 }
 
                 packetBuffer = new byte[buffer.readableBytes() - 8];
             } else {
                 if (this.compressionInitialized) {
-                    this.compressionIn = CompressionProvider.byPrefix(buffer.readByte());
+                    compressionIn = CompressionProvider.byPrefix(buffer.readByte());
                 }
 
                 packetBuffer = new byte[buffer.readableBytes()];
@@ -94,7 +95,7 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
             buffer.readBytes(packetBuffer);
 
             try {
-                this.server.getNetwork().processBatch(packetBuffer, this.inbound, this.compressionIn);
+                this.server.getNetwork().processBatch(packetBuffer, this.inbound, compressionIn);
             } catch (Exception e) {
                 this.disconnect("Sent malformed packet");
                 log.error("[{}] Unable to process batch packet", (this.player == null ? this.session.getAddress() : this.player.getName()), e);
@@ -276,7 +277,6 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
     @Override
     public void setCompression(CompressionProvider compression) {
         Preconditions.checkNotNull(compression, "compression");
-        this.compressionIn = compression;
         this.compressionOut = compression;
         this.compressionInitialized = true;
     }
