@@ -17,7 +17,7 @@ import cn.nukkit.utils.TextFormat;
 public class EnchantCommand extends VanillaCommand {
 
     public EnchantCommand(String name) {
-        super(name, "%nukkit.command.enchant.description", "%commands.enchant.usage");
+        super(name, "%nukkit.command.enchant.description", "%nukkit.command.enchant.usage");
         this.setPermission("nukkit.command.enchant");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
@@ -62,18 +62,18 @@ public class EnchantCommand extends VanillaCommand {
         }
         Enchantment enchantment = Enchantment.getEnchantment(enchantId);
         if (enchantment == null) {
-            sender.sendMessage(new TranslationContainer("commands.enchant.notFound", String.valueOf(enchantId)));
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.enchant.notFound", String.valueOf(enchantId)));
             return true;
         }
         enchantment.setLevel(enchantLevel);
         Item item = player.getInventory().getItemInHand();
         if (item.getId() <= 0) {
-            sender.sendMessage(new TranslationContainer("commands.enchant.noItem"));
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.enchant.noItem", player.getName()));
             return true;
         }
         item.addEnchantment(enchantment);
         player.getInventory().setItemInHand(item);
-        Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.enchant.success"));
+        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.enchant.success", player.getName()));
         return true;
     }
 

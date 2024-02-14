@@ -9,6 +9,7 @@ import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.TextFormat;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +26,7 @@ import java.util.regex.Pattern;
 public class BanIpCommand extends VanillaCommand {
 
     public BanIpCommand(String name) {
-        super(name, "%nukkit.command.ban.ip.description", "%commands.banip.usage");
+        super(name, "%nukkit.command.ban.ip.description", "%nukkit.command.banip.usage");
         this.setPermission("nukkit.command.ban.ip");
         this.setAliases(new String[]{"banip"});
         this.commandParameters.clear();
@@ -89,7 +90,7 @@ public class BanIpCommand extends VanillaCommand {
 
                     Command.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success", value));
                 } else {
-                    sender.sendMessage(new TranslationContainer("commands.banip.invalid"));
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.banip.invalid"));
                     return false;
                 }
             }

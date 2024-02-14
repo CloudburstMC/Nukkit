@@ -41,69 +41,30 @@ public class KillCommand extends VanillaCommand {
             return false;
         }
         if (args.length == 1) {
+            if (args[0].equals("@s")) {
+                if (!(sender instanceof Player)) {
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.ingame"));
+                    return true;
+                }
+                suicide((Player) sender);
+                return true;
+            }
             if (!sender.hasPermission("nukkit.command.kill.other")) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", this.getName()));
                 return true;
             }
             Player player = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
             if (player != null) {
                 if (player.isCreative() || player.isSpectator()) {
-                    sender.sendMessage(TextFormat.RED + "No targets matched selector");
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.noTargetMatch"));
                     return true;
                 }
-                EntityDamageEvent ev = new EntityDamageEvent(player, DamageCause.SUICIDE, 1000);
-                sender.getServer().getPluginManager().callEvent(ev);
-                if (ev.isCancelled()) {
+                if (!kill(player)) {
                     return true;
                 }
-                player.setLastDamageCause(ev);
-                player.setHealth(0);
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
             } else if (args[0].equals("@e")) {
                 StringJoiner joiner = new StringJoiner(", ");
-                for (Level level : Server.getInstance().getLevels().values()) {
-                    for (Entity entity : level.getEntities()) {
-                        if (!(entity instanceof Player)) {
-                            EntityDamageEvent ev = new EntityDamageEvent(entity, DamageCause.SUICIDE, 1000);
-                            sender.getServer().getPluginManager().callEvent(ev);
-                            if (ev.isCancelled()) {
-                                continue;
-                            }
-                            joiner.add(entity.getName());
-                            entity.setLastDamageCause(ev);
-                            entity.close();
-                        }
-                    }
-                }
-                String entities = joiner.toString();
-                sender.sendMessage(new TranslationContainer("commands.kill.successful", entities.isEmpty() ? "0" : entities));
-            } else if (args[0].equals("@s")) {
-                if (!sender.hasPermission("nukkit.command.kill.self")) {
-                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
-                    return true;
-                }
-                if (!(sender instanceof Player)) {
-                    sender.sendMessage(new TranslationContainer("%commands.generic.ingame"));
-                    return true;
-                }
-                Player p = (Player) sender;
-                if (p.isCreative() || p.isSpectator()) {
-                    sender.sendMessage(TextFormat.RED + "No targets matched selector");
-                    return true;
-                }
-                EntityDamageEvent ev = new EntityDamageEvent(p, DamageCause.SUICIDE, 1000);
-                sender.getServer().getPluginManager().callEvent(ev);
-                if (ev.isCancelled()) {
-                    return true;
-                }
-                p.setLastDamageCause(ev);
-                p.setHealth(0);
-                sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
-            } else if (args[0].equals("@a")) {
-                if (!sender.hasPermission("nukkit.command.kill.other")) {
-                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
-                    return true;
-                }
                 for (Level level : Server.getInstance().getLevels().values()) {
                     for (Entity entity : level.getEntities()) {
                         if (entity instanceof Player) {
@@ -111,43 +72,86 @@ public class KillCommand extends VanillaCommand {
                             if (p.isCreative() || p.isSpectator()) {
                                 continue;
                             }
-                            EntityDamageEvent ev = new EntityDamageEvent(entity, DamageCause.SUICIDE, 1000);
-                            sender.getServer().getPluginManager().callEvent(ev);
-                            if (ev.isCancelled()) {
-                                continue;
-                            }
-                            entity.setLastDamageCause(ev);
-                            entity.setHealth(0);
                         }
+                        if (!kill(entity)) {
+                            continue;
+                        }
+                        joiner.add(entity.getName());
                     }
                 }
-                sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.all.successful"));
+                String entities = joiner.toString();
+                if (entities.isEmpty()) {
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.noTargetMatch"));
+                    return true;
+                }
+                sender.sendMessage(new TranslationContainer("commands.kill.successful", entities));
+            } else if (args[0].equals("@a")) {
+                StringJoiner joiner = new StringJoiner(", ");
+                for (Level level : Server.getInstance().getLevels().values()) {
+                    for (Entity entity : level.getEntities()) {
+                        if (!(entity instanceof Player)) {
+                            continue;
+                        }
+                        Player p = (Player) entity;
+                        if (p.isCreative() || p.isSpectator()) {
+                            continue;
+                        }
+                        if (!kill(entity)) {
+                            continue;
+                        }
+                        joiner.add(entity.getName());
+                    }
+                }
+                String entities = joiner.toString();
+                if (entities.isEmpty()) {
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.noTargetMatch"));
+                    return true;
+                }
+                sender.sendMessage(new TranslationContainer("commands.kill.successful", entities));
             } else {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             }
             return true;
         }
         if (sender instanceof Player) {
-            if (!sender.hasPermission("nukkit.command.kill.self")) {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
-                return true;
-            }
-            Player player = (Player) sender;
-            if (player.isCreative() || player.isSpectator()) {
-                sender.sendMessage(TextFormat.RED + "No targets matched selector");
-                return true;
-            }
-            EntityDamageEvent ev = new EntityDamageEvent(player, DamageCause.SUICIDE, 1000);
-            sender.getServer().getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) {
-                return true;
-            }
-            player.setLastDamageCause(ev);
-            player.setHealth(0);
-            sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
+            suicide((Player) sender);
         } else {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
+        }
+        return true;
+    }
+
+    private void suicide(Player player) {
+        if (!player.hasPermission("nukkit.command.kill.self")) {
+            player.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", this.getName()));
+            return;
+        }
+        if (player.isCreative() || player.isSpectator()) {
+            player.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.noTargetMatch"));
+            return;
+        }
+        if (!kill(player)) {
+            return;
+        }
+        player.sendMessage(new TranslationContainer("commands.kill.successful", player.getName()));
+    }
+
+    private static boolean kill(Entity entity) {
+        if (!entity.isAlive()) {
+            return false;
+        }
+
+        EntityDamageEvent ev = new EntityDamageEvent(entity, DamageCause.SUICIDE, 1000);
+        entity.getServer().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return false;
+        }
+        entity.setLastDamageCause(ev);
+        if (entity instanceof Player) {
+            entity.setHealth(0);
+        } else {
+            entity.close();
         }
         return true;
     }

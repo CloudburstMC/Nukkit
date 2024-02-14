@@ -17,7 +17,7 @@ import cn.nukkit.utils.TextFormat;
  */
 public class TeleportCommand extends VanillaCommand {
     public TeleportCommand(String name) {
-        super(name, "%nukkit.command.tp.description", "%commands.tp.usage");
+        super(name, "%nukkit.command.tp.description", "%nukkit.command.tp.usage");
         this.setPermission("nukkit.command.teleport");
         this.commandParameters.clear();
         this.commandParameters.put("->Player", new CommandParameter[]{
@@ -55,7 +55,7 @@ public class TeleportCommand extends VanillaCommand {
             if (sender instanceof Player) {
                 target = sender;
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.ingame"));
                 return true;
             }
             if (args.length == 1) {

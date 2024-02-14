@@ -5,6 +5,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.utils.TextFormat;
 
 import java.lang.reflect.Method;
 
@@ -43,7 +44,7 @@ public class SimpleCommand extends Command {
     }
 
     public void sendInGameMessage(CommandSender sender) {
-        sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+        sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.ingame"));
     }
 
     @Override

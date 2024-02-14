@@ -81,20 +81,20 @@ public class TitleCommand extends VanillaCommand {
                     player.setSubtitle(args[2]);
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.subtitle", TextFormat.clean(args[2]), player.getName()));
                     break;
-                /*case "actionbar":
-                    player.sendActionBarTitle(args[2]);
-                    sender.sendMessage(new TranslationContainer("nukkit.command.title.actionbar", new String[]{TextFormat.clean(args[2]), player.getName()}));
-                    break;*/
+                case "actionbar":
+                    player.sendActionBar(args[2]);
+                    sender.sendMessage(new TranslationContainer("nukkit.command.title.actionbar", TextFormat.clean(args[2]), player.getName()));
+                    break;
                 default:
                     sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                     return false;
             }
         } else if (args.length == 5) {
-            if (args[1].toLowerCase().equals("times")) {
+            if (args[1].equalsIgnoreCase("times")) {
                 try {
-                    /*player.setTitleAnimationTimes(Integer.valueOf(args[2]), //fadeIn
-                            Integer.valueOf(args[3]), //stay
-                            Integer.valueOf(args[4])); //fadeOut*/
+                    player.setTitleAnimationTimes(Integer.parseInt(args[2]), //fadeIn
+                            Integer.parseInt(args[3]), //stay
+                            Integer.parseInt(args[4])); //fadeOut
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.times.success",
                             args[2], args[3], args[4], player.getName()));
                 } catch (NumberFormatException exception) {

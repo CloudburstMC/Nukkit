@@ -6,6 +6,7 @@ import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.utils.TextFormat;
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -14,7 +15,7 @@ import cn.nukkit.lang.TranslationContainer;
 public class DefaultGamemodeCommand extends VanillaCommand {
 
     public DefaultGamemodeCommand(String name) {
-        super(name, "%nukkit.command.defaultgamemode.description", "%commands.defaultgamemode.usage");
+        super(name, "%nukkit.command.defaultgamemode.description", "%nukkit.command.defaultgamemode.usage");
         this.setPermission("nukkit.command.defaultgamemode");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
@@ -31,15 +32,15 @@ public class DefaultGamemodeCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.generic.usage", new String[]{this.usageMessage}));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
         int gameMode = Server.getGamemodeFromString(args[0]);
         if (gameMode != -1) {
             sender.getServer().setPropertyInt("gamemode", gameMode);
-            sender.sendMessage(new TranslationContainer("commands.defaultgamemode.success", new String[]{Server.getGamemodeString(gameMode)}));
+            sender.sendMessage(new TranslationContainer("commands.defaultgamemode.success", Server.getGamemodeString(gameMode)));
         } else {
-            sender.sendMessage("Unknown game mode"); //
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.gamemode.fail.invalid", args[0]));
         }
         return true;
     }

@@ -8,6 +8,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.utils.TextFormat;
 
 import java.text.DecimalFormat;
 
@@ -17,7 +18,7 @@ import java.text.DecimalFormat;
  */
 public class SetWorldSpawnCommand extends VanillaCommand {
     public SetWorldSpawnCommand(String name) {
-        super(name, "%nukkit.command.setworldspawn.description", "%commands.setworldspawn.usage");
+        super(name, "%nukkit.command.setworldspawn.description", "%nukkit.command.setworldspawn.usage");
         this.setPermission("nukkit.command.setworldspawn");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
@@ -37,7 +38,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
                 level = ((Player) sender).getLevel();
                 pos = ((Player) sender).round();
             } else {
-                sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.ingame"));
                 return true;
             }
         } else if (args.length == 3) {

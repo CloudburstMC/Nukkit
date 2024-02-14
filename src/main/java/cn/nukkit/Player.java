@@ -13,12 +13,9 @@ import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
-import cn.nukkit.event.entity.EntityDamageByBlockEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
-import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
@@ -4145,14 +4142,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (e instanceof Player) {
                             message = "death.attack.player";
                             params.add(((Player) e).getDisplayName());
-                            break;
                         } else if (e instanceof EntityLiving) {
                             message = "death.attack.mob";
                             params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
-                            break;
                         } else {
-                            params.add("Unknown");
+                            message = "death.attack.generic";
                         }
+                    } else {
+                        message = "death.attack.generic";
                     }
                     break;
                 case PROJECTILE:
@@ -4160,15 +4157,24 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Entity e = ((EntityDamageByEntityEvent) cause).getDamager();
                         killer = e;
                         if (e instanceof Player) {
-                            message = "death.attack.arrow";
+                            message = "death.attack.thrown";
                             params.add(((Player) e).getDisplayName());
                         } else if (e instanceof EntityLiving) {
-                            message = "death.attack.arrow";
+                            message = "death.attack.thrown";
                             params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
-                            break;
-                        } else {
-                            params.add("Unknown");
                         }
+                        if (message.isEmpty()) {
+                            message = "death.attack.generic";
+                        } else if (cause instanceof EntityDamageByChildEntityEvent) {
+                            Entity entity = ((EntityDamageByChildEntityEvent) cause).getChild();
+                            if (entity instanceof EntityArrow) {
+                                message = "death.attack.arrow";
+                            } else if (entity instanceof EntityThrownTrident) {
+                                message = "death.attack.trident";
+                            }
+                        }
+                    } else {
+                        message = "death.attack.generic";
                     }
                     break;
                 case VOID:
@@ -4181,11 +4187,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     message = "death.attack.fall";
                     break;
-
                 case SUFFOCATION:
                     message = "death.attack.inWall";
                     break;
-
                 case LAVA:
                     Block block = this.level.getBlock(new Vector3(this.x, this.y - 1, this.z));
                     if (block.getId() == Block.MAGMA) {
@@ -4194,19 +4198,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                     message = "death.attack.lava";
                     break;
-
                 case FIRE:
                     message = "death.attack.onFire";
                     break;
-
                 case FIRE_TICK:
                     message = "death.attack.inFire";
                     break;
-
                 case DROWNING:
                     message = "death.attack.drown";
                     break;
-
                 case CONTACT:
                     if (cause instanceof EntityDamageByBlockEvent) {
                         int id = ((EntityDamageByBlockEvent) cause).getDamager().getId();
@@ -4215,9 +4215,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         } else if (id == Block.ANVIL) {
                             message = "death.attack.anvil";
                         }
+                    } else {
+                        message = "death.attack.generic";
                     }
                     break;
-
                 case BLOCK_EXPLOSION:
                 case ENTITY_EXPLOSION:
                     if (cause instanceof EntityDamageByEntityEvent) {
@@ -4229,7 +4230,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         } else if (e instanceof EntityLiving) {
                             message = "death.attack.explosion.player";
                             params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
-                            break;
+                        } else if (e instanceof EntityFirework) {
+                            message = "death.attack.fireworks";
                         } else {
                             message = "death.attack.explosion";
                         }
@@ -4245,6 +4247,23 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     break;
                 case HUNGER:
                     message = "death.attack.starve";
+                    break;
+                case THORNS:
+                    if (cause instanceof EntityDamageByEntityEvent) {
+                        Entity e = ((EntityDamageByEntityEvent) cause).getDamager();
+                        killer = e;
+                        if (e instanceof Player) {
+                            message = "death.attack.thorns";
+                            params.add(((Player) e).getDisplayName());
+                        } else if (e instanceof EntityLiving) {
+                            message = "death.attack.thorns";
+                            params.add(!Objects.equals(e.getNameTag(), "") ? e.getNameTag() : e.getName());
+                        } else {
+                            message = "death.attack.generic";
+                        }
+                    } else {
+                        message = "death.attack.generic";
+                    }
                     break;
                 default:
                     message = "death.attack.generic";

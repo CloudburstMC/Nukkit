@@ -16,7 +16,7 @@ import cn.nukkit.level.Level;
 public class WeatherCommand extends VanillaCommand {
 
     public WeatherCommand(String name) {
-        super(name, "%nukkit.command.weather.description", "%commands.weather.usage");
+        super(name, "%nukkit.command.weather.description", "%nukkit.command.weather.usage");
         this.setPermission("nukkit.command.weather");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
@@ -31,7 +31,7 @@ public class WeatherCommand extends VanillaCommand {
             return true;
         }
         if (args.length == 0 || args.length > 2) {
-            sender.sendMessage(new TranslationContainer("commands.weather.usage", this.usageMessage));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
 
@@ -78,7 +78,7 @@ public class WeatherCommand extends VanillaCommand {
                         new TranslationContainer("commands.weather.thunder"));
                 return true;
             default:
-                sender.sendMessage(new TranslationContainer("commands.weather.usage", this.usageMessage));
+                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return false;
         }
 
