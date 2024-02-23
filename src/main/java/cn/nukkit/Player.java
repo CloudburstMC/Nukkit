@@ -759,12 +759,24 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.loadQueue.remove(index);
     }
 
+    /**
+     * Get the position where player will respawn
+     * @return player's spawn position or server's safe spawn
+     */
     public Position getSpawn() {
-        if (this.spawnPosition != null && this.spawnPosition.getLevel() != null) {
+        if (this.spawnPosition != null && this.spawnPosition.getLevel() != null && this.spawnPosition.getLevel().getProvider() != null) {
             return this.spawnPosition;
         } else {
             return this.server.getDefaultLevel().getSafeSpawn();
         }
+    }
+
+    /**
+     * Get player's spawn position
+     * @return player's spawn position or null if not set
+     */
+    public Position getSpawnPosition() {
+        return this.spawnPosition;
     }
 
     public void sendChunk(int x, int z, DataPacket packet) {
