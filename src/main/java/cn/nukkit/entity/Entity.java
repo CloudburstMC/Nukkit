@@ -2529,6 +2529,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void playAnimation(String animation) {
         AnimateEntityPacket animateEntityPacket = new AnimateEntityPacket();
         animateEntityPacket.animation = animation;
+        animateEntityPacket.runtimeEntityIds.add(this.id);
         Server.broadcastPacket(this.hasSpawned.values(), animateEntityPacket);
     }
 }
