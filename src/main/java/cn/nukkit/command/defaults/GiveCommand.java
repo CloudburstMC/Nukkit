@@ -47,56 +47,55 @@ public class GiveCommand extends VanillaCommand {
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
-            return true;
+            return false;
         }
 
         if (args.length < 2) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return true;
+            return false;
         }
 
         List<Player> targets = new ArrayList<>();
         if (args[0].equals("@a")) {
-            targets = new ArrayList<>(Server.getInstance().getOnlinePlayers().values());
+            targets.addAll(Server.getInstance().getOnlinePlayers().values());
         }
         else {
-            targets.add(sender.getServer().getPlayer(args[0].replace("@s", sender.getName())));
+            Player target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
+            if (target != null) targets.add(target);
+        }
+
+        Item item;
+        try {
+            item = Item.fromString(args[1]);
+        } catch (Exception e) {
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+            return false;
+        }
+
+        try {
+            item.setCount(Integer.parseInt(args[2]));
+        } catch (Exception e) {
+            item.setCount(item.getMaxStackSize());
+        }
+
+        if (item.getId() == 0) {
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", args[1]));
+            return false;
         }
 
         for (Player player : targets) {
-            Item item;
-
-            try {
-                item = Item.fromString(args[1]);
-            } catch (Exception e) {
-                sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-                return true;
-            }
-
-            try {
-                item.setCount(Integer.parseInt(args[2]));
-            } catch (Exception e) {
-                item.setCount(item.getMaxStackSize());
-            }
-
             if (player != null) {
-                if (item.getId() == 0) {
-                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.give.item.notFound", args[1]));
-                    return true;
-                }
                 player.getInventory().addItem(item.clone());
             } else {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
-
-                return true;
+                continue;
             }
             Command.broadcastCommandMessage(sender, new TranslationContainer(
                     "%commands.give.success",
                     item.getName() + " (" + item.getId() + ":" + item.getDamage() + ")",
                     String.valueOf(item.getCount()),
                     player.getName()));
-            return true;
         }
-        return false;
+        return true;
     }
 }
