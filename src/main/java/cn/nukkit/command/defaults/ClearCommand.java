@@ -52,7 +52,12 @@ public class ClearCommand extends VanillaCommand {
         }
         else {
             Player target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
-            if (target != null) targets.add(target);
+            if (target != null) {
+                targets.add(target);
+            }
+            else {
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+            }
         }
 
         for (Player player : targets) {

@@ -61,7 +61,12 @@ public class GiveCommand extends VanillaCommand {
         }
         else {
             Player target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
-            if (target != null) targets.add(target);
+            if (target != null) {
+                targets.add(target);
+            }
+            else {
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+            }
         }
 
         Item item;
@@ -84,12 +89,7 @@ public class GiveCommand extends VanillaCommand {
         }
 
         for (Player player : targets) {
-            if (player != null) {
-                player.getInventory().addItem(item.clone());
-            } else {
-                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
-                continue;
-            }
+            player.getInventory().addItem(item.clone());
             Command.broadcastCommandMessage(sender, new TranslationContainer(
                     "%commands.give.success",
                     item.getName() + " (" + item.getId() + ":" + item.getDamage() + ")",
