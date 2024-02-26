@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created on 2015/12/9 by xtypr.
+ * Created on 2024/26/2 by Sherko231.
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class ClearCommand extends VanillaCommand {
@@ -23,7 +23,8 @@ public class ClearCommand extends VanillaCommand {
         super(name, "%nukkit.command.clear.description", "%nukkit.command.clear.usage");
         this.setPermission("nukkit.command.clear");
         this.commandParameters.clear();
-        this.commandParameters.put("default", new CommandParameter[]{
+        this.commandParameters.put("default", new CommandParameter[]{});
+        this.commandParameters.put("target", new CommandParameter[]{
                 CommandParameter.newType("player", CommandParamType.TARGET),
         });
     }
@@ -31,12 +32,12 @@ public class ClearCommand extends VanillaCommand {
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
-            return true;
+            return false;
         }
 
         if (args.length > 1) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return true;
+            return false;
         }
 
         if (args.length == 0 && sender instanceof Player) {
@@ -47,14 +48,16 @@ public class ClearCommand extends VanillaCommand {
 
         List<Player> targets = new ArrayList<>();
         if (args[0].equals("@a")) {
-            targets = new ArrayList<>(Server.getInstance().getOnlinePlayers().values());
+            targets.addAll(Server.getInstance().getOnlinePlayers().values());
         }
         else {
-            targets.add(sender.getServer().getPlayer(args[0].replace("@s", sender.getName())));
+            Player target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
+            if (target != null) targets.add(target);
         }
 
         for (Player player : targets) {
             player.getInventory().clearAll();
+            Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.clear.success", player.getName()));
         }
 
         return false;

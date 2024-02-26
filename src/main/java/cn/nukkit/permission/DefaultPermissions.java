@@ -90,6 +90,7 @@ public abstract class DefaultPermissions {
         registerPermission(new Permission(ROOT + ".command.tell", "Allows the user to privately message another player", Permission.DEFAULT_TRUE), commands);
         registerPermission(new Permission(ROOT + ".command.say", "Allows the user to talk as the console", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.give", "Allows the user to give items to players", Permission.DEFAULT_OP), commands);
+        registerPermission(new Permission(ROOT + ".command.clear", "Allows the user to clear items from players", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.effect", "Allows the user to give/take potion effects", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.particle", "Allows the user to create particle effects", Permission.DEFAULT_OP), commands);
         registerPermission(new Permission(ROOT + ".command.teleport", "Allows the user to teleport players", Permission.DEFAULT_OP), commands);
