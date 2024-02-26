@@ -66,6 +66,7 @@ public class GiveCommand extends VanillaCommand {
             }
             else {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+                return false;
             }
         }
 

@@ -35,12 +35,12 @@ public class ClearCommand extends VanillaCommand {
             return false;
         }
 
-        if (args.length > 1) {
+        if (args.length > 1 || (!(sender instanceof Player) && args.length < 1)) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
 
-        if (args.length == 0 && sender instanceof Player) {
+        if (args.length == 0) {
             Player player = (Player) sender;
             player.getInventory().clearAll();
             return false;
@@ -57,6 +57,7 @@ public class ClearCommand extends VanillaCommand {
             }
             else {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
+                return false;
             }
         }
 
