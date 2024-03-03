@@ -4,10 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
-import cn.nukkit.item.Item;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
@@ -35,14 +33,8 @@ public class ClearCommand extends VanillaCommand {
             return false;
         }
 
-        if (args.length > 1 || (!(sender instanceof Player) && args.length < 1)) {
+        if (args.length != 1) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-            return false;
-        }
-
-        if (args.length == 0) {
-            Player player = (Player) sender;
-            player.getInventory().clearAll();
             return false;
         }
 
