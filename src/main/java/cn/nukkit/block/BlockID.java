@@ -4,6 +4,7 @@ public interface BlockID {
     int AIR = 0;
     int STONE = 1;
     int GRASS = 2;
+    int GRASS_BLOCK = 2;
     int DIRT = 3;
     int COBBLESTONE = 4;
     int COBBLE = 4;
