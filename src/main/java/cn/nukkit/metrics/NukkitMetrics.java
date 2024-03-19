@@ -164,6 +164,7 @@ public class NukkitMetrics {
             case 12: return "Switch";
             case 13: return "Xbox";
             case 14: return "Windows Phone";
+            case 15: return "Linux";
         }
         return "Unknown";
     }
