@@ -24,7 +24,7 @@ network:
  #Nivel de compresion usada para el envió de paquetes. Alta = más CPU, menos banda ancha
  compression-level: 4
  #Enable network encryption
- encryption: false
+ encryption: true
 
 debug:
  #Si es mayor que 1, mostrara mensajes de depuración en la consola

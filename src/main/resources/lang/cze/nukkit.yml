@@ -25,7 +25,7 @@ network:
  #Compression level používaný Zlib při odesílání dávkových paketů. Vyšší = více CPU, méně využití šířky pásma
  compression-level: 4
  #Enable network encryption
- encryption: false
+ encryption: true
 
 debug:
  #Pokud je nastavena 1, console posílá debug zprávy

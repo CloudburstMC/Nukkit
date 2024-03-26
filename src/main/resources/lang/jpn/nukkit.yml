@@ -24,7 +24,7 @@ network:
  #バッチパケットを送信するときのzlibの圧縮レベルですす。 値を大きくするとcpuに多く負荷かけ、低くすると通信量が増えます。
  compression-level: 4
  #Enable network encryption
- encryption: false
+ encryption: true
 
 debug:
  #1より大きいと、コンソールにデバッグメッセージが表示されます

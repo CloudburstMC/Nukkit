@@ -30,7 +30,7 @@ network:
  #Чим більше значення - тим більше навантаження на процесор, але менше навантаження на мережу
  compression-level: 4
  #Enable network encryption
- encryption: false
+ encryption: true
 
 debug:
  #Якщо > 1, у консолі будуть з'являтися повідомлення відладки 

@@ -24,7 +24,7 @@ network:
  #Komprimierungslevel von Zlib wenn eine Menge Pakete/Daten gesendet werden. Höher = mehr CPU, weniger Bandbreitennutzung
  compression-level: 4
  #Enable network encryption
- encryption: false
+ encryption: true
 
 debug:
  #Wenn > 1, werden Debug-Nachrichten in der Konsole angezeigt

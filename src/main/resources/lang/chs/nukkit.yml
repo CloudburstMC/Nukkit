@@ -24,7 +24,7 @@ network:
  #压缩等级。等级越高，CPU 占用越高，占用带宽越少
  compression-level: 4
  #Enable network encryption
- encryption: false
+ encryption: true
 
 debug:
  #当调试级别 > 1 时，将在控制台显示调试信息

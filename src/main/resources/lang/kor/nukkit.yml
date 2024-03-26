@@ -24,7 +24,7 @@ network:
  #일괄 처리된 패킷을 전송할 때 Zlib에 사용되는 압축 수준입니다. 높을수록 더 많은 CPU 사용량으로, 적은 대역폭을 사용합니다
  compression-level: 4
  #Enable network encryption
- encryption: false
+ encryption: true
 
 debug:
  #1보다 크면, 콘솔에 디버그 메시지를 표시합니다

@@ -24,7 +24,7 @@ network:
  #Suspaudimo lygis naudojant Zlib kai siunčiami suspausti paketai. Didesnė reikšmė = daugiau CPU, mažiau tinklo naudojimo
  compression-level: 4
  #Enable network encryption
- encryption: false
+ encryption: true
 
 debug:
  #Jeigu > 1, jis rodys derinimo pranešimus konsolėje
