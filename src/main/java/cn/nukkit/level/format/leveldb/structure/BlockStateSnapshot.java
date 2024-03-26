@@ -1,7 +1,7 @@
 package cn.nukkit.level.format.leveldb.structure;
 
 import cn.nukkit.level.format.leveldb.BlockStateMapping;
-import com.nukkitx.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMap;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;

@@ -20,8 +20,8 @@ import cn.nukkit.network.LittleEndianByteBufInputStream;
 import cn.nukkit.network.LittleEndianByteBufOutputStream;
 import cn.nukkit.network.protocol.types.EntityLink;
 import cn.nukkit.network.protocol.types.ExperimentData;
-import com.nukkitx.nbt.NBTOutputStream;
-import com.nukkitx.nbt.NbtUtils;
+import org.cloudburstmc.nbt.NBTOutputStream;
+import org.cloudburstmc.nbt.NbtUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 

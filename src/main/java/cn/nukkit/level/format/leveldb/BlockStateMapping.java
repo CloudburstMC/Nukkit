@@ -8,7 +8,7 @@ import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import org.cloudburstmc.blockstateupdater.*;
 import org.cloudburstmc.blockstateupdater.util.tagupdater.CompoundTagUpdaterContext;
-import com.nukkitx.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMap;
 import com.nukkitx.network.util.Preconditions;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;

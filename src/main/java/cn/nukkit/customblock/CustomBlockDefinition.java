@@ -1,7 +1,7 @@
 package cn.nukkit.customblock;
 
 import cn.nukkit.customblock.container.BlockContainer;
-import com.nukkitx.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMap;
 import lombok.Data;
 
 @Data

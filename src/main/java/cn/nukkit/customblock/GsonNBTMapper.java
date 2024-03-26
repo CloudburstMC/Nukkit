@@ -2,10 +2,10 @@ package cn.nukkit.customblock;
 
 import com.google.gson.*;
 import com.google.gson.internal.LazilyParsedNumber;
-import com.nukkitx.nbt.NbtList;
-import com.nukkitx.nbt.NbtMap;
-import com.nukkitx.nbt.NbtMapBuilder;
-import com.nukkitx.nbt.NbtType;
+import org.cloudburstmc.nbt.NbtList;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.nbt.NbtType;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.lang.reflect.Type;

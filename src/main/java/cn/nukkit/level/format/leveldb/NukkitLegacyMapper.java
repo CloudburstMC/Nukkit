@@ -2,10 +2,10 @@ package cn.nukkit.level.format.leveldb;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.GlobalBlockPalette;
-import com.nukkitx.nbt.NbtMap;
-import com.nukkitx.nbt.NbtMapBuilder;
-import com.nukkitx.nbt.NbtType;
-import com.nukkitx.nbt.NbtUtils;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.nbt.NbtType;
+import org.cloudburstmc.nbt.NbtUtils;
 
 import java.io.InputStream;
 import java.util.List;

@@ -19,7 +19,7 @@ import cn.nukkit.level.format.leveldb.LevelDBConstants;
 import cn.nukkit.level.format.leveldb.NukkitLegacyMapper;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import com.nukkitx.nbt.*;
+import org.cloudburstmc.nbt.*;
 import it.unimi.dsi.fastutil.ints.*;
 import it.unimi.dsi.fastutil.objects.*;
 import lombok.extern.log4j.Log4j2;

@@ -1,6 +1,6 @@
 package cn.nukkit.customblock.comparator;
 
-import com.nukkitx.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMap;
 
 import java.util.Comparator;
 
