@@ -6,6 +6,8 @@ import lombok.ToString;
 @ToString
 public class CommandBlockUpdatePacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.COMMAND_BLOCK_UPDATE_PACKET;
+
     public boolean isBlock;
     public int x;
     public int y;
@@ -21,7 +23,7 @@ public class CommandBlockUpdatePacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.COMMAND_BLOCK_UPDATE_PACKET;
+        return NETWORK_ID;
     }
 
     @Override

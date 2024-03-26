@@ -4,19 +4,19 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
-import lombok.extern.log4j.Log4j2;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
-@Log4j2
 public class EntityMetadata {
 
-    private final Map<Integer, EntityData> map = new HashMap<>();
+    private Int2ObjectMap<EntityData> map = new Int2ObjectOpenHashMap<>();
 
     public EntityData get(int id) {
         return this.getOrDefault(id, null);
@@ -39,7 +39,6 @@ public class EntityMetadata {
 
     public EntityMetadata put(EntityData data) {
         this.map.put(data.getId(), data);
-        //log.info("Updated entity data {}", this::toString);
         return this;
     }
 
@@ -121,11 +120,15 @@ public class EntityMetadata {
     }
 
     public Map<Integer, EntityData> getMap() {
-        return new HashMap<>(map);
+        return new TreeMap<>(this.map); // Ordered
     }
 
-    @Override
-    public String toString() {
-        return map.toString();
+    private EntityMetadata replace(Int2ObjectMap<EntityData> map) {
+        this.map = map;
+        return this;
+    }
+
+    public EntityMetadata clone() {
+        return new EntityMetadata().replace(new Int2ObjectOpenHashMap<>(this.map));
     }
 }

@@ -16,27 +16,24 @@ import cn.nukkit.utils.TextFormat;
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class TeleportCommand extends VanillaCommand {
+
     public TeleportCommand(String name) {
         super(name, "%nukkit.command.tp.description", "%commands.tp.usage");
         this.setPermission("nukkit.command.teleport");
         this.commandParameters.clear();
         this.commandParameters.put("->Player", new CommandParameter[]{
-                CommandParameter.newType("destination", CommandParamType.TARGET),
+                new CommandParameter("player", CommandParamType.TARGET, false),
         });
         this.commandParameters.put("Player->Player", new CommandParameter[]{
-                CommandParameter.newType("victim", CommandParamType.TARGET),
-                CommandParameter.newType("destination", CommandParamType.TARGET)
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("target", CommandParamType.TARGET, false),
         });
         this.commandParameters.put("Player->Pos", new CommandParameter[]{
-                CommandParameter.newType("victim", CommandParamType.TARGET),
-                CommandParameter.newType("destination", CommandParamType.POSITION),
-                CommandParameter.newType("yRot", true, CommandParamType.VALUE),
-                CommandParameter.newType("xRot", true, CommandParamType.VALUE)
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("blockPos", CommandParamType.POSITION, false),
         });
         this.commandParameters.put("->Pos", new CommandParameter[]{
-                CommandParameter.newType("destination", CommandParamType.POSITION),
-                CommandParameter.newType("yRot", true, CommandParamType.VALUE),
-                CommandParameter.newType("xRot", true, CommandParamType.VALUE)
+                new CommandParameter("blockPos", CommandParamType.POSITION, false),
         });
     }
 
@@ -59,21 +56,21 @@ public class TeleportCommand extends VanillaCommand {
                 return true;
             }
             if (args.length == 1) {
-                target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
+                target = sender.getServer().getPlayerExact(args[0].replace("@s", sender.getName()));
                 if (target == null) {
                     sender.sendMessage(TextFormat.RED + "Can't find player " + args[0]);
                     return true;
                 }
             }
         } else {
-            target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
+            target = sender.getServer().getPlayerExact(args[0].replace("@s", sender.getName()));
             if (target == null) {
                 sender.sendMessage(TextFormat.RED + "Can't find player " + args[0]);
                 return true;
             }
             if (args.length == 2) {
                 origin = target;
-                target = sender.getServer().getPlayer(args[1].replace("@s", sender.getName()));
+                target = sender.getServer().getPlayerExact(args[1].replace("@s", sender.getName()));
                 if (target == null) {
                     sender.sendMessage(TextFormat.RED + "Can't find player " + args[1]);
                     return true;
@@ -106,11 +103,17 @@ public class TeleportCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;
             }
-            if (y < 0) y = 0;
-            if (y > 256) y = 256;
+
+            if (x < -30000000) x = -30000000;
+            if (x > 30000000) x = 30000000;
+            if (y < -30000000) y = -30000000;
+            if (y > 30000000) y = 30000000;
+            if (z < -30000000) z = -30000000;
+            if (z > 30000000) z = 30000000;
+
             if (args.length == 6 || (args.length == 5 && pos == 3)) {
                 yaw = Integer.parseInt(args[pos++]);
-                pitch = Integer.parseInt(args[pos++]);
+                pitch = Integer.parseInt(args[pos]);
             }
             ((Player) target).teleport(new Location(x, y, z, yaw, pitch, ((Player) target).getLevel()), PlayerTeleportEvent.TeleportCause.COMMAND);
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.tp.success.coordinates", target.getName(), String.valueOf(NukkitMath.round(x, 2)), String.valueOf(NukkitMath.round(y, 2)), String.valueOf(NukkitMath.round(z, 2))));

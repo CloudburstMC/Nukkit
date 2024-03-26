@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockUnknown extends BlockMeta {
@@ -20,6 +20,11 @@ public class BlockUnknown extends BlockMeta {
     @Override
     public int getId() {
         return id;
+    }
+
+    @Override
+    public double getHardness() {
+        return 0.1;
     }
 
     @Override

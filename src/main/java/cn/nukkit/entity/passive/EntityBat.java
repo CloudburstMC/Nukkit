@@ -3,10 +3,7 @@ package cn.nukkit.entity.passive;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-/**
- * @author PikyCZ
- */
-public class EntityBat extends EntityAnimal {
+public class EntityBat extends EntityFlyingAnimal {
 
     public static final int NETWORK_ID = 19;
 
@@ -31,7 +28,12 @@ public class EntityBat extends EntityAnimal {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(6);
+        super.initEntity();
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 0;
     }
 }

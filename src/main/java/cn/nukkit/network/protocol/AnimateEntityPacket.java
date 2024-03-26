@@ -51,6 +51,7 @@ public class AnimateEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.decodeUnsupported();
     }
 
     @Override
@@ -60,7 +61,9 @@ public class AnimateEntityPacket extends DataPacket {
         this.putString(this.animation);
         this.putString(this.nextState);
         this.putString(this.stopExpression);
+
         this.putLInt(this.stopExpressionVersion);
+
         this.putString(this.controller);
         this.putLFloat(this.blendOutTime);
 

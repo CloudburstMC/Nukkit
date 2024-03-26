@@ -6,7 +6,7 @@ import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.scheduler.AsyncTask;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class LightPopulationTask extends AsyncTask {
@@ -37,8 +37,8 @@ public class LightPopulationTask extends AsyncTask {
     public void onCompletion(Server server) {
         Level level = server.getLevel(this.levelId);
 
-        BaseFullChunk chunk = this.chunk.clone();
         if (level != null) {
+            BaseFullChunk chunk = this.chunk.clone();
             if (chunk == null) {
                 return;
             }

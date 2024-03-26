@@ -8,6 +8,7 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.item in project nukkit.
  */
 public class ItemAppleGoldEnchanted extends ItemEdible {
+
     public ItemAppleGoldEnchanted() {
         this(0, 1);
     }
@@ -17,7 +18,7 @@ public class ItemAppleGoldEnchanted extends ItemEdible {
     }
 
     public ItemAppleGoldEnchanted(Integer meta, int count) {
-        super(GOLDEN_APPLE_ENCHANTED, meta, count, "Enchanted Golden Apple");
+        super(GOLDEN_APPLE_ENCHANTED, meta, count, "Enchanted Apple");
     }
 
     @Override

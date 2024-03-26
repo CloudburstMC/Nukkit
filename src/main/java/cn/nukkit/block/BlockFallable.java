@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFallingBlock;
 import cn.nukkit.event.block.BlockFallEvent;
 import cn.nukkit.level.Level;
@@ -9,9 +8,8 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 
-
 /**
- * author: rcsuperman
+ * @author rcsuperman
  * Nukkit Project
  */
 public abstract class BlockFallable extends BlockSolid {
@@ -28,7 +26,6 @@ public abstract class BlockFallable extends BlockSolid {
                 if (event.isCancelled()) {
                     return type;
                 }
-
                 this.level.setBlock(this, Block.get(Block.AIR), true, true);
                 CompoundTag nbt = new CompoundTag()
                         .putList(new ListTag<DoubleTag>("Pos")
@@ -46,11 +43,9 @@ public abstract class BlockFallable extends BlockSolid {
                         .putInt("TileID", this.getId())
                         .putByte("Data", this.getDamage());
 
-                EntityFallingBlock fall = (EntityFallingBlock) Entity.createEntity("FallingSand", this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
+                EntityFallingBlock fall = new EntityFallingBlock(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
 
-                if (fall != null) {
-                    fall.spawnToAll();
-                }
+                fall.spawnToAll();
             }
         }
         return type;

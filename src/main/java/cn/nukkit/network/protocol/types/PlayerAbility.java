@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum PlayerAbility {
+
     BUILD,
     MINE,
     DOORS_AND_SWITCHES,

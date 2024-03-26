@@ -1,10 +1,11 @@
 package cn.nukkit.item.enchantment;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentKnockback extends Enchantment {
+
     protected EnchantmentKnockback() {
         super(ID_KNOCKBACK, "knockback", Rarity.UNCOMMON, EnchantmentType.SWORD);
     }

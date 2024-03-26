@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.ObjIntConsumer;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
@@ -55,7 +55,7 @@ public class AvailableCommandsPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -131,7 +131,7 @@ public class AvailableCommandsPacket extends DataPacket {
 
         this.putUnsignedVarInt(0); //subCommandData
 
-        putUnsignedVarInt(commands.size());
+        this.putUnsignedVarInt(commands.size());
         commands.forEach((name, cmdData) -> {
             CommandData data = cmdData.versions.get(0);
 
@@ -170,12 +170,13 @@ public class AvailableCommandsPacket extends DataPacket {
 
                     putLInt(type);
                     putBoolean(parameter.optional);
-                    putByte(parameter.options); // TODO: 19/03/2019 Bit flags. Only first bit is used for GameRules.
+                    putByte(parameter.options);
                 }
             }
         });
 
         this.putUnsignedVarInt(softEnums.size());
+
         softEnums.forEach((name, values) -> {
             this.putString(name);
             this.putUnsignedVarInt(values.size());

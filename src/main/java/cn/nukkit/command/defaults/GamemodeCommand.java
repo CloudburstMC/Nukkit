@@ -27,11 +27,11 @@ public class GamemodeCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 CommandParameter.newType("gameMode", CommandParamType.INT),
-                CommandParameter.newType("player", true, CommandParamType.TARGET)
+                new CommandParameter("player", CommandParamType.TARGET, true)
         });
         this.commandParameters.put("byString", new CommandParameter[]{
                 CommandParameter.newEnum("gameMode", CommandEnum.ENUM_GAMEMODE),
-                CommandParameter.newType("player", true, CommandParamType.TARGET)
+                new CommandParameter("player", CommandParamType.TARGET, true)
         });
     }
 
@@ -51,7 +51,7 @@ public class GamemodeCommand extends VanillaCommand {
         CommandSender target = sender;
         if (args.length > 1) {
             if (sender.hasPermission("nukkit.command.gamemode.other")) {
-                target = sender.getServer().getPlayer(args[1].replace("@s", sender.getName()));
+                target = sender.getServer().getPlayerExact(args[1].replace("@s", sender.getName()));
                 if (target == null) {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                     return true;
@@ -79,7 +79,7 @@ public class GamemodeCommand extends VanillaCommand {
             if (target.equals(sender)) {
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(gameMode)));
             } else {
-                target.sendMessage(new TranslationContainer("gameMode.changed", Server.getGamemodeString(gameMode)));
+                target.sendMessage(new TranslationContainer("gameMode.changed"));
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", target.getName(), Server.getGamemodeString(gameMode)));
             }
         }

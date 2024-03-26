@@ -6,6 +6,7 @@ import cn.nukkit.nbt.stream.NBTOutputStream;
 import java.io.IOException;
 
 public class ByteTag extends NumberTag<Integer> {
+
     public int data;
 
     @Override
@@ -28,12 +29,12 @@ public class ByteTag extends NumberTag<Integer> {
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
+    public void write(NBTOutputStream dos) throws IOException {
         dos.writeByte(data);
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis) throws IOException {
         data = dis.readByte();
     }
 
@@ -51,9 +52,9 @@ public class ByteTag extends NumberTag<Integer> {
     public String toString() {
         String hex = Integer.toHexString(this.data);
         if (hex.length() < 2) {
-            hex = "0" + hex;
+            hex = '0' + hex;
         }
-        return "ByteTag " + this.getName() + " (data: 0x" + hex + ")";
+        return "ByteTag " + this.getName() + " (data: 0x" + hex + ')';
     }
 
     @Override

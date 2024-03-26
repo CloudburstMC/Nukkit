@@ -7,6 +7,7 @@ import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 
 public class PopulatorLava extends Populator {
+
     private ChunkManager level;
     private int randomAmount;
     private int baseAmount;
@@ -28,15 +29,13 @@ public class PopulatorLava extends Populator {
             int amount = random.nextRange(0, this.randomAmount + 1) + this.baseAmount;
             int bx = chunkX << 4;
             int bz = chunkZ << 4;
-            int tx = bx + 15;
-            int tz = bz + 15;
             for (int i = 0; i < amount; ++i) {
                 int x = random.nextRange(0, 15);
                 int z = random.nextRange(0, 15);
-                int y = this.getHighestWorkableBlock(chunk, x, z);
+                int y = getHighestWorkableBlock(chunk, x, z);
                 if (y != -1 && chunk.getBlockId(x, y, z) == Block.AIR) {
                     chunk.setBlock(x, y, z, Block.LAVA);
-                    chunk.setBlockLight(x, y, z, Block.light[Block.LAVA]);
+                    chunk.setBlockLight(x, y, z, Block.getBlockLight(Block.LAVA));
                     this.lavaSpread(bx + x, y, bz + z);
                 }
             }
@@ -141,7 +140,6 @@ public class PopulatorLava extends Populator {
                             (j == 3 && previousDirection == 2)
                     ) {
                 int x = xx;
-                int y = yy;
                 int z = zz;
                 if (j == 0) {
                     --x;
@@ -152,17 +150,17 @@ public class PopulatorLava extends Populator {
                 } else if (j == 3) {
                     ++z;
                 }
-                if (!this.canFlowInto(x, y, z)) {
+                if (!this.canFlowInto(x, yy, z)) {
                     continue;
-                } else if (this.canFlowInto(x, y, z) && this.level.getBlockDataAt(x, y, z) == 0) {
+                } else if (this.canFlowInto(x, yy, z) && this.level.getBlockDataAt(x, yy, z) == 0) {
                     continue;
-                } else if (this.canFlowInto(x, y - 1, z)) {
+                } else if (this.canFlowInto(x, yy - 1, z)) {
                     return accumulatedCost;
                 }
                 if (accumulatedCost >= 4) {
                     continue;
                 }
-                int realCost = this.calculateFlowCost(x, y, z, accumulatedCost + 1, j);
+                int realCost = this.calculateFlowCost(x, yy, z, accumulatedCost + 1, j);
                 if (realCost < cost) {
                     cost = realCost;
                 }
@@ -177,7 +175,6 @@ public class PopulatorLava extends Populator {
         for (int j = 0; j < 4; ++j) {
             flowCost[j] = 1000;
             int x = xx;
-            int y = yy;
             int z = zz;
             if (j == 0) {
                 --x;
@@ -188,10 +185,10 @@ public class PopulatorLava extends Populator {
             } else if (j == 3) {
                 ++z;
             }
-            if (this.canFlowInto(x, y - 1, z)) {
+            if (this.canFlowInto(x, yy - 1, z)) {
                 flowCost[j] = 0;
             } else {
-                flowCost[j] = this.calculateFlowCost(x, y, z, 1, j);
+                flowCost[j] = this.calculateFlowCost(x, yy, z, 1, j);
             }
         }
         int minCost = flowCost[0];
@@ -217,7 +214,7 @@ public class PopulatorLava extends Populator {
     }
 
 
-    private int getHighestWorkableBlock(FullChunk chunk, int x, int z) {
+    private static int getHighestWorkableBlock(FullChunk chunk, int x, int z) {
         int y;
         for (y = 127; y >= 0; y--) {
             int b = chunk.getBlockId(x, y, z);

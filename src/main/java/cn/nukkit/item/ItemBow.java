@@ -2,12 +2,10 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
-import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -15,11 +13,10 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-
-import java.util.Random;
+import cn.nukkit.utils.Utils;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemBow extends ItemTool {
@@ -33,7 +30,11 @@ public class ItemBow extends ItemTool {
     }
 
     public ItemBow(Integer meta, int count) {
-        super(BOW, meta, count, "Bow");
+        this(BOW, meta, count, "Bow");
+    }
+
+    public ItemBow(int id, Integer meta, int count, String name) {
+        super(id, meta, count, name);
     }
 
     @Override
@@ -48,23 +49,44 @@ public class ItemBow extends ItemTool {
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return player.getInventory().contains(Item.get(ItemID.ARROW)) || player.isCreative();
+        return playerHasArrow(player) || player.isCreative();
+    }
+
+    private boolean playerHasArrow(Player p) {
+        if (p.getOffhandInventory().getItemFast(0).getId() == ItemID.ARROW) return true;
+        for (Item i : p.getInventory().getContents().values()) {
+            if (i.getId() == ItemID.ARROW) return true;
+        }
+        return false;
     }
 
     @Override
     public boolean onRelease(Player player, int ticksUsed) {
-        Item itemArrow = Item.get(Item.ARROW, 0, 1);
+        Item itemArrow = null;
+        boolean offhand = false;
+        if (player.getOffhandInventory().getItemFast(0).getId() == ItemID.ARROW) {
+            itemArrow = player.getOffhandInventory().getItemFast(0).clone();
+            itemArrow.setCount(1);
+            offhand = true;
+        } else {
+            for (Item i : player.getInventory().getContents().values()) {
+                if (i.getId() == ItemID.ARROW) {
+                    itemArrow = i.clone();
+                    itemArrow.setCount(1);
+                    break;
+                }
+            }
+        }
 
-        Inventory inventory = player.getOffhandInventory();
-
-        if (!inventory.contains(itemArrow) && !(inventory = player.getInventory()).contains(itemArrow) && (player.isAdventure() || player.isSurvival())) {
-            player.getOffhandInventory().sendContents(player);
-            inventory.sendContents(player);
-            return false;
+        if (itemArrow == null) {
+            if (player.isCreative()) {
+                itemArrow = Item.get(Item.ARROW, 0, 1);
+            } else {
+                return false;
+            }
         }
 
         double damage = 2;
-
         Enchantment bowDamage = this.getEnchantment(Enchantment.ID_BOW_POWER);
         if (bowDamage != null && bowDamage.getLevel() > 0) {
             damage += (double) bowDamage.getLevel() * 0.5 + 0.5;
@@ -72,6 +94,12 @@ public class ItemBow extends ItemTool {
 
         Enchantment flameEnchant = this.getEnchantment(Enchantment.ID_BOW_FLAME);
         boolean flame = flameEnchant != null && flameEnchant.getLevel() > 0;
+
+        float knockBack = 0.3f;
+        Enchantment knockBackEnchantment = this.getEnchantment(Enchantment.ID_BOW_KNOCKBACK);
+        if (knockBackEnchantment != null) {
+            knockBack += knockBackEnchantment.getLevel() * 0.1f;
+        }
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
@@ -85,18 +113,17 @@ public class ItemBow extends ItemTool {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (player.yaw > 180 ? 360 : 0) - (float) player.yaw))
                         .add(new FloatTag("", (float) -player.pitch)))
-                .putShort("Fire", flame ? 45 * 60 : 0)
-                .putDouble("damage", damage);
+                .putShort("Fire", flame ? 2700 : 0)
+                .putDouble("damage", damage)
+                .putFloat("knockback", knockBack);
 
         double p = (double) ticksUsed / 20;
-        double f = Math.min((p * p + p * 2) / 3, 1) * 2;
+        double f = Math.min((p * p + p * 2) / 3, 1) * 2.8;
 
-        EntityArrow arrow = (EntityArrow) Entity.createEntity("Arrow", player.chunk, nbt, player, f == 2);
-
-        if (arrow == null) {
-            return false;
+        EntityArrow arrow = new EntityArrow(player.chunk, nbt, player, f > 2.3, false);
+        if (itemArrow.getDamage() > 0) {
+            arrow.setData(itemArrow.getDamage());
         }
-
         EntityShootBowEvent entityShootBowEvent = new EntityShootBowEvent(player, this, arrow, f);
 
         if (f < 0.1 || ticksUsed < 3) {
@@ -105,25 +132,29 @@ public class ItemBow extends ItemTool {
 
         Server.getInstance().getPluginManager().callEvent(entityShootBowEvent);
         if (entityShootBowEvent.isCancelled()) {
-            entityShootBowEvent.getProjectile().kill();
-            player.getInventory().sendContents(player);
-            player.getOffhandInventory().sendContents(player);
+            entityShootBowEvent.getProjectile().close();
+            return false;
         } else {
             entityShootBowEvent.getProjectile().setMotion(entityShootBowEvent.getProjectile().getMotion().multiply(entityShootBowEvent.getForce()));
             Enchantment infinityEnchant = this.getEnchantment(Enchantment.ID_BOW_INFINITY);
             boolean infinity = infinityEnchant != null && infinityEnchant.getLevel() > 0;
             EntityProjectile projectile;
-            if (infinity && (projectile = entityShootBowEvent.getProjectile()) instanceof EntityArrow) {
+            if (infinity && itemArrow.getDamage() == 0 && (projectile = entityShootBowEvent.getProjectile()) instanceof EntityArrow) {
                 ((EntityArrow) projectile).setPickupMode(EntityArrow.PICKUP_CREATIVE);
             }
-            if (player.isAdventure() || player.isSurvival()) {
-                if (!infinity) {
-                    inventory.removeItem(itemArrow);
+            if (!player.isCreative()) {
+                if (!infinity || itemArrow.getDamage() != 0) {
+                    if (offhand) {
+                        player.getOffhandInventory().removeItem(itemArrow);
+                    } else {
+                        player.getInventory().removeItem(itemArrow);
+                    }
                 }
+
                 if (!this.isUnbreakable()) {
                     Enchantment durability = this.getEnchantment(Enchantment.ID_DURABILITY);
-                    if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100))) {
-                        this.setDamage(this.getDamage() + 1);
+                    if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= Utils.random.nextInt(100))) {
+                        this.setDamage(this.getDamage() + 2);
                         if (this.getDamage() >= getMaxDurability()) {
                             this.count--;
                         }
@@ -131,13 +162,15 @@ public class ItemBow extends ItemTool {
                     }
                 }
             }
+
             if (entityShootBowEvent.getProjectile() != null) {
-                ProjectileLaunchEvent projectev = new ProjectileLaunchEvent(entityShootBowEvent.getProjectile());
+                EntityProjectile proj = entityShootBowEvent.getProjectile();
+                ProjectileLaunchEvent projectev = new ProjectileLaunchEvent(proj);
                 Server.getInstance().getPluginManager().callEvent(projectev);
                 if (projectev.isCancelled()) {
-                    entityShootBowEvent.getProjectile().kill();
+                    proj.close();
                 } else {
-                    entityShootBowEvent.getProjectile().spawnToAll();
+                    proj.spawnToAll();
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
                 }
             }

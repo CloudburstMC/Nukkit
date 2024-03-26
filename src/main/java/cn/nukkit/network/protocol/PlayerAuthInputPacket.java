@@ -15,6 +15,7 @@ import java.util.Set;
 @ToString
 @Getter
 public class PlayerAuthInputPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_AUTH_INPUT_PACKET;
 
     private float yaw;
@@ -22,18 +23,18 @@ public class PlayerAuthInputPacket extends DataPacket {
     private float headYaw;
     private Vector3f position;
     private Vector2 motion;
-    private Set<AuthInputAction> inputData = EnumSet.noneOf(AuthInputAction.class);
+    private final Set<AuthInputAction> inputData = EnumSet.noneOf(AuthInputAction.class);
     private InputMode inputMode;
     private ClientPlayMode playMode;
     private AuthInteractionModel interactionModel;
     private Vector3f vrGazeDirection;
     private long tick;
     private Vector3f delta;
-    // private ItemStackRequest itemStackRequest;
-    private Map<PlayerActionType, PlayerBlockActionData> blockActionData = new EnumMap<>(PlayerActionType.class);
     private Vector2 analogMoveVector;
-    private long predictedVehicle;
-    private Vector2f vehicleRotation;
+    //private ItemStackRequest itemStackRequest;
+    private final Map<PlayerActionType, PlayerBlockActionData> blockActionData = new EnumMap<>(PlayerActionType.class);
+    private long predictedVehicle; // 1.20.60+
+    private Vector2f vehicleRotation; // 1.20.70+
 
     @Override
     public byte pid() {
@@ -57,6 +58,7 @@ public class PlayerAuthInputPacket extends DataPacket {
 
         this.inputMode = InputMode.fromOrdinal((int) this.getUnsignedVarInt());
         this.playMode = ClientPlayMode.fromOrdinal((int) this.getUnsignedVarInt());
+
         this.interactionModel = AuthInteractionModel.fromOrdinal((int) this.getUnsignedVarInt());
 
         if (this.playMode == ClientPlayMode.REALITY) {
@@ -66,13 +68,14 @@ public class PlayerAuthInputPacket extends DataPacket {
         this.tick = this.getUnsignedVarLong();
         this.delta = this.getVector3f();
 
-        if (this.inputData.contains(AuthInputAction.PERFORM_ITEM_STACK_REQUEST)) {
+        //if (this.inputData.contains(AuthInputAction.PERFORM_ITEM_STACK_REQUEST)) {
             // TODO: this.itemStackRequest = readItemStackRequest(buf, protocolVersion);
             // We are safe to leave this for later, since it is only sent with ServerAuthInventories
-        }
+        //}
 
         if (this.inputData.contains(AuthInputAction.PERFORM_BLOCK_ACTIONS)) {
             int arraySize = this.getVarInt();
+            if (arraySize > 512) throw new IllegalArgumentException("PlayerAuthInputPacket PERFORM_BLOCK_ACTIONS is too long: " + arraySize);
             for (int i = 0; i < arraySize; i++) {
                 PlayerActionType type = PlayerActionType.from(this.getVarInt());
                 switch (type) {
@@ -99,6 +102,6 @@ public class PlayerAuthInputPacket extends DataPacket {
 
     @Override
     public void encode() {
-        // Noop
+        this.encodeUnsupported();
     }
 }

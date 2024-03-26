@@ -4,12 +4,13 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.item.EntityItem;
+import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Position;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntityDespawnEvent extends EntityEvent {
@@ -21,7 +22,7 @@ public class EntityDespawnEvent extends EntityEvent {
 
     private final int entityType;
 
-    public EntityDespawnEvent(cn.nukkit.entity.Entity entity) {
+    public EntityDespawnEvent(Entity entity) {
         this.entity = entity;
         this.entityType = entity.getNetworkId();
     }
@@ -47,11 +48,10 @@ public class EntityDespawnEvent extends EntityEvent {
     }
 
     public boolean isVehicle() {
-        return this.entity instanceof Entity;
+        return this.entity instanceof EntityVehicle;
     }
 
     public boolean isItem() {
         return this.entity instanceof EntityItem;
     }
-
 }

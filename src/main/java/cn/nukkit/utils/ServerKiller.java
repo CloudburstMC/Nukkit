@@ -3,7 +3,9 @@ package cn.nukkit.utils;
 import java.util.concurrent.TimeUnit;
 
 /**
- * author: MagicDroidX
+ * A task that kills the server process after given time.
+ *
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ServerKiller extends Thread {
@@ -23,10 +25,7 @@ public class ServerKiller extends Thread {
     public void run() {
         try {
             sleep(sleepTime);
-        } catch (InterruptedException e) {
-            // ignore
-        }
-        System.out.println("\nTook too long to stop, server was killed forcefully!\n");
+        } catch (InterruptedException ignored) {}
         System.exit(1);
     }
 }

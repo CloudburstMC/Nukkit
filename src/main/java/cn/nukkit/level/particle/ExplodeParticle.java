@@ -7,6 +7,7 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class ExplodeParticle extends GenericParticle {
+
     public ExplodeParticle(Vector3 pos) {
         super(pos, Particle.TYPE_EXPLODE);
     }

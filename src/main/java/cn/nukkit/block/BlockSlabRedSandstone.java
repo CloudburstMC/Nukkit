@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -11,10 +10,10 @@ import cn.nukkit.utils.BlockColor;
 public class BlockSlabRedSandstone extends BlockSlab {
 
     public static final int RED_SANDSTONE = 0;
-    public static final int PURPUR = 1; //WHY THIS
+    public static final int PURPUR = 1;
 
     public BlockSlabRedSandstone() {
-        this(0);
+        this(RED_SANDSTONE);
     }
 
     public BlockSlabRedSandstone(int meta) {
@@ -28,7 +27,7 @@ public class BlockSlabRedSandstone extends BlockSlab {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
+        String[] names = {
                 "Red Sandstone",
                 "Purpur",
                 "",
@@ -44,7 +43,7 @@ public class BlockSlabRedSandstone extends BlockSlab {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };
@@ -55,7 +54,8 @@ public class BlockSlabRedSandstone extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
+        int damage = this.getDamage() & 0x07;
+        return new ItemBlock(Block.get(this.getId(),damage ), damage);
     }
 
     @Override
@@ -65,6 +65,25 @@ public class BlockSlabRedSandstone extends BlockSlab {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.ORANGE_BLOCK_COLOR;
+        int damage = this.getDamage() & 0x07;
+        switch (damage) {
+            case 0:
+                return BlockColor.ORANGE_BLOCK_COLOR;
+            case 1:
+                return BlockColor.PURPLE_BLOCK_COLOR;
+            case 2:
+                return BlockColor.CYAN_BLOCK_COLOR;
+            case 3:
+                return BlockColor.DIAMOND_BLOCK_COLOR;
+            case 4:
+                return BlockColor.CYAN_BLOCK_COLOR;
+            case 5:
+                return BlockColor.STONE_BLOCK_COLOR;
+            case 6:
+                return BlockColor.SAND_BLOCK_COLOR;
+            case 7:
+                return BlockColor.NETHERRACK_BLOCK_COLOR;
+        }
+        return BlockColor.STONE_BLOCK_COLOR;
     }
 }

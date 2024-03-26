@@ -2,6 +2,8 @@ package cn.nukkit.event;
 
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.plugin.RegisteredListener;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.*;
 
@@ -12,9 +14,9 @@ public class HandlerList {
 
     private volatile RegisteredListener[] handlers = null;
 
-    private final EnumMap<EventPriority, ArrayList<RegisteredListener>> handlerslots;
-
-    private static final ArrayList<HandlerList> allLists = new ArrayList<>();
+    private final EnumMap<EventPriority, List<RegisteredListener>> handlerslots;
+    private static final List<HandlerList> allLists = new ObjectArrayList<>();
+    private static final Map<Class<?>, HandlerList> eventHandlerLists = new Object2ObjectOpenHashMap<>();
 
     public static void bakeAll() {
         synchronized (allLists) {
@@ -56,7 +58,7 @@ public class HandlerList {
     public HandlerList() {
         handlerslots = new EnumMap<>(EventPriority.class);
         for (EventPriority o : EventPriority.values()) {
-            handlerslots.put(o, new ArrayList<>());
+            handlerslots.put(o, new ObjectArrayList<>());
         }
         synchronized (allLists) {
             allLists.add(this);
@@ -110,8 +112,8 @@ public class HandlerList {
 
     public synchronized void bake() {
         if (handlers != null) return; // don't re-bake when still valid
-        List<RegisteredListener> entries = new ArrayList<>();
-        for (Map.Entry<EventPriority, ArrayList<RegisteredListener>> entry : handlerslots.entrySet()) {
+        List<RegisteredListener> entries = new ObjectArrayList<>();
+        for (Map.Entry<EventPriority, List<RegisteredListener>> entry : handlerslots.entrySet()) {
             entries.addAll(entry.getValue());
         }
         handlers = entries.toArray(new RegisteredListener[0]);
@@ -150,4 +152,11 @@ public class HandlerList {
         }
     }
 
+    public static HandlerList getCachedHandlerList(Class<? extends Event> clazz) {
+        return eventHandlerLists.get(clazz);
+    }
+
+    public static void putCachedHandlerList(Class<? extends Event> clazz, HandlerList handlerList) {
+        eventHandlerLists.put(clazz, handlerList);
+    }
 }

@@ -48,7 +48,7 @@ public class BlockWeightedPressurePlateHeavy extends BlockPressurePlateBase {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };
@@ -59,7 +59,7 @@ public class BlockWeightedPressurePlateHeavy extends BlockPressurePlateBase {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override

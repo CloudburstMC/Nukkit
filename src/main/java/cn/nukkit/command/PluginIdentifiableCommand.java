@@ -3,7 +3,7 @@ package cn.nukkit.command;
 import cn.nukkit.plugin.Plugin;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public interface PluginIdentifiableCommand {

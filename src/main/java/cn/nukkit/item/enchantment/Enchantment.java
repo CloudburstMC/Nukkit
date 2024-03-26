@@ -21,21 +21,18 @@ import cn.nukkit.item.enchantment.trident.EnchantmentTridentChanneling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentImpaling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentLoyalty;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentRiptide;
-import cn.nukkit.math.NukkitMath;
+import cn.nukkit.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class Enchantment implements Cloneable {
 
     protected static Enchantment[] enchantments;
-
-    //http://minecraft.gamepedia.com/Enchanting#Aqua_Affinity
 
     public static final int ID_PROTECTION_ALL = 0;
     public static final int ID_PROTECTION_FIRE = 1;
@@ -109,8 +106,8 @@ public abstract class Enchantment implements Cloneable {
         enchantments[ID_BINDING_CURSE] = new EnchantmentBindingCurse();
         enchantments[ID_VANISHING_CURSE] = new EnchantmentVanishingCurse();
         enchantments[ID_TRIDENT_IMPALING] = new EnchantmentTridentImpaling();
-        enchantments[ID_TRIDENT_RIPTIDE] = new EnchantmentTridentRiptide();
         enchantments[ID_TRIDENT_LOYALTY] = new EnchantmentTridentLoyalty();
+        enchantments[ID_TRIDENT_RIPTIDE] = new EnchantmentTridentRiptide();
         enchantments[ID_TRIDENT_CHANNELING] = new EnchantmentTridentChanneling();
         enchantments[ID_CROSSBOW_MULTISHOT] = new EnchantmentCrossbowMultishot();
         enchantments[ID_CROSSBOW_PIERCING] = new EnchantmentCrossbowPiercing();
@@ -177,7 +174,9 @@ public abstract class Enchantment implements Cloneable {
             return this;
         }
 
-        this.level = NukkitMath.clamp(level, this.getMinLevel(), this.getMaxLevel());
+        if (level > this.getMaxLevel()) {
+            this.level = this.getMaxLevel();
+        } else this.level = Math.max(level, this.getMinLevel());
 
         return this;
     }
@@ -190,10 +189,6 @@ public abstract class Enchantment implements Cloneable {
         return this.rarity;
     }
 
-    /**
-     * @deprecated use {@link Rarity#getWeight()} instead
-     */
-    @Deprecated
     public int getWeight() {
         return this.rarity.getWeight();
     }
@@ -258,6 +253,10 @@ public abstract class Enchantment implements Cloneable {
         return false;
     }
 
+    public boolean isTreasure() {
+        return false;
+    }
+
     @Override
     protected Enchantment clone() {
         try {
@@ -270,10 +269,9 @@ public abstract class Enchantment implements Cloneable {
     public static final String[] words = {"the", "elder", "scrolls", "klaatu", "berata", "niktu", "xyzzy", "bless", "curse", "light", "darkness", "fire", "air", "earth", "water", "hot", "dry", "cold", "wet", "ignite", "snuff", "embiggen", "twist", "shorten", "stretch", "fiddle", "destroy", "imbue", "galvanize", "enchant", "free", "limited", "range", "of", "towards", "inside", "sphere", "cube", "self", "other", "ball", "mental", "physical", "grow", "shrink", "demon", "elemental", "spirit", "animal", "creature", "beast", "humanoid", "undead", "fresh", "stale"};
 
     public static String getRandomName() {
-        int count = ThreadLocalRandom.current().nextInt(3, 6);
         HashSet<String> set = new HashSet<>();
-        while (set.size() < count) {
-            set.add(Enchantment.words[ThreadLocalRandom.current().nextInt(0, Enchantment.words.length)]);
+        while (set.size() < Utils.random.nextInt(3, 6)) {
+            set.add(Enchantment.words[Utils.random.nextInt(0, Enchantment.words.length)]);
         }
 
         String[] words = set.toArray(new String[0]);

@@ -1,12 +1,9 @@
 package cn.nukkit.item;
 
-/**
- * Created by Leonidius20 on 18.08.18.
- */
 public class ItemBlazePowder extends Item {
 
     public ItemBlazePowder() {
-        this(0);
+        this(0, 1);
     }
 
     public ItemBlazePowder(Integer meta) {
@@ -14,6 +11,6 @@ public class ItemBlazePowder extends Item {
     }
 
     public ItemBlazePowder(Integer meta, int count) {
-        super(BLAZE_POWDER, meta, count, "Blaze Powder");
+        super(BLAZE_POWDER, 0, count, "Blaze Powder");
     }
 }

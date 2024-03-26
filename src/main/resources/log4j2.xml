@@ -11,8 +11,18 @@
                 <OnStartupTriggeringPolicy/>
             </Policies>
         </RollingRandomAccessFile>
+        <RollingRandomAccessFile name="LevelDB" fileName="logs/leveldb/latest.log" filePattern="logs/leveldb/%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%d{yyy-MM-dd HH:mm:ss.SSS} [%t] %-5level - %msg%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <OnStartupTriggeringPolicy/>
+            </Policies>
+        </RollingRandomAccessFile>
     </Appenders>
     <Loggers>
+        <Logger name="LevelDB-Logger" level="DEBUG" additivity="false">
+            <AppenderRef ref="LevelDB"/>
+        </Logger>
         <Root level="INFO">
             <AppenderRef ref="Console"/>
             <AppenderRef ref="File"/>

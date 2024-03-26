@@ -5,12 +5,10 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockAir extends BlockTransparent {
-
-    public BlockAir() {}
 
     @Override
     public int getId() {

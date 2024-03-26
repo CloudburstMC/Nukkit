@@ -1,6 +1,7 @@
 package cn.nukkit.math;
 
 public class BlockVector3 implements Cloneable {
+
     public int x;
     public int y;
     public int z;
@@ -93,7 +94,7 @@ public class BlockVector3 implements Cloneable {
     }
 
     public BlockVector3 add(BlockVector3 x) {
-        return new BlockVector3(this.x + x.getX(), this.y + x.getY(), this.z + x.getZ());
+        return new BlockVector3(this.x + x.x, this.y + x.y, this.z + x.z);
     }
 
     public BlockVector3 subtract() {
@@ -113,7 +114,7 @@ public class BlockVector3 implements Cloneable {
     }
 
     public BlockVector3 subtract(BlockVector3 x) {
-        return this.add(-x.getX(), -x.getY(), -x.getZ());
+        return this.add(-x.x, -x.y, -x.z);
     }
 
     public BlockVector3 multiply(int number) {
@@ -129,7 +130,7 @@ public class BlockVector3 implements Cloneable {
     }
 
     public BlockVector3 getSide(BlockFace face, int step) {
-        return new BlockVector3(this.getX() + face.getXOffset() * step, this.getY() + face.getYOffset() * step, this.getZ() + face.getZOffset() * step);
+        return new BlockVector3(this.x + face.getXOffset() * step, this.y + face.getYOffset() * step, this.z + face.getZOffset() * step);
     }
 
     public BlockVector3 up() {
@@ -220,7 +221,7 @@ public class BlockVector3 implements Cloneable {
 
     @Override
     public String toString() {
-        return "BlockPosition(level=" + ",x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
+        return "BlockVector3(level=" + ",x=" + this.x + ",y=" + this.y + ",z=" + this.z + ')';
     }
 
     @Override

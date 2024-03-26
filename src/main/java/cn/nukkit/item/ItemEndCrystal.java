@@ -15,7 +15,7 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ItemEndCrystal extends Item {
 
@@ -40,24 +40,33 @@ public class ItemEndCrystal extends Item {
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (!(target instanceof BlockBedrock) && !(target instanceof BlockObsidian)) return false;
         FullChunk chunk = level.getChunk((int) block.getX() >> 4, (int) block.getZ() >> 4);
-        Entity[] entities = level.getNearbyEntities(new SimpleAxisAlignedBB(target.x, target.y, target.z, target.x + 1, target.y + 2, target.z + 1));
-        Block up = target.up();
+        if (chunk == null) {
+            return false;
+        }
 
-        if (chunk == null || up.getId() != BlockID.AIR || up.up().getId() != BlockID.AIR || entities.length != 0) {
+        int tx = (int) target.x;
+        int ty = (int) target.y;
+        int tz = (int) target.z;
+        if (level.getBlockIdAt(chunk, tx, ty + 1, tz) != BlockID.AIR || level.getBlockIdAt(chunk, tx, ty + 2, tz) != BlockID.AIR) {
+            return false;
+        }
+
+        Entity[] entities = level.getCollidingEntities(new SimpleAxisAlignedBB(target.x, target.y, target.z, target.x + 1, target.y + 2, target.z + 1));
+        if (entities.length != 0) {
             return false;
         }
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", target.x + 0.5))
-                        .add(new DoubleTag("", up.y))
+                        .add(new DoubleTag("", ty + 1))
                         .add(new DoubleTag("", target.z + 0.5)))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("", 0))
                         .add(new DoubleTag("", 0))
                         .add(new DoubleTag("", 0)))
                 .putList(new ListTag<FloatTag>("Rotation")
-                        .add(new FloatTag("", new Random().nextFloat() * 360))
+                        .add(new FloatTag("", ThreadLocalRandom.current().nextFloat() * 360))
                         .add(new FloatTag("", 0)));
 
         if (this.hasCustomName()) {
@@ -67,11 +76,10 @@ public class ItemEndCrystal extends Item {
         Entity entity = Entity.createEntity("EndCrystal", chunk, nbt);
 
         if (entity != null) {
-            if (player.isAdventure() || player.isSurvival()) {
-                Item item = player.getInventory().getItemInHand();
-                item.setCount(item.getCount() - 1);
-                player.getInventory().setItemInHand(item);
+            if (!player.isCreative()) {
+                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
             }
+
             entity.spawnToAll();
             return true;
         }

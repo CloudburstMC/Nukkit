@@ -23,11 +23,12 @@ public class CraftingDataPacket extends DataPacket {
     public static final String CRAFTING_TAG_CAMPFIRE = "campfire";
     public static final String CRAFTING_TAG_BLAST_FURNACE = "blast_furnace";
     public static final String CRAFTING_TAG_SMOKER = "smoker";
+    public static final String CRAFTING_TAG_SMITHING_TABLE = "smithing_table";
 
     private List<Recipe> entries = new ArrayList<>();
     private final List<BrewingRecipe> brewingEntries = new ArrayList<>();
     private final List<ContainerRecipe> containerEntries = new ArrayList<>();
-    public boolean cleanRecipes;
+    public boolean cleanRecipes = true;
 
     public void addShapelessRecipe(ShapelessRecipe... recipe) {
         Collections.addAll(entries, recipe);
@@ -41,12 +42,12 @@ public class CraftingDataPacket extends DataPacket {
         Collections.addAll(entries, recipe);
     }
 
-    public void addMultiRecipe(MultiRecipe... recipe) {
-        Collections.addAll(entries, recipe);
-    }
-
     public void addBrewingRecipe(BrewingRecipe... recipe) {
         Collections.addAll(brewingEntries, recipe);
+    }
+
+    public void addMultiRecipe(MultiRecipe... recipe) {
+        Collections.addAll(entries, recipe);
     }
 
     public void addContainerRecipe(ContainerRecipe... recipe) {
@@ -61,7 +62,7 @@ public class CraftingDataPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -69,10 +70,13 @@ public class CraftingDataPacket extends DataPacket {
         this.reset();
         this.putUnsignedVarInt(entries.size());
 
-        int recipeNetworkId = 1;
-
         for (Recipe recipe : entries) {
-            this.putVarInt(recipe.getType().ordinal());
+            RecipeType networkType = recipe.getType();
+            if (networkType == RecipeType.SMITHING_TRANSFORM) {
+                networkType = RecipeType.REPAIR;
+            }
+            this.putVarInt(networkType.ordinal());
+
             switch (recipe.getType()) {
                 case SHAPELESS:
                     ShapelessRecipe shapeless = (ShapelessRecipe) recipe;
@@ -87,7 +91,7 @@ public class CraftingDataPacket extends DataPacket {
                     this.putUUID(shapeless.getId());
                     this.putString(CRAFTING_TAG_CRAFTING_TABLE);
                     this.putVarInt(shapeless.getPriority());
-                    this.putUnsignedVarInt(recipeNetworkId++);
+                    this.putUnsignedVarInt(shapeless.getNetworkId());
                     break;
                 case SHAPED:
                     ShapedRecipe shaped = (ShapedRecipe) recipe;
@@ -110,7 +114,7 @@ public class CraftingDataPacket extends DataPacket {
                     this.putUUID(shaped.getId());
                     this.putString(CRAFTING_TAG_CRAFTING_TABLE);
                     this.putVarInt(shaped.getPriority());
-                    this.putUnsignedVarInt(recipeNetworkId++);
+                    this.putUnsignedVarInt(shaped.getNetworkId());
                     break;
                 case FURNACE:
                 case FURNACE_DATA:
@@ -125,7 +129,29 @@ public class CraftingDataPacket extends DataPacket {
                     break;
                 case MULTI:
                     this.putUUID(((MultiRecipe) recipe).getId());
-                    this.putUnsignedVarInt(recipeNetworkId++);
+                    this.putUnsignedVarInt(((MultiRecipe) recipe).getNetworkId());
+                    break;
+                case SHULKER_BOX:
+                    break;
+                case SHAPELESS_CHEMISTRY:
+                    break;
+                case SHAPED_CHEMISTRY:
+                    break;
+                case REPAIR:
+                    break;
+                case CAMPFIRE:
+                    break;
+                case CAMPFIRE_DATA:
+                    break;
+                case SMITHING_TRANSFORM:
+                    SmithingRecipe smithing = (SmithingRecipe) recipe;
+                    this.putString(smithing.getRecipeId());
+                    this.putRecipeIngredient(Item.get(Item.AIR)); //template
+                    this.putRecipeIngredient(smithing.getEquipment());
+                    this.putRecipeIngredient(smithing.getIngredient());
+                    this.putSlot(smithing.getResult(), true);
+                    this.putString(CRAFTING_TAG_SMITHING_TABLE);
+                    this.putUnsignedVarInt(smithing.getNetworkId());
                     break;
             }
         }
@@ -156,5 +182,4 @@ public class CraftingDataPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
-
 }

@@ -9,11 +9,9 @@ public interface EntityInteractable {
 
     String getInteractButtonText();
 
-    //TODO: Mob entity stuff (e.g. feed)
     default String getInteractButtonText(Player player) {
         return this.getInteractButtonText();
     }
 
     boolean canDoInteraction();
-
 }

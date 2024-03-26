@@ -1,7 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -9,7 +7,18 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockDoubleSlabWood extends BlockSolidMeta {
+public class BlockDoubleSlabWood extends BlockDoubleSlabBase  {
+
+    private static final String[] NAMES = new String[]{
+            "Oak",
+            "Spruce",
+            "Birch",
+            "Jungle",
+            "Acacia",
+            "Dark Oak",
+            "",
+            ""
+    };
 
     public BlockDoubleSlabWood() {
         this(0);
@@ -22,6 +31,11 @@ public class BlockDoubleSlabWood extends BlockSolidMeta {
     @Override
     public int getId() {
         return DOUBLE_WOOD_SLAB;
+    }
+
+    @Override
+    public int getSingleSlabId() {
+        return WOOD_SLAB;
     }
 
     @Override
@@ -40,37 +54,21 @@ public class BlockDoubleSlabWood extends BlockSolidMeta {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Oak",
-                "Spruce",
-                "Birch",
-                "Jungle",
-                "Acacia",
-                "Dark Oak",
-                "",
-                ""
-        };
-        return "Double " + names[this.getDamage() & 0x07] + " Slab";
+    public String getSlabName() {
+        return NAMES[this.getDamage() & 0x07];
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.WOODEN_SLAB), this.getDamage() & 0x07);
-    }
-
-    public Item[] getDrops(Item item) {
-        return new Item[]{
-                Item.get(Item.WOOD_SLAB, this.getDamage() & 0x07, 2)
-        };
+    public int getItemDamage() {
+        return this.getDamage() & 0x07;
     }
 
     @Override
     public BlockColor getColor() {
-        switch(this.getDamage() & 0x07){
+        switch (this.getDamage() & 0x07) {
             default:
-                case 0: //OAK
-                    return BlockColor.WOOD_BLOCK_COLOR;
+            case 0: //OAK
+                return BlockColor.WOOD_BLOCK_COLOR;
             case 1: //SPRUCE
                 return BlockColor.SPRUCE_BLOCK_COLOR;
             case 2: //BIRCH

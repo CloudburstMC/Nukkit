@@ -30,5 +30,4 @@ public class BlockStairsDarkOak extends BlockStairsWood {
     public BlockColor getColor() {
         return BlockColor.BROWN_BLOCK_COLOR;
     }
-
 }

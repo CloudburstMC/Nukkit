@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockFadeEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSnowball;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
@@ -14,31 +13,14 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/6 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockSnowLayer extends BlockFallable {
-
-    private int meta;
+public class BlockSnowLayer extends BlockFallableMeta {
 
     public BlockSnowLayer() {
         this(0);
     }
 
     public BlockSnowLayer(int meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public final int getFullId() {
-        return (this.getId() << 4) + this.getDamage();
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
+        super(meta);
     }
 
     @Override
@@ -69,6 +51,11 @@ public class BlockSnowLayer extends BlockFallable {
     @Override
     public boolean canBeReplaced() {
         return (this.getDamage() & 0x7) != 0x7;
+    }
+
+    @Override
+    public boolean canPassThrough() {
+        return (this.getDamage() & 0x7) < 3;
     }
 
     @Override
@@ -114,12 +101,12 @@ public class BlockSnowLayer extends BlockFallable {
 
     @Override
     public Item toItem() {
-        return new ItemSnowball();
+        return Item.get(Item.SNOWBALL);
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isShovel() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isShovel()) {
             Item drop = this.toItem();
             int height = this.getDamage() & 0x7;
             drop.setCount(height < 3 ? 1 : height < 5 ? 2 : height == 7 ? 4 : 3);
@@ -134,11 +121,6 @@ public class BlockSnowLayer extends BlockFallable {
         return BlockColor.SNOW_BLOCK_COLOR;
     }
 
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
-    
     @Override
     public boolean isTransparent() {
         return (this.getDamage() & 0x7) != 0x7;
@@ -167,11 +149,11 @@ public class BlockSnowLayer extends BlockFallable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.isShovel() && (player.gamemode & 0x2) == 0) {
+        if (item.isShovel() && (player == null || (player.gamemode & 0x2) == 0)) {
             item.useOn(this);
             this.level.useBreakOn(this, item.clone().clearNamedTag(), null, true);
             return true;
-        } else if (item.getId() == SNOW_LAYER && (player.gamemode & 0x2) == 0) {
+        } else if (item.getId() == SNOW_LAYER && (player == null || (player.gamemode & 0x2) == 0)) {
             if ((this.getDamage() & 0x7) != 0x7) {
                 this.setDamage(this.getDamage() + 1);
                 this.level.setBlock(this ,this, true);
@@ -188,7 +170,7 @@ public class BlockSnowLayer extends BlockFallable {
     }
 
     @Override
-    public boolean canPassThrough() {
-        return (this.getDamage() & 0x7) < 3;
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

@@ -4,6 +4,7 @@ import cn.nukkit.Server;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.Buffer;
 import java.nio.BufferUnderflowException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -12,7 +13,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.nio.channels.spi.SelectorProvider;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -21,6 +22,7 @@ import java.util.*;
  * @author Tee7even
  */
 public class RCONServer extends Thread {
+
     private static final int SERVERDATA_AUTH = 3;
     private static final int SERVERDATA_AUTH_RESPONSE = 2;
     private static final int SERVERDATA_EXECCOMMAND = 2;
@@ -28,10 +30,10 @@ public class RCONServer extends Thread {
 
     private volatile boolean running;
 
-    private ServerSocketChannel serverChannel;
-    private Selector selector;
+    private final ServerSocketChannel serverChannel;
+    private final Selector selector;
 
-    private String password;
+    private final String password;
     private final Set<SocketChannel> rconSessions = new HashSet<>();
 
     private final List<RCONCommand> receiveQueue = new ArrayList<>();
@@ -101,8 +103,7 @@ public class RCONServer extends Thread {
                         this.write(key);
                     }
                 }
-            } catch (BufferUnderflowException exception) {
-                //Corrupted packet, ignore
+            } catch (BufferUnderflowException ignored) {
             } catch (Exception exception) {
                 Server.getInstance().getLogger().logException(exception);
             }
@@ -145,7 +146,8 @@ public class RCONServer extends Thread {
             return;
         }
 
-        buffer.flip();
+        //noinspection RedundantCast
+        ((Buffer) buffer).flip(); // do not remove the cast
         this.handle(channel, new RCONPacket(buffer));
     }
 
@@ -154,12 +156,14 @@ public class RCONServer extends Thread {
             case SERVERDATA_AUTH:
                 byte[] payload = new byte[1];
 
-                if (new String(packet.getPayload(), Charset.forName("UTF-8")).equals(this.password)) {
+                if (new String(packet.getPayload(), StandardCharsets.UTF_8).equals(this.password)) {
                     this.rconSessions.add(channel);
                     this.send(channel, new RCONPacket(packet.getId(), SERVERDATA_AUTH_RESPONSE, payload));
+                    try { Server.getInstance().getLogger().info("[RCON] " + channel.getRemoteAddress().toString() + " connected"); } catch (Exception ignored) {}
                     return;
                 }
 
+                try { Server.getInstance().getLogger().info("[RCON] Authentication failed for " + channel.getRemoteAddress().toString()); } catch (Exception ignored) {}
                 this.send(channel, new RCONPacket(-1, SERVERDATA_AUTH_RESPONSE, payload));
                 break;
             case SERVERDATA_EXECCOMMAND:
@@ -167,7 +171,7 @@ public class RCONServer extends Thread {
                     return;
                 }
 
-                String command = new String(packet.getPayload(), Charset.forName("UTF-8")).trim();
+                String command = new String(packet.getPayload(), StandardCharsets.UTF_8).trim();
                 synchronized (this.receiveQueue) {
                     this.receiveQueue.add(new RCONCommand(channel, packet.getId(), command));
                 }

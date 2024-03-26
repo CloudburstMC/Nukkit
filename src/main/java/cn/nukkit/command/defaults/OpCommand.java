@@ -16,11 +16,11 @@ import cn.nukkit.utils.TextFormat;
 public class OpCommand extends VanillaCommand {
 
     public OpCommand(String name) {
-        super(name, "%nukkit.command.op.description", "%commands.op.description");
+        super(name, "%nukkit.command.op.description", "%nukkit.command.op.usage");
         this.setPermission("nukkit.command.op.give");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newType("player", CommandParamType.TARGET)
+                new CommandParameter("player", CommandParamType.TARGET, false)
         });
     }
 
@@ -29,21 +29,22 @@ public class OpCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
+
         if (args.length == 0) {
-            sender.sendMessage(new TranslationContainer("commands.op.usage", this.usageMessage));
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
 
         String name = args[0];
         IPlayer player = sender.getServer().getOfflinePlayer(name);
-
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", player.getName()));
         if (player instanceof Player) {
+            player.setOp(true);
             ((Player) player).sendMessage(new TranslationContainer(TextFormat.GRAY + "%commands.op.message"));
+        } else {
+            sender.getServer().addOp(name);
         }
 
-        player.setOp(true);
-
+        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.op.success", player.getName()));
         return true;
     }
 }

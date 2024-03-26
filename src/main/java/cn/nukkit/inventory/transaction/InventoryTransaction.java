@@ -1,12 +1,14 @@
 package cn.nukkit.inventory.transaction;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.event.inventory.InventoryClickEvent;
 import cn.nukkit.event.inventory.InventoryTransactionEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.enchantment.Enchantment;
 
 import java.util.*;
 
@@ -15,7 +17,7 @@ import java.util.*;
  */
 public class InventoryTransaction {
 
-    private long creationTime;
+    private boolean invalid;
     protected boolean hasExecuted;
 
     protected Player source;
@@ -35,7 +37,7 @@ public class InventoryTransaction {
     }
 
     protected void init(Player source, List<InventoryAction> actions) {
-        creationTime = System.currentTimeMillis();
+        //creationTime = System.currentTimeMillis();
         this.source = source;
 
         for (InventoryAction action : actions) {
@@ -48,7 +50,7 @@ public class InventoryTransaction {
     }
 
     public long getCreationTime() {
-        return creationTime;
+        return 0; // unused
     }
 
     public Set<Inventory> getInventories() {
@@ -64,8 +66,38 @@ public class InventoryTransaction {
     }
 
     public void addAction(InventoryAction action) {
+        if (invalid) {
+            Server.getInstance().getLogger().debug("Failed to add InventoryAction for " + source.getName() + ": previous run was marked as invalid");
+            return;
+        }
+
         if (action instanceof SlotChangeAction) {
-            SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+            SlotChangeAction slotChangeAction = (SlotChangeAction)action;
+
+            Item targetItem = slotChangeAction.getTargetItemUnsafe();
+            Item sourceItem = slotChangeAction.getSourceItemUnsafe();
+            if (targetItem.getCount() > targetItem.getMaxStackSize() || sourceItem.getCount() > sourceItem.getMaxStackSize()) {
+                invalid = true;
+                Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": illegal item stack size");
+                return;
+            }
+
+            if (!slotChangeAction.getInventory().allowedToAdd(targetItem.getId())) {
+                invalid = true;
+                Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": " + slotChangeAction.getInventory().getTitle() + " inventory doesn't allow item " + targetItem.getId());
+                return;
+            }
+
+            if (!source.isCreative()) {
+                int slot = slotChangeAction.getSlot();
+                if (slot == 36 || slot == 37 || slot == 38 || slot == 39) {
+                    if (sourceItem.hasEnchantment(Enchantment.ID_BINDING_CURSE)) {
+                        invalid = true;
+                        Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": armor has binding curse");
+                        return;
+                    }
+                }
+            }
 
             ListIterator<InventoryAction> iterator = this.actions.listIterator();
 
@@ -77,22 +109,22 @@ public class InventoryTransaction {
                         continue;
                     Item existingSource = existingSlotChangeAction.getSourceItem();
                     Item existingTarget = existingSlotChangeAction.getTargetItem();
-                    if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot()
-                            && slotChangeAction.getSourceItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
+                    if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot() && slotChangeAction.getSourceItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
                         iterator.set(new SlotChangeAction(existingSlotChangeAction.getInventory(), existingSlotChangeAction.getSlot(), existingSlotChangeAction.getSourceItem(), slotChangeAction.getTargetItem()));
                         action.onAddToTransaction(this);
                         return;
                     } else if (existingSlotChangeAction.getSlot() == slotChangeAction.getSlot()
                             && slotChangeAction.getSourceItem().equals(existingSource, existingSource.hasMeta(), existingSource.hasCompoundTag())
                             && slotChangeAction.getTargetItem().equals(existingTarget, existingTarget.hasMeta(), existingTarget.hasCompoundTag())) {
-                        existingSource.setCount(existingSource.getCount() + slotChangeAction.getSourceItem().getCount());
-                        existingTarget.setCount(existingTarget.getCount() + slotChangeAction.getTargetItem().getCount());
+                        existingSource.setCount(existingSource.getCount() + slotChangeAction.getSourceItemUnsafe().getCount());
+                        existingTarget.setCount(existingTarget.getCount() + slotChangeAction.getTargetItemUnsafe().getCount());
                         iterator.set(new SlotChangeAction(existingSlotChangeAction.getInventory(), existingSlotChangeAction.getSlot(), existingSource, existingTarget));
                         return;
                     }
                 }
             }
         }
+
         this.actions.add(action);
         action.onAddToTransaction(this);
     }
@@ -109,15 +141,16 @@ public class InventoryTransaction {
 
     protected boolean matchItems(List<Item> needItems, List<Item> haveItems) {
         for (InventoryAction action : this.actions) {
-            if (action.getTargetItem().getId() != Item.AIR) {
+            if (action.getTargetItemUnsafe().getId() != Item.AIR) {
                 needItems.add(action.getTargetItem());
             }
 
             if (!action.isValid(this.source)) {
+                invalid = true;
                 return false;
             }
 
-            if (action.getSourceItem().getId() != Item.AIR) {
+            if (action.getSourceItemUnsafe().getId() != Item.AIR) {
                 haveItems.add(action.getSourceItem());
             }
         }
@@ -146,7 +179,6 @@ public class InventoryTransaction {
         for (InventoryAction action : this.actions) {
             if (action instanceof SlotChangeAction) {
                 SlotChangeAction sca = (SlotChangeAction) action;
-
                 sca.getInventory().sendSlot(sca.getSlot(), this.source);
             }
         }
@@ -155,7 +187,7 @@ public class InventoryTransaction {
     public boolean canExecute() {
         List<Item> haveItems = new ArrayList<>();
         List<Item> needItems = new ArrayList<>();
-        return matchItems(needItems, haveItems) && this.actions.size() > 0 && haveItems.size() == 0 && needItems.size() == 0;
+        return matchItems(needItems, haveItems) && !this.actions.isEmpty() && haveItems.isEmpty() && needItems.isEmpty();
     }
 
     protected boolean callExecuteEvent() {
@@ -184,7 +216,7 @@ public class InventoryTransaction {
         }
 
         if (who != null && to != null) {
-            if (from.getTargetItem().getCount() > from.getSourceItem().getCount()) {
+            if (from.getTargetItemUnsafe().getCount() > from.getSourceItemUnsafe().getCount()) {
                 from = to;
             }
 
@@ -200,11 +232,10 @@ public class InventoryTransaction {
     }
 
     public boolean execute() {
-        if (this.hasExecuted() || !this.canExecute()) {
+        if (invalid || this.hasExecuted() || !this.canExecute()) {
             this.sendInventories();
             return false;
         }
-
 
         if (!callExecuteEvent()) {
             this.sendInventories();

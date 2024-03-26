@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.block.BlockEnderChest;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityHumanType;
-import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
@@ -51,10 +50,9 @@ public class PlayerEnderChestInventory extends BaseInventory {
             blockEventPacket.case1 = 1;
             blockEventPacket.case2 = 2;
 
-            Level level = this.getHolder().getLevel();
-            if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_ENDERCHEST_OPEN);
-                level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, blockEventPacket);
+            if (chest.level != null && chest.level == who.level) {
+                chest.level.addLevelSoundEvent(chest.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_ENDERCHEST_OPEN);
+                chest.level.addChunkPacket((int) chest.getX() >> 4, (int) chest.getZ() >> 4, blockEventPacket);
             }
         }
     }
@@ -76,14 +74,13 @@ public class PlayerEnderChestInventory extends BaseInventory {
             blockEventPacket.case1 = 1;
             blockEventPacket.case2 = 0;
 
-            Level level = this.getHolder().getLevel();
-            if (level != null) {
-                level.addLevelSoundEvent(this.getHolder().add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_ENDERCHEST_CLOSED);
-                level.addChunkPacket((int) this.getHolder().getX() >> 4, (int) this.getHolder().getZ() >> 4, blockEventPacket);
+            if (chest.level != null && chest.level == who.level) {
+                chest.level.addLevelSoundEvent(chest.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_ENDERCHEST_CLOSED);
+                chest.level.addChunkPacket((int) chest.getX() >> 4, (int) chest.getZ() >> 4, blockEventPacket);
             }
-
-            who.setViewingEnderChest(null);
         }
+
+        who.setViewingEnderChest(null);
 
         super.onClose(who);
     }

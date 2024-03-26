@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
 public class ItemTotem extends Item {
-
+    
     public ItemTotem(Integer meta) {
         this(meta, 1);
     }

@@ -77,7 +77,7 @@ public class PlayerAsyncPreLoginEvent extends PlayerEvent {
     }
 
     public LoginResult getLoginResult() {
-        return this.loginResult;
+        return loginResult;
     }
 
     public void setLoginResult(LoginResult loginResult) {

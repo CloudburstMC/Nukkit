@@ -10,6 +10,7 @@ import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,6 +20,8 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
+    private Item item_;
+
     public BlockEntityItemFrame(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -26,11 +29,13 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     @Override
     protected void initBlockEntity() {
         if (!namedTag.contains("Item")) {
-            namedTag.putCompound("Item", NBTIO.putItemHelper(new ItemBlock(Block.get(BlockID.AIR))));
+            namedTag.putCompound("Item", NBTIO.putItemHelper(item_ = new ItemBlock(Block.get(BlockID.AIR))));
         }
+
         if (!namedTag.contains("ItemRotation")) {
             namedTag.putByte("ItemRotation", 0);
         }
+
         if (!namedTag.contains("ItemDropChance")) {
             namedTag.putFloat("ItemDropChance", 1.0f);
         }
@@ -47,7 +52,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.getBlock().getId() == Block.ITEM_FRAME_BLOCK;
+        return level.getBlockIdAt(chunk, (int) x, (int) y, (int) z) == Block.ITEM_FRAME_BLOCK;
     }
 
     public int getItemRotation() {
@@ -61,8 +66,11 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     }
 
     public Item getItem() {
-        CompoundTag NBTTag = this.namedTag.getCompound("Item");
-        return NBTIO.getItemHelper(NBTTag);
+        if (item_ == null) {
+            CompoundTag NBTTag = this.namedTag.getCompound("Item");
+            item_ = NBTIO.getItemHelper(NBTTag);
+        }
+        return item_;
     }
 
     public void setItem(Item item) {
@@ -70,6 +78,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     }
 
     public void setItem(Item item, boolean setChanged) {
+        item_ = null;
         this.namedTag.putCompound("Item", NBTIO.putItemHelper(item));
         if (setChanged) {
             this.setDirty();
@@ -84,11 +93,13 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
     public void setItemDropChance(float chance) {
         this.namedTag.putFloat("ItemDropChance", chance);
+        super.setDirty(); // No need to spawnToAll
     }
 
+    @Override
     public void setDirty() {
-        this.spawnToAll();
         super.setDirty();
+        this.spawnToAll();
     }
 
     @Override
@@ -96,19 +107,50 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         if (!this.namedTag.contains("Item")) {
             this.setItem(new ItemBlock(Block.get(BlockID.AIR)), false);
         }
-        CompoundTag item = namedTag.getCompound("Item").copy();
-        item.setName("Item");
+        CompoundTag itemOriginal = namedTag.getCompound("Item");
+
         CompoundTag tag = new CompoundTag()
                 .putString("id", BlockEntity.ITEM_FRAME)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-        int itemId = item.getShort("id");
+        int itemId = itemOriginal.getShort("id");
         if (itemId != Item.AIR) {
-            String identifier = RuntimeItems.getMapping().toRuntime(itemId, item.getShort("Damage")).getIdentifier();
-            item.putString("Name", identifier);
-            item.remove("id");
+            CompoundTag item;
+            if (itemId == Item.MAP) {
+                item = itemOriginal.copy();
+                item.setName("Item");
+
+                String identifier = RuntimeItems.getMapping().toRuntime(itemId, itemOriginal.getShort("Damage")).getIdentifier();
+                item.putString("Name", identifier);
+                item.remove("id");
+
+                item.getCompound("tag").remove("Colors");
+            } else {
+                // Instead of copying the item's whole nbt just send the data necessary to display the item
+                item = new CompoundTag("Item")
+                        .putByte("Count", itemOriginal.getByte("Count"))
+                        .putShort("Damage", itemOriginal.getShort("Damage"));
+
+                String identifier = RuntimeItems.getMapping().toRuntime(itemId, itemOriginal.getShort("Damage")).getIdentifier();
+                item.putString("Name", identifier);
+
+                if (itemOriginal.contains("tag")) {
+                    CompoundTag oldTag = itemOriginal.getCompound("tag");
+                    CompoundTag newTag = new CompoundTag();
+
+                    if (oldTag.contains("ench")) {
+                        newTag.putList(new ListTag<>("ench"));
+                    }
+
+                    if (oldTag.contains("display") && oldTag.get("display") instanceof CompoundTag) {
+                        newTag.putCompound("display", new CompoundTag("display").putString("Name", ((CompoundTag) oldTag.get("display")).getString("Name")));
+                    }
+
+                    item.put("tag", newTag);
+                }
+            }
 
             tag.putCompound("Item", item)
                     .putByte("ItemRotation", this.getItemRotation());
@@ -131,12 +173,11 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
                     return true;
                 }
             }
-
+            this.setItem(Item.get(Item.AIR));
+            this.setItemRotation(0);
             if (this.getItemDropChance() > ThreadLocalRandom.current().nextFloat()) {
                 this.level.dropItem(this.add(0.5, 0, 0.5), item);
             }
-            this.setItem(Item.get(Item.AIR));
-            this.setItemRotation(0);
             this.level.addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_REMOVED);
             return true;
         }

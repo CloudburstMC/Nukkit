@@ -1,11 +1,10 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.utils.DyeColor;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemBed extends Item {
@@ -20,7 +19,7 @@ public class ItemBed extends Item {
 
     public ItemBed(Integer meta, int count) {
         super(BED, meta, count, DyeColor.getByWoolData(meta).getName() + " Bed");
-        this.block = Block.get(BlockID.BED_BLOCK);
+        this.block = Block.get(BED_BLOCK);
     }
 
     @Override

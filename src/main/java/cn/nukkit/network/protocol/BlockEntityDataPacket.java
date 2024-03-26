@@ -4,11 +4,12 @@ import cn.nukkit.math.BlockVector3;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString(exclude = "namedTag")
 public class BlockEntityDataPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.BLOCK_ENTITY_DATA_PACKET;
 
     public int x;

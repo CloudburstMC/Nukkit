@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemFish extends ItemEdible {
@@ -21,5 +21,4 @@ public class ItemFish extends ItemEdible {
     protected ItemFish(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
-
 }

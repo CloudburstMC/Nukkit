@@ -15,7 +15,7 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.network.protocol.UpdateBlockPacket;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemBucket extends Item {
@@ -48,6 +48,8 @@ public class ItemBucket extends Item {
                 return "Water Bucket";
             case 10:
                 return "Lava Bucket";
+            case 11:
+                return "Powder Snow Bucket";
             case 12:
                 return "Bucket of Axolotl";
             case 13:
@@ -64,15 +66,16 @@ public class ItemBucket extends Item {
             case 4:
             case 5:
             case 8:
-            case 9:
+            case 9: // still water
             case 12:
             case 13:
-                return 8;
+                return WATER;
             case 10:
-            case 11:
-                return 10;
+                return LAVA;
+            case 11: // was still lava, now powder snow
+                return POWDER_SNOW;
             default:
-                return 0;
+                return AIR;
         }
     }
 
@@ -83,7 +86,7 @@ public class ItemBucket extends Item {
 
     @Override
     public boolean canBeActivated() {
-        return true;
+        return this.getDamage() != 1; // Not milk
     }
 
     @Override
@@ -92,26 +95,63 @@ public class ItemBucket extends Item {
             return false;
         }
 
-        Block targetBlock = Block.get(getDamageByTarget(this.meta));
+        Block targetBlock;
+        if (target instanceof BlockPowderSnow && this.getDamage() == 0) {
+            PlayerBucketFillEvent ev = new PlayerBucketFillEvent(player, block, face, this, Item.get(BUCKET, 11, 1));
+            player.getServer().getPluginManager().callEvent(ev);
 
-        if (targetBlock instanceof BlockAir) {
+            if (!ev.isCancelled()) {
+                player.getLevel().setBlock(target, BlockLayer.NORMAL, Block.get(BlockID.AIR), true, true);
+
+                if (!player.isCreative()) {
+                    if (this.getCount() - 1 <= 0) {
+                        player.getInventory().setItemInHand(ev.getItem());
+                    } else {
+                        Item clone = this.clone();
+                        clone.setCount(this.getCount() - 1);
+                        player.getInventory().setItemInHand(clone);
+                        if (player.getInventory().canAddItem(ev.getItem())) {
+                            player.getInventory().addItem(ev.getItem());
+                        } else {
+                            player.dropItem(ev.getItem());
+                        }
+                    }
+                }
+
+                level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_POWDER_SNOW);
+                return true;
+            } else {
+                player.getInventory().sendContents(player);
+            }
+        } else if ((targetBlock = Block.get(getDamageByTarget(this.meta))) instanceof BlockAir) {
+            if (!(target instanceof BlockLiquid) || target.getDamage() != 0) {
+                target = target.getLevelBlock(BlockLayer.WATERLOGGED);
+            }
+            if (!(target instanceof BlockLiquid) || target.getDamage() != 0) {
+                target = block;
+            }
+            if (!(target instanceof BlockLiquid) || target.getDamage() != 0) {
+                target = block.getLevelBlock(BlockLayer.WATERLOGGED);
+            }
+
             if (target instanceof BlockLiquid && target.getDamage() == 0) {
                 Item result = Item.get(BUCKET, getDamageByTarget(target.getId()), 1);
                 PlayerBucketFillEvent ev;
                 player.getServer().getPluginManager().callEvent(ev = new PlayerBucketFillEvent(player, block, face, this, result));
+
                 if (!ev.isCancelled()) {
-                    player.getLevel().setBlock(target, Block.get(BlockID.AIR), true, true);
+                    player.getLevel().setBlock(target, target.getLayer(), Block.get(BlockID.AIR), true, true);
 
                     // When water is removed ensure any adjacent still water is
                     // replaced with water that can flow.
                     for (BlockFace side : Plane.HORIZONTAL) {
-                        Block b = target.getSide(side);
+                        Block b = target.getSide(Block.LAYER_NORMAL, side);
                         if (b.getId() == STILL_WATER) {
                             level.setBlock(b, Block.get(BlockID.WATER));
                         }
                     }
 
-                    if (player.isSurvival()) {
+                    if (!player.isCreative()) {
                         if (this.getCount() - 1 <= 0) {
                             player.getInventory().setItemInHand(ev.getItem());
                         } else {
@@ -139,7 +179,28 @@ public class ItemBucket extends Item {
             }
         } else if (targetBlock instanceof BlockLiquid) {
             Item result = Item.get(BUCKET, 0, 1);
+            boolean usesWaterlogging = ((BlockLiquid) targetBlock).usesWaterLogging();
+            Block placementBlock;
+            if (usesWaterlogging) {
+                if (block.getId() == BlockID.BAMBOO) {
+                    placementBlock = block;
+                } else if (target.getWaterloggingType() != Block.WaterloggingType.NO_WATERLOGGING) {
+                    placementBlock = target.getLevelBlock(BlockLayer.WATERLOGGED);
+                } else if (block.getWaterloggingType() != Block.WaterloggingType.NO_WATERLOGGING) {
+                    placementBlock = block.getLevelBlock(BlockLayer.WATERLOGGED);
+                } else {
+                    placementBlock = block;
+                }
+            } else {
+                placementBlock = block;
+            }
             PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, result, true);
+            boolean canBeFlowedInto = placementBlock.canBeFlowedInto() || placementBlock.getId() == BlockID.BAMBOO;
+            if (usesWaterlogging) {
+                ev.setCancelled(placementBlock.getWaterloggingType() == Block.WaterloggingType.NO_WATERLOGGING && !canBeFlowedInto);
+            } else {
+                ev.setCancelled(!canBeFlowedInto);
+            }
             if (!block.canBeFlowedInto()) {
                 ev.setCancelled(true);
             }
@@ -153,8 +214,8 @@ public class ItemBucket extends Item {
             player.getServer().getPluginManager().callEvent(ev);
 
             if (!ev.isCancelled()) {
-                player.getLevel().setBlock(block, targetBlock, true, true);
-                if (player.isSurvival()) {
+                player.getLevel().setBlock(placementBlock, placementBlock.getLayer(), targetBlock, true, true);
+                if (!player.isCreative()) {
                     if (this.getCount() - 1 <= 0) {
                         player.getInventory().setItemInHand(ev.getItem());
                     } else {
@@ -213,7 +274,33 @@ public class ItemBucket extends Item {
                 player.getLevel().addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_FIZZ);
                 player.getLevel().addParticle(new ExplodeParticle(target.add(0.5, 1, 0.5)));
             } else {
-                player.getLevel().sendBlocks(new Player[]{player}, new Block[]{Block.get(Block.AIR, 0, block)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, 1);
+                player.getLevel().sendBlocks(new Player[] {player}, new Block[] {block.getLevelBlock(Block.LAYER_WATERLOGGED)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, BlockLayer.WATERLOGGED);
+                player.getInventory().sendContents(player);
+            }
+        } else if (targetBlock instanceof BlockPowderSnow) {
+            PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, Item.get(BUCKET, 0, 1), true);
+            player.getServer().getPluginManager().callEvent(ev);
+
+            if (!ev.isCancelled()) {
+                player.getLevel().setBlock(block, BlockLayer.NORMAL, targetBlock, true, true);
+                if (!player.isCreative()) {
+                    if (this.getCount() - 1 <= 0) {
+                        player.getInventory().setItemInHand(ev.getItem());
+                    } else {
+                        Item clone = this.clone();
+                        clone.setCount(this.getCount() - 1);
+                        player.getInventory().setItemInHand(clone);
+                        if (player.getInventory().canAddItem(ev.getItem())) {
+                            player.getInventory().addItem(ev.getItem());
+                        } else {
+                            player.dropItem(ev.getItem());
+                        }
+                    }
+                }
+
+                level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_POWDER_SNOW);
+                return true;
+            } else {
                 player.getInventory().sendContents(player);
             }
         }

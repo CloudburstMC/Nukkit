@@ -9,6 +9,9 @@ import lombok.ToString;
 @Getter
 @Setter
 public class RequestAbilityPacket extends DataPacket {
+
+    public static final byte NETWORK_ID = ProtocolInfo.REQUEST_ABILITY_PACKET;
+
     protected static final PlayerAbility[] ABILITIES = UpdateAbilitiesPacket.VALID_FLAGS;
     protected static final AbilityType[] ABILITY_TYPES = AbilityType.values();
 
@@ -27,12 +30,12 @@ public class RequestAbilityPacket extends DataPacket {
 
     @Override
     public void encode() {
-        throw new UnsupportedOperationException();
+        this.encodeUnsupported();
     }
 
     @Override
     public byte pid() {
-        return ProtocolInfo.REQUEST_ABILITY_PACKET;
+        return NETWORK_ID;
     }
 
     public enum AbilityType {

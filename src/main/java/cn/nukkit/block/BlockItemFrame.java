@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityItemFrame;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemItemFrame;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -18,10 +17,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * Created by Pub4Game on 03.07.2016.
  */
 public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
-    private final static int[] FACING = new int[]{4, 5, 3, 2, 1, 0}; // TODO when 1.13 support arrives, add UP/DOWN facings
+
+    private final static int[] FACING = {4, 5, 3, 2, 1, 0};
 
     private final static int FACING_BITMASK = 0b0111;
-    private final static int MAP_BIT = 0b1000;
+    //private final static int MAP_BIT = 0b1000;
 
     public BlockItemFrame() {
         this(0);
@@ -61,15 +61,22 @@ public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
+        if (!(blockEntity instanceof BlockEntityItemFrame)) {
+            return false;
+        }
+
         BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
+        if (itemFrame.getItem() == null) {
+            return true;
+        }
         if (itemFrame.getItem().getId() == Item.AIR) {
-            Item itemOnFrame = item.clone();
-            if (player != null && player.isSurvival()) {
-                itemOnFrame.setCount(itemOnFrame.getCount() - 1);
-                player.getInventory().setItemInHand(itemOnFrame);
+            Item itemToFrame = item.clone();
+            if (player != null && !player.isCreative()) {
+                item.setCount(item.getCount() - 1);
+                player.getInventory().setItemInHand(item);
             }
-            itemOnFrame.setCount(1);
-            itemFrame.setItem(itemOnFrame);
+            itemToFrame.setCount(1);
+            itemFrame.setItem(itemToFrame);
             this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_ITEM_ADDED);
         } else {
             itemFrame.setItemRotation((itemFrame.getItemRotation() + 1) % 8);
@@ -80,9 +87,11 @@ public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (face.getIndex() > 1 && target.isSolid() && (!block.isSolid() || block.canBeReplaced())) {
+        if (target.isSolid() && (!block.isSolid() || block.canBeReplaced())) {
             this.setDamage(FACING[face.getIndex()]);
-            this.getLevel().setBlock(block, this, true, true);
+
+            this.getLevel().setBlock(this, this, true, true);
+
             CompoundTag nbt = new CompoundTag()
                     .putString("id", BlockEntity.ITEM_FRAME)
                     .putInt("x", (int) block.x)
@@ -95,10 +104,8 @@ public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
                     nbt.put(aTag.getName(), aTag);
                 }
             }
-            BlockEntityItemFrame frame = (BlockEntityItemFrame) BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-            if (frame == null) {
-                return false;
-            }
+            BlockEntity.createBlockEntity(BlockEntity.ITEM_FRAME, this.getChunk(), nbt);
+            this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_PLACED);
             return true;
         }
         return false;
@@ -128,7 +135,7 @@ public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemItemFrame();
+        return Item.get(Item.ITEM_FRAME);
     }
 
     @Override
@@ -162,6 +169,10 @@ public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
                 return BlockFace.NORTH;
             case 3:
                 return BlockFace.SOUTH;
+            case 4:
+                return BlockFace.UP;
+            case 5:
+                return BlockFace.DOWN;
         }
 
         return null;
@@ -173,12 +184,27 @@ public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
+    public boolean isSolid() {
+        return false;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
+    }
+
+    @Override
     public BlockFace getBlockFace() {
         return this.getFacing().getOpposite();
     }
 
     @Override
-    public boolean isSolid() {
-        return false;
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false; // prevent item loss issue with pistons until a working implementation
     }
 }

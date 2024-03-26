@@ -2,10 +2,14 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.projectile.EntityEnderEye;
 import cn.nukkit.entity.projectile.EntityEnderPearl;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
+import cn.nukkit.level.Level;
+import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -26,10 +30,14 @@ public abstract class ProjectileItem extends Item {
     abstract public float getThrowForce();
 
     public boolean onClickAir(Player player, Vector3 directionVector) {
+        if (this instanceof ItemEnderEye && player.getLevel().getDimension() != Level.DIMENSION_OVERWORLD) {
+            return false;
+        }
+
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", player.x))
-                        .add(new DoubleTag("", player.y + player.getEyeHeight() - 0.30000000149011612))
+                        .add(new DoubleTag("", player.y + player.getEyeHeight()))
                         .add(new DoubleTag("", player.z)))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("", directionVector.x))
@@ -41,41 +49,67 @@ public abstract class ProjectileItem extends Item {
 
         this.correctNBT(nbt);
 
-        Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getFloorX() >> 4, player.getFloorZ() >> 4), nbt, player);
+        Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getChunkX(), player.getChunkZ()), nbt, player);
         if (projectile != null) {
-            if (projectile instanceof EntityEnderPearl) {
+            if (projectile instanceof EntityEnderPearl || projectile instanceof EntityEnderEye) {
                 if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
-                    projectile.kill();
+                    projectile.close();
                     return false;
                 }
             }
 
-            projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
+            if (projectile instanceof EntityEnderEye) {
+                if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
+                    projectile.close();
+                    return false;
+                }
+
+                Position strongholdPosition = this.getStrongholdPosition(player);
+                if (strongholdPosition == null) {
+                    projectile.close();
+                    return false;
+                }
+
+                Vector3f vector = strongholdPosition
+                        .subtract(player.getPosition())
+                        .asVector3f()
+                        .normalize()
+                        .multiply(1f);
+
+                vector.y = 0.55f;
+
+                projectile.setMotion(vector.asVector3().divide(this.getThrowForce()));
+            } else {
+                projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
+            }
 
             if (projectile instanceof EntityProjectile) {
                 ProjectileLaunchEvent ev = new ProjectileLaunchEvent((EntityProjectile) projectile);
 
                 player.getServer().getPluginManager().callEvent(ev);
+
                 if (ev.isCancelled()) {
-                    projectile.kill();
+                    projectile.close();
                 } else {
                     if (!player.isCreative()) {
                         this.count--;
                     }
-                    if (projectile instanceof EntityEnderPearl) {
+                    if (projectile instanceof EntityEnderPearl || projectile instanceof EntityEnderEye) {
                         player.onThrowEnderPearl();
                     }
                     projectile.spawnToAll();
                     player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
                 }
             }
-        } else {
-            return false;
         }
+
         return true;
     }
 
     protected void correctNBT(CompoundTag nbt) {
+    }
 
+    private Position getStrongholdPosition(Player p) {
+        return p.level.getDimension() == Level.DIMENSION_OVERWORLD ? p : null; // TODO
     }
 }

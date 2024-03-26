@@ -17,5 +17,4 @@ public class FormResponseModal extends FormResponse {
     public String getClickedButtonText() {
         return clickedButtonText;
     }
-
 }

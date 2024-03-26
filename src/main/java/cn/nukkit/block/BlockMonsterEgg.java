@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 
 public class BlockMonsterEgg extends BlockSolidMeta {
+
     public static final int STONE = 0;
     public static final int COBBLESTONE = 1;
     public static final int STONE_BRICK = 2;
@@ -10,7 +11,7 @@ public class BlockMonsterEgg extends BlockSolidMeta {
     public static final int CRACKED_BRICK = 4;
     public static final int CHISELED_BRICK = 5;
 
-    private static final String[] NAMES = new String[]{
+    private static final String[] NAMES = {
             "Stone",
             "Cobblestone",
             "Stone Brick",
@@ -39,7 +40,7 @@ public class BlockMonsterEgg extends BlockSolidMeta {
 
     @Override
     public double getResistance() {
-        return 3.75;
+        return 0.75;
     }
 
     @Override

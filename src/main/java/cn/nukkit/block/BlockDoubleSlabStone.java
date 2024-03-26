@@ -1,15 +1,14 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
-public class BlockDoubleSlabStone extends BlockSolidMeta {
+public class BlockDoubleSlabStone extends BlockDoubleSlabBase  {
+
     public static final int STONE = 0;
     public static final int SANDSTONE = 1;
     public static final int WOODEN = 2;
@@ -18,6 +17,17 @@ public class BlockDoubleSlabStone extends BlockSolidMeta {
     public static final int STONE_BRICK = 5;
     public static final int QUARTZ = 6;
     public static final int NETHER_BRICK = 7;
+
+    private static final String[] NAMES = new String[]{
+            "Stone",
+            "Sandstone",
+            "Wooden",
+            "Cobblestone",
+            "Brick",
+            "Stone Brick",
+            "Quartz",
+            "Nether Brick"
+    };
 
     public BlockDoubleSlabStone() {
         this(0);
@@ -30,6 +40,11 @@ public class BlockDoubleSlabStone extends BlockSolidMeta {
     @Override
     public int getId() {
         return DOUBLE_SLAB;
+    }
+
+    @Override
+    public int getSingleSlabId() {
+        return STONE_SLAB;
     }
 
     @Override
@@ -48,45 +63,24 @@ public class BlockDoubleSlabStone extends BlockSolidMeta {
     }
 
     @Override
-    public String getName() {
-        String[] names = new String[]{
-                "Stone",
-                "Sandstone",
-                "Wooden",
-                "Cobblestone",
-                "Brick",
-                "Stone Brick",
-                "Quartz",
-                "Nether Brick"
-        };
-        return "Double " + names[this.getDamage() & 0x07] + " Slab";
+    public String getSlabName() {
+        return NAMES[this.getDamage() & 0x07];
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.STONE_SLAB), this.getDamage() & 0x07);
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
-            return new Item[]{
-                    Item.get(Item.SLAB, this.getDamage() & 0x07, 2)
-            };
-        } else {
-            return new Item[0];
-        }
+    public int getItemDamage() {
+        return this.getDamage() & 0x07;
     }
 
     @Override
     public BlockColor getColor() {
         switch (this.getDamage() & 0x07) {
             default:
-                case BlockDoubleSlabStone.STONE:
-                case BlockDoubleSlabStone.COBBLESTONE:
-                case BlockDoubleSlabStone.BRICK:
-                case BlockDoubleSlabStone.STONE_BRICK:
-                    return BlockColor.STONE_BLOCK_COLOR;
+            case BlockDoubleSlabStone.STONE:
+            case BlockDoubleSlabStone.COBBLESTONE:
+            case BlockDoubleSlabStone.BRICK:
+            case BlockDoubleSlabStone.STONE_BRICK:
+                return BlockColor.STONE_BLOCK_COLOR;
             case BlockDoubleSlabStone.SANDSTONE:
                 return BlockColor.SAND_BLOCK_COLOR;
             case BlockDoubleSlabStone.WOODEN:

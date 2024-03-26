@@ -21,4 +21,9 @@ public class ItemRecordCat extends ItemRecord {
     public String getSoundId() {
         return "record.cat";
     }
+
+    @Override
+    public String getDiscName() {
+        return "C418 - cat";
+    }
 }

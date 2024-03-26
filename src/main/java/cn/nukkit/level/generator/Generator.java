@@ -1,5 +1,6 @@
 package cn.nukkit.level.generator;
 
+import cn.nukkit.Server;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.DimensionData;
@@ -7,30 +8,34 @@ import cn.nukkit.level.DimensionEnum;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
+
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class Generator implements BlockID {
+
     public static final int TYPE_OLD = 0;
     public static final int TYPE_INFINITE = 1;
     public static final int TYPE_FLAT = 2;
     public static final int TYPE_NETHER = 3;
+    public static final int TYPE_THE_END = 4;
+    public static final int TYPE_VOID = 5;
 
     public abstract int getId();
 
     public DimensionData getDimensionData() {
         DimensionData dimensionData = DimensionEnum.getDataFromId(this.getDimension());
         if (dimensionData == null) {
+            Server.getInstance().getLogger().warning("Invalid DimensionData for Generator " + this.getClass().getName());
             dimensionData = DimensionEnum.OVERWORLD.getDimensionData();
         }
         return dimensionData;
     }
 
-    @Deprecated
     public int getDimension() {
         return Level.DIMENSION_OVERWORLD;
     }
@@ -72,18 +77,18 @@ public abstract class Generator implements BlockID {
     }
 
     public static String getGeneratorName(Class<? extends Generator> c) {
-        for (String key : Generator.nameList.keySet()) {
-            if (Generator.nameList.get(key).equals(c)) {
-                return key;
+        for (Map.Entry<String, Class<? extends Generator>> entry : Generator.nameList.entrySet()) {
+            if (entry.getValue() == c) {
+                return entry.getKey();
             }
         }
         return "unknown";
     }
 
     public static int getGeneratorType(Class<? extends Generator> c) {
-        for (int key : Generator.typeList.keySet()) {
-            if (Generator.typeList.get(key).equals(c)) {
-                return key;
+        for (Map.Entry<Integer, Class<? extends Generator>> entry : Generator.typeList.entrySet()) {
+            if (entry.getValue() == c) {
+                return entry.getKey();
             }
         }
         return Generator.TYPE_INFINITE;

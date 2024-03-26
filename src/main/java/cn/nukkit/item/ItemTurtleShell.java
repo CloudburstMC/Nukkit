@@ -1,8 +1,5 @@
 package cn.nukkit.item;
 
-/**
- * Created by PetteriM1
- */
 public class ItemTurtleShell extends ItemArmor {
 
     public ItemTurtleShell() {
@@ -35,10 +32,5 @@ public class ItemTurtleShell extends ItemArmor {
     @Override
     public int getMaxDurability() {
         return 276;
-    }
-
-    @Override
-    public int getToughness() {
-        return 2;
     }
 }

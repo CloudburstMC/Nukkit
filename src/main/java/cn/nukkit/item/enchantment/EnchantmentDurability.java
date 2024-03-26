@@ -5,17 +5,18 @@ import cn.nukkit.item.Item;
 import java.util.Random;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentDurability extends Enchantment {
+
     protected EnchantmentDurability() {
         super(ID_DURABILITY, "durability", Rarity.UNCOMMON, EnchantmentType.BREAKABLE);
     }
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return 5 + (level - 1) * 8;
+        return 5 + ((level - 1) << 3);
     }
 
     @Override
@@ -26,11 +27,6 @@ public class EnchantmentDurability extends Enchantment {
     @Override
     public int getMaxLevel() {
         return 3;
-    }
-
-    @Override
-    public boolean checkCompatibility(Enchantment enchantment) {
-        return super.checkCompatibility(enchantment) && enchantment.id != ID_FORTUNE_DIGGING;
     }
 
     @Override

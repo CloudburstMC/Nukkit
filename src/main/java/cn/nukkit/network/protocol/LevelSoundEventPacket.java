@@ -5,6 +5,7 @@ import lombok.ToString;
 
 @ToString
 public class LevelSoundEventPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.LEVEL_SOUND_EVENT_PACKET;
 
     public static final int SOUND_ITEM_USE_ON = 0;
@@ -120,7 +121,7 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_RECORD_WARD = 110;
     public static final int SOUND_RECORD_11 = 111;
     public static final int SOUND_RECORD_WAIT = 112;
-    public static final int SOUND_STOP_RECORD = 113; //Not really a sound
+    public static final int SOUND_STOP_RECORD = 113;
     public static final int SOUND_GUARDIAN_FLOP = 114;
     public static final int SOUND_ELDERGUARDIAN_CURSE = 115;
     public static final int SOUND_MOB_WARNING = 116;
@@ -430,7 +431,6 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_GOAT_BASS_7 = 420;
     public static final int SOUND_GOAT_BASS_8 = 421;
     public static final int SOUND_GOAT_BASS_9 = 422;
-
     public static final int SOUND_IMITATE_WARDEN = 426;
     public static final int SOUND_LISTENING_ANGRY = 427;
     public static final int SOUND_ITEM_GIVEN = 428;
@@ -448,7 +448,6 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_CONVERT_TO_FROG = 440;
     public static final int SOUND_RECORD_PLAYING = 441;
     public static final int SOUND_ENCHANTING_TABLE_USE = 442;
-
     public static final int SOUND_PRESSURE_PLATE_CLICK_OFF = 448;
     public static final int SOUND_PRESSURE_PLATE_CLICK_ON = 449;
     public static final int SOUND_BUTTON_CLICK_OFF = 450;
@@ -480,6 +479,13 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_AMBIENT_UNDERWATER_EXIT = 476;
     public static final int SOUND_BOTTLE_FILL = 477;
     public static final int SOUND_BOTTLE_EMPTY = 478;
+    public static final int SOUND_CRAFTER_CRAFT = 479;
+    public static final int SOUND_CRAFTER_FAILED = 480;
+    public static final int SOUND_CRAFTER_DISABLE_SLOT = 481;
+    public static final int SOUND_DECORATED_POT_INSERT = 482;
+    public static final int SOUND_DECORATED_POT_INSERT_FAILED = 483;
+    public static final int SOUND_COPPER_BULB_ON = 490;
+    public static final int SOUND_COPPER_BULB_OFF = 491;
 
     public int sound;
     public float x;

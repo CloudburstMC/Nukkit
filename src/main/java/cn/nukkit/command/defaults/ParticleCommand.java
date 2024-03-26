@@ -3,7 +3,6 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
@@ -12,7 +11,6 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -20,19 +18,21 @@ import java.util.concurrent.ThreadLocalRandom;
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class ParticleCommand extends VanillaCommand {
-    private static final String[] ENUM_VALUES = new String[]{"explode", "hugeexplosion", "hugeexplosionseed", "bubble"
+
+    private static final String[] ENUM_VALUES = {"explode", "hugeexplosion", "hugeexplosionseed", "bubble"
             , "splash", "wake", "water", "crit", "smoke", "spell", "instantspell", "dripwater", "driplava", "townaura"
             , "spore", "portal", "flame", "lava", "reddust", "snowballpoof", "slime", "itembreak", "terrain", "heart"
             , "ink", "droplet", "enchantmenttable", "happyvillager", "angryvillager", "forcefield"};
+
     public ParticleCommand(String name) {
         super(name, "%nukkit.command.particle.description", "%nukkit.command.particle.usage");
         this.setPermission("nukkit.command.particle");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newEnum("effect", new CommandEnum("Particle", ENUM_VALUES)),
-                CommandParameter.newType("position", CommandParamType.POSITION),
-                CommandParameter.newType("count", true, CommandParamType.INT),
-                CommandParameter.newType("data", true, CommandParamType.INT)
+                new CommandParameter("name", false, ENUM_VALUES),
+                new CommandParameter("position", CommandParamType.POSITION, false),
+                new CommandParameter("count", CommandParamType.INT, true),
+                new CommandParameter("data", true)
         });
     }
 
@@ -44,7 +44,6 @@ public class ParticleCommand extends VanillaCommand {
 
         if (args.length < 4) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return true;
         }
 
@@ -75,23 +74,18 @@ public class ParticleCommand extends VanillaCommand {
             try {
                 double c = Double.parseDouble(args[4]);
                 count = (int) c;
-            } catch (Exception e) {
-                //ignore
-            }
+            } catch (Exception ignored) {}
         }
         count = Math.max(1, count);
 
         int data = -1;
         if (args.length > 5) {
             try {
-                double d = Double.parseDouble(args[5]);
+                double d = Double.parseDouble(args[8]);
                 data = (int) d;
-            } catch (Exception e) {
-                //ignore
-            }
+            } catch (Exception ignored) {}
         }
-
-        Particle particle = this.getParticle(name, position, data);
+        Particle particle = getParticle(name, position, data);
 
         if (particle == null) {
             position.level.addParticleEffect(position.asVector3f(), args[0], -1, position.level.getDimension());
@@ -100,7 +94,7 @@ public class ParticleCommand extends VanillaCommand {
 
         sender.sendMessage(new TranslationContainer("commands.particle.success", name, String.valueOf(count)));
 
-        Random random = ThreadLocalRandom.current();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
 
         for (int i = 0; i < count; i++) {
             particle.setComponents(
@@ -114,7 +108,7 @@ public class ParticleCommand extends VanillaCommand {
         return true;
     }
 
-    private Particle getParticle(String name, Vector3 pos, int data) {
+    private static Particle getParticle(String name, Vector3 pos, int data) {
         switch (name) {
             case "explode":
                 return new ExplodeParticle(pos);
@@ -202,7 +196,7 @@ public class ParticleCommand extends VanillaCommand {
         return null;
     }
 
-    private static double getDouble(String arg, double defaultValue) throws Exception {
+    private static double getDouble(String arg, double defaultValue) {
         if (arg.startsWith("~")) {
             String relativePos = arg.substring(1);
             if (relativePos.isEmpty()) {

@@ -1,18 +1,27 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.entity.*;
+import cn.nukkit.entity.mob.EntityZombiePigman;
+import cn.nukkit.event.entity.CreatureSpawnEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-/**
- * Author: BeYkeRYkt Nukkit Project
- */
-public class EntityPig extends EntityAnimal {
+import java.util.ArrayList;
+import java.util.List;
+
+public class EntityPig extends EntityWalkingAnimal /*implements EntityRideable, EntityControllable*/ {
 
     public static final int NETWORK_ID = 12;
 
     public EntityPig(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
+
+    @Override
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 
     @Override
@@ -33,29 +42,71 @@ public class EntityPig extends EntityAnimal {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(10);
-    }
-
-    @Override
-    public String getName() {
-        return "Pig";
+        super.initEntity();
     }
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(((this.isOnFire()) ? Item.COOKED_PORKCHOP : Item.RAW_PORKCHOP))};
+        List<Item> drops = new ArrayList<>();
+
+        if (!this.isBaby()) {
+            for (int i = 0; i < Utils.rand(1, 3); i++) {
+                drops.add(Item.get(this.isOnFire() ? Item.COOKED_PORKCHOP : Item.RAW_PORKCHOP, 0, 1));
+            }
+        }
+
+        return drops.toArray(new Item[0]);
+    }
+
+    public int getKillExperience() {
+        return this.isBaby() ? 0 : Utils.rand(1, 3);
     }
 
     @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
+    public void onStruckByLightning(Entity lightning) {
+        Entity ent = Entity.createEntity("ZombiePigman", this);
+        if (ent != null) {
+            CreatureSpawnEvent cse = new CreatureSpawnEvent(EntityZombiePigman.NETWORK_ID, this, ent.namedTag, CreatureSpawnEvent.SpawnReason.LIGHTNING);
+            this.getServer().getPluginManager().callEvent(cse);
+
+            if (cse.isCancelled()) {
+                ent.close();
+                return;
+            }
+
+            ent.yaw = this.yaw;
+            ent.pitch = this.pitch;
+            ent.setImmobile(this.isImmobile());
+            if (this.hasCustomName()) {
+                ent.setNameTag(this.getNameTag());
+                ent.setNameTagVisible(this.isNameTagVisible());
+                ent.setNameTagAlwaysVisible(this.isNameTagAlwaysVisible());
+            }
+            /*if (this.isBaby()) {
+                ent.setBaby(); // TODO
+            }*/
+
+            this.close();
+            ent.spawnToAll();
+        } else {
+            super.onStruckByLightning(lightning);
+        }
     }
 
     @Override
-    public boolean isBreedingItem(Item item) {
-        int id = item.getId();
+    public void updatePassengers() {
+        if (this.passengers.isEmpty()) {
+            return;
+        }
 
-        return id == Item.CARROT || id == Item.POTATO || id == Item.BEETROOT;
+        for (Entity passenger : new ArrayList<>(this.passengers)) {
+            if (!passenger.isAlive() || this.isInsideOfWater()) {
+                dismountEntity(passenger);
+                continue;
+            }
+
+            updatePassengerPosition(passenger);
+        }
     }
 }

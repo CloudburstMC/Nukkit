@@ -1,22 +1,16 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRedstone;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.NukkitRandom;
-
-import java.util.Random;
+import cn.nukkit.utils.Utils;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockOreRedstone extends BlockSolid {
-
-    public BlockOreRedstone() {
-    }
 
     @Override
     public int getId() {
@@ -30,7 +24,7 @@ public class BlockOreRedstone extends BlockSolid {
 
     @Override
     public double getResistance() {
-        return 15;
+        return 3;
     }
 
     @Override
@@ -46,15 +40,19 @@ public class BlockOreRedstone extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
-            int count = new Random().nextInt(2) + 4;
+            if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
+                return new Item[]{this.toItem()};
+            }
+
+            int count = Utils.random.nextInt(2) + 4;
 
             Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
             if (fortune != null && fortune.getLevel() >= 1) {
-                count += new Random().nextInt(fortune.getLevel() + 1);
+                count += Utils.random.nextInt(fortune.getLevel() + 1);
             }
 
             return new Item[]{
-                    new ItemRedstone(0, count)
+                    Item.get(Item.REDSTONE_DUST, 0, count)
             };
         } else {
             return new Item[0];
@@ -63,8 +61,9 @@ public class BlockOreRedstone extends BlockSolid {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_TOUCH) { //type == Level.BLOCK_UPDATE_NORMAL ||
-            this.getLevel().setBlock(this, Block.get(BlockID.GLOWING_REDSTONE_ORE), false, false);
+        if (type == Level.BLOCK_UPDATE_TOUCH) {
+            this.getLevel().setBlock(this, Block.get(GLOWING_REDSTONE_ORE), false, false);
+            this.getLevel().scheduleUpdate(this, 600);
 
             return Level.BLOCK_UPDATE_WEAK;
         }
@@ -74,7 +73,7 @@ public class BlockOreRedstone extends BlockSolid {
 
     @Override
     public int getDropExp() {
-        return new NukkitRandom().nextRange(1, 5);
+        return Utils.rand(1, 5);
     }
 
     @Override

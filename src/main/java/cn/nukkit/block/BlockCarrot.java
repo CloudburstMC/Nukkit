@@ -1,9 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemCarrot;
-
-import java.util.Random;
+import cn.nukkit.utils.Utils;
 
 /**
  * @author Nukkit Project Team
@@ -32,16 +30,16 @@ public class BlockCarrot extends BlockCrops {
     public Item[] getDrops(Item item) {
         if (getDamage() >= 0x07) {
             return new Item[]{
-                    new ItemCarrot(0, new Random().nextInt(3) + 1)
+                    Item.get(Item.CARROT, 0, Utils.rand(1, 5))
             };
         }
         return new Item[]{
-                new ItemCarrot()
+                Item.get(Item.CARROT)
         };
     }
 
     @Override
     public Item toItem() {
-        return new ItemCarrot();
+        return Item.get(Item.CARROT);
     }
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.level.generator.noise.nukkit.f;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  */
 public abstract class NoiseF {

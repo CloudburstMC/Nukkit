@@ -29,5 +29,4 @@ public class PlayerEatFoodEvent extends PlayerEvent implements Cancellable {
     public void setFood(Food food) {
         this.food = food;
     }
-
 }

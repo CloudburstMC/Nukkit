@@ -1,9 +1,9 @@
 package cn.nukkit.level.biome.impl.ocean;
 
-import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
+import cn.nukkit.block.Block;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  * <p>
  * This biome does not generate naturally
@@ -11,9 +11,6 @@ import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
 public class FrozenOceanBiome extends OceanBiome {
     public FrozenOceanBiome() {
         super();
-
-        WaterIcePopulator ice = new WaterIcePopulator();
-        this.addPopulator(ice);
     }
 
     @Override
@@ -29,5 +26,10 @@ public class FrozenOceanBiome extends OceanBiome {
     @Override
     public boolean canRain() {
         return false;
+    }
+
+    @Override
+    public int getCoverId(int x, int z) {
+        return SNOW_LAYER << Block.DATA_BITS;
     }
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemEgg extends ProjectileItem {
@@ -27,7 +27,9 @@ public class ItemEgg extends ProjectileItem {
     public float getThrowForce() {
         return 1.5f;
     }
-
+    
     @Override
-    public int getMaxStackSize() { return 16; }
+    public int getMaxStackSize() {
+        return 16;
+    }
 }

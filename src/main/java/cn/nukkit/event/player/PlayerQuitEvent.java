@@ -12,7 +12,7 @@ public class PlayerQuitEvent extends PlayerEvent {
     }
 
     protected TextContainer quitMessage;
-    protected boolean autoSave = true;
+    protected boolean autoSave;
     protected String reason;
 
     public PlayerQuitEvent(Player player, TextContainer quitMessage, String reason) {

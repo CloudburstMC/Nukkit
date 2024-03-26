@@ -7,7 +7,7 @@ import cn.nukkit.event.block.BlockEvent;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class FurnaceSmeltEvent extends BlockEvent implements Cancellable {

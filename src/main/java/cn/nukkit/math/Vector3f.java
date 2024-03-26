@@ -1,6 +1,7 @@
 package cn.nukkit.math;
 
 public class Vector3f implements Cloneable {
+
     public static final int SIDE_DOWN = 0;
     public static final int SIDE_UP = 1;
     public static final int SIDE_NORTH = 2;
@@ -102,7 +103,7 @@ public class Vector3f implements Cloneable {
     }
 
     public Vector3f add(Vector3f x) {
-        return new Vector3f(this.x + x.getX(), this.y + x.getY(), this.z + x.getZ());
+        return new Vector3f(this.x + x.x, this.y + x.y, this.z + x.z);
     }
 
     public Vector3f subtract() {
@@ -122,7 +123,7 @@ public class Vector3f implements Cloneable {
     }
 
     public Vector3f subtract(Vector3f x) {
-        return this.add(-x.getX(), -x.getY(), -x.getZ());
+        return this.add(-x.x, -x.y, -x.z);
     }
 
     public Vector3f multiply(float number) {
@@ -352,7 +353,7 @@ public class Vector3f implements Cloneable {
 
     @Override
     public String toString() {
-        return "Vector3(x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
+        return "Vector3f(x=" + this.x + ",y=" + this.y + ",z=" + this.z + ')';
     }
 
     @Override

@@ -1,5 +1,7 @@
 package cn.nukkit.entity.data;
 
+import cn.nukkit.Nukkit;
+import cn.nukkit.Server;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.utils.*;
 import com.google.common.base.Preconditions;
@@ -10,27 +12,29 @@ import lombok.ToString;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
-@ToString(exclude = {"geometryData", "animationData"})
+@ToString
 public class Skin {
+
     private static final int PIXEL_SIZE = 4;
 
     public static final int SINGLE_SKIN_SIZE = 64 * 32 * PIXEL_SIZE;
     public static final int DOUBLE_SKIN_SIZE = 64 * 64 * PIXEL_SIZE;
     public static final int SKIN_128_64_SIZE = 128 * 64 * PIXEL_SIZE;
     public static final int SKIN_128_128_SIZE = 128 * 128 * PIXEL_SIZE;
+    
+    private static final int MAX_DATA_SIZE = 262144;
 
     public static final String GEOMETRY_CUSTOM = convertLegacyGeometryName("geometry.humanoid.custom");
     public static final String GEOMETRY_CUSTOM_SLIM = convertLegacyGeometryName("geometry.humanoid.customSlim");
 
+    private boolean noPlayFab; // Don't attempt to generate missing play fab id multiple times
     private String fullSkinId;
     private String skinId;
     private String playFabId = "";
@@ -58,15 +62,24 @@ public class Skin {
     }
 
     private boolean isValidSkin() {
-        return skinId != null && !skinId.trim().isEmpty() && skinId.length() < 100 &&
-                skinData != null && skinData.width >= 64 && skinData.height >= 32 &&
-                skinData.data.length >= SINGLE_SKIN_SIZE &&
-                (playFabId == null || playFabId.length() < 100) &&
-                (capeId == null || capeId.length() < 100) &&
-                (skinColor == null || skinColor.length() < 100) &&
-                (armSize == null || armSize.length() < 100) &&
-                (fullSkinId == null || fullSkinId.length() < 200) &&
-                (geometryDataEngineVersion == null || geometryDataEngineVersion.length() < 100);
+        try {
+            return (skinId != null && !skinId.trim().isEmpty() && skinId.length() < 100) &&
+                    (skinData != null && skinData.width >= 64 && skinData.height >= 32 && skinData.data.length >= SINGLE_SKIN_SIZE) &&
+                    (geometryData != null && !geometryData.isEmpty()) &&
+                    ((geometryData.getBytes().length <= MAX_DATA_SIZE &&
+                            skinData.data.length <= MAX_DATA_SIZE &&
+                            (capeData == null || capeData.data.length <= MAX_DATA_SIZE) &&
+                            (animationData == null || animationData.getBytes().length <= MAX_DATA_SIZE))) &&
+                    (playFabId == null || playFabId.length() < 100) &&
+                    (capeId == null || capeId.length() < 100) &&
+                    (skinColor == null || skinColor.length() < 100) &&
+                    (armSize == null || armSize.length() < 100) &&
+                    (fullSkinId == null || fullSkinId.length() < 200) &&
+                    (geometryDataEngineVersion == null || geometryDataEngineVersion.length() < 100);
+        } catch (Exception ex) {
+            if (Nukkit.DEBUG > 1) Server.getInstance().getLogger().logException(ex);
+            return false;
+        }
     }
 
     private boolean isValidResourcePatch() {
@@ -74,8 +87,7 @@ public class Skin {
             return false;
         }
         try {
-            JSONObject object = (JSONObject) JSONValue.parse(skinResourcePatch);
-            JSONObject geometry = (JSONObject) object.get("geometry");
+            JSONObject geometry = (JSONObject) ((JSONObject) JSONValue.parse(skinResourcePatch)).get("geometry");
             return geometry.containsKey("default") && geometry.get("default") instanceof String;
         } catch (ClassCastException | NullPointerException e) {
             return false;
@@ -91,6 +103,7 @@ public class Skin {
 
     public String getSkinId() {
         if (this.skinId == null) {
+            Server.getInstance().getLogger().debug("Missing skin ID, generating new");
             this.generateSkinId("Custom");
         }
         return skinId;
@@ -98,6 +111,7 @@ public class Skin {
 
     public void setSkinId(String skinId) {
         if (skinId == null || skinId.trim().isEmpty()) {
+            Server.getInstance().getLogger().debug("Skin ID cannot be empty! ", new Throwable());
             return;
         }
         this.skinId = skinId;
@@ -123,14 +137,15 @@ public class Skin {
 
     public void setSkinResourcePatch(String skinResourcePatch) {
         if (skinResourcePatch == null || skinResourcePatch.trim().isEmpty()) {
-            skinResourcePatch = GEOMETRY_CUSTOM;
+            this.skinResourcePatch = GEOMETRY_CUSTOM;
+            return;
         }
         this.skinResourcePatch = skinResourcePatch;
     }
 
     public void setGeometryName(String geometryName) {
-        if (geometryName == null || geometryName.trim().isEmpty()) {
-            skinResourcePatch = GEOMETRY_CUSTOM;
+        if (geometryName.trim().isEmpty()) {
+            this.skinResourcePatch = GEOMETRY_CUSTOM;
             return;
         }
 
@@ -167,8 +182,9 @@ public class Skin {
 
     public void setCapeData(byte[] capeData) {
         Objects.requireNonNull(capeData, "capeData");
-        Preconditions.checkArgument(capeData.length == SINGLE_SKIN_SIZE || capeData.length == 0, "Invalid legacy cape");
-        setCapeData(new SerializedImage(64, 32, capeData));
+        if (capeData.length == SINGLE_SKIN_SIZE) {
+            setCapeData(new SerializedImage(64, 32, capeData));
+        }
     }
 
     public void setCapeData(BufferedImage image) {
@@ -286,32 +302,47 @@ public class Skin {
 
     public void setFullSkinId(String fullSkinId) {
         this.fullSkinId = fullSkinId;
+        this.noPlayFab = false; // Allow another attempt to generate it using the new id
     }
 
     public String getFullSkinId() {
         if (this.fullSkinId == null) {
             this.fullSkinId = this.getSkinId() + this.getCapeId();
+            this.noPlayFab = false; // Allow another attempt to generate it using the new id
         }
         return this.fullSkinId;
     }
 
     public void setPlayFabId(String playFabId) {
         this.playFabId = playFabId;
+        this.noPlayFab = false;
     }
 
     public String getPlayFabId() {
-        if (this.persona && (this.playFabId == null || this.playFabId.isEmpty())) {
-            try {
-                this.playFabId = this.skinId.split("-")[5];
-            } catch (Exception e) {
-                this.playFabId = this.getFullSkinId().replace("-", "").substring(16);
+        if (this.noPlayFab) {
+            return "";
+        }
+        if ((this.playFabId == null || this.playFabId.isEmpty())) {
+            String[] split = this.getFullSkinId().split("-", 6);
+            if (split.length > 5) {
+                this.playFabId = split[5];
+                this.noPlayFab = false;
+            } else {
+                try {
+                    this.playFabId = this.getFullSkinId().replace("-", "").substring(16);
+                    this.noPlayFab = false;
+                } catch (Exception ignore) {
+                    Server.getInstance().getLogger().debug("Couldn't generate Skin playFabId for " + this.getFullSkinId());
+                    this.playFabId = "";
+                    this.noPlayFab = true;
+                }
             }
         }
         return this.playFabId;
     }
 
     private static SerializedImage parseBufferedImage(BufferedImage image) {
-        FastByteArrayOutputStream outputStream = new FastByteArrayOutputStream();
+        FastByteArrayOutputStream outputStream = ThreadCache.fbaos.get().reset();
         for (int y = 0; y < image.getHeight(); y++) {
             for (int x = 0; x < image.getWidth(); x++) {
                 Color color = new Color(image.getRGB(x, y), true);

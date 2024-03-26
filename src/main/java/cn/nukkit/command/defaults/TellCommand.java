@@ -20,8 +20,8 @@ public class TellCommand extends VanillaCommand {
         this.setPermission("nukkit.command.tell");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newType("message", CommandParamType.MESSAGE)
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("message", CommandParamType.TEXT, false)
         });
     }
 
@@ -33,13 +33,12 @@ public class TellCommand extends VanillaCommand {
 
         if (args.length < 2) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
-
             return false;
         }
 
         String name = args[0].replace("@s", sender.getName());
 
-        Player player = sender.getServer().getPlayer(name);
+        Player player = sender.getServer().getPlayerExact(name);
         if (player == null) {
             sender.sendMessage(new TranslationContainer("commands.generic.player.notFound"));
             return true;
@@ -52,16 +51,22 @@ public class TellCommand extends VanillaCommand {
 
         StringBuilder msg = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
-            msg.append(args[i]).append(" ");
+            msg.append(args[i]).append(' ');
         }
-        if (msg.length() > 0) {
+        if (msg.length() > 512) {
+            sender.sendMessage(TextFormat.RED + "The message is too long");
+            return true;
+        } else if (msg.length() > 0) {
             msg = new StringBuilder(msg.substring(0, msg.length() - 1));
         }
 
         String displayName = (sender instanceof Player ? ((Player) sender).getDisplayName() : sender.getName());
 
-        sender.sendMessage("[" + sender.getName() + " -> " + player.getDisplayName() + "] " + msg);
-        player.sendMessage("[" + displayName + " -> " + player.getName() + "] " + msg);
+        sender.sendMessage('[' + sender.getName() + " -> " + player.getDisplayName() + "] " + msg);
+        player.sendMessage('[' + displayName + " -> " + player.getName() + "] " + msg);
+        if (sender instanceof Player) {
+            sender.getServer().getLogger().info('[' + sender.getName() + " -> " + player.getDisplayName() + "] " + msg);
+        }
 
         return true;
     }

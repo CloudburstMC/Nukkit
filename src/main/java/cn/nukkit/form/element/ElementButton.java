@@ -29,5 +29,4 @@ public class ElementButton {
     public void addImage(ElementButtonImageData image) {
         if (!image.getData().isEmpty() && !image.getType().isEmpty()) this.image = image;
     }
-
 }

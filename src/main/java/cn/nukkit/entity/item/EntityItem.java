@@ -1,9 +1,11 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ItemDespawnEvent;
@@ -24,23 +26,25 @@ import cn.nukkit.network.protocol.EntityEventPacket;
 public class EntityItem extends Entity {
 
     public static final int NETWORK_ID = 64;
+    protected String owner;
+    protected String thrower;
+    protected Item item;
+    protected int pickupDelay;
+    protected boolean floatsInLava;
+    public Player droppedBy;
+
+    private boolean deadOnceAndForAll;
 
     public EntityItem(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+
+        this.updateMode = 5;
     }
 
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
     }
-
-    protected String owner;
-    protected String thrower;
-
-    protected Item item;
-
-    protected int pickupDelay;
-    protected boolean floatsInLava;
 
     @Override
     public float getWidth() {
@@ -79,10 +83,15 @@ public class EntityItem extends Entity {
 
     @Override
     protected void initEntity() {
+        this.setMaxHealth(5);
+
         super.initEntity();
 
-        this.setMaxHealth(5);
-        this.setHealth(this.namedTag.getShort("Health"));
+        if (namedTag.contains("Health")) {
+            this.setHealth(namedTag.getShort("Health"));
+        } else {
+            this.setHealth(5);
+        }
 
         if (this.namedTag.contains("Age")) {
             this.age = this.namedTag.getShort("Age");
@@ -106,7 +115,10 @@ public class EntityItem extends Entity {
         }
 
         this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY, true);
+
+        if (this.item == null) {
+            throw new NullPointerException("EntityItem with null item");
+        }
 
         int id = this.item.getId();
         if (id >= Item.NETHERITE_INGOT && id <= Item.NETHERITE_SCRAP) {
@@ -123,9 +135,10 @@ public class EntityItem extends Entity {
         if ((cause == DamageCause.VOID || cause == DamageCause.CONTACT || cause == DamageCause.FIRE_TICK
                 || (cause == DamageCause.ENTITY_EXPLOSION || cause == DamageCause.BLOCK_EXPLOSION) && !this.isInsideOfWater()
                 && (this.item == null || this.item.getId() != Item.NETHER_STAR)) && super.attack(source)) {
-            if (this.item == null || this.isAlive()) {
+            if (this.item == null || this.isAlive() || this.deadOnceAndForAll) {
                 return true;
             }
+            this.deadOnceAndForAll = true;
             int id = this.item.getId();
             if (id != Item.SHULKER_BOX && id != Item.UNDYED_SHULKER_BOX) {
                 return true;
@@ -155,49 +168,22 @@ public class EntityItem extends Entity {
         }
 
         int tickDiff = currentTick - this.lastUpdate;
-
         if (tickDiff <= 0 && !this.justCreated) {
             return true;
         }
 
-        this.lastUpdate = currentTick;
+        this.minimalEntityTick(currentTick, tickDiff);
 
-        this.timing.startTiming();
-        
-        if (this.age % 60 == 0 && this.onGround && this.getItem() != null && this.isAlive()) {
-            if (this.getItem().getCount() < this.getItem().getMaxStackSize()) {
-                for (Entity entity : this.getLevel().getNearbyEntities(getBoundingBox().grow(1, 1, 1), this, false)) {
-                    if (entity instanceof EntityItem) {
-                        if (!entity.isAlive()) {
-                            continue;
-                        }
-                        Item closeItem = ((EntityItem) entity).getItem();
-                        if (!closeItem.equals(getItem(), true, true)) {
-                            continue;
-                        }
-                        if (!entity.isOnGround()) {
-                            continue;
-                        }
-                        int newAmount = this.getItem().getCount() + closeItem.getCount();
-                        if (newAmount > this.getItem().getMaxStackSize()) {
-                            continue;
-                        }
-                        entity.close();
-                        this.getItem().setCount(newAmount);
-                        EntityEventPacket packet = new EntityEventPacket();
-                        packet.eid = getId();
-                        packet.data = newAmount;
-                        packet.event = EntityEventPacket.MERGE_ITEMS;
-                        Server.broadcastPacket(this.getViewers().values(), packet);
-                    }
-                }
+        if (this.age > 6000) {
+            ItemDespawnEvent ev = new ItemDespawnEvent(this);
+            this.server.getPluginManager().callEvent(ev);
+
+            if (ev.isCancelled()) {
+                this.age = 0;
+            } else {
+                this.close();
+                return false;
             }
-        }
-
-        boolean hasUpdate = this.entityBaseTick(tickDiff);
-
-        if (!this.fireProof && this.isInsideOfFire()) {
-            this.kill();
         }
 
         if (this.isAlive()) {
@@ -206,34 +192,111 @@ public class EntityItem extends Entity {
                 if (this.pickupDelay < 0) {
                     this.pickupDelay = 0;
                 }
-            }/* else { // Done in Player#checkNearEntities
-                for (Entity entity : this.level.getNearbyEntities(this.boundingBox.grow(1, 0.5, 1), this)) {
-                    if (entity instanceof Player) {
-                        if (((Player) entity).pickupEntity(this, true)) {
-                            return true;
+            }
+
+            // updateMode % 3 or age % 20 basically means on every reduced update, don't use updateMode % 2 because that would include every update with default updateMode
+            if (this.onGround && this.item != null && (this.updateMode % 3 == 1 || this.age % 20 == 0)) {
+                if (this.item.getCount() < this.item.getMaxStackSize()) {
+                    Entity[] e = this.getLevel().getNearbyEntities(getBoundingBox().grow(1, 1, 1), this);
+
+                    for (Entity entity : e) {
+                        if (entity instanceof EntityItem) {
+                            if (entity.closed || !entity.isAlive()) {
+                                continue;
+                            }
+                            Item closeItem = ((EntityItem) entity).getItem();
+                            if (!closeItem.equals(item, true, true)) {
+                                continue;
+                            }
+                            if (!entity.isOnGround()) {
+                                continue;
+                            }
+                            int newAmount = this.item.getCount() + closeItem.getCount();
+                            if (newAmount > this.item.getMaxStackSize()) {
+                                continue;
+                            }
+                            closeItem.setCount(0);
+                            entity.close();
+                            this.item.setCount(newAmount);
+                            EntityEventPacket packet = new EntityEventPacket();
+                            packet.eid = getId();
+                            packet.data = newAmount;
+                            packet.event = EntityEventPacket.MERGE_ITEMS;
+                            Server.broadcastPacket(this.getViewers().values(), packet);
+                        }
+                        if (this.item.getCount() >= this.item.getMaxStackSize()) {
+                            break;
                         }
                     }
                 }
-            }*/
+            }
 
-            int bid = level.getBlock(this.getFloorX(), NukkitMath.floorDouble(this.y + 0.53), this.getFloorZ(), false).getId();
-            if (bid == BlockID.WATER || bid == BlockID.STILL_WATER ||
-                    (this.floatsInLava && (bid == Block.LAVA || bid == Block.STILL_LAVA))) {
+            int blockId;
+            if (this.isOnGround()) {
+                this.motionY = 0;
+            } else if (Block.hasWater((blockId = level.getBlockIdAt(this.chunk, this.getFloorX(), NukkitMath.floorDouble(this.y + 0.53), this.getFloorZ()))) ||
+                    (this.floatsInLava && (blockId == Block.LAVA || blockId == Block.STILL_LAVA))) {
                 this.motionY = this.getGravity() / 2;
-            } else if (!this.isOnGround()) {
+            } else {
                 this.motionY -= this.getGravity();
             }
 
-            if (this.checkObstruction(this.x, this.y, this.z)) {
-                hasUpdate = true;
+            this.checkBlockCollision();
+
+            this.checkObstruction(this.x, this.y, this.z);
+
+            // Check nearby blocks changed
+            if (this.updateMode % 3 == 1) {
+                this.updateMode = 5;
+
+                // Force check for nearby blocks changed even if not moving
+                if (this.motionY == 0) {
+                    this.motionY = 0.00001;
+                }
+
+                if (!this.fireProof) { // Fix missed collisions
+                    Block block = level.getBlock(this.chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ(), false);
+                    int bid = block.getId();
+                    if (bid == BlockID.FIRE || bid == BlockID.SOUL_FIRE || bid == BlockID.LAVA || bid == BlockID.STILL_LAVA) {
+                        this.attack(new EntityDamageByBlockEvent(block, this, DamageCause.FIRE, 1));
+                    } else if (bid == BlockID.CACTUS) {
+                        this.attack(new EntityDamageByBlockEvent(block, this, DamageCause.CONTACT, 1));
+                        return true;
+                    }
+                }
             }
 
-            this.move(this.motionX, this.motionY, this.motionZ);
+            // Flowing water
+            if (this.move(this.motionX, this.motionY, this.motionZ) && !(this.motionX == 0 && this.motionZ == 0)) {
+                this.collisionBlocks = null;
+            }
+
+            if (this.y < (this.getLevel().getMinBlockY() - 16)) {
+                this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+            }
+
+            if (this.fireTicks > 0) {
+                if (this.fireProof) {
+                    this.fireTicks -= tickDiff << 2;
+                    if (this.fireTicks < 0) {
+                        this.fireTicks = 0;
+                    }
+                } else {
+                    if (((this.fireTicks % 20) == 0 || tickDiff > 20)) {
+                        this.attack(new EntityDamageEvent(this, DamageCause.FIRE_TICK, 1));
+                    }
+                    this.fireTicks -= tickDiff;
+                }
+                if (this.fireTicks <= 0) {
+                    this.extinguish();
+                } else if (!this.fireProof) {
+                    this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, true);
+                }
+            }
 
             double friction = 1 - this.getDrag();
-
             if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor();
+                friction *= this.getLevel().getBlock(this.chunk, getFloorX(), getFloorY() - 1, getFloorZ(), false).getFrictionFactor();
             }
 
             this.motionX *= friction;
@@ -241,26 +304,18 @@ public class EntityItem extends Entity {
             this.motionZ *= friction;
 
             if (this.onGround) {
-                this.motionY *= -0.5;
+                this.motionY = 0;
             }
 
             this.updateMovement();
-
-            if (this.age > 6000) {
-                ItemDespawnEvent ev = new ItemDespawnEvent(this);
-                this.server.getPluginManager().callEvent(ev);
-                if (ev.isCancelled()) {
-                    this.age = 0;
-                } else {
-                    this.kill();
-                    hasUpdate = true;
-                }
-            }
         }
 
-        this.timing.stopTiming();
+        if (!this.isAlive()) {
+            this.close();
+            return false;
+        }
 
-        return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
+        return !(this.motionX == 0 && this.motionY == 0 && this.motionZ == 0);
     }
 
     @Override
@@ -283,7 +338,7 @@ public class EntityItem extends Entity {
 
     @Override
     public String getName() {
-        return this.hasCustomName() ? this.getNameTag() : (this.item == null ? "" : this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
+        return this.hasCustomName() ? this.getNameTag() : (this.item.hasCustomName() ? this.item.getCustomName() : this.item.getName());
     }
 
     public Item getItem() {
@@ -330,13 +385,8 @@ public class EntityItem extends Entity {
         addEntity.speedX = (float) this.motionX;
         addEntity.speedY = (float) this.motionY;
         addEntity.speedZ = (float) this.motionZ;
-        addEntity.metadata = this.dataProperties;
-        addEntity.item = this.getItem();
+        addEntity.metadata = this.dataProperties.clone();
+        addEntity.item = this.item;
         return addEntity;
-    }
-
-    @Override
-    public boolean doesTriggerPressurePlate() {
-        return true;
     }
 }

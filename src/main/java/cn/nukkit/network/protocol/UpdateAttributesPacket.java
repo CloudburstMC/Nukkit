@@ -20,10 +20,12 @@ public class UpdateAttributesPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
+    @Override
     public void encode() {
         this.reset();
 
@@ -39,10 +41,11 @@ public class UpdateAttributesPacket extends DataPacket {
                 this.putLFloat(entry.getValue());
                 this.putLFloat(entry.getDefaultValue());
                 this.putString(entry.getName());
+
                 this.putUnsignedVarInt(0); // Modifiers
             }
         }
+
         this.putUnsignedVarInt(this.frame);
     }
-
 }

@@ -1,6 +1,10 @@
 package cn.nukkit.utils;
 
+/**
+ * Dye color enum
+ */
 public enum DyeColor {
+
     BLACK(0, 15, "Black", "Ink Sac", BlockColor.BLACK_BLOCK_COLOR, new BlockColor(0x00, 0x00, 0x00)),
     RED(1, 14, "Red", BlockColor.RED_BLOCK_COLOR, new BlockColor(0xb0, 0x2e, 0x26)),
     GREEN(2, 13, "Green", BlockColor.GREEN_BLOCK_COLOR, new BlockColor(0x5e, 0x7c, 0x16)),
@@ -41,6 +45,11 @@ public enum DyeColor {
         this.dyeName = dyeName;
     }
 
+    /**
+     * Get as BlockColor
+     *
+     * @return BlockColor of the DyeColor
+     */
     public BlockColor getColor() {
         return this.blockColor;
     }
@@ -49,18 +58,38 @@ public enum DyeColor {
         return this.signColor;
     }
 
+    /**
+     * Get as dye item meta value
+     *
+     * @return dye item meta value of the DyeColor
+     */
     public int getDyeData() {
         return this.dyeColorMeta;
     }
 
+    /**
+     * Get as wool block meta value
+     *
+     * @return wool block meta value of the DyeColor
+     */
     public int getWoolData() {
         return this.woolColorMeta;
     }
 
+    /**
+     * Get color name
+     *
+     * @return color name
+     */
     public String getName() {
         return this.colorName;
     }
 
+    /**
+     * Get dye name
+     *
+     * @return dye name
+     */
     public String getDyeName() {
         return this.dyeName;
     }
@@ -75,10 +104,22 @@ public enum DyeColor {
         }
     }
 
+    /**
+     * Get DyeColor by dye item meta value
+     *
+     * @param dyeColorMeta dye item meta value
+     * @return DyeColor
+     */
     public static DyeColor getByDyeData(int dyeColorMeta) {
         return BY_DYE_DATA[dyeColorMeta & 0x0f];
     }
 
+    /**
+     * Get DyeColor by wool block meta value
+     *
+     * @param woolColorMeta wool block meta value
+     * @return DyeColor
+     */
     public static DyeColor getByWoolData(int woolColorMeta) {
         return BY_WOOL_DATA[woolColorMeta & 0x0f];
     }

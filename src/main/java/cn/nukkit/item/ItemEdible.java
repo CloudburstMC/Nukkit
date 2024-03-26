@@ -4,12 +4,14 @@ import cn.nukkit.Player;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class ItemEdible extends Item {
+
     public ItemEdible(int id, Integer meta, int count, String name) {
         super(id, meta, count, name);
     }
@@ -28,27 +30,33 @@ public abstract class ItemEdible extends Item {
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        if (player.getFoodData().getLevel() < player.getFoodData().getMaxLevel() || player.isCreative() || player.getServer().getDifficulty() == 0) {
-            return true;
-        }
-        player.getFoodData().sendFoodLevel();
-        return false;
+        return player.canEat(true);
+    }
+
+    protected int getUseTicks() {
+        return 30;
     }
 
     @Override
     public boolean onUse(Player player, int ticksUsed) {
+        if (ticksUsed < this.getUseTicks()) {
+            player.getServer().getLogger().debug(player.getName() + ": food ticksUsed=" + ticksUsed);
+            return false;
+        }
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
 
         player.getServer().getPluginManager().callEvent(consumeEvent);
         if (consumeEvent.isCancelled()) {
-            player.getInventory().sendContents(player);
-            return false;
+            return false; // Inventory#sendContents is called in Player
         }
 
         Food food = Food.getByRelative(this);
-        if ((player.isAdventure() || player.isSurvival()) && food != null && food.eatenBy(player)) {
-            --this.count;
-            player.getInventory().setItemInHand(this);
+        if (food != null && food.eatenBy(player)) {
+            player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BURP);
+            if (!player.isCreative() && !player.isSpectator()) {
+                --this.count;
+                player.getInventory().setItemInHand(this);
+            }
         }
         return true;
     }

@@ -5,18 +5,19 @@ import lombok.ToString;
 @ToString
 public class ToastRequestPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.TOAST_REQUEST_PACKET;
+
     public String title = "";
     public String content = "";
 
     @Override
     public byte pid() {
-        return ProtocolInfo.TOAST_REQUEST_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
-        this.title = this.getString();
-        this.content = this.getString();
+        this.decodeUnsupported();
     }
 
     @Override

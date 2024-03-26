@@ -1,12 +1,11 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-/**
- * @author PikyCZ
- */
-public class EntityEvoker extends EntityMob {
+public class EntityEvoker extends EntityWalkingMob {
 
     public static final int NETWORK_ID = 104;
 
@@ -20,12 +19,6 @@ public class EntityEvoker extends EntityMob {
     }
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
-        this.setMaxHealth(24);
-    }
-
-    @Override
     public float getWidth() {
         return 0.6f;
     }
@@ -36,7 +29,18 @@ public class EntityEvoker extends EntityMob {
     }
 
     @Override
-    public String getName() {
-        return "Evoker";
+    protected void initEntity() {
+        this.setMaxHealth(24);
+        super.initEntity();
+    }
+
+    @Override
+    public Item[] getDrops() {
+        return new Item[]{Item.get(Item.EMERALD, 0, Utils.rand(0, 1)), Item.get(Item.TOTEM, 0, 1)};
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 10;
     }
 }

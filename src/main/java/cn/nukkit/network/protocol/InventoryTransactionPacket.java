@@ -4,14 +4,14 @@ import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.TransactionData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.ToString;
 
-import java.util.ArrayDeque;
-import java.util.Collection;
-
 @ToString
 public class InventoryTransactionPacket extends DataPacket {
+
+    public static final byte NETWORK_ID = ProtocolInfo.INVENTORY_TRANSACTION_PACKET;
 
     public static final int TYPE_NORMAL = 0;
     public static final int TYPE_MISMATCH = 1;
@@ -39,6 +39,7 @@ public class InventoryTransactionPacket extends DataPacket {
     public int transactionType;
     public NetworkInventoryAction[] actions;
     public TransactionData transactionData;
+    public boolean hasNetworkIds = false;
     public int legacyRequestId;
 
     /**
@@ -51,16 +52,19 @@ public class InventoryTransactionPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.INVENTORY_TRANSACTION_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void encode() {
         this.reset();
+
         this.putVarInt(this.legacyRequestId);
-        //TODO legacySlot array
+
         this.putUnsignedVarInt(this.transactionType);
+        this.putBoolean(this.hasNetworkIds);
         this.putUnsignedVarInt(this.actions.length);
+
         for (NetworkInventoryAction action : this.actions) {
             action.write(this);
         }
@@ -109,22 +113,23 @@ public class InventoryTransactionPacket extends DataPacket {
         this.legacyRequestId = this.getVarInt();
         if (legacyRequestId < -1 && (legacyRequestId & 1) == 0) {
             int length = (int) this.getUnsignedVarInt();
+            if (length > 4096) {
+                throw new RuntimeException("Too many inventory transactions in one packet");
+            }
+
             for (int i = 0; i < length; i++) {
                 this.getByte();
                 int bufLen = (int) this.getUnsignedVarInt();
                 this.get(bufLen);
             }
-
         }
 
         this.transactionType = (int) this.getUnsignedVarInt();
 
-        int length = (int) this.getUnsignedVarInt();
-        Collection<NetworkInventoryAction> actions = new ArrayDeque<>();
-        for (int i = 0; i < length; i++) {
-            actions.add(new NetworkInventoryAction().read(this));
+        this.actions = new NetworkInventoryAction[Math.min((int) this.getUnsignedVarInt(), 4096)];
+        for (int i = 0; i < this.actions.length; i++) {
+            this.actions[i] = new NetworkInventoryAction().read(this);
         }
-        this.actions = actions.toArray(new NetworkInventoryAction[0]);
 
         switch (this.transactionType) {
             case TYPE_NORMAL:
@@ -139,7 +144,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 itemData.face = this.getBlockFace();
                 itemData.hotbarSlot = this.getVarInt();
                 itemData.itemInHand = this.getSlot();
-                itemData.playerPos = this.getVector3f().asVector3();
+                itemData.playerPos = this.getVector3fAsVector3();
                 itemData.clickPos = this.getVector3f();
                 itemData.blockRuntimeId = (int) this.getUnsignedVarInt();
 
@@ -152,8 +157,8 @@ public class InventoryTransactionPacket extends DataPacket {
                 useItemOnEntityData.actionType = (int) this.getUnsignedVarInt();
                 useItemOnEntityData.hotbarSlot = this.getVarInt();
                 useItemOnEntityData.itemInHand = this.getSlot();
-                useItemOnEntityData.playerPos = this.getVector3f().asVector3();
-                useItemOnEntityData.clickPos = this.getVector3f().asVector3();
+                useItemOnEntityData.playerPos = this.getVector3fAsVector3();
+                useItemOnEntityData.clickPos = this.getVector3fAsVector3();
 
                 this.transactionData = useItemOnEntityData;
                 break;
@@ -162,13 +167,17 @@ public class InventoryTransactionPacket extends DataPacket {
 
                 releaseItemData.actionType = (int) getUnsignedVarInt();
                 releaseItemData.hotbarSlot = getVarInt();
-                releaseItemData.itemInHand = getSlot();
-                releaseItemData.headRot = this.getVector3f().asVector3();
+                releaseItemData.itemInHand = this.getSlot();
+                releaseItemData.headRot = this.getVector3fAsVector3();
 
                 this.transactionData = releaseItemData;
                 break;
             default:
                 throw new RuntimeException("Unknown transaction type " + this.transactionType);
         }
+    }
+
+    private Vector3 getVector3fAsVector3() {
+        return new Vector3(this.getLFloat(4), this.getLFloat(4), this.getLFloat(4));
     }
 }

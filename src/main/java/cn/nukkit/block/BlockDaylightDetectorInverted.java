@@ -1,16 +1,15 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.math.BlockFace;
 
 /**
  * Created on 2015/11/22 by CreeperFace.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
-
-    public BlockDaylightDetectorInverted() {
-    }
 
     @Override
     public int getId() {
@@ -23,12 +22,23 @@ public class BlockDaylightDetectorInverted extends BlockDaylightDetector {
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.DAYLIGHT_DETECTOR), 0);
-    }
-
-    protected boolean invertDetect() {
+    public boolean onActivate(Item item, Player player) {
+        this.getLevel().setBlock(this, Block.get(DAYLIGHT_DETECTOR));
         return true;
     }
 
+    @Override
+    public Item toItem() {
+        return new ItemBlock(Block.get(DAYLIGHT_DETECTOR), 0);
+    }
+
+    @Override
+    public boolean isPowerSource() {
+        return true;
+    }
+
+    @Override
+    public int getWeakPower(BlockFace face) {
+        return this.level.isAnimalSpawningAllowedByTime() ? 0 : 15;
+    }
 }

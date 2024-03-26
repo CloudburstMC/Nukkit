@@ -5,16 +5,18 @@ import lombok.ToString;
 @ToString
 public class RequestNetworkSettingsPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET;
+
     public int protocolVersion;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void encode() {
-        throw new UnsupportedOperationException();
+        this.encodeUnsupported();
     }
 
     @Override

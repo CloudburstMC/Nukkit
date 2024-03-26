@@ -7,12 +7,10 @@ import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.network.protocol.*;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
  * DummyBossBar
  * ===============
- * author: boybook
+ * @author boybook
  * Nukkit Project
  * ===============
  */
@@ -33,6 +31,9 @@ public class DummyBossBar {
         this.color = builder.color;
     }
 
+    /**
+     * Boss bar builder
+     */
     public static class Builder {
         private final Player player;
         private final long bossBarId;
@@ -43,7 +44,7 @@ public class DummyBossBar {
 
         public Builder(Player player) {
             this.player = player;
-            this.bossBarId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
+            this.bossBarId = 1095216660480L + Utils.random.nextLong(0, 0x7fffffffL);
         }
 
         public Builder text(String text) {
@@ -66,18 +67,38 @@ public class DummyBossBar {
         }
     }
 
+    /**
+     * Get boss bar owner
+     *
+     * @return player
+     */
     public Player getPlayer() {
         return player;
     }
 
+    /**
+     * Get boss bar id
+     *
+     * @return boss bar id
+     */
     public long getBossBarId() {
         return bossBarId;
     }
 
+    /**
+     * Get boss bar text
+     *
+     * @return current text
+     */
     public String getText() {
         return text;
     }
 
+    /**
+     * Set the boss bar text and send it to player if changed
+     *
+     * @param text new text
+     */
     public void setText(String text) {
         if (!this.text.equals(text)) {
             this.text = text;
@@ -86,10 +107,20 @@ public class DummyBossBar {
         }
     }
 
+    /**
+     * Get boss bar length
+     *
+     * @return length
+     */
     public float getLength() {
         return length;
     }
 
+    /**
+     * Set boss bar length
+     *
+     * @param length new length
+     */
     public void setLength(float length) {
         if (this.length != length) {
             this.length = length;
@@ -98,6 +129,10 @@ public class DummyBossBar {
         }
     }
 
+    /**
+     * Set boss bar color. Requires client version 1.18 or newer.
+     * @param color the boss bar color
+     */
     public void setColor(BossBarColor color) {
         if (this.color == null || !this.color.equals(color)) {
             this.color = color;
@@ -105,6 +140,10 @@ public class DummyBossBar {
         }
     }
 
+    /**
+     * Get boss bar color
+     * @return current color of the boss bar
+     */
     public BossBarColor getColor() {
         return this.color;
     }
@@ -128,7 +167,6 @@ public class DummyBossBar {
                 .putLong(Entity.DATA_LEAD_HOLDER_EID, -1)
                 .putString(Entity.DATA_NAMETAG, text) // Set the entity name
                 .putFloat(Entity.DATA_SCALE, 0); // And make it invisible
-
         player.dataPacket(pkAdd);
     }
 
@@ -212,6 +250,9 @@ public class DummyBossBar {
         player.dataPacket(pkRemove);
     }
 
+    /**
+     * Create boss bar entity and send its data
+     */
     public void create() {
         createBossEntity();
         sendAttributes();
@@ -233,5 +274,4 @@ public class DummyBossBar {
         sendHideBossBar();
         removeBossEntity();
     }
-
 }

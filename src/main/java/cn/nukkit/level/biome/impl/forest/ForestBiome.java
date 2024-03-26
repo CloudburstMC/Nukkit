@@ -2,10 +2,11 @@ package cn.nukkit.level.biome.impl.forest;
 
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.biome.type.GrassyBiome;
+import cn.nukkit.level.generator.populator.impl.PopulatorFallenTree;
 import cn.nukkit.level.generator.populator.impl.PopulatorTree;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ForestBiome extends GrassyBiome {
@@ -25,15 +26,21 @@ public class ForestBiome extends GrassyBiome {
         this.type = type;
 
         PopulatorTree trees = new PopulatorTree(type == TYPE_BIRCH_TALL ? BlockSapling.BIRCH_TALL : BlockSapling.BIRCH);
-        trees.setBaseAmount(type == TYPE_NORMAL ? 3 : 6);
+        trees.setBaseAmount(type == TYPE_NORMAL ? 3 : 10);
+        trees.setRandomAmount(3);
         this.addPopulator(trees);
 
         if (type == TYPE_NORMAL) {
-            //normal forest biomes have both oak and birch trees
+            // Normal forest biomes have both oak and birch trees
             trees = new PopulatorTree(BlockSapling.OAK);
-            trees.setBaseAmount(3);
+            trees.setBaseAmount(4);
+            trees.setRandomAmount(3);
             this.addPopulator(trees);
         }
+
+        PopulatorFallenTree fallenTree = new PopulatorFallenTree();
+        fallenTree.setType(type);
+        this.addPopulator(fallenTree);
     }
 
     @Override

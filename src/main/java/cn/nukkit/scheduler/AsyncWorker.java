@@ -5,10 +5,11 @@ import cn.nukkit.InterruptibleThread;
 import java.util.LinkedList;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class AsyncWorker extends Thread implements InterruptibleThread {
+
     private final LinkedList<AsyncTask> stack = new LinkedList<>();
 
     public AsyncWorker() {
@@ -44,10 +45,7 @@ public class AsyncWorker extends Thread implements InterruptibleThread {
             }
             try {
                 sleep(5);
-            } catch (InterruptedException e) {
-                //igonre
-            }
+            } catch (InterruptedException ignored) {}
         }
     }
-
 }

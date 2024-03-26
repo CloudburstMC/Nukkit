@@ -1,7 +1,9 @@
 package cn.nukkit.level.biome.type;
 
+import cn.nukkit.block.Block;
+
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class SandyBiome extends CoveredBiome {
@@ -12,7 +14,7 @@ public abstract class SandyBiome extends CoveredBiome {
 
     @Override
     public int getSurfaceId(int x, int y, int z) {
-        return SAND << 4;
+        return Block.SAND << Block.DATA_BITS;
     }
 
     @Override
@@ -22,6 +24,6 @@ public abstract class SandyBiome extends CoveredBiome {
 
     @Override
     public int getGroundId(int x, int y, int z) {
-        return SANDSTONE << 4;
+        return Block.SANDSTONE << Block.DATA_BITS;
     }
 }

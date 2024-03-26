@@ -11,9 +11,11 @@ import java.util.List;
 
 public class FormWindowCustom extends FormWindow {
 
-    private final String type = "custom_form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
+    @SuppressWarnings("unused")
+    private final String type = "custom_form";
     private String title = "";
     private ElementButtonImageData icon;
+    @SuppressWarnings("FieldMayBeFinal")
     private List<Element> content;
 
     private FormResponseCustom response;
@@ -74,9 +76,7 @@ public class FormWindowCustom extends FormWindow {
             return;
         }
 
-        List<String> elementResponses = GSON.fromJson(data, new TypeToken<List<String>>() {
-        }.getType());
-        //elementResponses.remove(elementResponses.size() - 1); //submit button //maybe mojang removed that?
+        List<String> elementResponses = GSON.fromJson(data, new ListTypeToken().getType());
 
         int i = 0;
 
@@ -150,4 +150,6 @@ public class FormWindowCustom extends FormWindow {
         }
     }
 
+    private static class ListTypeToken extends TypeToken<List<String>> {
+    }
 }

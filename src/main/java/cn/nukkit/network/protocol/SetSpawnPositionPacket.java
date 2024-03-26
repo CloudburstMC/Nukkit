@@ -21,7 +21,7 @@ public class SetSpawnPositionPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -29,7 +29,7 @@ public class SetSpawnPositionPacket extends DataPacket {
         this.reset();
         this.putVarInt(this.spawnType);
         this.putBlockVector3(this.x, this.y, this.z);
-        this.putVarInt(dimension);
+        this.putVarInt(this.dimension);
         this.putBlockVector3(this.x, this.y, this.z);
     }
 
@@ -37,5 +37,4 @@ public class SetSpawnPositionPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
-
 }

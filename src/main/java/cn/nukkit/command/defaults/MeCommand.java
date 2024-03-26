@@ -14,11 +14,11 @@ import cn.nukkit.utils.TextFormat;
 public class MeCommand extends VanillaCommand {
 
     public MeCommand(String name) {
-        super(name, "%nukkit.command.me.description", "%commands.me.usage");
+        super(name, "%nukkit.command.me.description", "%nukkit.command.me.usage");
         this.setPermission("nukkit.command.me");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newType("message", CommandParamType.MESSAGE)
+                new CommandParameter("action ...", CommandParamType.RAWTEXT, false)
         });
     }
 
@@ -43,7 +43,7 @@ public class MeCommand extends VanillaCommand {
 
         StringBuilder msg = new StringBuilder();
         for (String arg : args) {
-            msg.append(arg).append(" ");
+            msg.append(arg).append(' ');
         }
 
         if (msg.length() > 0) {

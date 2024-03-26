@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
@@ -19,7 +18,6 @@ public class BlockWaterLily extends BlockFlowable {
     }
 
     public BlockWaterLily(int meta) {
-        // Lily pad can't have meta. Also stops the server from throwing an exception with the block palette.
         super(0);
     }
 
@@ -31,6 +29,11 @@ public class BlockWaterLily extends BlockFlowable {
     @Override
     public int getId() {
         return WATER_LILY;
+    }
+
+    @Override
+    protected AxisAlignedBB recalculateBoundingBox() {
+        return this;
     }
 
     @Override
@@ -59,11 +62,6 @@ public class BlockWaterLily extends BlockFlowable {
     }
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
-        return this;
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (target instanceof BlockWater) {
             Block up = target.up();
@@ -87,11 +85,6 @@ public class BlockWaterLily extends BlockFlowable {
     }
 
     @Override
-    public Item toItem() {
-        return new ItemBlock(this, 0);
-    }
-
-    @Override
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
@@ -102,12 +95,7 @@ public class BlockWaterLily extends BlockFlowable {
     }
 
     @Override
-    public int getFullId() {
-        return this.getId() << 4;
-    }
-
-    @Override
-    public void setDamage(int meta) {
-
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

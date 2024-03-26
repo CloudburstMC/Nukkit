@@ -1,8 +1,27 @@
 package cn.nukkit.command.data;
 
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class CommandParameter {
+
+    public final static String ARG_TYPE_STRING = "string";
+    public final static String ARG_TYPE_STRING_ENUM = "stringenum";
+    public final static String ARG_TYPE_BOOL = "bool";
+    public final static String ARG_TYPE_TARGET = "target";
+    public final static String ARG_TYPE_PLAYER = "target";
+    public final static String ARG_TYPE_BLOCK_POS = "blockpos";
+    public final static String ARG_TYPE_RAW_TEXT = "rawtext";
+    public final static String ARG_TYPE_INT = "int";
+
+    public static final String ENUM_TYPE_ITEM_LIST = "Item";
+    public static final String ENUM_TYPE_BLOCK_LIST = "Block";
+    public static final String ENUM_TYPE_COMMAND_LIST = "commandName";
+    public static final String ENUM_TYPE_ENCHANTMENT_LIST = "enchantmentType";
+    public static final String ENUM_TYPE_ENTITY_LIST = "entityType";
+    public static final String ENUM_TYPE_EFFECT_LIST = "effectType";
+    public static final String ENUM_TYPE_PARTICLE_LIST = "particleType";
 
     public String name;
     public CommandParamType type;
@@ -12,44 +31,24 @@ public class CommandParameter {
     public CommandEnum enumData;
     public String postFix;
 
-    /**
-     * @deprecated use {@link #newType(String, boolean, CommandParamType)} instead
-     */
-    @Deprecated
     public CommandParameter(String name, String type, boolean optional) {
         this(name, fromString(type), optional);
     }
 
-    /**
-     * @deprecated use {@link #newType(String, boolean, CommandParamType)} instead
-     */
-    @Deprecated
     public CommandParameter(String name, CommandParamType type, boolean optional) {
         this.name = name;
         this.type = type;
         this.optional = optional;
     }
 
-    /**
-     * @deprecated use {@link #newType(String, boolean, CommandParamType)} instead
-     */
-    @Deprecated
     public CommandParameter(String name, boolean optional) {
         this(name, CommandParamType.RAWTEXT, optional);
     }
 
-    /**
-     * @deprecated use {@link #newType(String, CommandParamType)} instead
-     */
-    @Deprecated
     public CommandParameter(String name) {
         this(name, false);
     }
 
-    /**
-     * @deprecated use {@link #newEnum(String, boolean, String)} instead
-     */
-    @Deprecated
     public CommandParameter(String name, boolean optional, String enumType) {
         this.name = name;
         this.type = CommandParamType.RAWTEXT;
@@ -57,29 +56,17 @@ public class CommandParameter {
         this.enumData = new CommandEnum(enumType, new ArrayList<>());
     }
 
-    /**
-     * @deprecated use {@link #newEnum(String, boolean, String[])} instead
-     */
-    @Deprecated
     public CommandParameter(String name, boolean optional, String[] enumValues) {
         this.name = name;
         this.type = CommandParamType.RAWTEXT;
         this.optional = optional;
-        this.enumData = new CommandEnum(name + "Enums", enumValues);
+        this.enumData = new CommandEnum(name + "Enums", Arrays.asList(enumValues));
     }
 
-    /**
-     * @deprecated use {@link #newEnum(String, String)} instead
-     */
-    @Deprecated
     public CommandParameter(String name, String enumType) {
         this(name, false, enumType);
     }
 
-    /**
-     * @deprecated use {@link #newEnum(String, String[])} instead
-     */
-    @Deprecated
     public CommandParameter(String name, String[] enumValues) {
         this(name, false, enumValues);
     }

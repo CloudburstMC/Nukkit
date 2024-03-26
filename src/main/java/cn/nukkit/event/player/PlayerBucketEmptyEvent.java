@@ -26,7 +26,8 @@ public class PlayerBucketEmptyEvent extends PlayerBucketEvent {
     }
 
     /**
-     * Whether a fish can be spawned when a fish bucket is emptied.
+     * Whether a fish can be spawned if a fish bucket is emptied.
+     * Notice: Disabling 'block-listener' in server.properties disables fish spawning from buckets.
      *
      * @return can spawn a fish
      */
@@ -35,7 +36,8 @@ public class PlayerBucketEmptyEvent extends PlayerBucketEvent {
     }
 
     /**
-     * Set whether a fish can be spawned when a fish bucket is emptied.
+     * Whether a fish can be spawned if a fish bucket is emptied.
+     * Notice: Disabling 'block-listener' in server.properties disables fish spawning from buckets.
      *
      * @param mobSpawningAllowed can spawn a fish
      */

@@ -1,17 +1,13 @@
 package cn.nukkit.item;
 
-import cn.nukkit.block.*;
-import cn.nukkit.math.BlockFace;
-import cn.nukkit.level.Level;
 import cn.nukkit.Player;
-
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.block.*;
 import cn.nukkit.event.block.BlockIgniteEvent;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
+import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.Utils;
 
-/**
- * Created by PetteriM1
- */
 public class ItemFireCharge extends Item {
 
     public ItemFireCharge() {
@@ -37,32 +33,32 @@ public class ItemFireCharge extends Item {
             return false;
         }
 
-        if (block.getId() == AIR && (target instanceof BlockSolid || target instanceof BlockSolidMeta)) {
+        if (block.getId() == AIR && (target instanceof BlockSolid || target instanceof BlockSolidMeta || target instanceof BlockLeaves)) {
             if (target.getId() == OBSIDIAN) {
-                if (level.createPortal(target)) {
+                if (level.createPortal(target, true)) {
                     return true;
                 }
             }
 
-            BlockFire fire = (BlockFire) Block.get(BlockID.FIRE);
+            int did;
+            BlockFire fire = (BlockFire) Block.get(((did = block.down().getId()) == SOUL_SAND || did == SOUL_SOIL) ? BlockID.SOUL_FIRE : BlockID.FIRE);
             fire.x = block.x;
             fire.y = block.y;
             fire.z = block.z;
             fire.level = level;
 
             if (fire.isBlockTopFacingSurfaceSolid(fire.down()) || fire.canNeighborBurn()) {
-                BlockIgniteEvent e = new BlockIgniteEvent(block, null, player, BlockIgniteEvent.BlockIgniteCause.FLINT_AND_STEEL);
+                BlockIgniteEvent e = new BlockIgniteEvent(block, null, player, BlockIgniteEvent.BlockIgniteCause.FIREBALL);
                 block.getLevel().getServer().getPluginManager().callEvent(e);
 
                 if (!e.isCancelled()) {
                     level.setBlock(fire, fire, true);
-                    level.addLevelEvent(block, LevelEventPacket.EVENT_SOUND_GHAST_SHOOT, 78642);
-                    level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
-                }
-                if (player.isSurvival()) {
-                    Item item = player.getInventory().getItemInHand();
-                    item.setCount(item.getCount() - 1);
-                    player.getInventory().setItemInHand(item);
+                    level.scheduleUpdate(fire, (fire.tickRate() + Utils.random.nextInt(10)));
+                    level.addSound(block, Sound.MOB_GHAST_FIREBALL);
+
+                    if (!player.isCreative()) {
+                        player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
+                    }
                 }
                 return true;
             }

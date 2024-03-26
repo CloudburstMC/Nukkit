@@ -1,6 +1,7 @@
 package cn.nukkit.network.rcon;
 
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
@@ -10,6 +11,7 @@ import java.nio.ByteOrder;
  * @author Tee7even
  */
 public class RCONPacket {
+
     private final int id;
     private final int type;
     private final byte[] payload;
@@ -22,6 +24,10 @@ public class RCONPacket {
 
     public RCONPacket(ByteBuffer buffer) throws IOException {
         int size = buffer.getInt();
+
+        if (size > 524288) {
+            throw new RuntimeException("Too big RCON packet: " + size);
+        }
 
         this.id = buffer.getInt();
         this.type = buffer.getInt();
@@ -43,7 +49,8 @@ public class RCONPacket {
         buffer.put((byte) 0);
         buffer.put((byte) 0);
 
-        buffer.flip();
+        //noinspection RedundantCast
+        ((Buffer) buffer).flip(); // do not remove the cast
         return buffer;
     }
 

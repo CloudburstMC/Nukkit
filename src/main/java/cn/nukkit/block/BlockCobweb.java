@@ -2,8 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemString;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -11,6 +11,7 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockCobweb extends BlockFlowable {
+
     public BlockCobweb() {
         this(0);
     }
@@ -45,6 +46,11 @@ public class BlockCobweb extends BlockFlowable {
     }
 
     @Override
+    public boolean hasEntityCollision() {
+        return true;
+    }
+
+    @Override
     public void onEntityCollide(Entity entity) {
         entity.resetFallDistance();
     }
@@ -57,7 +63,7 @@ public class BlockCobweb extends BlockFlowable {
             };
         } else if (item.isSword()) {
             return new Item[]{
-                    new ItemString()
+                    Item.get(Item.STRING)
             };
         } else {
             return new Item[0];
@@ -72,5 +78,20 @@ public class BlockCobweb extends BlockFlowable {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    protected AxisAlignedBB recalculateBoundingBox() {
+        return this;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

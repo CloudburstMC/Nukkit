@@ -8,9 +8,6 @@ import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
-/**
- * Created by PetteriM1
- */
 public class ShulkerBoxInventory extends ContainerInventory {
 
     public ShulkerBoxInventory(BlockEntityShulkerBox box) {
@@ -64,15 +61,11 @@ public class ShulkerBoxInventory extends ContainerInventory {
 
     @Override
     public boolean canAddItem(Item item) {
-        if (item.getId() == BlockID.SHULKER_BOX || item.getId() == BlockID.UNDYED_SHULKER_BOX) {
-            // Do not allow nested shulker boxes.
-            return false;
-        }
-        return super.canAddItem(item);
+        return this.allowedToAdd(item.getId()) && super.canAddItem(item);
     }
 
     @Override
-    public void sendSlot(int index, Player... players) {
-        super.sendSlot(index, players);
+    public boolean allowedToAdd(int itemId) {
+        return itemId != BlockID.SHULKER_BOX && itemId != BlockID.UNDYED_SHULKER_BOX;
     }
 }

@@ -14,10 +14,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class RegionLoader extends BaseRegionLoader {
+
     public RegionLoader(LevelProvider level, int regionX, int regionZ) throws IOException {
         super(level, regionX, regionZ, "mca");
     }
@@ -42,42 +43,42 @@ public class RegionLoader extends BaseRegionLoader {
         }
 
         try {
-        Integer[] table = this.locationTable.get(index);
-        RandomAccessFile raf = this.getRandomAccessFile();
-        raf.seek(table[0] << 12);
-        int length = raf.readInt();
-        byte compression = raf.readByte();
-        if (length <= 0 || length >= MAX_SECTOR_LENGTH) {
-            if (length >= MAX_SECTOR_LENGTH) {
-                table[0] = ++this.lastSector;
-                table[1] = 1;
-                this.locationTable.put(index, table);
-                MainLogger.getLogger().error("Corrupted chunk header detected");
+            Integer[] table = this.locationTable.get(index);
+            RandomAccessFile raf = this.getRandomAccessFile();
+            raf.seek(table[0] << 12);
+            int length = raf.readInt();
+            byte compression = raf.readByte();
+            if (length <= 0 || length >= MAX_SECTOR_LENGTH) {
+                if (length >= MAX_SECTOR_LENGTH) {
+                    table[0] = ++this.lastSector;
+                    table[1] = 1;
+                    this.locationTable.put(index, table);
+                    MainLogger.getLogger().error("Corrupted chunk header detected (" + x + ", " + z + ") (" + this.levelProvider.getName() + "/r." + this.x + "." + this.z + ".mca)");
+                }
+                return null;
             }
-            return null;
-        }
 
-        if (length > (table[1] << 12)) {
-            MainLogger.getLogger().error("Corrupted bigger chunk detected");
-            table[1] = length >> 12;
-            this.locationTable.put(index, table);
-            this.writeLocationIndex(index);
-        } else if (compression != COMPRESSION_ZLIB && compression != COMPRESSION_GZIP) {
-            MainLogger.getLogger().error("Invalid compression type");
-            return null;
-        }
+            if (length > (table[1] << 12)) {
+                MainLogger.getLogger().error("Corrupted bigger chunk detected (" + x + ", " + z + ") (" + this.levelProvider.getName() + "/r." + this.x + "." + this.z + ".mca)");
+                table[1] = length >> 12;
+                this.locationTable.put(index, table);
+                this.writeLocationIndex(index);
+            } else if (compression != COMPRESSION_ZLIB && compression != COMPRESSION_GZIP) {
+                MainLogger.getLogger().error("Invalid compression type (" + x + ", " + z + ") (" + this.levelProvider.getName() + "/r." + this.x + "." + this.z + ".mca)");
+                return null;
+            }
 
-        byte[] data = new byte[length - 1];
-        raf.readFully(data);
-        Chunk chunk = this.unserializeChunk(data);
-        if (chunk != null) {
-            return chunk;
-        } else {
-            MainLogger.getLogger().error("Corrupted chunk detected at (" + x + ", " + z + ") in " + levelProvider.getName());
-            return null;
-        }
-        } catch (EOFException e) {
-            MainLogger.getLogger().error("Your world is corrupt, because some code is bad and corrupted it. oops. ");
+            byte[] data = new byte[length - 1];
+            raf.readFully(data);
+            Chunk chunk = this.unserializeChunk(data);
+            if (chunk != null) {
+                return chunk;
+            } else {
+                MainLogger.getLogger().error("Corrupted chunk detected (" + x + ", " + z + ") (" + this.levelProvider.getName() + "/r." + this.x + "." + this.z + ".mca)");
+                return null;
+            }
+            } catch (EOFException e) {
+            MainLogger.getLogger().error("World corruption occurred (" + x + ", " + z + ") (" + this.levelProvider.getName() + "/r." + this.x + "." + this.z + ".mca)");
             return null;
         }
     }
@@ -96,7 +97,7 @@ public class RegionLoader extends BaseRegionLoader {
     protected void saveChunk(int x, int z, byte[] chunkData) throws IOException {
         int length = chunkData.length + 1;
         if (length + 4 > MAX_SECTOR_LENGTH) {
-            throw new ChunkException("Chunk is too big! " + (length + 4) + " > " + MAX_SECTOR_LENGTH);
+            throw new ChunkException("Chunk [" + x + ", " + z + "] is too big! " + (length + 4) + " > " + MAX_SECTOR_LENGTH);
         }
         int sectors = (int) Math.ceil((length + 4) / 4096d);
         int index = getChunkOffset(x, z);
@@ -119,7 +120,7 @@ public class RegionLoader extends BaseRegionLoader {
         RandomAccessFile raf = this.getRandomAccessFile();
         raf.seek(table[0] << 12);
 
-        BinaryStream stream = new BinaryStream();
+        BinaryStream stream = new BinaryStream(new byte[5 + chunkData.length]).reset();
         stream.put(Binary.writeInt(length));
         stream.putByte(COMPRESSION_ZLIB);
         stream.put(chunkData);
@@ -214,8 +215,8 @@ public class RegionLoader extends BaseRegionLoader {
         RandomAccessFile raf = this.getRandomAccessFile();
         raf.seek(0);
         this.lastSector = 1;
-        int[] data = new int[1024 * 2]; //1024 records * 2 times
-        for (int i = 0; i < 1024 * 2; i++) {
+        int[] data = new int[2048]; //1024 records * 2 times
+        for (int i = 0; i < 2048; i++) {
             data[i] = raf.readInt();
         }
         for (int i = 0; i < 1024; ++i) {
@@ -245,7 +246,7 @@ public class RegionLoader extends BaseRegionLoader {
         RandomAccessFile raf = this.getRandomAccessFile();
         Map<Integer, Integer> sectors = new TreeMap<>();
         for (Map.Entry entry : this.locationTable.entrySet()) {
-            Integer index = (Integer) entry.getKey();
+            int index = (int) entry.getKey();
             Integer[] data = (Integer[]) entry.getValue();
             if (data[0] == 0 || data[1] == 0) {
                 this.locationTable.put(index, new Integer[]{0, 0, 0});

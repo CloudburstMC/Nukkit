@@ -11,7 +11,6 @@ public class ItemNameTag extends Item {
     }
 
     public ItemNameTag(Integer meta, int count) {
-        super(NAME_TAG, meta, count, "Name Tag");
+        super(NAME_TAG, 0, count, "Name Tag");
     }
-
 }

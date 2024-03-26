@@ -2,19 +2,20 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsWheat;
+import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created on 2015/11/23 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockDoublePlant extends BlockFlowable {
+
     public static final int SUNFLOWER = 0;
     public static final int LILAC = 1;
     public static final int TALL_GRASS = 2;
@@ -23,7 +24,7 @@ public class BlockDoublePlant extends BlockFlowable {
     public static final int PEONY = 5;
     public static final int TOP_HALF_BITMASK = 0x8;
 
-    private static final String[] NAMES = new String[]{
+    private static final String[] NAMES = {
             "Sunflower",
             "Lilac",
             "Double Tallgrass",
@@ -47,7 +48,8 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean canBeReplaced() {
-        return this.getDamage() == TALL_GRASS || this.getDamage() == LARGE_FERN;
+        int damage = this.getDamage() & 0x7;
+        return damage == TALL_GRASS || damage == LARGE_FERN;
     }
 
     @Override
@@ -83,8 +85,9 @@ public class BlockDoublePlant extends BlockFlowable {
 
         int id = down.getId();
         if (up.getId() == AIR && (id == GRASS || id == DIRT || id == PODZOL || id == FARMLAND || id == MYCELIUM)) {
-            this.getLevel().setBlock(block, this, true, false); // If we update the bottom half, it will drop the item because there isn't a flower block above
-            this.getLevel().setBlock(up, Block.get(BlockID.DOUBLE_PLANT, getDamage() ^ TOP_HALF_BITMASK), true, true);
+            // Place top half first in order to call block updates on bottom part, but do not update to prevent breaking.
+            this.getLevel().setBlock(up, Block.get(DOUBLE_PLANT, getDamage() ^ TOP_HALF_BITMASK), true, false);
+            this.getLevel().setBlock(block, this, true, true);
             return true;
         }
 
@@ -93,10 +96,11 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean onBreak(Item item) {
-        Block down = down();
-
         if ((this.getDamage() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) { // Top half
-            this.getLevel().useBreakOn(down);
+            Block down = down();
+            if (down instanceof BlockDoublePlant) {
+                this.getLevel().useBreakOn(down);
+            }
         } else {
             this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
         }
@@ -107,27 +111,27 @@ public class BlockDoublePlant extends BlockFlowable {
     @Override
     public Item[] getDrops(Item item) {
         if ((this.getDamage() & TOP_HALF_BITMASK) != TOP_HALF_BITMASK) {
-            switch (this.getDamage() & 0x07) {
+            int type = this.getDamage() & 0x07;
+            switch (type) {
                 case TALL_GRASS:
                 case LARGE_FERN:
-                    boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
+                    boolean dropSeeds = Utils.random.nextInt(10) == 0;
                     if (item.isShears()) {
-                        //todo enchantment
                         if (dropSeeds) {
                             return new Item[]{
-                                    new ItemSeedsWheat(0, 1),
-                                    toItem()
+                                    Item.get(Item.WHEAT_SEEDS),
+                                    Item.get(Item.TALL_GRASS, type == LARGE_FERN ? 2 : 1, 2)
                             };
                         } else {
                             return new Item[]{
-                                    toItem()
+                                    Item.get(Item.TALL_GRASS, type == LARGE_FERN ? 2 : 1, 2)
                             };
                         }
                     }
 
                     if (dropSeeds) {
                         return new Item[]{
-                                new ItemSeedsWheat()
+                                Item.get(Item.WHEAT_SEEDS)
                         };
                     } else {
                         return new Item[0];
@@ -152,22 +156,23 @@ public class BlockDoublePlant extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) { //Bone meal
-            switch (this.getDamage() & 0x07) {
-                case SUNFLOWER:
-                case LILAC:
-                case ROSE_BUSH:
-                case PEONY:
-                    if (player != null && (player.gamemode & 0x01) == 0) {
-                        item.count--;
-                    }
-                    this.level.addParticle(new BoneMealParticle(this));
-                    this.level.dropItem(this, this.toItem());
-            }
+        if (item.getId() == Item.DYE && item.getDamage() == ItemDye.BONE_MEAL) {
+            int type = this.getDamage() & 0x07;
+            if (type == SUNFLOWER || type == LILAC || type == ROSE_BUSH || type == PEONY) { // Flower
+                if (player != null && !player.isCreative()) {
+                    item.count--;
+                }
 
+                this.level.addParticle(new BoneMealParticle(this));
+                this.level.dropItem(this, this.toItem());
+            }
             return true;
         }
 
         return false;
+    }
+
+    public Item toItem() {
+        return new ItemBlock(this, this.getDamage() & 0x07, 1);
     }
 }

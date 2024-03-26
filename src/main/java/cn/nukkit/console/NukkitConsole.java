@@ -2,7 +2,6 @@ package cn.nukkit.console;
 
 import cn.nukkit.Server;
 import cn.nukkit.event.server.ServerCommandEvent;
-import co.aikar.timings.Timings;
 import lombok.RequiredArgsConstructor;
 import net.minecrell.terminalconsole.SimpleTerminalConsole;
 import org.jline.reader.LineReader;
@@ -14,27 +13,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredArgsConstructor
 public class NukkitConsole extends SimpleTerminalConsole {
-    private final Server server;
+
     private final BlockingQueue<String> consoleQueue = new LinkedBlockingQueue<>();
-    private AtomicBoolean executingCommands = new AtomicBoolean(false);
+    private final AtomicBoolean executingCommands = new AtomicBoolean(false);
 
     @Override
     protected boolean isRunning() {
-        return server.isRunning();
+        return Server.getInstance().isRunning();
     }
 
     @Override
     protected void runCommand(String command) {
         if (executingCommands.get()) {
-            Timings.serverCommandTimer.startTiming();
-            ServerCommandEvent event = new ServerCommandEvent(server.getConsoleSender(), command);
-            if (server.getPluginManager() != null) {
-                server.getPluginManager().callEvent(event);
+            ServerCommandEvent event = new ServerCommandEvent(Server.getInstance().getConsoleSender(), command);
+            if (Server.getInstance().getPluginManager() != null) {
+                Server.getInstance().getPluginManager().callEvent(event);
             }
             if (!event.isCancelled()) {
-                Server.getInstance().getScheduler().scheduleTask(() -> server.dispatchCommand(event.getSender(), event.getCommand()));
+                Server.getInstance().getScheduler().scheduleTask(() -> Server.getInstance().dispatchCommand(event.getSender(), event.getCommand()));
             }
-            Timings.serverCommandTimer.stopTiming();
         } else {
             consoleQueue.add(command);
         }
@@ -50,12 +47,12 @@ public class NukkitConsole extends SimpleTerminalConsole {
 
     @Override
     protected void shutdown() {
-        server.shutdown();
+        Server.getInstance().shutdown();
     }
 
     @Override
     protected LineReader buildReader(LineReaderBuilder builder) {
-        builder.completer(new NukkitConsoleCompleter(server));
+        builder.completer(new NukkitConsoleCompleter());
         builder.appName("Nukkit");
         builder.option(LineReader.Option.HISTORY_BEEP, false);
         builder.option(LineReader.Option.HISTORY_IGNORE_DUPS, true);

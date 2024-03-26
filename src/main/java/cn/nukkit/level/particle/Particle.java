@@ -6,7 +6,7 @@ import cn.nukkit.network.protocol.DataPacket;
 import java.lang.reflect.Field;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class Particle extends Vector3 {
@@ -100,27 +100,6 @@ public abstract class Particle extends Vector3 {
     public static final int TYPE_DUST_PLUME = 88;
     public static final int TYPE_WHITE_SMOKE = 89;
 
-    public static Integer getParticleIdByName(String name) {
-        name = name.toUpperCase();
-
-        try {
-            Field field = Particle.class.getField((name.startsWith("TYPE_") ? name : ("TYPE_" + name)));
-
-            Class<?> type = field.getType();
-
-            if (type == int.class) {
-                return field.getInt(null);
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            // ignore
-        }
-        return null;
-    }
-
-    public static boolean particleExists(String name) {
-        return getParticleIdByName(name) != null;
-    }
-
     public Particle() {
         super(0, 0, 0);
     }
@@ -137,5 +116,24 @@ public abstract class Particle extends Vector3 {
         super(x, y, z);
     }
 
-    abstract public DataPacket[] encode();
+    public abstract DataPacket[] encode();
+
+    public static Integer getParticleIdByName(String name) {
+        name = name.toUpperCase();
+
+        try {
+            Field field = Particle.class.getField((name.startsWith("TYPE_") ? name : ("TYPE_" + name)));
+
+            Class<?> type = field.getType();
+
+            if (type == int.class) {
+                return field.getInt(null);
+            }
+        } catch (NoSuchFieldException | IllegalAccessException ignored) {}
+        return null;
+    }
+
+    public static boolean particleExists(String name) {
+        return getParticleIdByName(name) != null;
+    }
 }

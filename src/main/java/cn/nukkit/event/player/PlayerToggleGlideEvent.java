@@ -21,5 +21,4 @@ public class PlayerToggleGlideEvent extends PlayerEvent implements Cancellable {
     public boolean isGliding() {
         return this.isGliding;
     }
-
 }

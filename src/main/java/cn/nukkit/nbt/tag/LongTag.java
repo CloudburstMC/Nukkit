@@ -6,6 +6,7 @@ import cn.nukkit.nbt.stream.NBTOutputStream;
 import java.io.IOException;
 
 public class LongTag extends NumberTag<Long> {
+
     public long data;
 
     @Override
@@ -28,12 +29,12 @@ public class LongTag extends NumberTag<Long> {
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
+    public void write(NBTOutputStream dos) throws IOException {
         dos.writeLong(data);
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis) throws IOException {
         data = dis.readLong();
     }
 
@@ -49,7 +50,7 @@ public class LongTag extends NumberTag<Long> {
 
     @Override
     public String toString() {
-        return "LongTag " + this.getName() + " (data:" + data + ")";
+        return "LongTag " + this.getName() + " (data:" + data + ')';
     }
 
     @Override
@@ -65,5 +66,4 @@ public class LongTag extends NumberTag<Long> {
         }
         return false;
     }
-
 }

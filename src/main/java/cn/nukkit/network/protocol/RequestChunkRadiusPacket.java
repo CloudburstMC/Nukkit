@@ -3,7 +3,7 @@ package cn.nukkit.network.protocol;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
@@ -22,12 +22,11 @@ public class RequestChunkRadiusPacket extends DataPacket {
 
     @Override
     public void encode() {
-
+        this.encodeUnsupported();
     }
 
     @Override
     public byte pid() {
         return NETWORK_ID;
     }
-
 }

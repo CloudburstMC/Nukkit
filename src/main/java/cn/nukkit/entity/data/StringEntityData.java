@@ -3,10 +3,11 @@ package cn.nukkit.entity.data;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class StringEntityData extends EntityData<String> {
+
     public String data;
 
     public StringEntityData(int id, String data) {

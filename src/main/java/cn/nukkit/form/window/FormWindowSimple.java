@@ -8,9 +8,11 @@ import java.util.List;
 
 public class FormWindowSimple extends FormWindow {
 
-    private final String type = "form"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
+    @SuppressWarnings("unused")
+    private final String type = "form";
     private String title = "";
     private String content = "";
+    @SuppressWarnings("FieldMayBeFinal")
     private List<ElementButton> buttons;
 
     private FormResponseSimple response = null;
@@ -70,5 +72,4 @@ public class FormWindowSimple extends FormWindow {
         }
         this.response = new FormResponseSimple(buttonID, buttons.get(buttonID));
     }
-
 }

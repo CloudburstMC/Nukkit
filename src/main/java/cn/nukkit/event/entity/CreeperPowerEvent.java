@@ -6,7 +6,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class CreeperPowerEvent extends EntityEvent implements Cancellable {
@@ -59,19 +59,19 @@ public class CreeperPowerEvent extends EntityEvent implements Cancellable {
 
         /**
          * Power change caused by a lightning bolt
-         * <p>
+         * 
          * Powered state: true
          */
         LIGHTNING,
         /**
          * Power change caused by something else (probably a plugin)
-         * <p>
+         * 
          * Powered state: true
          */
         SET_ON,
         /**
          * Power change caused by something else (probably a plugin)
-         * <p>
+         * 
          * Powered state: false
          */
         SET_OFF

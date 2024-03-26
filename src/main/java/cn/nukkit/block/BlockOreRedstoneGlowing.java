@@ -5,16 +5,11 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 
-//和pm源码有点出入，这里参考了wiki
-
 /**
  * Created on 2015/12/6 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockOreRedstoneGlowing extends BlockOreRedstone {
-
-    public BlockOreRedstoneGlowing() {
-    }
 
     @Override
     public String getName() {
@@ -33,7 +28,7 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.REDSTONE_ORE));
+        return new ItemBlock(Block.get(REDSTONE_ORE));
     }
 
     @Override
@@ -49,15 +44,5 @@ public class BlockOreRedstoneGlowing extends BlockOreRedstone {
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
-
-    @Override
-    public boolean canSilkTouch() {
-        return true;
     }
 }

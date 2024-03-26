@@ -1,6 +1,5 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.api.API;
 import cn.nukkit.block.Block;
 import cn.nukkit.math.BlockFace;
 
@@ -15,18 +14,26 @@ import static cn.nukkit.utils.Rail.Orientation.State.*;
 
 /**
  * INTERNAL helper class of railway
- * <p>
+ * 
  * By lmlstarqaq http://snake1999.com/
  * Creation time: 2017/7/1 17:42.
  */
-@API(usage = API.Usage.BLEEDING, definition = API.Definition.INTERNAL)
 public final class Rail {
 
+    /**
+     * Check if the block is a rail block
+     *
+     * @param block block
+     * @return is rail block
+     */
     public static boolean isRailBlock(Block block) {
         Objects.requireNonNull(block, "Rail block predicate can not accept null block");
         return isRailBlock(block.getId());
     }
 
+    /**
+     * Rail orientation enum
+     */
     public enum Orientation {
         STRAIGHT_NORTH_SOUTH(0, STRAIGHT, NORTH, SOUTH, null),
         STRAIGHT_EAST_WEST(1, STRAIGHT, EAST, WEST, null),
@@ -120,6 +127,9 @@ public final class Rail {
             return Optional.ofNullable(ascendingDirection);
         }
 
+        /**
+         * Rail orientation state enum
+         */
         public enum State {
             STRAIGHT, ASCENDING, CURVED
         }
@@ -143,6 +153,12 @@ public final class Rail {
         }
     }
 
+    /**
+     * Check if the block is a rail block
+     *
+     * @param blockId block id
+     * @return is rail block
+     */
     public static boolean isRailBlock(int blockId) {
         switch (blockId) {
             case Block.RAIL:

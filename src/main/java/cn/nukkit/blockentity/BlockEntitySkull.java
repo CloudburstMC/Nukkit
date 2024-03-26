@@ -33,7 +33,7 @@ public class BlockEntitySkull extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return getBlock().getId() == Block.SKULL_BLOCK;
+        return level.getBlockIdAt(chunk, (int) x, (int) y, (int) z) == Block.SKULL_BLOCK;
     }
 
     @Override
@@ -46,5 +46,4 @@ public class BlockEntitySkull extends BlockEntitySpawnable {
                 .putInt("z", (int) this.z)
                 .put("Rot", this.namedTag.get("Rot"));
     }
-
 }

@@ -34,6 +34,7 @@ public class WhitelistCommand extends VanillaCommand {
         });
     }
 
+
     @Override
     public boolean execute(CommandSender sender, String commandLabel, String[] args) {
         if (!this.testPermission(sender)) {
@@ -46,24 +47,23 @@ public class WhitelistCommand extends VanillaCommand {
         }
 
         if (args.length == 1) {
-            if (this.badPerm(sender, args[0].toLowerCase())) {
+            if (badPerm(sender, args[0].toLowerCase())) {
                 return false;
             }
             switch (args[0].toLowerCase()) {
                 case "reload":
                     sender.getServer().reloadWhitelist();
                     Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.reloaded"));
-
                     return true;
                 case "on":
                     sender.getServer().setPropertyBoolean("white-list", true);
+                    sender.getServer().whitelistEnabled = true;
                     Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.enabled"));
-
                     return true;
                 case "off":
                     sender.getServer().setPropertyBoolean("white-list", false);
+                    sender.getServer().whitelistEnabled = false;
                     Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.disabled"));
-
                     return true;
                 case "list":
                     StringBuilder result = new StringBuilder();
@@ -85,8 +85,8 @@ public class WhitelistCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer("commands.generic.usage", "%commands.whitelist.remove.usage"));
                     return true;
             }
-        } else if (args.length == 2) {
-            if (this.badPerm(sender, args[0].toLowerCase())) {
+        } else {
+            if (badPerm(sender, args[0].toLowerCase())) {
                 return false;
             }
             switch (args[0].toLowerCase()) {
@@ -106,7 +106,7 @@ public class WhitelistCommand extends VanillaCommand {
         return true;
     }
 
-    private boolean badPerm(CommandSender sender, String perm) {
+    private static boolean badPerm(CommandSender sender, String perm) {
         if (!sender.hasPermission("nukkit.command.whitelist." + perm)) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
 

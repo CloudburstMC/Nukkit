@@ -4,7 +4,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.math.Vector3;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class MovingObjectPosition {

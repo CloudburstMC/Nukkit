@@ -9,7 +9,7 @@ import cn.nukkit.event.player.PlayerKickEvent;
 import cn.nukkit.lang.TranslationContainer;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BanCommand extends VanillaCommand {
@@ -20,8 +20,8 @@ public class BanCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("default",
                 new CommandParameter[]{
-                        CommandParameter.newType("player", CommandParamType.TARGET),
-                        CommandParameter.newType("reason", true, CommandParamType.STRING)
+                        new CommandParameter("player", CommandParamType.TARGET, false),
+                        new CommandParameter("reason", CommandParamType.STRING, true)
                 });
     }
 
@@ -40,7 +40,7 @@ public class BanCommand extends VanillaCommand {
         String name = args[0].replace("@s", sender.getName());
         StringBuilder reason = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
-            reason.append(args[i]).append(" ");
+            reason.append(args[i]).append(' ');
         }
 
         if (reason.length() > 0) {
@@ -51,7 +51,7 @@ public class BanCommand extends VanillaCommand {
 
         Player player = sender.getServer().getPlayerExact(name);
         if (player != null) {
-            player.kick(PlayerKickEvent.Reason.NAME_BANNED, (reason.length() > 0) ? "Banned by admin. Reason: " + reason : "Banned by admin");
+            player.kick(PlayerKickEvent.Reason.NAME_BANNED, (reason.length() > 0) ? "You are banned! Reason: " + reason : "You are banned!", true);
         }
 
         Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.ban.success", player != null ? player.getName() : name));

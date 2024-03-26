@@ -21,7 +21,7 @@ public class PlayerListPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -29,25 +29,28 @@ public class PlayerListPacket extends DataPacket {
         this.reset();
         this.putByte(this.type);
         this.putUnsignedVarInt(this.entries.length);
-        for (Entry entry : this.entries) {
-            this.putUUID(entry.uuid);
-            if (type == TYPE_ADD) {
-                this.putVarLong(entry.entityId);
-                this.putString(entry.name);
-                this.putString(entry.xboxUserId);
-                this.putString(entry.platformChatId);
-                this.putLInt(entry.buildPlatform);
-                this.putSkin(entry.skin);
-                this.putBoolean(entry.isTeacher);
-                this.putBoolean(entry.isHost);
-                this.putBoolean(entry.isSubClient);
-            }
-        }
-
-        if (type == TYPE_ADD) {
-            for (Entry entry : this.entries) {
-                this.putBoolean(entry.skin.isTrusted());
-            }
+        switch (type) {
+            case TYPE_ADD:
+                for (Entry entry : this.entries) {
+                    this.putUUID(entry.uuid);
+                    this.putVarLong(entry.entityId);
+                    this.putString(entry.name);
+                    this.putString(entry.xboxUserId);
+                    this.putString(entry.platformChatId);
+                    this.putLInt(entry.buildPlatform);
+                    this.putSkin(entry.skin);
+                    this.putBoolean(entry.isTeacher);
+                    this.putBoolean(entry.isHost);
+                    this.putBoolean(entry.isSubClient);
+                }
+                for (Entry entry : this.entries) { // WTF Mojang
+                    this.putBoolean(entry.skin.isTrusted());
+                }
+                break;
+            case TYPE_REMOVE:
+                for (Entry entry : this.entries) {
+                    this.putUUID(entry.uuid);
+                }
         }
     }
 
@@ -62,10 +65,10 @@ public class PlayerListPacket extends DataPacket {
         public final UUID uuid;
         public long entityId = 0;
         public String name = "";
-        public String xboxUserId = ""; //TODO
-        public String platformChatId = ""; //TODO
-        public int buildPlatform = -1;
         public Skin skin;
+        public String xboxUserId = "";
+        public String platformChatId = "";
+        public int buildPlatform = -1;
         public boolean isTeacher;
         public boolean isHost;
         public boolean isSubClient;
@@ -86,5 +89,4 @@ public class PlayerListPacket extends DataPacket {
             this.xboxUserId = xboxUserId == null ? "" : xboxUserId;
         }
     }
-
 }

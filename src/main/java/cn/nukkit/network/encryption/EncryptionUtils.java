@@ -156,7 +156,7 @@ public class EncryptionUtils {
                 return !iterator.hasNext();
             }
 
-            if (lastKey.equals(EncryptionUtils.getMojangPublicKey())) {
+            if (lastKey.equals(EncryptionUtils.MOJANG_PUBLIC_KEY)) {
                 validChain = true;
             }
 

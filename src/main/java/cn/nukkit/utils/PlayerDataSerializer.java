@@ -6,6 +6,11 @@ import java.io.OutputStream;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * A serializer that handles the player data saving.
+ *
+ * Use setPlayerDataSerializer() in Server to register it.
+ */
 public interface PlayerDataSerializer {
 
     /**

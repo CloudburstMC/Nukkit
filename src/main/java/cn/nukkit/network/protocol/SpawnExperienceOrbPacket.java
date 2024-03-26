@@ -14,7 +14,10 @@ public class SpawnExperienceOrbPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.x = this.getLFloat();
+        this.y = this.getLFloat();
+        this.z = this.getLFloat();
+        this.amount = (int) this.getUnsignedVarInt();
     }
 
     @Override

@@ -3,7 +3,7 @@ package cn.nukkit.item.enchantment.damage;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentDamageAll extends EnchantmentDamage {
@@ -29,6 +29,6 @@ public class EnchantmentDamageAll extends EnchantmentDamage {
 
     @Override
     public double getDamageBonus(Entity entity) {
-        return this.getLevel() * 1.25; //https://minecraft.fandom.com/wiki/Sharpness#Usage
+        return this.getLevel() * 1.25;
     }
 }

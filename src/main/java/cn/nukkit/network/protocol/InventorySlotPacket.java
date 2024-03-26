@@ -4,11 +4,12 @@ import cn.nukkit.item.Item;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
 public class InventorySlotPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.INVENTORY_SLOT_PACKET;
 
     @Override
@@ -22,9 +23,7 @@ public class InventorySlotPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.inventoryId = (int) this.getUnsignedVarInt();
-        this.slot = (int) this.getUnsignedVarInt();
-        this.item = this.getSlot();
+        this.decodeUnsupported();
     }
 
     @Override

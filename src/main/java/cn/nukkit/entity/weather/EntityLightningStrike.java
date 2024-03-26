@@ -8,5 +8,4 @@ public interface EntityLightningStrike extends EntityWeather {
     boolean isEffect();
 
     void setEffect(boolean e);
-
 }

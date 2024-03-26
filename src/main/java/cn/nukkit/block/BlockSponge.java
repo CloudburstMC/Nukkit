@@ -5,24 +5,25 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.particle.SmokeParticle;
+import cn.nukkit.level.particle.ExplodeParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class BlockSponge extends BlockSolidMeta {
 
     public static final int DRY = 0;
     public static final int WET = 1;
-    private static final String[] NAMES = new String[]{
+
+    private static final String[] NAMES = {
             "Sponge",
             "Wet sponge"
     };
@@ -51,32 +52,28 @@ public class BlockSponge extends BlockSolidMeta {
     }
 
     @Override
-    public int getToolType() {
-        return ItemTool.TYPE_HOE;
-    }
-
-    @Override
     public String getName() {
         return NAMES[this.getDamage() & 0b1];
     }
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.YELLOW_BLOCK_COLOR;
+        return BlockColor.CLOTH_BLOCK_COLOR;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_HOE;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (this.getDamage() == WET && level.getDimension() == Level.DIMENSION_NETHER) {
             level.setBlock(block, Block.get(BlockID.SPONGE, DRY), true, true);
-            this.getLevel().addLevelEvent(block.add(0.5, 0.875, 0.5), LevelEventPacket.EVENT_SOUND_EXPLODE);
-
-            for (int i = 0; i < 8; ++i) {
-                level.addParticle(new SmokeParticle(block.getLocation().add(ThreadLocalRandom.current().nextDouble(), 1, ThreadLocalRandom.current().nextDouble())));
-            }
-
+            level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_FIZZ);
+            level.addParticle(new ExplodeParticle(block.add(0.5, 1, 0.5)));
             return true;
-        } else if (this.getDamage() == DRY && block instanceof BlockWater && performWaterAbsorb(block)) {
+        } else if (this.getDamage() == DRY && performWaterAbsorb(block)) {
             level.setBlock(block, Block.get(BlockID.SPONGE, WET), true, true);
 
             for (int i = 0; i < 4; i++) {
@@ -96,6 +93,17 @@ public class BlockSponge extends BlockSolidMeta {
     }
 
     private boolean performWaterAbsorb(Block block) {
+        boolean waterFound = false;
+        for (BlockFace side : BlockFace.values()) {
+            if (getSide(side) instanceof BlockWater) {
+                waterFound = true;
+                break;
+            }
+        }
+        if (!waterFound) {
+            return false;
+        }
+
         Queue<Entry> entries = new ArrayDeque<>();
 
         entries.add(new Entry(block, 0));
@@ -106,7 +114,7 @@ public class BlockSponge extends BlockSolidMeta {
             for (BlockFace face : BlockFace.values()) {
 
                 Block faceBlock = entry.block.getSide(face);
-                if (faceBlock.getId() == BlockID.WATER || faceBlock.getId() == BlockID.STILL_WATER) {
+                if (Block.hasWater(faceBlock.getId())) {
                     this.level.setBlock(faceBlock, Block.get(BlockID.AIR));
                     ++waterRemoved;
                     if (entry.distance < 6) {

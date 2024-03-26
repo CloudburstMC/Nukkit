@@ -30,5 +30,4 @@ public class BlockStairsJungle extends BlockStairsWood {
     public BlockColor getColor() {
         return BlockColor.DIRT_BLOCK_COLOR;
     }
-
 }

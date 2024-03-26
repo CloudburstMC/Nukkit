@@ -1,10 +1,8 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.entity.Entity;
+import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
@@ -13,18 +11,17 @@ import cn.nukkit.nbt.tag.ListTag;
 /**
  * @author CreeperFace
  */
-public class BlockEntityPistonArm extends BlockEntity {
+public class BlockEntityPistonArm extends BlockEntitySpawnable {
 
-    public float progress = 1.0F;
-    public float lastProgress = 1.0F;
+    public float progress;
+    public float lastProgress;
     public BlockFace facing;
     public boolean extending = false;
     public boolean sticky = false;
-    public byte state = 1;
+    public byte state;
     public byte newState = 1;
     public Vector3 attachedBlock = null;
     public boolean isMovable = true;
-    public boolean powered = false;
 
     public BlockEntityPistonArm(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -32,6 +29,8 @@ public class BlockEntityPistonArm extends BlockEntity {
 
     @Override
     protected void initBlockEntity() {
+        this.isMovable = true;
+
         if (namedTag.contains("Progress")) {
             this.progress = namedTag.getFloat("Progress");
         }
@@ -48,8 +47,8 @@ public class BlockEntityPistonArm extends BlockEntity {
             this.extending = namedTag.getBoolean("Extending");
         }
 
-        if (namedTag.contains("powered")) {
-            this.powered = namedTag.getBoolean("powered");
+        if (namedTag.contains("State")) {
+            this.state = (byte) namedTag.getByte("State");
         }
 
         if (namedTag.contains("AttachedBlocks")) {
@@ -64,25 +63,25 @@ public class BlockEntityPistonArm extends BlockEntity {
         super.initBlockEntity();
     }
 
-    private void pushEntities() {
-        float lastProgress = this.getExtendedProgress(this.lastProgress);
-        double x = lastProgress * (float) this.facing.getXOffset();
-        double y = lastProgress * (float) this.facing.getYOffset();
-        double z = lastProgress * (float) this.facing.getZOffset();
-        AxisAlignedBB bb = new SimpleAxisAlignedBB(x, y, z, x + 1.0D, y + 1.0D, z + 1.0D);
-        Entity[] entities = this.level.getCollidingEntities(bb);
-        if (entities.length != 0) {
-
-        }
-
+    public void setExtended(boolean extending) {
+        this.extending = extending;
+        this.newState = this.state;
+        this.lastProgress = this.progress;
+        this.state = (byte) (extending ? 1 : 0);
+        this.progress = extending ? 1.0f : 0;
     }
 
-    private float getExtendedProgress(float progress) {
-        return this.extending ? progress - 1.0F : 1.0F - progress;
+    public boolean isExtended() {
+        return this.extending;
+    }
+
+    public void broadcastMove() {
+        this.level.addChunkPacket(this.getChunkX(), this.getChunkZ(), this.createSpawnPacket());
     }
 
     public boolean isBlockEntityValid() {
-        return true;
+        int blockId = getBlock().getId();
+        return blockId == Block.PISTON || blockId == Block.STICKY_PISTON;
     }
 
     public void saveNBT() {
@@ -92,10 +91,19 @@ public class BlockEntityPistonArm extends BlockEntity {
         this.namedTag.putByte("NewState", this.newState);
         this.namedTag.putFloat("Progress", this.progress);
         this.namedTag.putFloat("LastProgress", this.lastProgress);
-        this.namedTag.putBoolean("powered", this.powered);
+        this.namedTag.putBoolean("Sticky", this.sticky);
     }
 
     public CompoundTag getSpawnCompound() {
-        return (new CompoundTag()).putString("id", "PistonArm").putInt("x", (int) this.x).putInt("y", (int) this.y).putInt("z", (int) this.z);
+        return new CompoundTag()
+                .putString("id", BlockEntity.PISTON_ARM)
+                .putInt("x", (int) this.x)
+                .putInt("y", (int) this.y)
+                .putInt("z", (int) this.z)
+                .putFloat("Progress", this.progress)
+                .putFloat("LastProgress", this.lastProgress)
+                .putBoolean("Sticky", this.sticky)
+                .putByte("State", this.state)
+                .putByte("NewState", this.newState);
     }
 }

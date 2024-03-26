@@ -9,6 +9,7 @@ import cn.nukkit.utils.BlockColor;
  * Created by CreeperFace on 26. 11. 2016.
  */
 public class BlockSlabStone extends BlockSlab {
+
     public static final int STONE = 0;
     public static final int SANDSTONE = 1;
     public static final int WOODEN = 2;
@@ -23,7 +24,11 @@ public class BlockSlabStone extends BlockSlab {
     }
 
     public BlockSlabStone(int meta) {
-        super(meta, DOUBLE_STONE_SLAB);
+        this(meta, DOUBLE_STONE_SLAB);
+    }
+
+    public BlockSlabStone(int meta, int doubleSlab) {
+        super(meta, doubleSlab);
     }
 
     @Override
@@ -33,7 +38,7 @@ public class BlockSlabStone extends BlockSlab {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
+        String[] names = {
                 "Stone",
                 "Sandstone",
                 "Wooden",
@@ -49,7 +54,7 @@ public class BlockSlabStone extends BlockSlab {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };
@@ -60,7 +65,8 @@ public class BlockSlabStone extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
+        int damage = this.getDamage() & 0x07;
+        return new ItemBlock(Block.get(this.getId(),damage ), damage);
     }
 
     @Override

@@ -1,8 +1,5 @@
 package cn.nukkit.plugin;
 
-/**
- * Created on 15-12-13.
- */
 public interface Library {
 
     String getGroupId();
@@ -10,5 +7,4 @@ public interface Library {
     String getArtifactId();
 
     String getVersion();
-
 }

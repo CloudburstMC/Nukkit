@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.utils.*;
 import com.google.gson.Gson;
@@ -11,20 +12,18 @@ import lombok.ToString;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-
-/**
- * Created by on 15-10-13.
- */
 @ToString
 public class LoginPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.LOGIN_PACKET;
 
     public String username;
-    public int protocol;
+    private int protocol_;
     public UUID clientUUID;
     public long clientId;
     public Skin skin;
+
+    private static final Gson GSON = new Gson();
 
     @Override
     public byte pid() {
@@ -33,39 +32,42 @@ public class LoginPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.protocol = this.getInt();
-        if (protocol == 0) {
+        this.protocol_ = this.getInt();
+        if (this.protocol_ == 0) {
             setOffset(getOffset() + 2);
-            this.protocol = getInt();
+            this.protocol_ = getInt();
         }
-        if (!ProtocolInfo.SUPPORTED_PROTOCOLS.contains(protocol)) {
-            // decoding the chain could cause issues on newer or older versions.
-            return;
+        if (ProtocolInfo.SUPPORTED_PROTOCOLS.contains(this.protocol_)) { // Avoid errors with unsupported versions
+            this.setBuffer(this.getByteArray(), 0);
+            decodeChainData();
+            decodeSkinData();
         }
-
-        this.setBuffer(this.getByteArray(), 0);
-        decodeChainData();
-        decodeSkinData();
     }
 
     @Override
     public void encode() {
-
+        this.encodeUnsupported();
     }
 
     public int getProtocol() {
-        return protocol;
+        return protocol_;
     }
 
     private void decodeChainData() {
-        Map<String, List<String>> map = new Gson().fromJson(new String(this.get(getLInt()), StandardCharsets.UTF_8),
-                new TypeToken<Map<String, List<String>>>() {
-                }.getType());
+        int size = this.getLInt();
+        if (size > 3145728) {
+            throw new IllegalArgumentException("The chain data is too big: " + size);
+        }
+
+        String data = new String(this.get(size), StandardCharsets.UTF_8);
+
+        Map<String, List<String>> map = GSON.fromJson(data, new MapTypeToken().getType());
         if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
-        List<String> chains = map.get("chain");
-        for (String c : chains) {
-            JsonObject chainMap = decodeToken(c);
+
+        for (String c : map.get("chain")) {
+            JsonObject chainMap = ClientChainData.decodeToken(c);
             if (chainMap == null) continue;
+
             if (chainMap.has("extraData")) {
                 JsonObject extra = chainMap.get("extraData").getAsJsonObject();
                 if (extra.has("displayName")) this.username = extra.get("displayName").getAsString();
@@ -75,84 +77,108 @@ public class LoginPacket extends DataPacket {
     }
 
     private void decodeSkinData() {
-        JsonObject skinToken = decodeToken(new String(this.get(this.getLInt())));
-        if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
+        int size = this.getLInt();
+        if (size > 10485760) {
+            Server.getInstance().getLogger().warning(username + ": The skin data is too big: " + size);
+            return; // Get disconnected due to "invalid skin"
+        }
+
+        JsonObject skinToken = ClientChainData.decodeToken(new String(this.get(size), StandardCharsets.UTF_8));
+        if (skinToken == null) throw new RuntimeException("Invalid null skin token");
+
+        if (skinToken.has("ClientRandomId")) {
+            this.clientId = skinToken.get("ClientRandomId").getAsLong();
+        }
 
         skin = new Skin();
         skin.setTrusted(false); // Don't trust player skins
 
         if (skinToken.has("SkinId")) {
             skin.setSkinId(skinToken.get("SkinId").getAsString());
+        } else {
+            skin.setSkinId(UUID.randomUUID().toString());
         }
 
         skin.setFullSkinId(skin.getSkinId());
 
-        if (skinToken.has("PlayFabId")) {
-            skin.setPlayFabId(skinToken.get("PlayFabId").getAsString());
-        }
+        if (protocol_ < 388) {
+            if (skinToken.has("SkinData")) {
+                skin.setSkinData(Base64.getDecoder().decode(skinToken.get("SkinData").getAsString()));
+            }
 
-        if (skinToken.has("CapeId")) {
-            skin.setCapeId(skinToken.get("CapeId").getAsString());
-        }
+            if (skinToken.has("CapeData")) {
+                skin.setCapeData(Base64.getDecoder().decode(skinToken.get("CapeData").getAsString()));
+            }
 
-        skin.setSkinData(getImage(skinToken, "Skin"));
-        skin.setCapeData(getImage(skinToken, "Cape"));
+            if (skinToken.has("SkinGeometryName")) {
+                skin.setGeometryName(skinToken.get("SkinGeometryName").getAsString());
+            }
 
-        if (skinToken.has("PremiumSkin")) {
-            skin.setPremium(skinToken.get("PremiumSkin").getAsBoolean());
-        }
+            if (skinToken.has("SkinGeometry")) {
+                skin.setGeometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometry").getAsString()), StandardCharsets.UTF_8));
+            }
+        } else {
+            if (skinToken.has("PlayFabId")) {
+                skin.setPlayFabId(skinToken.get("PlayFabId").getAsString());
+            }
 
-        if (skinToken.has("PersonaSkin")) {
-            skin.setPersona(skinToken.get("PersonaSkin").getAsBoolean());
-        }
+            if (skinToken.has("CapeId")) {
+                skin.setCapeId(skinToken.get("CapeId").getAsString());
+            }
 
-        if (skinToken.has("CapeOnClassicSkin")) {
-            skin.setCapeOnClassic(skinToken.get("CapeOnClassicSkin").getAsBoolean());
-        }
+            skin.setSkinData(getImage(skinToken, "Skin"));
+            skin.setCapeData(getImage(skinToken, "Cape"));
 
-        if (skinToken.has("SkinResourcePatch")) {
-            skin.setSkinResourcePatch(new String(Base64.getDecoder().decode(skinToken.get("SkinResourcePatch").getAsString()), StandardCharsets.UTF_8));
-        }
+            if (skinToken.has("PremiumSkin")) {
+                skin.setPremium(skinToken.get("PremiumSkin").getAsBoolean());
+            }
 
-        if (skinToken.has("SkinGeometryData")) {
-            skin.setGeometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometryData").getAsString()), StandardCharsets.UTF_8));
-        }
+            if (skinToken.has("PersonaSkin")) {
+                skin.setPersona(skinToken.get("PersonaSkin").getAsBoolean());
+            }
 
-        if (skinToken.has("SkinAnimationData")) {
-            skin.setAnimationData(new String(Base64.getDecoder().decode(skinToken.get("SkinAnimationData").getAsString()), StandardCharsets.UTF_8));
-        }
+            if (skinToken.has("CapeOnClassicSkin")) {
+                skin.setCapeOnClassic(skinToken.get("CapeOnClassicSkin").getAsBoolean());
+            }
 
-        if (skinToken.has("AnimatedImageData")) {
-            for (JsonElement element : skinToken.get("AnimatedImageData").getAsJsonArray()) {
-                skin.getAnimations().add(getAnimation(element.getAsJsonObject()));
+            if (skinToken.has("SkinResourcePatch")) {
+                skin.setSkinResourcePatch(new String(Base64.getDecoder().decode(skinToken.get("SkinResourcePatch").getAsString()), StandardCharsets.UTF_8));
+            }
+
+            if (skinToken.has("SkinGeometryData")) {
+                skin.setGeometryData(new String(Base64.getDecoder().decode(skinToken.get("SkinGeometryData").getAsString()), StandardCharsets.UTF_8));
+            }
+
+            if (skinToken.has("SkinAnimationData")) {
+                skin.setAnimationData(new String(Base64.getDecoder().decode(skinToken.get("SkinAnimationData").getAsString()), StandardCharsets.UTF_8));
+            }
+
+            if (skinToken.has("AnimatedImageData")) {
+                for (JsonElement element : skinToken.get("AnimatedImageData").getAsJsonArray()) {
+                    skin.getAnimations().add(getAnimation(element.getAsJsonObject()));
+                }
+            }
+
+            if (skinToken.has("SkinColor")) {
+                skin.setSkinColor(skinToken.get("SkinColor").getAsString());
+            }
+
+            if (skinToken.has("ArmSize")) {
+                skin.setArmSize(skinToken.get("ArmSize").getAsString());
+            }
+
+            if (skinToken.has("PersonaPieces")) {
+                for (JsonElement object : skinToken.get("PersonaPieces").getAsJsonArray()) {
+                    skin.getPersonaPieces().add(getPersonaPiece(object.getAsJsonObject()));
+                }
+            }
+
+            if (skinToken.has("PieceTintColors")) {
+                for (JsonElement object : skinToken.get("PieceTintColors").getAsJsonArray()) {
+                    skin.getTintColors().add(getTint(object.getAsJsonObject()));
+                }
             }
         }
-
-        if (skinToken.has("SkinColor")) {
-            skin.setSkinColor(skinToken.get("SkinColor").getAsString());
-        }
-
-        if (skinToken.has("ArmSize")) {
-            skin.setArmSize(skinToken.get("ArmSize").getAsString());
-        }
-
-        if (skinToken.has("PersonaPieces")) {
-            for (JsonElement object : skinToken.get("PersonaPieces").getAsJsonArray()) {
-                skin.getPersonaPieces().add(getPersonaPiece(object.getAsJsonObject()));
-            }
-        }
-
-        if (skinToken.has("PieceTintColors")) {
-            for (JsonElement object : skinToken.get("PieceTintColors").getAsJsonArray()) {
-                skin.getTintColors().add(getTint(object.getAsJsonObject()));
-            }
-        }
-    }
-
-    private JsonObject decodeToken(String token) {
-        String[] base = token.split("\\.");
-        if (base.length < 2) return null;
-        return new Gson().fromJson(new String(Base64.getDecoder().decode(base[1]), StandardCharsets.UTF_8), JsonObject.class);
     }
 
     private static SkinAnimation getAnimation(JsonObject element) {
@@ -195,5 +221,8 @@ public class LoginPacket extends DataPacket {
             colors.add(element.getAsString()); // remove #
         }
         return new PersonaPieceTint(pieceType, colors);
+    }
+
+    private static class MapTypeToken extends TypeToken<Map<String, List<String>>> {
     }
 }

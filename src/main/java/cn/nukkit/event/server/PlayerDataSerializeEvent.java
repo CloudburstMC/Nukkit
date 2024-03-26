@@ -9,7 +9,8 @@ import java.util.UUID;
 
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PlayerDataSerializeEvent extends ServerEvent {
-    private static HandlerList handlers = new HandlerList();
+
+    private static final HandlerList handlers = new HandlerList();
 
     private final Optional<String> name;
     private final Optional<UUID> uuid;
@@ -21,9 +22,7 @@ public class PlayerDataSerializeEvent extends ServerEvent {
         UUID uuid = null;
         try {
             uuid = UUID.fromString(name);
-        } catch (Exception e) {
-            // ignore
-        }
+        } catch (Exception ignored) {}
         this.uuid = Optional.ofNullable(uuid);
         this.name = this.uuid.isPresent() ? Optional.empty() : Optional.of(name);
     }

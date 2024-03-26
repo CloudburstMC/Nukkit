@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.event.entity.EntityShootBowEvent;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
@@ -13,9 +14,6 @@ import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
-/**
- * Created by PetteriM1
- */
 public class ItemTrident extends ItemTool {
 
     public ItemTrident() {
@@ -34,12 +32,12 @@ public class ItemTrident extends ItemTool {
     public int getMaxDurability() {
         return ItemTool.DURABILITY_TRIDENT;
     }
-
+    
     @Override
     public boolean isSword() {
         return true;
     }
-
+    
     @Override
     public int getAttackDamage() {
         return 9;
@@ -73,6 +71,14 @@ public class ItemTrident extends ItemTool {
 
         EntityThrownTrident trident = new EntityThrownTrident(player.chunk, nbt, player);
         trident.setItem(this);
+
+        if (player.isCreative()) {
+            trident.setPickupMode(EntityProjectile.PICKUP_CREATIVE);
+        }
+
+        if (this.hasEnchantment(Enchantment.ID_TRIDENT_LOYALTY)) {
+            trident.setFavoredSlot(player.getInventory().getHeldItemIndex());
+        }
 
         double p = (double) ticksUsed / 20;
         double f = Math.min((p * p + p * 2) / 3, 1) * 2.5;

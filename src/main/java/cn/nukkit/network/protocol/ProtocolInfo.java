@@ -5,13 +5,13 @@ import com.google.common.primitives.Ints;
 import java.util.List;
 
 /**
- * author: MagicDroidX &amp; iNevet
+ * @author MagicDroidX &amp; iNevet
  * Nukkit Project
  */
 public interface ProtocolInfo {
 
     /**
-     * Actual Minecraft: PE protocol version
+     * Actual Minecraft protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
     int CURRENT_PROTOCOL = Integer.valueOf("662"); // DO NOT REMOVE BOXING
@@ -126,12 +126,16 @@ public interface ProtocolInfo {
     byte SERVER_SETTINGS_RESPONSE_PACKET = 0x67;
     byte SHOW_PROFILE_PACKET = 0x68;
     byte SET_DEFAULT_GAME_TYPE_PACKET = 0x69;
+    byte REMOVE_OBJECTIVE_PACKET = 0x6a;
+    byte SET_DISPLAY_OBJECTIVE_PACKET = 0x6b;
+    byte SET_SCORE_PACKET = 0x6c;
+    byte LAB_TABLE_PACKET = 0x6d;
+    byte UPDATE_BLOCK_SYNCED_PACKET = 0x6e;
     byte MOVE_ENTITY_DELTA_PACKET = 0x6f;
     byte SET_SCOREBOARD_IDENTITY_PACKET = 0x70;
     byte SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET = 0x71;
     byte UPDATE_SOFT_ENUM_PACKET = 0x72;
     byte NETWORK_STACK_LATENCY_PACKET = 0x73;
-
     byte SCRIPT_CUSTOM_EVENT_PACKET = 0x75;
     byte SPAWN_PARTICLE_EFFECT_PACKET = 0x76;
     byte AVAILABLE_ENTITY_IDENTIFIERS_PACKET = 0x77;
@@ -142,8 +146,8 @@ public interface ProtocolInfo {
     byte LEVEL_EVENT_GENERIC_PACKET = 0x7c;
     byte LECTERN_UPDATE_PACKET = 0x7d;
     byte VIDEO_STREAM_CONNECT_PACKET = 0x7e;
-    //byte ADD_ENTITY_PACKET = 0x7f;
-    //byte REMOVE_ENTITY_PACKET = 0x80;
+    byte ADD_ENTITY_PACKET_2 = 0x7f;
+    byte REMOVE_ENTITY_PACKET_2 = (byte) 0x80;
     byte CLIENT_CACHE_STATUS_PACKET = (byte) 0x81;
     byte ON_SCREEN_TEXTURE_ANIMATION_PACKET = (byte) 0x82;
     byte MAP_CREATE_LOCKED_COPY_PACKET = (byte) 0x83;
@@ -214,6 +218,6 @@ public interface ProtocolInfo {
     byte UNLOCKED_RECIPES_PACKET = (byte) 0xc7;
     // MC packet IDs continue from 300 (0x12c)
     // Hack: 100 is added to the IDs below on encode
-    // TODO: New pid() function (int) while trying not to break too many plugins
-    byte __INTERNAL__OPEN_SIGN_PACKET = (byte) 203; // 303
+    // TODO: New pid() function (int) that calls the old one by default
+    byte __INTERNAL__OPEN_SIGN_PACKET = (byte) 203;
 }

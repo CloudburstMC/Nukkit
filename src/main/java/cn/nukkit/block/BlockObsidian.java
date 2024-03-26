@@ -10,9 +10,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockObsidian extends BlockSolid {
 
-    public BlockObsidian() {
-    }
-
     @Override
     public String getName() {
         return "Obsidian";
@@ -30,7 +27,7 @@ public class BlockObsidian extends BlockSolid {
 
     @Override
     public double getHardness() {
-        return 35; //50 in PC
+        return 35;
     }
 
     @Override
@@ -52,7 +49,7 @@ public class BlockObsidian extends BlockSolid {
     @Override
     public boolean onBreak(Item item) {
         //destroy the nether portal
-        Block[] nearby = new Block[]{
+        Block[] nearby = {
                 this.up(), this.down(),
                 this.north(), south(),
                 this.west(), this.east(),

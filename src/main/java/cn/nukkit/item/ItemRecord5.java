@@ -18,4 +18,9 @@ public class ItemRecord5 extends ItemRecord {
     public String getSoundId() {
         return "record.5";
     }
+
+    @Override
+    public String getDiscName() {
+        return "Samuel Åberg - 5";
+    }
 }

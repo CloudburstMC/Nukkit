@@ -1,7 +1,8 @@
 package cn.nukkit.level.generator;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
@@ -11,14 +12,11 @@ import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Flat extends Generator {
@@ -62,7 +60,7 @@ public class Flat extends Generator {
     }
 
     public Flat() {
-        this(new HashMap<>());
+        this(Collections.emptyMap());
     }
 
     public Flat(Map<String, Object> options) {
@@ -70,25 +68,24 @@ public class Flat extends Generator {
         this.options = options;
 
         if (this.options.containsKey("decoration")) {
-            PopulatorOre ores = new PopulatorOre(BlockID.STONE, new OreType[]{
-                    new OreType(Block.get(BlockID.COAL_ORE), 20, 16, 0, 128),
-                    new OreType(Block.get(BlockID.IRON_ORE), 20, 8, 0, 64),
-                    new OreType(Block.get(BlockID.REDSTONE_ORE), 8, 7, 0, 16),
-                    new OreType(Block.get(BlockID.LAPIS_ORE), 1, 6, 0, 32),
-                    new OreType(Block.get(BlockID.GOLD_ORE), 2, 8, 0, 32),
-                    new OreType(Block.get(BlockID.DIAMOND_ORE), 1, 7, 0, 16),
-                    new OreType(Block.get(BlockID.DIRT), 20, 32, 0, 128),
-                    new OreType(Block.get(BlockID.GRAVEL), 20, 16, 0, 128),
+            PopulatorOre ores = new PopulatorOre(STONE, new OreType[]{
+                    new OreType(Block.get(BlockID.COAL_ORE), 20, 17, 0, 128),
+                    new OreType(Block.get(BlockID.IRON_ORE), 20, 9, 0, 64),
+                    new OreType(Block.get(BlockID.REDSTONE_ORE), 8, 8, 0, 16),
+                    new OreType(Block.get(BlockID.LAPIS_ORE), 1, 7, 0, 30),
+                    new OreType(Block.get(BlockID.GOLD_ORE), 2, 9, 0, 32),
+                    new OreType(Block.get(BlockID.DIAMOND_ORE), 1, 8, 0, 16),
+                    new OreType(Block.get(BlockID.DIRT), 10, 33, 0, 128),
+                    new OreType(Block.get(BlockID.GRAVEL), 8, 33, 0, 128)
             });
             this.populators.add(ores);
         }
     }
 
-    protected void parsePreset(String preset, int chunkX, int chunkZ) {
+    protected void parsePreset(String preset) {
         try {
             this.preset = preset;
             String[] presetArray = preset.split(";");
-            int version = Integer.parseInt(presetArray[0]);
             String blocks = presetArray.length > 1 ? presetArray[1] : "";
             this.biome = presetArray.length > 2 ? Integer.parseInt(presetArray[2]) : 1;
             String options = presetArray.length > 3 ? presetArray[1] : "";
@@ -129,8 +126,8 @@ public class Flat extends Generator {
                 if (Pattern.matches("^[0-9a-z_]+$", option)) {
                     this.options.put(option, true);
                 } else if (Pattern.matches("^[0-9a-z_]+\\([0-9a-z_ =]+\\)$", option)) {
-                    String name = option.substring(0, option.indexOf("("));
-                    String extra = option.substring(option.indexOf("(") + 1, option.indexOf(")"));
+                    String name = option.substring(0, option.indexOf('('));
+                    String extra = option.substring(option.indexOf('(') + 1, option.indexOf(')'));
                     Map<String, Float> map = new HashMap<>();
                     for (String kv : extra.split(" ")) {
                         String[] data = kv.split("=");
@@ -140,7 +137,7 @@ public class Flat extends Generator {
                 }
             }
         } catch (Exception e) {
-            Server.getInstance().getLogger().error("error while parsing the preset", e);
+            Server.getInstance().getLogger().error("Error while parsing the preset", e);
             throw new RuntimeException(e);
         }
     }
@@ -156,9 +153,9 @@ public class Flat extends Generator {
         if (!this.init) {
             init = true;
             if (this.options.containsKey("preset") && !"".equals(this.options.get("preset"))) {
-                this.parsePreset((String) this.options.get("preset"), chunkX, chunkZ);
+                this.parsePreset((String) this.options.get("preset"));
             } else {
-                this.parsePreset(this.preset, chunkX, chunkZ);
+                this.parsePreset(this.preset);
             }
         }
         this.generateChunk(level.getChunk(chunkX, chunkZ));
@@ -172,8 +169,6 @@ public class Flat extends Generator {
                 chunk.setBiomeId(X, Z, biome);
 
                 for (int y = 0; y < 256; ++y) {
-                    int k = this.structure[y][0];
-                    int l = this.structure[y][1];
                     chunk.setBlock(X, y, Z, this.structure[y][0], this.structure[y][1]);
                 }
             }
@@ -191,6 +186,6 @@ public class Flat extends Generator {
 
     @Override
     public Vector3 getSpawn() {
-        return new Vector3(128, this.floorLevel, 128);
+        return new Vector3(0.5, this.floorLevel, 0.5);
     }
 }

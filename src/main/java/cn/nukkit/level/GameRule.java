@@ -26,13 +26,19 @@ public enum GameRule {
     NATURAL_REGENERATION("naturalRegeneration"),
     PVP("pvp"),
     RANDOM_TICK_SPEED("randomTickSpeed"),
+    RESPAWN_BLOCKS_EXPLODE("respawnBlocksExplode"),
     SEND_COMMAND_FEEDBACK("sendCommandFeedback"),
     SHOW_COORDINATES("showCoordinates"),
     SHOW_DEATH_MESSAGES("showDeathMessages"),
+    SHOW_TAGS("showTags"),
     SPAWN_RADIUS("spawnRadius"),
     TNT_EXPLODES("tntExplodes"),
-    SHOW_TAGS("showTags"),
-    PLAYERS_SLEEPING_PERCENTAGE("playersSleepingPercentage");
+
+    SHOW_BORDER_EFFECT("showBorderEffect"),
+    PLAYERS_SLEEPING_PERCENTAGE("playersSleepingPercentage"),
+    RECIPES_UNLOCK("recipesUnlock"),
+    DO_LIMITED_CRAFTING("doLimitedCrafting"),
+    ;
 
     private final String name;
 
@@ -42,7 +48,7 @@ public enum GameRule {
 
     public static Optional<GameRule> parseString(String gameRuleString) {
         for (GameRule gameRule: values()) {
-            if (gameRule.getName().equalsIgnoreCase(gameRuleString)) {
+            if (gameRule.name.equalsIgnoreCase(gameRuleString)) {
                 return Optional.of(gameRule);
             }
         }
@@ -51,9 +57,16 @@ public enum GameRule {
 
     public static String[] getNames() {
         String[] stringValues = new String[values().length];
-
         for (int i = 0; i < values().length; i++) {
-            stringValues[i] = values()[i].getName();
+            stringValues[i] = values()[i].name;
+        }
+        return stringValues;
+    }
+
+    public static String[] getNamesLowerCase() {
+        String[] stringValues = new String[values().length];
+        for (int i = 0; i < values().length; i++) {
+            stringValues[i] = values()[i].name.toLowerCase();
         }
         return stringValues;
     }

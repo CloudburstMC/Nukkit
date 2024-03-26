@@ -2,9 +2,6 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
-/**
- * Created on 15-10-14.
- */
 @ToString
 public class TakeItemEntityPacket extends DataPacket {
 
@@ -15,8 +12,7 @@ public class TakeItemEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.target = this.getEntityRuntimeId();
-        this.entityId = this.getEntityRuntimeId();
+        this.decodeUnsupported();
     }
 
     @Override
@@ -30,5 +26,4 @@ public class TakeItemEntityPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
-
 }

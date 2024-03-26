@@ -1,23 +1,19 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.utils.Utils;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-/**
- * @author PikyCZ
- */
-public class EntityMule extends EntityAnimal {
+import java.util.ArrayList;
+import java.util.List;
+
+public class EntityMule extends EntityHorseBase {
 
     public static final int NETWORK_ID = 25;
 
     public EntityMule(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-    }
-
-    @Override
-    public Item[] getDrops() {
-        return new Item[]{Item.get(Item.LEATHER)};
     }
 
     @Override
@@ -43,7 +39,20 @@ public class EntityMule extends EntityAnimal {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(15);
+        super.initEntity();
+    }
+
+    @Override
+    public Item[] getDrops() {
+        List<Item> drops = new ArrayList<>();
+
+        if (!this.isBaby()) {
+            for (int i = 0; i < Utils.rand(0, 2); i++) {
+                drops.add(Item.get(Item.LEATHER, 0, 1));
+            }
+        }
+
+        return drops.toArray(new Item[0]);
     }
 }

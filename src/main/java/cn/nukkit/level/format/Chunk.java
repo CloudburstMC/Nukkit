@@ -1,10 +1,11 @@
 package cn.nukkit.level.format;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public interface Chunk extends FullChunk {
+
     byte SECTION_COUNT = 16;
 
     boolean isSectionEmpty(float fY);
@@ -14,6 +15,10 @@ public interface Chunk extends FullChunk {
     boolean setSection(float fY, ChunkSection section);
 
     ChunkSection[] getSections();
+
+    default int getSectionOffset() {
+        return 0;
+    }
 
     class Entry {
         public final int chunkX;

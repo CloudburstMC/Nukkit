@@ -1,14 +1,17 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.ItemBreakParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntityEgg extends EntityProjectile {
+
     public static final int NETWORK_ID = 82;
 
     @Override
@@ -33,7 +36,7 @@ public class EntityEgg extends EntityProjectile {
 
     @Override
     protected float getGravity() {
-        return 0.03f;
+        return 0.04f;
     }
 
     @Override
@@ -55,13 +58,18 @@ public class EntityEgg extends EntityProjectile {
             return false;
         }
 
-        boolean hasUpdate = super.onUpdate(currentTick);
-
-        if (this.age > 1200 || this.isCollided) {
-            this.kill();
-            hasUpdate = true;
+        if (this.age > 1200) {
+            this.close();
+        } else if (this.isCollided) {
+            this.close();
         }
 
-        return hasUpdate;
+        super.onUpdate(currentTick);
+        return !this.closed;
+    }
+
+    @Override
+    public void onHit() {
+        level.addParticle(new ItemBreakParticle(this, Item.get(Item.EGG)), null, 5);
     }
 }

@@ -3,11 +3,12 @@ package cn.nukkit.entity.passive;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-/**
- * @author PikyCZ
- */
-public class EntityDonkey extends EntityAnimal {
+import java.util.ArrayList;
+import java.util.List;
+
+public class EntityDonkey extends EntityHorseBase {
 
     public static final int NETWORK_ID = 24;
 
@@ -38,12 +39,20 @@ public class EntityDonkey extends EntityAnimal {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(15);
+        super.initEntity();
     }
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.LEATHER)};
+        List<Item> drops = new ArrayList<>();
+
+        if (!this.isBaby()) {
+            for (int i = 0; i < Utils.rand(0, 2); i++) {
+                drops.add(Item.get(Item.LEATHER, 0, 1));
+            }
+        }
+
+        return drops.toArray(new Item[0]);
     }
 }

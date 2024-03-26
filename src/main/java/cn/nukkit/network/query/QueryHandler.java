@@ -2,6 +2,7 @@ package cn.nukkit.network.query;
 
 import cn.nukkit.Server;
 import cn.nukkit.event.server.QueryRegenerateEvent;
+import cn.nukkit.utils.Utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
@@ -12,11 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class QueryHandler {
@@ -33,6 +32,7 @@ public class QueryHandler {
 
     public QueryHandler() {
         this.server = Server.getInstance();
+
         this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.query.start"));
         String ip = this.server.getIp();
         String addr = (!ip.isEmpty()) ? ip : "0.0.0.0";
@@ -47,8 +47,8 @@ public class QueryHandler {
 
     public void regenerateInfo() {
         QueryRegenerateEvent ev = this.server.getQueryInformation();
-        this.longData = ev.getLongQuery(this.longData);
-        this.shortData = ev.getShortQuery(this.shortData);
+        this.longData = ev.getLongQuery();
+        this.shortData = ev.getShortQuery();
         this.timeout = System.currentTimeMillis() + ev.getTimeout();
     }
 
@@ -56,7 +56,7 @@ public class QueryHandler {
         this.lastToken = this.token;
         byte[] token = new byte[16];
         for (int i = 0; i < 16; i++) {
-            token[i] = (byte) new Random().nextInt(255);
+            token[i] = (byte) Utils.random.nextInt(255);
         }
         this.token = token;
     }
@@ -65,6 +65,7 @@ public class QueryHandler {
         return getTokenString(token.getBytes(StandardCharsets.UTF_8), address);
     }
 
+
     public static byte[] getTokenString(byte[] token, InetAddress address) {
         try {
             MessageDigest digest = MessageDigest.getInstance("MD5");
@@ -72,7 +73,7 @@ public class QueryHandler {
             digest.update(token);
             return Arrays.copyOf(digest.digest(), 4);
         } catch (NoSuchAlgorithmException e) {
-            return ByteBuffer.allocate(4).putInt(ThreadLocalRandom.current().nextInt()).array();
+            return ByteBuffer.allocate(4).putInt(Utils.random.nextInt()).array();
         }
     }
 
@@ -102,7 +103,8 @@ public class QueryHandler {
                 if (this.timeout < System.currentTimeMillis()) {
                     this.regenerateInfo();
                 }
-                reply = ByteBufAllocator.DEFAULT.ioBuffer(64);
+
+                reply = ByteBufAllocator.DEFAULT.directBuffer(64);
                 reply.writeByte(STATISTICS);
                 reply.writeInt(sessionId);
                 if (packet.readableBytes() == 8) {

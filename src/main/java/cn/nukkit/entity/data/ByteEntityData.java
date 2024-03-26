@@ -3,10 +3,11 @@ package cn.nukkit.entity.data;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ByteEntityData extends EntityData<Integer> {
+
     public int data;
 
     public ByteEntityData(int id, int data) {

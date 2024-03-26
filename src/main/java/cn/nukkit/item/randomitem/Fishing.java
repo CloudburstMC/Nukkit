@@ -2,7 +2,6 @@ package cn.nukkit.item.randomitem;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.math.NukkitMath;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.utils.DyeColor;
 
@@ -45,24 +44,30 @@ public final class Fishing {
         int fortuneLevel = 0;
         int lureLevel = 0;
         if (rod != null) {
-            if (rod.getEnchantment(Enchantment.ID_FORTUNE_FISHING) != null) {
-                fortuneLevel = rod.getEnchantment(Enchantment.ID_FORTUNE_FISHING).getLevel();
-            } else if (rod.getEnchantment(Enchantment.ID_LURE) != null) {
-                lureLevel = rod.getEnchantment(Enchantment.ID_LURE).getLevel();
+            Enchantment ench;
+            if ((ench = rod.getEnchantment(Enchantment.ID_FORTUNE_FISHING)) != null) {
+                fortuneLevel = ench.getLevel();
+            } else if ((ench = rod.getEnchantment(Enchantment.ID_LURE)) != null) {
+                lureLevel = ench.getLevel();
             }
         }
         return getFishingResult(fortuneLevel, lureLevel);
     }
 
     public static Item getFishingResult(int fortuneLevel, int lureLevel) {
-        float treasureChance = NukkitMath.clamp(0.05f + 0.01f * fortuneLevel - 0.01f * lureLevel, 0, 1);
-        float junkChance = NukkitMath.clamp(0.05f - 0.025f * fortuneLevel - 0.01f * lureLevel, 0, 1);
-        float fishChance = NukkitMath.clamp(1 - treasureChance - junkChance, 0, 1);
+        float treasureChance = limitRange(0.05f + 0.01f * fortuneLevel - 0.01f * lureLevel);
+        float junkChance = limitRange(0.05f - 0.025f * fortuneLevel - 0.01f * lureLevel);
+        float fishChance = limitRange(1 - treasureChance - junkChance);
         putSelector(FISHES, fishChance);
         putSelector(TREASURES, treasureChance);
         putSelector(JUNKS, junkChance);
         Object result = selectFrom(ROOT_FISHING);
         if (result instanceof Item) return (Item) result;
         return null;
+    }
+
+    private static float limitRange(float value) {
+        if (value >= 1f) return 1f;
+        return Math.max(value, 0f);
     }
 }

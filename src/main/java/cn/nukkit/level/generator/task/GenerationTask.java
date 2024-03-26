@@ -8,14 +8,14 @@ import cn.nukkit.level.generator.SimpleChunkManager;
 import cn.nukkit.scheduler.AsyncTask;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class GenerationTask extends AsyncTask {
+
     private final Level level;
     public boolean state;
     private BaseFullChunk chunk;
-
 
     public GenerationTask(Level level, BaseFullChunk chunk) {
         this.state = true;
@@ -25,16 +25,17 @@ public class GenerationTask extends AsyncTask {
 
     @Override
     public void onRun() {
-        Generator generator = level.getGenerator();
         this.state = false;
+        Generator generator = level.getGenerator();
         if (generator == null) {
+            Server.getInstance().getLogger().debug(level.getFolderName() + "/GenerationTask: generator == null");
             return;
         }
 
         SimpleChunkManager manager = (SimpleChunkManager) generator.getChunkManager();
 
         if (manager == null) {
-            this.state = false;
+            Server.getInstance().getLogger().debug(level.getFolderName() + "/GenerationTask: manager == null");
             return;
         }
 
@@ -49,6 +50,12 @@ public class GenerationTask extends AsyncTask {
 
                 synchronized (chunk) {
                     if (!chunk.isGenerated()) {
+                        if (level.getProvider() == null) {
+                            this.state = false;
+                            Server.getInstance().getLogger().debug(level.getFolderName() + "/GenerationTask: provider == null");
+                            return;
+                        }
+
                         manager.setChunk(chunk.getX(), chunk.getZ(), chunk);
                         generator.generateChunk(chunk.getX(), chunk.getZ());
                         chunk = manager.getChunk(chunk.getX(), chunk.getZ());
@@ -56,12 +63,11 @@ public class GenerationTask extends AsyncTask {
                     }
                 }
                 this.chunk = chunk;
-                state = true;
+                this.state = true;
             } finally {
                 manager.cleanChunks(level.getSeed());
             }
         }
-
     }
 
     @Override

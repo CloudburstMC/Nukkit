@@ -7,10 +7,11 @@ import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.level.Location;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntityTeleportEvent extends EntityEvent implements Cancellable {
+
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {

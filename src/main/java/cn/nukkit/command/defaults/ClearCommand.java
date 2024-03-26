@@ -9,14 +9,14 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
- * Created on 2024/26/2 by Sherko231.
- * Package cn.nukkit.command.defaults in project Nukkit .
+ * @author Sherko231
  */
 public class ClearCommand extends VanillaCommand {
+
     public ClearCommand(String name) {
         super(name, "%nukkit.command.clear.description", "%nukkit.command.clear.usage");
         this.setPermission("nukkit.command.clear");
@@ -38,16 +38,14 @@ public class ClearCommand extends VanillaCommand {
             return false;
         }
 
-        List<Player> targets = new ArrayList<>();
+        Collection<Player> targets;
         if (args[0].equals("@a")) {
-            targets.addAll(Server.getInstance().getOnlinePlayers().values());
-        }
-        else {
-            Player target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
+            targets = Server.getInstance().getOnlinePlayers().values();
+        } else {
+            Player target = sender.getServer().getPlayerExact(args[0].replace("@s", sender.getName()));
             if (target != null) {
-                targets.add(target);
-            }
-            else {
+                targets = Collections.singletonList(target);
+            } else {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                 return false;
             }

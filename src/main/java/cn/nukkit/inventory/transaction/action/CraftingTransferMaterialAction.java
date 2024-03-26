@@ -10,12 +10,12 @@ import cn.nukkit.item.Item;
  */
 public class CraftingTransferMaterialAction extends InventoryAction {
 
-    private int slot;
+    //private int slot;
 
     public CraftingTransferMaterialAction(Item sourceItem, Item targetItem, int slot) {
         super(sourceItem, targetItem);
 
-        this.slot = slot;
+        //this.slot = slot;
     }
 
     @Override
@@ -45,11 +45,9 @@ public class CraftingTransferMaterialAction extends InventoryAction {
 
     @Override
     public void onExecuteSuccess(Player $source) {
-
     }
 
     @Override
     public void onExecuteFail(Player source) {
-
     }
 }

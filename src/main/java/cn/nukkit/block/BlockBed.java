@@ -3,20 +3,27 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityBed;
-import cn.nukkit.entity.item.EntityPrimedTNT;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.mob.*;
+import cn.nukkit.event.player.PlayerBedEnterEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBed;
-import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.level.Explosion;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.particle.DestroyBlockParticle;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockBed extends BlockTransparentMeta implements Faceable {
@@ -40,11 +47,6 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public double getResistance() {
-        return 1;
-    }
-
-    @Override
     public double getHardness() {
         return 0.2;
     }
@@ -59,26 +61,23 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
         return this.y + 0.5625;
     }
 
-    @Override
-    public boolean onActivate(Item item) {
-        return this.onActivate(item, null);
-    }
+    /**
+     * List of mob network IDs which make players unable to sleep when nearby the bed.
+     */
+    private static final IntSet MOB_IDS = new IntOpenHashSet(new int[]{EntityBlaze.NETWORK_ID, EntityCaveSpider.NETWORK_ID, EntityCreeper.NETWORK_ID, EntityDrowned.NETWORK_ID, EntityElderGuardian.NETWORK_ID, EntityEnderman.NETWORK_ID, EntityEndermite.NETWORK_ID, EntityEvoker.NETWORK_ID, EntityGhast.NETWORK_ID, EntityGuardian.NETWORK_ID, EntityHoglin.NETWORK_ID, EntityHusk.NETWORK_ID, EntityPiglinBrute.NETWORK_ID, EntityPillager.NETWORK_ID, EntityRavager.NETWORK_ID, EntityShulker.NETWORK_ID, EntitySilverfish.NETWORK_ID, EntitySkeleton.NETWORK_ID, EntitySlime.NETWORK_ID, EntitySpider.NETWORK_ID, EntityStray.NETWORK_ID, EntityVex.NETWORK_ID, EntityVindicator.NETWORK_ID, EntityWitch.NETWORK_ID, EntityWither.NETWORK_ID, EntityWitherSkeleton.NETWORK_ID, EntityZoglin.NETWORK_ID, EntityZombie.NETWORK_ID, EntityZombiePigman.NETWORK_ID, EntityZombieVillagerV1.NETWORK_ID, EntityZombieVillager.NETWORK_ID});
 
     @Override
     public boolean onActivate(Item item, Player player) {
+        if (this.level.getDimension() != Level.DIMENSION_OVERWORLD) {
+            if (this.level.getGameRules().getBoolean(GameRule.RESPAWN_BLOCKS_EXPLODE)) {
+                if (this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true)) {
+                    this.level.addParticle(new DestroyBlockParticle(this.add(0.5, 0.5, 0.5), this));
+                }
 
-        if (this.level.getDimension() == Level.DIMENSION_NETHER || this.level.getDimension() == Level.DIMENSION_THE_END) {
-            CompoundTag tag = EntityPrimedTNT.getDefaultNBT(this).putShort("Fuse", 0);
-            new EntityPrimedTNT(this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), tag);
-            return true;
-        }
-
-        int time = this.getLevel().getTime() % Level.TIME_FULL;
-
-        boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
-
-        if (player != null && !isNight) {
-            player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
+                Explosion explosion = new Explosion(this.add(0.5, 0, 0.5), 5, this);
+                explosion.explodeA();
+                explosion.explodeB();
+            }
             return true;
         }
 
@@ -91,43 +90,72 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
         if ((this.getDamage() & 0x08) == 0x08) {
             b = this;
         } else {
-            if (blockNorth.getId() == this.getId() && (blockNorth.getDamage() & 0x08) == 0x08) {
+            if (blockNorth.getId() == BED_BLOCK && (blockNorth.getDamage() & 0x08) == 0x08) {
                 b = blockNorth;
-            } else if (blockSouth.getId() == this.getId() && (blockSouth.getDamage() & 0x08) == 0x08) {
+            } else if (blockSouth.getId() == BED_BLOCK && (blockSouth.getDamage() & 0x08) == 0x08) {
                 b = blockSouth;
-            } else if (blockEast.getId() == this.getId() && (blockEast.getDamage() & 0x08) == 0x08) {
+            } else if (blockEast.getId() == BED_BLOCK && (blockEast.getDamage() & 0x08) == 0x08) {
                 b = blockEast;
-            } else if (blockWest.getId() == this.getId() && (blockWest.getDamage() & 0x08) == 0x08) {
+            } else if (blockWest.getId() == BED_BLOCK && (blockWest.getDamage() & 0x08) == 0x08) {
                 b = blockWest;
             } else {
                 if (player != null) {
-                    player.sendMessage(new TranslationContainer("tile.bed.notValid"));
+                    player.sendMessage("§7%tile.bed.notValid", true);
                 }
 
                 return true;
             }
         }
 
-        if (player != null && !player.sleepOn(b)) {
-            player.sendMessage(new TranslationContainer("tile.bed.occupied"));
-        }
+        if (player != null) {
+            if (player.distanceSquared(this) > 36) {
+                player.sendMessage("§7%tile.bed.tooFar", true);
+                return true;
+            }
 
+            if (!player.isCreative()) {
+                BlockFace secondPart = this.getBlockFace().getOpposite();
+                AxisAlignedBB checkArea = new SimpleAxisAlignedBB(b.x - 8, b.y - 6.5, b.z - 8, b.x + 9, b.y + 5.5, b.z + 9).addCoord(secondPart.getXOffset(), 0, secondPart.getZOffset());
+
+                for (Entity entity : this.getLevel().getCollidingEntities(checkArea)) {
+                    if (!entity.isClosed() && MOB_IDS.contains(entity.getNetworkId())) {
+                        player.sendMessage("§7%tile.bed.notSafe", true);
+                        return true;
+                    }
+                }
+            }
+
+            int time = this.getLevel().getTime() % Level.TIME_FULL;
+            boolean isNight = time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE;
+            if (!isNight && !this.getLevel().isThundering()) {
+                if (!b.equals(player.getSpawnPosition())) {
+                    PlayerBedEnterEvent ev = new PlayerBedEnterEvent(player, this, true); // TODO: Event for setting player respawn point?
+                    player.getServer().getPluginManager().callEvent(ev);
+                    if (!ev.isCancelled()) {
+                        player.setSpawn(b);
+                        player.sendMessage("§7%tile.bed.respawnSet", true);
+                    }
+                }
+                player.sendMessage("§7%tile.bed.noSleep", true);
+            } else if (!player.sleepOn(b)) {
+                player.sendMessage("§7%tile.bed.occupied", true);
+            }
+        }
 
         return true;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
-        if (!down.isTransparent()) {
-            Block next = this.getSide(player.getDirection());
-            Block downNext = next.down();
+        if (canStayOnFullNonSolid(this.down())) {
+            Block next = this.getSide(player.getHorizontalFacing());
 
-            if (next.canBeReplaced() && !downNext.isTransparent()) {
+            if (next.canBeReplaced() && canStayOnFullNonSolid(next.down())) {
                 int meta = player.getDirection().getHorizontalIndex();
 
-                this.getLevel().setBlock(block, Block.get(this.getId(), meta), true, true);
-                this.getLevel().setBlock(next, Block.get(this.getId(), meta | 0x08), true, true);
+                this.getLevel().setBlock(block, Block.get(BED_BLOCK, meta), true, true);
+
+                this.getLevel().setBlock(next, Block.get(BED_BLOCK, meta | 0x08), true, true);
 
                 createBlockEntity(this, item.getDamage());
                 createBlockEntity(next, item.getDamage());
@@ -138,50 +166,84 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
         return false;
     }
 
+    /**
+     * Internal: Can drop item when broken
+     */
+    public boolean canDropItem = true;
+
     @Override
     public boolean onBreak(Item item) {
-        Block blockNorth = this.north(); //Gets the blocks around them
+        Block blockNorth = this.north();
         Block blockSouth = this.south();
         Block blockEast = this.east();
         Block blockWest = this.west();
 
-        if ((this.getDamage() & 0x08) == 0x08) { //This is the Top part of bed
-            if (blockNorth.getId() == BED_BLOCK && (blockNorth.getDamage() & 0x08) != 0x08) { //Checks if the block ID&&meta are right
-                this.getLevel().setBlock(blockNorth, Block.get(BlockID.AIR), true, true);
+        Block secondPart = null;
+        if ((this.getDamage() & 0x08) == 0x08) { // Top part of the bed
+            if (blockNorth.getId() == BED_BLOCK && (blockNorth.getDamage() & 0x08) != 0x08) { // Check if the block ID & meta are right
+                secondPart = blockNorth;
             } else if (blockSouth.getId() == BED_BLOCK && (blockSouth.getDamage() & 0x08) != 0x08) {
-                this.getLevel().setBlock(blockSouth, Block.get(BlockID.AIR), true, true);
+                secondPart = blockSouth;
             } else if (blockEast.getId() == BED_BLOCK && (blockEast.getDamage() & 0x08) != 0x08) {
-                this.getLevel().setBlock(blockEast, Block.get(BlockID.AIR), true, true);
+                secondPart = blockEast;
             } else if (blockWest.getId() == BED_BLOCK && (blockWest.getDamage() & 0x08) != 0x08) {
-                this.getLevel().setBlock(blockWest, Block.get(BlockID.AIR), true, true);
+                secondPart = blockWest;
             }
-        } else { //Bottom Part of Bed
-            if (blockNorth.getId() == this.getId() && (blockNorth.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockNorth, Block.get(BlockID.AIR), true, true);
-            } else if (blockSouth.getId() == this.getId() && (blockSouth.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockSouth, Block.get(BlockID.AIR), true, true);
-            } else if (blockEast.getId() == this.getId() && (blockEast.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockEast, Block.get(BlockID.AIR), true, true);
-            } else if (blockWest.getId() == this.getId() && (blockWest.getDamage() & 0x08) == 0x08) {
-                this.getLevel().setBlock(blockWest, Block.get(BlockID.AIR), true, true);
+        } else { // Bottom part of the bed
+            if (blockNorth.getId() == BED_BLOCK && (blockNorth.getDamage() & 0x08) == 0x08) {
+                secondPart = blockNorth;
+            } else if (blockSouth.getId() == BED_BLOCK && (blockSouth.getDamage() & 0x08) == 0x08) {
+                secondPart = blockSouth;
+            } else if (blockEast.getId() == BED_BLOCK && (blockEast.getDamage() & 0x08) == 0x08) {
+                secondPart = blockEast;
+            } else if (blockWest.getId() == BED_BLOCK && (blockWest.getDamage() & 0x08) == 0x08) {
+                secondPart = blockWest;
             }
         }
 
-        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, false); // Do not update both parts to prevent duplication bug if there is two fallable blocks top of the bed
+        if (secondPart != null) {
+            Item secondPartDrop = (secondPart.getDamage() & 0x08) == 0x08 ? secondPart.toItem() : null; // Get drops before block entity is destroyed to keep the color
+            if (this.getLevel().setBlock(secondPart, Block.get(BlockID.AIR), true, true)) {
+                if (secondPartDrop != null && this.canDropItem && this.getLevel().gameRules.getBoolean(GameRule.DO_TILE_DROPS)) {
+                    this.getLevel().dropItem(this.add(0.5, 0.5, 0.5), secondPartDrop); // Drops only from the top part, prevent a dupe
+                }
+            }
+        }
+
+        this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, secondPart == null); // Don't update both parts to prevent duplication bug if there are two fallable blocks on top of the bed
+
+        for (Entity entity : this.level.getNearbyEntities(new SimpleAxisAlignedBB(this, this).grow(2, 1, 2))) {
+            if (!(entity instanceof Player)) continue;
+            Player player = (Player) entity;
+
+            if (player.getSleepingPos() == null) continue;
+            if (!player.getSleepingPos().equals(this) && !player.getSleepingPos().equals(secondPart)) continue;
+            player.stopSleep();
+        }
+
+        if (level.getDimension() == Level.DIMENSION_OVERWORLD) {
+            Vector3 safeSpawn = null;
+            for (Player player : level.getServer().getOnlinePlayers().values()) {
+                if (player.getSpawnPosition() != null && (player.getSpawnPosition().equals(this) || player.getSpawnPosition().equals(secondPart))) {
+                    player.setSpawn(safeSpawn == null ? (safeSpawn = level.getServer().getDefaultLevel().getSafeSpawn()) : safeSpawn);
+                }
+            }
+        }
 
         return true;
     }
 
-    private void createBlockEntity(Vector3 pos, int color) {
+    private void createBlockEntity(Block pos, int color) {
         CompoundTag nbt = BlockEntity.getDefaultCompound(pos, BlockEntity.BED);
         nbt.putByte("color", color);
 
-        BlockEntity.createBlockEntity(BlockEntity.BED, this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
+        BlockEntityBed be = (BlockEntityBed) BlockEntity.createBlockEntity(BlockEntity.BED, pos.getChunk(), nbt);
+        be.spawnToAll();
     }
 
     @Override
     public Item toItem() {
-        return new ItemBed(this.getDyeColor().getWoolData());
+        return Item.get(Item.BED, this.getDyeColor().getWoolData());
     }
 
     @Override
@@ -204,5 +266,15 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    /*@Override
+    public boolean breakWhenPushed() {
+        return true;
+    }*/
+
+    @Override
+    public boolean canBePushed() {
+        return false; // Temporary dupe patch
     }
 }

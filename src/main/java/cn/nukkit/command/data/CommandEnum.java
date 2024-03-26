@@ -14,8 +14,7 @@ import java.util.List;
 public class CommandEnum {
 
     public static final CommandEnum ENUM_BOOLEAN = new CommandEnum("Boolean", ImmutableList.of("true", "false"));
-    public static final CommandEnum ENUM_GAMEMODE = new CommandEnum("GameMode",
-            ImmutableList.of("survival", "creative", "s", "c", "adventure", "a", "spectator", "view", "v", "spc"));
+    public static final CommandEnum ENUM_GAMEMODE = new CommandEnum("GameMode", ImmutableList.of("survival", "creative", "s", "c", "adventure", "a", "spectator", "view", "v", "spc"));
     public static final CommandEnum ENUM_BLOCK;
     public static final CommandEnum ENUM_ITEM;
 
@@ -25,7 +24,6 @@ public class CommandEnum {
             blocks.add(field.getName().toLowerCase());
         }
         ENUM_BLOCK = new CommandEnum("Block", blocks.build());
-
         ImmutableList.Builder<String> items = ImmutableList.builder();
         for (Field field : ItemID.class.getDeclaredFields()) {
             items.add(field.getName().toLowerCase());
@@ -34,8 +32,8 @@ public class CommandEnum {
         ENUM_ITEM = new CommandEnum("Item", items.build());
     }
 
-    private String name;
-    private List<String> values;
+    private final String name;
+    private final List<String> values;
 
     public CommandEnum(String name, String... values) {
         this(name, Arrays.asList(values));

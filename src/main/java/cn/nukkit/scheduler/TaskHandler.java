@@ -2,13 +2,12 @@ package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
-import co.aikar.timings.Timing;
-import co.aikar.timings.Timings;
 
 /**
  * @author MagicDroidX
  */
 public class TaskHandler {
+
     private final int taskId;
     private final boolean asynchronous;
 
@@ -23,14 +22,11 @@ public class TaskHandler {
 
     private boolean cancelled;
 
-    public final Timing timing;
-
     public TaskHandler(Plugin plugin, Runnable task, int taskId, boolean asynchronous) {
         this.asynchronous = asynchronous;
         this.plugin = plugin;
         this.task = task;
         this.taskId = taskId;
-        this.timing = Timings.getTaskTiming(this, period);
     }
 
     public boolean isCancelled() {
@@ -82,7 +78,7 @@ public class TaskHandler {
     }
 
     public void cancel() {
-        if (!this.isCancelled() && this.task instanceof Task) {
+        if (!this.cancelled && this.task instanceof Task) {
             ((Task) this.task).onCancel();
         }
         this.cancelled = true;
@@ -96,15 +92,10 @@ public class TaskHandler {
     public void run(int currentTick) {
         try {
             setLastRunTick(currentTick);
-            getTask().run();
+            task.run();
         } catch (RuntimeException ex) {
             Server.getInstance().getLogger().critical("Exception while invoking run", ex);
         }
-    }
-
-    @Deprecated
-    public String getTaskName() {
-        return "Unknown";
     }
 
     public boolean isAsynchronous() {
@@ -118,5 +109,4 @@ public class TaskHandler {
     public void setPeriod(int period) {
         this.period = period;
     }
-
 }

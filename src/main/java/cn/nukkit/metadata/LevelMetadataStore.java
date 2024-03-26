@@ -3,7 +3,7 @@ package cn.nukkit.metadata;
 import cn.nukkit.level.Level;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class LevelMetadataStore extends MetadataStore {
@@ -13,6 +13,6 @@ public class LevelMetadataStore extends MetadataStore {
         if (!(level instanceof Level)) {
             throw new IllegalArgumentException("Argument must be a Level instance");
         }
-        return (((Level) level).getName() + ":" + metadataKey).toLowerCase();
+        return (((Level) level).getName() + ':' + metadataKey).toLowerCase();
     }
 }

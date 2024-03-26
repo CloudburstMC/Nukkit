@@ -17,7 +17,9 @@ import java.util.Map;
 import java.util.UUID;
 
 /**
- * author: MagicDroidX
+ * Binary
+ *
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Binary {
@@ -102,11 +104,16 @@ public class Binary {
     public static byte[] writeMetadata(EntityMetadata metadata) {
         BinaryStream stream = new BinaryStream();
         Map<Integer, EntityData> map = metadata.getMap();
+
         stream.putUnsignedVarInt(map.size());
-        for (int id : map.keySet()) {
-            EntityData d = map.get(id);
+        for (Map.Entry<Integer, EntityData> entry : map.entrySet()) {
+            EntityData d = entry.getValue();
+            int id = entry.getKey();
+
+
             stream.putUnsignedVarInt(id);
             stream.putUnsignedVarInt(d.getType());
+
             switch (d.getType()) {
                 case Entity.DATA_TYPE_BYTE:
                     stream.putByte(((ByteEntityData) d).getData().byteValue());
@@ -383,13 +390,13 @@ public class Binary {
     }
 
     public static byte[] writeVarInt(int v) {
-        BinaryStream stream = new BinaryStream();
+        BinaryStream stream = new BinaryStream(new byte[5]).reset();
         stream.putVarInt(v);
         return stream.getBuffer();
     }
 
     public static byte[] writeUnsignedVarInt(long v) {
-        BinaryStream stream = new BinaryStream();
+        BinaryStream stream = new BinaryStream(new byte[5]).reset();
         stream.putUnsignedVarInt(v);
         return stream.getBuffer();
     }
@@ -408,13 +415,13 @@ public class Binary {
 
     public static String bytesToHexString(byte[] src, boolean blank) {
         StringBuilder stringBuilder = new StringBuilder();
-        if (src == null || src.length <= 0) {
+        if (src == null || src.length == 0) {
             return null;
         }
 
         for (byte b : src) {
             if (!(stringBuilder.length() == 0) && blank) {
-                stringBuilder.append(" ");
+                stringBuilder.append(' ');
             }
             int v = b & 0xFF;
             String hv = Integer.toHexString(v);
@@ -427,16 +434,16 @@ public class Binary {
     }
 
     public static byte[] hexStringToBytes(String hexString) {
-        if (hexString == null || hexString.equals("")) {
+        if (hexString == null || hexString.isEmpty()) {
             return null;
         }
         String str = "0123456789ABCDEF";
         hexString = hexString.toUpperCase().replace(" ", "");
-        int length = hexString.length() / 2;
+        int length = hexString.length() >> 1;
         char[] hexChars = hexString.toCharArray();
         byte[] d = new byte[length];
         for (int i = 0; i < length; i++) {
-            int pos = i * 2;
+            int pos = i << 1;
             d[i] = (byte) (((byte) str.indexOf(hexChars[pos]) << 4) | ((byte) str.indexOf(hexChars[pos + 1])));
         }
         return d;
@@ -472,7 +479,6 @@ public class Binary {
         for (byte[] b : bytes) {
             length += b.length;
         }
-
         byte[] appendedBytes = new byte[length];
         int index = 0;
         for (byte[] b : bytes) {
@@ -500,7 +506,6 @@ public class Binary {
         for (byte[] bytes : bytes2) {
             length += bytes.length;
         }
-
         byte[] appendedBytes = new byte[length];
         System.arraycopy(bytes1, 0, appendedBytes, 0, bytes1.length);
         int index = bytes1.length;
@@ -511,6 +516,4 @@ public class Binary {
         }
         return appendedBytes;
     }
-
-
 }

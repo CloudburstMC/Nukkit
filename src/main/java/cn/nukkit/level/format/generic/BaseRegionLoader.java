@@ -2,33 +2,32 @@ package cn.nukkit.level.format.generic;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 abstract public class BaseRegionLoader {
-    public static final int VERSION = 1;
+
     public static final byte COMPRESSION_GZIP = 1;
     public static final byte COMPRESSION_ZLIB = 2;
     public static final int MAX_SECTOR_LENGTH = 256 << 12;
-    public static final int COMPRESSION_LEVEL = 7;
 
     protected int x;
     protected int z;
     protected int lastSector;
     protected LevelProvider levelProvider;
 
-    private RandomAccessFile randomAccessFile;
+    private final RandomAccessFile randomAccessFile;
 
     // TODO: A simple array will perform better and use less memory
-    protected final Map<Integer, Integer[]> locationTable = new HashMap<>();
+    protected final Int2ObjectMap<Integer[]> locationTable = new Int2ObjectOpenHashMap<>();
 
     public long lastUsed;
 
@@ -37,7 +36,7 @@ abstract public class BaseRegionLoader {
             this.x = regionX;
             this.z = regionZ;
             this.levelProvider = level;
-            String filePath = this.levelProvider.getPath() + "region/r." + regionX + "." + regionZ + "." + ext;
+            String filePath = this.levelProvider.getPath() + "region/r." + regionX + '.' + regionZ + '.' + ext;
             File file = new File(filePath);
             boolean exists = file.exists();
             if (!exists) {
@@ -54,12 +53,8 @@ abstract public class BaseRegionLoader {
 
             this.lastUsed = System.currentTimeMillis();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Unable to load r." + regionX + '.' + regionZ + '.' + ext, e);
         }
-    }
-
-    public void compress() {
-        // TODO
     }
 
     public RandomAccessFile getRandomAccessFile() {
@@ -99,5 +94,4 @@ abstract public class BaseRegionLoader {
     public Integer[] getLocationIndexes() {
         return this.locationTable.keySet().toArray(new Integer[0]);
     }
-
 }

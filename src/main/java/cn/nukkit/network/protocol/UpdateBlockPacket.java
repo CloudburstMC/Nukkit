@@ -1,14 +1,14 @@
 package cn.nukkit.network.protocol;
 
-
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
 public class UpdateBlockPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.UPDATE_BLOCK_PACKET;
 
     public static final int FLAG_NONE = 0b0000;
@@ -34,7 +34,7 @@ public class UpdateBlockPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override

@@ -37,7 +37,6 @@ public class PlayerChatEvent extends PlayerMessageEvent implements Cancellable {
                     this.recipients.add((CommandSender) permissible);
                 }
             }
-
         } else {
             this.recipients = recipients;
         }

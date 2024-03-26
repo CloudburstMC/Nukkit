@@ -6,6 +6,7 @@ import cn.nukkit.Player;
  * @author CreeperFace
  */
 public class PlayerCursorInventory extends PlayerUIComponent {
+
     private final PlayerUIInventory playerUI;
 
     PlayerCursorInventory(PlayerUIInventory playerUI) {

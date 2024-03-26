@@ -21,4 +21,9 @@ public class ItemRecordWait extends ItemRecord {
     public String getSoundId() {
         return "record.wait";
     }
+
+    @Override
+    public String getDiscName() {
+        return "C418 - wait";
+    }
 }

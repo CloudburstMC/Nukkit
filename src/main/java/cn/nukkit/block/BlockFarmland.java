@@ -4,7 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -48,21 +48,20 @@ public class BlockFarmland extends BlockTransparentMeta {
 
     @Override
     public double getMaxY() {
-        return this.y + 1;
+        return this.y + 0.9375;
     }
 
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
-            Vector3 v = new Vector3();
+            Block up = this.up();
 
-            if (this.level.getBlock(v.setComponents(x, this.y + 1, z)) instanceof BlockCrops) {
+            if (up instanceof BlockCrops) {
                 return 0;
             }
 
-            if (this.level.getBlock(v.setComponents(x, this.y + 1, z)).isSolid()) {
+            if (up.isSolid()) {
                 this.level.setBlock(this, Block.get(BlockID.DIRT), false, true);
-
                 return Level.BLOCK_UPDATE_RANDOM;
             }
 
@@ -78,10 +77,10 @@ public class BlockFarmland extends BlockTransparentMeta {
                                 continue;
                             }
 
-                            v.setComponents(x, y, z);
-                            int block = this.level.getBlockIdAt(v.getFloorX(), v.getFloorY(), v.getFloorZ());
+                            FullChunk chunk = this.level.getChunk(x >> 4, z >> 4);
 
-                            if (block == WATER || block == STILL_WATER) {
+                            int block = this.level.getBlockIdAt(chunk, x, y, z);
+                            if (Block.hasWater(block) || block == FROSTED_ICE || this.level.isBlockWaterloggedAt(chunk, x, y, z)) {
                                 found = true;
                                 break;
                             }
@@ -90,23 +89,28 @@ public class BlockFarmland extends BlockTransparentMeta {
                 }
             }
 
-            Block block = this.level.getBlock(v.setComponents(x, y - 1, z));
-            if (found || block instanceof BlockWater) {
+            Block block;
+            if (found || (block = this.down()) instanceof BlockWater || block instanceof BlockIceFrosted) {
                 if (this.getDamage() < 7) {
                     this.setDamage(7);
-                    this.level.setBlock(this, this, false, false);
+                    this.level.setBlock(this, this, false, true);
                 }
                 return Level.BLOCK_UPDATE_RANDOM;
             }
 
             if (this.getDamage() > 0) {
                 this.setDamage(this.getDamage() - 1);
-                this.level.setBlock(this, this, false, false);
+                this.level.setBlock(this, this, false, true);
             } else {
                 this.level.setBlock(this, Block.get(Block.DIRT), false, true);
             }
 
             return Level.BLOCK_UPDATE_RANDOM;
+        } else if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.up().isSolid()) {
+                this.level.setBlock(this, Block.get(DIRT), false, true);
+                return Level.BLOCK_UPDATE_NORMAL;
+            }
         }
 
         return 0;

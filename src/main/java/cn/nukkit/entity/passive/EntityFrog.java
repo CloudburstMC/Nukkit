@@ -2,13 +2,19 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-public class EntityFrog extends EntityAnimal {
+public class EntityFrog extends EntityJumpingAnimal {
 
     public static final int NETWORK_ID = 132;
 
     public EntityFrog(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
+
+    @Override
+    public int getKillExperience() {
+        return Utils.rand(1, 3);
     }
 
     @Override
@@ -28,12 +34,7 @@ public class EntityFrog extends EntityAnimal {
 
     @Override
     protected void initEntity() {
-        super.initEntity();
         this.setMaxHealth(10);
-    }
-
-    @Override
-    public String getName() {
-        return "Frog";
+        super.initEntity();
     }
 }

@@ -3,7 +3,7 @@ package cn.nukkit.command;
 import java.util.List;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public interface CommandMap {
@@ -21,5 +21,4 @@ public interface CommandMap {
     void clearCommands();
 
     Command getCommand(String name);
-
 }

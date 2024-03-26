@@ -3,10 +3,10 @@ package cn.nukkit.scheduler;
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
-import cn.nukkit.utils.Utils;
 
-import java.util.ArrayDeque;
 import java.util.Map;
+import java.util.Optional;
+import java.util.PriorityQueue;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -22,16 +22,22 @@ public class ServerScheduler {
     private final AsyncPool asyncPool;
 
     private final Queue<TaskHandler> pending;
-    private final Map<Integer, ArrayDeque<TaskHandler>> queueMap;
+    private final Queue<TaskHandler> queue;
     private final Map<Integer, TaskHandler> taskMap;
     private final AtomicInteger currentTaskId;
 
-    private volatile int currentTick = -1;
+    private volatile int currentTick;
 
     public ServerScheduler() {
         this.pending = new ConcurrentLinkedQueue<>();
         this.currentTaskId = new AtomicInteger();
-        this.queueMap = new ConcurrentHashMap<>();
+        this.queue = new PriorityQueue<>(11, (left, right) -> {
+            int i = left.getNextRunTick() - right.getNextRunTick();
+            if (i == 0) {
+                return left.getTaskId() - right.getTaskId();
+            }
+            return i;
+        });
         this.taskMap = new ConcurrentHashMap<>();
         this.asyncPool = new AsyncPool(Server.getInstance(), WORKERS);
     }
@@ -83,10 +89,6 @@ public class ServerScheduler {
 
     public int getAsyncTaskPoolSize() {
         return asyncPool.getCorePoolSize();
-    }
-
-    public void increaseAsyncTaskPoolSize(int newSize) {
-        throw new UnsupportedOperationException("Cannot increase a working pool size."); //wtf?
     }
 
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
@@ -205,7 +207,7 @@ public class ServerScheduler {
             // It is only there for backwards compatibility!
             if (taskHandler.getPlugin() == null || plugin.equals(taskHandler.getPlugin())) {
                 try {
-                    taskHandler.cancel(); /* It will remove from task map automatic in next main heartbeat. */
+                    taskHandler.cancel(); // It will remove from task map automatic in next main heartbeat
                 } catch (RuntimeException ex) {
                     Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
                 }
@@ -222,7 +224,7 @@ public class ServerScheduler {
             }
         }
         this.taskMap.clear();
-        this.queueMap .clear();
+        this.queue.clear();
         this.currentTaskId.set(0);
     }
 
@@ -258,73 +260,50 @@ public class ServerScheduler {
     }
 
     public void mainThreadHeartbeat(int currentTick) {
-        // Accepts pending.
-        TaskHandler task;
-        while ((task = pending.poll()) != null) {
-            int tick = Math.max(currentTick, task.getNextRunTick()); // Do not schedule in the past
-            ArrayDeque<TaskHandler> queue = Utils.getOrCreate(queueMap, ArrayDeque.class, tick);
-            queue.add(task);
+        this.currentTick = currentTick;
+        // Accepts pending
+        while (!pending.isEmpty()) {
+            queue.offer(pending.poll());
         }
-        if (currentTick - this.currentTick > queueMap.size()) { // A large number of ticks have passed since the last execution
-            for (Map.Entry<Integer, ArrayDeque<TaskHandler>> entry : queueMap.entrySet()) {
-                int tick = entry.getKey();
-                if (tick <= currentTick) {
-                    runTasks(tick);
+        // Main heart beat
+        while (isReady(currentTick)) {
+            TaskHandler taskHandler = queue.poll();
+            if (taskHandler.isCancelled()) {
+                taskMap.remove(taskHandler.getTaskId());
+                continue;
+            } else if (taskHandler.isAsynchronous()) {
+                asyncPool.execute(taskHandler.getTask());
+            } else {
+                try {
+                    taskHandler.run(currentTick);
+                } catch (Throwable e) {
+                    Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskId() + ": " + e.getMessage());
+                    Server.getInstance().getLogger().logException(e instanceof Exception ? e : new RuntimeException(e));
                 }
             }
-        } else { // Normal server tick
-            for (int i = this.currentTick + 1; i <= currentTick; i++) {
-                runTasks(currentTick);
+            if (taskHandler.isRepeating()) {
+                taskHandler.setNextRunTick(currentTick + taskHandler.getPeriod());
+                pending.offer(taskHandler);
+            } else {
+                try {
+                    Optional.ofNullable(taskMap.remove(taskHandler.getTaskId())).ifPresent(TaskHandler::cancel);
+                } catch (RuntimeException ex) {
+                    Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
+                }
             }
         }
-        this.currentTick = currentTick;
         AsyncTask.collectTask();
     }
 
-    private void runTasks(int currentTick) {
-        ArrayDeque<TaskHandler> queue = queueMap.remove(currentTick);
-        if (queue != null) {
-            for (TaskHandler taskHandler : queue) {
-                if (taskHandler.isCancelled()) {
-                    taskMap.remove(taskHandler.getTaskId());
-                    continue;
-                } else if (taskHandler.isAsynchronous()) {
-                    asyncPool.execute(taskHandler.getTask());
-                } else {
-                    taskHandler.timing.startTiming();
-                    try {
-                        taskHandler.run(currentTick);
-                    } catch (Throwable e) {
-                        Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskId() + ": " + e.getMessage());
-                        Server.getInstance().getLogger().logException(e instanceof Exception ? (Exception) e : new RuntimeException(e));
-                    }
-                    taskHandler.timing.stopTiming();
-                }
-                if (taskHandler.isRepeating()) {
-                    taskHandler.setNextRunTick(currentTick + taskHandler.getPeriod());
-                    pending.offer(taskHandler);
-                } else {
-                    try {
-                        TaskHandler removed = taskMap.remove(taskHandler.getTaskId());
-                        if (removed != null) removed.cancel();
-                    } catch (RuntimeException ex) {
-                        Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
-                    }
-                }
-            }
-        }
+    public int getQueueSize() {
+        return queue.size() + pending.size();
     }
 
-    public int getQueueSize() {
-        int size = pending.size();
-        for (ArrayDeque<TaskHandler> queue : queueMap.values()) {
-            size += queue.size();
-        }
-        return size;
+    private boolean isReady(int currentTick) {
+        return this.queue.peek() != null && this.queue.peek().getNextRunTick() <= currentTick;
     }
 
     private int nextTaskId() {
         return currentTaskId.incrementAndGet();
     }
-
 }

@@ -1,6 +1,6 @@
 package cn.nukkit.item;
 
-public class ItemEnderEye extends Item {
+public class ItemEnderEye extends ProjectileItem {
 
     public ItemEnderEye() {
         this(0, 1);
@@ -12,5 +12,15 @@ public class ItemEnderEye extends Item {
 
     public ItemEnderEye(Integer meta, int count) {
         super(ENDER_EYE, meta, count, "Ender Eye");
+    }
+
+    @Override
+    public String getProjectileEntityType() {
+        return "EnderEye";
+    }
+
+    @Override
+    public float getThrowForce() {
+        return 1.5f;
     }
 }

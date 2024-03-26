@@ -4,10 +4,12 @@ import lombok.ToString;
 
 @ToString
 public class EmotePacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.EMOTE_PACKET;
+
     public long runtimeId;
-    public String xuid;
-    public String platformId;
+    public String xuid = "";
+    public String platformId = "";
     public String emoteID;
     public byte flags;
 

@@ -148,5 +148,4 @@ public final class Angle implements Comparable<Angle> {
         this.doubleValue = doubleValue;
         this.isDegree = isDegree;
     }
-
 }

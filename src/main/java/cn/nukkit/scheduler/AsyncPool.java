@@ -2,7 +2,7 @@ package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
 
-import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -10,10 +10,11 @@ import java.util.concurrent.TimeUnit;
  * @author Nukkit Project Team
  */
 public class AsyncPool extends ThreadPoolExecutor {
+
     private final Server server;
 
     public AsyncPool(Server server, int size) {
-        super(size, Integer.MAX_VALUE, 60, TimeUnit.MILLISECONDS, new SynchronousQueue<>());
+        super(size, size, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<>());
         this.setThreadFactory(runnable -> new Thread(runnable) {{
             setDaemon(true);
             setName(String.format("Nukkit Asynchronous Task Handler #%s", getPoolSize()));

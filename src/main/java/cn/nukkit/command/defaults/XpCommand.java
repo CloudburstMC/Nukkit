@@ -13,17 +13,14 @@ import cn.nukkit.utils.TextFormat;
  * Package cn.nukkit.command.defaults in project nukkit.
  */
 public class XpCommand extends Command {
+
     public XpCommand(String name) {
         super(name, "%nukkit.command.xp.description", "%commands.xp.usage");
         this.setPermission("nukkit.command.xp");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newType("amount", CommandParamType.INT),
-                CommandParameter.newType("player", true, CommandParamType.TARGET)
-        });
-        this.commandParameters.put("level", new CommandParameter[]{
-                CommandParameter.newPostfix("amount", "l"),
-                CommandParameter.newType("player", true, CommandParamType.TARGET)
+                new CommandParameter("amount|level", CommandParamType.INT, false),
+                new CommandParameter("player", CommandParamType.TARGET, true)
         });
     }
 
@@ -45,7 +42,7 @@ public class XpCommand extends Command {
             }
             amountString = args[0];
             playerName = args[1];
-            player = sender.getServer().getPlayer(playerName);
+            player = sender.getServer().getPlayerExact(playerName);
         } else {
             if (args.length == 1) {
                 amountString = args[0];
@@ -53,7 +50,7 @@ public class XpCommand extends Command {
             } else if (args.length == 2) {
                 amountString = args[0];
                 playerName = args[1].replace("@s", sender.getName());
-                player = sender.getServer().getPlayer(playerName);
+                player = sender.getServer().getPlayerExact(playerName);
             } else {
                 sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                 return true;

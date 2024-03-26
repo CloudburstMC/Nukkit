@@ -1,8 +1,5 @@
 package cn.nukkit.item;
 
-/**
- * Created by Leonidius20 on 18.08.18.
- */
 public class ItemGhastTear extends Item {
 
     public ItemGhastTear() {
@@ -14,7 +11,6 @@ public class ItemGhastTear extends Item {
     }
 
     public ItemGhastTear(Integer meta, int count) {
-        super(GHAST_TEAR, meta, count, "Ghast Tear");
+        super(GHAST_TEAR, 0, count, "Ghast Tear");
     }
-
 }
