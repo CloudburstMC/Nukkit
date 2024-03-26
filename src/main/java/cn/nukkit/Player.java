@@ -1223,7 +1223,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         int centerX = this.getChunkX();
         int centerZ = this.getChunkZ();
 
-        int radius = spawned ? this.chunkRadius : server.c_s_spawnThreshold;
+        int radius = spawned ? this.chunkRadius : server.spawnThresholdRadius;
         int radiusSqr = radius * radius;
 
         long index;

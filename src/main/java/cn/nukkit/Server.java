@@ -148,7 +148,7 @@ public class Server {
     private int maxPlayers; // setMaxPlayers
     private boolean autoSave = true; // setAutoSave
     private int difficulty; // setDifficulty
-    int c_s_spawnThreshold;
+    int spawnThresholdRadius;
     private String ip;
     private int port;
     private final UUID serverID;
@@ -2810,7 +2810,7 @@ public class Server {
         /* nukkit.yml */
 
         this.forceLanguage = this.getConfig("settings.force-language", false);
-        this.queryPlugins = this.getConfig("settings.query-plugins", false);
+        this.queryPlugins = this.getConfig("settings.query-plugins", true);
 
         this.networkCompressionThreshold = this.getConfig("network.batch-threshold", 256);
         this.networkCompressionLevel = Math.max(Math.min(this.getConfig("network.compression-level", 4), 9), 0);
@@ -2834,7 +2834,7 @@ public class Server {
         this.spawnThreshold = this.getConfig("spawn-threshold", 56);
         this.cacheChunks = this.getConfig("cache-chunks", false);
 
-        this.c_s_spawnThreshold = (int) Math.ceil(Math.sqrt(this.spawnThreshold));
+        this.spawnThresholdRadius = (int) Math.ceil(Math.sqrt(this.spawnThreshold));
 
         /* server.properties */
 
@@ -2845,7 +2845,6 @@ public class Server {
         this.achievementsEnabled = this.getPropertyBoolean("achievements", true);
         this.pvpEnabled = this.getPropertyBoolean("pvp", true);
         this.announceAchievements = this.getPropertyBoolean("announce-player-achievements", true);
-        this.queryPlugins = this.getPropertyBoolean("query-plugins", false);
         this.allowFlight = this.getPropertyBoolean("allow-flight", false);
         this.isHardcore = this.getPropertyBoolean("hardcore", false);
         this.forceResources = this.getPropertyBoolean("force-resources", false);

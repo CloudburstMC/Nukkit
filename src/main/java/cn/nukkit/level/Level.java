@@ -342,7 +342,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         this.chunkGenerationQueueSize = this.server.getConfig("chunk-generation.queue-size", 8);
         this.chunkPopulationQueueSize = this.server.getConfig("chunk-generation.population-queue-size", 8);
         this.chunkTickList.clear();
-        this.clearChunksOnTick = this.server.getConfig("clear-chunk-tick-list", true);
+        this.clearChunksOnTick = this.server.getConfig("chunk-ticking.clear-tick-list", false);
         this.temporalVector = new Vector3(0, 0, 0);
 
         this.skyLightSubtracted = this.calculateSkylightSubtracted(1);
