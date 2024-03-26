@@ -76,7 +76,7 @@ public class BlockEndRod extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(faces[player != null ? face.getIndex() : 0]);
+        this.setDamage(FACES[player != null ? face.getIndex() : 0]);
         this.getLevel().setBlock(block, this, true, true);
 
         return true;

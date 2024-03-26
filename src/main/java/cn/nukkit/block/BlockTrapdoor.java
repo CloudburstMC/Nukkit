@@ -200,7 +200,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
             top = face != BlockFace.UP;
         }
 
-        meta |= faces[facing.getHorizontalIndex()];
+        meta |= FACES[facing.getHorizontalIndex()];
 
         if (top) {
             meta |= TRAPDOOR_TOP_BIT;

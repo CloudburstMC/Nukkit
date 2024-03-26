@@ -63,7 +63,7 @@ public class BlockBone extends BlockSolid implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(((this.getDamage() & 0x3) | faces[face.getIndex()]));
+        this.setDamage(((this.getDamage() & 0x3) | FACES[face.getIndex()]));
         this.getLevel().setBlock(block, this, true);
         return true;
     }

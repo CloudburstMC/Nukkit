@@ -118,7 +118,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setDamage(FACES[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
         this.getLevel().setBlock(this, this, true, true);
         return true;

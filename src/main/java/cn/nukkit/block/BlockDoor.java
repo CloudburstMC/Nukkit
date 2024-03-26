@@ -238,7 +238,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
                 return false;
             }
 
-            int direction = faces[player != null ? player.getDirection().getHorizontalIndex() : 0];
+            int direction = FACES[player != null ? player.getDirection().getHorizontalIndex() : 0];
 
             Block left = this.getSide(player.getDirection().rotateYCCW());
             Block right = this.getSide(player.getDirection().rotateY());
