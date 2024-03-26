@@ -22,7 +22,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     public static final int DOOR_HINGE_BIT = 0x01;
     public static final int DOOR_POWERED_BIT = 0x02;
 
-    private static final int[] faces = {1, 2, 3, 0};
+    private static final int[] FACES = {1, 2, 3, 0};
 
     protected BlockDoor(int meta) {
         super(meta);

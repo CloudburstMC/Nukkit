@@ -15,7 +15,7 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockAnvil extends BlockFallableMeta implements Faceable {
 
-    private static final int[] faces = {1, 2, 3, 0};
+    private static final int[] FACES = {1, 2, 3, 0};
 
     private static final String[] NAMES = {
             "Anvil",

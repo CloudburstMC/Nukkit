@@ -13,7 +13,7 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockBone extends BlockSolid implements Faceable {
 
-    private static final int[] faces = {
+    private static final int[] FACES = {
             0,
             0,
             0b1000,

@@ -60,7 +60,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     /**
      * A commonly used block face pattern
      */
-    protected static final int[] faces2534 = {2, 5, 3, 4};
+    protected static final int[] FACES2534 = {2, 5, 3, 4};
 
     protected Block() {}
 

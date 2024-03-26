@@ -7,7 +7,7 @@ import cn.nukkit.math.BlockFace;
 
 public class BlockLightningRod extends BlockTransparentMeta {
 
-    private static final int[] faces = {0, 1, 2, 3, 4, 5};
+    private static final int[] FACES = {0, 1, 2, 3, 4, 5};
 
     public BlockLightningRod() {
         this(0);

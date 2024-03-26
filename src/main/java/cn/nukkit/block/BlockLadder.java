@@ -15,7 +15,7 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockLadder extends BlockTransparentMeta implements Faceable {
 
-    private static final int[] faces = {
+    private static final int[] FACES = {
             0, //never use
             1, //never use
             3,

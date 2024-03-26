@@ -22,7 +22,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
     public static final int TRAPDOOR_TOP_BIT = 0x04;
 
-    private static final int[] faces = {2, 1, 3, 0};
+    private static final int[] FACES = {2, 1, 3, 0};
 
     public BlockTrapdoor() {
         this(0);

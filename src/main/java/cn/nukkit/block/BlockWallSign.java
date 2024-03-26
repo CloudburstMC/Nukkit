@@ -9,7 +9,7 @@ import cn.nukkit.math.BlockFace;
  */
 public class BlockWallSign extends BlockSignPost {
 
-    private static final int[] faces = {
+    private static final int[] FACES = {
             3,
             2,
             5,

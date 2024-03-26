@@ -14,7 +14,7 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockEndRod extends BlockTransparentMeta implements Faceable {
 
-    private static final int[] faces = {0, 1, 3, 2, 5, 4};
+    private static final int[] FACES = {0, 1, 3, 2, 5, 4};
 
     public BlockEndRod() {
         this(0);

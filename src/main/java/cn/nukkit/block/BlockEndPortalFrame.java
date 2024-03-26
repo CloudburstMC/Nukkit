@@ -13,7 +13,7 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceable {
 
-    private static final int[] faces = {2, 3, 0, 1};
+    private static final int[] FACES = {2, 3, 0, 1};
 
     public BlockEndPortalFrame() {
         this(0);

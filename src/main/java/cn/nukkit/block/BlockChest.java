@@ -89,7 +89,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         BlockEntityChest chest = null;
-        this.setDamage(Block.faces2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setDamage(Block.FACES2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
         for (int side = 2; side <= 5; ++side) {
             if ((this.getDamage() == 4 || this.getDamage() == 5) && (side == 4 || side == 5)) {

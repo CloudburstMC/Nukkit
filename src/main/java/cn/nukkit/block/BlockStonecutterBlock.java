@@ -53,7 +53,7 @@ public class BlockStonecutterBlock extends BlockSolidMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(Block.faces2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setDamage(Block.FACES2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         return super.place(item, block, target, face, fx, fy, fz, player);
     }
 

@@ -73,7 +73,6 @@ public class Nukkit {
         OptionSpec<String> vSpec = parser.accepts("v", "Set verbosity of logging").withRequiredArg().ofType(String.class);
         OptionSpec<String> verbositySpec = parser.accepts("verbosity", "Set verbosity of logging").withRequiredArg().ofType(String.class);
         OptionSpec<String> languageSpec = parser.accepts("language", "Set a predefined language").withOptionalArg().ofType(String.class);
-        OptionSpec<Void> nettyDebugSpec = parser.accepts("debug", "Enables debug stuff");
 
         // Parse arguments
         OptionSet options = parser.parse(args);
@@ -87,11 +86,8 @@ public class Nukkit {
             return;
         }
 
-        // Netty logger for debug info
-        if (options.has(nettyDebugSpec)) {
-            InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
-            ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
-        }
+        InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
         TITLE = options.has(titleSpec);
 
