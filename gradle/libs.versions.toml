@@ -17,7 +17,6 @@ snakeyaml = { group = "org.yaml", name = "snakeyaml", version = "1.33" }
 leveldb = { group = "org.iq80.leveldb", name = "leveldb", version = "0.11-SNAPSHOT" }
 leveldbjni = { group = "net.daporkchop", name = "leveldb-mcpe-jni", version = "0.0.10-SNAPSHOT" }
 snappy = { group = "org.xerial.snappy", name = "snappy-java", version = "1.1.10.5" }
-expiringmap = { group = "net.jodah", name = "expiringmap", version = "0.5.11" }
 jwt = { group = "com.nimbusds", name = "nimbus-jose-jwt", version = "9.13" }
 jopt-simple = { group = "net.sf.jopt-simple", name = "jopt-simple", version = "5.0.4" }
 blockstateupdater = { group = "org.cloudburstmc", name = "block-state-updater", version = "1.20.10-SNAPSHOT" }

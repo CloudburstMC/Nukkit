@@ -2415,8 +2415,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             }
 
             if (player != null) {
-                Vector3 diff = player.getPositionOffset();
-                if (hand.getBoundingBox().intersectsWith(player.getBoundingBox().getOffsetBoundingBox(diff.x, diff.y, diff.z))) {
+                if (hand.getBoundingBox().intersectsWith(player.getNextPositionBB())) {
                     this.sendBlocks(player, new Block[]{block, target}, UpdateBlockPacket.FLAG_NONE); // Prevent ghost blocks
                     return null; // Player in block
                 }

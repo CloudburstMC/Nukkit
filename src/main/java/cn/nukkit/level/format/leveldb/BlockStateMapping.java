@@ -1,28 +1,29 @@
 package cn.nukkit.level.format.leveldb;
 
+import cn.nukkit.level.format.leveldb.structure.BlockStateSnapshot;
 import cn.nukkit.level.format.leveldb.updater.BlockStateUpdaterChunker;
 import cn.nukkit.level.format.leveldb.updater.BlockStateUpdaterVanilla;
-import cn.nukkit.level.format.leveldb.structure.BlockStateSnapshot;
 import cn.nukkit.utils.MainLogger;
-import net.jodah.expiringmap.ExpirationPolicy;
-import net.jodah.expiringmap.ExpiringMap;
-import org.cloudburstmc.blockstateupdater.*;
-import org.cloudburstmc.blockstateupdater.util.tagupdater.CompoundTagUpdaterContext;
-import org.cloudburstmc.nbt.NbtMap;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.nukkitx.network.util.Preconditions;
 import it.unimi.dsi.fastutil.Hash;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.*;
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenCustomHashMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.cloudburstmc.blockstateupdater.*;
+import org.cloudburstmc.blockstateupdater.util.tagupdater.CompoundTagUpdaterContext;
+import org.cloudburstmc.nbt.NbtMap;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
-import static cn.nukkit.level.format.leveldb.LevelDBConstants.*;
+import static cn.nukkit.level.format.leveldb.LevelDBConstants.PALETTE_VERSION;
 
 public class BlockStateMapping {
     private static final Logger log = LogManager.getLogger("LevelDB-Logger");
@@ -33,10 +34,9 @@ public class BlockStateMapping {
     private static final int LATEST_UPDATER_VERSION;
     private static final BlockStateMapping INSTANCE = new BlockStateMapping(PALETTE_VERSION);
 
-    private static final ExpiringMap<NbtMap, NbtMap> BLOCK_UPDATE_CACHE = ExpiringMap.builder()
-            .maxSize(1024)
-            .expiration(60, TimeUnit.SECONDS)
-            .expirationPolicy(ExpirationPolicy.ACCESSED)
+    private static final Cache<NbtMap, NbtMap> BLOCK_UPDATE_CACHE = CacheBuilder.newBuilder()
+            .maximumSize(1024)
+            .expireAfterAccess(60, TimeUnit.SECONDS)
             .build();
 
     static {
@@ -243,7 +243,7 @@ public class BlockStateMapping {
     }
 
     public NbtMap updateVanillaState(NbtMap state) {
-        NbtMap cached = BLOCK_UPDATE_CACHE.get(state);
+        NbtMap cached = BLOCK_UPDATE_CACHE.getIfPresent(state);
         if (cached == null) {
             int version = state.getInt("version"); // TODO: validate this when updating next time
             cached = CONTEXT.update(state, LATEST_UPDATER_VERSION == version ? version - 1 : version);

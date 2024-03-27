@@ -37,7 +37,6 @@ dependencies {
         exclude(group = "org.iq80.leveldb", module = "leveldb")
     }
     api(libs.snappy)
-    api(libs.expiringmap)
     api(libs.jwt)
     api(libs.bundles.terminal)
     api(libs.bundles.log4j)

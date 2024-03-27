@@ -35,7 +35,8 @@ import java.util.Optional;
  */
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
 
-    public static final int MAX_BLOCK_ID = 1024;
+    @SuppressWarnings("UnnecessaryBoxing")
+    public static final int MAX_BLOCK_ID = Integer.valueOf("1024");
     public static final int DATA_BITS = 6;
     public static final int DATA_SIZE = 1 << DATA_BITS;
     public static final int DATA_MASK = DATA_SIZE - 1;

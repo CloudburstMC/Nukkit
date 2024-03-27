@@ -50,7 +50,7 @@ public class StatusCommand extends VanillaCommand {
 
         sender.sendMessage(TextFormat.GOLD + "TPS / Average: " + tpsColor + NukkitMath.round(tps, 2) + " / " + NukkitMath.round(server.getTicksPerSecondAverage(), 2));
 
-        sender.sendMessage(TextFormat.GOLD + "Load / Average: " + tpsColor + server.getTickUsage() + "% / " + server.getTickUsageAverage() + '%');
+        sender.sendMessage(TextFormat.GOLD + "Load / Average: " + tpsColor + server.getTickUsage() + "% / " + server.getTickUsageAverage() * 100 + '%');
 
         //sender.sendMessage(TextFormat.GOLD + "Network upload: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getUpload() / 1024 * 1000), 2) + " kB/s");
 

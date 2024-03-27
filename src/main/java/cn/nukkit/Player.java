@@ -883,13 +883,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return this.newPosition != null ? new Position(this.newPosition.x, this.newPosition.y, this.newPosition.z, this.level) : this.getPosition();
     }
 
-    private static final Vector3 ZERO_VECTOR3 = new Vector3(0, 0, 0);
-
-    public Vector3 getPositionOffset() {
+    public AxisAlignedBB getNextPositionBB() {
         if (this.newPosition == null) {
-            return ZERO_VECTOR3;
+            return this.boundingBox;
         }
-        return this.newPosition.subtract(this);
+        Vector3 diff = this.newPosition.subtract(this);
+        return this.boundingBox.getOffsetBoundingBox(diff.x, diff.y, diff.z);
     }
 
     /**
@@ -2249,7 +2248,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                     this.resetFallDistance();
                 } else {
-                    if (this.checkMovement && this.riptideTicks < 1 && !this.isGliding() && !server.getAllowFlight() && this.inAirTicks > 20 && !this.getAllowFlight() && !this.isSleeping() && !this.isImmobile() && !this.isSwimming() && this.riding == null && !this.hasEffect(Effect.LEVITATION) && !this.hasEffect(Effect.SLOW_FALLING) && this.speed != null && !ZERO_VECTOR3.equals(this.speed)) {
+                    if (this.checkMovement && this.riptideTicks < 1 && !this.isGliding() && !server.getAllowFlight() && this.inAirTicks > 20 && !this.getAllowFlight() && !this.isSleeping() && !this.isImmobile() && !this.isSwimming() && this.riding == null && !this.hasEffect(Effect.LEVITATION) && !this.hasEffect(Effect.SLOW_FALLING) && this.speed != null && !(this.speed.x == 0 && this.speed.y == 0 && this.speed.z == 0)) {
                         double expectedVelocity = (-this.getGravity()) / ((double) this.getDrag()) - ((-this.getGravity()) / ((double) this.getDrag())) * Math.exp(-((double) this.getDrag()) * ((double) (this.inAirTicks - this.startAirTicks)));
                         double diff = Math.abs(Math.abs(expectedVelocity) - Math.abs(this.speed.y));
 
